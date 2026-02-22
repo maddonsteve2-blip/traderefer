@@ -1,0 +1,27 @@
+{
+    "name": "traderefer",
+    "version": "0.1.0",
+    "packageManager": "pnpm@10.30.0",
+    "private": true,
+    "scripts": {
+        "build": "turbo build",
+        "dev": "turbo dev",
+        "lint": "turbo lint",
+        "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    },
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "devDependencies": {
+        "turbo": "latest",
+        "prettier": "latest"
+    },
+    "pnpm": {
+        "overrides": {},
+        "neverBuiltDependencies": [],
+        "peerDependencyRules": {
+            "allowAny": ["react", "react-dom"]
+        }
+    }
+}

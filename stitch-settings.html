@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeRefer Premium Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97415",
+                        "background-light": "#fafafa",
+                        "background-dark": "#18181b",
+                        "zinc-50": "#fafafa",
+                        "zinc-100": "#f4f4f5",
+                        "zinc-400": "#a1a1aa",
+                        "zinc-500": "#71717a",
+                        "zinc-900": "#18181b",
+                        "border-zinc": "#e4e4e7",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px",
+                        "card": "32px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-zinc-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full bg-background-light/80 backdrop-blur-md border-b border-border-zinc px-6 lg:px-40 py-4">
+<div class="max-w-[1024px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-xl text-white flex items-center justify-center">
+<span class="material-symbols-outlined !text-2xl">handshake</span>
+</div>
+<h2 class="text-zinc-900 font-extrabold text-xl tracking-tight">TradeRefer</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:block text-right mr-2">
+<p class="text-sm font-bold text-zinc-900 leading-none">Alex Rivera</p>
+<p class="text-xs text-zinc-500 leading-tight">Admin Account</p>
+</div>
+<div class="size-10 rounded-full bg-cover bg-center border-2 border-white shadow-sm" data-alt="Professional headshot of a business owner" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCIG-HJohauirVBd_Ui1JN-v_7y4Ynwfk_ll-m8eBCMfS-95QMkvdlmuvPmkOrqIyAAtNeBD5oPlrbGCFt-cmGWQ4sZGvFVdKxlP_SUg_aODajgNm7etJbW5MRospzmXWpBgr2Jn_NaCDcR7AkwNN5Q1F7u0_G5klMPZVCXO4r5l9AD_r3oMw3s_ZNbgp1B0IeQbKRketrCSnPSdBRwkV0OCguKEf_bt24Df66gMXCmudHkeDDjcOaxBku9ajTiGeHjo_HoEiM8kl4K");'>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1024px] mx-auto px-6 lg:px-0 py-12">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div class="space-y-2">
+<h1 class="text-zinc-900 text-4xl font-extrabold tracking-tight">Business Settings</h1>
+<p class="text-zinc-500 text-lg">Manage your business profile, referral fees, and verification status.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex min-w-[140px] items-center justify-center rounded-full h-12 px-6 bg-zinc-100 text-zinc-900 text-sm font-bold shadow-sm hover:bg-zinc-200 transition-all">
+                    Cancel
+                </button>
+<button class="flex min-w-[160px] items-center justify-center rounded-full h-12 px-8 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
+                    Save Changes
+                </button>
+</div>
+</div>
+<div class="space-y-8">
+<!-- Card 1: Business Profile -->
+<section class="bg-white border border-border-zinc rounded-[32px] p-8 md:p-10 shadow-sm">
+<div class="flex items-center gap-4 mb-8">
+<div class="size-12 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold text-zinc-900">Business Profile</h2>
+<p class="text-sm text-zinc-500 font-medium">Public information about your company</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">Business Name</label>
+<input class="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-primary/20 placeholder-zinc-300" type="text" value="TradeRefer Inc."/>
+</div>
+<div class="space-y-2">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">Trade Category</label>
+<select class="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-primary/20">
+<option>Plumbing</option>
+<option>Electrical</option>
+<option>HVAC</option>
+<option>Roofing</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">Phone</label>
+<input class="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-primary/20" type="tel" value="+1 234 567 890"/>
+</div>
+<div class="space-y-2">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">Email Address</label>
+<input class="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-primary/20" type="email" value="contact@traderefer.com"/>
+</div>
+<div class="space-y-2">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">URL Slug</label>
+<div class="flex items-center bg-zinc-50 rounded-xl px-4 py-3.5">
+<span class="text-zinc-400 mr-1 text-sm">traderefer.com/</span>
+<input class="bg-transparent border-none p-0 text-zinc-900 font-medium focus:ring-0 w-full" type="text" value="traderefer-inc"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">Service Radius</label>
+<input class="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-primary/20" type="text" value="25km"/>
+</div>
+<div class="space-y-2 md:col-span-2">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">Description</label>
+<textarea class="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-primary/20" rows="3">Premium plumbing services with 24/7 emergency support for high-end residential and commercial properties.</textarea>
+</div>
+<div class="space-y-2 md:col-span-2">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">Suburb</label>
+<input class="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-primary/20" type="text" value="Sydney CBD"/>
+</div>
+</div>
+</section>
+<!-- Card 2: Referral Fee Settings -->
+<section class="bg-white border border-border-zinc rounded-[32px] p-8 md:p-10 shadow-sm overflow-hidden relative">
+<div class="flex items-center gap-4 mb-8">
+<div class="size-12 rounded-full bg-orange-100 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold text-zinc-900">Referral Fee Settings</h2>
+<p class="text-sm text-zinc-500 font-medium">Control the cost of new leads</p>
+</div>
+</div>
+<div class="space-y-8">
+<div class="max-w-xs space-y-3">
+<label class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 ml-1">Base Referral Fee</label>
+<div class="relative flex items-center">
+<span class="absolute left-4 text-2xl font-black text-zinc-900">$</span>
+<input class="w-full bg-zinc-50 border-none rounded-2xl pl-10 pr-4 py-6 text-4xl font-black text-zinc-900 focus:ring-2 focus:ring-primary/20" type="number" value="100"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-zinc-50 p-6 rounded-2xl border border-zinc-100">
+<p class="text-[10px] font-extrabold uppercase tracking-[0.1em] text-zinc-400 mb-2">Referrer Reward</p>
+<p class="text-2xl font-bold text-zinc-900">$80.00</p>
+<p class="text-xs text-zinc-500 mt-1">80% of total fee</p>
+</div>
+<div class="bg-zinc-50 p-6 rounded-2xl border border-zinc-100">
+<p class="text-[10px] font-extrabold uppercase tracking-[0.1em] text-zinc-400 mb-2">Platform Fee (20%)</p>
+<p class="text-2xl font-bold text-zinc-900">$20.00</p>
+<p class="text-xs text-zinc-500 mt-1">Processing &amp; insurance</p>
+</div>
+<div class="bg-primary p-6 rounded-2xl shadow-xl shadow-primary/20 text-white relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-[10px] font-extrabold uppercase tracking-[0.1em] text-white/80 mb-2">Total Unlock Price</p>
+<p class="text-2xl font-black text-white">$120.00</p>
+<p class="text-xs text-white/80 mt-1">Tax included</p>
+</div>
+<!-- Subtle decorative element -->
+<div class="absolute -right-4 -bottom-4 size-20 bg-white/10 rounded-full blur-2xl"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Card 3: ABN Verification -->
+<section class="bg-white border border-border-zinc rounded-[32px] p-8 md:p-10 shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-8">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+<span class="material-symbols-outlined">verified_user</span>
+</div>
+<div>
+<h2 class="text-2xl font-bold text-zinc-900">ABN Verification</h2>
+<p class="text-sm text-zinc-500 font-medium">Verify your Australian Business Number</p>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row items-stretch gap-3 md:min-w-[480px]">
+<div class="flex-1 relative">
+<input class="w-full bg-zinc-50 border-none rounded-xl px-4 py-4 text-zinc-900 font-mono tracking-widest focus:ring-2 focus:ring-blue-600/20 placeholder-zinc-300" placeholder="11 222 333 444" type="text"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2">
+<span class="material-symbols-outlined text-zinc-300 text-lg">info</span>
+</div>
+</div>
+<button class="bg-blue-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
+<span class="material-symbols-outlined text-xl">shield</span>
+                            Verify ABN
+                        </button>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-zinc-100 flex items-start gap-3">
+<span class="material-symbols-outlined text-blue-500 text-sm mt-0.5">verified</span>
+<p class="text-xs text-zinc-500 leading-relaxed">Verification ensures your business is compliant with Australian trade regulations. Verified businesses receive a badge and higher priority in referral rankings.</p>
+</div>
+</section>
+</div>
+<footer class="mt-16 text-center text-zinc-400 text-sm">
+<p>© 2024 TradeRefer Premium. All settings are encrypted and secured.</p>
+</footer>
+</main>
+</body></html>
