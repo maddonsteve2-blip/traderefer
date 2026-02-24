@@ -691,30 +691,7 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                                             </div>
                                         )}
 
-                                        {/* Tweak & regenerate */}
-                                        <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 space-y-3">
-                                            <div className="flex items-center gap-2">
-                                                <Sparkles className="w-4 h-4 text-orange-500" />
-                                                <div className="text-sm font-bold text-zinc-700">Not quite right? Tell the AI what to change.</div>
-                                            </div>
-                                            <div className="flex gap-3">
-                                                <input
-                                                    type="text"
-                                                    value={tweakInput}
-                                                    onChange={(e) => setTweakInput(e.target.value)}
-                                                    placeholder="e.g. Make it more casual, mention emergency work"
-                                                    className="flex-1 px-4 py-3 bg-white border border-zinc-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm"
-                                                />
-                                                <Button
-                                                    type="button"
-                                                    onClick={() => { if (tweakInput.trim()) { generateProfile(tweakInput.trim()); setTweakInput(""); } }}
-                                                    disabled={isGenerating || !tweakInput.trim()}
-                                                    className="bg-zinc-900 hover:bg-black text-white rounded-xl px-4"
-                                                >
-                                                    Regenerate
-                                                </Button>
-                                            </div>
-                                        </div>
+                                        <p className="text-sm text-zinc-400 text-center">None of these right? <button type="button" onClick={() => generateProfile()} className="text-orange-500 font-bold hover:underline">Generate 3 new options</button></p>
                                     </>
                                 ) : (
                                     /* ── PHASE 2: Edit locked-in profile ── */
@@ -726,83 +703,136 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                                                 </div>
                                                 <h1 className="text-3xl font-black text-zinc-900 tracking-tight font-display">Fine-tune your profile</h1>
                                             </div>
-                                            <p className="text-base text-zinc-500 font-medium leading-relaxed">Edit anything you&apos;d like to change, then continue.</p>
+                                            <p className="text-base text-zinc-500 font-medium leading-relaxed">Edit any section directly, or ask AI to tweak it for you.</p>
                                         </div>
 
-                                        <div className="space-y-6">
+                                        <div className="space-y-5">
                                             {/* About Us */}
-                                            <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <label className="text-sm font-black text-zinc-400 uppercase tracking-widest">About Us</label>
-                                                    <button type="button" onClick={() => setEditingDescription(!editingDescription)} className="text-sm font-bold text-orange-500 flex items-center gap-1 hover:underline">
-                                                        <Pencil className="w-3.5 h-3.5" /> {editingDescription ? 'Done' : 'Edit'}
-                                                    </button>
-                                                </div>
-                                                {editingDescription ? (
-                                                    <textarea
-                                                        value={formData.description}
-                                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                                        rows={4}
-                                                        className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-base font-medium resize-none"
-                                                    />
-                                                ) : (
-                                                    <p className="text-base text-zinc-700 leading-relaxed">{formData.description || "No description generated"}</p>
-                                                )}
+                                            <div className="bg-zinc-50 p-5 rounded-[24px] border border-zinc-100">
+                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-2 block">About Us</label>
+                                                <textarea
+                                                    value={formData.description}
+                                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                                    rows={4}
+                                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium resize-none leading-relaxed"
+                                                />
                                             </div>
 
                                             {/* Why Refer Us */}
-                                            <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <label className="text-sm font-black text-zinc-400 uppercase tracking-widest">Why Refer Us</label>
-                                                    <button type="button" onClick={() => setEditingWhyRefer(!editingWhyRefer)} className="text-sm font-bold text-orange-500 flex items-center gap-1 hover:underline">
-                                                        <Pencil className="w-3.5 h-3.5" /> {editingWhyRefer ? 'Done' : 'Edit'}
-                                                    </button>
-                                                </div>
-                                                {editingWhyRefer ? (
-                                                    <textarea
-                                                        value={formData.why_refer_us}
-                                                        onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
-                                                        rows={3}
-                                                        className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-base font-medium resize-none"
-                                                    />
-                                                ) : (
-                                                    <p className="text-base text-zinc-700 leading-relaxed">{formData.why_refer_us || "No pitch generated"}</p>
-                                                )}
+                                            <div className="bg-zinc-50 p-5 rounded-[24px] border border-zinc-100">
+                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-2 block">Why Refer Us</label>
+                                                <textarea
+                                                    value={formData.why_refer_us}
+                                                    onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
+                                                    rows={3}
+                                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium resize-none leading-relaxed"
+                                                />
                                             </div>
 
                                             {/* Services */}
-                                            <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
-                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 block">Services We Provide</label>
+                                            <div className="bg-zinc-50 p-5 rounded-[24px] border border-zinc-100">
+                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-2 block">Services We Provide</label>
                                                 <div className="flex flex-wrap gap-2">
                                                     {formData.services.map((s, i) => (
-                                                        <span key={i} className="px-4 py-2 bg-white border border-zinc-200 rounded-full text-sm font-medium text-zinc-700 flex items-center gap-2">
+                                                        <span key={i} className="px-3 py-1.5 bg-white border border-zinc-200 rounded-full text-sm font-medium text-zinc-700 flex items-center gap-1.5">
                                                             {s}
-                                                            <button type="button" onClick={() => setFormData(prev => ({ ...prev, services: prev.services.filter((_, idx) => idx !== i) }))} className="text-zinc-300 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
+                                                            <button type="button" onClick={() => setFormData(prev => ({ ...prev, services: prev.services.filter((_, idx) => idx !== i) }))} className="text-zinc-300 hover:text-red-500"><X className="w-3 h-3" /></button>
                                                         </span>
                                                     ))}
                                                 </div>
                                             </div>
 
                                             {/* Features / Highlights */}
-                                            <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
-                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 block">Business Highlights</label>
+                                            <div className="bg-zinc-50 p-5 rounded-[24px] border border-zinc-100">
+                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-2 block">Business Highlights</label>
                                                 <div className="flex flex-wrap gap-2">
                                                     {formData.features.map((f, i) => (
-                                                        <span key={i} className="px-4 py-2 bg-orange-50 border border-orange-200 rounded-full text-sm font-bold text-orange-700 flex items-center gap-2">
+                                                        <span key={i} className="px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-full text-sm font-bold text-orange-700 flex items-center gap-1.5">
                                                             {f}
-                                                            <button type="button" onClick={() => setFormData(prev => ({ ...prev, features: prev.features.filter((_, idx) => idx !== i) }))} className="text-orange-300 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
+                                                            <button type="button" onClick={() => setFormData(prev => ({ ...prev, features: prev.features.filter((_, idx) => idx !== i) }))} className="text-orange-300 hover:text-red-500"><X className="w-3 h-3" /></button>
                                                         </span>
                                                     ))}
                                                 </div>
                                             </div>
 
-                                            {/* Start over link */}
+                                            {/* AI Tweak */}
+                                            <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 space-y-3">
+                                                <div className="flex items-center gap-2">
+                                                    <Sparkles className="w-4 h-4 text-orange-500" />
+                                                    <div className="text-sm font-bold text-orange-900">Want AI to rewrite something?</div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="text"
+                                                        value={tweakInput}
+                                                        onChange={(e) => setTweakInput(e.target.value)}
+                                                        placeholder="e.g. Make the about us more casual"
+                                                        className="flex-1 px-4 py-2.5 bg-white border border-orange-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm"
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        onClick={async () => {
+                                                            if (!tweakInput.trim()) return;
+                                                            setIsGenerating(true);
+                                                            try {
+                                                                const res = await fetch("/api/ai/generate-profile", {
+                                                                    method: "POST",
+                                                                    headers: { "Content-Type": "application/json" },
+                                                                    body: JSON.stringify({
+                                                                        conversation: [{
+                                                                            role: "user",
+                                                                            content: `You are editing an existing TradeRefer profile. Here is the current profile:
+
+About Us: ${formData.description}
+Why Refer Us: ${formData.why_refer_us}
+Services: ${formData.services.join(', ')}
+Highlights: ${formData.features.join(', ')}
+
+The business owner wants this change: "${tweakInput.trim()}"
+
+Apply ONLY that change. Keep everything else the same. Respond with ONLY a JSON object (no markdown, no code fences):
+{
+  "profiles": [{
+    "description": "updated about us",
+    "why_refer_us": "updated why refer us",
+    "services": ["updated services list"],
+    "features": ["updated highlights"],
+    "years_experience": "${formData.years_experience}",
+    "specialty": "${formData.specialty}"
+  }]
+}`
+                                                                        }],
+                                                                    }),
+                                                                });
+                                                                if (!res.ok) throw new Error("Failed");
+                                                                const data = await res.json();
+                                                                const profile = data.profiles?.[0] || data;
+                                                                if (profile.description) setFormData(prev => ({
+                                                                    ...prev,
+                                                                    description: profile.description || prev.description,
+                                                                    why_refer_us: profile.why_refer_us || prev.why_refer_us,
+                                                                    services: profile.services || prev.services,
+                                                                    features: profile.features || prev.features,
+                                                                }));
+                                                                setTweakInput("");
+                                                            } catch { toast.error("AI tweak failed — edit manually instead"); }
+                                                            finally { setIsGenerating(false); }
+                                                        }}
+                                                        disabled={isGenerating || !tweakInput.trim()}
+                                                        className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl px-4 text-sm font-bold"
+                                                    >
+                                                        {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Sparkles className="w-3.5 h-3.5 mr-1" /> Tweak</>}
+                                                    </Button>
+                                                </div>
+                                            </div>
+
+                                            {/* Start over */}
                                             <button
                                                 type="button"
-                                                onClick={() => { setProfileLocked(false); setSelectedProfileIndex(-1); }}
-                                                className="w-full py-3 text-sm font-bold text-zinc-400 hover:text-orange-500 flex items-center justify-center gap-2 transition-colors"
+                                                onClick={() => { setProfileLocked(false); setSelectedProfileIndex(-1); generateProfile(); }}
+                                                className="w-full py-2 text-sm font-bold text-zinc-400 hover:text-orange-500 flex items-center justify-center gap-2 transition-colors"
                                             >
-                                                <ChevronLeft className="w-4 h-4" /> Back to profile options
+                                                <Sparkles className="w-3.5 h-3.5" /> Start over — generate 3 new options
                                             </button>
                                         </div>
                                     </>
