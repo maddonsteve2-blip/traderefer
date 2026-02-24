@@ -22,9 +22,11 @@ import {
     X,
     Eye,
     EyeOff,
-    Users
+    Users,
+    Search
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { getSuburbs } from "@/lib/locations";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -58,6 +60,12 @@ export default function BusinessOnboardingPage() {
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [photoUrls, setPhotoUrls] = useState<string[]>([]);
     const [isUploadingMedia, setIsUploadingMedia] = useState(false);
+    const [suburbSearch, setSuburbSearch] = useState("");
+    const [showSuburbs, setShowSuburbs] = useState(false);
+    const allSuburbs = getSuburbs();
+    const filteredSuburbs = suburbSearch
+        ? allSuburbs.filter(s => s.toLowerCase().includes(suburbSearch.toLowerCase()))
+        : allSuburbs;
     const router = useRouter();
 
     const checkSlug = async (val: string) => {
@@ -241,38 +249,58 @@ export default function BusinessOnboardingPage() {
                                                 ))}
                                             </select>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            <div className="md:col-span-2">
-                                                <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                                    <MapPin className="w-3.5 h-3.5" /> Base Suburb
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={formData.suburb}
-                                                    onChange={(e) => setFormData({ ...formData, suburb: e.target.value })}
-                                                    placeholder="e.g. Highton"
-                                                    className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                                    State
-                                                </label>
-                                                <select
-                                                    value={formData.state}
-                                                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                                                    className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium appearance-none"
-                                                >
-                                                    <option value="VIC">VIC</option>
-                                                    <option value="NSW">NSW</option>
-                                                    <option value="QLD">QLD</option>
-                                                    <option value="WA">WA</option>
-                                                    <option value="SA">SA</option>
-                                                    <option value="TAS">TAS</option>
-                                                    <option value="ACT">ACT</option>
-                                                    <option value="NT">NT</option>
-                                                </select>
-                                            </div>
+                                        <div className="relative">
+                                            <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                                <MapPin className="w-3.5 h-3.5" /> Base Suburb
+                                            </label>
+                                            {formData.suburb ? (
+                                                <div className="flex items-center justify-between w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl">
+                                                    <span className="text-lg font-medium text-zinc-900">{formData.suburb}, VIC</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { setFormData({ ...formData, suburb: "" }); setSuburbSearch(""); setShowSuburbs(true); }}
+                                                        className="text-sm font-bold text-orange-500 hover:underline"
+                                                    >
+                                                        Change
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="relative">
+                                                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-300" />
+                                                        <input
+                                                            type="text"
+                                                            value={suburbSearch}
+                                                            onFocus={() => setShowSuburbs(true)}
+                                                            onChange={(e) => { setSuburbSearch(e.target.value); setShowSuburbs(true); }}
+                                                            placeholder="Search Geelong suburbs..."
+                                                            className="w-full pl-14 pr-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300"
+                                                        />
+                                                    </div>
+                                                    {showSuburbs && (
+                                                        <div className="absolute z-20 left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-2xl shadow-xl max-h-64 overflow-y-auto">
+                                                            {filteredSuburbs.length === 0 ? (
+                                                                <div className="px-6 py-4 text-zinc-400 text-sm">No suburbs found</div>
+                                                            ) : (
+                                                                filteredSuburbs.map(suburb => (
+                                                                    <button
+                                                                        key={suburb}
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            setFormData({ ...formData, suburb });
+                                                                            setSuburbSearch("");
+                                                                            setShowSuburbs(false);
+                                                                        }}
+                                                                        className="w-full text-left px-6 py-3 hover:bg-orange-50 text-zinc-700 font-medium transition-colors first:rounded-t-2xl last:rounded-b-2xl"
+                                                                    >
+                                                                        {suburb}
+                                                                    </button>
+                                                                ))
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
                                         </div>
                                     </div>
 

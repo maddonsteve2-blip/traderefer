@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, ChevronRight, Phone } from "lucide-react";
+import { MapPin, ChevronRight, Phone, Search } from "lucide-react";
+import { getSuburbs } from "@/lib/locations";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 
@@ -19,6 +20,12 @@ export default function ReferrerOnboardingPage() {
         region: ""
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [suburbSearch, setSuburbSearch] = useState("");
+    const [showSuburbs, setShowSuburbs] = useState(false);
+    const suburbs = getSuburbs();
+    const filteredSuburbs = suburbSearch
+        ? suburbs.filter(s => s.toLowerCase().includes(suburbSearch.toLowerCase()))
+        : suburbs;
     const { getToken } = useAuth();
     const { user } = useUser();
     const router = useRouter();
@@ -110,17 +117,59 @@ export default function ReferrerOnboardingPage() {
                                 {errors.phone && <p className="text-red-500 text-xs font-bold mt-1.5 ml-1">{errors.phone}</p>}
                             </div>
 
-                            <div>
+                            <div className="relative">
                                 <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                    <MapPin className="w-3.5 h-3.5" /> Primary Region
+                                    <MapPin className="w-3.5 h-3.5" /> Your Suburb
                                 </label>
-                                <input
-                                    type="text"
-                                    value={formData.region}
-                                    onChange={(e) => { setFormData({ ...formData, region: e.target.value }); setErrors({ ...errors, region: "" }); }}
-                                    placeholder="e.g. Geelong / Surf Coast"
-                                    className={`w-full px-6 py-4 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300 ${errors.region ? 'border-red-400' : 'border-zinc-100'}`}
-                                />
+                                {formData.region ? (
+                                    <div className="flex items-center justify-between w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl">
+                                        <span className="text-lg font-medium text-zinc-900">{formData.region}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => { setFormData({ ...formData, region: "" }); setSuburbSearch(""); setShowSuburbs(true); }}
+                                            className="text-sm font-bold text-orange-500 hover:underline"
+                                        >
+                                            Change
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="relative">
+                                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-300" />
+                                            <input
+                                                type="text"
+                                                value={suburbSearch}
+                                                onFocus={() => setShowSuburbs(true)}
+                                                onChange={(e) => { setSuburbSearch(e.target.value); setShowSuburbs(true); setErrors({ ...errors, region: "" }); }}
+                                                placeholder="Search Geelong suburbs..."
+                                                className={`w-full pl-14 pr-6 py-4 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300 ${errors.region ? 'border-red-400' : 'border-zinc-100'}`}
+                                            />
+                                        </div>
+                                        {showSuburbs && (
+                                            <div className="absolute z-20 left-0 right-0 top-full mt-2 bg-white border border-zinc-200 rounded-2xl shadow-xl max-h-64 overflow-y-auto">
+                                                {filteredSuburbs.length === 0 ? (
+                                                    <div className="px-6 py-4 text-zinc-400 text-sm">No suburbs found</div>
+                                                ) : (
+                                                    filteredSuburbs.map(suburb => (
+                                                        <button
+                                                            key={suburb}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setFormData({ ...formData, region: suburb });
+                                                                setSuburbSearch("");
+                                                                setShowSuburbs(false);
+                                                                setErrors({ ...errors, region: "" });
+                                                            }}
+                                                            className="w-full text-left px-6 py-3 hover:bg-orange-50 text-zinc-700 font-medium transition-colors first:rounded-t-2xl last:rounded-b-2xl"
+                                                        >
+                                                            {suburb}
+                                                        </button>
+                                                    ))
+                                                )}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
                                 {errors.region && <p className="text-red-500 text-xs font-bold mt-1.5 ml-1">{errors.region}</p>}
                             </div>
                         </div>
