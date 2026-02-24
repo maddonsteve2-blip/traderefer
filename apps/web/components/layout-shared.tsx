@@ -109,6 +109,11 @@ export function Navbar() {
                                                     Deals
                                                 </Button>
                                             </Link>
+                                            <Link href="/dashboard/business/campaigns" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Campaigns
+                                                </Button>
+                                            </Link>
                                             <Link href="/dashboard/business/profile" className="hidden sm:block">
                                                 <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
                                                     Public Profile

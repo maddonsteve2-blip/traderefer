@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Star, ShieldCheck, ChevronRight, DollarSign, Gift, Zap } from "lucide-react";
+import { Search, MapPin, Star, ShieldCheck, ChevronRight, DollarSign, Gift, Zap, Flame } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { BusinessDirectoryFilters } from "@/components/BusinessDirectoryFilters";
@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 async function getBusinesses(category?: string, suburb?: string, search?: string) {
     try {
-        let query = `SELECT b.*, (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count FROM businesses b WHERE b.status = 'active' AND (b.listing_visibility = 'public' OR b.listing_visibility IS NULL)`;
+        let query = `SELECT b.*, (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count, (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count FROM businesses b WHERE b.status = 'active' AND (b.listing_visibility = 'public' OR b.listing_visibility IS NULL)`;
         const params: string[] = [];
 
         if (category) {
@@ -128,6 +128,12 @@ export default async function BusinessDirectory({
                                             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-bold border border-blue-100">
                                                 <Zap className="w-3 h-3" />
                                                 {biz.avg_response_minutes < 60 ? `< ${biz.avg_response_minutes}m` : `< ${Math.ceil(biz.avg_response_minutes / 60)}h`} response
+                                            </div>
+                                        )}
+                                        {Number(biz.campaign_count) > 0 && (
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-full text-sm font-bold border border-red-100 animate-pulse">
+                                                <Flame className="w-3 h-3" />
+                                                Bonus active
                                             </div>
                                         )}
                                     </div>

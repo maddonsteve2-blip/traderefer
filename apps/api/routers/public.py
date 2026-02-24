@@ -143,3 +143,70 @@ async def get_business_reviews(slug: str, db: AsyncSession = Depends(get_db)):
             "created_at": str(row["created_at"])
         })
     return reviews
+
+
+@router.get("/businesses/{slug}/campaigns")
+async def get_business_campaigns(slug: str, db: AsyncSession = Depends(get_db)):
+    """Get active campaigns for a business (public endpoint)."""
+    biz_result = await db.execute(
+        text("SELECT id FROM businesses WHERE slug = :slug"),
+        {"slug": slug}
+    )
+    biz = biz_result.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    result = await db.execute(
+        text("""
+            SELECT id, title, description, campaign_type, bonus_amount_cents,
+                   multiplier, volume_threshold, promo_text, starts_at, ends_at
+            FROM campaigns
+            WHERE business_id = :bid AND is_active = true
+              AND starts_at <= now() AND ends_at > now()
+            ORDER BY created_at DESC
+        """),
+        {"bid": biz[0]}
+    )
+    campaigns = []
+    for row in result.mappings().all():
+        c = {k: v for k, v in dict(row).items()}
+        c["id"] = str(c["id"])
+        for dt in ("starts_at", "ends_at"):
+            if c.get(dt):
+                c[dt] = str(c[dt])
+        if c.get("multiplier") is not None:
+            c["multiplier"] = float(c["multiplier"])
+        campaigns.append(c)
+    return campaigns
+
+
+@router.get("/campaigns/hot")
+async def get_hot_campaigns(db: AsyncSession = Depends(get_db)):
+    """Get all active campaigns across the platform (public endpoint for referrer dashboard)."""
+    result = await db.execute(
+        text("""
+            SELECT c.id, c.title, c.description, c.campaign_type,
+                   c.bonus_amount_cents, c.multiplier, c.volume_threshold,
+                   c.promo_text, c.starts_at, c.ends_at,
+                   b.business_name, b.slug, b.trade_category, b.suburb, b.logo_url
+            FROM campaigns c
+            JOIN businesses b ON b.id = c.business_id
+            WHERE c.is_active = true
+              AND c.starts_at <= now() AND c.ends_at > now()
+              AND b.status = 'active'
+              AND (b.listing_visibility = 'public' OR b.listing_visibility IS NULL)
+            ORDER BY c.bonus_amount_cents DESC, c.created_at DESC
+            LIMIT 20
+        """)
+    )
+    campaigns = []
+    for row in result.mappings().all():
+        c = {k: v for k, v in dict(row).items()}
+        c["id"] = str(c["id"])
+        for dt in ("starts_at", "ends_at"):
+            if c.get(dt):
+                c[dt] = str(c[dt])
+        if c.get("multiplier") is not None:
+            c["multiplier"] = float(c["multiplier"])
+        campaigns.append(c)
+    return campaigns

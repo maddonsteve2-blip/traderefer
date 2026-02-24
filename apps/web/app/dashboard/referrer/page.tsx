@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { HotCampaigns } from "@/components/referrer/HotCampaigns";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -142,6 +143,8 @@ export default async function ReferrerDashboardPage() {
                         ))}
                     </div>
                 </Card>
+
+                <HotCampaigns />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <Card className="bg-zinc-900 p-8 text-white relative overflow-hidden shadow-2xl group">

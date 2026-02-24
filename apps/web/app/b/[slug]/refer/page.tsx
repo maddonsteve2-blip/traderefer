@@ -16,7 +16,8 @@ import {
     ExternalLink,
     Phone,
     Tag,
-    Gift
+    Gift,
+    Flame
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -59,16 +60,30 @@ async function getReviews(slug: string) {
     }
 }
 
+async function getCampaigns(slug: string) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    try {
+        const res = await fetch(`${apiUrl}/businesses/${slug}/campaigns`, {
+            cache: 'no-store'
+        });
+        if (!res.ok) return [];
+        return res.json();
+    } catch {
+        return [];
+    }
+}
+
 export default async function ReferrerBusinessPage({
     params
 }: {
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const [business, deals, reviews] = await Promise.all([
+    const [business, deals, reviews, campaigns] = await Promise.all([
         getBusiness(slug),
         getDeals(slug),
-        getReviews(slug)
+        getReviews(slug),
+        getCampaigns(slug)
     ]);
 
     if (!business) {
@@ -218,6 +233,39 @@ export default async function ReferrerBusinessPage({
                                 ))}
                             </div>
                         </section>
+
+                        {/* Active Campaigns */}
+                        {campaigns && campaigns.length > 0 && (
+                            <section>
+                                <h2 className="text-xl font-bold text-zinc-900 mb-6 flex items-center gap-2">
+                                    <Flame className="w-5 h-5 text-red-500" /> Active Campaigns
+                                </h2>
+                                <div className="space-y-3">
+                                    {campaigns.map((campaign: any) => (
+                                        <div key={campaign.id} className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-2xl p-5">
+                                            <div className="flex items-start justify-between">
+                                                <div>
+                                                    <h3 className="font-bold text-zinc-900">{campaign.title}</h3>
+                                                    {campaign.description && <p className="text-sm text-zinc-600 mt-1">{campaign.description}</p>}
+                                                </div>
+                                                <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-bold shrink-0 ml-3">
+                                                    {campaign.campaign_type === 'flat_bonus' && `+$${(campaign.bonus_amount_cents / 100).toFixed(0)} per lead`}
+                                                    {campaign.campaign_type === 'multiplier' && `${campaign.multiplier}x commission`}
+                                                    {campaign.campaign_type === 'volume_bonus' && `$${(campaign.bonus_amount_cents / 100).toFixed(0)} for ${campaign.volume_threshold}+ leads`}
+                                                    {campaign.campaign_type === 'first_referral' && `$${(campaign.bonus_amount_cents / 100).toFixed(0)} first referral`}
+                                                </span>
+                                            </div>
+                                            {campaign.promo_text && (
+                                                <p className="text-sm text-zinc-500 mt-2 italic">&ldquo;{campaign.promo_text}&rdquo;</p>
+                                            )}
+                                            <div className="text-xs font-bold text-red-400 mt-2">
+                                                Ends {new Date(campaign.ends_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
 
                         {/* Active Deals */}
                         {deals && deals.length > 0 && (
