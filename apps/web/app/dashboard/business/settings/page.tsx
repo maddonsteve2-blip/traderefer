@@ -178,7 +178,7 @@ export default function BusinessSettingsPage() {
             <div className="max-w-[1024px] mx-auto px-6 lg:px-0 py-12">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                     <div className="space-y-2">
-                        <Link href="/dashboard" className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-orange-500 transition-colors mb-2">
+                        <Link href="/dashboard/business" className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-orange-500 transition-colors mb-2">
                             <ChevronLeft className="w-4 h-4" /> Back to Dashboard
                         </Link>
                         <h1 className="text-zinc-900 text-4xl font-extrabold tracking-tight">Business Settings</h1>

@@ -33,7 +33,7 @@ async function getDashboardData() {
     });
 
     if (res.status === 404) {
-        redirect("/onboarding");
+        redirect("/onboarding/referrer");
     }
 
     if (!res.ok) {
@@ -53,7 +53,7 @@ export default async function ReferrerDashboardPage() {
                     <h2 className="text-xl font-bold mb-4 text-zinc-900">Portal Limited</h2>
                     <p className="text-zinc-500 mb-6 text-sm">We couldn&apos;t connect to your referrer profile. Please try refreshing.</p>
                     <Button asChild className="bg-orange-500 hover:bg-orange-600 rounded-full px-8">
-                        <Link href="/dashboard">Refresh Dashboard</Link>
+                        <Link href="/dashboard/referrer">Refresh Dashboard</Link>
                     </Button>
                 </div>
             </div>

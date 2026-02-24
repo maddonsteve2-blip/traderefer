@@ -42,7 +42,7 @@ async function getBusinessDashboardData() {
     });
 
     if (res.status === 404) {
-        redirect("/onboarding");
+        redirect("/onboarding/business");
     }
 
     if (!res.ok) {
@@ -62,7 +62,7 @@ export default async function BusinessDashboardPage() {
                     <h2 className="text-xl font-bold mb-4 text-zinc-900">Dashboard Unavailable</h2>
                     <p className="text-zinc-500 mb-6 text-sm">We couldn&apos;t load your business profile. This might be a temporary issue with our connection.</p>
                     <Button asChild className="bg-orange-500 hover:bg-orange-600 rounded-full px-8">
-                        <Link href="/dashboard">Retry Connection</Link>
+                        <Link href="/dashboard/business">Retry Connection</Link>
                     </Button>
                 </div>
             </div>

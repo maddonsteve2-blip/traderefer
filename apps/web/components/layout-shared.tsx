@@ -13,6 +13,7 @@ export function Navbar() {
     const pathname = usePathname();
     const isDashboard = pathname?.startsWith("/dashboard");
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
+    const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
     const { getToken, isSignedIn } = useAuth();
     const [walletBalance, setWalletBalance] = useState<number | null>(null);
     const [showTopUp, setShowTopUp] = useState(false);
@@ -72,46 +73,81 @@ export function Navbar() {
                         <SignedIn>
                             {isDashboard ? (
                                 <>
-                                    <Link href="/dashboard/business" className="hidden sm:block">
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
-                                            Dashboard
-                                        </Button>
-                                    </Link>
-                                    {isBusinessDashboard && walletBalance !== null && (
-                                        <button
-                                            onClick={() => setShowTopUp(true)}
-                                            className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-200 rounded-full transition-all group"
-                                        >
-                                            <Wallet className="w-4 h-4 text-zinc-400 group-hover:text-orange-500" />
-                                            <span className="text-sm font-bold text-zinc-700">${(walletBalance / 100).toFixed(2)}</span>
-                                            <Plus className="w-3.5 h-3.5 text-orange-500" />
-                                        </button>
+                                    {isBusinessDashboard && (
+                                        <>
+                                            <Link href="/dashboard/business" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Dashboard
+                                                </Button>
+                                            </Link>
+                                            {walletBalance !== null && (
+                                                <button
+                                                    onClick={() => setShowTopUp(true)}
+                                                    className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-200 rounded-full transition-all group"
+                                                >
+                                                    <Wallet className="w-4 h-4 text-zinc-400 group-hover:text-orange-500" />
+                                                    <span className="text-sm font-bold text-zinc-700">${(walletBalance / 100).toFixed(2)}</span>
+                                                    <Plus className="w-3.5 h-3.5 text-orange-500" />
+                                                </button>
+                                            )}
+                                            <Link href="/dashboard/business/leads" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Leads
+                                                </Button>
+                                            </Link>
+                                            <Link href="/dashboard/business/messages" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Messages
+                                                </Button>
+                                            </Link>
+                                            <Link href="/dashboard/business/referrers" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Referrers
+                                                </Button>
+                                            </Link>
+                                            <Link href="/dashboard/business/profile" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Public Profile
+                                                </Button>
+                                            </Link>
+                                            <Link href="/dashboard/business/settings" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900">
+                                                    Settings
+                                                </Button>
+                                            </Link>
+                                        </>
                                     )}
-                                    <Link href="/dashboard/business/leads" className="hidden sm:block">
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
-                                            Leads
-                                        </Button>
-                                    </Link>
-                                    <Link href="/dashboard/business/messages" className="hidden sm:block">
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
-                                            Messages
-                                        </Button>
-                                    </Link>
-                                    <Link href="/dashboard/business/referrers" className="hidden sm:block">
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
-                                            Referrers
-                                        </Button>
-                                    </Link>
-                                    <Link href="/dashboard/business/profile" className="hidden sm:block">
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
-                                            Public Profile
-                                        </Button>
-                                    </Link>
-                                    <Link href="/dashboard/business/settings" className="hidden sm:block">
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900">
-                                            Settings
-                                        </Button>
-                                    </Link>
+                                    {isReferrerDashboard && (
+                                        <>
+                                            <Link href="/dashboard/referrer" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Dashboard
+                                                </Button>
+                                            </Link>
+                                            <Link href="/businesses" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Find Businesses
+                                                </Button>
+                                            </Link>
+                                            <Link href="/dashboard/referrer/messages" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Messages
+                                                </Button>
+                                            </Link>
+                                            <Link href="/dashboard/referrer/withdraw" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Withdraw
+                                                </Button>
+                                            </Link>
+                                        </>
+                                    )}
+                                    {!isBusinessDashboard && !isReferrerDashboard && (
+                                        <Link href="/dashboard" className="hidden sm:block">
+                                            <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                Dashboard
+                                            </Button>
+                                        </Link>
+                                    )}
                                 </>
                             ) : (
                                 <Link href="/dashboard" className="hidden sm:block">

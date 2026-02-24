@@ -42,7 +42,7 @@ export default async function BusinessLeadsPage() {
     if (!token) redirect("/login");
 
     const bizId = await getBusinessId(token);
-    if (!bizId) redirect("/onboarding");
+    if (!bizId) redirect("/onboarding/business");
     const leads = await getLeads(bizId, token);
 
     const pendingCount = leads.filter((l: any) => l.status === 'VERIFIED' || l.status === 'PENDING').length;

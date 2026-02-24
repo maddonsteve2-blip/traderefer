@@ -21,32 +21,29 @@ export default function DashboardRedirect() {
                 if (!token) return;
 
                 const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+                const headers = { 'Authorization': `Bearer ${token}` };
 
-                // We check if business exists
-                const bizRes = await fetch(`${apiBase}/business/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                // Check both roles in parallel
+                const [bizRes, refRes] = await Promise.all([
+                    fetch(`${apiBase}/business/me`, { headers }),
+                    fetch(`${apiBase}/referrer/me`, { headers })
+                ]);
 
                 if (bizRes.ok) {
                     router.push("/dashboard/business");
                     return;
                 }
 
-                // If not business, check if referrer exists
-                const refRes = await fetch(`${apiBase}/referrer/dashboard`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
                 if (refRes.ok) {
                     router.push("/dashboard/referrer");
                     return;
                 }
 
-                // If neither, they haven't onboarded
+                // Neither role found — send to onboarding choice
                 router.push("/onboarding");
             } catch (err) {
                 console.error("Redirect error", err);
-                router.push("/onboarding"); // Fallback to onboarding
+                router.push("/onboarding");
             }
         }
 
