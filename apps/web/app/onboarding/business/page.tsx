@@ -1022,7 +1022,21 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                         {/* ═══════════════════════════════════════════════ */}
                         <div className={`${step === 2 ? 'pt-3' : 'pt-8'} flex items-center gap-4`}>
                             {step > 1 && step < 6 && (
-                                <Button variant="ghost" onClick={() => setStep(step - 1)} disabled={isLoading || isGenerating} className="rounded-full h-16 px-8 text-zinc-400 hover:text-zinc-900 font-bold">
+                                <Button variant="ghost" onClick={() => {
+                                    if (step === 2) {
+                                        setChatMessages([]);
+                                        setChatInput("");
+                                        setChatDone(false);
+                                        setSelectedSuggestions(new Set());
+                                    }
+                                    if (step === 3) {
+                                        setProfileOptions([]);
+                                        setSelectedProfileIndex(-1);
+                                        setProfileLocked(false);
+                                        setTweakInput("");
+                                    }
+                                    setStep(step - 1);
+                                }} disabled={isLoading || isGenerating} className="rounded-full h-16 px-8 text-zinc-400 hover:text-zinc-900 font-bold">
                                     <ChevronLeft className="w-5 h-5 mr-2" /> Back
                                 </Button>
                             )}
