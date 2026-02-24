@@ -66,7 +66,15 @@ export default async function PublicProfilePage({
         <main className="min-h-screen bg-white">
             {/* Premium Header/Hero */}
             <div className="bg-zinc-900 pt-24 pb-16 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-orange-500/10 blur-[120px] rounded-full" />
+                {business.cover_photo_url ? (
+                    <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={business.cover_photo_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/80 to-zinc-900/40" />
+                    </>
+                ) : (
+                    <div className="absolute top-0 right-0 w-1/3 h-full bg-orange-500/10 blur-[120px] rounded-full" />
+                )}
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="flex items-center gap-4 mb-8">
                         <Link href="/businesses" className="inline-flex items-center gap-2 text-zinc-500 hover:text-orange-400 transition-colors group">

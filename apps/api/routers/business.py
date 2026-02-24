@@ -32,6 +32,7 @@ class BusinessOnboarding(BaseModel):
     service_radius_km: int = 20
     referral_fee_cents: int = 1000
     logo_url: Optional[str] = None
+    cover_photo_url: Optional[str] = None
     photo_urls: Optional[list[str]] = None
     listing_visibility: str = "public"
     years_experience: Optional[str] = None
@@ -54,6 +55,7 @@ class BusinessUpdate(BaseModel):
     website: Optional[str] = None
     referral_fee_cents: Optional[int] = None
     logo_url: Optional[str] = None
+    cover_photo_url: Optional[str] = None
     photo_urls: Optional[list[str]] = None
     features: Optional[list[str]] = None
     listing_visibility: Optional[str] = None
@@ -119,6 +121,8 @@ async def onboarding(
         update_fields = {}
         if data.logo_url:
             update_fields["logo_url"] = data.logo_url
+        if data.cover_photo_url:
+            update_fields["cover_photo_url"] = data.cover_photo_url
         if data.photo_urls:
             update_fields["photo_urls"] = data.photo_urls
 
@@ -162,14 +166,14 @@ async def onboarding(
             user_id, business_name, slug, trade_category,
             description, suburb, business_phone, business_email,
             website, service_radius_km, referral_fee_cents, status,
-            state, lat, lng, logo_url, photo_urls, stripe_account_id,
+            state, lat, lng, logo_url, cover_photo_url, photo_urls, stripe_account_id,
             listing_visibility, years_experience, services, specialties,
             business_highlights, why_refer_us, features
         ) VALUES (
             :user_id, :business_name, :slug, :trade_category,
             :description, :suburb, :business_phone, :business_email,
             :website, :service_radius_km, :referral_fee_cents, 'active',
-            :state, :lat, :lng, :logo_url, :photo_urls, :stripe_account_id,
+            :state, :lat, :lng, :logo_url, :cover_photo_url, :photo_urls, :stripe_account_id,
             :listing_visibility, :years_experience, :services, :specialties,
             :business_highlights, :why_refer_us, :features
         ) RETURNING id, slug
@@ -192,6 +196,7 @@ async def onboarding(
             "lat": lat,
             "lng": lng,
             "logo_url": data.logo_url,
+            "cover_photo_url": data.cover_photo_url,
             "photo_urls": data.photo_urls or [],
             "stripe_account_id": f"acct_mock_{slug}",
             "listing_visibility": data.listing_visibility or "public",

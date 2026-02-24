@@ -74,6 +74,7 @@ export default function BusinessOnboardingPage() {
     const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
     const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
+    const [coverPhotoUrl, setCoverPhotoUrl] = useState<string | null>(null);
     const [photoUrls, setPhotoUrls] = useState<string[]>([]);
     const [isUploadingMedia, setIsUploadingMedia] = useState(false);
     const [editingDescription, setEditingDescription] = useState(false);
@@ -349,6 +350,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                     body: JSON.stringify({
                         ...formData,
                         logo_url: logoUrl,
+                        cover_photo_url: coverPhotoUrl,
                         photo_urls: photoUrls,
                         business_highlights: formData.highlights,
                         specialties: formData.specialty ? [formData.specialty] : [],
@@ -955,6 +957,25 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
 
                                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                                     <div className="lg:col-span-2 space-y-6">
+                                        {/* Cover Photo */}
+                                        <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100 space-y-4">
+                                            <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                                                <ImageIcon className="w-3.5 h-3.5" /> Cover Photo (Banner)
+                                            </label>
+                                            {coverPhotoUrl ? (
+                                                <div className="relative rounded-xl overflow-hidden aspect-[3/1] bg-zinc-100">
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    <img src={coverPhotoUrl} alt="Cover" className="w-full h-full object-cover" />
+                                                    <button type="button" onClick={() => setCoverPhotoUrl(null)} className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-red-500 text-white rounded-full transition-colors">
+                                                        <X className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <ImageUpload onUpload={(urls: string[]) => { if (urls.length > 0) setCoverPhotoUrl(urls[0]); }} disabled={isUploadingMedia} maxFiles={1} folder="covers" hidePreview />
+                                            )}
+                                            <p className="text-xs text-zinc-400 font-medium">Wide landscape image for your profile header. Recommended 1200x400 px.</p>
+                                        </div>
+                                        {/* Logo */}
                                         <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100 space-y-4">
                                             <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
                                                 <Camera className="w-3.5 h-3.5" /> Business Logo
@@ -962,6 +983,7 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                             <ImageUpload onUpload={handleLogoUpload} disabled={isUploadingMedia} maxFiles={1} folder="logos" hidePreview />
                                             <p className="text-xs text-zinc-400 font-medium">Square PNG or JPG, at least 200x200 px.</p>
                                         </div>
+                                        {/* Work Gallery */}
                                         <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100 space-y-4">
                                             <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
                                                 <ImageIcon className="w-3.5 h-3.5" /> Work Gallery
