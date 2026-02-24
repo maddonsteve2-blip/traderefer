@@ -33,6 +33,7 @@ class BusinessOnboarding(BaseModel):
     referral_fee_cents: int = 1000
     logo_url: Optional[str] = None
     photo_urls: Optional[list[str]] = None
+    listing_visibility: str = "public"
 
 class BusinessUpdate(BaseModel):
     business_name: Optional[str] = None
@@ -49,6 +50,7 @@ class BusinessUpdate(BaseModel):
     logo_url: Optional[str] = None
     photo_urls: Optional[list[str]] = None
     features: Optional[list[str]] = None
+    listing_visibility: Optional[str] = None
 
 class ProjectCreate(BaseModel):
     title: str
@@ -152,12 +154,14 @@ async def onboarding(
             user_id, business_name, slug, trade_category,
             description, suburb, business_phone, business_email,
             website, service_radius_km, referral_fee_cents, status,
-            state, lat, lng, logo_url, photo_urls, stripe_account_id
+            state, lat, lng, logo_url, photo_urls, stripe_account_id,
+            listing_visibility
         ) VALUES (
             :user_id, :business_name, :slug, :trade_category,
             :description, :suburb, :business_phone, :business_email,
             :website, :service_radius_km, :referral_fee_cents, 'active',
-            :state, :lat, :lng, :logo_url, :photo_urls, :stripe_account_id
+            :state, :lat, :lng, :logo_url, :photo_urls, :stripe_account_id,
+            :listing_visibility
         ) RETURNING id, slug
     """)
 
@@ -179,7 +183,8 @@ async def onboarding(
             "lng": lng,
             "logo_url": data.logo_url,
             "photo_urls": data.photo_urls or [],
-            "stripe_account_id": f"acct_mock_{slug}"
+            "stripe_account_id": f"acct_mock_{slug}",
+            "listing_visibility": data.listing_visibility or "public"
         })
         await db.commit()
         row = result.fetchone()
@@ -201,7 +206,7 @@ async def get_my_business(
                referral_fee_cents, service_radius_km, is_verified, trust_score,
                logo_url, photo_urls, status, connection_rate,
                total_leads_unlocked, wallet_balance_cents, stripe_account_id,
-               abn, features, created_at
+               abn, features, listing_visibility, created_at
         FROM businesses WHERE user_id = :user_id
     """)
     result = await db.execute(query, {"user_id": uuid.UUID(user.id)})

@@ -13,7 +13,7 @@ PUBLIC_BUSINESS_COLUMNS = """
     business_phone, business_email, website,
     trust_score, connection_rate, total_leads_unlocked, total_confirmed,
     is_verified, listing_rank, logo_url, photo_urls, features,
-    referral_fee_cents, created_at
+    referral_fee_cents, listing_visibility, created_at
 """
 
 @router.get("/businesses")
@@ -29,7 +29,7 @@ async def get_businesses(
     offset = (max(1, page) - 1) * limit
 
     # Construct safe query strings
-    base_where = "WHERE status = 'active'"
+    base_where = "WHERE status = 'active' AND listing_visibility = 'public'"
     query_params = {"limit": limit, "offset": offset}
     
     if suburb:

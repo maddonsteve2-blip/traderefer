@@ -3,7 +3,6 @@ import {
     Rocket,
     Wallet,
     History,
-    Link as LinkIcon,
     Users,
     TrendingUp,
     ChevronRight,
@@ -104,10 +103,10 @@ export default async function ReferrerDashboardPage() {
                 <Card className="p-8 md:p-10 mb-10 shadow-xl shadow-zinc-200/50">
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
-                            <LinkIcon className="w-5 h-5 text-orange-500" /> Your Active Links
+                            <Users className="w-5 h-5 text-orange-500" /> Your Businesses
                         </h3>
                         <Link href="/businesses" className="text-base font-black text-orange-600 uppercase tracking-widest hover:underline flex items-center gap-1">
-                            Add another <Plus className="w-4 h-4" />
+                            Find New Businesses <Plus className="w-4 h-4" />
                         </Link>
                     </div>
 

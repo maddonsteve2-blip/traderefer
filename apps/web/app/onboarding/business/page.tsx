@@ -19,7 +19,10 @@ import {
     Shield,
     Camera,
     Image as ImageIcon,
-    X
+    X,
+    Eye,
+    EyeOff,
+    Users
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
@@ -47,7 +50,8 @@ export default function BusinessOnboardingPage() {
         website: "",
         slug: "",
         service_radius_km: 25,
-        referral_fee_cents: 1000
+        referral_fee_cents: 1000,
+        listing_visibility: "public"
     });
     const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
     const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
@@ -397,6 +401,51 @@ export default function BusinessOnboardingPage() {
                                             <strong className="text-orange-900 block mb-1">Fee Guarantee</strong>
                                             You only pay the unlock fee when you choose to see a customer&apos;s full contact details. Leads are pre-verified via SMS.
                                         </p>
+                                    </div>
+
+                                    <div className="bg-white p-8 rounded-[32px] border border-zinc-100 shadow-sm space-y-4">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center">
+                                                {formData.listing_visibility === 'public' ? (
+                                                    <Eye className="w-5 h-5 text-green-600" />
+                                                ) : (
+                                                    <EyeOff className="w-5 h-5 text-zinc-500" />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-zinc-900">Listing Visibility</h3>
+                                                <p className="text-sm text-zinc-500 font-medium">Choose who can find your business.</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, listing_visibility: 'public' })}
+                                                className={`p-5 rounded-2xl border-2 text-left transition-all ${
+                                                    formData.listing_visibility === 'public'
+                                                        ? 'border-green-500 bg-green-50'
+                                                        : 'border-zinc-100 bg-zinc-50 hover:border-zinc-200'
+                                                }`}
+                                            >
+                                                <Eye className={`w-5 h-5 mb-2 ${formData.listing_visibility === 'public' ? 'text-green-600' : 'text-zinc-400'}`} />
+                                                <div className="text-sm font-bold text-zinc-900">Public</div>
+                                                <p className="text-sm text-zinc-500 mt-1">Listed in the directory. Any referrer can find and refer you.</p>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, listing_visibility: 'private' })}
+                                                className={`p-5 rounded-2xl border-2 text-left transition-all ${
+                                                    formData.listing_visibility === 'private'
+                                                        ? 'border-orange-500 bg-orange-50'
+                                                        : 'border-zinc-100 bg-zinc-50 hover:border-zinc-200'
+                                                }`}
+                                            >
+                                                <EyeOff className={`w-5 h-5 mb-2 ${formData.listing_visibility === 'private' ? 'text-orange-600' : 'text-zinc-400'}`} />
+                                                <div className="text-sm font-bold text-zinc-900">Private (Invite Only)</div>
+                                                <p className="text-sm text-zinc-500 mt-1">Hidden from directory. Only people with your direct link can refer you.</p>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </>

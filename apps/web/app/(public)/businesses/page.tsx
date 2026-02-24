@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Star, ShieldCheck, ChevronRight } from "lucide-react";
+import { Search, MapPin, Star, ShieldCheck, ChevronRight, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { BusinessDirectoryFilters } from "@/components/BusinessDirectoryFilters";
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 async function getBusinesses(category?: string, suburb?: string, search?: string) {
     try {
-        let query = `SELECT * FROM businesses WHERE status = 'active'`;
+        let query = `SELECT * FROM businesses WHERE status = 'active' AND (listing_visibility = 'public' OR listing_visibility IS NULL)`;
         const params: string[] = [];
 
         if (category) {
@@ -80,7 +80,7 @@ export default async function BusinessDirectory({
                                                     {biz.business_name}
                                                 </h3>
                                             </Link>
-                                            <div className="flex items-center gap-1.5 text-xs text-zinc-500 font-medium">
+                                            <div className="flex items-center gap-1.5 text-sm text-zinc-500 font-medium">
                                                 <span className="text-orange-600">{biz.trade_category}</span>
                                                 <span>•</span>
                                                 <span className="flex items-center gap-1">
@@ -102,8 +102,8 @@ export default async function BusinessDirectory({
                                         <div className="flex items-center gap-0.5 text-orange-500">
                                             <Star className="w-4 h-4 fill-current" />
                                         </div>
-                                        <span className="text-xs font-bold text-zinc-900">{biz.connection_rate}% connection rate</span>
-                                        <span className="text-xs text-zinc-400">• {biz.total_confirmed} verified leads</span>
+                                        <span className="text-sm font-bold text-zinc-900">{biz.connection_rate}% connection rate</span>
+                                        <span className="text-sm text-zinc-400">• {biz.total_confirmed} verified leads</span>
                                     </div>
                                     <p className="text-sm text-zinc-600 line-clamp-2 leading-relaxed h-10">
                                         {biz.description || `Expert ${biz.trade_category} serving the ${biz.suburb} area. High quality workmanship and reliable service.`}
@@ -111,12 +111,12 @@ export default async function BusinessDirectory({
                                 </div>
 
                                 <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
-                                    <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-xs font-bold">
-                                        <MapPin className="w-3 h-3" />
-                                        {biz.suburb}
+                                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-bold border border-green-100">
+                                        <DollarSign className="w-3 h-3" />
+                                        ${((biz.referral_fee_cents || 1000) / 100).toFixed(0)} per lead
                                     </div>
                                     <Button asChild className="bg-zinc-900 hover:bg-black text-white rounded-full px-5 group/btn h-10">
-                                        <Link href={`/b/${biz.slug}`}>
+                                        <Link href={`/b/${biz.slug}/refer`}>
                                             Start Referring <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                                         </Link>
                                     </Button>
