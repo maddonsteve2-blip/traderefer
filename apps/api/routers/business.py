@@ -1286,3 +1286,165 @@ async def broadcast_to_referrers(
         f"/b/{biz['slug']}/refer"
     )
     return {"message": "Broadcast sent to all connected referrers"}
+
+
+# ── Network Effects: Business→Business Recommendations ──
+
+class BusinessRecommendation(BaseModel):
+    to_business_slug: str
+    message: Optional[str] = None
+
+class BusinessInvite(BaseModel):
+    invite_email: str
+    invite_name: str
+    invite_trade: Optional[str] = None
+
+
+@router.post("/network/recommend")
+async def recommend_business(
+    data: BusinessRecommendation,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Recommend another business on the platform (creates a two-way trust link)."""
+    user_uuid = uuid.UUID(user.id)
+    from_biz = await db.execute(text("SELECT id FROM businesses WHERE user_id = :uid"), {"uid": user_uuid})
+    from_row = from_biz.fetchone()
+    if not from_row:
+        raise HTTPException(status_code=404, detail="Your business not found")
+
+    to_biz = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": data.to_business_slug})
+    to_row = to_biz.fetchone()
+    if not to_row:
+        raise HTTPException(status_code=404, detail="Business to recommend not found")
+
+    if from_row[0] == to_row[0]:
+        raise HTTPException(status_code=400, detail="Cannot recommend yourself")
+
+    try:
+        await db.execute(
+            text("""
+                INSERT INTO business_recommendations (from_business_id, to_business_id, message)
+                VALUES (:from_id, :to_id, :message)
+                ON CONFLICT (from_business_id, to_business_id) DO NOTHING
+            """),
+            {"from_id": from_row[0], "to_id": to_row[0], "message": data.message}
+        )
+        await db.commit()
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return {"message": f"Recommended {data.to_business_slug}"}
+
+
+@router.get("/network/recommendations")
+async def get_my_recommendations(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Get businesses I've recommended and businesses that recommended me."""
+    user_uuid = uuid.UUID(user.id)
+    biz_res = await db.execute(text("SELECT id FROM businesses WHERE user_id = :uid"), {"uid": user_uuid})
+    biz = biz_res.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    # Businesses I recommended
+    given = await db.execute(
+        text("""
+            SELECT b.business_name, b.slug, b.trade_category, b.suburb, b.logo_url, b.is_verified,
+                   br.message, br.created_at
+            FROM business_recommendations br
+            JOIN businesses b ON b.id = br.to_business_id
+            WHERE br.from_business_id = :bid
+            ORDER BY br.created_at DESC
+        """),
+        {"bid": biz[0]}
+    )
+
+    # Businesses that recommended me
+    received = await db.execute(
+        text("""
+            SELECT b.business_name, b.slug, b.trade_category, b.suburb, b.logo_url, b.is_verified,
+                   br.message, br.created_at
+            FROM business_recommendations br
+            JOIN businesses b ON b.id = br.from_business_id
+            WHERE br.to_business_id = :bid
+            ORDER BY br.created_at DESC
+        """),
+        {"bid": biz[0]}
+    )
+
+    def fmt(rows):
+        out = []
+        for r in rows.mappings().all():
+            d = dict(r)
+            if d.get("created_at"):
+                d["created_at"] = str(d["created_at"])
+            out.append(d)
+        return out
+
+    return {"given": fmt(given), "received": fmt(received)}
+
+
+@router.post("/network/invite")
+async def invite_business(
+    data: BusinessInvite,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Invite a business to join TradeRefer (creates a trackable invite)."""
+    user_uuid = uuid.UUID(user.id)
+    biz_res = await db.execute(text("SELECT id, business_name FROM businesses WHERE user_id = :uid"), {"uid": user_uuid})
+    biz = biz_res.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    invite_code = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+
+    await db.execute(
+        text("""
+            INSERT INTO business_invites (inviter_business_id, invite_email, invite_name, invite_trade, invite_code)
+            VALUES (:bid, :email, :name, :trade, :code)
+        """),
+        {"bid": biz[0], "email": data.invite_email, "name": data.invite_name,
+         "trade": data.invite_trade, "code": invite_code}
+    )
+    await db.commit()
+
+    return {
+        "invite_code": invite_code,
+        "invite_url": f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/onboarding/business?ref={invite_code}",
+        "message": f"Invite created for {data.invite_name}"
+    }
+
+
+@router.get("/network/invites")
+async def get_my_invites(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """List invites I've sent."""
+    user_uuid = uuid.UUID(user.id)
+    biz_res = await db.execute(text("SELECT id FROM businesses WHERE user_id = :uid"), {"uid": user_uuid})
+    biz = biz_res.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    result = await db.execute(
+        text("""
+            SELECT invite_name, invite_email, invite_trade, invite_code, status, created_at
+            FROM business_invites
+            WHERE inviter_business_id = :bid
+            ORDER BY created_at DESC
+        """),
+        {"bid": biz[0]}
+    )
+    invites = []
+    for r in result.mappings().all():
+        d = dict(r)
+        if d.get("created_at"):
+            d["created_at"] = str(d["created_at"])
+        invites.append(d)
+    return invites

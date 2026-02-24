@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { HotCampaigns } from "@/components/referrer/HotCampaigns";
 import { EarningsDashboard } from "@/components/referrer/EarningsDashboard";
 import { DiscoverSection } from "@/components/referrer/DiscoverSection";
+import { MyTradesTeam } from "@/components/referrer/MyTradesTeam";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -86,48 +87,7 @@ export default async function ReferrerDashboardPage() {
 
                 <DiscoverSection />
 
-                <Card className="p-8 md:p-10 mb-10 shadow-xl shadow-zinc-200/50">
-                    <div className="flex items-center justify-between mb-8">
-                        <h3 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
-                            <Users className="w-5 h-5 text-orange-500" /> Your Businesses
-                        </h3>
-                        <Link href="/businesses" className="text-base font-black text-orange-600 uppercase tracking-widest hover:underline flex items-center gap-1">
-                            Find New Businesses <Plus className="w-4 h-4" />
-                        </Link>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {links.map((link: any) => (
-                            <div key={link.name} className="p-6 bg-zinc-50 rounded-3xl border border-zinc-100 flex items-center justify-between gap-4 hover:border-orange-200 hover:bg-white transition-all group">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-zinc-100 group-hover:border-orange-100 transition-colors">
-                                        <Users className="w-5 h-5 text-zinc-400 group-hover:text-orange-500 transition-colors" />
-                                    </div>
-                                    <div>
-                                        <div className="text-base font-bold text-zinc-900 group-hover:text-orange-600 transition-colors">{link.name}</div>
-                                        <div className="text-base text-zinc-400 font-bold uppercase tracking-widest">{link.sub}</div>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-4 md:gap-6">
-                                    <div className="text-right">
-                                        <div className="font-black text-zinc-900 leading-none">{link.leads}</div>
-                                        <div className="text-base font-bold text-zinc-300 uppercase">Referrals</div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="font-black text-orange-600 leading-none">${link.earned.toFixed(2)}</div>
-                                        <div className="text-base font-bold text-orange-300 uppercase">Earned</div>
-                                    </div>
-                                    <Button asChild variant="ghost" size="icon" className="rounded-full hover:bg-white text-zinc-400 hover:text-orange-600">
-                                        <Link href={`/b/${link.slug}/refer`}>
-                                            <ExternalLink className="w-4 h-4" />
-                                        </Link>
-                                    </Button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </Card>
+                <MyTradesTeam />
 
                 <HotCampaigns />
 

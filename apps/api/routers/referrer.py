@@ -142,7 +142,10 @@ async def get_referrer_dashboard(
                 b.business_name, 
                 b.trade_category, 
                 b.suburb, 
-                b.slug
+                b.slug,
+                b.logo_url,
+                b.referral_fee_cents,
+                b.is_verified
             FROM referral_links rl
             JOIN businesses b ON rl.business_id = b.id
             WHERE rl.referrer_id = :referrer_id
@@ -156,11 +159,15 @@ async def get_referrer_dashboard(
             formatted_links.append({
                 "name": l["business_name"],
                 "sub": f"{l['trade_category']} • {l['suburb']}",
+                "trade_category": l["trade_category"],
                 "clicks": l.get("clicks", 0),
                 "leads": l.get("leads_created", 0),
                 "earned": (l.get("total_earned_cents") or 0) / 100,
                 "slug": l["slug"],
-                "code": l["link_code"]
+                "code": l["link_code"],
+                "logo_url": l.get("logo_url"),
+                "referral_fee_cents": l.get("referral_fee_cents", 0),
+                "is_verified": l.get("is_verified", False)
             })
         
         return {

@@ -13,7 +13,8 @@ import {
     Linkedin,
     Share2,
     CheckCircle2,
-    Image as ImageIcon
+    Image as ImageIcon,
+    Users
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -94,6 +95,11 @@ export default async function PublicProfilePage({
                                 {business.is_verified && (
                                     <span className="flex items-center gap-1.5 px-4 py-1.5 bg-blue-500/10 text-blue-400 rounded-full text-sm font-bold border border-blue-500/20">
                                         <Shield className="w-3.5 h-3.5" /> Verified Business
+                                    </span>
+                                )}
+                                {(business.trusted_by_referrers > 0 || business.trusted_by_businesses > 0) && (
+                                    <span className="flex items-center gap-1.5 px-4 py-1.5 bg-green-500/10 text-green-400 rounded-full text-sm font-bold border border-green-500/20">
+                                        <Users className="w-3.5 h-3.5" /> Trusted by {business.trusted_by_referrers + business.trusted_by_businesses}
                                     </span>
                                 )}
                             </div>

@@ -70,8 +70,42 @@ async def get_business(slug: str, db: AsyncSession = Depends(get_db)):
     
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
-        
-    return dict(business._mapping)
+
+    data = dict(business._mapping)
+    bid = data.get("id")
+
+    # Trusted By counts
+    ref_count = await db.execute(
+        text("SELECT COUNT(*) FROM referral_links WHERE business_id = :bid"),
+        {"bid": bid}
+    )
+    biz_rec_count = await db.execute(
+        text("SELECT COUNT(*) FROM business_recommendations WHERE to_business_id = :bid"),
+        {"bid": bid}
+    )
+    # Businesses this business recommends
+    recommends_count = await db.execute(
+        text("SELECT COUNT(*) FROM business_recommendations WHERE from_business_id = :bid"),
+        {"bid": bid}
+    )
+    data["trusted_by_referrers"] = ref_count.scalar() or 0
+    data["trusted_by_businesses"] = biz_rec_count.scalar() or 0
+    data["recommends_count"] = recommends_count.scalar() or 0
+
+    # Get recommended businesses list
+    recs = await db.execute(
+        text("""
+            SELECT b.business_name, b.slug, b.trade_category, b.logo_url
+            FROM business_recommendations br
+            JOIN businesses b ON b.id = br.to_business_id
+            WHERE br.from_business_id = :bid
+            ORDER BY br.created_at DESC LIMIT 6
+        """),
+        {"bid": bid}
+    )
+    data["recommended_businesses"] = [dict(r) for r in recs.mappings().all()]
+
+    return data
 
 
 @router.get("/businesses/{slug}/deals")
@@ -286,3 +320,46 @@ async def top_earners(db: AsyncSession = Depends(get_db)):
             "leads_this_month": row["leads_this_month"],
         })
     return leaderboard
+
+
+@router.get("/referrer/{referrer_id}/team")
+async def get_referrer_team(referrer_id: str, db: AsyncSession = Depends(get_db)):
+    """Public endpoint: get a referrer's team of trusted businesses."""
+    import uuid as _uuid
+    try:
+        rid = _uuid.UUID(referrer_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid referrer ID")
+
+    ref = await db.execute(
+        text("SELECT full_name, region, tier FROM referrers WHERE id = :rid"),
+        {"rid": rid}
+    )
+    referrer = ref.mappings().first()
+    if not referrer:
+        raise HTTPException(status_code=404, detail="Referrer not found")
+
+    links = await db.execute(
+        text("""
+            SELECT b.business_name, b.slug, b.trade_category, b.suburb, b.state,
+                   b.logo_url, b.referral_fee_cents, b.is_verified, b.trust_score,
+                   rl.link_code
+            FROM referral_links rl
+            JOIN businesses b ON rl.business_id = b.id
+            WHERE rl.referrer_id = :rid
+              AND b.status = 'active'
+        """),
+        {"rid": rid}
+    )
+    team = []
+    for row in links.mappings().all():
+        d = dict(row)
+        d["id"] = d.get("slug")
+        team.append(d)
+
+    return {
+        "referrer_name": referrer["full_name"],
+        "region": referrer["region"],
+        "tier": referrer["tier"],
+        "team": team
+    }

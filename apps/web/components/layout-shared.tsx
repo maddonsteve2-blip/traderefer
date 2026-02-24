@@ -120,6 +120,11 @@ export function Navbar() {
                                                     Analytics
                                                 </Button>
                                             </Link>
+                                            <Link href="/dashboard/business/network" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Network
+                                                </Button>
+                                            </Link>
                                             <Link href="/dashboard/business/profile" className="hidden sm:block">
                                                 <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
                                                     Public Profile
