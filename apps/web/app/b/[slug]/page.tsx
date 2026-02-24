@@ -188,6 +188,19 @@ export default async function PublicProfilePage({
                             </p>
                         </section>
 
+                        {/* Why Refer Us */}
+                        {business.why_refer_us && (
+                            <section className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-[32px] p-8 md:p-10 border border-orange-100">
+                                <h2 className="text-2xl font-bold text-zinc-900 mb-4 font-display flex items-center gap-3">
+                                    <span className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center text-sm text-orange-600">
+                                        <Star className="w-4 h-4" />
+                                    </span>
+                                    Why Choose {business.business_name}
+                                </h2>
+                                <p className="text-lg text-zinc-700 leading-relaxed font-medium">{business.why_refer_us}</p>
+                            </section>
+                        )}
+
                         {/* Services We Provide */}
                         {business.services && business.services.length > 0 && (
                             <section>
@@ -334,9 +347,42 @@ export default async function PublicProfilePage({
                         {/* Service Area */}
                         <div className="p-6 bg-zinc-900 rounded-[32px] text-white">
                             <div className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-3">Service Area</div>
-                            <div className="text-xl font-bold mb-1">{business.suburb}</div>
+                            <div className="text-xl font-bold mb-1">{business.suburb}{business.state ? `, ${business.state}` : ''}</div>
                             <p className="text-zinc-400 text-base">{business.service_radius_km}km surrounding radius</p>
+                            {business.years_experience && (
+                                <div className="mt-4 pt-4 border-t border-zinc-700">
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <Award className="w-4 h-4 text-amber-400" />
+                                        <span className="text-zinc-300 font-medium">{business.years_experience} experience</span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
+
+                        {/* Contact Info */}
+                        {(business.business_phone || business.business_email || business.website) && (
+                            <div className="bg-white rounded-[32px] border border-zinc-200 p-6 space-y-4">
+                                <div className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Contact</div>
+                                {business.business_phone && (
+                                    <a href={`tel:${business.business_phone}`} className="flex items-center gap-3 text-zinc-700 hover:text-orange-600 transition-colors">
+                                        <Phone className="w-4 h-4 text-orange-500" />
+                                        <span className="font-medium">{business.business_phone}</span>
+                                    </a>
+                                )}
+                                {business.business_email && (
+                                    <a href={`mailto:${business.business_email}`} className="flex items-center gap-3 text-zinc-700 hover:text-orange-600 transition-colors">
+                                        <Mail className="w-4 h-4 text-orange-500" />
+                                        <span className="font-medium text-sm break-all">{business.business_email}</span>
+                                    </a>
+                                )}
+                                {business.website && (
+                                    <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-zinc-700 hover:text-orange-600 transition-colors">
+                                        <Globe className="w-4 h-4 text-orange-500" />
+                                        <span className="font-medium text-sm">Visit Website</span>
+                                    </a>
+                                )}
+                            </div>
+                        )}
 
                         {/* Share */}
                         <div className="bg-zinc-50 rounded-[40px] p-8 text-center border border-zinc-100">
