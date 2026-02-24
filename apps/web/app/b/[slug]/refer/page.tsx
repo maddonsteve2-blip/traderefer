@@ -17,7 +17,11 @@ import {
     Phone,
     Tag,
     Gift,
-    Flame
+    Flame,
+    Award,
+    Wrench,
+    Briefcase,
+    Image as ImageIcon
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -312,41 +316,66 @@ export default async function ReferrerBusinessPage({
                             </section>
                         )}
 
+                        {/* Badges Bar */}
+                        <div className="flex flex-wrap gap-2">
+                            {business.years_experience && (
+                                <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full text-sm font-bold text-amber-700">
+                                    <Award className="w-4 h-4" /> {business.years_experience}
+                                </span>
+                            )}
+                            {business.is_verified && (
+                                <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full text-sm font-bold text-green-700">
+                                    <Shield className="w-4 h-4" /> ABN Verified
+                                </span>
+                            )}
+                            {business.specialties && business.specialties.length > 0 && business.specialties.map((s: string) => (
+                                <span key={s} className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 rounded-full text-sm font-bold text-orange-700">
+                                    <Wrench className="w-4 h-4" /> {s}
+                                </span>
+                            ))}
+                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-100 border border-zinc-200 rounded-full text-sm font-bold text-zinc-600">
+                                <MapPin className="w-4 h-4" /> {business.suburb} · {business.service_radius_km}km radius
+                            </span>
+                            {business.created_at && (
+                                <span className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-100 border border-zinc-200 rounded-full text-sm font-bold text-zinc-600">
+                                    Active since {new Date(business.created_at).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
+                                </span>
+                            )}
+                        </div>
+
                         {/* About the Business */}
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8">
                             <h2 className="text-xl font-bold text-zinc-900 mb-4">About This Business</h2>
-                            <p className="text-zinc-600 leading-relaxed mb-6">
+                            <p className="text-zinc-600 leading-relaxed">
                                 {business.description || `${business.business_name} is a premier ${business.trade_category} service provider in ${business.suburb}. They pride themselves on quality workmanship and reliable service.`}
                             </p>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {[
-                                    { label: "Trade Category", value: business.trade_category },
-                                    { label: "Service Area", value: `${business.suburb} · ${business.service_radius_km}km radius` },
-                                    { label: "Verified", value: business.is_verified ? "Yes — ABN Verified" : "Pending verification" },
-                                    { label: "Active Since", value: business.created_at ? new Date(business.created_at).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' }) : 'N/A' },
-                                ].map((item) => (
-                                    <div key={item.label} className="flex items-start gap-3 p-4 bg-zinc-50 rounded-xl">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
-                                        <div>
-                                            <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider">{item.label}</div>
-                                            <div className="text-sm font-medium text-zinc-900">{item.value}</div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
                         </section>
 
-                        {/* Why Refer This Business */}
+                        {/* Services We Provide */}
+                        {business.services && business.services.length > 0 && (
+                            <section className="bg-white rounded-3xl border border-zinc-200 p-8">
+                                <h2 className="text-xl font-bold text-zinc-900 mb-6 flex items-center gap-2">
+                                    <Briefcase className="w-5 h-5 text-orange-500" /> Services They Provide
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {business.services.map((service: string) => (
+                                        <div key={service} className="flex items-center gap-3 p-3 bg-zinc-50 rounded-xl border border-zinc-100">
+                                            <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0" />
+                                            <span className="text-sm font-medium text-zinc-800">{service}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Why Refer This Business — features/highlights */}
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8">
                             <h2 className="text-xl font-bold text-zinc-900 mb-6">Why Refer {business.business_name}?</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {(business.features && business.features.length > 0 ? business.features : [
-                                    "Licensed & Insured",
-                                    "Verified Business",
-                                    "Fast Response Time",
-                                    "TradeRefer Trusted"
-                                ]).map((feature: string) => (
+                                {(business.features && business.features.length > 0 ? business.features :
+                                    business.business_highlights && business.business_highlights.length > 0 ? business.business_highlights :
+                                    ["Licensed & Insured", "Verified Business", "Fast Response Time", "TradeRefer Trusted"]
+                                ).map((feature: string) => (
                                     <div key={feature} className="flex items-center gap-3 p-4 bg-orange-50/50 rounded-xl border border-orange-100/50">
                                         <CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0" />
                                         <span className="font-medium text-zinc-900">{feature}</span>

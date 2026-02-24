@@ -13,7 +13,8 @@ PUBLIC_BUSINESS_COLUMNS = """
     business_phone, business_email, website,
     trust_score, connection_rate, total_leads_unlocked, total_confirmed,
     is_verified, listing_rank, logo_url, photo_urls, features,
-    referral_fee_cents, listing_visibility, avg_response_minutes, why_refer_us, created_at
+    referral_fee_cents, listing_visibility, avg_response_minutes, why_refer_us, created_at,
+    years_experience, services, specialties, business_highlights
 """
 
 @router.get("/businesses")

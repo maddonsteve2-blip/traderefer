@@ -14,7 +14,11 @@ import {
     Share2,
     CheckCircle2,
     Image as ImageIcon,
-    Users
+    Users,
+    Briefcase,
+    Clock,
+    Award,
+    Wrench
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -136,47 +140,87 @@ export default async function PublicProfilePage({
                 </div>
             </div>
 
+            {/* Badges Bar — Service Seeking inspired */}
+            <div className="border-b border-zinc-100 bg-white">
+                <div className="container mx-auto px-4 py-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                        {business.years_experience && (
+                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full text-sm font-bold text-amber-700">
+                                <Award className="w-4 h-4" /> {business.years_experience}
+                            </span>
+                        )}
+                        {business.avg_response_minutes != null && (
+                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-full text-sm font-bold text-blue-700">
+                                <Clock className="w-4 h-4" /> Responds in {business.avg_response_minutes < 60 ? `< ${business.avg_response_minutes} min` : `< ${Math.ceil(business.avg_response_minutes / 60)} hrs`}
+                            </span>
+                        )}
+                        {business.is_verified && (
+                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full text-sm font-bold text-green-700">
+                                <Shield className="w-4 h-4" /> ABN Verified
+                            </span>
+                        )}
+                        {(business.trusted_by_referrers > 0 || business.trusted_by_businesses > 0) && (
+                            <span className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 border border-purple-200 rounded-full text-sm font-bold text-purple-700">
+                                <Users className="w-4 h-4" /> Trusted by {business.trusted_by_referrers + business.trusted_by_businesses}
+                            </span>
+                        )}
+                        {business.specialties && business.specialties.length > 0 && business.specialties.map((s: string) => (
+                            <span key={s} className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 rounded-full text-sm font-bold text-orange-700">
+                                <Wrench className="w-4 h-4" /> {s}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             {/* Profile Content */}
             <div className="container mx-auto px-4 py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                     <div className="lg:col-span-2 space-y-12">
+                        {/* About Us */}
                         <section>
                             <h2 className="text-2xl font-bold text-zinc-900 mb-6 font-display flex items-center gap-3">
                                 <span className="w-8 h-8 bg-zinc-100 rounded-lg flex items-center justify-center text-sm">01</span>
-                                About the Business
+                                About Us
                             </h2>
                             <p className="text-lg text-zinc-600 leading-relaxed max-w-3xl whitespace-pre-wrap">
                                 {business.description || `${business.business_name} is a premier ${business.trade_category} service provider in ${business.suburb}. We pride ourselves on quality workmanship and reliable service.`}
                             </p>
                         </section>
 
-                        <section className="bg-zinc-50 rounded-[40px] p-8 md:p-12 border border-zinc-100">
-                            <h2 className="text-2xl font-bold text-zinc-900 mb-8 font-display">Service Features</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {(business.features && business.features.length > 0 ? business.features : [
-                                    "Locally Owned",
-                                    "Verified Reviews",
-                                    "Flexible Hours",
-                                    "TradeRefer Trusted"
-                                ]).map((feature: string) => {
-                                    const featureData: Record<string, string> = {
-                                        "Locally Owned": `Proudly serving ${business.suburb}`,
-                                        "Verified Reviews": "Top rated by the community",
-                                        "Flexible Hours": "Book at your convenience",
-                                        "TradeRefer Trusted": "Background checked & verified",
-                                        "24/7 Emergency": "Available whenever you need us",
-                                        "Licensed & Insured": "Fully qualified professionals",
-                                        "Free Quotes": "No obligation pricing",
-                                        "Senior Discounts": "Special rates for seniors"
-                                    };
-                                    return (
-                                        <div key={feature} className="bg-white p-6 rounded-3xl shadow-sm border border-zinc-100">
-                                            <CheckCircle2 className="w-6 h-6 text-green-500 mb-3" />
-                                            <h4 className="font-bold text-zinc-900 mb-1">{feature}</h4>
-                                            <p className="text-base text-zinc-500">{featureData[feature] || "Quality guaranteed service"}</p>
+                        {/* Services We Provide */}
+                        {business.services && business.services.length > 0 && (
+                            <section>
+                                <h2 className="text-2xl font-bold text-zinc-900 mb-6 font-display flex items-center gap-3">
+                                    <span className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center text-sm text-orange-600">
+                                        <Briefcase className="w-4 h-4" />
+                                    </span>
+                                    Services We Provide
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {business.services.map((service: string) => (
+                                        <div key={service} className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl border border-zinc-100 hover:border-orange-200 hover:bg-orange-50/30 transition-all">
+                                            <CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0" />
+                                            <span className="font-medium text-zinc-800">{service}</span>
                                         </div>
-                                    );
-                                })}
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Business Highlights */}
+                        <section className="bg-zinc-50 rounded-[40px] p-8 md:p-12 border border-zinc-100">
+                            <h2 className="text-2xl font-bold text-zinc-900 mb-8 font-display">Why Choose Us</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {(business.features && business.features.length > 0 ? business.features :
+                                    business.business_highlights && business.business_highlights.length > 0 ? business.business_highlights :
+                                    ["Locally Owned", "Verified Reviews", "Flexible Hours", "TradeRefer Trusted"]
+                                ).map((feature: string) => (
+                                    <div key={feature} className="bg-white p-6 rounded-3xl shadow-sm border border-zinc-100">
+                                        <CheckCircle2 className="w-6 h-6 text-green-500 mb-3" />
+                                        <h4 className="font-bold text-zinc-900">{feature}</h4>
+                                    </div>
+                                ))}
                             </div>
                         </section>
 
