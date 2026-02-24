@@ -316,10 +316,10 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                 <Link href="/support" className="text-sm font-bold text-zinc-400 hover:text-zinc-900 transition-colors">Contact Support</Link>
             </header>
 
-            <div className="flex-1 flex flex-col items-center justify-center py-20 px-4">
-                <div className={`w-full transition-all duration-500 ${step === 5 ? 'max-w-4xl' : step === 2 ? 'max-w-2xl' : 'max-w-xl'}`}>
+            <div className={`flex-1 flex flex-col items-center ${step === 2 ? 'justify-start py-4' : 'justify-center py-20'} px-4`}>
+                <div className={`w-full transition-all duration-500 ${step === 5 ? 'max-w-4xl' : step === 2 ? 'max-w-2xl' : 'max-w-xl'} ${step === 2 ? 'flex flex-col flex-1 min-h-0' : ''}`}>
                     {/* Progress Bar */}
-                    <div className="flex items-center gap-2 mb-12">
+                    <div className={`flex items-center gap-2 ${step === 2 ? 'mb-3' : 'mb-12'}`}>
                         {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s) => (
                             <div key={s} className="flex-1 h-1.5 rounded-full overflow-hidden bg-zinc-100">
                                 <div className={`h-full transition-all duration-500 ${s <= step ? 'bg-orange-500' : 'bg-transparent'}`} />
@@ -328,7 +328,7 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                         <span className="ml-4 text-sm font-black text-zinc-400 uppercase tracking-widest whitespace-nowrap">Step {step} of {TOTAL_STEPS}</span>
                     </div>
 
-                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className={`animate-in fade-in slide-in-from-bottom-4 duration-700 ${step === 2 ? 'flex flex-col flex-1 min-h-0 space-y-3' : 'space-y-8'}`}>
 
                         {/* ═══════════════════════════════════════════════ */}
                         {/* STEP 1: ESSENTIALS                             */}
@@ -460,20 +460,19 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                         {/* ═══════════════════════════════════════════════ */}
                         {step === 2 && (
                             <>
-                                <div>
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-400 rounded-2xl flex items-center justify-center">
-                                            <Sparkles className="w-5 h-5 text-white" />
-                                        </div>
-                                        <h1 className="text-3xl font-black text-zinc-900 tracking-tight font-display">Chat with your AI assistant</h1>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center shrink-0">
+                                        <Sparkles className="w-4 h-4 text-white" />
                                     </div>
-                                    <p className="text-base text-zinc-500 font-medium leading-relaxed">Answer a few quick questions and we&apos;ll write your entire profile for you.</p>
+                                    <div>
+                                        <h1 className="text-xl font-black text-zinc-900 tracking-tight font-display">Chat with your AI assistant</h1>
+                                    </div>
                                 </div>
 
                                 {/* Chat Container */}
-                                <div className="bg-zinc-50 rounded-[28px] border border-zinc-100 overflow-hidden">
+                                <div className="bg-zinc-50 rounded-[20px] border border-zinc-100 overflow-hidden flex flex-col flex-1 min-h-0">
                                     {/* Messages */}
-                                    <div className="h-[400px] overflow-y-auto p-6 space-y-4">
+                                    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 min-h-[200px]">
                                         {chatMessages.map((msg, i) => (
                                             <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'assistant' ? 'bg-gradient-to-br from-orange-500 to-amber-400' : 'bg-zinc-900'}`}>
@@ -848,7 +847,7 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                         {/* ═══════════════════════════════════════════════ */}
                         {/* NAVIGATION BUTTONS                             */}
                         {/* ═══════════════════════════════════════════════ */}
-                        <div className="pt-8 flex items-center gap-4">
+                        <div className={`${step === 2 ? 'pt-3' : 'pt-8'} flex items-center gap-4`}>
                             {step > 1 && step < 6 && (
                                 <Button variant="ghost" onClick={() => setStep(step - 1)} disabled={isLoading || isGenerating} className="rounded-full h-16 px-8 text-zinc-400 hover:text-zinc-900 font-bold">
                                     <ChevronLeft className="w-5 h-5 mr-2" /> Back
@@ -880,9 +879,11 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                 </div>
             </div>
 
-            <footer className="p-10 border-t border-zinc-50 text-center">
-                <p className="text-zinc-300 text-sm font-bold uppercase tracking-[0.2em]">2026 TradeRefer Pty Ltd</p>
-            </footer>
+            {step !== 2 && (
+                <footer className="p-10 border-t border-zinc-50 text-center">
+                    <p className="text-zinc-300 text-sm font-bold uppercase tracking-[0.2em]">2026 TradeRefer Pty Ltd</p>
+                </footer>
+            )}
         </main>
     );
 }
