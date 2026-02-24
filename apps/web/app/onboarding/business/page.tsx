@@ -779,35 +779,33 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                                                                     method: "POST",
                                                                     headers: { "Content-Type": "application/json" },
                                                                     body: JSON.stringify({
-                                                                        conversation: [{
-                                                                            role: "user",
-                                                                            content: `You are editing an existing TradeRefer profile. Here is the current profile:
+                                                                        conversation: [
+                                                                            {
+                                                                                role: "system",
+                                                                                content: `You are a profile editor. You receive an existing business profile and a tweak request. Apply ONLY the requested tweak. Do NOT rewrite from scratch. Do NOT generate multiple options. Return exactly ONE JSON object with the tweaked profile. No markdown. No code fences. No explanation. Just the JSON.`
+                                                                            },
+                                                                            {
+                                                                                role: "user",
+                                                                                content: `Here is the current profile:
 
-About Us: ${formData.description}
-Why Refer Us: ${formData.why_refer_us}
-Services: ${formData.services.join(', ')}
-Highlights: ${formData.features.join(', ')}
+description: ${JSON.stringify(formData.description)}
+why_refer_us: ${JSON.stringify(formData.why_refer_us)}
+services: ${JSON.stringify(formData.services)}
+features: ${JSON.stringify(formData.features)}
 
-The business owner wants this change: "${tweakInput.trim()}"
+Tweak requested: "${tweakInput.trim()}"
 
-Apply ONLY that change. Keep everything else the same. Respond with ONLY a JSON object (no markdown, no code fences):
-{
-  "profiles": [{
-    "description": "updated about us",
-    "why_refer_us": "updated why refer us",
-    "services": ["updated services list"],
-    "features": ["updated highlights"],
-    "years_experience": "${formData.years_experience}",
-    "specialty": "${formData.specialty}"
-  }]
-}`
-                                                                        }],
+Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
+{"description":"...","why_refer_us":"...","services":["..."],"features":["..."]}`
+                                                                            }
+                                                                        ],
                                                                     }),
                                                                 });
                                                                 if (!res.ok) throw new Error("Failed");
                                                                 const data = await res.json();
+                                                                // Handle both flat object and nested profiles array
                                                                 const profile = data.profiles?.[0] || data;
-                                                                if (profile.description) setFormData(prev => ({
+                                                                setFormData(prev => ({
                                                                     ...prev,
                                                                     description: profile.description || prev.description,
                                                                     why_refer_us: profile.why_refer_us || prev.why_refer_us,
@@ -815,6 +813,7 @@ Apply ONLY that change. Keep everything else the same. Respond with ONLY a JSON 
                                                                     features: profile.features || prev.features,
                                                                 }));
                                                                 setTweakInput("");
+                                                                toast.success("Profile tweaked!");
                                                             } catch { toast.error("AI tweak failed — edit manually instead"); }
                                                             finally { setIsGenerating(false); }
                                                         }}
