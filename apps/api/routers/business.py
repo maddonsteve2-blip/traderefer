@@ -34,6 +34,12 @@ class BusinessOnboarding(BaseModel):
     logo_url: Optional[str] = None
     photo_urls: Optional[list[str]] = None
     listing_visibility: str = "public"
+    years_experience: Optional[str] = None
+    services: Optional[list[str]] = None
+    specialties: Optional[list[str]] = None
+    business_highlights: Optional[list[str]] = None
+    why_refer_us: Optional[str] = None
+    features: Optional[list[str]] = None
 
 class BusinessUpdate(BaseModel):
     business_name: Optional[str] = None
@@ -157,13 +163,15 @@ async def onboarding(
             description, suburb, business_phone, business_email,
             website, service_radius_km, referral_fee_cents, status,
             state, lat, lng, logo_url, photo_urls, stripe_account_id,
-            listing_visibility
+            listing_visibility, years_experience, services, specialties,
+            business_highlights, why_refer_us, features
         ) VALUES (
             :user_id, :business_name, :slug, :trade_category,
             :description, :suburb, :business_phone, :business_email,
             :website, :service_radius_km, :referral_fee_cents, 'active',
             :state, :lat, :lng, :logo_url, :photo_urls, :stripe_account_id,
-            :listing_visibility
+            :listing_visibility, :years_experience, :services, :specialties,
+            :business_highlights, :why_refer_us, :features
         ) RETURNING id, slug
     """)
 
@@ -186,7 +194,13 @@ async def onboarding(
             "logo_url": data.logo_url,
             "photo_urls": data.photo_urls or [],
             "stripe_account_id": f"acct_mock_{slug}",
-            "listing_visibility": data.listing_visibility or "public"
+            "listing_visibility": data.listing_visibility or "public",
+            "years_experience": data.years_experience,
+            "services": data.services or [],
+            "specialties": data.specialties or [],
+            "business_highlights": data.business_highlights or [],
+            "why_refer_us": data.why_refer_us,
+            "features": data.features or []
         })
         await db.commit()
         row = result.fetchone()
