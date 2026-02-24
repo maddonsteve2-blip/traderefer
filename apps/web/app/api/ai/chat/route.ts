@@ -1,7 +1,7 @@
 import { generateText } from "ai";
-import { createAnthropic } from "@ai-sdk/anthropic";
+import { createOpenAI } from "@ai-sdk/openai";
 
-const zai = createAnthropic({
+const zai = createOpenAI({
     apiKey: process.env.ZAI_API_KEY,
     baseURL: "https://api.z.ai/api/coding/paas/v4/",
 });
@@ -30,7 +30,7 @@ RULES:
 - When you have enough info, your final message MUST include the exact phrase "I've got everything I need" — this is the signal that the conversation is done.`;
 
         const { text } = await generateText({
-            model: zai("claude-sonnet-4-20250514"),
+            model: zai("glm-5"),
             system: systemPrompt,
             messages,
         });
