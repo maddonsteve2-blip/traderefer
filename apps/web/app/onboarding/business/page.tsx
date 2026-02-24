@@ -542,8 +542,8 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                                                     {isLastAssistant && suggestions.length > 0 && !chatDone && (
                                                         <div className="ml-11 space-y-2">
                                                             <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">Tap to add — select as many as you like</p>
-                                                            <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-                                                                {suggestions.slice(0, Math.ceil(suggestions.length / 2)).map((s, si) => {
+                                                            <div className="grid grid-cols-2 gap-1.5">
+                                                                {suggestions.map((s, si) => {
                                                                     const isSelected = selectedSuggestions.has(s);
                                                                     return (
                                                                         <button
@@ -557,37 +557,13 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                                                                                     return next;
                                                                                 });
                                                                             }}
-                                                                            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${isSelected ? 'bg-orange-500 text-white border border-orange-500' : 'bg-orange-50 border border-orange-200 text-orange-700 hover:bg-orange-100'}`}
+                                                                            className={`px-3 py-1.5 rounded-full text-xs font-medium truncate transition-colors ${isSelected ? 'bg-orange-500 text-white border border-orange-500' : 'bg-orange-50 border border-orange-200 text-orange-700 hover:bg-orange-100'}`}
                                                                         >
                                                                             {isSelected && <span className="mr-1">✓</span>}{s}
                                                                         </button>
                                                                     );
                                                                 })}
                                                             </div>
-                                                            {suggestions.length > 1 && (
-                                                                <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
-                                                                    {suggestions.slice(Math.ceil(suggestions.length / 2)).map((s, si) => {
-                                                                        const isSelected = selectedSuggestions.has(s);
-                                                                        return (
-                                                                            <button
-                                                                                key={si}
-                                                                                type="button"
-                                                                                onClick={() => {
-                                                                                    setSelectedSuggestions(prev => {
-                                                                                        const next = new Set(prev);
-                                                                                        if (next.has(s)) { next.delete(s); } else { next.add(s); }
-                                                                                        setChatInput(Array.from(next).join(', '));
-                                                                                        return next;
-                                                                                    });
-                                                                                }}
-                                                                                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${isSelected ? 'bg-orange-500 text-white border border-orange-500' : 'bg-orange-50 border border-orange-200 text-orange-700 hover:bg-orange-100'}`}
-                                                                            >
-                                                                                {isSelected && <span className="mr-1">✓</span>}{s}
-                                                                            </button>
-                                                                        );
-                                                                    })}
-                                                                </div>
-                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
