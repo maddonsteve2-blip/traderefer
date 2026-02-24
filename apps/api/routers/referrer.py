@@ -12,7 +12,7 @@ import os
 router = APIRouter()
 
 class ReferrerOnboarding(BaseModel):
-    full_name: str
+    full_name: Optional[str] = None
     phone: str
     region: str
 
@@ -49,7 +49,7 @@ async def onboarding(
     try:
         result = await db.execute(query, {
             "user_id": user_uuid,
-            "full_name": data.full_name,
+            "full_name": data.full_name or email.split("@")[0].replace(".", " ").title(),
             "email": email,
             "phone": data.phone,
             "region": data.region,

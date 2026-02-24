@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, ChevronRight, Phone, User } from "lucide-react";
+import { MapPin, ChevronRight, Phone } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { toast } from "sonner";
 
@@ -15,17 +15,16 @@ export default function ReferrerOnboardingPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [showTour, setShowTour] = useState(true);
     const [formData, setFormData] = useState({
-        full_name: "",
         phone: "",
         region: ""
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const { getToken } = useAuth();
+    const { user } = useUser();
     const router = useRouter();
 
     const validate = () => {
         const newErrors: Record<string, string> = {};
-        if (!formData.full_name.trim()) newErrors.full_name = "Full name is required";
         if (!formData.phone.trim()) newErrors.phone = "Mobile number is required";
         if (!formData.region.trim()) newErrors.region = "Primary region is required";
         setErrors(newErrors);
@@ -46,7 +45,10 @@ export default function ReferrerOnboardingPage() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    full_name: user?.fullName || user?.firstName || "",
+                    ...formData
+                })
             });
             if (!response.ok) {
                 const errorText = await response.text();
@@ -88,22 +90,11 @@ export default function ReferrerOnboardingPage() {
                             </p>
                         </div>
 
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                    <User className="w-3.5 h-3.5" /> Full Name
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.full_name}
-                                    onChange={(e) => { setFormData({ ...formData, full_name: e.target.value }); setErrors({ ...errors, full_name: "" }); }}
-                                    placeholder="e.g. Sarah Johnson"
-                                    className={`w-full px-6 py-4 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300 ${errors.full_name ? 'border-red-400' : 'border-zinc-100'}`}
-                                />
-                                {errors.full_name && <p className="text-red-500 text-xs font-bold mt-1.5 ml-1">{errors.full_name}</p>}
-                            </div>
+                        {user?.firstName && (
+                            <p className="text-sm text-zinc-400">Signed in as <span className="font-bold text-zinc-600">{user.fullName || user.firstName}</span></p>
+                        )}
 
+                        <div className="space-y-6">
                             <div>
                                 <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                                     <Phone className="w-3.5 h-3.5" /> Mobile Number
