@@ -238,27 +238,36 @@ export default function BusinessOnboardingPage() {
                 body: JSON.stringify({
                     conversation: [
                         {
+                            role: "system",
+                            content: `You are a profile writer for TradeRefer, an Australian trades referral platform. You write compelling business profiles based on chat conversations. Use EVERY piece of information from the conversation. Do not leave anything out. Write in Australian English. No markdown.`
+                        },
+                        {
                             role: "user",
-                            content: `You are a profile writer for TradeRefer, an Australian trades referral platform.
-
-Based on this conversation with the owner of "${formData.business_name}" (a ${formData.trade_category} business in ${formData.suburb}, VIC — Geelong region), generate THREE profile options.
+                            content: `Based on this conversation with the owner of "${formData.business_name}" (a ${formData.trade_category} business in ${formData.suburb}, VIC), generate THREE distinct profile options.
 
 CONVERSATION:
 ${appendedSummary}
 
-Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly like:
+IMPORTANT: Use ALL information from the conversation. Include every service mentioned, every highlight, every detail about their experience, service area, guarantees, and specialties. Do not summarise or skip anything.
+
+Each profile should have a different writing style:
+- Option 1: Professional and confident
+- Option 2: Friendly and approachable  
+- Option 3: Bold and punchy
+
+Respond with ONLY a JSON object (no markdown, no code fences):
 {
   "profiles": [
     {
-      "description": "2-3 sentences, first person plural, professional but approachable, Australian English",
-      "why_refer_us": "2-3 sentences convincing referrers to send leads",
-      "services": ["5-8 specific services"],
-      "features": ["3-5 short punchy highlights"],
-      "years_experience": "as discussed",
-      "specialty": "main specialty/focus"
+      "description": "3-4 sentences about the business. First person plural (we/our). Mention years of experience, location, what they do, and what makes them special. Use ALL details from the chat.",
+      "why_refer_us": "2-3 sentences convincing referrers to send leads. Mention guarantees, response times, customer satisfaction, and any unique selling points discussed.",
+      "services": ["list EVERY service mentioned in the chat - aim for 6-10 services"],
+      "features": ["list ALL highlights/selling points mentioned - aim for 5-8 items like 'Free Quotes', '100% Satisfaction Guarantee', 'Licensed & Insured', 'Same Day Response', etc."],
+      "years_experience": "exactly as discussed e.g. '5 years' or '10+ years'",
+      "specialty": "their main specialty as discussed"
     },
-    { ...option2... },
-    { ...option3... }
+    { ...option 2 different style... },
+    { ...option 3 different style... }
   ]
 }`
                         }
