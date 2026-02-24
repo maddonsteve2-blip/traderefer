@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
+from routers.notifications import notify_all_referrers_for_business
 import uuid
 
 router = APIRouter()
@@ -119,6 +120,24 @@ async def create_campaign(
     )
     await db.commit()
     row = result.fetchone()
+
+    # Notify all connected referrers about the new campaign
+    try:
+        biz_name_res = await db.execute(
+            text("SELECT business_name, slug FROM businesses WHERE id = :bid"),
+            {"bid": biz_id}
+        )
+        biz_row = biz_name_res.fetchone()
+        if biz_row:
+            await notify_all_referrers_for_business(
+                db, biz_id, "new_campaign",
+                f"🔥 New campaign from {biz_row[0]}!",
+                data.promo_text or data.title,
+                f"/b/{biz_row[1]}/refer"
+            )
+    except Exception as e:
+        print(f"Campaign notification error (non-fatal): {e}")
+
     return {"id": str(row[0]), "message": "Campaign created"}
 
 

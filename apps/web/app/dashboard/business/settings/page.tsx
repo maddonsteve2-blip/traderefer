@@ -14,7 +14,8 @@ import {
     Loader2,
     CheckCircle2,
     ChevronLeft,
-    TrendingUp
+    TrendingUp,
+    Clock
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -40,6 +41,7 @@ export default function BusinessSettingsPage() {
         abn: string;
         referral_fee_cents: number;
         why_refer_us: string;
+        response_sla_minutes: number | null;
     }>({
         business_name: "",
         trade_category: "",
@@ -52,7 +54,8 @@ export default function BusinessSettingsPage() {
         website: "",
         abn: "",
         referral_fee_cents: 1000,
-        why_refer_us: ""
+        why_refer_us: "",
+        response_sla_minutes: null
     });
     const [verifying, setVerifying] = useState(false);
 
@@ -79,7 +82,8 @@ export default function BusinessSettingsPage() {
                     website: data.website || "",
                     abn: data.abn || "",
                     referral_fee_cents: data.referral_fee_cents || 1000,
-                    why_refer_us: data.why_refer_us || ""
+                    why_refer_us: data.why_refer_us || "",
+                    response_sla_minutes: data.response_sla_minutes || null
                 });
             }
         } catch (err) {
@@ -329,6 +333,55 @@ export default function BusinessSettingsPage() {
                                     <div className="absolute -right-4 -bottom-4 size-20 bg-white/10 rounded-full blur-2xl"></div>
                                 </div>
                             </div>
+                        </div>
+                    </section>
+
+                    {/* Card: Response SLA */}
+                    <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="size-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-500">
+                                <Clock className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-zinc-900">Response Time Target</h2>
+                                <p className="text-sm text-zinc-500 font-medium">Set your target response time for new leads — displayed on your referrer partner page</p>
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                {[
+                                    { label: "30 min", value: 30 },
+                                    { label: "1 hour", value: 60 },
+                                    { label: "2 hours", value: 120 },
+                                    { label: "4 hours", value: 240 },
+                                ].map(opt => (
+                                    <button
+                                        key={opt.value}
+                                        onClick={() => setFormData({ ...formData, response_sla_minutes: opt.value })}
+                                        className={`p-4 rounded-xl border-2 text-center font-bold transition-all ${
+                                            formData.response_sla_minutes === opt.value
+                                                ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                                                : "border-zinc-200 text-zinc-600 hover:border-emerald-300"
+                                        }`}
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
+                            {formData.response_sla_minutes && (
+                                <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                                    <p className="text-sm font-bold text-emerald-800">
+                                        Referrers will see: "Responds in &lt; {formData.response_sla_minutes < 60 ? `${formData.response_sla_minutes} min` : `${formData.response_sla_minutes / 60} hour${formData.response_sla_minutes > 60 ? 's' : ''}`}"
+                                    </p>
+                                    <button
+                                        onClick={() => setFormData({ ...formData, response_sla_minutes: null })}
+                                        className="text-xs font-bold text-emerald-600 hover:text-emerald-800 underline"
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
+                            )}
+                            <p className="text-sm text-zinc-400 ml-1">Setting a response time target builds trust with referrers and earns you a speed badge on your directory listing.</p>
                         </div>
                     </section>
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from routers import public, leads, business, referrer, admin, webhooks, media, messages, deals, campaigns
+from routers import public, leads, business, referrer, admin, webhooks, media, messages, deals, campaigns, notifications as notif_router
 import os
 from dotenv import load_dotenv
 
@@ -43,6 +43,7 @@ app.include_router(media.router, prefix="/media", tags=["Media"])
 app.include_router(messages.router, prefix="/messages", tags=["Messages"])
 app.include_router(deals.router, prefix="/business", tags=["Deals"])
 app.include_router(campaigns.router, prefix="/business", tags=["Campaigns"])
+app.include_router(notif_router.router, prefix="/api", tags=["Notifications"])
 
 @app.get("/")
 async def root():

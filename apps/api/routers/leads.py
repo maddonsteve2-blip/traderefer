@@ -4,6 +4,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
+from routers.notifications import create_notification
 import uuid
 import random
 import os
@@ -477,6 +478,32 @@ async def confirm_pin(
             """), {"amount": payout, "link_id": row["referral_link_id"]})
 
         await db.commit()
+
+        # Send notification to referrer
+        if row["referrer_id"] and payout > 0:
+            try:
+                ref_user = await db.execute(
+                    text("SELECT user_id FROM referrers WHERE id = :rid"),
+                    {"rid": row["referrer_id"]}
+                )
+                ref_row = ref_user.fetchone()
+                biz_name_res = await db.execute(
+                    text("SELECT business_name, slug FROM businesses WHERE id = :bid"),
+                    {"bid": row["business_id"]}
+                )
+                biz_row = biz_name_res.fetchone()
+                if ref_row and biz_row:
+                    await create_notification(
+                        db,
+                        str(ref_row[0]),
+                        "lead_accepted",
+                        f"You earned ${payout / 100:.2f}!",
+                        f"Your referral to {biz_row[0]} was confirmed. The money is in your wallet.",
+                        f"/dashboard/referrer"
+                    )
+            except Exception as notif_err:
+                print(f"Notification error (non-fatal): {notif_err}")
+
         return {"confirmed": True, "message": "Lead confirmed and payment released to referrer."}
     except Exception as e:
         await db.rollback()

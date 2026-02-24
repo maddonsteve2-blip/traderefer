@@ -52,6 +52,7 @@ class BusinessUpdate(BaseModel):
     features: Optional[list[str]] = None
     listing_visibility: Optional[str] = None
     why_refer_us: Optional[str] = None
+    response_sla_minutes: Optional[int] = None
 
 class ProjectCreate(BaseModel):
     title: str
@@ -207,7 +208,7 @@ async def get_my_business(
                referral_fee_cents, service_radius_km, is_verified, trust_score,
                logo_url, photo_urls, status, connection_rate,
                total_leads_unlocked, wallet_balance_cents, stripe_account_id,
-               abn, features, listing_visibility, why_refer_us, avg_response_minutes, created_at
+               abn, features, listing_visibility, why_refer_us, avg_response_minutes, response_sla_minutes, created_at
         FROM businesses WHERE user_id = :user_id
     """)
     result = await db.execute(query, {"user_id": uuid.UUID(user.id)})
@@ -1161,3 +1162,127 @@ async def wallet_topup(
     await db.commit()
 
     return {"new_balance_cents": new_balance}
+
+
+@router.get("/analytics/referrers")
+async def referrer_analytics(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Top referrers, campaign performance, cost per customer for the business."""
+    user_uuid = uuid.UUID(user.id)
+    biz_res = await db.execute(
+        text("SELECT id FROM businesses WHERE user_id = :uid"), {"uid": user_uuid}
+    )
+    biz = biz_res.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+    biz_id = biz[0]
+
+    # Top referrers
+    top_res = await db.execute(
+        text("""
+            SELECT r.full_name, r.tier,
+                   COUNT(l.id) as lead_count,
+                   COALESCE(SUM(l.referrer_payout_amount_cents), 0) as total_paid_cents,
+                   SUM(CASE WHEN l.status = 'CONFIRMED' THEN 1 ELSE 0 END) as confirmed_count
+            FROM leads l
+            JOIN referrers r ON r.id = l.referrer_id
+            WHERE l.business_id = :bid
+            GROUP BY r.id, r.full_name, r.tier
+            ORDER BY lead_count DESC
+            LIMIT 10
+        """),
+        {"bid": biz_id}
+    )
+    top_referrers = [
+        {
+            "name": row["full_name"],
+            "tier": row["tier"],
+            "lead_count": row["lead_count"],
+            "confirmed_count": row["confirmed_count"],
+            "total_paid_cents": row["total_paid_cents"],
+        }
+        for row in top_res.mappings().all()
+    ]
+
+    # Campaign performance
+    camp_res = await db.execute(
+        text("""
+            SELECT c.id, c.title, c.campaign_type, c.bonus_amount_cents,
+                   c.starts_at, c.ends_at, c.is_active,
+                   (SELECT COUNT(*) FROM leads l
+                    WHERE l.business_id = :bid
+                    AND l.created_at BETWEEN c.starts_at AND c.ends_at) as leads_during
+            FROM campaigns c
+            WHERE c.business_id = :bid
+            ORDER BY c.created_at DESC
+            LIMIT 10
+        """),
+        {"bid": biz_id}
+    )
+    campaign_perf = []
+    for row in camp_res.mappings().all():
+        c = dict(row)
+        c["id"] = str(c["id"])
+        for dt in ("starts_at", "ends_at"):
+            if c.get(dt):
+                c[dt] = str(c[dt])
+        campaign_perf.append(c)
+
+    # Cost per customer
+    cost_res = await db.execute(
+        text("""
+            SELECT COUNT(*) as total_leads,
+                   SUM(CASE WHEN status = 'CONFIRMED' THEN 1 ELSE 0 END) as confirmed,
+                   COALESCE(SUM(unlock_fee_cents), 0) as total_spent_cents
+            FROM leads
+            WHERE business_id = :bid
+        """),
+        {"bid": biz_id}
+    )
+    cost_row = cost_res.mappings().first()
+    confirmed = cost_row["confirmed"] or 0
+    total_spent = cost_row["total_spent_cents"] or 0
+    cost_per_customer = round(total_spent / confirmed) if confirmed > 0 else 0
+
+    return {
+        "top_referrers": top_referrers,
+        "campaign_performance": campaign_perf,
+        "summary": {
+            "total_leads": cost_row["total_leads"],
+            "confirmed_leads": confirmed,
+            "total_spent_cents": total_spent,
+            "cost_per_customer_cents": cost_per_customer,
+        }
+    }
+
+
+class BulkMessage(BaseModel):
+    message: str
+
+
+@router.post("/broadcast")
+async def broadcast_to_referrers(
+    data: BulkMessage,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Send a notification to all connected referrers."""
+    from routers.notifications import notify_all_referrers_for_business
+    user_uuid = uuid.UUID(user.id)
+    biz_res = await db.execute(
+        text("SELECT id, business_name, slug FROM businesses WHERE user_id = :uid"),
+        {"uid": user_uuid}
+    )
+    biz = biz_res.mappings().first()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    await notify_all_referrers_for_business(
+        db, biz["id"], "general",
+        f"Update from {biz['business_name']}",
+        data.message,
+        f"/b/{biz['slug']}/refer"
+    )
+    return {"message": "Broadcast sent to all connected referrers"}

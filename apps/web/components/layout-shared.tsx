@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { TrendingUp, Wallet, Plus } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 import { TopUpDialog } from "@/components/dashboard/TopUpDialog";
+import { NotificationBell } from "@/components/NotificationBell";
 import { Logo } from "@/components/Logo";
 
 export function Navbar() {
@@ -114,6 +115,11 @@ export function Navbar() {
                                                     Campaigns
                                                 </Button>
                                             </Link>
+                                            <Link href="/dashboard/business/analytics" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Analytics
+                                                </Button>
+                                            </Link>
                                             <Link href="/dashboard/business/profile" className="hidden sm:block">
                                                 <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
                                                     Public Profile
@@ -172,6 +178,7 @@ export function Navbar() {
                                     </Link>
                                 </>
                             )}
+                            <NotificationBell />
                             <UserButton afterSignOutUrl="/" />
                         </SignedIn>
                     </nav>
