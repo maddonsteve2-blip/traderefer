@@ -44,7 +44,7 @@ export default function LoginPage() {
 
             {/* Right Side: Form */}
             <div className="md:w-1/2 p-8 flex items-center justify-center">
-                <SignIn fallbackRedirectUrl="/dashboard" signUpUrl="/register" appearance={{ elements: { socialButtonsRoot: 'hidden', dividerRow: 'hidden' } }} />
+                <SignIn fallbackRedirectUrl="/dashboard" signUpUrl="/register" />
             </div>
         </main>
     );

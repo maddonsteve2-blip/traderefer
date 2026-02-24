@@ -12,6 +12,8 @@ app = FastAPI(title="TradeRefer API")
 # CORS configuration
 origins = [
     os.getenv("FRONTEND_URL", "http://localhost:3000"),
+    "https://traderefer.au",
+    "https://www.traderefer.au",
     "https://web-weld-xi.vercel.app",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -48,3 +50,40 @@ app.include_router(notif_router.router, prefix="/api", tags=["Notifications"])
 @app.get("/")
 async def root():
     return {"message": "TradeRefer API is running"}
+
+
+# ── Auth Status: lightweight role check for routing ──
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
+from services.database import get_db
+from services.auth import get_current_user, AuthenticatedUser
+import uuid
+
+@app.get("/auth/status")
+async def auth_status(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Returns the user's role(s) and onboarding status for routing."""
+    user_uuid = uuid.UUID(user.id)
+
+    biz_res = await db.execute(
+        text("SELECT id, status FROM businesses WHERE user_id = :uid"),
+        {"uid": user_uuid}
+    )
+    biz = biz_res.fetchone()
+
+    ref_res = await db.execute(
+        text("SELECT id, status FROM referrers WHERE user_id = :uid"),
+        {"uid": user_uuid}
+    )
+    ref = ref_res.fetchone()
+
+    return {
+        "user_id": user.id,
+        "has_business": biz is not None,
+        "business_status": biz[1] if biz else None,
+        "has_referrer": ref is not None,
+        "referrer_status": ref[1] if ref else None,
+        "needs_onboarding": biz is None and ref is None
+    }

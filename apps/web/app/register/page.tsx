@@ -57,7 +57,7 @@ export default function RegisterPage() {
             {/* Right Side: Registration Form */}
             <div className="lg:w-7/12 p-8 flex items-center justify-center bg-zinc-50">
                 <Suspense fallback={<div className="text-zinc-500 font-bold">Loading...</div>}>
-                    <SignUp fallbackRedirectUrl="/onboarding" signInUrl="/login" appearance={{ elements: { socialButtonsRoot: 'hidden', dividerRow: 'hidden' } }} />
+                    <SignUp fallbackRedirectUrl="/dashboard" signInUrl="/login" />
                 </Suspense>
             </div>
         </main>

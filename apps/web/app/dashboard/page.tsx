@@ -1,61 +1,39 @@
-"use client";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+export default async function DashboardRedirect() {
+    const { userId, getToken } = await auth();
 
-export default function DashboardRedirect() {
-    const router = useRouter();
-    const { getToken, isLoaded, isSignedIn } = useAuth();
+    if (!userId) {
+        redirect("/login");
+    }
 
-    useEffect(() => {
-        if (!isLoaded) return;
-        if (!isSignedIn) {
-            router.push("/login");
-            return;
-        }
+    const token = await getToken();
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-        async function resolveDashboard() {
-            try {
-                const token = await getToken();
-                if (!token) return;
+    try {
+        const res = await fetch(`${apiBase}/auth/status`, {
+            cache: "no-store",
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-                const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
-                const headers = { 'Authorization': `Bearer ${token}` };
+        if (res.ok) {
+            const data = await res.json();
 
-                // Check both roles in parallel
-                const [bizRes, refRes] = await Promise.all([
-                    fetch(`${apiBase}/business/me`, { headers }),
-                    fetch(`${apiBase}/referrer/me`, { headers })
-                ]);
+            // Has a business account — go to business dashboard
+            if (data.has_business) {
+                redirect("/dashboard/business");
+            }
 
-                if (bizRes.ok) {
-                    router.push("/dashboard/business");
-                    return;
-                }
-
-                if (refRes.ok) {
-                    router.push("/dashboard/referrer");
-                    return;
-                }
-
-                // Neither role found — send to onboarding choice
-                router.push("/onboarding");
-            } catch (err) {
-                console.error("Redirect error", err);
-                router.push("/onboarding");
+            // Has a referrer account — go to referrer dashboard
+            if (data.has_referrer) {
+                redirect("/dashboard/referrer");
             }
         }
+    } catch (err) {
+        console.error("Auth status check failed:", err);
+    }
 
-        resolveDashboard();
-    }, [isLoaded, isSignedIn, getToken, router]);
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-            <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
-                <p className="text-zinc-500 font-bold animate-pulse">Redirecting to your dashboard...</p>
-            </div>
-        </div>
-    );
+    // No role found — new user, send to onboarding
+    redirect("/onboarding");
 }
