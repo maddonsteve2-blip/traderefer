@@ -20,6 +20,7 @@ class LeadCreate(BaseModel):
     consumer_suburb: str
     consumer_address: Optional[str] = None
     job_description: str
+    lead_urgency: str = "warm"  # warm, hot, cold
     referral_code: Optional[str] = None
     device_hash: Optional[str] = None
 
@@ -110,7 +111,8 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             referral_fee_snapshot_cents,
             referrer_payout_amount_cents,
             consumer_ip,
-            consumer_device_hash
+            consumer_device_hash,
+            lead_urgency
         ) VALUES (
             :business_id, 
             :referral_link_id, 
@@ -126,7 +128,8 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             :referral_fee_snapshot,
             :payout_snapshot,
             :ip,
-            :device_hash
+            :device_hash,
+            :lead_urgency
         ) RETURNING id
     """)
     
@@ -145,7 +148,8 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             "referral_fee_snapshot": referral_fee,
             "payout_snapshot": int(referral_fee * 0.7), # Default 70% payout
             "ip": client_ip,
-            "device_hash": lead.device_hash
+            "device_hash": lead.device_hash,
+            "lead_urgency": lead.lead_urgency
         })
         new_lead_id = result.scalar()
         await db.commit()

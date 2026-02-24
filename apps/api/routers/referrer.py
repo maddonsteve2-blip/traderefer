@@ -505,3 +505,46 @@ async def submit_review(
     )
     await db.commit()
     return {"message": "Review submitted"}
+
+
+class PrivateFeedback(BaseModel):
+    business_slug: str
+    message: str
+    category: str = "general"  # general, response_time, quality, communication
+
+
+@router.post("/feedback")
+async def submit_private_feedback(
+    data: PrivateFeedback,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Submit private feedback to a business (only visible to the business)."""
+    user_uuid = uuid.UUID(user.id)
+    ref_res = await db.execute(
+        text("SELECT id, full_name FROM referrers WHERE user_id = :uid"),
+        {"uid": user_uuid}
+    )
+    ref = ref_res.fetchone()
+    if not ref:
+        raise HTTPException(status_code=404, detail="Referrer not found")
+
+    biz_res = await db.execute(
+        text("SELECT id, user_id FROM businesses WHERE slug = :slug"),
+        {"slug": data.business_slug}
+    )
+    biz = biz_res.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    # Store as an in-app notification to the business owner
+    from routers.notifications import create_notification
+    await create_notification(
+        db,
+        str(biz[1]),  # business user_id
+        "feedback",
+        f"Private feedback from {ref[1]}",
+        f"[{data.category.upper()}] {data.message}",
+        "/dashboard/business"
+    )
+    return {"message": "Feedback sent privately to the business"}

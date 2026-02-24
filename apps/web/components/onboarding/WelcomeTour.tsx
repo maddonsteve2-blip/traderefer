@@ -11,7 +11,8 @@ import {
     TrendingUp,
     ChevronRight,
     ArrowRight,
-    Rocket
+    Rocket,
+    Trophy
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
@@ -34,17 +35,24 @@ export function WelcomeTour({ type, onComplete }: WelcomeTourProps) {
         },
         {
             title: "Share & Track",
-            desc: "Use your unique referral link to recommend tradies. Track every click and referral in real-time.",
+            desc: "Use your unique referral link to recommend tradies. We give you pre-written messages, QR codes, and social media templates.",
             icon: LinkIcon,
             color: "text-blue-500",
             bg: "bg-blue-500/10"
         },
         {
-            title: "Earn Cash",
-            desc: "Get paid instantly when a business accepts your referral. No points—just cash.",
+            title: "Earn Real Cash",
+            desc: "Get paid when a business accepts your referral. Sarah from Melbourne earned $480 last month referring just 3 businesses.",
             icon: DollarSign,
             color: "text-green-500",
             bg: "bg-green-500/10"
+        },
+        {
+            title: "Level Up",
+            desc: "Climb from Starter to Ambassador tier. Higher tiers earn up to 90% commission splits, priority support, and quarterly bonuses.",
+            icon: Trophy,
+            color: "text-purple-500",
+            bg: "bg-purple-500/10"
         }
     ];
 
@@ -97,7 +105,7 @@ export function WelcomeTour({ type, onComplete }: WelcomeTourProps) {
 
                     <div key={step} className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-both">
                         <div className="inline-flex px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-black text-orange-500 uppercase tracking-widest">
-                            Step {step + 1} of 3
+                            Step {step + 1} of {steps.length}
                         </div>
                         <h2 className="text-4xl md:text-6xl font-black text-white leading-tight font-display tracking-tight">
                             {currentStep.title}

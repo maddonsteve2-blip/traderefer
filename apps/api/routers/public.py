@@ -210,3 +210,79 @@ async def get_hot_campaigns(db: AsyncSession = Depends(get_db)):
             c["multiplier"] = float(c["multiplier"])
         campaigns.append(c)
     return campaigns
+
+
+@router.get("/discover/hot")
+async def hot_right_now(db: AsyncSession = Depends(get_db)):
+    """Businesses with highest referral fees — 'Hot Right Now'."""
+    result = await db.execute(
+        text("""
+            SELECT id, business_name, slug, trade_category, suburb, state,
+                   referral_fee_cents, logo_url, trust_score, is_verified,
+                   avg_response_minutes
+            FROM businesses
+            WHERE status = 'active'
+              AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+              AND referral_fee_cents > 0
+            ORDER BY referral_fee_cents DESC
+            LIMIT 8
+        """)
+    )
+    rows = []
+    for row in result.mappings().all():
+        d = dict(row)
+        d["id"] = str(d["id"])
+        rows.append(d)
+    return rows
+
+
+@router.get("/discover/new")
+async def new_on_traderefer(db: AsyncSession = Depends(get_db)):
+    """Recently listed businesses — 'New on TradeRefer'."""
+    result = await db.execute(
+        text("""
+            SELECT id, business_name, slug, trade_category, suburb, state,
+                   referral_fee_cents, logo_url, trust_score, is_verified,
+                   created_at
+            FROM businesses
+            WHERE status = 'active'
+              AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+            ORDER BY created_at DESC
+            LIMIT 8
+        """)
+    )
+    rows = []
+    for row in result.mappings().all():
+        d = dict(row)
+        d["id"] = str(d["id"])
+        if d.get("created_at"):
+            d["created_at"] = str(d["created_at"])
+        rows.append(d)
+    return rows
+
+
+@router.get("/discover/top-earners")
+async def top_earners(db: AsyncSession = Depends(get_db)):
+    """Anonymous leaderboard — top referrer earnings this month."""
+    result = await db.execute(
+        text("""
+            SELECT r.tier,
+                   COALESCE(SUM(e.gross_cents), 0) as month_earnings_cents,
+                   COUNT(DISTINCT e.lead_id) as leads_this_month
+            FROM referrer_earnings e
+            JOIN referrers r ON r.id = e.referrer_id
+            WHERE e.created_at >= date_trunc('month', now())
+            GROUP BY r.id, r.tier
+            ORDER BY month_earnings_cents DESC
+            LIMIT 5
+        """)
+    )
+    leaderboard = []
+    for i, row in enumerate(result.mappings().all()):
+        leaderboard.append({
+            "rank": i + 1,
+            "tier": row["tier"],
+            "month_earnings_cents": row["month_earnings_cents"],
+            "leads_this_month": row["leads_this_month"],
+        })
+    return leaderboard

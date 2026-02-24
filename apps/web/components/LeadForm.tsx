@@ -23,7 +23,8 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
         consumer_email: "",
         consumer_suburb: "",
         consumer_address: "",
-        job_description: ""
+        job_description: "",
+        lead_urgency: "warm"
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -153,6 +154,31 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                         className="w-full px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all resize-none font-medium"
                         placeholder="Explain the job..."
                     ></textarea>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">How urgent is this?</label>
+                    <div className="grid grid-cols-3 gap-2">
+                        {[
+                            { value: "hot", label: "Urgent", desc: "Need it ASAP", color: "border-red-500 bg-red-50 text-red-700" },
+                            { value: "warm", label: "Soon", desc: "Within a week", color: "border-orange-500 bg-orange-50 text-orange-700" },
+                            { value: "cold", label: "Just Browsing", desc: "Getting quotes", color: "border-blue-500 bg-blue-50 text-blue-700" },
+                        ].map(opt => (
+                            <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, lead_urgency: opt.value }))}
+                                className={`p-3 rounded-xl border-2 text-center transition-all ${
+                                    formData.lead_urgency === opt.value
+                                        ? opt.color
+                                        : "border-zinc-100 bg-zinc-50 text-zinc-500 hover:border-zinc-200"
+                                }`}
+                            >
+                                <div className="text-sm font-bold">{opt.label}</div>
+                                <div className="text-xs opacity-70">{opt.desc}</div>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="flex items-start gap-3 py-2">

@@ -23,6 +23,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReferrerShareKit } from "@/components/referrer/ShareKit";
 import { StartReferringButton } from "@/components/referrer/StartReferringButton";
+import { PrivateFeedback } from "@/components/referrer/PrivateFeedback";
 import { ReviewSection } from "@/components/referrer/ReviewSection";
 
 async function getBusiness(slug: string) {
@@ -458,6 +459,8 @@ export default async function ReferrerBusinessPage({
                                 </div>
                             </div>
                         </div>
+
+                        <PrivateFeedback businessSlug={business.slug} businessName={business.business_name} />
                     </div>
                 </div>
             </div>

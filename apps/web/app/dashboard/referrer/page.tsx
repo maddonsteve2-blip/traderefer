@@ -14,6 +14,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HotCampaigns } from "@/components/referrer/HotCampaigns";
 import { EarningsDashboard } from "@/components/referrer/EarningsDashboard";
+import { DiscoverSection } from "@/components/referrer/DiscoverSection";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -82,6 +83,8 @@ export default async function ReferrerDashboardPage() {
                 </div>
 
                 <EarningsDashboard />
+
+                <DiscoverSection />
 
                 <Card className="p-8 md:p-10 mb-10 shadow-xl shadow-zinc-200/50">
                     <div className="flex items-center justify-between mb-8">
