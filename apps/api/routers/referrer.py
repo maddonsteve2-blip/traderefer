@@ -231,6 +231,163 @@ async def get_my_referrer(
         raise HTTPException(status_code=404, detail="Referrer profile not found")
     return dict(ref)
 
+TIER_THRESHOLDS = {
+    "starter": {"min": 0, "max": 5, "split": 80, "next": "pro"},
+    "pro": {"min": 6, "max": 20, "split": 85, "next": "elite"},
+    "elite": {"min": 21, "max": 50, "split": 90, "next": "ambassador"},
+    "ambassador": {"min": 51, "max": 999999, "split": 90, "next": None},
+}
+
+def calculate_tier(total_referrals: int) -> str:
+    if total_referrals >= 51: return "ambassador"
+    if total_referrals >= 21: return "elite"
+    if total_referrals >= 6: return "pro"
+    return "starter"
+
+
+class MonthlyGoalUpdate(BaseModel):
+    monthly_goal_cents: Optional[int] = None
+
+
+@router.get("/stats")
+async def get_referrer_stats(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Full earnings stats, tier info, and per-business breakdown for the referrer dashboard."""
+    user_uuid = uuid.UUID(user.id)
+
+    ref_result = await db.execute(
+        text("SELECT * FROM referrers WHERE user_id = :uid"),
+        {"uid": user_uuid}
+    )
+    ref = ref_result.mappings().first()
+    if not ref:
+        raise HTTPException(status_code=404, detail="Referrer profile not found")
+
+    ref_id = ref["id"]
+
+    # Count confirmed leads as total referrals
+    count_result = await db.execute(
+        text("SELECT COUNT(*) as cnt FROM leads WHERE referrer_id = :rid AND status = 'CONFIRMED'"),
+        {"rid": ref_id}
+    )
+    total_referrals = count_result.scalar() or 0
+
+    # Earnings: this week, this month, lifetime
+    earnings_result = await db.execute(
+        text("""
+            SELECT
+                COALESCE(SUM(CASE WHEN created_at >= date_trunc('week', now()) THEN unlock_fee_cents ELSE 0 END), 0) as week_cents,
+                COALESCE(SUM(CASE WHEN created_at >= date_trunc('month', now()) THEN unlock_fee_cents ELSE 0 END), 0) as month_cents,
+                COALESCE(SUM(unlock_fee_cents), 0) as lifetime_cents,
+                COALESCE(SUM(CASE WHEN created_at >= date_trunc('month', now()) - interval '1 month' AND created_at < date_trunc('month', now()) THEN unlock_fee_cents ELSE 0 END), 0) as last_month_cents
+            FROM leads
+            WHERE referrer_id = :rid AND status IN ('UNLOCKED', 'CONFIRMED', 'ON_THE_WAY')
+        """),
+        {"rid": ref_id}
+    )
+    earnings = earnings_result.mappings().first()
+
+    # Pending earnings (leads not yet confirmed)
+    pending_result = await db.execute(
+        text("SELECT COALESCE(SUM(unlock_fee_cents), 0) as pending FROM leads WHERE referrer_id = :rid AND status = 'UNLOCKED'"),
+        {"rid": ref_id}
+    )
+    pending_cents = pending_result.scalar() or 0
+
+    # Per-business breakdown (top 10)
+    biz_result = await db.execute(
+        text("""
+            SELECT b.business_name, b.slug, b.trade_category,
+                   COUNT(l.id) as lead_count,
+                   COALESCE(SUM(l.unlock_fee_cents), 0) as earned_cents
+            FROM leads l
+            JOIN businesses b ON b.id = l.business_id
+            WHERE l.referrer_id = :rid AND l.status IN ('UNLOCKED', 'CONFIRMED', 'ON_THE_WAY')
+            GROUP BY b.id, b.business_name, b.slug, b.trade_category
+            ORDER BY earned_cents DESC
+            LIMIT 10
+        """),
+        {"rid": ref_id}
+    )
+    per_business = [
+        {
+            "business_name": row["business_name"],
+            "slug": row["slug"],
+            "trade_category": row["trade_category"],
+            "lead_count": row["lead_count"],
+            "earned_cents": row["earned_cents"],
+        }
+        for row in biz_result.mappings().all()
+    ]
+
+    # Tier calculation
+    tier = calculate_tier(total_referrals)
+    tier_info = TIER_THRESHOLDS[tier]
+    next_tier = tier_info["next"]
+    next_threshold = TIER_THRESHOLDS[next_tier]["min"] if next_tier else None
+    referrals_to_next = (next_threshold - total_referrals) if next_threshold else 0
+
+    # Update tier + total_referrals in DB if changed
+    if tier != ref.get("tier") or total_referrals != ref.get("total_referrals"):
+        await db.execute(
+            text("UPDATE referrers SET tier = :tier, total_referrals = :tr WHERE id = :rid"),
+            {"tier": tier, "tr": total_referrals, "rid": ref_id}
+        )
+        await db.commit()
+
+    week_cents = earnings["week_cents"] if earnings else 0
+    month_cents = earnings["month_cents"] if earnings else 0
+    lifetime_cents = earnings["lifetime_cents"] if earnings else 0
+    last_month_cents = earnings["last_month_cents"] if earnings else 0
+
+    # Monthly trend
+    month_trend = 0
+    if last_month_cents > 0:
+        month_trend = round(((month_cents - last_month_cents) / last_month_cents) * 100)
+
+    # Goal progress
+    monthly_goal_cents = ref.get("monthly_goal_cents")
+    goal_progress = None
+    if monthly_goal_cents and monthly_goal_cents > 0:
+        goal_progress = round((month_cents / monthly_goal_cents) * 100)
+
+    return {
+        "tier": tier,
+        "tier_split": tier_info["split"],
+        "next_tier": next_tier,
+        "referrals_to_next": max(0, referrals_to_next),
+        "total_referrals": total_referrals,
+        "earnings": {
+            "this_week": week_cents,
+            "this_month": month_cents,
+            "last_month": last_month_cents,
+            "lifetime": lifetime_cents,
+            "pending": pending_cents,
+            "month_trend": month_trend,
+        },
+        "monthly_goal_cents": monthly_goal_cents,
+        "goal_progress": goal_progress,
+        "per_business": per_business,
+    }
+
+
+@router.patch("/goal")
+async def update_monthly_goal(
+    data: MonthlyGoalUpdate,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    user_uuid = uuid.UUID(user.id)
+    await db.execute(
+        text("UPDATE referrers SET monthly_goal_cents = :goal WHERE user_id = :uid"),
+        {"goal": data.monthly_goal_cents, "uid": user_uuid}
+    )
+    await db.commit()
+    return {"message": "Goal updated"}
+
+
 class WithdrawalRequest(BaseModel):
     method: str
 

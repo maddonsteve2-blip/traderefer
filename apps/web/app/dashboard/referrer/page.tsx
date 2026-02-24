@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { HotCampaigns } from "@/components/referrer/HotCampaigns";
+import { EarningsDashboard } from "@/components/referrer/EarningsDashboard";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -80,26 +81,7 @@ export default async function ReferrerDashboardPage() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    <Card className="p-8 relative overflow-hidden group">
-                        <div className="text-base font-bold text-zinc-400 uppercase tracking-widest mb-2">Available Balance</div>
-                        <div className="text-4xl font-black text-zinc-900 font-display mb-1">${stats.wallet_balance.toFixed(2)}</div>
-                        <div className="text-base text-green-500 font-bold">Ready to withdraw</div>
-                        <Wallet className="absolute -right-4 -bottom-4 w-20 h-20 text-orange-500/5 group-hover:scale-110 transition-transform" />
-                    </Card>
-                    <Card className="p-8">
-                        <div className="text-base font-bold text-zinc-400 uppercase tracking-widest mb-2">Pending</div>
-                        <div className="text-4xl font-black text-zinc-900 font-display">${stats.pending.toFixed(2)}</div>
-                        <div className="text-base text-zinc-400 font-medium">Unlocked by business - awaiting payout</div>
-                    </Card>
-                    <Card className="p-8 bg-gradient-to-br from-white to-zinc-50">
-                        <div className="text-base font-bold text-zinc-400 uppercase tracking-widest mb-2">All Time Earnings</div>
-                        <div className="text-4xl font-black text-zinc-900 font-display">${stats.total_earned.toFixed(2)}</div>
-                        <div className="text-base text-zinc-500 font-medium flex items-center gap-1">
-                            <History className="w-3 h-3" /> Total earned performance
-                        </div>
-                    </Card>
-                </div>
+                <EarningsDashboard />
 
                 <Card className="p-8 md:p-10 mb-10 shadow-xl shadow-zinc-200/50">
                     <div className="flex items-center justify-between mb-8">
