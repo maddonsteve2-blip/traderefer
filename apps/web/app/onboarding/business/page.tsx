@@ -85,8 +85,20 @@ export default function BusinessOnboardingPage() {
     const [isChatting, setIsChatting] = useState(false);
     const [chatDone, setChatDone] = useState(false);
     const [profileOptions, setProfileOptions] = useState<any[]>([]);
-    const [selectedProfileIndex, setSelectedProfileIndex] = useState(0);
+    const [selectedProfileIndex, setSelectedProfileIndex] = useState(-1);
+    const [profileLocked, setProfileLocked] = useState(false);
+    const [tweakInput, setTweakInput] = useState("");
     const chatEndRef = useRef<HTMLDivElement>(null);
+
+    // Parse suggestion chips from AI messages
+    const parseSuggestions = (text: string): { message: string; suggestions: string[] } => {
+        const sugIdx = text.indexOf('Suggestions:');
+        if (sugIdx === -1) return { message: text, suggestions: [] };
+        const msgPart = text.substring(0, sugIdx).trim();
+        const sugPart = text.substring(sugIdx + 'Suggestions:'.length).trim();
+        const suggestions = sugPart.split(/[•\-\n,]/).map(s => s.trim().replace(/^"|"$/g, '')).filter(s => s.length > 0 && s.length < 80);
+        return { message: msgPart, suggestions: suggestions.slice(0, 3) };
+    };
 
     // Suburb search state
     const [suburbSearch, setSuburbSearch] = useState("");
@@ -507,20 +519,41 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                                 <div className="bg-zinc-50 rounded-[20px] border border-zinc-100 overflow-hidden flex flex-col flex-1 min-h-0">
                                     {/* Messages */}
                                     <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 min-h-[200px]">
-                                        {chatMessages.map((msg, i) => (
-                                            <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'assistant' ? 'bg-gradient-to-br from-orange-500 to-amber-400' : 'bg-zinc-900'}`}>
-                                                    {msg.role === 'assistant' ? (
-                                                        <Bot className="w-4 h-4 text-white" />
-                                                    ) : (
-                                                        <User className="w-4 h-4 text-white" />
+                                        {chatMessages.map((msg, i) => {
+                                            const isAssistant = msg.role === 'assistant';
+                                            const { message: displayText, suggestions } = isAssistant ? parseSuggestions(msg.content) : { message: msg.content, suggestions: [] };
+                                            const isLastAssistant = isAssistant && i === chatMessages.length - 1;
+                                            return (
+                                                <div key={i} className="space-y-2">
+                                                    <div className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isAssistant ? 'bg-gradient-to-br from-orange-500 to-amber-400' : 'bg-zinc-900'}`}>
+                                                            {isAssistant ? (
+                                                                <Bot className="w-4 h-4 text-white" />
+                                                            ) : (
+                                                                <User className="w-4 h-4 text-white" />
+                                                            )}
+                                                        </div>
+                                                        <div className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm leading-relaxed ${isAssistant ? 'bg-white border border-zinc-200 text-zinc-700' : 'bg-zinc-900 text-white'}`}>
+                                                            {displayText}
+                                                        </div>
+                                                    </div>
+                                                    {isLastAssistant && suggestions.length > 0 && !chatDone && (
+                                                        <div className="flex gap-2 ml-11 flex-wrap">
+                                                            {suggestions.map((s, si) => (
+                                                                <button
+                                                                    key={si}
+                                                                    type="button"
+                                                                    onClick={() => { setChatInput(s); }}
+                                                                    className="px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-full text-xs font-medium text-orange-700 hover:bg-orange-100 transition-colors"
+                                                                >
+                                                                    {s}
+                                                                </button>
+                                                            ))}
+                                                        </div>
                                                     )}
                                                 </div>
-                                                <div className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'assistant' ? 'bg-white border border-zinc-200 text-zinc-700' : 'bg-zinc-900 text-white'}`}>
-                                                    {msg.content}
-                                                </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                         {isChatting && (
                                             <div className="flex gap-3">
                                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center shrink-0">
@@ -576,158 +609,171 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                         {/* ═══════════════════════════════════════════════ */}
                         {step === 3 && (
                             <>
-                                <div>
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-400 rounded-2xl flex items-center justify-center">
-                                            <Sparkles className="w-5 h-5 text-white" />
-                                        </div>
-                                        <h1 className="text-4xl font-black text-zinc-900 tracking-tight font-display">Your AI-generated profile</h1>
-                                    </div>
-                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed">Here&apos;s what we came up with. Edit anything you&apos;d like to change.</p>
-                                </div>
-
                                 {isGenerating ? (
                                     <div className="flex flex-col items-center justify-center py-20 gap-4">
                                         <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center">
                                             <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                                         </div>
-                                        <p className="text-lg font-bold text-zinc-500">AI is writing your profile...</p>
-                                        <p className="text-sm text-zinc-400">This usually takes 5-10 seconds</p>
+                                        <p className="text-lg font-bold text-zinc-500">AI is writing your profile options...</p>
+                                        <p className="text-sm text-zinc-400">Creating 3 versions — usually takes 10-15 seconds</p>
                                     </div>
-                                ) : (
-                                    <div className="space-y-6">
-                                        {/* Profile options selector */}
-                                        {profileOptions.length > 0 && (
-                                            <div className="space-y-3">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-black text-zinc-400 uppercase tracking-widest">Choose a version</span>
-                                                    <span className="text-xs font-medium text-zinc-400">Pick one and tweak anything below</span>
+                                ) : !profileLocked ? (
+                                    /* ── PHASE 1: Pick from 3 options ── */
+                                    <>
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-400 rounded-2xl flex items-center justify-center">
+                                                    <Sparkles className="w-5 h-5 text-white" />
                                                 </div>
-                                                <div className="grid grid-cols-1 gap-3">
-                                                    {profileOptions.map((opt, idx) => (
-                                                        <button
-                                                            key={idx}
-                                                            type="button"
-                                                            onClick={() => applyProfileSelection(idx)}
-                                                            className={`text-left p-4 rounded-2xl border transition-all ${selectedProfileIndex === idx ? 'border-orange-500 bg-orange-50' : 'border-zinc-200 bg-white hover:border-orange-200'}`}
-                                                        >
-                                                            <div className="flex items-center gap-3 mb-2">
-                                                                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${selectedProfileIndex === idx ? 'border-orange-500 text-orange-600' : 'border-zinc-200 text-zinc-400'}`}>
-                                                                    {idx + 1}
-                                                                </div>
-                                                                <div className="text-sm font-bold text-zinc-900">Option {idx + 1}</div>
+                                                <h1 className="text-3xl font-black text-zinc-900 tracking-tight font-display">Pick your favourite profile</h1>
+                                            </div>
+                                            <p className="text-base text-zinc-500 font-medium leading-relaxed">We wrote 3 versions based on your chat. Pick the one that sounds most like you.</p>
+                                        </div>
+
+                                        {profileOptions.length > 0 && (
+                                            <div className="space-y-4">
+                                                {profileOptions.map((opt, idx) => (
+                                                    <button
+                                                        key={idx}
+                                                        type="button"
+                                                        onClick={() => { applyProfileSelection(idx); }}
+                                                        className={`w-full text-left p-5 rounded-2xl border-2 transition-all ${selectedProfileIndex === idx ? 'border-orange-500 bg-orange-50 shadow-lg shadow-orange-100' : 'border-zinc-200 bg-white hover:border-orange-200 hover:shadow-md'}`}
+                                                    >
+                                                        <div className="flex items-center gap-3 mb-3">
+                                                            <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-lg font-black ${selectedProfileIndex === idx ? 'border-orange-500 bg-orange-500 text-white' : 'border-zinc-200 text-zinc-400'}`}>
+                                                                {idx + 1}
                                                             </div>
-                                                            <p className="text-sm text-zinc-600 line-clamp-3">{opt.description || 'No description'}</p>
-                                                        </button>
+                                                            <div className="text-base font-bold text-zinc-900">Option {idx + 1}</div>
+                                                            {selectedProfileIndex === idx && <CheckCircle2 className="w-5 h-5 text-orange-500 ml-auto" />}
+                                                        </div>
+                                                        <p className="text-sm text-zinc-600 leading-relaxed mb-3">{opt.description || 'No description'}</p>
+                                                        {opt.features && opt.features.length > 0 && (
+                                                            <div className="flex flex-wrap gap-1.5">
+                                                                {opt.features.slice(0, 4).map((f: string, fi: number) => (
+                                                                    <span key={fi} className="px-2.5 py-1 bg-zinc-100 rounded-full text-xs font-medium text-zinc-600">{f}</span>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Tweak & regenerate */}
+                                        <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 space-y-3">
+                                            <div className="flex items-center gap-2">
+                                                <Sparkles className="w-4 h-4 text-orange-500" />
+                                                <div className="text-sm font-bold text-zinc-700">Not quite right? Tell the AI what to change.</div>
+                                            </div>
+                                            <div className="flex gap-3">
+                                                <input
+                                                    type="text"
+                                                    value={tweakInput}
+                                                    onChange={(e) => setTweakInput(e.target.value)}
+                                                    placeholder="e.g. Make it more casual, mention emergency work"
+                                                    className="flex-1 px-4 py-3 bg-white border border-zinc-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm"
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    onClick={() => { if (tweakInput.trim()) { generateProfile(tweakInput.trim()); setTweakInput(""); } }}
+                                                    disabled={isGenerating || !tweakInput.trim()}
+                                                    className="bg-zinc-900 hover:bg-black text-white rounded-xl px-4"
+                                                >
+                                                    Regenerate
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    /* ── PHASE 2: Edit locked-in profile ── */
+                                    <>
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-400 rounded-2xl flex items-center justify-center">
+                                                    <CheckCircle2 className="w-5 h-5 text-white" />
+                                                </div>
+                                                <h1 className="text-3xl font-black text-zinc-900 tracking-tight font-display">Fine-tune your profile</h1>
+                                            </div>
+                                            <p className="text-base text-zinc-500 font-medium leading-relaxed">Edit anything you&apos;d like to change, then continue.</p>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            {/* About Us */}
+                                            <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <label className="text-sm font-black text-zinc-400 uppercase tracking-widest">About Us</label>
+                                                    <button type="button" onClick={() => setEditingDescription(!editingDescription)} className="text-sm font-bold text-orange-500 flex items-center gap-1 hover:underline">
+                                                        <Pencil className="w-3.5 h-3.5" /> {editingDescription ? 'Done' : 'Edit'}
+                                                    </button>
+                                                </div>
+                                                {editingDescription ? (
+                                                    <textarea
+                                                        value={formData.description}
+                                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                                        rows={4}
+                                                        className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-base font-medium resize-none"
+                                                    />
+                                                ) : (
+                                                    <p className="text-base text-zinc-700 leading-relaxed">{formData.description || "No description generated"}</p>
+                                                )}
+                                            </div>
+
+                                            {/* Why Refer Us */}
+                                            <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <label className="text-sm font-black text-zinc-400 uppercase tracking-widest">Why Refer Us</label>
+                                                    <button type="button" onClick={() => setEditingWhyRefer(!editingWhyRefer)} className="text-sm font-bold text-orange-500 flex items-center gap-1 hover:underline">
+                                                        <Pencil className="w-3.5 h-3.5" /> {editingWhyRefer ? 'Done' : 'Edit'}
+                                                    </button>
+                                                </div>
+                                                {editingWhyRefer ? (
+                                                    <textarea
+                                                        value={formData.why_refer_us}
+                                                        onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
+                                                        rows={3}
+                                                        className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-base font-medium resize-none"
+                                                    />
+                                                ) : (
+                                                    <p className="text-base text-zinc-700 leading-relaxed">{formData.why_refer_us || "No pitch generated"}</p>
+                                                )}
+                                            </div>
+
+                                            {/* Services */}
+                                            <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
+                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 block">Services We Provide</label>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {formData.services.map((s, i) => (
+                                                        <span key={i} className="px-4 py-2 bg-white border border-zinc-200 rounded-full text-sm font-medium text-zinc-700 flex items-center gap-2">
+                                                            {s}
+                                                            <button type="button" onClick={() => setFormData(prev => ({ ...prev, services: prev.services.filter((_, idx) => idx !== i) }))} className="text-zinc-300 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
+                                                        </span>
                                                     ))}
                                                 </div>
                                             </div>
-                                        )}
 
-                                        {/* Tweak prompt */}
-                                        {profileOptions.length > 0 && (
-                                            <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-3">
-                                                <div className="flex items-center gap-2">
-                                                    <Sparkles className="w-4 h-4 text-orange-500" />
-                                                    <div className="text-sm font-bold text-zinc-900">Want changes? Tell the AI and regenerate.</div>
+                                            {/* Features / Highlights */}
+                                            <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
+                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 block">Business Highlights</label>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {formData.features.map((f, i) => (
+                                                        <span key={i} className="px-4 py-2 bg-orange-50 border border-orange-200 rounded-full text-sm font-bold text-orange-700 flex items-center gap-2">
+                                                            {f}
+                                                            <button type="button" onClick={() => setFormData(prev => ({ ...prev, features: prev.features.filter((_, idx) => idx !== i) }))} className="text-orange-300 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
+                                                        </span>
+                                                    ))}
                                                 </div>
-                                                <div className="flex gap-3">
-                                                    <input
-                                                        type="text"
-                                                        value={chatInput}
-                                                        onChange={(e) => setChatInput(e.target.value)}
-                                                        placeholder="e.g. Make it more friendly, highlight emergency callouts"
-                                                        className="flex-1 px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm"
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        onClick={() => chatInput.trim() && generateProfile(chatInput.trim())}
-                                                        disabled={isGenerating || !chatInput.trim()}
-                                                        className="bg-zinc-900 hover:bg-black text-white rounded-xl px-4"
-                                                    >
-                                                        Regenerate
-                                                    </Button>
-                                                </div>
-                                                <p className="text-xs text-zinc-500">AI will produce 3 new options; you can pick again.</p>
                                             </div>
-                                        )}
 
-                                        {/* About Us */}
-                                        <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
-                                            <div className="flex items-center justify-between mb-3">
-                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest">About Us</label>
-                                                <button type="button" onClick={() => setEditingDescription(!editingDescription)} className="text-sm font-bold text-orange-500 flex items-center gap-1 hover:underline">
-                                                    <Pencil className="w-3.5 h-3.5" /> {editingDescription ? 'Done' : 'Edit'}
-                                                </button>
-                                            </div>
-                                            {editingDescription ? (
-                                                <textarea
-                                                    value={formData.description}
-                                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                                    rows={4}
-                                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-base font-medium resize-none"
-                                                />
-                                            ) : (
-                                                <p className="text-base text-zinc-700 leading-relaxed">{formData.description || "No description generated"}</p>
-                                            )}
+                                            {/* Start over link */}
+                                            <button
+                                                type="button"
+                                                onClick={() => { setProfileLocked(false); setSelectedProfileIndex(-1); }}
+                                                className="w-full py-3 text-sm font-bold text-zinc-400 hover:text-orange-500 flex items-center justify-center gap-2 transition-colors"
+                                            >
+                                                <ChevronLeft className="w-4 h-4" /> Back to profile options
+                                            </button>
                                         </div>
-
-                                        {/* Why Refer Us */}
-                                        <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
-                                            <div className="flex items-center justify-between mb-3">
-                                                <label className="text-sm font-black text-zinc-400 uppercase tracking-widest">Why Refer Us</label>
-                                                <button type="button" onClick={() => setEditingWhyRefer(!editingWhyRefer)} className="text-sm font-bold text-orange-500 flex items-center gap-1 hover:underline">
-                                                    <Pencil className="w-3.5 h-3.5" /> {editingWhyRefer ? 'Done' : 'Edit'}
-                                                </button>
-                                            </div>
-                                            {editingWhyRefer ? (
-                                                <textarea
-                                                    value={formData.why_refer_us}
-                                                    onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
-                                                    rows={3}
-                                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-base font-medium resize-none"
-                                                />
-                                            ) : (
-                                                <p className="text-base text-zinc-700 leading-relaxed">{formData.why_refer_us || "No pitch generated"}</p>
-                                            )}
-                                        </div>
-
-                                        {/* Services */}
-                                        <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
-                                            <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 block">Services We Provide</label>
-                                            <div className="flex flex-wrap gap-2">
-                                                {formData.services.map((s, i) => (
-                                                    <span key={i} className="px-4 py-2 bg-white border border-zinc-200 rounded-full text-sm font-medium text-zinc-700 flex items-center gap-2">
-                                                        {s}
-                                                        <button type="button" onClick={() => setFormData(prev => ({ ...prev, services: prev.services.filter((_, idx) => idx !== i) }))} className="text-zinc-300 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        {/* Features / Highlights */}
-                                        <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
-                                            <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 block">Business Highlights</label>
-                                            <div className="flex flex-wrap gap-2">
-                                                {formData.features.map((f, i) => (
-                                                    <span key={i} className="px-4 py-2 bg-orange-50 border border-orange-200 rounded-full text-sm font-bold text-orange-700 flex items-center gap-2">
-                                                        {f}
-                                                        <button type="button" onClick={() => setFormData(prev => ({ ...prev, features: prev.features.filter((_, idx) => idx !== i) }))} className="text-orange-300 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        {/* Regenerate */}
-                                        <button
-                                            type="button"
-                                            onClick={() => generateProfile()}
-                                            disabled={isGenerating}
-                                            className="w-full py-3 text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center justify-center gap-2 transition-colors"
-                                        >
-                                            <Sparkles className="w-4 h-4" /> Regenerate with AI
-                                        </button>
-                                    </div>
+                                    </>
                                 )}
                             </>
                         )}
@@ -952,6 +998,14 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                                     ) : (
                                         <><Sparkles className="w-5 h-5 mr-2" /> Generate My Profile <ChevronRight className="ml-2 w-6 h-6" /></>
                                     )}
+                                </Button>
+                            ) : step === 3 && !profileLocked ? (
+                                <Button
+                                    onClick={() => { if (selectedProfileIndex >= 0) setProfileLocked(true); }}
+                                    disabled={isGenerating || selectedProfileIndex < 0}
+                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
+                                >
+                                    <CheckCircle2 className="w-5 h-5 mr-2" /> Lock In This Profile <ChevronRight className="ml-2 w-6 h-6" />
                                 </Button>
                             ) : (
                                 <Button
