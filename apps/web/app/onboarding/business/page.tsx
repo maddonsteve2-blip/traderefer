@@ -84,6 +84,8 @@ export default function BusinessOnboardingPage() {
     const [chatInput, setChatInput] = useState("");
     const [isChatting, setIsChatting] = useState(false);
     const [chatDone, setChatDone] = useState(false);
+    const [profileOptions, setProfileOptions] = useState<any[]>([]);
+    const [selectedProfileIndex, setSelectedProfileIndex] = useState(0);
     const chatEndRef = useRef<HTMLDivElement>(null);
 
     // Suburb search state
@@ -190,12 +192,16 @@ export default function BusinessOnboardingPage() {
     };
 
     // AI profile generation from conversation
-    const generateProfile = async () => {
+    const generateProfile = async (extraInstruction?: string) => {
         setIsGenerating(true);
         try {
             const conversationSummary = chatMessages
                 .map(m => `${m.role === "user" ? "Business Owner" : "Assistant"}: ${m.content}`)
                 .join("\n");
+
+            const appendedSummary = extraInstruction
+                ? `${conversationSummary}\n\nAdditional change request from business owner: ${extraInstruction}`
+                : conversationSummary;
 
             const res = await fetch("/api/ai/generate-profile", {
                 method: "POST",
@@ -206,19 +212,25 @@ export default function BusinessOnboardingPage() {
                             role: "user",
                             content: `You are a profile writer for TradeRefer, an Australian trades referral platform.
 
-Based on this conversation with the owner of "${formData.business_name}" (a ${formData.trade_category} business in ${formData.suburb}, VIC — Geelong region), generate their business profile.
+Based on this conversation with the owner of "${formData.business_name}" (a ${formData.trade_category} business in ${formData.suburb}, VIC — Geelong region), generate THREE profile options.
 
 CONVERSATION:
-${conversationSummary}
+${appendedSummary}
 
-Respond with ONLY a JSON object (no markdown, no code fences) with these exact keys:
+Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly like:
 {
-  "description": "A compelling 2-3 sentence business description. Written in first person plural (we). Professional but approachable. Australian English.",
-  "why_refer_us": "A 2-3 sentence pitch about why referrers should send leads to this business. Focus on reliability and quality.",
-  "services": ["Array of 5-8 specific services based on what was discussed"],
-  "features": ["Array of 3-5 short punchy business highlights, e.g. 'Licensed & Insured', '10+ Years Experience'"],
-  "years_experience": "How long in business as discussed",
-  "specialty": "Their main specialty or focus area"
+  "profiles": [
+    {
+      "description": "2-3 sentences, first person plural, professional but approachable, Australian English",
+      "why_refer_us": "2-3 sentences convincing referrers to send leads",
+      "services": ["5-8 specific services"],
+      "features": ["3-5 short punchy highlights"],
+      "years_experience": "as discussed",
+      "specialty": "main specialty/focus"
+    },
+    { ...option2... },
+    { ...option3... }
+  ]
 }`
                         }
                     ],
@@ -231,28 +243,50 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
 
             if (data.error) throw new Error(data.error);
 
-            // Handle both parsed JSON and raw text responses
-            const profile = data.raw ? {} : data;
+            // Normalize profiles array
+            let profiles = data.profiles || (data.raw ? [] : data.description ? [data] : []);
+
+            // Ensure at least 3 options by duplicating the first if necessary
+            if (profiles.length === 1) profiles = [profiles[0], profiles[0], profiles[0]];
+            if (profiles.length === 2) profiles = [profiles[0], profiles[1], profiles[0]];
+
+            if (!profiles.length) {
+                toast.error("AI returned an unexpected format. You can edit the fields manually.");
+            }
+
+            setProfileOptions(profiles);
+            const chosen = profiles[0] || {};
+            setSelectedProfileIndex(0);
 
             setFormData(prev => ({
                 ...prev,
-                description: profile.description || prev.description,
-                why_refer_us: profile.why_refer_us || prev.why_refer_us,
-                services: profile.services || prev.services,
-                features: profile.features || prev.features,
-                years_experience: profile.years_experience || prev.years_experience,
-                specialty: profile.specialty || prev.specialty,
+                description: chosen.description || prev.description,
+                why_refer_us: chosen.why_refer_us || prev.why_refer_us,
+                services: chosen.services || prev.services,
+                features: chosen.features || prev.features,
+                years_experience: chosen.years_experience || prev.years_experience,
+                specialty: chosen.specialty || prev.specialty,
             }));
-
-            if (!profile.description) {
-                toast.error("AI returned an unexpected format. You can edit the fields manually.");
-            }
         } catch (err) {
             console.error("AI generation error:", err);
             toast.error("Profile generation failed. You can fill in the details manually.");
         } finally {
             setIsGenerating(false);
         }
+    };
+
+    const applyProfileSelection = (index: number) => {
+        const chosen = profileOptions[index] || {};
+        setSelectedProfileIndex(index);
+        setFormData(prev => ({
+            ...prev,
+            description: chosen.description || prev.description,
+            why_refer_us: chosen.why_refer_us || prev.why_refer_us,
+            services: chosen.services || prev.services,
+            features: chosen.features || prev.features,
+            years_experience: chosen.years_experience || prev.years_experience,
+            specialty: chosen.specialty || prev.specialty,
+        }));
     };
 
     const handleNext = async () => {
@@ -505,34 +539,32 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                                     </div>
 
                                     {/* Input */}
-                                    {!chatDone && (
-                                        <div className="border-t border-zinc-200 p-4 bg-white">
-                                            <form onSubmit={(e) => { e.preventDefault(); sendChatMessage(); }} className="flex gap-3">
-                                                <input
-                                                    type="text"
-                                                    value={chatInput}
-                                                    onChange={(e) => setChatInput(e.target.value)}
-                                                    placeholder="Type your answer..."
-                                                    disabled={isChatting}
-                                                    className="flex-1 px-5 py-3 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium placeholder:text-zinc-300 disabled:opacity-50"
-                                                    autoFocus
-                                                />
-                                                <Button
-                                                    type="submit"
-                                                    disabled={!chatInput.trim() || isChatting}
-                                                    className="bg-zinc-900 hover:bg-black text-white rounded-2xl px-5 h-[46px] shadow-sm"
-                                                >
-                                                    <Send className="w-4 h-4" />
-                                                </Button>
-                                            </form>
-                                        </div>
-                                    )}
+                                    <div className="border-t border-zinc-200 p-4 bg-white">
+                                        <form onSubmit={(e) => { e.preventDefault(); sendChatMessage(); }} className="flex gap-3">
+                                            <input
+                                                type="text"
+                                                value={chatInput}
+                                                onChange={(e) => setChatInput(e.target.value)}
+                                                placeholder={chatDone ? "You can ask more or say 'generate'" : "Type your answer..."}
+                                                disabled={isChatting}
+                                                className="flex-1 px-5 py-3 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium placeholder:text-zinc-300 disabled:opacity-50"
+                                                autoFocus
+                                            />
+                                            <Button
+                                                type="submit"
+                                                disabled={!chatInput.trim() || isChatting}
+                                                className="bg-zinc-900 hover:bg-black text-white rounded-2xl px-5 h-[46px] shadow-sm"
+                                            >
+                                                <Send className="w-4 h-4" />
+                                            </Button>
+                                        </form>
+                                    </div>
 
                                     {/* Done indicator */}
                                     {chatDone && (
                                         <div className="border-t border-green-200 p-4 bg-green-50 flex items-center gap-3">
                                             <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                                            <p className="text-sm font-medium text-green-800">Conversation complete — click &quot;Generate My Profile&quot; to continue</p>
+                                            <p className="text-sm font-medium text-green-800">Ready to generate. You can still ask more before generating.</p>
                                         </div>
                                     )}
                                 </div>
@@ -564,6 +596,62 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
+                                        {/* Profile options selector */}
+                                        {profileOptions.length > 0 && (
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-black text-zinc-400 uppercase tracking-widest">Choose a version</span>
+                                                    <span className="text-xs font-medium text-zinc-400">Pick one and tweak anything below</span>
+                                                </div>
+                                                <div className="grid grid-cols-1 gap-3">
+                                                    {profileOptions.map((opt, idx) => (
+                                                        <button
+                                                            key={idx}
+                                                            type="button"
+                                                            onClick={() => applyProfileSelection(idx)}
+                                                            className={`text-left p-4 rounded-2xl border transition-all ${selectedProfileIndex === idx ? 'border-orange-500 bg-orange-50' : 'border-zinc-200 bg-white hover:border-orange-200'}`}
+                                                        >
+                                                            <div className="flex items-center gap-3 mb-2">
+                                                                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${selectedProfileIndex === idx ? 'border-orange-500 text-orange-600' : 'border-zinc-200 text-zinc-400'}`}>
+                                                                    {idx + 1}
+                                                                </div>
+                                                                <div className="text-sm font-bold text-zinc-900">Option {idx + 1}</div>
+                                                            </div>
+                                                            <p className="text-sm text-zinc-600 line-clamp-3">{opt.description || 'No description'}</p>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Tweak prompt */}
+                                        {profileOptions.length > 0 && (
+                                            <div className="bg-white border border-zinc-200 rounded-2xl p-4 space-y-3">
+                                                <div className="flex items-center gap-2">
+                                                    <Sparkles className="w-4 h-4 text-orange-500" />
+                                                    <div className="text-sm font-bold text-zinc-900">Want changes? Tell the AI and regenerate.</div>
+                                                </div>
+                                                <div className="flex gap-3">
+                                                    <input
+                                                        type="text"
+                                                        value={chatInput}
+                                                        onChange={(e) => setChatInput(e.target.value)}
+                                                        placeholder="e.g. Make it more friendly, highlight emergency callouts"
+                                                        className="flex-1 px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm"
+                                                    />
+                                                    <Button
+                                                        type="button"
+                                                        onClick={() => chatInput.trim() && generateProfile(chatInput.trim())}
+                                                        disabled={isGenerating || !chatInput.trim()}
+                                                        className="bg-zinc-900 hover:bg-black text-white rounded-xl px-4"
+                                                    >
+                                                        Regenerate
+                                                    </Button>
+                                                </div>
+                                                <p className="text-xs text-zinc-500">AI will produce 3 new options; you can pick again.</p>
+                                            </div>
+                                        )}
+
                                         {/* About Us */}
                                         <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100">
                                             <div className="flex items-center justify-between mb-3">
@@ -633,7 +721,7 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                                         {/* Regenerate */}
                                         <button
                                             type="button"
-                                            onClick={generateProfile}
+                                            onClick={() => generateProfile()}
                                             disabled={isGenerating}
                                             className="w-full py-3 text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center justify-center gap-2 transition-colors"
                                         >
@@ -856,7 +944,7 @@ Respond with ONLY a JSON object (no markdown, no code fences) with these exact k
                             {step === 2 ? (
                                 <Button
                                     onClick={handleNext}
-                                    disabled={!chatDone || isGenerating}
+                                    disabled={isGenerating}
                                     className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
                                 >
                                     {isGenerating ? (
