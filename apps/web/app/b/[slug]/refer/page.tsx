@@ -22,6 +22,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReferrerShareKit } from "@/components/referrer/ShareKit";
 import { StartReferringButton } from "@/components/referrer/StartReferringButton";
+import { ReviewSection } from "@/components/referrer/ReviewSection";
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -45,15 +46,29 @@ async function getDeals(slug: string) {
     }
 }
 
+async function getReviews(slug: string) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    try {
+        const res = await fetch(`${apiUrl}/businesses/${slug}/reviews`, {
+            cache: 'no-store'
+        });
+        if (!res.ok) return [];
+        return res.json();
+    } catch {
+        return [];
+    }
+}
+
 export default async function ReferrerBusinessPage({
     params
 }: {
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const [business, deals] = await Promise.all([
+    const [business, deals, reviews] = await Promise.all([
         getBusiness(slug),
-        getDeals(slug)
+        getDeals(slug),
+        getReviews(slug)
     ]);
 
     if (!business) {
@@ -156,7 +171,7 @@ export default async function ReferrerBusinessPage({
                                     {
                                         label: "Connection Rate",
                                         value: `${connectionRate}%`,
-                                        sub: "leads responded to",
+                                        sub: "referrals responded to",
                                         icon: Zap,
                                         bg: "bg-blue-50",
                                         color: "text-blue-600",
@@ -172,14 +187,23 @@ export default async function ReferrerBusinessPage({
                                         border: "border-yellow-100"
                                     },
                                     {
-                                        label: "Total Leads",
+                                        label: "Total Referrals",
                                         value: `${totalLeads}`,
                                         sub: `${totalConfirmed} confirmed`,
                                         icon: Users,
                                         bg: "bg-purple-50",
                                         color: "text-purple-600",
                                         border: "border-purple-100"
-                                    }
+                                    },
+                                    ...(business.avg_response_minutes != null ? [{
+                                        label: "Response Time",
+                                        value: business.avg_response_minutes < 60 ? `< ${business.avg_response_minutes}m` : `< ${Math.ceil(business.avg_response_minutes / 60)}h`,
+                                        sub: "avg reply speed",
+                                        icon: Clock,
+                                        bg: "bg-cyan-50",
+                                        color: "text-cyan-600",
+                                        border: "border-cyan-100"
+                                    }] : [])
                                 ].map((stat) => (
                                     <div key={stat.label} className={`${stat.bg} border ${stat.border} rounded-2xl p-5`}>
                                         <div className="flex items-center gap-2 mb-3">
@@ -229,6 +253,16 @@ export default async function ReferrerBusinessPage({
                             </section>
                         )}
 
+                        {/* Why Refer Us */}
+                        {business.why_refer_us && (
+                            <section className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl border border-purple-200 p-8">
+                                <h2 className="text-xl font-bold text-zinc-900 mb-4 flex items-center gap-2">
+                                    <MessageSquare className="w-5 h-5 text-purple-500" /> Why Refer Us
+                                </h2>
+                                <p className="text-zinc-700 leading-relaxed text-base font-medium">{business.why_refer_us}</p>
+                            </section>
+                        )}
+
                         {/* About the Business */}
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8">
                             <h2 className="text-xl font-bold text-zinc-900 mb-4">About This Business</h2>
@@ -270,6 +304,11 @@ export default async function ReferrerBusinessPage({
                                     </div>
                                 ))}
                             </div>
+                        </section>
+
+                        {/* Referrer Reviews */}
+                        <section className="bg-white rounded-3xl border border-zinc-200 p-8">
+                            <ReviewSection slug={slug} initialReviews={reviews} />
                         </section>
 
                         {/* Earnings Estimator */}
@@ -345,6 +384,7 @@ export default async function ReferrerBusinessPage({
                                 suburb={business.suburb}
                                 slug={slug}
                                 commission={referrerEarns}
+                                deals={deals}
                             />
                         </div>
 

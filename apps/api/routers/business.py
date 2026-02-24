@@ -51,6 +51,7 @@ class BusinessUpdate(BaseModel):
     photo_urls: Optional[list[str]] = None
     features: Optional[list[str]] = None
     listing_visibility: Optional[str] = None
+    why_refer_us: Optional[str] = None
 
 class ProjectCreate(BaseModel):
     title: str
@@ -206,7 +207,7 @@ async def get_my_business(
                referral_fee_cents, service_radius_km, is_verified, trust_score,
                logo_url, photo_urls, status, connection_rate,
                total_leads_unlocked, wallet_balance_cents, stripe_account_id,
-               abn, features, listing_visibility, created_at
+               abn, features, listing_visibility, why_refer_us, avg_response_minutes, created_at
         FROM businesses WHERE user_id = :user_id
     """)
     result = await db.execute(query, {"user_id": uuid.UUID(user.id)})

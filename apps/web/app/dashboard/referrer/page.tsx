@@ -126,7 +126,7 @@ export default async function ReferrerDashboardPage() {
                                 <div className="flex items-center gap-4 md:gap-6">
                                     <div className="text-right">
                                         <div className="font-black text-zinc-900 leading-none">{link.leads}</div>
-                                        <div className="text-base font-bold text-zinc-300 uppercase">Leads</div>
+                                        <div className="text-base font-bold text-zinc-300 uppercase">Referrals</div>
                                     </div>
                                     <div className="text-right">
                                         <div className="font-black text-orange-600 leading-none">${link.earned.toFixed(2)}</div>

@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Star, ShieldCheck, ChevronRight, DollarSign, Gift } from "lucide-react";
+import { Search, MapPin, Star, ShieldCheck, ChevronRight, DollarSign, Gift, Zap } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { BusinessDirectoryFilters } from "@/components/BusinessDirectoryFilters";
@@ -122,6 +122,12 @@ export default async function BusinessDirectory({
                                             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-sm font-bold border border-orange-100">
                                                 <Gift className="w-3 h-3" />
                                                 {biz.deal_count} {Number(biz.deal_count) === 1 ? 'deal' : 'deals'}
+                                            </div>
+                                        )}
+                                        {biz.avg_response_minutes != null && biz.avg_response_minutes <= 120 && (
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-bold border border-blue-100">
+                                                <Zap className="w-3 h-3" />
+                                                {biz.avg_response_minutes < 60 ? `< ${biz.avg_response_minutes}m` : `< ${Math.ceil(biz.avg_response_minutes / 60)}h`} response
                                             </div>
                                         )}
                                     </div>

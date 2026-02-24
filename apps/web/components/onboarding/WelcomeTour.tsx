@@ -34,14 +34,14 @@ export function WelcomeTour({ type, onComplete }: WelcomeTourProps) {
         },
         {
             title: "Share & Track",
-            desc: "Use your unique referral link to recommend tradies. Track every click and lead in real-time.",
+            desc: "Use your unique referral link to recommend tradies. Track every click and referral in real-time.",
             icon: LinkIcon,
             color: "text-blue-500",
             bg: "bg-blue-500/10"
         },
         {
             title: "Earn Cash",
-            desc: "Get paid instantly as soon as a business unlocks your lead. No points—just cash.",
+            desc: "Get paid instantly when a business accepts your referral. No points—just cash.",
             icon: DollarSign,
             color: "text-green-500",
             bg: "bg-green-500/10"

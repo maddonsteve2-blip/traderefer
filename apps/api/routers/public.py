@@ -13,7 +13,7 @@ PUBLIC_BUSINESS_COLUMNS = """
     business_phone, business_email, website,
     trust_score, connection_rate, total_leads_unlocked, total_confirmed,
     is_verified, listing_rank, logo_url, photo_urls, features,
-    referral_fee_cents, listing_visibility, created_at
+    referral_fee_cents, listing_visibility, avg_response_minutes, why_refer_us, created_at
 """
 
 @router.get("/businesses")
@@ -108,3 +108,38 @@ async def get_business_deals(slug: str, db: AsyncSession = Depends(get_db)):
             "created_at": str(row["created_at"])
         })
     return deals
+
+
+@router.get("/businesses/{slug}/reviews")
+async def get_business_reviews(slug: str, db: AsyncSession = Depends(get_db)):
+    """Get referrer reviews for a business (public endpoint)."""
+    biz_result = await db.execute(
+        text("SELECT id FROM businesses WHERE slug = :slug"),
+        {"slug": slug}
+    )
+    biz = biz_result.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    result = await db.execute(
+        text("""
+            SELECT rr.id, rr.rating, rr.comment, rr.created_at,
+                   r.full_name as referrer_name
+            FROM referrer_reviews rr
+            JOIN referrers r ON r.id = rr.referrer_id
+            WHERE rr.business_id = :bid
+            ORDER BY rr.created_at DESC
+            LIMIT 20
+        """),
+        {"bid": biz[0]}
+    )
+    reviews = []
+    for row in result.mappings().all():
+        reviews.append({
+            "id": str(row["id"]),
+            "rating": row["rating"],
+            "comment": row["comment"],
+            "referrer_name": row["referrer_name"],
+            "created_at": str(row["created_at"])
+        })
+    return reviews

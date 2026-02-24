@@ -39,6 +39,7 @@ export default function BusinessSettingsPage() {
         website: string;
         abn: string;
         referral_fee_cents: number;
+        why_refer_us: string;
     }>({
         business_name: "",
         trade_category: "",
@@ -50,7 +51,8 @@ export default function BusinessSettingsPage() {
         business_email: "",
         website: "",
         abn: "",
-        referral_fee_cents: 1000
+        referral_fee_cents: 1000,
+        why_refer_us: ""
     });
     const [verifying, setVerifying] = useState(false);
 
@@ -76,7 +78,8 @@ export default function BusinessSettingsPage() {
                     business_email: data.business_email || "",
                     website: data.website || "",
                     abn: data.abn || "",
-                    referral_fee_cents: data.referral_fee_cents || 1000
+                    referral_fee_cents: data.referral_fee_cents || 1000,
+                    why_refer_us: data.why_refer_us || ""
                 });
             }
         } catch (err) {
@@ -238,6 +241,30 @@ export default function BusinessSettingsPage() {
                                     placeholder="info@business.com"
                                 />
                             </div>
+                        </div>
+                    </section>
+
+                    {/* Card: Why Refer Us (Referrer Pitch) */}
+                    <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="size-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-500">
+                                <User className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-bold text-zinc-900">Why Refer Us</h2>
+                                <p className="text-sm text-zinc-500 font-medium">Your pitch to referrers — tell them why they should recommend you</p>
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1">Referrer Pitch</label>
+                            <textarea
+                                rows={4}
+                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-purple-500/20 placeholder-zinc-300 resize-none"
+                                value={formData.why_refer_us}
+                                onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
+                                placeholder="e.g. We respond to every lead within 2 hours, always show up on time, and our customers love us. Referrers earn $15 per qualified lead — the easiest money you'll make!"
+                            />
+                            <p className="text-sm text-zinc-400 ml-1">This appears on your referrer partner page to convince referrers to promote you.</p>
                         </div>
                     </section>
 

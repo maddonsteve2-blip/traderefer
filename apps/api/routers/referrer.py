@@ -16,6 +16,11 @@ class ReferrerOnboarding(BaseModel):
     phone: str
     region: str
 
+class ReviewCreate(BaseModel):
+    business_slug: str
+    rating: int  # 1-5
+    comment: Optional[str] = None
+
 @router.post("/onboarding")
 async def onboarding(
     data: ReferrerOnboarding, 
@@ -294,3 +299,52 @@ async def withdraw_funds(
     except Exception as e:
         await db.rollback()
         raise HTTPException(status_code=500, detail=f"Withdrawal failed: {str(e)}")
+
+
+@router.post("/reviews")
+async def submit_review(
+    data: ReviewCreate,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Submit or update a referrer review of a business."""
+    if data.rating < 1 or data.rating > 5:
+        raise HTTPException(status_code=400, detail="Rating must be 1-5")
+
+    user_uuid = uuid.UUID(user.id)
+
+    # Get referrer ID
+    ref_result = await db.execute(
+        text("SELECT id FROM referrers WHERE user_id = :uid"),
+        {"uid": user_uuid}
+    )
+    ref = ref_result.fetchone()
+    if not ref:
+        raise HTTPException(status_code=404, detail="Referrer profile not found")
+
+    # Get business ID from slug
+    biz_result = await db.execute(
+        text("SELECT id FROM businesses WHERE slug = :slug"),
+        {"slug": data.business_slug}
+    )
+    biz = biz_result.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    # Upsert review (one review per referrer per business)
+    await db.execute(
+        text("""
+            INSERT INTO referrer_reviews (business_id, referrer_id, rating, comment)
+            VALUES (:bid, :rid, :rating, :comment)
+            ON CONFLICT (business_id, referrer_id)
+            DO UPDATE SET rating = :rating, comment = :comment, created_at = now()
+        """),
+        {
+            "bid": biz[0],
+            "rid": ref[0],
+            "rating": data.rating,
+            "comment": data.comment
+        }
+    )
+    await db.commit()
+    return {"message": "Review submitted"}

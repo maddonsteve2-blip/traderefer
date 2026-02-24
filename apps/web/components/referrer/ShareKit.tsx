@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Copy, Check, MessageSquare, Mail, Phone, Facebook, Twitter, Instagram, Share2 } from "lucide-react";
+import { useState, useRef } from "react";
+import { Copy, Check, MessageSquare, Mail, Phone, Facebook, Twitter, Instagram, Share2, QrCode, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import QRCode from "react-qr-code";
+
+interface Deal {
+    title: string;
+    discount_text?: string;
+}
 
 interface ReferrerShareKitProps {
     businessName: string;
@@ -11,30 +17,34 @@ interface ReferrerShareKitProps {
     suburb: string;
     slug: string;
     commission: number;
+    deals?: Deal[];
 }
 
-export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, commission }: ReferrerShareKitProps) {
+export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, commission, deals = [] }: ReferrerShareKitProps) {
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+    const [showQR, setShowQR] = useState(false);
+    const qrRef = useRef<HTMLDivElement>(null);
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://traderefer.au';
     const referralUrl = `${baseUrl}/b/${slug}`;
 
+    const dealLine = deals.length > 0 ? `\n🎁 Current deal: ${deals[0].discount_text || deals[0].title}` : '';
     const shareText = `Need a ${tradeCategory.toLowerCase()}? Check out ${businessName} in ${suburb} — verified and highly rated. Get a free quote here:`;
 
     const messages = [
         {
             label: "SMS / Text",
             icon: Phone,
-            text: `Hey! Need a ${tradeCategory.toLowerCase()}? I know a great one in ${suburb} — ${businessName}. They're verified and highly rated. Get a free quote here: ${referralUrl}`
+            text: `Hey! Need a ${tradeCategory.toLowerCase()}? I know a great one in ${suburb} — ${businessName}. They're verified and highly rated.${dealLine}\nGet a free quote here: ${referralUrl}`
         },
         {
             label: "WhatsApp",
             icon: MessageSquare,
-            text: `👋 Looking for a reliable ${tradeCategory.toLowerCase()}? Check out *${businessName}* in ${suburb}. Licensed, verified, and trusted by the community.\n\nGet a free quote: ${referralUrl}`
+            text: `👋 Looking for a reliable ${tradeCategory.toLowerCase()}? Check out *${businessName}* in ${suburb}. Licensed, verified, and trusted by the community.${dealLine}\n\nGet a free quote: ${referralUrl}`
         },
         {
             label: "Email",
             icon: Mail,
-            text: `Hi,\n\nI wanted to recommend ${businessName} — a verified ${tradeCategory.toLowerCase()} in ${suburb}. They come highly rated and offer free quotes.\n\nYou can check them out and book here: ${referralUrl}\n\nHope this helps!`
+            text: `Hi,\n\nI wanted to recommend ${businessName} — a verified ${tradeCategory.toLowerCase()} in ${suburb}. They come highly rated and offer free quotes.${deals.length > 0 ? `\n\nCurrent offer: ${deals[0].discount_text || deals[0].title}` : ''}\n\nYou can check them out and book here: ${referralUrl}\n\nHope this helps!`
         }
     ];
 
@@ -161,6 +171,35 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
                         </div>
                     ))}
                 </div>
+            </div>
+
+            {/* QR Code */}
+            <div>
+                <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">In-Person Referral</div>
+                <button
+                    onClick={() => setShowQR(!showQR)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 transition-colors"
+                >
+                    <QrCode className="w-4 h-4" />
+                    {showQR ? 'Hide QR Code' : 'Show QR Code'}
+                </button>
+                {showQR && (
+                    <div className="mt-3 flex flex-col items-center gap-3 p-6 bg-white border border-zinc-200 rounded-xl">
+                        <div ref={qrRef} className="bg-white p-3 rounded-xl">
+                            <QRCode value={referralUrl} size={160} />
+                        </div>
+                        <p className="text-sm text-zinc-500 text-center">Show this to anyone who needs a {tradeCategory.toLowerCase()}</p>
+                        <button
+                            onClick={() => {
+                                navigator.clipboard.writeText(referralUrl);
+                                toast.success("Link copied!");
+                            }}
+                            className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-1"
+                        >
+                            <Copy className="w-3.5 h-3.5" /> Copy Link
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );
