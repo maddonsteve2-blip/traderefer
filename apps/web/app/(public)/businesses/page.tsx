@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Star, ShieldCheck, ChevronRight, DollarSign } from "lucide-react";
+import { Search, MapPin, Star, ShieldCheck, ChevronRight, DollarSign, Gift } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { BusinessDirectoryFilters } from "@/components/BusinessDirectoryFilters";
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 async function getBusinesses(category?: string, suburb?: string, search?: string) {
     try {
-        let query = `SELECT * FROM businesses WHERE status = 'active' AND (listing_visibility = 'public' OR listing_visibility IS NULL)`;
+        let query = `SELECT b.*, (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count FROM businesses b WHERE b.status = 'active' AND (b.listing_visibility = 'public' OR b.listing_visibility IS NULL)`;
         const params: string[] = [];
 
         if (category) {
@@ -28,7 +28,7 @@ async function getBusinesses(category?: string, suburb?: string, search?: string
             query += ` AND (business_name ILIKE $${params.length} OR trade_category ILIKE $${params.length} OR description ILIKE $${params.length})`;
         }
 
-        query += ` ORDER BY listing_rank DESC, created_at DESC`;
+        query += ` ORDER BY b.listing_rank DESC, b.created_at DESC`;
 
         const businesses = await sql.unsafe(query, params);
         return businesses;
@@ -111,9 +111,17 @@ export default async function BusinessDirectory({
                                 </div>
 
                                 <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
-                                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-bold border border-green-100">
-                                        <DollarSign className="w-3 h-3" />
-                                        ${((biz.referral_fee_cents || 1000) / 100).toFixed(0)} per lead
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-bold border border-green-100">
+                                            <DollarSign className="w-3 h-3" />
+                                            ${((biz.referral_fee_cents || 1000) / 100).toFixed(0)} per lead
+                                        </div>
+                                        {Number(biz.deal_count) > 0 && (
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-sm font-bold border border-orange-100">
+                                                <Gift className="w-3 h-3" />
+                                                {biz.deal_count} {Number(biz.deal_count) === 1 ? 'deal' : 'deals'}
+                                            </div>
+                                        )}
                                     </div>
                                     <Button asChild className="bg-zinc-900 hover:bg-black text-white rounded-full px-5 group/btn h-10">
                                         <Link href={`/b/${biz.slug}/refer`}>

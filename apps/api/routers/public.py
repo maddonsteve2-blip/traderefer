@@ -72,3 +72,39 @@ async def get_business(slug: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Business not found")
         
     return dict(business._mapping)
+
+
+@router.get("/businesses/{slug}/deals")
+async def get_business_deals(slug: str, db: AsyncSession = Depends(get_db)):
+    """Get active deals for a business (public endpoint)."""
+    # First get business ID from slug
+    biz_result = await db.execute(
+        text("SELECT id FROM businesses WHERE slug = :slug"),
+        {"slug": slug}
+    )
+    biz = biz_result.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    result = await db.execute(
+        text("""
+            SELECT id, title, description, discount_text, terms, expires_at, created_at
+            FROM deals
+            WHERE business_id = :bid AND is_active = true
+              AND (expires_at IS NULL OR expires_at > now())
+            ORDER BY created_at DESC
+        """),
+        {"bid": biz[0]}
+    )
+    deals = []
+    for row in result.mappings().all():
+        deals.append({
+            "id": str(row["id"]),
+            "title": row["title"],
+            "description": row["description"],
+            "discount_text": row["discount_text"],
+            "terms": row["terms"],
+            "expires_at": str(row["expires_at"]) if row["expires_at"] else None,
+            "created_at": str(row["created_at"])
+        })
+    return deals

@@ -105,6 +105,11 @@ export function Navbar() {
                                                     Referrers
                                                 </Button>
                                             </Link>
+                                            <Link href="/dashboard/business/deals" className="hidden sm:block">
+                                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                                    Deals
+                                                </Button>
+                                            </Link>
                                             <Link href="/dashboard/business/profile" className="hidden sm:block">
                                                 <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
                                                     Public Profile

@@ -14,7 +14,9 @@ import {
     Zap,
     CheckCircle2,
     ExternalLink,
-    Phone
+    Phone,
+    Tag,
+    Gift
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -30,13 +32,29 @@ async function getBusiness(slug: string) {
     return res.json();
 }
 
+async function getDeals(slug: string) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    try {
+        const res = await fetch(`${apiUrl}/businesses/${slug}/deals`, {
+            cache: 'no-store'
+        });
+        if (!res.ok) return [];
+        return res.json();
+    } catch {
+        return [];
+    }
+}
+
 export default async function ReferrerBusinessPage({
     params
 }: {
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const business = await getBusiness(slug);
+    const [business, deals] = await Promise.all([
+        getBusiness(slug),
+        getDeals(slug)
+    ]);
 
     if (!business) {
         notFound();
@@ -170,6 +188,40 @@ export default async function ReferrerBusinessPage({
                                 ))}
                             </div>
                         </section>
+
+                        {/* Active Deals */}
+                        {deals && deals.length > 0 && (
+                            <section>
+                                <h2 className="text-xl font-bold text-zinc-900 mb-6 flex items-center gap-2">
+                                    <Gift className="w-5 h-5 text-orange-500" /> Active Deals
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {deals.map((deal: any) => (
+                                        <div key={deal.id} className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-6 hover:shadow-lg hover:shadow-orange-100/50 transition-all">
+                                            <div className="flex items-start gap-3 mb-3">
+                                                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
+                                                    <Tag className="w-5 h-5 text-orange-600" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <h3 className="font-bold text-zinc-900 leading-tight">{deal.title}</h3>
+                                                    {deal.discount_text && (
+                                                        <span className="inline-flex items-center mt-1.5 px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-sm font-bold">
+                                                            {deal.discount_text}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {deal.description && (
+                                                <p className="text-sm text-zinc-600 leading-relaxed line-clamp-2">{deal.description}</p>
+                                            )}
+                                            {deal.terms && (
+                                                <p className="text-sm text-zinc-400 mt-2 italic">{deal.terms}</p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
 
                         {/* About the Business */}
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8">
