@@ -51,6 +51,28 @@ export default function BusinessOnboardingPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const { getToken } = useAuth();
+    const router = useRouter();
+
+    // Check if user already has a business — redirect to dashboard
+    useEffect(() => {
+        const checkExisting = async () => {
+            try {
+                const token = await getToken();
+                if (!token) return;
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/business/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    // Business already exists — redirect to dashboard
+                    router.replace("/dashboard/business");
+                }
+            } catch {
+                // No business found or error — stay on onboarding
+            }
+        };
+        checkExisting();
+    }, [getToken, router]);
+
     const [formData, setFormData] = useState({
         business_name: "",
         trade_category: "Plumbing",
@@ -124,8 +146,6 @@ export default function BusinessOnboardingPage() {
     const filteredSuburbs = suburbSearch
         ? allSuburbs.filter(s => s.toLowerCase().includes(suburbSearch.toLowerCase()))
         : allSuburbs;
-
-    const router = useRouter();
 
     // Auto-scroll chat
     useEffect(() => {
