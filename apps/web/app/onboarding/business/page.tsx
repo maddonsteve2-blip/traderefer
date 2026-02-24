@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Building2,
@@ -23,7 +23,10 @@ import {
     EyeOff,
     Sparkles,
     Search,
-    Pencil
+    Pencil,
+    Send,
+    Bot,
+    User
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { getSuburbs } from "@/lib/locations";
@@ -36,23 +39,10 @@ import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { ImageUpload } from "@/components/ImageUpload";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 
-// AI Q&A options
-const YEARS_OPTIONS = ["Less than 1 year", "1-3 years", "3-5 years", "5-10 years", "10-20 years", "20+ years"];
-
-const HIGHLIGHT_OPTIONS = [
-    "Licensed & Insured",
-    "Free Quotes",
-    "Emergency Available",
-    "Same-Day Service",
-    "Family Owned",
-    "Eco-Friendly",
-    "Warranty on Work",
-    "After-Hours Available",
-    "Senior Discounts",
-    "Locally Owned",
-    "Fast Response Time",
-    "Quality Materials",
-];
+type ChatMessage = {
+    role: "user" | "assistant";
+    content: string;
+};
 
 export default function BusinessOnboardingPage() {
     const TOTAL_STEPS = 6;
@@ -74,7 +64,6 @@ export default function BusinessOnboardingPage() {
         service_radius_km: 25,
         referral_fee_cents: 1000,
         listing_visibility: "public",
-        // AI-generated fields
         years_experience: "",
         specialty: "",
         highlights: [] as string[],
@@ -90,6 +79,13 @@ export default function BusinessOnboardingPage() {
     const [editingDescription, setEditingDescription] = useState(false);
     const [editingWhyRefer, setEditingWhyRefer] = useState(false);
 
+    // Chat state
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [chatInput, setChatInput] = useState("");
+    const [isChatting, setIsChatting] = useState(false);
+    const [chatDone, setChatDone] = useState(false);
+    const chatEndRef = useRef<HTMLDivElement>(null);
+
     // Suburb search state
     const [suburbSearch, setSuburbSearch] = useState("");
     const [showSuburbs, setShowSuburbs] = useState(false);
@@ -99,6 +95,19 @@ export default function BusinessOnboardingPage() {
         : allSuburbs;
 
     const router = useRouter();
+
+    // Auto-scroll chat
+    useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [chatMessages, isChatting]);
+
+    // Start chat when entering step 2
+    useEffect(() => {
+        if (step === 2 && chatMessages.length === 0) {
+            startChat();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [step]);
 
     const checkSlug = async (val: string) => {
         if (!val) { setSlugStatus('idle'); return; }
@@ -118,52 +127,136 @@ export default function BusinessOnboardingPage() {
         setPhotoUrls(urls);
     };
 
-    const toggleHighlight = (h: string) => {
-        setFormData(prev => ({
-            ...prev,
-            highlights: prev.highlights.includes(h)
-                ? prev.highlights.filter(x => x !== h)
-                : [...prev.highlights, h]
-        }));
+    // Chat functions
+    const startChat = async () => {
+        setIsChatting(true);
+        try {
+            const res = await fetch("/api/ai/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messages: [],
+                    business_name: formData.business_name,
+                    trade_category: formData.trade_category,
+                    suburb: formData.suburb,
+                }),
+            });
+            if (!res.ok) throw new Error("Chat failed");
+            const data = await res.json();
+            setChatMessages([{ role: "assistant", content: data.message }]);
+        } catch (err) {
+            console.error("Chat start error:", err);
+            setChatMessages([{ role: "assistant", content: `G'day! I'm here to help build your ${formData.trade_category} profile. How long have you been in business?` }]);
+        } finally {
+            setIsChatting(false);
+        }
     };
 
-    // AI profile generation
+    const sendChatMessage = async () => {
+        if (!chatInput.trim() || isChatting) return;
+
+        const userMsg: ChatMessage = { role: "user", content: chatInput.trim() };
+        const updatedMessages = [...chatMessages, userMsg];
+        setChatMessages(updatedMessages);
+        setChatInput("");
+        setIsChatting(true);
+
+        try {
+            const res = await fetch("/api/ai/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messages: updatedMessages,
+                    business_name: formData.business_name,
+                    trade_category: formData.trade_category,
+                    suburb: formData.suburb,
+                }),
+            });
+            if (!res.ok) throw new Error("Chat failed");
+            const data = await res.json();
+            const assistantMsg: ChatMessage = { role: "assistant", content: data.message };
+            setChatMessages([...updatedMessages, assistantMsg]);
+
+            // Check if conversation is done
+            if (data.message.toLowerCase().includes("i've got everything i need")) {
+                setChatDone(true);
+            }
+        } catch (err) {
+            console.error("Chat error:", err);
+            toast.error("Chat failed — try again");
+        } finally {
+            setIsChatting(false);
+        }
+    };
+
+    // AI profile generation from conversation
     const generateProfile = async () => {
         setIsGenerating(true);
         try {
+            const conversationSummary = chatMessages
+                .map(m => `${m.role === "user" ? "Business Owner" : "Assistant"}: ${m.content}`)
+                .join("\n");
+
             const res = await fetch("/api/ai/generate-profile", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    business_name: formData.business_name,
-                    trade_category: formData.trade_category,
-                    suburb: formData.suburb,
-                    years_experience: formData.years_experience,
-                    specialty: formData.specialty,
-                    highlights: formData.highlights,
+                    conversation: [
+                        {
+                            role: "user",
+                            content: `You are a profile writer for TradeRefer, an Australian trades referral platform.
+
+Based on this conversation with the owner of "${formData.business_name}" (a ${formData.trade_category} business in ${formData.suburb}, VIC — Geelong region), generate their business profile.
+
+CONVERSATION:
+${conversationSummary}
+
+Respond with ONLY a JSON object (no markdown, no code fences) with these exact keys:
+{
+  "description": "A compelling 2-3 sentence business description. Written in first person plural (we). Professional but approachable. Australian English.",
+  "why_refer_us": "A 2-3 sentence pitch about why referrers should send leads to this business. Focus on reliability and quality.",
+  "services": ["Array of 5-8 specific services based on what was discussed"],
+  "features": ["Array of 3-5 short punchy business highlights, e.g. 'Licensed & Insured', '10+ Years Experience'"],
+  "years_experience": "How long in business as discussed",
+  "specialty": "Their main specialty or focus area"
+}`
+                        }
+                    ],
                 }),
             });
 
-            if (!res.ok) throw new Error("AI generation failed");
+            if (!res.ok) throw new Error("Profile generation failed");
 
             const data = await res.json();
+
+            if (data.error) throw new Error(data.error);
+
+            // Handle both parsed JSON and raw text responses
+            const profile = data.raw ? {} : data;
+
             setFormData(prev => ({
                 ...prev,
-                description: data.description || prev.description,
-                why_refer_us: data.why_refer_us || prev.why_refer_us,
-                services: data.services || prev.services,
-                features: data.features || prev.features,
+                description: profile.description || prev.description,
+                why_refer_us: profile.why_refer_us || prev.why_refer_us,
+                services: profile.services || prev.services,
+                features: profile.features || prev.features,
+                years_experience: profile.years_experience || prev.years_experience,
+                specialty: profile.specialty || prev.specialty,
             }));
+
+            if (!profile.description) {
+                toast.error("AI returned an unexpected format. You can edit the fields manually.");
+            }
         } catch (err) {
             console.error("AI generation error:", err);
-            toast.error("AI generation failed. You can fill in the description manually.");
+            toast.error("Profile generation failed. You can fill in the details manually.");
         } finally {
             setIsGenerating(false);
         }
     };
 
     const handleNext = async () => {
-        // Step 2 → Step 3: trigger AI generation
+        // Step 2 → Step 3: trigger AI generation from chat
         if (step === 2) {
             await generateProfile();
             setStep(3);
@@ -224,7 +317,7 @@ export default function BusinessOnboardingPage() {
             </header>
 
             <div className="flex-1 flex flex-col items-center justify-center py-20 px-4">
-                <div className={`w-full transition-all duration-500 ${step === 5 ? 'max-w-4xl' : 'max-w-xl'}`}>
+                <div className={`w-full transition-all duration-500 ${step === 5 ? 'max-w-4xl' : step === 2 ? 'max-w-2xl' : 'max-w-xl'}`}>
                     {/* Progress Bar */}
                     <div className="flex items-center gap-2 mb-12">
                         {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s) => (
@@ -244,7 +337,7 @@ export default function BusinessOnboardingPage() {
                             <>
                                 <div>
                                     <h1 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight font-display">Tell us about your business</h1>
-                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed">The basics — we'll use AI to build the rest of your profile.</p>
+                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed">The basics — our AI assistant will chat with you to build the rest.</p>
                                 </div>
                                 <div className="space-y-6">
                                     <div className="bg-zinc-50 p-6 rounded-[32px] border border-zinc-100 space-y-6">
@@ -363,7 +456,7 @@ export default function BusinessOnboardingPage() {
                         )}
 
                         {/* ═══════════════════════════════════════════════ */}
-                        {/* STEP 2: AI Q&A                                 */}
+                        {/* STEP 2: AI CHAT                                */}
                         {/* ═══════════════════════════════════════════════ */}
                         {step === 2 && (
                             <>
@@ -372,58 +465,77 @@ export default function BusinessOnboardingPage() {
                                         <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-400 rounded-2xl flex items-center justify-center">
                                             <Sparkles className="w-5 h-5 text-white" />
                                         </div>
-                                        <h1 className="text-4xl font-black text-zinc-900 tracking-tight font-display">Tell us a bit more</h1>
+                                        <h1 className="text-3xl font-black text-zinc-900 tracking-tight font-display">Chat with your AI assistant</h1>
                                     </div>
-                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed">Quick questions so AI can write your profile. Just tap to answer.</p>
+                                    <p className="text-base text-zinc-500 font-medium leading-relaxed">Answer a few quick questions and we&apos;ll write your entire profile for you.</p>
                                 </div>
 
-                                <div className="space-y-8">
-                                    {/* Years */}
-                                    <div>
-                                        <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-4">How long have you been in business?</label>
-                                        <div className="flex flex-wrap gap-2">
-                                            {YEARS_OPTIONS.map(y => (
-                                                <button
-                                                    key={y}
-                                                    type="button"
-                                                    onClick={() => setFormData({ ...formData, years_experience: y })}
-                                                    className={`px-5 py-3 rounded-full text-sm font-bold transition-all ${formData.years_experience === y ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}
-                                                >
-                                                    {y}
-                                                </button>
-                                            ))}
-                                        </div>
+                                {/* Chat Container */}
+                                <div className="bg-zinc-50 rounded-[28px] border border-zinc-100 overflow-hidden">
+                                    {/* Messages */}
+                                    <div className="h-[400px] overflow-y-auto p-6 space-y-4">
+                                        {chatMessages.map((msg, i) => (
+                                            <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'assistant' ? 'bg-gradient-to-br from-orange-500 to-amber-400' : 'bg-zinc-900'}`}>
+                                                    {msg.role === 'assistant' ? (
+                                                        <Bot className="w-4 h-4 text-white" />
+                                                    ) : (
+                                                        <User className="w-4 h-4 text-white" />
+                                                    )}
+                                                </div>
+                                                <div className={`max-w-[80%] px-5 py-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'assistant' ? 'bg-white border border-zinc-200 text-zinc-700' : 'bg-zinc-900 text-white'}`}>
+                                                    {msg.content}
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {isChatting && (
+                                            <div className="flex gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center shrink-0">
+                                                    <Bot className="w-4 h-4 text-white" />
+                                                </div>
+                                                <div className="bg-white border border-zinc-200 px-5 py-3 rounded-2xl">
+                                                    <div className="flex gap-1.5">
+                                                        <div className="w-2 h-2 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                                        <div className="w-2 h-2 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                                        <div className="w-2 h-2 bg-zinc-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div ref={chatEndRef} />
                                     </div>
 
-                                    {/* Specialty */}
-                                    <div>
-                                        <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-4">What&apos;s your specialty or focus?</label>
-                                        <input
-                                            type="text"
-                                            value={formData.specialty}
-                                            onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
-                                            placeholder={`e.g. Hot water systems, Gas fitting, Bathroom renos...`}
-                                            className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300"
-                                        />
-                                    </div>
-
-                                    {/* Highlights */}
-                                    <div>
-                                        <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-4">What makes you stand out? <span className="text-zinc-300 normal-case">(pick all that apply)</span></label>
-                                        <div className="flex flex-wrap gap-2">
-                                            {HIGHLIGHT_OPTIONS.map(h => (
-                                                <button
-                                                    key={h}
-                                                    type="button"
-                                                    onClick={() => toggleHighlight(h)}
-                                                    className={`px-4 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-1.5 ${formData.highlights.includes(h) ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}
+                                    {/* Input */}
+                                    {!chatDone && (
+                                        <div className="border-t border-zinc-200 p-4 bg-white">
+                                            <form onSubmit={(e) => { e.preventDefault(); sendChatMessage(); }} className="flex gap-3">
+                                                <input
+                                                    type="text"
+                                                    value={chatInput}
+                                                    onChange={(e) => setChatInput(e.target.value)}
+                                                    placeholder="Type your answer..."
+                                                    disabled={isChatting}
+                                                    className="flex-1 px-5 py-3 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium placeholder:text-zinc-300 disabled:opacity-50"
+                                                    autoFocus
+                                                />
+                                                <Button
+                                                    type="submit"
+                                                    disabled={!chatInput.trim() || isChatting}
+                                                    className="bg-zinc-900 hover:bg-black text-white rounded-2xl px-5 h-[46px] shadow-sm"
                                                 >
-                                                    {formData.highlights.includes(h) && <Check className="w-3.5 h-3.5" />}
-                                                    {h}
-                                                </button>
-                                            ))}
+                                                    <Send className="w-4 h-4" />
+                                                </Button>
+                                            </form>
                                         </div>
-                                    </div>
+                                    )}
+
+                                    {/* Done indicator */}
+                                    {chatDone && (
+                                        <div className="border-t border-green-200 p-4 bg-green-50 flex items-center gap-3">
+                                            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+                                            <p className="text-sm font-medium text-green-800">Conversation complete — click &quot;Generate My Profile&quot; to continue</p>
+                                        </div>
+                                    )}
                                 </div>
                             </>
                         )}
@@ -511,7 +623,10 @@ export default function BusinessOnboardingPage() {
                                             <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 block">Business Highlights</label>
                                             <div className="flex flex-wrap gap-2">
                                                 {formData.features.map((f, i) => (
-                                                    <span key={i} className="px-4 py-2 bg-orange-50 border border-orange-200 rounded-full text-sm font-bold text-orange-700">{f}</span>
+                                                    <span key={i} className="px-4 py-2 bg-orange-50 border border-orange-200 rounded-full text-sm font-bold text-orange-700 flex items-center gap-2">
+                                                        {f}
+                                                        <button type="button" onClick={() => setFormData(prev => ({ ...prev, features: prev.features.filter((_, idx) => idx !== i) }))} className="text-orange-300 hover:text-red-500"><X className="w-3.5 h-3.5" /></button>
+                                                    </span>
                                                 ))}
                                             </div>
                                         </div>
@@ -739,17 +854,27 @@ export default function BusinessOnboardingPage() {
                                     <ChevronLeft className="w-5 h-5 mr-2" /> Back
                                 </Button>
                             )}
-                            <Button
-                                onClick={handleNext}
-                                disabled={isLoading || isGenerating || (step === 4 && formData.referral_fee_cents < 300) || isUploadingMedia}
-                                className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
-                            >
-                                {isLoading ? 'Completing...' : isGenerating ? (
-                                    <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating profile...</>
-                                ) : step === 6 ? 'Go to Dashboard' : step === 2 ? (
-                                    <><Sparkles className="w-5 h-5 mr-2" /> Generate My Profile</>
-                                ) : 'Continue'} {!isGenerating && !isLoading && <ChevronRight className="ml-2 w-6 h-6" />}
-                            </Button>
+                            {step === 2 ? (
+                                <Button
+                                    onClick={handleNext}
+                                    disabled={!chatDone || isGenerating}
+                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
+                                >
+                                    {isGenerating ? (
+                                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating profile...</>
+                                    ) : (
+                                        <><Sparkles className="w-5 h-5 mr-2" /> Generate My Profile <ChevronRight className="ml-2 w-6 h-6" /></>
+                                    )}
+                                </Button>
+                            ) : (
+                                <Button
+                                    onClick={handleNext}
+                                    disabled={isLoading || isGenerating || (step === 4 && formData.referral_fee_cents < 300) || isUploadingMedia}
+                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
+                                >
+                                    {isLoading ? 'Completing...' : step === 6 ? 'Go to Dashboard' : 'Continue'} <ChevronRight className="ml-2 w-6 h-6" />
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
