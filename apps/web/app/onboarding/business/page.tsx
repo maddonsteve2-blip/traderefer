@@ -90,6 +90,21 @@ export default function BusinessOnboardingPage() {
     const [tweakInput, setTweakInput] = useState("");
     const chatEndRef = useRef<HTMLDivElement>(null);
 
+    // Strip markdown from AI messages
+    const stripMarkdown = (text: string): string => {
+        return text
+            .replace(/#{1,6}\s+/g, '')       // headings
+            .replace(/\*\*(.+?)\*\*/g, '$1') // bold
+            .replace(/\*(.+?)\*/g, '$1')     // italic
+            .replace(/__(.+?)__/g, '$1')      // bold alt
+            .replace(/_(.+?)_/g, '$1')        // italic alt
+            .replace(/^[\s]*[-•]\s+/gm, '• ') // normalize bullets to plain dot
+            .replace(/^[\s]*\d+\.\s+/gm, '')  // numbered lists
+            .replace(/```[\s\S]*?```/g, '')   // code blocks
+            .replace(/`(.+?)`/g, '$1')        // inline code
+            .trim();
+    };
+
     // Parse suggestion chips from AI messages
     const [selectedSuggestions, setSelectedSuggestions] = useState<Set<string>>(new Set());
     const parseSuggestions = (text: string): { message: string; suggestions: string[] } => {
@@ -523,7 +538,9 @@ Respond with ONLY a JSON object (no markdown, no code fences) shaped exactly lik
                                     <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 min-h-[200px]">
                                         {chatMessages.map((msg, i) => {
                                             const isAssistant = msg.role === 'assistant';
-                                            const { message: displayText, suggestions } = isAssistant ? parseSuggestions(msg.content) : { message: msg.content, suggestions: [] };
+                                            const parsed = isAssistant ? parseSuggestions(msg.content) : { message: msg.content, suggestions: [] };
+                                            const displayText = isAssistant ? stripMarkdown(parsed.message) : parsed.message;
+                                            const suggestions = parsed.suggestions;
                                             const isLastAssistant = isAssistant && i === chatMessages.length - 1;
                                             return (
                                                 <div key={i} className="space-y-2">
