@@ -7,6 +7,9 @@ from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
 import uuid
 import random
+import os
+import httpx
+import json
 
 router = APIRouter()
 
@@ -157,141 +160,117 @@ async def delete_deal(
     return {"message": "Deal deleted"}
 
 
-# ── AI Deal Generator ──────────────────────────────────────────
+# ── AI Deal Generator (Z.AI GLM Coding API) ───────────────────
 
-# Templates organized by trade category and deal type
-DEAL_TEMPLATES = {
-    "discount": [
-        {
-            "title": "{pct}% Off Your First {service}",
-            "description": "New customers get {pct}% off their first {service_lower} job when referred through TradeRefer. Quality work, great price.",
-            "discount_text": "{pct}% off first job",
-        },
-        {
-            "title": "Save ${amount} on {service} This Month",
-            "description": "Book this month and save ${amount} on any {service_lower} work. Referred customers only — mention TradeRefer when you call.",
-            "discount_text": "${amount} off this month",
-        },
-    ],
-    "free_service": [
-        {
-            "title": "Free Quote + Priority Booking",
-            "description": "Get a free on-site quote and jump the queue with priority booking. Referred customers are always our top priority.",
-            "discount_text": "Free quote + priority booking",
-        },
-        {
-            "title": "Free {addon} with Any Job Over ${min}",
-            "description": "Book a {service_lower} job over ${min} and get a free {addon_lower}. Available exclusively for TradeRefer referrals.",
-            "discount_text": "Free {addon_lower} on jobs ${min}+",
-        },
-    ],
-    "seasonal": [
-        {
-            "title": "{season} {service} Special",
-            "description": "Beat the {season_lower} rush! Book your {service_lower} now and get {pct}% off. Limited spots available — referred customers served first.",
-            "discount_text": "{pct}% off {season_lower} bookings",
-        },
-        {
-            "title": "End of {season} Clearance — {service}",
-            "description": "Last chance for {season_lower} pricing on {service_lower}. Referred customers save an extra ${amount}. Book before spots fill up.",
-            "discount_text": "Extra ${amount} off — ends soon",
-        },
-    ],
-    "bundle": [
-        {
-            "title": "Complete {service} Package Deal",
-            "description": "Get the full {service_lower} package — inspection, quote, and job done right. Referred customers get a bundled rate that saves up to {pct}%.",
-            "discount_text": "Up to {pct}% off bundled service",
-        },
-        {
-            "title": "Refer a Friend, Both Save",
-            "description": "When your referral books a job, they save ${amount} and you earn a reward. Everyone wins with {business_name}.",
-            "discount_text": "${amount} off for referred customers",
-        },
-    ],
-}
-
-TRADE_ADDONS = {
-    "Plumbing": ["safety inspection", "tap washer replacement", "drain check", "hot water system check"],
-    "Electrical": ["safety switch test", "smoke alarm check", "LED downlight upgrade", "powerpoint inspection"],
-    "Landscaping": ["garden design consultation", "soil test", "plant health check", "lawn assessment"],
-    "Painting": ["colour consultation", "small touch-up", "wallpaper removal quote", "paint sample test"],
-    "Carpentry": ["measurement and quote", "timber consultation", "hardware selection", "minor repair"],
-    "Roofing": ["roof inspection", "gutter clean", "leak assessment", "roof report"],
-    "Cleaning": ["oven deep clean", "window wash", "carpet spot treatment", "fridge clean"],
-    "Building": ["site inspection", "feasibility assessment", "3D render", "council advice"],
-}
-
-SEASONS = ["Summer", "Autumn", "Winter", "Spring"]
+ZAI_API_KEY = os.getenv("ZAI_API_KEY", "")
+ZAI_CODING_URL = "https://api.z.ai/api/coding/paas/v4/chat/completions"
 
 
-def _generate_deals(business_name: str, trade_category: str, description: str = None, hint: str = None):
-    """Generate 3 AI-powered deal suggestions based on business context."""
+async def _generate_deals_ai(business_name: str, trade_category: str, description: str = None, hint: str = None):
+    """Generate 3 deal suggestions using Z.AI GLM coding model."""
+
+    hint_part = f'\nThe business owner wants deals focused on: "{hint}"' if hint else ""
+    desc_part = f"\nBusiness description: {description}" if description else ""
+
+    prompt = f"""You are a marketing expert for Australian trade businesses on the TradeRefer referral platform.
+
+Generate exactly 3 unique, compelling deal/offer suggestions for this business:
+- Business name: {business_name}
+- Trade category: {trade_category}{desc_part}{hint_part}
+
+These deals will be shared by referrers to attract new customers. Make them specific to the trade, realistic, and appealing. Use Australian English and AUD currency.
+
+Return ONLY a valid JSON array with exactly 3 objects. Each object must have these exact keys:
+- "title": Short catchy deal headline (max 60 chars)
+- "description": 1-2 sentence description of the offer (max 200 chars)  
+- "discount_text": Short badge text for the deal card (max 40 chars, e.g. "15% off first job")
+- "terms": One sentence about redemption terms
+
+Return ONLY the JSON array, no markdown, no code fences, no explanation."""
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                ZAI_CODING_URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {ZAI_API_KEY}"
+                },
+                json={
+                    "model": "glm-5",
+                    "messages": [
+                        {"role": "system", "content": "You are a JSON API that returns only valid JSON arrays. Never include markdown formatting or code fences."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    "temperature": 0.8,
+                    "stream": False
+                }
+            )
+
+            if response.status_code != 200:
+                print(f"Z.AI API error: {response.status_code} - {response.text}")
+                return None
+
+            data = response.json()
+            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+            # Clean up response — strip markdown fences if present
+            content = content.strip()
+            if content.startswith("```"):
+                content = content.split("\n", 1)[-1]
+            if content.endswith("```"):
+                content = content.rsplit("```", 1)[0]
+            content = content.strip()
+
+            suggestions = json.loads(content)
+
+            # Validate structure
+            if not isinstance(suggestions, list) or len(suggestions) == 0:
+                return None
+
+            validated = []
+            for s in suggestions[:3]:
+                validated.append({
+                    "title": str(s.get("title", ""))[:60],
+                    "description": str(s.get("description", ""))[:200],
+                    "discount_text": str(s.get("discount_text", ""))[:40],
+                    "terms": str(s.get("terms", f"Available for TradeRefer referrals only. Contact {business_name} to redeem."))
+                })
+            return validated
+
+    except Exception as e:
+        print(f"Z.AI generation error: {e}")
+        return None
+
+
+def _generate_deals_fallback(business_name: str, trade_category: str, hint: str = None):
+    """Fallback template-based generator if AI is unavailable."""
     service = trade_category
     service_lower = trade_category.lower()
-    addons = TRADE_ADDONS.get(trade_category, ["consultation", "inspection", "assessment", "check-up"])
+    pcts = [10, 15, 20]
+    amounts = [25, 50, 75]
 
-    # Pick deal types based on hint or random
-    if hint:
-        hint_lower = hint.lower()
-        if "discount" in hint_lower or "percent" in hint_lower or "%" in hint_lower:
-            deal_types = ["discount", "discount", "bundle"]
-        elif "free" in hint_lower:
-            deal_types = ["free_service", "free_service", "discount"]
-        elif "season" in hint_lower or "summer" in hint_lower or "winter" in hint_lower:
-            deal_types = ["seasonal", "seasonal", "discount"]
-        elif "bundle" in hint_lower or "package" in hint_lower:
-            deal_types = ["bundle", "bundle", "free_service"]
-        else:
-            deal_types = ["discount", "free_service", "seasonal"]
-    else:
-        deal_types = ["discount", "free_service", random.choice(["seasonal", "bundle"])]
-
-    results = []
-    used_templates = set()
-
-    for dtype in deal_types:
-        templates = DEAL_TEMPLATES.get(dtype, DEAL_TEMPLATES["discount"])
-        # Pick a template we haven't used yet
-        available = [i for i in range(len(templates)) if f"{dtype}_{i}" not in used_templates]
-        if not available:
-            available = list(range(len(templates)))
-        idx = random.choice(available)
-        used_templates.add(f"{dtype}_{idx}")
-        template = templates[idx]
-
-        pct = random.choice([10, 15, 20])
-        amount = random.choice([25, 50, 75, 100])
-        min_amount = random.choice([200, 300, 500])
-        addon = random.choice(addons)
-        season = random.choice(SEASONS)
-
-        replacements = {
-            "{business_name}": business_name,
-            "{service}": service,
-            "{service_lower}": service_lower,
-            "{pct}": str(pct),
-            "{amount}": str(amount),
-            "{min}": str(min_amount),
-            "{addon}": addon.title(),
-            "{addon_lower}": addon.lower(),
-            "{season}": season,
-            "{season_lower}": season.lower(),
-        }
-
-        def apply(text):
-            for k, v in replacements.items():
-                text = text.replace(k, v)
-            return text
-
-        results.append({
-            "title": apply(template["title"]),
-            "description": apply(template["description"]),
-            "discount_text": apply(template["discount_text"]),
+    templates = [
+        {
+            "title": f"{random.choice(pcts)}% Off Your First {service} Job",
+            "description": f"New customers get a discount on their first {service_lower} job when referred through TradeRefer.",
+            "discount_text": f"{random.choice(pcts)}% off first job",
             "terms": f"Available for TradeRefer referrals only. Contact {business_name} to redeem.",
-        })
-
-    return results
+        },
+        {
+            "title": f"Free Quote + Priority Booking",
+            "description": f"Get a free on-site quote and jump the queue with priority booking from {business_name}.",
+            "discount_text": "Free quote + priority",
+            "terms": f"Mention TradeRefer when you call {business_name}.",
+        },
+        {
+            "title": f"Save ${random.choice(amounts)} on {service} This Month",
+            "description": f"Book this month and save on any {service_lower} work. Referred customers only.",
+            "discount_text": f"${random.choice(amounts)} off this month",
+            "terms": f"Available for TradeRefer referrals only. Contact {business_name} to redeem.",
+        },
+    ]
+    return templates
 
 
 @router.post("/deals/generate")
@@ -299,11 +278,23 @@ async def generate_deals_ai(
     data: AIGenerateRequest,
     user: AuthenticatedUser = Depends(get_current_user)
 ):
-    """Generate AI-powered deal suggestions based on business context."""
-    suggestions = _generate_deals(
+    """Generate AI-powered deal suggestions using Z.AI GLM model, with template fallback."""
+
+    # Try Z.AI first if API key is configured
+    if ZAI_API_KEY:
+        suggestions = await _generate_deals_ai(
+            business_name=data.business_name,
+            trade_category=data.trade_category,
+            description=data.description,
+            hint=data.prompt_hint
+        )
+        if suggestions:
+            return {"suggestions": suggestions, "source": "ai"}
+
+    # Fallback to templates
+    suggestions = _generate_deals_fallback(
         business_name=data.business_name,
         trade_category=data.trade_category,
-        description=data.description,
         hint=data.prompt_hint
     )
-    return {"suggestions": suggestions}
+    return {"suggestions": suggestions, "source": "template"}

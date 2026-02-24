@@ -52,6 +52,7 @@ export default function BusinessDealsPage() {
     const [aiHint, setAiHint] = useState("");
     const [aiSuggestions, setAiSuggestions] = useState<AISuggestion[]>([]);
     const [aiLoading, setAiLoading] = useState(false);
+    const [aiSource, setAiSource] = useState<"ai" | "template" | null>(null);
 
     // Manual create state
     const [showCreate, setShowCreate] = useState(false);
@@ -124,6 +125,7 @@ export default function BusinessDealsPage() {
             if (res.ok) {
                 const data = await res.json();
                 setAiSuggestions(data.suggestions);
+                setAiSource(data.source || "template");
             } else {
                 toast.error("Failed to generate suggestions.");
             }
@@ -298,7 +300,14 @@ export default function BusinessDealsPage() {
                         {aiSuggestions.length > 0 && (
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <p className="text-sm font-bold text-purple-600 uppercase tracking-wider">Pick a suggestion to customise</p>
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-sm font-bold text-purple-600 uppercase tracking-wider">Pick a suggestion to customise</p>
+                                        {aiSource === "ai" && (
+                                            <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-sm font-bold flex items-center gap-1">
+                                                <Sparkles className="w-3 h-3" /> AI-Powered
+                                            </span>
+                                        )}
+                                    </div>
                                     <button onClick={generateAI} className="text-sm font-bold text-purple-500 hover:text-purple-700 flex items-center gap-1 transition-colors">
                                         <RefreshCw className="w-3.5 h-3.5" /> Regenerate
                                     </button>
