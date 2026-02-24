@@ -283,17 +283,17 @@ export default async function PublicProfilePage({
                             <h4 className="font-bold text-zinc-900 mb-4 font-display">Share this Profile</h4>
                             <div className="flex justify-center gap-2">
                                 <Button asChild variant="outline" size="icon" className="rounded-full w-12 h-12 bg-white border-zinc-200 text-zinc-600 hover:text-orange-500 hover:border-orange-200 shadow-sm transition-all hover:scale-110">
-                                    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://traderefer.com/b/${slug}`)}`} target="_blank" rel="noopener noreferrer">
+                                    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://traderefer.au/b/${slug}`)}`} target="_blank" rel="noopener noreferrer">
                                         <Facebook className="w-5 h-5" />
                                     </a>
                                 </Button>
                                 <Button asChild variant="outline" size="icon" className="rounded-full w-12 h-12 bg-white border-zinc-200 text-zinc-600 hover:text-orange-500 hover:border-orange-200 shadow-sm transition-all hover:scale-110">
-                                    <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://traderefer.com/b/${slug}`)}&text=${encodeURIComponent(`Need a verified ${business.trade_category}? Check out ${business.business_name}!`)}`} target="_blank" rel="noopener noreferrer">
+                                    <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://traderefer.au/b/${slug}`)}&text=${encodeURIComponent(`Need a verified ${business.trade_category}? Check out ${business.business_name}!`)}`} target="_blank" rel="noopener noreferrer">
                                         <Twitter className="w-5 h-5" />
                                     </a>
                                 </Button>
                                 <Button asChild variant="outline" size="icon" className="rounded-full w-12 h-12 bg-white border-zinc-200 text-zinc-600 hover:text-orange-500 hover:border-orange-200 shadow-sm transition-all hover:scale-110">
-                                    <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://traderefer.com/b/${slug}`)}`} target="_blank" rel="noopener noreferrer">
+                                    <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://traderefer.au/b/${slug}`)}`} target="_blank" rel="noopener noreferrer">
                                         <Linkedin className="w-5 h-5" />
                                     </a>
                                 </Button>

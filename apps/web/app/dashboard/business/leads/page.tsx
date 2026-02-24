@@ -72,7 +72,7 @@ export default async function BusinessLeadsPage() {
                             Encourage your customers to share your unique referral link to drive more high-quality, verified leads.
                         </p>
                         <Button asChild variant="outline" className="rounded-full border-zinc-200 px-8">
-                            <Link href="/dashboard/business/settings">View My Referral Link</Link>
+                            <Link href="/dashboard/business">Share My Invite Link</Link>
                         </Button>
                     </div>
                 )}

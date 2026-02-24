@@ -81,8 +81,8 @@ export default function SupportPage() {
                             </div>
                             <h3 className="text-xl font-bold text-zinc-900 mb-2">Email Support</h3>
                             <p className="text-zinc-500 mb-4 font-medium">We aim to respond to all inquiries within 24 hours.</p>
-                            <a href="mailto:support@traderefer.com" className="text-lg font-bold text-orange-600 hover:text-orange-700 transition-colors">
-                                support@traderefer.com
+                            <a href="mailto:support@traderefer.au" className="text-lg font-bold text-orange-600 hover:text-orange-700 transition-colors">
+                                support@traderefer.au
                             </a>
                         </Card>
 
@@ -94,8 +94,8 @@ export default function SupportPage() {
                                 </div>
                                 <h3 className="text-xl font-bold mb-2 font-display">FAQ & Guides</h3>
                                 <p className="text-zinc-400 mb-6 leading-relaxed">Check out our help center for quick answers to common questions about payouts, lead verification, and more.</p>
-                                <Button variant="outline" className="w-full rounded-full bg-transparent border-zinc-700 text-white hover:bg-white hover:text-zinc-900 transition-colors">
-                                    Visit Help Center
+                                <Button variant="outline" disabled className="w-full rounded-full bg-transparent border-zinc-700 text-zinc-500 cursor-not-allowed">
+                                    Help Center — Coming Soon
                                 </Button>
                             </div>
                         </Card>
@@ -191,9 +191,6 @@ export default function SupportPage() {
                 </div>
             </main>
 
-            <footer className="py-10 text-center border-t border-zinc-200 bg-white mt-auto">
-                <p className="text-zinc-400 font-medium">© {new Date().getFullYear()} TradeRefer. All rights reserved.</p>
-            </footer>
         </div>
     );
 }

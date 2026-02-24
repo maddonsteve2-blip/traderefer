@@ -13,6 +13,8 @@ import {
     ArrowRight,
     Rocket
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
+
 
 interface WelcomeTourProps {
     type: "business" | "referrer";
@@ -90,10 +92,7 @@ export function WelcomeTour({ type, onComplete }: WelcomeTourProps) {
             <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center relative z-10">
                 <div className="space-y-8 order-2 lg:order-1">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
-                            <Rocket className="w-6 h-6 text-white" />
-                        </div>
-                        <span className="font-black text-xl text-white tracking-tighter">TradeRefer</span>
+                        <Logo size="sm" variant="orange" />
                     </div>
 
                     <div key={step} className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-both">

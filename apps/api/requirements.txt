@@ -1,5 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
 python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
@@ -8,3 +8,6 @@ pydantic-settings
 httpx
 sqlalchemy
 asyncpg
+python-dotenv
+stripe
+boto3

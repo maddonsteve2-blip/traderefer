@@ -1,9 +1,10 @@
 import { SignIn } from "@clerk/nextjs";
 import {
-    Rocket,
     ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
+
 
 export default function LoginPage() {
     return (
@@ -12,10 +13,7 @@ export default function LoginPage() {
             <div className="md:w-1/2 bg-zinc-900 p-12 md:p-24 flex flex-col justify-between relative overflow-hidden">
                 <div className="relative z-10">
                     <Link href="/" className="flex items-center gap-2 mb-20 group">
-                        <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg shadow-orange-500/20">
-                            <Rocket className="w-6 h-6 text-white" />
-                        </div>
-                        <span className="font-black text-2xl text-white tracking-tighter">TradeRefer</span>
+                        <Logo size="md" variant="white" />
                     </Link>
 
                     <h1 className="text-5xl md:text-7xl font-black text-white mb-8 font-display tracking-tight">
@@ -46,7 +44,7 @@ export default function LoginPage() {
 
             {/* Right Side: Form */}
             <div className="md:w-1/2 p-8 flex items-center justify-center">
-                <SignIn fallbackRedirectUrl="/dashboard" signUpUrl="/register" />
+                <SignIn fallbackRedirectUrl="/dashboard" signUpUrl="/register" appearance={{ elements: { socialButtonsRoot: 'hidden', dividerRow: 'hidden' } }} />
             </div>
         </main>
     );

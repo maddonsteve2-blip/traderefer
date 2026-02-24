@@ -14,7 +14,6 @@ router = APIRouter()
 class ReferrerOnboarding(BaseModel):
     full_name: str
     phone: str
-    profession: str
     region: str
 
 @router.post("/onboarding")
@@ -36,9 +35,9 @@ async def onboarding(
     
     query = text("""
         INSERT INTO referrers (
-            user_id, full_name, email, phone, profession, region, status, stripe_account_id
+            user_id, full_name, email, phone, region, status, stripe_account_id
         ) VALUES (
-            :user_id, :full_name, :email, :phone, :profession, :region, 'active', :stripe_account_id
+            :user_id, :full_name, :email, :phone, :region, 'active', :stripe_account_id
         ) RETURNING id
     """)
     
@@ -48,7 +47,6 @@ async def onboarding(
             "full_name": data.full_name,
             "email": email,
             "phone": data.phone,
-            "profession": data.profession,
             "region": data.region,
             "stripe_account_id": f"acct_mock_ref_{user.id[:8]}"
         })

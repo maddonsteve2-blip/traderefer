@@ -1,10 +1,10 @@
 import { SignUp } from "@clerk/nextjs";
 import {
-    Rocket,
     Quote
 } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { Logo } from "@/components/Logo";
 
 export default function RegisterPage() {
     return (
@@ -13,10 +13,7 @@ export default function RegisterPage() {
             <div className="lg:w-5/12 bg-zinc-900 p-12 md:p-20 lg:p-24 flex flex-col justify-between relative overflow-hidden">
                 <div className="relative z-10">
                     <Link href="/" className="flex items-center gap-2 mb-16 group">
-                        <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg shadow-orange-500/20">
-                            <Rocket className="w-6 h-6 text-white" />
-                        </div>
-                        <span className="font-black text-2xl text-white tracking-tighter">TradeRefer</span>
+                        <Logo size="md" variant="white" />
                     </Link>
 
                     <div className="space-y-8">
@@ -60,7 +57,7 @@ export default function RegisterPage() {
             {/* Right Side: Registration Form */}
             <div className="lg:w-7/12 p-8 flex items-center justify-center bg-zinc-50">
                 <Suspense fallback={<div className="text-zinc-500 font-bold">Loading...</div>}>
-                    <SignUp fallbackRedirectUrl="/onboarding" signInUrl="/login" />
+                    <SignUp fallbackRedirectUrl="/onboarding" signInUrl="/login" appearance={{ elements: { socialButtonsRoot: 'hidden', dividerRow: 'hidden' } }} />
                 </Suspense>
             </div>
         </main>

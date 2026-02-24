@@ -271,7 +271,7 @@ export default function BusinessSettingsPage() {
                                     />
                                 </div>
                                 <p className="text-base text-zinc-600 ml-1 font-semibold">&#128161; Click the amount above to change your referral fee</p>
-                                
+
                                 <div className="p-4 bg-orange-50 border-2 border-orange-200 rounded-xl mt-3">
                                     <p className="text-base text-orange-900 font-bold leading-relaxed">
                                         &#128176; <span className="font-black">For Quality Leads:</span> We recommend setting your referral fee at <span className="font-black">$10 or higher</span> to encourage referrers to actively promote your business and send you high-quality leads.

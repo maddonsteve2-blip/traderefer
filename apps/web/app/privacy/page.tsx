@@ -60,7 +60,7 @@ export default function PrivacyPage() {
                                 <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
                                     <Shield className="w-6 h-6 text-orange-500 mb-4" />
                                     <div className="font-bold text-zinc-900 text-sm mb-2">Account Info</div>
-                                    <p className="text-sm text-zinc-500 font-medium">Name, email, and credentials via Neon Auth.</p>
+                                    <p className="text-sm text-zinc-500 font-medium">Name, email, and credentials via Clerk.</p>
                                 </div>
                                 <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
                                     <Eye className="w-6 h-6 text-blue-500 mb-4" />
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
                                 <div className="bg-zinc-900 text-white px-8 py-6 rounded-3xl flex-1 flex items-center justify-between">
                                     <div>
                                         <div className="text-base font-black text-zinc-500 uppercase tracking-widest mb-1">Auth Engine</div>
-                                        <div className="font-black text-lg">Neon Auth</div>
+                                        <div className="font-black text-lg">Clerk</div>
                                     </div>
                                     <ChevronRight className="w-5 h-5 text-orange-500" />
                                 </div>

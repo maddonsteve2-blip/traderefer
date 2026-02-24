@@ -49,7 +49,7 @@ export function StorefrontLinkCard({ slug, businessName }: StorefrontLinkCardPro
 
             <div className="flex items-center gap-2 p-3 bg-zinc-800 rounded-2xl mb-6 border border-zinc-700 relative z-10 transition-all hover:bg-zinc-700/50">
                 <div className="text-base text-zinc-300 truncate flex-1 font-mono tracking-tight">
-                    traderefer.com/b/{slug}
+                    traderefer.au/b/{slug}
                 </div>
                 <Button
                     onClick={handleCopy}

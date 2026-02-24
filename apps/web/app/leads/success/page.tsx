@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ChevronRight, MessageSquare, Phone } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/Logo";
+
 
 export default function LeadSuccessPage() {
     return (
@@ -50,9 +52,12 @@ export default function LeadSuccessPage() {
                     </div>
                 </div>
 
-                <p className="mt-8 text-zinc-400 text-sm italic">
-                    You'll receive a confirmation text message shortly.
-                </p>
+                <div className="mt-8 flex flex-col items-center gap-4">
+                    <Logo size="sm" showText={false} />
+                    <p className="text-zinc-400 text-sm italic">
+                        You'll receive a confirmation text message shortly.
+                    </p>
+                </div>
             </div>
         </main>
     );

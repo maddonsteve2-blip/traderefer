@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { TrendingUp, Wallet, Plus } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 import { TopUpDialog } from "@/components/dashboard/TopUpDialog";
+import { Logo } from "@/components/Logo";
 
 export function Navbar() {
     const pathname = usePathname();
@@ -27,7 +28,7 @@ export function Navbar() {
                 const data = await res.json();
                 setWalletBalance(data.wallet_balance_cents ?? 0);
             }
-        } catch {}
+        } catch { }
     };
 
     useEffect(() => {
@@ -45,10 +46,7 @@ export function Navbar() {
             <header className="fixed top-0 w-full border-b bg-white/80 backdrop-blur-md z-50">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center group-hover:bg-orange-600 transition-colors">
-                            <TrendingUp className="text-white w-5 h-5" />
-                        </div>
-                        <span className="text-xl font-bold tracking-tight text-zinc-900 font-display">TradeRefer</span>
+                        <Logo size="sm" />
                     </Link>
 
                     <nav className="flex items-center gap-4 md:gap-8">
@@ -145,19 +143,19 @@ export function Footer() {
         <footer className="bg-white border-t py-12">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="flex items-center gap-2">
-                        <TrendingUp className="text-orange-500 w-6 h-6" />
-                        <span className="text-lg font-bold font-display">TradeRefer</span>
-                    </div>
+                    <Link href="/" className="flex items-center gap-2">
+                        <Logo size="sm" />
+                    </Link>
 
                     <div className="flex gap-8 text-sm text-zinc-500">
                         <Link href="/privacy" className="hover:text-zinc-900 transition-colors">Privacy Policy</Link>
                         <Link href="/terms" className="hover:text-zinc-900 transition-colors">Terms</Link>
+                        <Link href="/support" className="hover:text-zinc-900 transition-colors">Support</Link>
                         <Link href="/contact" className="hover:text-zinc-900 transition-colors">Contact</Link>
                     </div>
 
                     <div className="text-sm text-zinc-400">
-                        © 2026 TradeRefer Pty Ltd | ABN: XX XXX XXX XXX
+                        © 2026 TradeRefer Pty Ltd
                     </div>
                 </div>
             </div>

@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { Logo } from "@/components/Logo";
+
 
 export default function Home() {
   return (
@@ -125,8 +127,8 @@ export default function Home() {
             <div className="bg-zinc-100 rounded-3xl p-4 rotate-3 shadow-xl">
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-200">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="text-white w-6 h-6" />
+                  <div className="w-10 h-10">
+                    <Logo size="sm" showText={false} />
                   </div>
                   <div>
                     <div className="font-bold text-zinc-900 line-clamp-1">Wallet Balance</div>

@@ -5,7 +5,6 @@ import {
     Zap,
     Star,
     ChevronRight,
-    Settings,
     Pencil,
     User,
     Image as ImageIcon,
@@ -24,6 +23,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { StorefrontLinkCard } from "@/components/dashboard/StorefrontLinkCard";
+import { InviteReferrersButton } from "@/components/dashboard/InviteReferrersButton";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -98,11 +98,7 @@ export default async function BusinessDashboardPage() {
                                 <User className="w-3.5 h-3.5" /> Edit Profile Media
                             </Link>
                         </Button>
-                        <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6 flex items-center gap-2 h-10 text-base font-bold shadow-md shadow-orange-200 transition-all active:scale-95">
-                            <Link href="/dashboard/business/settings" className="flex items-center gap-2">
-                                <Settings className="w-3.5 h-3.5" /> Account Settings
-                            </Link>
-                        </Button>
+                        <InviteReferrersButton businessName={business.name} slug={business.slug} />
                     </div>
                 </div>
 

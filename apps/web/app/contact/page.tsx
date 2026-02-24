@@ -25,7 +25,7 @@ export default function ContactPage() {
                                 <div>
                                     <div className="text-base font-black text-orange-500 uppercase tracking-widest mb-1">Office Hours</div>
                                     <div className="font-bold text-zinc-900">Mon — Fri, 9AM — 5PM AEST</div>
-                                    <div className="text-xs text-zinc-400 font-medium">Melborne / Sydney Local Time</div>
+                                    <div className="text-xs text-zinc-400 font-medium">Melbourne / Sydney Local Time</div>
                                 </div>
                             </div>
 
@@ -104,7 +104,7 @@ export default function ContactPage() {
                         <div className="mt-8 flex items-center justify-center gap-6">
                             <div className="flex items-center gap-2 text-zinc-400 text-sm font-bold">
                                 <Mail className="w-4 h-4 text-zinc-300" />
-                                support@traderefer.com.au
+                                support@traderefer.au
                             </div>
                         </div>
                     </div>

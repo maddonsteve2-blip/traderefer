@@ -21,12 +21,15 @@ import {
     Image as ImageIcon,
     X
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { ImageUpload } from "@/components/ImageUpload";
+import { TRADE_CATEGORIES } from "@/lib/constants";
 
 export default function BusinessOnboardingPage() {
     const [step, setStep] = useState(1);
@@ -129,12 +132,9 @@ export default function BusinessOnboardingPage() {
         <main className="min-h-screen bg-white flex flex-col">
             {/* Simple Header */}
             <header className="p-6 flex justify-between items-center border-b border-zinc-100 bg-white sticky top-0 z-50">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-zinc-900 rounded-lg flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-white" />
-                    </div>
-                    <span className="font-black text-xl tracking-tighter">TradeRefer</span>
-                </div>
+                <Link href="/">
+                    <Logo size="sm" />
+                </Link>
                 <Link href="/support" className="text-sm font-bold text-zinc-400 hover:text-zinc-900 transition-colors">
                     Contact Support
                 </Link>
@@ -217,7 +217,7 @@ export default function BusinessOnboardingPage() {
                                                 </div>
                                             </div>
                                             <p className="mt-2 text-sm font-bold text-zinc-400 uppercase tracking-wider">
-                                                Your profile will be at: <span className="text-zinc-900 lowercase">traderefer.com/b/{formData.slug || '...'}</span>
+                                                Your profile will be at: <span className="text-zinc-900 lowercase">traderefer.au/b/{formData.slug || '...'}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -232,11 +232,9 @@ export default function BusinessOnboardingPage() {
                                                 onChange={(e) => setFormData({ ...formData, trade_category: e.target.value })}
                                                 className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium appearance-none"
                                             >
-                                                <option>Plumbing</option>
-                                                <option>Electrical</option>
-                                                <option>Carpentry</option>
-                                                <option>Landscaping</option>
-                                                <option>Roofing</option>
+                                                {TRADE_CATEGORIES.map((cat) => (
+                                                    <option key={cat} value={cat}>{cat}</option>
+                                                ))}
                                             </select>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -341,8 +339,8 @@ export default function BusinessOnboardingPage() {
 
                                     <div className="bg-white p-8 rounded-[32px] border border-zinc-100 shadow-sm space-y-8">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center">
-                                                <TrendingUp className="w-5 h-5 text-orange-600" />
+                                            <div className="w-10 h-10 flex items-center justify-center">
+                                                <Logo size="sm" variant="icon-only" />
                                             </div>
                                             <div>
                                                 <h3 className="font-bold text-zinc-900">Referrer Reward</h3>
@@ -456,7 +454,7 @@ export default function BusinessOnboardingPage() {
                                                 <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                                                 <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
                                                 <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                                                <span className="text-zinc-500 text-xs font-mono ml-3 truncate">traderefer.com/b/{formData.slug || '...'}</span>
+                                                <span className="text-zinc-500 text-xs font-mono ml-3 truncate">traderefer.au/b/{formData.slug || '...'}</span>
                                             </div>
 
                                             <div className="p-8 space-y-6">

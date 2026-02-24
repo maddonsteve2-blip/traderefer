@@ -23,6 +23,7 @@ import { useDropzone } from "react-dropzone";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/ImageUpload";
+import { TRADE_CATEGORIES } from "@/lib/constants";
 import {
     Dialog,
     DialogContent,
@@ -367,14 +368,9 @@ export default function BusinessProfileManagementPage() {
                                                 value={formData.trade_category}
                                                 onChange={(e) => setFormData({ ...formData, trade_category: e.target.value })}
                                             >
-                                                <option value="Plumbing">Plumbing</option>
-                                                <option value="Electrical">Electrical</option>
-                                                <option value="Carpentry">Carpentry</option>
-                                                <option value="Landscaping">Landscaping</option>
-                                                <option value="Roofing">Roofing</option>
-                                                <option value="Painting">Painting</option>
-                                                <option value="Cleaning">Cleaning</option>
-                                                <option value="Building">Building</option>
+                                                {TRADE_CATEGORIES.map((cat) => (
+                                                    <option key={cat} value={cat}>{cat}</option>
+                                                ))}
                                             </select>
                                         </div>
                                         <div>
