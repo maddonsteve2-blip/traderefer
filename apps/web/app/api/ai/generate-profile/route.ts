@@ -3,7 +3,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 
 const zai = createOpenAI({
     apiKey: process.env.ZAI_API_KEY,
-    baseURL: "https://api.z.ai/api/coding/paas/v4/",
+    baseURL: "https://api.z.ai/api/coding/paas/v4",
 });
 
 export async function POST(req: Request) {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         const { conversation } = body;
 
         const { text } = await generateText({
-            model: zai("glm-5"),
+            model: zai.chat("glm-5"),
             messages: conversation,
         });
 

@@ -3,7 +3,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 
 const zai = createOpenAI({
     apiKey: process.env.ZAI_API_KEY,
-    baseURL: "https://api.z.ai/api/coding/paas/v4/",
+    baseURL: "https://api.z.ai/api/coding/paas/v4",
 });
 
 export async function POST(req: Request) {
@@ -30,7 +30,7 @@ RULES:
 - When you have enough info, your final message MUST include the exact phrase "I've got everything I need" — this is the signal that the conversation is done.`;
 
         const { text } = await generateText({
-            model: zai("glm-5"),
+            model: zai.chat("glm-5"),
             system: systemPrompt,
             messages,
         });
