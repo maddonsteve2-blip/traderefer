@@ -63,6 +63,16 @@ export default async function PublicProfilePage({
             <div className="bg-zinc-900 pt-24 pb-16 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-orange-500/10 blur-[120px] rounded-full" />
                 <div className="container mx-auto px-4 relative z-10">
+                    <div className="flex items-center gap-4 mb-8">
+                        <Link href="/businesses" className="inline-flex items-center gap-2 text-zinc-500 hover:text-orange-400 transition-colors group">
+                            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            <span className="text-sm font-bold">Directory</span>
+                        </Link>
+                        <span className="text-zinc-700">·</span>
+                        <Link href={`/b/${slug}/refer`} className="inline-flex items-center gap-2 text-zinc-500 hover:text-orange-400 transition-colors">
+                            <span className="text-sm font-bold">Refer This Business</span>
+                        </Link>
+                    </div>
                     <div className="flex flex-col md:flex-row items-center gap-8">
                         <div className="w-32 h-32 md:w-40 md:h-40 bg-zinc-800 rounded-[40px] border border-zinc-700 flex items-center justify-center text-4xl font-black text-orange-500 shadow-2xl overflow-hidden relative">
                             {business.logo_url ? (

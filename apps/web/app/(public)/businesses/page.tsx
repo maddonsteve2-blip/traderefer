@@ -7,6 +7,7 @@ import { BusinessDirectoryFilters } from "@/components/BusinessDirectoryFilters"
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
+import { BackToDashboard } from "@/components/BackToDashboard";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,7 @@ export default async function BusinessDirectory({
     return (
         <main className="flex-1 pt-24 pb-12 bg-zinc-50 min-h-screen">
             <div className="container mx-auto px-4">
+                <BackToDashboard />
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-zinc-900 mb-2 font-display">Business Directory</h1>

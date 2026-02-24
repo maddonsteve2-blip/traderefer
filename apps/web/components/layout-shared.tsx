@@ -51,13 +51,12 @@ export function Navbar() {
                     </Link>
 
                     <nav className="flex items-center gap-4 md:gap-8">
-                        {!isDashboard && (
-                            <Link href="/businesses" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors">
-                                Browse Businesses
-                            </Link>
-                        )}
-
                         <SignedOut>
+                            {!isDashboard && (
+                                <Link href="/businesses" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors">
+                                    Browse Businesses
+                                </Link>
+                            )}
                             <SignInButton mode="modal">
                                 <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900">
                                     Sign In
@@ -155,11 +154,18 @@ export function Navbar() {
                                     )}
                                 </>
                             ) : (
-                                <Link href="/dashboard" className="hidden sm:block">
-                                    <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-6 font-bold">
-                                        Dashboard
-                                    </Button>
-                                </Link>
+                                <>
+                                    <Link href="/businesses" className="hidden sm:block">
+                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                            Find Businesses
+                                        </Button>
+                                    </Link>
+                                    <Link href="/dashboard" className="hidden sm:block">
+                                        <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-6 font-bold">
+                                            My Dashboard
+                                        </Button>
+                                    </Link>
+                                </>
                             )}
                             <UserButton afterSignOutUrl="/" />
                         </SignedIn>

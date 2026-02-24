@@ -133,7 +133,7 @@ export default async function ReferrerDashboardPage() {
                                         <div className="text-base font-bold text-orange-300 uppercase">Earned</div>
                                     </div>
                                     <Button asChild variant="ghost" size="icon" className="rounded-full hover:bg-white text-zinc-400 hover:text-orange-600">
-                                        <Link href={`/businesses/${link.slug}`}>
+                                        <Link href={`/b/${link.slug}/refer`}>
                                             <ExternalLink className="w-4 h-4" />
                                         </Link>
                                     </Button>
