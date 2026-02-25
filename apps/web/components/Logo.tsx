@@ -18,12 +18,11 @@ const sizeMap = {
 function LogoIcon({ size = 28, alt = "TradeRefer" }: { size?: number; alt?: string }) {
     return (
         <Image
-            src="/logo.png"
+            src="/logo.svg"
             alt={alt}
             width={size}
             height={size}
             className="rounded-lg"
-            unoptimized
             priority
         />
     );

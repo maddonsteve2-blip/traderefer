@@ -54,9 +54,17 @@ export function Navbar() {
                     <nav className="flex items-center gap-4 md:gap-8">
                         <SignedOut>
                             {!isDashboard && (
-                                <Link href="/businesses" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors">
-                                    Browse Businesses
-                                </Link>
+                                <>
+                                    <Link href="/businesses" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors">
+                                        Browse Businesses
+                                    </Link>
+                                    <Link href="/support" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors">
+                                        Support
+                                    </Link>
+                                    <Link href="/contact" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors">
+                                        Contact
+                                    </Link>
+                                </>
                             )}
                             <SignInButton mode="modal">
                                 <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900">
@@ -176,6 +184,16 @@ export function Navbar() {
                                             Find Businesses
                                         </Button>
                                     </Link>
+                                    <Link href="/support" className="hidden lg:block">
+                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                            Support
+                                        </Button>
+                                    </Link>
+                                    <Link href="/contact" className="hidden lg:block">
+                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                            Contact
+                                        </Button>
+                                    </Link>
                                     <Link href="/dashboard" className="hidden sm:block">
                                         <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-6 font-bold">
                                             My Dashboard
@@ -204,23 +222,52 @@ export function Navbar() {
 
 export function Footer() {
     return (
-        <footer className="bg-white border-t py-12">
+        <footer className="bg-zinc-900 text-white pt-16 pb-8">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-                    <Link href="/" className="flex items-center gap-2">
-                        <Logo size="sm" />
-                    </Link>
-
-                    <div className="flex gap-8 text-sm text-zinc-500">
-                        <Link href="/privacy" className="hover:text-zinc-900 transition-colors">Privacy Policy</Link>
-                        <Link href="/terms" className="hover:text-zinc-900 transition-colors">Terms</Link>
-                        <Link href="/support" className="hover:text-zinc-900 transition-colors">Support</Link>
-                        <Link href="/contact" className="hover:text-zinc-900 transition-colors">Contact</Link>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
+                    {/* Brand */}
+                    <div className="col-span-2 md:col-span-1">
+                        <Link href="/" className="inline-flex items-center gap-2 mb-4">
+                            <Logo size="sm" variant="white" />
+                        </Link>
+                        <p className="text-zinc-400 text-sm leading-relaxed max-w-xs">
+                            Australia's trusted trade referral network. Connect with verified tradies and earn rewards for every referral.
+                        </p>
                     </div>
 
-                    <div className="text-sm text-zinc-400">
-                        © 2026 TradeRefer Pty Ltd
+                    {/* Platform */}
+                    <div>
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">Platform</h4>
+                        <ul className="space-y-2.5">
+                            <li><Link href="/businesses" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Browse Businesses</Link></li>
+                            <li><Link href="/join" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Become a Referrer</Link></li>
+                            <li><Link href="/onboarding" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">List Your Business</Link></li>
+                            <li><Link href="/dashboard" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Dashboard</Link></li>
+                        </ul>
                     </div>
+
+                    {/* Company */}
+                    <div>
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">Company</h4>
+                        <ul className="space-y-2.5">
+                            <li><Link href="/support" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Support</Link></li>
+                            <li><Link href="/contact" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Contact Us</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Legal */}
+                    <div>
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-4">Legal</h4>
+                        <ul className="space-y-2.5">
+                            <li><Link href="/privacy" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Privacy Policy</Link></li>
+                            <li><Link href="/terms" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Terms of Service</Link></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="border-t border-zinc-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p className="text-xs text-zinc-500">© {new Date().getFullYear()} TradeRefer Pty Ltd. All rights reserved.</p>
+                    <p className="text-xs text-zinc-600">Made in Australia 🇦🇺</p>
                 </div>
             </div>
         </footer>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="108" fill="#EA580C"/>
+  
+  <!-- Two circular referral arrows forming a loop -->
+  <!-- Top-right arrow (white) -->
+  <path d="M170 200 C170 130 260 100 320 140 L360 110 L370 180 L300 175 L335 150 C290 118 210 140 210 200" 
+        fill="white"/>
+  
+  <!-- Bottom-left arrow (white) -->
+  <path d="M342 290 C342 360 252 390 192 350 L152 380 L142 310 L212 315 L177 340 C222 372 302 350 302 290" 
+        fill="white"/>
+  
+  <!-- Left person (trade worker) -->
+  <circle cx="175" cy="250" r="32" fill="white"/>
+  <path d="M175 290 C145 290 120 310 120 340 L120 370 L230 370 L230 340 C230 310 205 290 175 290Z" fill="white"/>
+  
+  <!-- Right person (referrer) -->
+  <circle cx="337" cy="250" r="32" fill="white" opacity="0.7"/>
+  <path d="M337 290 C307 290 282 310 282 340 L282 370 L392 370 L392 340 C392 310 367 290 337 290Z" fill="white" opacity="0.7"/>
+</svg>
