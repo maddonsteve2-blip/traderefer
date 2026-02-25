@@ -12,7 +12,7 @@ PUBLIC_BUSINESS_COLUMNS = """
     suburb, state, service_radius_km,
     business_phone, business_email, website,
     trust_score, connection_rate, total_leads_unlocked, total_confirmed,
-    is_verified, listing_rank, logo_url, cover_photo_url, photo_urls, features,
+    is_verified, listing_rank, logo_url, cover_photo_url, photo_urls, features, abn,
     referral_fee_cents, listing_visibility, avg_response_minutes, why_refer_us, created_at,
     years_experience, services, specialties, business_highlights
 """

@@ -41,6 +41,7 @@ class BusinessOnboarding(BaseModel):
     business_highlights: Optional[list[str]] = None
     why_refer_us: Optional[str] = None
     features: Optional[list[str]] = None
+    abn: Optional[str] = None
 
 class BusinessUpdate(BaseModel):
     business_name: Optional[str] = None
@@ -61,6 +62,7 @@ class BusinessUpdate(BaseModel):
     listing_visibility: Optional[str] = None
     why_refer_us: Optional[str] = None
     response_sla_minutes: Optional[int] = None
+    abn: Optional[str] = None
 
 class ProjectCreate(BaseModel):
     title: str
@@ -168,14 +170,14 @@ async def onboarding(
             website, service_radius_km, referral_fee_cents, status,
             state, lat, lng, logo_url, cover_photo_url, photo_urls, stripe_account_id,
             listing_visibility, years_experience, services, specialties,
-            business_highlights, why_refer_us, features
+            business_highlights, why_refer_us, features, abn
         ) VALUES (
             :user_id, :business_name, :slug, :trade_category,
             :description, :suburb, :business_phone, :business_email,
             :website, :service_radius_km, :referral_fee_cents, 'active',
             :state, :lat, :lng, :logo_url, :cover_photo_url, :photo_urls, :stripe_account_id,
             :listing_visibility, :years_experience, :services, :specialties,
-            :business_highlights, :why_refer_us, :features
+            :business_highlights, :why_refer_us, :features, :abn
         ) RETURNING id, slug
     """)
 
@@ -205,7 +207,8 @@ async def onboarding(
             "specialties": data.specialties or [],
             "business_highlights": data.business_highlights or [],
             "why_refer_us": data.why_refer_us,
-            "features": data.features or []
+            "features": data.features or [],
+            "abn": data.abn
         })
         await db.commit()
         row = result.fetchone()

@@ -33,11 +33,12 @@ import { getSuburbs } from "@/lib/locations";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { ImageUpload } from "@/components/ImageUpload";
 import { TRADE_CATEGORIES } from "@/lib/constants";
+import { completeOnboarding } from "@/app/onboarding/_actions";
 
 type ChatMessage = {
     role: "user" | "assistant";
@@ -51,27 +52,8 @@ export default function BusinessOnboardingPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const { getToken } = useAuth();
+    const { user } = useUser();
     const router = useRouter();
-
-    // Check if user already has a business — redirect to dashboard
-    useEffect(() => {
-        const checkExisting = async () => {
-            try {
-                const token = await getToken();
-                if (!token) return;
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/business/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    // Business already exists — redirect to dashboard
-                    router.replace("/dashboard/business");
-                }
-            } catch {
-                // No business found or error — stay on onboarding
-            }
-        };
-        checkExisting();
-    }, [getToken, router]);
 
     const [formData, setFormData] = useState({
         business_name: "",
@@ -92,6 +74,7 @@ export default function BusinessOnboardingPage() {
         why_refer_us: "",
         services: [] as string[],
         features: [] as string[],
+        abn: "",
     });
     const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
     const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
@@ -374,24 +357,30 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                         photo_urls: photoUrls,
                         business_highlights: formData.highlights,
                         specialties: formData.specialty ? [formData.specialty] : [],
+                        abn: formData.abn || undefined,
                     })
                 });
                 if (!res.ok) {
                     const errData = await res.json();
                     throw new Error(errData.detail || 'Onboarding failed');
                 }
-                setStep(6);
+
+                // Set Clerk publicMetadata so middleware knows onboarding is done
+                const clerkRes = await completeOnboarding("business");
+                if (clerkRes.error) {
+                    throw new Error(clerkRes.error);
+                }
+
+                // Force session token refresh so middleware sees updated claims
+                await user?.reload();
+
+                // Redirect to dashboard
+                router.push("/dashboard/business");
             } catch (err: any) {
                 toast.error(err.message);
             } finally {
                 setIsLoading(false);
             }
-            return;
-        }
-
-        // Step 6: go to dashboard
-        if (step === 6) {
-            router.push("/dashboard/business");
             return;
         }
 
@@ -435,6 +424,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                 </div>
                                 <div className="space-y-6">
                                     <div className="bg-zinc-50 p-6 rounded-[32px] border border-zinc-100 space-y-6">
+                                        {/* Business name */}
                                         <div>
                                             <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                                                 <Building2 className="w-3.5 h-3.5" /> Business Name
@@ -458,6 +448,8 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                                 className="w-full px-6 py-4 bg-white border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300"
                                             />
                                         </div>
+
+                                        {/* Slug */}
                                         <div>
                                             <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                                                 <Globe className="w-3.5 h-3.5" /> Public Handle (Slug)
@@ -484,6 +476,21 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                             <p className="mt-2 text-sm font-bold text-zinc-400 uppercase tracking-wider">
                                                 Your profile: <span className="text-zinc-900 lowercase">traderefer.au/b/{formData.slug || '...'}</span>
                                             </p>
+                                        </div>
+
+                                        {/* ABN / ACN */}
+                                        <div>
+                                            <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                                <Shield className="w-3.5 h-3.5" /> ABN / ACN (Optional)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={formData.abn}
+                                                onChange={(e) => setFormData({ ...formData, abn: e.target.value })}
+                                                placeholder="11-digit ABN or 9-digit ACN"
+                                                className="w-full px-6 py-4 bg-white border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium"
+                                            />
+                                            <p className="mt-2 text-xs font-bold text-zinc-400 uppercase tracking-wider">Optional — helps us verify your business</p>
                                         </div>
                                     </div>
 

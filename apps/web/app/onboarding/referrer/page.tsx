@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { toast } from "sonner";
+import { completeOnboarding } from "@/app/onboarding/_actions";
 
 export default function ReferrerOnboardingPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +62,16 @@ export default function ReferrerOnboardingPage() {
                 const errorText = await response.text();
                 throw new Error(`Onboarding failed (${response.status}): ${errorText}`);
             }
+
+            // Set Clerk publicMetadata so middleware knows onboarding is done
+            const clerkRes = await completeOnboarding("referrer");
+            if (clerkRes.error) {
+                throw new Error(clerkRes.error);
+            }
+
+            // Force session token refresh so middleware sees updated claims
+            await user?.reload();
+
             router.push("/dashboard/referrer");
         } catch (error) {
             console.error(error);

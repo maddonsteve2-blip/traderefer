@@ -62,6 +62,10 @@ export default async function PublicProfilePage({
     const featuredProject = projects.find((p: any) => p.is_featured);
     const otherProjects = projects.filter((p: any) => p !== featuredProject);
 
+    // Compute derived stats
+    const memberSinceYear = business.created_at ? new Date(business.created_at).getFullYear() : null;
+    const jobsCompleted = business.total_leads_unlocked || 0;
+
     return (
         <main className="min-h-screen bg-white">
             {/* Premium Header/Hero */}
