@@ -24,6 +24,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LeadForm } from "@/components/LeadForm";
 import { BookNowButton } from "@/components/BookNowButton";
+import { EditableProfile } from "@/components/EditableProfile";
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -67,6 +68,7 @@ export default async function PublicProfilePage({
     const jobsCompleted = business.total_leads_unlocked || 0;
 
     return (
+        <EditableProfile businessSlug={slug}>
         <main className="min-h-screen bg-white">
             {/* Premium Header/Hero */}
             <div className="bg-zinc-900 pt-24 pb-16 relative overflow-hidden">
@@ -424,5 +426,6 @@ export default async function PublicProfilePage({
                 </div>
             </div>
         </main>
+        </EditableProfile>
     );
 }
