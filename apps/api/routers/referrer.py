@@ -6,6 +6,7 @@ from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
 from services.stripe_service import StripeService
+from services.email import send_referrer_welcome, send_referrer_payout_processed
 import uuid
 import os
 
@@ -57,6 +58,7 @@ async def onboarding(
         })
         await db.commit()
         row = result.fetchone()
+        send_referrer_welcome(email, data.full_name or email.split("@")[0].replace(".", " ").title())
         return {"id": str(row[0])}
     except Exception as e:
         await db.rollback()
@@ -458,6 +460,12 @@ async def withdraw_funds(
         # but ensure the payout_requests record is solid.
         
         await db.commit()
+        send_referrer_payout_processed(
+            email=ref["email"],
+            full_name=ref["full_name"] or ref["email"],
+            amount_dollars=amount / 100,
+            method=request.method,
+        )
         return {"status": "success", "amount": amount / 100}
         
     except Exception as e:

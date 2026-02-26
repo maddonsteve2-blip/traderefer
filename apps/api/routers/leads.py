@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
 from routers.notifications import create_notification
+from services.email import send_business_new_lead, send_consumer_lead_confirmation
 import uuid
 import random
 import os
@@ -153,7 +154,33 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
         })
         new_lead_id = result.scalar()
         await db.commit()
-        
+
+        # Fetch business email + name to notify them
+        biz_info = await db.execute(
+            text("SELECT business_name, business_email, trade_category FROM businesses WHERE id = :id"),
+            {"id": lead.business_id}
+        )
+        biz_row = biz_info.mappings().first()
+        if biz_row and biz_row["business_email"]:
+            send_business_new_lead(
+                email=biz_row["business_email"],
+                business_name=biz_row["business_name"],
+                consumer_name=lead.consumer_name,
+                suburb=lead.consumer_suburb,
+                job_description=lead.job_description,
+                lead_id=str(new_lead_id),
+                unlock_fee_dollars=total_unlock_fee / 100,
+            )
+        # Notify the consumer
+        if lead.consumer_email and biz_row:
+            send_consumer_lead_confirmation(
+                email=lead.consumer_email,
+                consumer_name=lead.consumer_name,
+                business_name=biz_row["business_name"],
+                trade_category=biz_row["trade_category"],
+                job_description=lead.job_description,
+            )
+
         return {"id": str(new_lead_id), "status": "PENDING"}
     except Exception as e:
         await db.rollback()

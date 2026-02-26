@@ -11,3 +11,4 @@ asyncpg
 python-dotenv
 stripe
 boto3
+resend

@@ -6,6 +6,7 @@ from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
 from services.stripe_service import StripeService
+from services.email import send_business_welcome
 import re
 import uuid
 import os
@@ -215,7 +216,9 @@ async def onboarding(
         })
         await db.commit()
         row = result.fetchone()
-        return {"id": str(row[0]), "slug": row[1]}
+        new_slug = row[1]
+        send_business_welcome(data.business_email, data.business_name, new_slug)
+        return {"id": str(row[0]), "slug": new_slug}
     except Exception as e:
         await db.rollback()
         print(f"Onboarding error: {e}")

@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Request, HTTPException, Header, Depends
 from services.stripe_service import StripeService
 from services.database import get_db
+from services.email import send_business_lead_unlocked, send_referrer_lead_unlocked
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 import stripe
 import os
+from datetime import datetime, timedelta
 
 router = APIRouter()
 
@@ -125,7 +127,50 @@ async def stripe_webhook(
                 })
             
             await db.commit()
-            
+
+            # Email: notify business of unlocked lead with full contact details
+            full_lead = await db.execute(text("""
+                SELECT l.consumer_name, l.consumer_phone, l.consumer_email, l.consumer_suburb, l.job_description,
+                       b.business_name, b.business_email
+                FROM leads l JOIN businesses b ON b.id = l.business_id
+                WHERE l.id = :id
+            """), {"id": lead_id})
+            full = full_lead.mappings().first()
+            if full and full["business_email"]:
+                send_business_lead_unlocked(
+                    email=full["business_email"],
+                    business_name=full["business_name"],
+                    consumer_name=full["consumer_name"],
+                    consumer_phone=full["consumer_phone"],
+                    consumer_email=full["consumer_email"],
+                    suburb=full["consumer_suburb"],
+                    job_description=full["job_description"],
+                )
+
+            # Email: notify referrer of pending earning
+            if referrer_id:
+                ref_info = await db.execute(text("""
+                    SELECT r.email, r.full_name, l.consumer_suburb
+                    FROM referrers r, leads l
+                    WHERE r.id = :rid AND l.id = :lid
+                """), {"rid": referrer_id, "lid": lead_id})
+                ref_row = ref_info.mappings().first()
+                if ref_row and ref_row["email"]:
+                    biz_name_res = await db.execute(
+                        text("SELECT business_name FROM businesses WHERE id = :id"),
+                        {"id": business_id}
+                    )
+                    biz_name_row = biz_name_res.mappings().first()
+                    available = (datetime.utcnow() + timedelta(days=7)).strftime("%d %b %Y")
+                    send_referrer_lead_unlocked(
+                        email=ref_row["email"],
+                        full_name=ref_row["full_name"] or ref_row["email"],
+                        business_name=biz_name_row["business_name"] if biz_name_row else "the business",
+                        suburb=ref_row["consumer_suburb"],
+                        payout_dollars=payout_amount / 100,
+                        available_date=available,
+                    )
+
     elif event["type"] == "account.updated":
         account = event["data"]["object"]
         # Handle account identity verification updates if needed
