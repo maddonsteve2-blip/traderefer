@@ -1,20 +1,30 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
-let _placesReady: Promise<void> | null = null;
-let _optionsSet = false;
-function loadPlaces(): Promise<void> {
-    if (_placesReady) return _placesReady;
-    if (!_optionsSet) {
-        (setOptions as any)({ apiKey: API_KEY, version: "weekly" });
-        _optionsSet = true;
+let _mapsReady: Promise<void> | null = null;
+function loadMapsScript(): Promise<void> {
+    if (typeof window === "undefined") return Promise.resolve();
+    if (_mapsReady) return _mapsReady;
+    if ((window as any).google?.maps?.places?.Autocomplete) {
+        return (_mapsReady = Promise.resolve());
     }
-    _placesReady = importLibrary("places").then(() => {});
-    return _placesReady!;
+    _mapsReady = new Promise<void>((resolve, reject) => {
+        const existing = document.querySelector('script[src*="maps.googleapis.com"]');
+        if (existing) {
+            existing.addEventListener("load", () => resolve());
+            return;
+        }
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error("Failed to load Google Maps"));
+        document.head.appendChild(script);
+    });
+    return _mapsReady;
 }
 
 export function AddressAutocomplete({
@@ -32,152 +42,91 @@ export function AddressAutocomplete({
     className?: string;
     placeholder?: string;
 }) {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [displayValue, setDisplayValue] = useState("");
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [inputValue, setInputValue] = useState("");
     const [ready, setReady] = useState(false);
-    const [error, setError] = useState(false);
-    const elementInserted = useRef(false);
-    const onAddressSelectRef = useRef(onAddressSelect);
-    onAddressSelectRef.current = onAddressSelect;
+    const [loadError, setLoadError] = useState(false);
+    const acRef = useRef<any>(null);
+    const onSelectRef = useRef(onAddressSelect);
+    onSelectRef.current = onAddressSelect;
 
     // Sync initial display value
     useEffect(() => {
         if (addressValue && suburbValue && stateValue) {
-            setDisplayValue(`${addressValue}, ${suburbValue} ${stateValue}`);
+            setInputValue(`${addressValue}, ${suburbValue} ${stateValue}`);
         } else if (addressValue && suburbValue) {
-            setDisplayValue(`${addressValue}, ${suburbValue}`);
+            setInputValue(`${addressValue}, ${suburbValue}`);
         } else if (addressValue) {
-            setDisplayValue(addressValue);
+            setInputValue(addressValue);
         } else if (suburbValue) {
-            setDisplayValue(suburbValue);
+            setInputValue(suburbValue);
         }
     }, [addressValue, suburbValue, stateValue]);
 
-    // Create and insert PlaceAutocompleteElement
+    const handlePlaceChanged = useCallback(() => {
+        const ac = acRef.current;
+        if (!ac) return;
+        const place = ac.getPlace();
+        if (!place?.address_components) return;
+
+        let streetNumber = "";
+        let route = "";
+        let locality = "";
+        let adminArea = "VIC";
+
+        for (const c of place.address_components) {
+            if (c.types.includes("street_number")) streetNumber = c.long_name;
+            if (c.types.includes("route")) route = c.long_name;
+            if (c.types.includes("locality")) locality = c.long_name;
+            if (c.types.includes("administrative_area_level_1")) adminArea = c.short_name;
+        }
+
+        if (!locality) {
+            const sub = place.address_components.find(
+                (c: any) => c.types.includes("sublocality") || c.types.includes("sublocality_level_1")
+            );
+            if (sub) locality = sub.long_name;
+        }
+
+        const address = `${streetNumber} ${route}`.trim();
+        const full = place.formatted_address || `${address}, ${locality}, ${adminArea}`;
+        setInputValue(full);
+        onSelectRef.current(
+            address || place.name || full,
+            locality || address || place.name || "",
+            adminArea
+        );
+    }, []);
+
     useEffect(() => {
-        if (elementInserted.current) return;
         let cancelled = false;
-
-        loadPlaces()
+        loadMapsScript()
             .then(() => {
-                if (cancelled || !containerRef.current || elementInserted.current) return;
-                elementInserted.current = true;
-
-                // Create the new PlaceAutocompleteElement (Web Component)
+                if (cancelled || !inputRef.current || acRef.current) return;
                 const goog = (window as any).google;
-                const pac = new goog.maps.places.PlaceAutocompleteElement({
-                    includedRegionCodes: ["au"],
+                const ac = new goog.maps.places.Autocomplete(inputRef.current, {
+                    componentRestrictions: { country: "au" },
+                    fields: ["address_components", "formatted_address", "name"],
                 });
-
-                // Style the inner input to match our design
-                pac.style.width = "100%";
-                pac.setAttribute("placeholder", placeholder);
-
-                // Listen for place selection
-                pac.addEventListener("gmp-select", async (e: any) => {
-                    try {
-                        const placePrediction = e.placePrediction;
-                        if (!placePrediction) return;
-
-                        const place = placePrediction.toPlace();
-                        await place.fetchFields({
-                            fields: ["addressComponents", "formattedAddress", "displayName"],
-                        });
-
-                        let streetNumber = "";
-                        let route = "";
-                        let locality = "";
-                        let adminArea = "VIC";
-
-                        const components = place.addressComponents || [];
-                        for (const component of components) {
-                            const types = component.types || [];
-                            if (types.includes("street_number")) streetNumber = component.longText || "";
-                            if (types.includes("route")) route = component.longText || "";
-                            if (types.includes("locality")) locality = component.longText || "";
-                            if (types.includes("administrative_area_level_1")) adminArea = component.shortText || "";
-                        }
-
-                        if (!locality) {
-                            const sub = components.find(
-                                (c: any) => (c.types || []).includes("sublocality") || (c.types || []).includes("sublocality_level_1")
-                            );
-                            if (sub) locality = sub.longText || "";
-                        }
-
-                        const address = `${streetNumber} ${route}`.trim();
-                        const fullAddress = place.formattedAddress || `${address}, ${locality}, ${adminArea}`;
-                        const displayName = place.displayName || "";
-
-                        setDisplayValue(fullAddress);
-                        onAddressSelectRef.current(
-                            address || displayName || fullAddress,
-                            locality || address || displayName || "",
-                            adminArea
-                        );
-                    } catch (err) {
-                        console.error("Place selection error:", err);
-                    }
-                });
-
-                // Clear existing content and insert the element
-                containerRef.current.innerHTML = "";
-                containerRef.current.appendChild(pac);
+                ac.addListener("place_changed", handlePlaceChanged);
+                acRef.current = ac;
                 setReady(true);
             })
-            .catch((err: unknown) => {
-                console.error("Google Maps load error:", err);
-                if (!cancelled) setError(true);
-            });
-
+            .catch(() => { if (!cancelled) setLoadError(true); });
         return () => { cancelled = true; };
-    }, [placeholder]);
+    }, [handlePlaceChanged]);
 
-    if (error) {
-        return <div className="text-red-500 text-sm">Error loading address search</div>;
-    }
+    if (loadError) return <div className="text-red-500 text-sm">Error loading address search</div>;
 
     return (
-        <div>
-            {/* Show current value when a place has been selected */}
-            {displayValue && ready && (
-                <p className="mb-2 text-sm font-medium text-zinc-500">
-                    Current: <span className="text-zinc-900">{displayValue}</span>
-                </p>
-            )}
-            {/* Container for the PlaceAutocompleteElement Web Component */}
-            <div
-                ref={containerRef}
-                className={className}
-                style={{ minHeight: "48px" }}
-            >
-                {!ready && (
-                    <input
-                        className={className}
-                        placeholder="Loading address search..."
-                        disabled
-                    />
-                )}
-            </div>
-            <style>{`
-                gmp-place-autocomplete {
-                    width: 100%;
-                }
-                gmp-place-autocomplete input {
-                    width: 100%;
-                    padding: 0.75rem 1rem;
-                    font-size: 1rem;
-                    border: 1px solid #e4e4e7;
-                    border-radius: 0.75rem;
-                    outline: none;
-                    background: #fafafa;
-                    transition: all 0.2s;
-                }
-                gmp-place-autocomplete input:focus {
-                    border-color: #f97316;
-                    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-                }
-            `}</style>
-        </div>
+        <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder={ready ? placeholder : "Loading..."}
+            className={className}
+            disabled={!ready}
+        />
     );
 }
