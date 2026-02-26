@@ -6,6 +6,7 @@ from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
 from routers.notifications import notify_all_referrers_for_business
+from services.email import send_referrer_campaign_notification
 import uuid
 
 router = APIRouter()
@@ -135,6 +136,25 @@ async def create_campaign(
                 data.promo_text or data.title,
                 f"/b/{biz_row[1]}/refer"
             )
+            # Email each connected referrer about the campaign
+            referrer_emails = await db.execute(
+                text("""
+                    SELECT r.email, r.full_name
+                    FROM referral_links rl
+                    JOIN referrers r ON r.id = rl.referrer_id
+                    WHERE rl.business_id = :bid AND rl.is_active = true AND r.email IS NOT NULL
+                """),
+                {"bid": biz_id}
+            )
+            for ref in referrer_emails.mappings().all():
+                send_referrer_campaign_notification(
+                    email=ref["email"],
+                    full_name=ref["full_name"] or ref["email"],
+                    business_name=biz_row[0],
+                    campaign_title=data.title,
+                    promo_text=data.promo_text,
+                    business_slug=biz_row[1],
+                )
     except Exception as e:
         print(f"Campaign notification error (non-fatal): {e}")
 

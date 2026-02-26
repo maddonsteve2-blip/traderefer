@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from datetime import datetime, timedelta
+from services.email import send_referrer_earning_available
 import os
 
 async def expire_pending_leads(db: AsyncSession):
@@ -61,7 +62,7 @@ async def release_pending_earnings(db: AsyncSession):
     if released_earnings:
         print(f"Cron: Released {len(released_earnings)} pending earnings.")
         
-        # 2. Update referrer wallet balances for released earnings
+        # 2. Update referrer wallet balances and send emails
         for earning in released_earnings:
             await db.execute(text("""
                 UPDATE referrers 
@@ -72,6 +73,27 @@ async def release_pending_earnings(db: AsyncSession):
                 "amount": earning["gross_cents"],
                 "rid": earning["referrer_id"]
             })
+
+            # Email referrer that their earning is now available
+            try:
+                ref_info = await db.execute(text("""
+                    SELECT r.email, r.full_name, b.business_name
+                    FROM referrer_earnings re
+                    JOIN referrers r ON r.id = re.referrer_id
+                    LEFT JOIN leads l ON l.id = re.lead_id
+                    LEFT JOIN businesses b ON b.id = l.business_id
+                    WHERE re.id = :eid
+                """), {"eid": earning["id"]})
+                ref_row = ref_info.mappings().first()
+                if ref_row and ref_row["email"]:
+                    send_referrer_earning_available(
+                        email=ref_row["email"],
+                        full_name=ref_row["full_name"] or ref_row["email"],
+                        amount_dollars=earning["gross_cents"] / 100,
+                        business_name=ref_row["business_name"] or "TradeRefer",
+                    )
+            except Exception as e:
+                print(f"Cron earning email error (non-fatal): {e}")
             
     return len(released_earnings)
 

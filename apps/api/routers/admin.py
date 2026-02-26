@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from services.auth import require_admin, AuthenticatedUser
 from services.database import get_db
+from services.email import send_dispute_resolved_business, send_dispute_resolved_referrer
 from sqlalchemy.ext.asyncio import AsyncSession
 from services.tasks import jobs
 from pydantic import BaseModel
@@ -129,6 +130,38 @@ async def resolve_dispute(
         })
         
         await db.commit()
+
+        # Email business and referrer about dispute outcome
+        try:
+            parties = await db.execute(text("""
+                SELECT b.business_email, b.business_name,
+                       r.email as referrer_email, r.full_name as referrer_name,
+                       l.referrer_payout_amount_cents
+                FROM leads l
+                JOIN businesses b ON b.id = l.business_id
+                LEFT JOIN referrers r ON r.id = l.referrer_id
+                WHERE l.id = :lid
+            """), {"lid": lead_id})
+            p = parties.mappings().first()
+            if p:
+                if p["business_email"]:
+                    send_dispute_resolved_business(
+                        email=p["business_email"],
+                        business_name=p["business_name"],
+                        outcome=data.outcome,
+                        admin_notes=data.admin_notes,
+                    )
+                if p["referrer_email"]:
+                    send_dispute_resolved_referrer(
+                        email=p["referrer_email"],
+                        full_name=p["referrer_name"] or p["referrer_email"],
+                        outcome=data.outcome,
+                        business_name=p["business_name"],
+                        amount_dollars=(p["referrer_payout_amount_cents"] or 0) / 100,
+                    )
+        except Exception as email_err:
+            print(f"Dispute resolution email error (non-fatal): {email_err}")
+
         return {"status": "success", "message": f"Lead {lead_id} resolved with outcome: {data.outcome}"}
     except Exception as e:
         await db.rollback()

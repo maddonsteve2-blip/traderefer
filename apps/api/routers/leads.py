@@ -5,7 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
 from routers.notifications import create_notification
-from services.email import send_business_new_lead, send_consumer_lead_confirmation
+from services.email import (
+    send_business_new_lead, send_consumer_lead_confirmation,
+    send_consumer_on_the_way, send_business_lead_unlocked,
+    send_referrer_lead_unlocked, send_business_dispute_raised
+)
 import uuid
 import random
 import os
@@ -380,6 +384,25 @@ async def on_the_way(
     # 6. TODO: Trigger SMS via Twilio (Part 4.4)
     print(f"📱 SMS to {lead['consumer_phone']}: Your connection code for {business['id']} is {pin}. valid for 4hrs.")
 
+    # 7. Email consumer their PIN
+    consumer_info = await db.execute(
+        text("SELECT consumer_name, consumer_email FROM leads WHERE id = :id"),
+        {"id": lead_id}
+    )
+    consumer_row = consumer_info.mappings().first()
+    biz_name_res = await db.execute(
+        text("SELECT business_name FROM businesses WHERE id = :id"),
+        {"id": business["id"]}
+    )
+    biz_name_row = biz_name_res.mappings().first()
+    if consumer_row and consumer_row["consumer_email"] and biz_name_row:
+        send_consumer_on_the_way(
+            email=consumer_row["consumer_email"],
+            consumer_name=consumer_row["consumer_name"],
+            business_name=biz_name_row["business_name"],
+            pin=pin,
+        )
+
     return {"status": "ON_THE_WAY", "expires_at": expires_at.isoformat()}
 
 class PINConfirm(BaseModel):
@@ -535,6 +558,30 @@ async def confirm_pin(
             except Exception as notif_err:
                 print(f"Notification error (non-fatal): {notif_err}")
 
+        # Email referrer: earning confirmed and available
+        if row["referrer_id"] and payout > 0:
+            try:
+                ref_email_res = await db.execute(
+                    text("SELECT email, full_name FROM referrers WHERE id = :rid"),
+                    {"rid": row["referrer_id"]}
+                )
+                ref_email_row = ref_email_res.mappings().first()
+                biz_name_res2 = await db.execute(
+                    text("SELECT business_name FROM businesses WHERE id = :bid"),
+                    {"bid": row["business_id"]}
+                )
+                biz_name_row2 = biz_name_res2.mappings().first()
+                if ref_email_row and ref_email_row["email"]:
+                    from services.email import send_referrer_earning_available
+                    send_referrer_earning_available(
+                        email=ref_email_row["email"],
+                        full_name=ref_email_row["full_name"] or ref_email_row["email"],
+                        amount_dollars=payout / 100,
+                        business_name=biz_name_row2["business_name"] if biz_name_row2 else "the business",
+                    )
+            except Exception as email_err:
+                print(f"Earning email error (non-fatal): {email_err}")
+
         return {"confirmed": True, "message": "Lead confirmed and payment released to referrer."}
     except Exception as e:
         await db.rollback()
@@ -591,6 +638,24 @@ async def create_dispute(
         await db.execute(text("UPDATE leads SET status = 'DISPUTED' WHERE id = :id"), {"id": lead_id})
         
         await db.commit()
+
+        # Email business: dispute confirmation
+        try:
+            biz_email_res = await db.execute(
+                text("SELECT b.business_email, b.business_name FROM businesses b JOIN leads l ON l.business_id = b.id WHERE l.id = :lid"),
+                {"lid": lead_id}
+            )
+            biz_email_row = biz_email_res.mappings().first()
+            if biz_email_row and biz_email_row["business_email"]:
+                send_business_dispute_raised(
+                    email=biz_email_row["business_email"],
+                    business_name=biz_email_row["business_name"],
+                    lead_id=lead_id,
+                    reason=data.reason,
+                )
+        except Exception as email_err:
+            print(f"Dispute email error (non-fatal): {email_err}")
+
         return {"status": "success", "message": "Dispute raised successfully"}
     except Exception as e:
         await db.rollback()

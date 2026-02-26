@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
+from services.email import send_new_message_notification
 import uuid
 
 router = APIRouter()
@@ -254,6 +255,41 @@ async def send_message(
         {"cid": conv_uuid},
     )
     await db.commit()
+
+    # Email the recipient a nudge
+    try:
+        if sender_type == "business":
+            # Notify the referrer
+            ref_info = await db.execute(
+                text("SELECT r.email, r.full_name, b.business_name FROM referrers r, businesses b WHERE r.id = :rid AND b.id = :bid"),
+                {"rid": conv["referrer_id"], "bid": conv["business_id"]}
+            )
+            row = ref_info.mappings().first()
+            if row and row["email"] and body_text:
+                send_new_message_notification(
+                    email=row["email"],
+                    recipient_name=row["full_name"] or row["email"],
+                    sender_name=row["business_name"],
+                    message_preview=body_text,
+                    conversation_url="/dashboard/referrer/messages",
+                )
+        else:
+            # Notify the business
+            biz_info = await db.execute(
+                text("SELECT b.business_email, b.business_name, r.full_name as ref_name FROM businesses b, referrers r WHERE b.id = :bid AND r.id = :rid"),
+                {"bid": conv["business_id"], "rid": conv["referrer_id"]}
+            )
+            row = biz_info.mappings().first()
+            if row and row["business_email"] and body_text:
+                send_new_message_notification(
+                    email=row["business_email"],
+                    recipient_name=row["business_name"],
+                    sender_name=row["ref_name"] or "A referrer",
+                    message_preview=body_text,
+                    conversation_url="/dashboard/business/messages",
+                )
+    except Exception as email_err:
+        print(f"Message notification email error (non-fatal): {email_err}")
 
     return {
         "id": str(msg["id"]),

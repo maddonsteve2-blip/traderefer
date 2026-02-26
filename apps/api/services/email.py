@@ -122,6 +122,116 @@ def send_referrer_payout_processed(email: str, full_name: str, amount_dollars: f
 # CONSUMER EMAILS
 # ─────────────────────────────────────────────
 
+def send_referrer_earning_available(email: str, full_name: str, amount_dollars: float, business_name: str):
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">Your earnings are now available!</h1>
+      <p>Hi {full_name}, the 7-day hold period has passed and your referral earnings are ready to withdraw.</p>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0">
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Business</td><td style="padding:8px">{business_name}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Available Now</td><td style="padding:8px;font-weight:bold;color:#ea580c">${amount_dollars:.2f}</td></tr>
+      </table>
+      <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Withdraw Earnings</a>
+    </div>
+    """
+    _send(email, f"${amount_dollars:.2f} is ready to withdraw!", html)
+
+
+def send_consumer_on_the_way(email: str, consumer_name: str, business_name: str, pin: str):
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">{business_name} is on the way!</h1>
+      <p>Hi {consumer_name}, your tradie is heading to you. When they arrive, give them this PIN to confirm the job:</p>
+      <div style="background:#fff7ed;border:2px solid #ea580c;border-radius:12px;padding:24px;text-align:center;margin:24px 0">
+        <p style="color:#666;margin:0 0 8px 0;font-size:14px">Your confirmation PIN</p>
+        <p style="font-size:48px;font-weight:900;color:#ea580c;margin:0;letter-spacing:8px">{pin}</p>
+        <p style="color:#666;margin:8px 0 0 0;font-size:13px">Valid for 4 hours</p>
+      </div>
+      <p style="color:#666;font-size:14px">Show this PIN to {business_name} when they arrive to confirm your job is complete.</p>
+    </div>
+    """
+    _send(email, f"Your PIN for {business_name} — they're on the way!", html)
+
+
+def send_business_dispute_raised(email: str, business_name: str, lead_id: str, reason: str):
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">Dispute Received</h1>
+      <p>Hi {business_name}, your dispute has been received and is under review by our team.</p>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0">
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Lead ID</td><td style="padding:8px;font-family:monospace">{lead_id[:8]}...</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Reason</td><td style="padding:8px">{reason}</td></tr>
+      </table>
+      <p style="color:#666">Our team will review your dispute within 2 business days and contact you with an outcome.</p>
+      <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Leads</a>
+    </div>
+    """
+    _send(email, "Your dispute has been received — under review", html)
+
+
+def send_dispute_resolved_business(email: str, business_name: str, outcome: str, admin_notes: Optional[str] = None):
+    outcome_text = "confirmed in your favour" if outcome == "confirm" else "not upheld"
+    colour = "#16a34a" if outcome == "confirm" else "#dc2626"
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">Dispute Resolved</h1>
+      <p>Hi {business_name}, your dispute has been reviewed and resolved.</p>
+      <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:16px 0">
+        <p style="margin:0;font-weight:bold;color:{colour}">Outcome: {outcome_text.capitalize()}</p>
+        {f'<p style="margin:8px 0 0 0;color:#666">{admin_notes}</p>' if admin_notes else ''}
+      </div>
+      <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
+    </div>
+    """
+    _send(email, f"Dispute resolved — {outcome_text}", html)
+
+
+def send_dispute_resolved_referrer(email: str, full_name: str, outcome: str, business_name: str, amount_dollars: float):
+    if outcome == "confirm":
+        msg = f"The dispute was resolved in the business's favour. Your ${amount_dollars:.2f} earning for a referral to {business_name} has been released to your wallet."
+    else:
+        msg = f"The dispute raised by {business_name} was not upheld. Your ${amount_dollars:.2f} earning has been cancelled. Contact support if you have questions."
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">Dispute Outcome</h1>
+      <p>Hi {full_name},</p>
+      <p>{msg}</p>
+      <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
+    </div>
+    """
+    _send(email, "Update on your referral dispute", html)
+
+
+def send_new_message_notification(email: str, recipient_name: str, sender_name: str, message_preview: str, conversation_url: str):
+    preview = message_preview[:120] + "..." if len(message_preview) > 120 else message_preview
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">New message from {sender_name}</h1>
+      <p>Hi {recipient_name},</p>
+      <div style="background:#f9f9f9;border-left:4px solid #ea580c;padding:16px;border-radius:4px;margin:16px 0">
+        <p style="margin:0;color:#333;font-style:italic">"{preview}"</p>
+      </div>
+      <a href="{FRONTEND_URL}{conversation_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Reply</a>
+    </div>
+    """
+    _send(email, f"New message from {sender_name}", html)
+
+
+def send_referrer_campaign_notification(email: str, full_name: str, business_name: str, campaign_title: str, promo_text: Optional[str], business_slug: str):
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">🔥 New campaign from {business_name}</h1>
+      <p>Hi {full_name}, one of your linked businesses has launched a new campaign you can share with customers.</p>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:20px;margin:16px 0">
+        <h2 style="margin:0 0 8px 0;color:#9a3412">{campaign_title}</h2>
+        {f'<p style="margin:0;color:#666">{promo_text}</p>' if promo_text else ''}
+      </div>
+      <a href="{FRONTEND_URL}/b/{business_slug}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Share This Business</a>
+    </div>
+    """
+    _send(email, f"New campaign from {business_name} — share it now!", html)
+
+
 def send_consumer_lead_confirmation(email: str, consumer_name: str, business_name: str, trade_category: str, job_description: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
