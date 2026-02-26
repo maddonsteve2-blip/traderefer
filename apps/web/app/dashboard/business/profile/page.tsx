@@ -111,6 +111,7 @@ export default function BusinessProfileManagementPage() {
                     address: data.address || "",
                     suburb: data.suburb || "",
                     state: data.state || "VIC",
+                    postcode: data.postcode || "",
                     slug: data.slug || "",
                     service_radius_km: data.service_radius_km || 25,
                     photo_urls: data.photo_urls || [],
