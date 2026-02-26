@@ -40,6 +40,15 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Reset Clerk component styles so OTP/verification inputs work correctly */
+  [data-clerk-component] *,
+  .cl-rootBox *,
+  .cl-signUp-root *,
+  .cl-signIn-root * {
+    border-color: revert;
+    outline: revert;
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
     @apply bg-background text-foreground;
