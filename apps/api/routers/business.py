@@ -24,6 +24,7 @@ class BusinessOnboarding(BaseModel):
     trade_category: str
     description: Optional[str] = None
     suburb: str
+    address: Optional[str] = None
     state: str = "VIC"
     business_phone: str
     business_email: str
@@ -48,6 +49,7 @@ class BusinessUpdate(BaseModel):
     trade_category: Optional[str] = None
     description: Optional[str] = None
     suburb: Optional[str] = None
+    address: Optional[str] = None
     state: Optional[str] = None
     service_radius_km: Optional[int] = None
     slug: Optional[str] = None
@@ -166,14 +168,14 @@ async def onboarding(
     query = text("""
         INSERT INTO businesses (
             user_id, business_name, slug, trade_category,
-            description, suburb, business_phone, business_email,
+            description, suburb, address, business_phone, business_email,
             website, service_radius_km, referral_fee_cents, status,
             state, lat, lng, logo_url, cover_photo_url, photo_urls, stripe_account_id,
             listing_visibility, years_experience, services, specialties,
             business_highlights, why_refer_us, features, abn
         ) VALUES (
             :user_id, :business_name, :slug, :trade_category,
-            :description, :suburb, :business_phone, :business_email,
+            :description, :suburb, :address, :business_phone, :business_email,
             :website, :service_radius_km, :referral_fee_cents, 'active',
             :state, :lat, :lng, :logo_url, :cover_photo_url, :photo_urls, :stripe_account_id,
             :listing_visibility, :years_experience, :services, :specialties,
@@ -189,6 +191,7 @@ async def onboarding(
             "trade_category": data.trade_category,
             "description": data.description,
             "suburb": data.suburb,
+            "address": data.address,
             "business_phone": data.business_phone,
             "business_email": data.business_email,
             "website": data.website,
@@ -225,7 +228,7 @@ async def get_my_business(
 ):
     """Fetches the business associated with the authenticated user."""
     query = text("""
-        SELECT id, business_name, trade_category, description, suburb, state,
+        SELECT id, business_name, trade_category, description, suburb, address, state,
                business_phone, business_email, website, slug,
                referral_fee_cents, service_radius_km, is_verified, trust_score,
                logo_url, photo_urls, status, connection_rate,
@@ -287,9 +290,10 @@ async def update_business(
         return {"message": "No changes"}
 
     # Geocoding if location changes
-    if "suburb" in update_data or "state" in update_data:
+    if "suburb" in update_data or "state" in update_data or "address" in update_data:
         new_suburb = update_data.get("suburb", biz["suburb"])
         new_state = update_data.get("state", biz.get("state", "VIC"))
+        # we can still use get_lat_lng, but could incorporate address if implemented
         lat, lng = await get_lat_lng(new_suburb, new_state)
         if lat and lng:
             update_data["lat"] = lat
@@ -322,7 +326,7 @@ async def get_business_dashboard(
 
         # 1. Get business stats
         biz_query = text("""
-            SELECT id, business_name, slug, trade_category, suburb, trust_score,
+            SELECT id, business_name, slug, trade_category, suburb, address, trust_score,
                    connection_rate, total_leads_unlocked, wallet_balance_cents,
                    referral_fee_cents, stripe_account_id
             FROM businesses WHERE user_id = :user_id
@@ -371,6 +375,7 @@ async def get_business_dashboard(
                 "name": biz["business_name"],
                 "category": biz["trade_category"],
                 "suburb": biz["suburb"],
+                "address": biz.get("address"),
                 "slug": biz["slug"],
                 "trust_score": biz["trust_score"],
                 "connection_rate": float(biz["connection_rate"] or 0),

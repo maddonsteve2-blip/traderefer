@@ -33,6 +33,7 @@ export default function BusinessSettingsPage() {
         trade_category: string;
         description: string;
         suburb: string;
+        address: string;
         service_radius_km: number;
         slug: string;
         business_phone: string;
@@ -47,6 +48,7 @@ export default function BusinessSettingsPage() {
         trade_category: "",
         description: "",
         suburb: "",
+        address: "",
         service_radius_km: 25,
         slug: "",
         business_phone: "",
@@ -75,6 +77,7 @@ export default function BusinessSettingsPage() {
                     trade_category: data.trade_category || "",
                     description: data.description || "",
                     suburb: data.suburb || "",
+                    address: data.address || "",
                     service_radius_km: data.service_radius_km || 25,
                     slug: data.slug || "",
                     business_phone: data.business_phone || "",
@@ -358,11 +361,10 @@ export default function BusinessSettingsPage() {
                                     <button
                                         key={opt.value}
                                         onClick={() => setFormData({ ...formData, response_sla_minutes: opt.value })}
-                                        className={`p-4 rounded-xl border-2 text-center font-bold transition-all ${
-                                            formData.response_sla_minutes === opt.value
+                                        className={`p-4 rounded-xl border-2 text-center font-bold transition-all ${formData.response_sla_minutes === opt.value
                                                 ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                                                 : "border-zinc-200 text-zinc-600 hover:border-emerald-300"
-                                        }`}
+                                            }`}
                                     >
                                         {opt.label}
                                     </button>

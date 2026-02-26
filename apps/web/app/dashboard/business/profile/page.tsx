@@ -23,6 +23,7 @@ import { useDropzone } from "react-dropzone";
 import Link from "next/link";
 import { toast } from "sonner";
 import { ImageUpload } from "@/components/ImageUpload";
+import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 import {
     Dialog,
@@ -48,6 +49,7 @@ export default function BusinessProfileManagementPage() {
         description: "",
         website: "",
         logo_url: "",
+        address: "",
         suburb: "",
         state: "VIC",
         slug: "",
@@ -105,6 +107,7 @@ export default function BusinessProfileManagementPage() {
                     description: data.description || "",
                     website: data.website || "",
                     logo_url: data.logo_url || "",
+                    address: data.address || "",
                     suburb: data.suburb || "",
                     state: data.state || "VIC",
                     slug: data.slug || "",
@@ -400,32 +403,23 @@ export default function BusinessProfileManagementPage() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block">Base Suburb</label>
-                                    <input
-                                        type="text"
+                                <div className="md:col-span-2">
+                                    <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Address & Location</label>
+                                    <AddressAutocomplete
+                                        addressValue={formData.address}
+                                        suburbValue={formData.suburb}
+                                        stateValue={formData.state}
+                                        onAddressSelect={(address, suburb, state) => {
+                                            setFormData(prev => ({ ...prev, address, suburb, state }));
+                                        }}
+                                        placeholder="Search for your address in Australia..."
                                         className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"
-                                        value={formData.suburb}
-                                        onChange={(e) => setFormData({ ...formData, suburb: e.target.value })}
-                                        placeholder="e.g. Geelong"
                                     />
-                                </div>
-                                <div>
-                                    <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block">State</label>
-                                    <select
-                                        className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"
-                                        value={formData.state}
-                                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                                    >
-                                        <option value="VIC">VIC</option>
-                                        <option value="NSW">NSW</option>
-                                        <option value="QLD">QLD</option>
-                                        <option value="WA">WA</option>
-                                        <option value="SA">SA</option>
-                                        <option value="TAS">TAS</option>
-                                        <option value="ACT">ACT</option>
-                                        <option value="NT">NT</option>
-                                    </select>
+                                    {formData.address && formData.suburb && (
+                                        <p className="mt-2 text-sm font-medium text-zinc-500 ml-1">
+                                            Selected: <span className="text-zinc-900">{formData.address}, {formData.suburb} {formData.state}</span>
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block">Service Radius (km)</label>
