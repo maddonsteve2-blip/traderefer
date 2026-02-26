@@ -1,51 +1,20 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-
-declare global {
-    interface Window {
-        google?: any;
-    }
-}
+import { Loader } from "@googlemaps/js-api-loader";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
-/* ── Bootstrap the Maps JS API with importLibrary support ── */
-let _loadPromise: Promise<void> | null = null;
-function loadGoogleMaps(): Promise<void> {
-    if (_loadPromise) return _loadPromise;
-    if (typeof window === "undefined") return Promise.reject(new Error("No window"));
+const loader = new Loader({
+    apiKey: API_KEY,
+    version: "weekly",
+});
 
-    const g = (window as any).google;
-    if (g?.maps?.places?.PlaceAutocompleteElement) {
-        return (_loadPromise = Promise.resolve());
-    }
-
-    _loadPromise = new Promise<void>((resolve, reject) => {
-        // Inject the Google Maps bootstrap loader (enables importLibrary)
-        const bootstrapScript = document.createElement("script");
-        bootstrapScript.textContent = `
-            (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=q+"="+Date.now();r.add("maps");e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);var x=m.createElement("script");var N=d[l]=function(f,...n){return N._p||=new Promise(function(v,w){x.id="gm_authFailure_module";x.crossOrigin="";x.src="https://maps.googleapis.com/maps/api/js?"+e+"&callback="+q;d[q]=v;x.onerror=()=>h=w(Error(p+" could not load."));x.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.appendChild(x)}).then(()=>d[l](f,...n))};N({});})({key:"${API_KEY}",v:"weekly"});
-        `;
-        document.head.appendChild(bootstrapScript);
-
-        // Now use importLibrary to load Places
-        const waitForGoogle = () => {
-            const goog = (window as any).google;
-            if (goog?.maps?.importLibrary) {
-                goog.maps.importLibrary("places").then(() => {
-                    resolve();
-                }).catch(reject);
-            } else {
-                setTimeout(waitForGoogle, 50);
-            }
-        };
-        waitForGoogle();
-
-        // Timeout after 15s
-        setTimeout(() => reject(new Error("Google Maps load timeout")), 15000);
-    });
-    return _loadPromise;
+let _placesReady: Promise<void> | null = null;
+function loadPlaces(): Promise<void> {
+    if (_placesReady) return _placesReady;
+    _placesReady = (loader as any).importLibrary("places").then(() => {});
+    return _placesReady!;
 }
 
 export function AddressAutocomplete({
@@ -89,7 +58,7 @@ export function AddressAutocomplete({
         if (elementInserted.current) return;
         let cancelled = false;
 
-        loadGoogleMaps()
+        loadPlaces()
             .then(() => {
                 if (cancelled || !containerRef.current || elementInserted.current) return;
                 elementInserted.current = true;
@@ -156,7 +125,7 @@ export function AddressAutocomplete({
                 containerRef.current.appendChild(pac);
                 setReady(true);
             })
-            .catch((err) => {
+            .catch((err: unknown) => {
                 console.error("Google Maps load error:", err);
                 if (!cancelled) setError(true);
             });
