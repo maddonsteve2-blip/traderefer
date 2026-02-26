@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useLoadScript, Autocomplete } from "@react-google-maps/api";
+import { useLoadScript, Autocomplete, Libraries } from "@react-google-maps/api";
 
-const libraries: ("places")[] = ["places"];
+const libraries: Libraries = ["places"];
 
 export function AddressAutocomplete({
     addressValue = "",
