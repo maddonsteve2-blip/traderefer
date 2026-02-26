@@ -5,11 +5,14 @@ import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
-(setOptions as any)({ apiKey: API_KEY, version: "weekly" });
-
 let _placesReady: Promise<void> | null = null;
+let _optionsSet = false;
 function loadPlaces(): Promise<void> {
     if (_placesReady) return _placesReady;
+    if (!_optionsSet) {
+        (setOptions as any)({ apiKey: API_KEY, version: "weekly" });
+        _optionsSet = true;
+    }
     _placesReady = importLibrary("places").then(() => {});
     return _placesReady!;
 }
