@@ -25,7 +25,7 @@ export function AddressAutocomplete({
     addressValue?: string;
     suburbValue?: string;
     stateValue?: string;
-    onAddressSelect: (address: string, suburb: string, state: string) => void;
+    onAddressSelect: (address: string, suburb: string, state: string, postcode?: string) => void;
     className?: string;
     placeholder?: string;
 }) {
@@ -107,12 +107,14 @@ export function AddressAutocomplete({
             let route = "";
             let locality = "";
             let adminArea = "VIC";
+            let postcode = "";
 
             for (const c of (place.addressComponents || [])) {
                 if (c.types.includes("street_number")) streetNumber = c.longText || "";
                 if (c.types.includes("route")) route = c.longText || "";
                 if (c.types.includes("locality")) locality = c.longText || "";
                 if (c.types.includes("administrative_area_level_1")) adminArea = c.shortText || "";
+                if (c.types.includes("postal_code")) postcode = c.longText || "";
             }
             if (!locality) {
                 const sub = (place.addressComponents || []).find(
@@ -127,7 +129,8 @@ export function AddressAutocomplete({
             onSelectRef.current(
                 address || place.displayName || full,
                 locality || address || place.displayName || "",
-                adminArea
+                adminArea,
+                postcode
             );
         } catch (err) {
             console.error("Place fetch error:", err);

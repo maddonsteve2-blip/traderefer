@@ -52,6 +52,7 @@ export default function BusinessProfileManagementPage() {
         address: "",
         suburb: "",
         state: "VIC",
+        postcode: "",
         slug: "",
         service_radius_km: 25,
         photo_urls: [] as string[],
@@ -409,8 +410,8 @@ export default function BusinessProfileManagementPage() {
                                         addressValue={formData.address}
                                         suburbValue={formData.suburb}
                                         stateValue={formData.state}
-                                        onAddressSelect={(address, suburb, state) => {
-                                            setFormData(prev => ({ ...prev, address, suburb, state }));
+                                        onAddressSelect={(address, suburb, state, postcode) => {
+                                            setFormData(prev => ({ ...prev, address, suburb, state, postcode: postcode || prev.postcode }));
                                         }}
                                         placeholder="Search for your address in Australia..."
                                         className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"

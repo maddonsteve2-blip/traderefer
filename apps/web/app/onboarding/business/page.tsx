@@ -63,6 +63,7 @@ export default function BusinessOnboardingPage() {
         suburb: "",
         address: "",
         state: "VIC",
+        postcode: "",
         business_phone: "",
         business_email: "",
         website: "",
@@ -517,8 +518,8 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                                 addressValue={formData.address}
                                                 suburbValue={formData.suburb}
                                                 stateValue={formData.state}
-                                                onAddressSelect={(address, suburb, state) => {
-                                                    setFormData(prev => ({ ...prev, address, suburb, state }));
+                                                onAddressSelect={(address, suburb, state, postcode) => {
+                                                    setFormData(prev => ({ ...prev, address, suburb, state, postcode: postcode || prev.postcode }));
                                                 }}
                                                 placeholder="Search for your address in Australia..."
                                                 className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300"
