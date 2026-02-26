@@ -1,30 +1,22 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
+import { Loader } from "@googlemaps/js-api-loader";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+
+const loader = new Loader({
+    apiKey: API_KEY,
+    version: "weekly",
+    libraries: ["places"],
+});
 
 let _mapsReady: Promise<void> | null = null;
 function loadMapsScript(): Promise<void> {
     if (typeof window === "undefined") return Promise.resolve();
     if (_mapsReady) return _mapsReady;
-    if ((window as any).google?.maps?.places?.Autocomplete) {
-        return (_mapsReady = Promise.resolve());
-    }
-    _mapsReady = new Promise<void>((resolve, reject) => {
-        const existing = document.querySelector('script[src*="maps.googleapis.com"]');
-        if (existing) {
-            existing.addEventListener("load", () => resolve());
-            return;
-        }
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
-        script.async = true;
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error("Failed to load Google Maps"));
-        document.head.appendChild(script);
-    });
-    return _mapsReady;
+    _mapsReady = loader.load().then(() => {});
+    return _mapsReady!;
 }
 
 export function AddressAutocomplete({
