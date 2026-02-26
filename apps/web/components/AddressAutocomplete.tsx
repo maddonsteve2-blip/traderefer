@@ -22,10 +22,7 @@ function loadGoogleMaps(): Promise<void> {
         script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&loading=async`;
         script.async = true;
         script.defer = true;
-        script.onload = () => {
-            // Wait for importLibrary to ensure PlaceAutocompleteElement is available
-            (window as any).google.maps.importLibrary("places").then(() => resolve()).catch(reject);
-        };
+        script.onload = () => resolve();
         script.onerror = () => reject(new Error("Failed to load Google Maps"));
         document.head.appendChild(script);
     });
