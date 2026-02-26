@@ -570,7 +570,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                         <Sparkles className="w-4 h-4 text-white" />
                                     </div>
                                     <div>
-                                        <h1 className="text-xl font-black text-zinc-900 tracking-tight font-display">Chat with your AI assistant</h1>
+                                        <h1 className="text-xl font-black text-zinc-900 tracking-tight font-display">AI Profile Assistant</h1>
                                     </div>
                                 </div>
 
@@ -1125,17 +1125,24 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                 </Button>
                             )}
                             {step === 2 ? (
-                                <Button
-                                    onClick={handleNext}
-                                    disabled={isGenerating}
-                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
-                                >
-                                    {isGenerating ? (
-                                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating profile...</>
-                                    ) : (
-                                        <><Sparkles className="w-5 h-5 mr-2" /> Generate My Profile <ChevronRight className="ml-2 w-6 h-6" /></>
+                                <div className="flex-1 flex flex-col gap-2">
+                                    {!chatDone && !isGenerating && (
+                                        <p className="text-center text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                                            Answer all questions first — the assistant will let you know when it&apos;s ready
+                                        </p>
                                     )}
-                                </Button>
+                                    <Button
+                                        onClick={handleNext}
+                                        disabled={isGenerating || !chatDone}
+                                        className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                                    >
+                                        {isGenerating ? (
+                                            <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating profile...</>
+                                        ) : (
+                                            <><Sparkles className="w-5 h-5 mr-2" /> Generate My Profile <ChevronRight className="ml-2 w-6 h-6" /></>
+                                        )}
+                                    </Button>
+                                </div>
                             ) : step === 3 && !profileLocked ? (
                                 <Button
                                     onClick={() => { if (selectedProfileIndex >= 0) setProfileLocked(true); }}
