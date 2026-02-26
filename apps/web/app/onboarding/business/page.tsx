@@ -333,6 +333,16 @@ Respond with ONLY a JSON object (no markdown, no code fences):
     };
 
     const handleNext = async () => {
+        // Step 1 validation
+        if (step === 1) {
+            if (!formData.business_name.trim()) { toast.error("Business name is required"); return; }
+            if (!formData.slug.trim()) { toast.error("Public handle (slug) is required"); return; }
+            if (slugStatus === 'taken') { toast.error("That handle is already taken — choose another"); return; }
+            if (!formData.address.trim() || !formData.suburb.trim() || !formData.postcode.trim()) { toast.error("Please select a full address including postcode"); return; }
+            if (!formData.business_phone.trim()) { toast.error("Business phone is required"); return; }
+            if (!formData.business_email.trim()) { toast.error("Business email is required"); return; }
+        }
+
         // Step 2 → Step 3: trigger AI generation from chat
         if (step === 2) {
             await generateProfile();
