@@ -419,7 +419,7 @@ export default function BusinessProfileManagementPage() {
                                     />
                                     {formData.address && formData.suburb && (
                                         <p className="mt-2 text-sm font-medium text-zinc-500 ml-1">
-                                            Selected: <span className="text-zinc-900">{formData.address}, {formData.suburb} {formData.state}</span>
+                                            Selected: <span className="text-zinc-900">{formData.address}, {formData.suburb} {formData.state} {formData.postcode}</span>
                                         </p>
                                     )}
                                 </div>
