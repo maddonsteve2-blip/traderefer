@@ -72,11 +72,11 @@ export default async function BusinessDirectory({
                         <div key={biz.id} className="bg-white rounded-2xl border border-zinc-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
                             <div className="p-6">
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center overflow-hidden border border-zinc-100 shadow-inner">
+                                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                                        <div className="w-16 h-16 bg-zinc-100 rounded-xl flex items-center justify-center overflow-hidden border border-zinc-200 shadow-inner">
                                             <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} />
                                         </div>
-                                        <div>
+                                        <div className="flex-1 min-w-0">
                                             <Link href={`/b/${biz.slug}`} className="hover:underline">
                                                 <h3 className="font-bold text-lg text-zinc-900 group-hover:text-orange-600 transition-colors line-clamp-1">
                                                     {biz.business_name}

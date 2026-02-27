@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, AlertCircle } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 
 interface LeadFormProps {
     businessName: string;
@@ -14,8 +15,34 @@ interface LeadFormProps {
 
 export function LeadForm({ businessName, businessId, referralCode }: LeadFormProps) {
     const router = useRouter();
+    const { isSignedIn, userId, getToken } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isOwner, setIsOwner] = useState(false);
+
+    // Check if current user owns this business
+    useEffect(() => {
+        if (!isSignedIn || !userId) return;
+        (async () => {
+            try {
+                const token = await getToken();
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/businesses/me`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const biz = await res.json();
+                    setIsOwner(biz.id === businessId);
+                } else {
+                    console.warn("Business ownership check failed:", res.status, res.statusText);
+                    setIsOwner(false);
+                }
+            } catch (err) {
+                console.error("Business ownership check error:", err);
+                // If check fails, assume not owner
+                setIsOwner(false);
+            }
+        })();
+    }, [isSignedIn, userId, businessId, getToken]);
 
     const [formData, setFormData] = useState({
         consumer_name: "",
@@ -55,7 +82,13 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
             }
 
             const data = await response.json();
-            router.push(`/leads/verify?id=${data.id}`);
+            
+            // If current user owns this business, skip PIN verification
+            if (isOwner) {
+                router.push("/leads/success");
+            } else {
+                router.push(`/leads/verify?id=${data.id}`);
+            }
         } catch (err: any) {
             setError(err.message);
             setIsLoading(false);
