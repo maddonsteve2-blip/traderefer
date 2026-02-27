@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ReferrerShareKit } from "@/components/referrer/ShareKit";
+import { ShareKitGate } from "@/components/referrer/ShareKitGate";
 import { StartReferringButton } from "@/components/referrer/StartReferringButton";
 import { PrivateFeedback } from "@/components/referrer/PrivateFeedback";
 
@@ -324,15 +324,15 @@ export default async function ReferrerBusinessPage({
                             </div>
                         </div>
 
-                        {/* Share Kit */}
+                        {/* Share Kit — gated to active referrers only */}
                         <div className="bg-white rounded-2xl border border-zinc-200 p-5">
                             <h3 className="text-sm font-black text-zinc-900 mb-1">Share Kit</h3>
                             <p className="text-xs text-zinc-400 mb-4">Pre-written messages ready to copy and send.</p>
-                            <ReferrerShareKit
+                            <ShareKitGate
+                                slug={slug}
                                 businessName={business.business_name}
                                 tradeCategory={business.trade_category}
                                 suburb={business.suburb}
-                                slug={slug}
                                 commission={referrerEarns}
                                 deals={deals}
                             />

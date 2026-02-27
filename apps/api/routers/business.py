@@ -989,6 +989,83 @@ async def update_referrer_notes(
     return {"message": "Notes updated", "business_notes": data.business_notes}
 
 
+class ReviewReferrer(BaseModel):
+    referrer_id: str
+    rating: int  # 1-5
+    comment: Optional[str] = None
+
+
+@router.post("/me/referrers/{referrer_id}/review")
+async def review_referrer(
+    referrer_id: str,
+    data: ReviewReferrer,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
+):
+    """Business sends an internal review of a referrer — delivered as a private notification."""
+    if data.rating < 1 or data.rating > 5:
+        raise HTTPException(status_code=400, detail="Rating must be 1-5")
+
+    biz = await _get_business_id(db, user)
+    biz_id = biz["id"]
+    ref_uuid = uuid.UUID(referrer_id)
+    stars = "★" * data.rating + "☆" * (5 - data.rating)
+
+    # Verify referral link exists (referrer must be linked to this business)
+    link_check = await db.execute(
+        text("SELECT id FROM referral_links WHERE business_id = :biz_id AND referrer_id = :ref_id"),
+        {"biz_id": biz_id, "ref_id": ref_uuid}
+    )
+    if not link_check.fetchone():
+        raise HTTPException(status_code=404, detail="Referrer not linked to this business")
+
+    # Get business name and referrer user_id
+    biz_details = await db.execute(
+        text("SELECT business_name FROM businesses WHERE id = :bid"),
+        {"bid": biz_id}
+    )
+    biz_row = biz_details.mappings().fetchone()
+
+    ref_details = await db.execute(
+        text("SELECT user_id, full_name, email FROM referrers WHERE id = :rid"),
+        {"rid": ref_uuid}
+    )
+    ref_row = ref_details.mappings().fetchone()
+    if not ref_row:
+        raise HTTPException(status_code=404, detail="Referrer not found")
+
+    business_name = biz_row["business_name"] if biz_row else "A business"
+    comment_part = f" — \"{data.comment}\"" if data.comment else ""
+
+    from routers.notifications import create_notification
+    await create_notification(
+        db,
+        str(ref_row["user_id"]),
+        "review",
+        f"{business_name} rated you {stars}",
+        f"{data.rating}/5{comment_part}",
+        "/dashboard/referrer"
+    )
+
+    # Email the referrer
+    from services.email import send_referrer_review_request
+    if ref_row["email"]:
+        from services.email import _send
+        review_html = f"""
+        <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+          <h1 style="color:#ea580c">You received a review from {business_name}</h1>
+          <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:20px;margin:16px 0">
+            <p style="margin:0;font-size:24px;color:#ea580c;letter-spacing:4px">{stars}</p>
+            <p style="margin:4px 0 0 0;font-weight:bold;color:#333">{data.rating}/5 — from {business_name}</p>
+            {f'<p style="margin:8px 0 0 0;color:#555;font-style:italic">"{data.comment}"</p>' if data.comment else ''}
+          </div>
+          <a href="https://traderefer.au/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
+        </div>
+        """
+        _send(ref_row["email"], f"You got a {data.rating}-star review from {business_name}", review_html)
+
+    return {"message": "Review sent to referrer"}
+
 
 @router.post("/me/referrers/{referrer_id}/bonus")
 async def award_referrer_bonus(

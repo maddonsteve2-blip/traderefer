@@ -22,6 +22,11 @@ class ReviewCreate(BaseModel):
     rating: int  # 1-5
     comment: Optional[str] = None
 
+class ReviewBusiness(BaseModel):
+    business_slug: str
+    rating: int  # 1-5
+    comment: Optional[str] = None
+
 @router.post("/onboarding")
 async def onboarding(
     data: ReferrerOnboarding, 
@@ -473,79 +478,80 @@ async def withdraw_funds(
         raise HTTPException(status_code=500, detail=f"Withdrawal failed: {str(e)}")
 
 
-@router.post("/reviews")
-async def submit_review(
-    data: ReviewCreate,
+@router.get("/is-linked/{slug}")
+async def is_linked_to_business(
+    slug: str,
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user)
 ):
-    """Submit or update a referrer review of a business."""
+    """Check whether the authenticated referrer has an active referral link for this business."""
+    user_uuid = uuid.UUID(user.id)
+    result = await db.execute(
+        text("""
+            SELECT rl.id FROM referral_links rl
+            JOIN referrers r ON r.id = rl.referrer_id
+            JOIN businesses b ON b.id = rl.business_id
+            WHERE r.user_id = :uid AND b.slug = :slug
+            LIMIT 1
+        """),
+        {"uid": user_uuid, "slug": slug}
+    )
+    return {"linked": result.fetchone() is not None}
+
+
+@router.post("/review-business")
+async def review_business(
+    data: ReviewBusiness,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Referrer sends an internal review of a business — delivered as a private notification to the business owner."""
     if data.rating < 1 or data.rating > 5:
         raise HTTPException(status_code=400, detail="Rating must be 1-5")
 
     user_uuid = uuid.UUID(user.id)
+    stars = "★" * data.rating + "☆" * (5 - data.rating)
 
-    # Get referrer ID
-    ref_result = await db.execute(
-        text("SELECT id FROM referrers WHERE user_id = :uid"),
+    ref_res = await db.execute(
+        text("SELECT id, full_name FROM referrers WHERE user_id = :uid"),
         {"uid": user_uuid}
     )
-    ref = ref_result.fetchone()
+    ref = ref_res.mappings().fetchone()
     if not ref:
         raise HTTPException(status_code=404, detail="Referrer profile not found")
 
-    # Get business ID from slug
-    biz_result = await db.execute(
-        text("SELECT id FROM businesses WHERE slug = :slug"),
+    biz_res = await db.execute(
+        text("SELECT id, user_id, business_name, slug, business_email FROM businesses WHERE slug = :slug"),
         {"slug": data.business_slug}
     )
-    biz = biz_result.fetchone()
+    biz = biz_res.mappings().fetchone()
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
-    # Get business email + slug and referrer name for email notifications
-    biz_details = await db.execute(
-        text("SELECT business_email, business_name, slug FROM businesses WHERE id = :bid"),
-        {"bid": biz[0]}
-    )
-    biz_row = biz_details.mappings().fetchone()
+    referrer_name = ref["full_name"] or "A referrer"
+    comment_part = f" — \"{data.comment}\"" if data.comment else ""
 
-    ref_details = await db.execute(
-        text("SELECT full_name, email FROM referrers WHERE id = :rid"),
-        {"rid": ref[0]}
+    from routers.notifications import create_notification
+    await create_notification(
+        db,
+        str(biz["user_id"]),
+        "review",
+        f"{referrer_name} rated you {stars}",
+        f"{data.rating}/5{comment_part}",
+        "/dashboard/business"
     )
-    ref_row = ref_details.mappings().fetchone()
 
-    # Upsert review (one review per referrer per business)
-    await db.execute(
-        text("""
-            INSERT INTO referrer_reviews (business_id, referrer_id, rating, comment)
-            VALUES (:bid, :rid, :rating, :comment)
-            ON CONFLICT (business_id, referrer_id)
-            DO UPDATE SET rating = :rating, comment = :comment, created_at = now()
-        """),
-        {
-            "bid": biz[0],
-            "rid": ref[0],
-            "rating": data.rating,
-            "comment": data.comment
-        }
-    )
-    await db.commit()
-
-    # Email: notify business of new review
-    if biz_row and biz_row["business_email"]:
-        referrer_name = ref_row["full_name"] if ref_row else "A referrer"
+    if biz["business_email"]:
         send_business_new_review(
-            email=biz_row["business_email"],
-            business_name=biz_row["business_name"],
+            email=biz["business_email"],
+            business_name=biz["business_name"],
             referrer_name=referrer_name,
             rating=data.rating,
             comment=data.comment,
-            slug=biz_row["slug"]
+            slug=biz["slug"]
         )
 
-    return {"message": "Review submitted"}
+    return {"message": "Review sent to business"}
 
 
 class PrivateFeedback(BaseModel):
