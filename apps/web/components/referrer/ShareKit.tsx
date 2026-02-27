@@ -105,18 +105,18 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
     ];
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-5">
             {/* Quick Share Buttons */}
             <div>
-                <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">Share Instantly</div>
-                <div className="grid grid-cols-2 gap-2">
+                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Share Instantly</p>
+                <div className="grid grid-cols-3 gap-2">
                     {shareButtons.map((btn) => (
                         <button
                             key={btn.label}
                             onClick={btn.onClick}
-                            className={`${btn.color} text-white rounded-xl px-3 py-2.5 text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md`}
+                            className="flex items-center justify-center gap-1.5 px-2 py-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-700 transition-colors"
                         >
-                            <btn.icon className="w-4 h-4" />
+                            <btn.icon className="w-3.5 h-3.5 shrink-0" />
                             {btn.label}
                         </button>
                     ))}
@@ -133,9 +133,9 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
                                 toast.success("Link copied!");
                             }
                         }}
-                        className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl px-3 py-2.5 text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md"
+                        className="flex items-center justify-center gap-1.5 px-2 py-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-700 transition-colors"
                     >
-                        <Share2 className="w-4 h-4" />
+                        <Share2 className="w-3.5 h-3.5 shrink-0" />
                         More
                     </button>
                 </div>
@@ -143,17 +143,17 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
 
             {/* Pre-written Messages */}
             <div>
-                <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">Copy & Paste Messages</div>
+                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Copy & Paste Messages</p>
                 <div className="space-y-3">
                     {messages.map((msg, i) => (
-                        <div key={msg.label} className="group">
-                            <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-sm font-bold text-zinc-500 flex items-center gap-1.5">
+                        <div key={msg.label} className="rounded-xl border border-zinc-200 overflow-hidden">
+                            <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 border-b border-zinc-200">
+                                <span className="text-xs font-bold text-zinc-600 flex items-center gap-1.5">
                                     <msg.icon className="w-3.5 h-3.5" /> {msg.label}
                                 </span>
                                 <button
                                     onClick={() => handleCopy(msg.text, i)}
-                                    className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors"
+                                    className={`text-xs font-bold flex items-center gap-1 transition-colors ${copiedIndex === i ? 'text-green-600' : 'text-zinc-500 hover:text-zinc-900'}`}
                                 >
                                     {copiedIndex === i ? (
                                         <><Check className="w-3.5 h-3.5" /> Copied</>
@@ -164,7 +164,7 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
                             </div>
                             <div
                                 onClick={() => handleCopy(msg.text, i)}
-                                className="p-3 bg-zinc-50 rounded-xl text-sm text-zinc-600 leading-relaxed cursor-pointer hover:bg-orange-50 hover:border-orange-200 border border-zinc-100 transition-all line-clamp-3"
+                                className="p-3 bg-white text-sm text-zinc-700 leading-relaxed cursor-pointer hover:bg-zinc-50 transition-colors whitespace-pre-wrap"
                             >
                                 {msg.text}
                             </div>
@@ -175,26 +175,26 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
 
             {/* QR Code */}
             <div>
-                <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-3">In-Person Referral</div>
+                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">In-Person Referral</p>
                 <button
                     onClick={() => setShowQR(!showQR)}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 transition-colors"
                 >
                     <QrCode className="w-4 h-4" />
                     {showQR ? 'Hide QR Code' : 'Show QR Code'}
                 </button>
                 {showQR && (
-                    <div className="mt-3 flex flex-col items-center gap-3 p-6 bg-white border border-zinc-200 rounded-xl">
-                        <div ref={qrRef} className="bg-white p-3 rounded-xl">
-                            <QRCode value={referralUrl} size={160} />
+                    <div className="mt-3 flex flex-col items-center gap-3 p-5 bg-zinc-50 border border-zinc-200 rounded-xl">
+                        <div ref={qrRef} className="bg-white p-3 rounded-lg border border-zinc-200">
+                            <QRCode value={referralUrl} size={150} />
                         </div>
-                        <p className="text-sm text-zinc-500 text-center">Show this to anyone who needs a {tradeCategory.toLowerCase()}</p>
+                        <p className="text-xs text-zinc-500 text-center">Show this to anyone who needs a {tradeCategory.toLowerCase()}</p>
                         <button
                             onClick={() => {
                                 navigator.clipboard.writeText(referralUrl);
                                 toast.success("Link copied!");
                             }}
-                            className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-1"
+                            className="text-sm font-bold text-zinc-600 hover:text-zinc-900 flex items-center gap-1 transition-colors"
                         >
                             <Copy className="w-3.5 h-3.5" /> Copy Link
                         </button>
