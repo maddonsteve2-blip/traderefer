@@ -99,7 +99,22 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
     platform_fee = int(referral_fee * (platform_fee_percent / 100))
     total_unlock_fee = referral_fee + platform_fee
 
-    # 3. Insert Lead
+    # 3. If a lead already exists for this phone+business, return it (idempotent)
+    existing_res = await db.execute(
+        text("""
+            SELECT id, status
+            FROM leads
+            WHERE consumer_phone = :phone AND business_id = :bid
+            ORDER BY created_at DESC
+            LIMIT 1
+        """),
+        {"phone": lead.consumer_phone, "bid": lead.business_id}
+    )
+    existing = existing_res.mappings().first()
+    if existing:
+        return {"id": str(existing["id"]), "status": existing["status"]}
+
+    # 4. Insert Lead
     insert_query = text("""
         INSERT INTO leads (
             business_id, 
@@ -188,6 +203,24 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
         return {"id": str(new_lead_id), "status": "PENDING"}
     except Exception as e:
         await db.rollback()
+
+        # If we raced the unique constraint, return the existing lead instead of 500
+        err_str = str(e)
+        if "idx_leads_phone_business" in err_str or "UniqueViolationError" in err_str:
+            existing_res = await db.execute(
+                text("""
+                    SELECT id, status
+                    FROM leads
+                    WHERE consumer_phone = :phone AND business_id = :bid
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                """),
+                {"phone": lead.consumer_phone, "bid": lead.business_id}
+            )
+            existing = existing_res.mappings().first()
+            if existing:
+                return {"id": str(existing["id"]), "status": existing["status"]}
+
         print(f"Error creating lead: {e}")
         print(f"Lead data: business_id={lead.business_id}, consumer_name={lead.consumer_name}, consumer_phone={lead.consumer_phone}, consumer_email={lead.consumer_email}, consumer_suburb={lead.consumer_suburb}")
         print(f"Calculated values: referral_fee={referral_fee}, total_unlock_fee={total_unlock_fee}, platform_fee={platform_fee}")
