@@ -11,6 +11,8 @@ export default async function DashboardRedirect() {
     const token = await getToken();
     const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+    let destination = "/onboarding";
+
     try {
         const res = await fetch(`${apiBase}/auth/status`, {
             cache: "no-store",
@@ -20,20 +22,15 @@ export default async function DashboardRedirect() {
         if (res.ok) {
             const data = await res.json();
 
-            // Has a business account — go to business dashboard
             if (data.has_business) {
-                redirect("/dashboard/business");
-            }
-
-            // Has a referrer account — go to referrer dashboard
-            if (data.has_referrer) {
-                redirect("/dashboard/referrer");
+                destination = "/dashboard/business";
+            } else if (data.has_referrer) {
+                destination = "/dashboard/referrer";
             }
         }
     } catch (err) {
         console.error("Auth status check failed:", err);
     }
 
-    // No role found — new user, send to onboarding
-    redirect("/onboarding");
+    redirect(destination);
 }
