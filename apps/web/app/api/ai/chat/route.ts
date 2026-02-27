@@ -1,5 +1,6 @@
 import { generateText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 const zai = createOpenAI({
     apiKey: process.env.ZAI_API_KEY,
@@ -54,6 +55,19 @@ ABSOLUTE RULES — FOLLOW THESE EXACTLY:
             model: zai.chat("glm-5"),
             system: systemPrompt,
             messages,
+        });
+
+        // Track AI chat message usage server-side
+        const posthog = getPostHogClient();
+        posthog.capture({
+            distinctId: business_name || 'anonymous',
+            event: 'ai_chat_message_sent',
+            properties: {
+                trade_category,
+                suburb,
+                user_message_count: userMessageCount,
+                conversation_done: text.toLowerCase().includes("i've got everything i need"),
+            }
         });
 
         return Response.json({ message: text });

@@ -5,6 +5,7 @@ import { Copy, Check, MessageSquare, Mail, Phone, Facebook, Twitter, Instagram, 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import QRCode from "react-qr-code";
+import posthog from "posthog-js";
 
 interface Deal {
     title: string;
@@ -51,6 +52,12 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
     const handleCopy = (text: string, index: number) => {
         navigator.clipboard.writeText(text);
         setCopiedIndex(index);
+        const channelNames = ['sms', 'whatsapp', 'email'];
+        posthog.capture('referral_message_copied', {
+            channel: channelNames[index] || 'unknown',
+            business_slug: slug,
+            business_name: businessName,
+        });
         toast.success("Message copied! Paste it anywhere.");
         setTimeout(() => setCopiedIndex(null), 2000);
     };
@@ -61,6 +68,7 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
             icon: MessageSquare,
             color: "bg-green-600 hover:bg-green-700",
             onClick: () => {
+                posthog.capture('referral_link_shared', { channel: 'whatsapp', business_slug: slug, business_name: businessName });
                 const text = encodeURIComponent(messages[1].text);
                 window.open(`https://wa.me/?text=${text}`, '_blank');
             }
@@ -70,6 +78,7 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
             icon: Facebook,
             color: "bg-blue-600 hover:bg-blue-700",
             onClick: () => {
+                posthog.capture('referral_link_shared', { channel: 'facebook', business_slug: slug, business_name: businessName });
                 const url = encodeURIComponent(referralUrl);
                 window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
             }
@@ -79,6 +88,7 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
             icon: Twitter,
             color: "bg-zinc-900 hover:bg-black",
             onClick: () => {
+                posthog.capture('referral_link_shared', { channel: 'twitter', business_slug: slug, business_name: businessName });
                 const text = encodeURIComponent(`${shareText} ${referralUrl}`);
                 window.open(`https://x.com/intent/tweet?text=${text}`, '_blank', 'width=600,height=400');
             }
@@ -88,6 +98,7 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
             icon: Instagram,
             color: "bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600",
             onClick: () => {
+                posthog.capture('referral_link_shared', { channel: 'instagram', business_slug: slug, business_name: businessName });
                 navigator.clipboard.writeText(`${shareText} ${referralUrl}`);
                 toast.success("Caption copied! Paste it in your Instagram story or post.");
             }
@@ -97,6 +108,7 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
             icon: Mail,
             color: "bg-zinc-600 hover:bg-zinc-700",
             onClick: () => {
+                posthog.capture('referral_link_shared', { channel: 'email', business_slug: slug, business_name: businessName });
                 const subject = encodeURIComponent(`Check out ${businessName} — great ${tradeCategory.toLowerCase()} in ${suburb}`);
                 const body = encodeURIComponent(messages[2].text);
                 window.open(`mailto:?subject=${subject}&body=${body}`);
@@ -122,6 +134,7 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
                     ))}
                     <button
                         onClick={() => {
+                            posthog.capture('referral_link_shared', { channel: 'native_share', business_slug: slug, business_name: businessName });
                             if (navigator.share) {
                                 navigator.share({
                                     title: `${businessName} — ${tradeCategory}`,
@@ -177,7 +190,12 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
             <div>
                 <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">In-Person Referral</p>
                 <button
-                    onClick={() => setShowQR(!showQR)}
+                    onClick={() => {
+                        if (!showQR) {
+                            posthog.capture('referral_qr_code_shown', { business_slug: slug, business_name: businessName });
+                        }
+                        setShowQR(!showQR);
+                    }}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 transition-colors"
                 >
                     <QrCode className="w-4 h-4" />

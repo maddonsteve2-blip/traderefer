@@ -40,6 +40,7 @@ import { ImageUpload } from "@/components/ImageUpload";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 import { completeOnboarding } from "@/app/onboarding/_actions";
+import posthog from "posthog-js";
 
 type ChatMessage = {
     role: "user" | "assistant";
@@ -302,6 +303,13 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                 toast.error("AI returned an unexpected format. You can edit the fields manually.");
             }
 
+            posthog.capture('business_profile_generated', {
+                trade_category: formData.trade_category,
+                suburb: formData.suburb,
+                chat_message_count: chatMessages.length,
+                profile_options_count: profiles.length,
+                is_tweak: !!extraInstruction,
+            });
             setProfileOptions(profiles);
             const chosen = profiles[0] || {};
             setSelectedProfileIndex(0);
@@ -350,6 +358,12 @@ Respond with ONLY a JSON object (no markdown, no code fences):
 
         // Step 2 → Step 3: trigger AI generation from chat
         if (step === 2) {
+            posthog.capture('business_onboarding_step_completed', {
+                step: 2,
+                step_name: 'ai_chat',
+                trade_category: formData.trade_category,
+                chat_messages: chatMessages.length,
+            });
             await generateProfile();
             setStep(3);
             return;
@@ -387,12 +401,25 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                     throw new Error(clerkRes.error);
                 }
 
+                posthog.capture('business_onboarding_completed', {
+                    trade_category: formData.trade_category,
+                    suburb: formData.suburb,
+                    state: formData.state,
+                    listing_visibility: formData.listing_visibility,
+                    referral_fee_cents: formData.referral_fee_cents,
+                    service_radius_km: formData.service_radius_km,
+                    has_logo: !!logoUrl,
+                    has_cover_photo: !!coverPhotoUrl,
+                    photo_count: photoUrls.length,
+                });
+
                 // Force session token refresh so middleware sees updated claims
                 await user?.reload();
 
                 // Redirect to dashboard
                 router.push("/dashboard/business");
             } catch (err: any) {
+                posthog.captureException(err);
                 toast.error(err.message);
             } finally {
                 setIsLoading(false);
@@ -401,11 +428,22 @@ Respond with ONLY a JSON object (no markdown, no code fences):
         }
 
         // Default: next step
-        if (step < TOTAL_STEPS) setStep(step + 1);
+        if (step < TOTAL_STEPS) {
+            posthog.capture('business_onboarding_step_completed', {
+                step,
+                trade_category: formData.trade_category,
+            });
+            setStep(step + 1);
+        }
     };
 
     if (showTour) {
-        return <WelcomeTour type="business" onComplete={() => setShowTour(false)} />;
+        return <WelcomeTour type="business" onComplete={() => {
+            setShowTour(false);
+            posthog.capture('business_onboarding_started', {
+                trade_category: formData.trade_category,
+            });
+        }} />;
     }
 
     return (

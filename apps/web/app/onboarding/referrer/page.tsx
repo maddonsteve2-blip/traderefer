@@ -12,6 +12,7 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
 import { toast } from "sonner";
 import { completeOnboarding } from "@/app/onboarding/_actions";
+import posthog from "posthog-js";
 
 export default function ReferrerOnboardingPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -69,11 +70,16 @@ export default function ReferrerOnboardingPage() {
                 throw new Error(clerkRes.error);
             }
 
+            posthog.capture('referrer_onboarding_completed', {
+                region: formData.region,
+            });
+
             // Force session token refresh so middleware sees updated claims
             await user?.reload();
 
             router.push("/dashboard/referrer");
         } catch (error) {
+            posthog.captureException(error);
             console.error(error);
             alert("Failed to complete onboarding");
         } finally {

@@ -1,0 +1,87 @@
+[
+  {
+    "event": "business_onboarding_started",
+    "description": "Fired when a business user begins the onboarding flow (tour dismissed, step 1 shown)",
+    "file": "app/onboarding/business/page.tsx"
+  },
+  {
+    "event": "business_onboarding_step_completed",
+    "description": "Fired each time the user advances a step during business onboarding; includes step number and trade category",
+    "file": "app/onboarding/business/page.tsx"
+  },
+  {
+    "event": "business_profile_generated",
+    "description": "Fired when AI generates profile options from the chat conversation; includes number of messages exchanged",
+    "file": "app/onboarding/business/page.tsx"
+  },
+  {
+    "event": "business_onboarding_completed",
+    "description": "Fired on successful completion of business onboarding (API submit + Clerk metadata updated); includes trade_category and suburb",
+    "file": "app/onboarding/business/page.tsx"
+  },
+  {
+    "event": "lead_unlock_initiated",
+    "description": "Fired when a business clicks 'Unlock Details' for a lead; includes lead_id and unlock_fee_cents",
+    "file": "components/dashboard/LeadsList.tsx"
+  },
+  {
+    "event": "lead_unlocked",
+    "description": "Fired when a lead is successfully unlocked (either from wallet or payment); includes lead_id and payment_method (wallet or stripe)",
+    "file": "components/dashboard/LeadsList.tsx"
+  },
+  {
+    "event": "lead_on_the_way",
+    "description": "Fired when a business marks themselves as 'on the way' to a lead's job; includes lead_id",
+    "file": "components/dashboard/LeadsList.tsx"
+  },
+  {
+    "event": "lead_job_confirmed",
+    "description": "Fired when a job is confirmed via PIN; includes lead_id",
+    "file": "components/dashboard/LeadsList.tsx"
+  },
+  {
+    "event": "campaign_created",
+    "description": "Fired when a business successfully creates a campaign; includes campaign_type and bonus_amount_cents or multiplier",
+    "file": "app/dashboard/business/campaigns/page.tsx"
+  },
+  {
+    "event": "campaign_toggled",
+    "description": "Fired when a business pauses or reactivates a campaign; includes campaign_id and new state (paused/active)",
+    "file": "app/dashboard/business/campaigns/page.tsx"
+  },
+  {
+    "event": "campaign_deleted",
+    "description": "Fired when a business deletes a campaign; includes campaign_id",
+    "file": "app/dashboard/business/campaigns/page.tsx"
+  },
+  {
+    "event": "referral_link_shared",
+    "description": "Fired when a referrer shares a referral link via any channel; includes channel (sms, whatsapp, facebook, twitter, instagram, email, native_share) and business_slug",
+    "file": "components/referrer/ShareKit.tsx"
+  },
+  {
+    "event": "referral_message_copied",
+    "description": "Fired when a referrer copies a pre-written referral message; includes channel (sms, whatsapp, email) and business_slug",
+    "file": "components/referrer/ShareKit.tsx"
+  },
+  {
+    "event": "referral_qr_code_shown",
+    "description": "Fired when a referrer shows the QR code for in-person referrals; includes business_slug",
+    "file": "components/referrer/ShareKit.tsx"
+  },
+  {
+    "event": "referrer_onboarding_completed",
+    "description": "Fired when a referrer completes onboarding; includes region selected",
+    "file": "app/onboarding/referrer/page.tsx"
+  },
+  {
+    "event": "ai_chat_message_sent",
+    "description": "Fired when a business owner sends a message in the AI onboarding chat; includes message count",
+    "file": "app/api/ai/chat/route.ts"
+  },
+  {
+    "event": "ai_profile_generated",
+    "description": "Server-side: Fired when the AI generate-profile API is called; includes whether it was a tweak or fresh generation",
+    "file": "app/api/ai/generate-profile/route.ts"
+  }
+]

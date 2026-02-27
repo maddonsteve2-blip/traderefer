@@ -17,6 +17,7 @@ import { StripePaymentModal } from "./StripePaymentModal";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PinConfirmationModal } from "./PinConfirmationModal";
+import posthog from "posthog-js";
 
 interface Lead {
     id: string;
@@ -50,6 +51,14 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
             return;
         }
 
+        const lead = leads.find(l => l.id === leadId);
+        posthog.capture('lead_unlock_initiated', {
+            lead_id: leadId,
+            unlock_fee_cents: lead?.unlock_fee_cents,
+            trade_type: lead?.trade_type,
+            suburb: lead?.suburb,
+        });
+
         setIsUnlocking(leadId);
 
         try {
@@ -70,6 +79,11 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
             const data = await res.json();
 
             if (data.status === "UNLOCKED") {
+                posthog.capture('lead_unlocked', {
+                    lead_id: leadId,
+                    payment_method: 'wallet',
+                    unlock_fee_cents: lead?.unlock_fee_cents,
+                });
                 await refreshLead(leadId);
                 window.dispatchEvent(new Event('wallet-updated'));
             } else if (data.status === "REQUIRES_PAYMENT" && data.client_secret && !data.client_secret.includes("mock")) {
@@ -80,6 +94,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                 alert("Stripe is not configured. Please set up Stripe keys to process payments.");
             }
         } catch (error) {
+            posthog.captureException(error);
             alert((error as Error).message);
         } finally {
             setIsUnlocking(null);
@@ -87,6 +102,9 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
     };
 
     const handleOnTheWay = async (leadId: string) => {
+        posthog.capture('lead_on_the_way', {
+            lead_id: leadId,
+        });
         setIsUpdatingStatus(leadId);
         try {
             const token = await getToken();
@@ -104,6 +122,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
 
             await refreshLead(leadId);
         } catch (error) {
+            posthog.captureException(error);
             alert((error as Error).message);
         } finally {
             setIsUpdatingStatus(null);
@@ -138,6 +157,12 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
 
     const handlePaymentSuccess = async () => {
         if (activeLeadId) {
+            const lead = leads.find(l => l.id === activeLeadId);
+            posthog.capture('lead_unlocked', {
+                lead_id: activeLeadId,
+                payment_method: 'stripe',
+                unlock_fee_cents: lead?.unlock_fee_cents,
+            });
             await refreshLead(activeLeadId);
         }
         setStripeClientSecret(null);
@@ -145,6 +170,9 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
     };
 
     const handlePinConfirmed = async (leadId: string) => {
+        posthog.capture('lead_job_confirmed', {
+            lead_id: leadId,
+        });
         await refreshLead(leadId);
         setShowPinModal(null);
     };

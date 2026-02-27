@@ -8,6 +8,7 @@ import {
     Calendar, Megaphone, X, Flame, Clock
 } from "lucide-react";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 interface Campaign {
     id: string;
@@ -116,6 +117,12 @@ export default function CampaignsPage() {
             });
 
             if (res.ok) {
+                posthog.capture('campaign_created', {
+                    campaign_type: form.campaign_type,
+                    bonus_amount_cents: form.campaign_type !== 'multiplier' ? form.bonus_amount_cents : undefined,
+                    multiplier: form.campaign_type === 'multiplier' ? form.multiplier : undefined,
+                    volume_threshold: form.campaign_type === 'volume_bonus' ? form.volume_threshold : undefined,
+                });
                 toast.success("Campaign created!");
                 setShowCreate(false);
                 setForm({ title: "", description: "", campaign_type: "flat_bonus", bonus_amount_cents: 1000, multiplier: 2.0, volume_threshold: 5, promo_text: "", ends_at: "" });
@@ -132,6 +139,10 @@ export default function CampaignsPage() {
     };
 
     const handleToggle = async (id: string, active: boolean) => {
+        posthog.capture('campaign_toggled', {
+            campaign_id: id,
+            new_state: active ? 'paused' : 'active',
+        });
         const token = await getToken();
         await fetch(`${apiUrl}/business/campaigns/${id}`, {
             method: "PATCH",
@@ -142,6 +153,9 @@ export default function CampaignsPage() {
     };
 
     const handleDelete = async (id: string) => {
+        posthog.capture('campaign_deleted', {
+            campaign_id: id,
+        });
         const token = await getToken();
         await fetch(`${apiUrl}/business/campaigns/${id}`, {
             method: "DELETE",
