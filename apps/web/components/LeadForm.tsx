@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
+import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 
 interface LeadFormProps {
     businessName: string;
@@ -61,9 +62,23 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
         job_description: "",
         lead_urgency: "warm"
     });
+    const [addressValue, setAddressValue] = useState("");
+    const [suburbValue, setSuburbValue] = useState("");
+    const [stateValue, setStateValue] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const handleAddressSelect = (address: string, suburb: string, state: string, postcode?: string) => {
+        setAddressValue(address);
+        setSuburbValue(suburb);
+        setStateValue(state);
+        setFormData(prev => ({ 
+            ...prev, 
+            consumer_address: address,
+            consumer_suburb: suburb
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -135,7 +150,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                         placeholder="John Doe"
                     />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                     <div>
                         <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Mobile</label>
                         <input
@@ -148,28 +163,16 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                             placeholder="0412 000 000"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Suburb</label>
-                        <input
-                            required
-                            name="consumer_suburb"
-                            value={formData.consumer_suburb}
-                            onChange={handleChange}
-                            type="text"
-                            className="w-full px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium"
-                            placeholder="Highton"
-                        />
-                    </div>
                 </div>
                 <div>
-                    <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Street Address</label>
-                    <input
-                        name="consumer_address"
-                        value={formData.consumer_address}
-                        onChange={handleChange}
-                        type="text"
+                    <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Address *</label>
+                    <AddressAutocomplete
+                        addressValue={addressValue}
+                        suburbValue={suburbValue}
+                        stateValue={stateValue}
+                        onAddressSelect={handleAddressSelect}
                         className="w-full px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-medium"
-                        placeholder="123 Example St (optional)"
+                        placeholder="Search for your address..."
                     />
                 </div>
                 <div>
