@@ -22,11 +22,19 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
 
     // Check if current user owns this business
     useEffect(() => {
-        if (!isSignedIn || !userId) return;
+        if (!isSignedIn || !userId) {
+            setIsOwner(false);
+            return;
+        }
         (async () => {
             try {
                 const token = await getToken();
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/businesses/me`, {
+                if (!token) {
+                    console.warn("No auth token available");
+                    setIsOwner(false);
+                    return;
+                }
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
