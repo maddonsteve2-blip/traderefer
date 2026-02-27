@@ -669,9 +669,33 @@ Respond with ONLY a JSON object (no markdown, no code fences):
 
                                     {/* Done indicator */}
                                     {chatDone && (
-                                        <div className="border-t border-green-200 p-4 bg-green-50 flex items-center gap-3">
-                                            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                                            <p className="text-sm font-medium text-green-800">Ready to generate. You can still ask more before generating.</p>
+                                        <div className="border-t-2 border-orange-200 bg-gradient-to-b from-orange-50 to-amber-50 p-5 space-y-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-9 h-9 bg-orange-500 rounded-full flex items-center justify-center shrink-0 shadow-md shadow-orange-200">
+                                                    <CheckCircle2 className="w-5 h-5 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-base font-black text-orange-900">Your profile is ready to generate!</p>
+                                                    <p className="text-sm font-medium text-orange-700 mt-0.5">Got anything to add? Type it below — otherwise hit Generate.</p>
+                                                </div>
+                                            </div>
+                                            <form onSubmit={(e) => { e.preventDefault(); sendChatMessage(); }} className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={chatInput}
+                                                    onChange={(e) => setChatInput(e.target.value)}
+                                                    placeholder="e.g. We also do emergency callouts 24/7..."
+                                                    disabled={isChatting}
+                                                    className="flex-1 px-4 py-3 bg-white border-2 border-orange-300 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 text-sm font-medium placeholder:text-orange-300 disabled:opacity-50 shadow-sm"
+                                                />
+                                                <Button
+                                                    type="submit"
+                                                    disabled={!chatInput.trim() || isChatting}
+                                                    className="bg-orange-500 hover:bg-orange-600 text-white rounded-2xl px-4 h-[46px] shadow-sm shadow-orange-200 disabled:opacity-40"
+                                                >
+                                                    <Send className="w-4 h-4" />
+                                                </Button>
+                                            </form>
                                         </div>
                                     )}
                                 </div>
