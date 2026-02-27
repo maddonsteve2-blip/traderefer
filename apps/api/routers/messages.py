@@ -7,6 +7,7 @@ from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
 from services.email import send_new_message_notification
 import uuid
+from utils.logging_config import error_logger
 
 router = APIRouter()
 
@@ -289,7 +290,7 @@ async def send_message(
                     conversation_url="/dashboard/business/messages",
                 )
     except Exception as email_err:
-        print(f"Message notification email error (non-fatal): {email_err}")
+        error_logger.warning(f"Message notification email error (non-fatal): {email_err}")
 
     return {
         "id": str(msg["id"]),

@@ -7,6 +7,7 @@ from sqlalchemy import text
 import stripe
 import os
 from datetime import datetime, timedelta
+from utils.logging_config import payment_logger, error_logger
 
 router = APIRouter()
 
@@ -52,7 +53,7 @@ async def stripe_webhook(
             lead = res.mappings().first()
             
             if not lead:
-                print(f"⚠️ Lead {lead_id} not found in webhook")
+                error_logger.warning(f"Lead {lead_id} not found in webhook")
                 return {"status": "error", "message": "Lead not found"}
 
             payout_amount = lead["referrer_payout_amount_cents"] or int(lead["unlock_fee_cents"] * 0.7)
@@ -60,7 +61,7 @@ async def stripe_webhook(
             referrer_id = lead["referrer_id"]
             link_id = lead["referral_link_id"]
 
-            print(f"💰 Payment succeeded for lead {lead_id}. Referrer payout pending: {payout_amount}")
+            payment_logger.info(f"Payment succeeded for lead {lead_id}. Referrer payout pending: {payout_amount}")
             
             # 2. Unlock the lead
             await db.execute(text("""

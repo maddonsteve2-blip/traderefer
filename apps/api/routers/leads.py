@@ -14,6 +14,7 @@ import uuid
 import random
 import os
 from datetime import datetime, timedelta
+from utils.logging_config import lead_logger, error_logger, payment_logger
 
 router = APIRouter()
 
@@ -51,7 +52,7 @@ async def check_ip_velocity(ip: str, db: AsyncSession):
     count = result.scalar() or 0
     
     if count >= 5:
-        print(f"Fraud: IP {ip} blocked (velocity: {count} leads/hr)")
+        error_logger.warning(f"Fraud: IP {ip} blocked (velocity: {count} leads/hr)")
         raise HTTPException(
             status_code=429, 
             detail="Too many lead submissions. Please try again in an hour."
@@ -188,9 +189,9 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
         return {"id": str(new_lead_id), "status": "PENDING"}
     except Exception as e:
         await db.rollback()
-        print(f"Error creating lead: {e}")
-        print(f"Lead data: business_id={lead.business_id}, consumer_name={lead.consumer_name}, consumer_phone={lead.consumer_phone}, consumer_email={lead.consumer_email}, consumer_suburb={lead.consumer_suburb}")
-        print(f"Calculated values: referral_fee={referral_fee}, total_unlock_fee={total_unlock_fee}, platform_fee={platform_fee}")
+        error_logger.error(f"Error creating lead: {e}")
+        error_logger.error(f"Lead data: business_id={lead.business_id}, consumer_name={lead.consumer_name}, consumer_phone={lead.consumer_phone}, consumer_email={lead.consumer_email}, consumer_suburb={lead.consumer_suburb}")
+        error_logger.error(f"Calculated values: referral_fee={referral_fee}, total_unlock_fee={total_unlock_fee}, platform_fee={platform_fee}")
         raise HTTPException(status_code=500, detail="Failed to create lead")
 
 class OTPVerify(BaseModel):
@@ -337,7 +338,7 @@ async def unlock_lead(
         }
         
     except Exception as e:
-        print(f"Stripe setup error: {e}")
+        payment_logger.error(f"Stripe setup error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to initialize payment")
 
 @router.post("/{lead_id}/on-the-way")
@@ -384,7 +385,7 @@ async def on_the_way(
     await db.commit()
 
     # 6. TODO: Trigger SMS via Twilio (Part 4.4)
-    print(f"📱 SMS to {lead['consumer_phone']}: Your connection code for {business['id']} is {pin}. valid for 4hrs.")
+    lead_logger.info(f"SMS notification | phone={lead['consumer_phone']} | business={business['id']} | pin={pin}")
 
     # 7. Email consumer their PIN
     consumer_info = await db.execute(
@@ -558,7 +559,7 @@ async def confirm_pin(
                         f"/dashboard/referrer"
                     )
             except Exception as notif_err:
-                print(f"Notification error (non-fatal): {notif_err}")
+                error_logger.warning(f"Notification error (non-fatal): {notif_err}")
 
         # Email referrer: earning confirmed and available
         if row["referrer_id"] and payout > 0:
@@ -582,7 +583,7 @@ async def confirm_pin(
                         business_name=biz_name_row2["business_name"] if biz_name_row2 else "the business",
                     )
             except Exception as email_err:
-                print(f"Earning email error (non-fatal): {email_err}")
+                error_logger.warning(f"Earning email error (non-fatal): {email_err}")
 
         # Email referrer: ask for a review of the business
         if row["referrer_id"]:
@@ -606,12 +607,12 @@ async def confirm_pin(
                         slug=biz_slug_row["slug"],
                     )
             except Exception as rev_email_err:
-                print(f"Review request email error (non-fatal): {rev_email_err}")
+                error_logger.warning(f"Review request email error (non-fatal): {rev_email_err}")
 
         return {"confirmed": True, "message": "Lead confirmed and payment released to referrer."}
     except Exception as e:
         await db.rollback()
-        print(f"PIN Confirmation Error: {e}")
+        error_logger.error(f"PIN Confirmation Error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to confirm PIN")
 @router.post("/{lead_id}/dispute")
 async def create_dispute(
@@ -680,10 +681,10 @@ async def create_dispute(
                     reason=data.reason,
                 )
         except Exception as email_err:
-            print(f"Dispute email error (non-fatal): {email_err}")
+            error_logger.warning(f"Dispute email error (non-fatal): {email_err}")
 
         return {"status": "success", "message": "Dispute raised successfully"}
     except Exception as e:
         await db.rollback()
-        print(f"Dispute error: {e}")
+        error_logger.error(f"Dispute error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to raise dispute")

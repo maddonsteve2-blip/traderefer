@@ -1,10 +1,11 @@
 import stripe
 import os
 import uuid
-from typing import Optional
+from typing import Optional, Dict, Any
+from utils.logging_config import payment_logger, error_logger
 
 # Set Stripe API key from environment variable
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
 
 class StripeService:
     @staticmethod
@@ -22,7 +23,7 @@ class StripeService:
             )
             return account.id
         except Exception as e:
-            print(f"Stripe error: {e}")
+            error_logger.error(f"Stripe error creating account: {e}", exc_info=True)
             # For testing without a real key, return a mock ID
             return f"acct_mock_{email.split('@')[0]}"
 
@@ -38,7 +39,7 @@ class StripeService:
             )
             return account_link.url
         except Exception as e:
-            print(f"Stripe link error: {e}")
+            error_logger.error(f"Stripe link error: {e}", exc_info=True)
             # Mock return for testing
             return f"https://connect.stripe.com/setup/s/mock_{account_id}"
 
@@ -71,7 +72,7 @@ class StripeService:
             payment_intent = stripe.PaymentIntent.create(**params)
             return payment_intent
         except Exception as e:
-            print(f"Stripe payment error: {e}")
+            error_logger.error(f"Stripe payment error: {e}", exc_info=True)
             # Mock object for dev
             class MockIntent:
                 client_secret = f"pi_mock_secret_{amount}"
@@ -89,5 +90,5 @@ class StripeService:
             )
             return transfer.id
         except Exception as e:
-            print(f"Stripe transfer error: {e}")
+            error_logger.error(f"Stripe transfer error: {e}", exc_info=True)
             return f"tr_mock_{uuid.uuid4().hex[:8]}"

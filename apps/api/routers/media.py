@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
+from utils.logging_config import general_logger, error_logger
 
 router = APIRouter()
 
@@ -86,7 +87,7 @@ async def upload_file(
             await db.commit()
 
             url = f"{API_BASE_URL}/media/serve/{file_id}"
-            print(f"[neon] Stored {folder}/{filename} ({len(data)} bytes) → {url}")
+            general_logger.info(f"[neon] Stored {folder}/{filename} ({len(data)} bytes) → {url}")
             return {"url": url}
         except HTTPException:
             raise
@@ -113,7 +114,7 @@ async def upload_file(
         return {"url": url}
 
     except Exception as e:
-        print(f"S3 Upload Error: {e}")
+        error_logger.error(f"S3 Upload Error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to upload file")
 
 

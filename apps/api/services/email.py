@@ -2,6 +2,7 @@ import os
 import resend
 import asyncio
 from typing import Optional
+from utils.logging_config import email_logger, error_logger
 
 resend.api_key = os.getenv("RESEND_API_KEY", "")
 FROM_ADDRESS = os.getenv("RESEND_FROM", "TradeRefer <no-reply@traderefer.au>")
@@ -11,12 +12,12 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", "https://traderefer.au")
 async def _send(to: str, subject: str, html: str):
     """Async email send using Resend. Runs in thread pool to avoid blocking."""
     if not resend.api_key:
-        print(f"[email] RESEND_API_KEY not set — skipping email to {to}: {subject}")
+        email_logger.error(f"RESEND_API_KEY not set — skipping email to {to}: {subject}")
         return
     
     # Validate from address
     if not FROM_ADDRESS or "@" not in FROM_ADDRESS:
-        print(f"[email] Invalid RESEND_FROM address: {FROM_ADDRESS}")
+        email_logger.error(f"Invalid RESEND_FROM address: {FROM_ADDRESS}")
         return
     
     try:
@@ -30,14 +31,13 @@ async def _send(to: str, subject: str, html: str):
             })
         
         result = await asyncio.to_thread(send_email)
-        print(f"[email] Sent '{subject}' to {to}: {result}")
+        email_logger.info(f"Email sent successfully | to={to} | subject={subject} | result={result}")
         return result
         
     except Exception as e:
-        print(f"[email] Failed to send '{subject}' to {to}: {e}")
-        # Print full traceback for debugging
-        import traceback
-        traceback.print_exc()
+        error_msg = f"Failed to send email | to={to} | subject={subject} | error={e}"
+        email_logger.error(error_msg)
+        error_logger.error(error_msg, exc_info=True)
 
 
 # ─────────────────────────────────────────────

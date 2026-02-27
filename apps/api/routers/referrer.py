@@ -9,6 +9,7 @@ from services.stripe_service import StripeService
 from services.email import send_referrer_welcome, send_referrer_payout_processed, send_business_new_review, send_referrer_review_request
 import uuid
 import os
+from utils.logging_config import error_logger, general_logger
 
 router = APIRouter()
 
@@ -118,7 +119,7 @@ async def create_referral_link(
         return {"link_code": link_code}
     except Exception as e:
         await db.rollback()
-        print(f"Error creating link: {e}")
+        error_logger.error(f"Error creating link: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to create referral link")
 
 @router.get("/dashboard")
@@ -192,7 +193,7 @@ async def get_referrer_dashboard(
     except HTTPException:
         raise
     except Exception as e:
-        print(f"Error in dashboard: {e}")
+        error_logger.error(f"Error in dashboard: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Dashboard error: {str(e)}")
 
 @router.get("/payouts")

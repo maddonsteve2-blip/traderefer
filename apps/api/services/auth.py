@@ -7,6 +7,7 @@ import uuid
 import time
 from pydantic import BaseModel
 from typing import Optional
+from utils.logging_config import auth_logger, error_logger
 
 security = HTTPBearer()
 
@@ -29,7 +30,7 @@ async def get_jwks():
                 _jwks = response.json()
                 _jwks_fetched_at = now
         except Exception as e:
-            print(f"Error fetching JWKS: {e}")
+            auth_logger.error(f"Error fetching JWKS: {e}")
             # If we have stale keys, use them rather than failing
             if _jwks is not None:
                 return _jwks
@@ -82,9 +83,9 @@ async def get_current_user(token: HTTPAuthorizationCredentials = Depends(securit
                 is_admin=is_admin
             )
     except Exception as e:
-        print(f"Auth error (Token Decoding): {e}")
+        error_logger.error(f"Auth error (Token Decoding): {e}")
         unverified_header = jwt.get_unverified_header(token.credentials)
-        print(f"Token Header: {unverified_header}")
+        auth_logger.info(f"Token Header: {unverified_header}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Could not validate credentials: {str(e)}",

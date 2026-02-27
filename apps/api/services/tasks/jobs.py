@@ -3,6 +3,7 @@ from sqlalchemy import text
 from datetime import datetime, timedelta
 from services.email import send_referrer_earning_available
 import os
+from utils.logging_config import cron_logger, error_logger
 
 async def expire_pending_leads(db: AsyncSession):
     """
@@ -19,7 +20,7 @@ async def expire_pending_leads(db: AsyncSession):
     expired_leads = result.mappings().all()
     
     if expired_leads:
-        print(f"Cron: Expired {len(expired_leads)} pending leads.")
+        cron_logger.info(f"Expired {len(expired_leads)} pending leads")
         
     return len(expired_leads)
 
@@ -40,7 +41,7 @@ async def expire_unlocked_leads(db: AsyncSession):
     expired_unlocked = result.mappings().all()
     
     if expired_unlocked:
-        print(f"Cron: Expired {len(expired_unlocked)} unlocked leads (72h limit).")
+        cron_logger.info(f"Expired {len(expired_unlocked)} unlocked leads (72h limit)")
         
     return len(expired_unlocked)
 
@@ -60,7 +61,7 @@ async def release_pending_earnings(db: AsyncSession):
     released_earnings = result.mappings().all()
     
     if released_earnings:
-        print(f"Cron: Released {len(released_earnings)} pending earnings.")
+        cron_logger.info(f"Released {len(released_earnings)} pending earnings")
         
         # 2. Update referrer wallet balances and send emails
         for earning in released_earnings:
@@ -93,7 +94,7 @@ async def release_pending_earnings(db: AsyncSession):
                         business_name=ref_row["business_name"] or "TradeRefer",
                     )
             except Exception as e:
-                print(f"Cron earning email error (non-fatal): {e}")
+                error_logger.warning(f"Cron earning email error (non-fatal): {e}")
             
     return len(released_earnings)
 
@@ -111,6 +112,6 @@ async def cleanup_expired_pins(db: AsyncSession):
     expired_pins = result.mappings().all()
     
     if expired_pins:
-        print(f"Cron: Moved {len(expired_pins)} leads to UNCONFIRMED due to expired PINs.")
+        cron_logger.info(f"Moved {len(expired_pins)} leads to UNCONFIRMED due to expired PINs")
         
     return len(expired_pins)
