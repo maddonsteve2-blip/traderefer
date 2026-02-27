@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import Head from "next/head";
 
 export default function Page() {
@@ -76,5 +77,3 @@ export default function Page() {
     </div>
   );
 }
-
-import * as Sentry from "@sentry/nextjs";
