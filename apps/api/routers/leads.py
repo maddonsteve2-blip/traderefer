@@ -189,6 +189,8 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
     except Exception as e:
         await db.rollback()
         print(f"Error creating lead: {e}")
+        print(f"Lead data: business_id={lead.business_id}, consumer_name={lead.consumer_name}, consumer_phone={lead.consumer_phone}, consumer_email={lead.consumer_email}, consumer_suburb={lead.consumer_suburb}")
+        print(f"Calculated values: referral_fee={referral_fee}, total_unlock_fee={total_unlock_fee}, platform_fee={platform_fee}")
         raise HTTPException(status_code=500, detail="Failed to create lead")
 
 class OTPVerify(BaseModel):
