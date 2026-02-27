@@ -232,6 +232,36 @@ def send_referrer_campaign_notification(email: str, full_name: str, business_nam
     _send(email, f"New campaign from {business_name} — share it now!", html)
 
 
+def send_business_new_review(email: str, business_name: str, referrer_name: str, rating: int, comment: Optional[str], slug: str):
+    stars = "★" * rating + "☆" * (5 - rating)
+    comment_html = f'<p style="margin:8px 0 0 0;color:#555;font-style:italic">"{comment}"</p>' if comment else ""
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">New Review for {business_name}</h1>
+      <p>{referrer_name} has left a review on your referral profile.</p>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:20px;margin:16px 0">
+        <p style="margin:0;font-size:24px;color:#ea580c;letter-spacing:4px">{stars}</p>
+        <p style="margin:4px 0 0 0;font-weight:bold;color:#333">{rating}/5 — by {referrer_name}</p>
+        {comment_html}
+      </div>
+      <a href="{FRONTEND_URL}/b/{slug}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Your Profile</a>
+    </div>
+    """
+    _send(email, f"New {rating}-star review from {referrer_name}", html)
+
+
+def send_referrer_review_request(email: str, full_name: str, business_name: str, slug: str):
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+      <h1 style="color:#ea580c">How was referring {business_name}?</h1>
+      <p>Hi {full_name}, your referral to <strong>{business_name}</strong> was confirmed. We'd love to hear how the experience went — your review helps other referrers!</p>
+      <a href="{FRONTEND_URL}/b/{slug}/refer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Leave a Review</a>
+      <p style="margin-top:16px;color:#666;font-size:14px">It only takes 30 seconds.</p>
+    </div>
+    """
+    _send(email, f"How was referring {business_name}? Leave a quick review", html)
+
+
 def send_consumer_lead_confirmation(email: str, consumer_name: str, business_name: str, trade_category: str, job_description: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">

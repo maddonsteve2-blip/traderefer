@@ -28,7 +28,6 @@ import { notFound } from "next/navigation";
 import { ReferrerShareKit } from "@/components/referrer/ShareKit";
 import { StartReferringButton } from "@/components/referrer/StartReferringButton";
 import { PrivateFeedback } from "@/components/referrer/PrivateFeedback";
-import { ReviewSection } from "@/components/referrer/ReviewSection";
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -43,19 +42,6 @@ async function getDeals(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     try {
         const res = await fetch(`${apiUrl}/businesses/${slug}/deals`, {
-            cache: 'no-store'
-        });
-        if (!res.ok) return [];
-        return res.json();
-    } catch {
-        return [];
-    }
-}
-
-async function getReviews(slug: string) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    try {
-        const res = await fetch(`${apiUrl}/businesses/${slug}/reviews`, {
             cache: 'no-store'
         });
         if (!res.ok) return [];
@@ -84,10 +70,9 @@ export default async function ReferrerBusinessPage({
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-    const [business, deals, reviews, campaigns] = await Promise.all([
+    const [business, deals, campaigns] = await Promise.all([
         getBusiness(slug),
         getDeals(slug),
-        getReviews(slug),
         getCampaigns(slug)
     ]);
 
@@ -288,11 +273,6 @@ export default async function ReferrerBusinessPage({
                                     </div>
                                 ))}
                             </div>
-                        </section>
-
-                        {/* Reviews */}
-                        <section className="bg-white rounded-2xl border border-zinc-200 p-6">
-                            <ReviewSection slug={slug} initialReviews={reviews} />
                         </section>
 
                         {/* Earnings Estimator */}

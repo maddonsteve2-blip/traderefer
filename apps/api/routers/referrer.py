@@ -6,7 +6,7 @@ from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
 from services.stripe_service import StripeService
-from services.email import send_referrer_welcome, send_referrer_payout_processed
+from services.email import send_referrer_welcome, send_referrer_payout_processed, send_business_new_review, send_referrer_review_request
 import uuid
 import os
 
@@ -503,6 +503,19 @@ async def submit_review(
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
+    # Get business email + slug and referrer name for email notifications
+    biz_details = await db.execute(
+        text("SELECT business_email, business_name, slug FROM businesses WHERE id = :bid"),
+        {"bid": biz[0]}
+    )
+    biz_row = biz_details.mappings().fetchone()
+
+    ref_details = await db.execute(
+        text("SELECT full_name, email FROM referrers WHERE id = :rid"),
+        {"rid": ref[0]}
+    )
+    ref_row = ref_details.mappings().fetchone()
+
     # Upsert review (one review per referrer per business)
     await db.execute(
         text("""
@@ -519,6 +532,19 @@ async def submit_review(
         }
     )
     await db.commit()
+
+    # Email: notify business of new review
+    if biz_row and biz_row["business_email"]:
+        referrer_name = ref_row["full_name"] if ref_row else "A referrer"
+        send_business_new_review(
+            email=biz_row["business_email"],
+            business_name=biz_row["business_name"],
+            referrer_name=referrer_name,
+            rating=data.rating,
+            comment=data.comment,
+            slug=biz_row["slug"]
+        )
+
     return {"message": "Review submitted"}
 
 

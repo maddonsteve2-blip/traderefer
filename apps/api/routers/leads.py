@@ -582,6 +582,30 @@ async def confirm_pin(
             except Exception as email_err:
                 print(f"Earning email error (non-fatal): {email_err}")
 
+        # Email referrer: ask for a review of the business
+        if row["referrer_id"]:
+            try:
+                ref_rev_res = await db.execute(
+                    text("SELECT email, full_name FROM referrers WHERE id = :rid"),
+                    {"rid": row["referrer_id"]}
+                )
+                ref_rev_row = ref_rev_res.mappings().first()
+                biz_slug_res = await db.execute(
+                    text("SELECT business_name, slug FROM businesses WHERE id = :bid"),
+                    {"bid": row["business_id"]}
+                )
+                biz_slug_row = biz_slug_res.mappings().first()
+                if ref_rev_row and ref_rev_row["email"] and biz_slug_row:
+                    from services.email import send_referrer_review_request
+                    send_referrer_review_request(
+                        email=ref_rev_row["email"],
+                        full_name=ref_rev_row["full_name"] or ref_rev_row["email"],
+                        business_name=biz_slug_row["business_name"],
+                        slug=biz_slug_row["slug"],
+                    )
+            except Exception as rev_email_err:
+                print(f"Review request email error (non-fatal): {rev_email_err}")
+
         return {"confirmed": True, "message": "Lead confirmed and payment released to referrer."}
     except Exception as e:
         await db.rollback()
