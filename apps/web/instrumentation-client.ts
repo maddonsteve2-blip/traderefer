@@ -7,13 +7,5 @@ Sentry.init({
   sendDefaultPii: true,
 
   // Performance monitoring
-  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
-
-  // Session replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
-
-  integrations: [
-    Sentry.replayIntegration(),
-  ],
+  tracesSampleRate: 0.1,
 });
