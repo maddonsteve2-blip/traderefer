@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: "https://b2b50766c882354af956b84736e50f60@o4508132350033920.ingest.us.sentry.io/4508132351410176",
   environment: process.env.ENVIRONMENT || "production",
   release: process.env.VERCEL_GIT_COMMIT_SHA || "unknown",
   
