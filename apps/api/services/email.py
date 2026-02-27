@@ -1,5 +1,6 @@
 import os
 import resend
+import asyncio
 from typing import Optional
 
 resend.api_key = os.getenv("RESEND_API_KEY", "")
@@ -7,22 +8,43 @@ FROM_ADDRESS = os.getenv("RESEND_FROM", "TradeRefer <no-reply@traderefer.au>")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://traderefer.au")
 
 
-def _send(to: str, subject: str, html: str):
-    """Fire-and-forget email send. Swallows errors so they never break API responses."""
+async def _send(to: str, subject: str, html: str):
+    """Async email send using Resend. Runs in thread pool to avoid blocking."""
     if not resend.api_key:
         print(f"[email] RESEND_API_KEY not set — skipping email to {to}: {subject}")
         return
+    
+    # Validate from address
+    if not FROM_ADDRESS or "@" not in FROM_ADDRESS:
+        print(f"[email] Invalid RESEND_FROM address: {FROM_ADDRESS}")
+        return
+    
     try:
-        resend.Emails.send({"from": FROM_ADDRESS, "to": [to], "subject": subject, "html": html})
+        # Run sync Resend SDK in thread pool to avoid blocking async event loop
+        def send_email():
+            return resend.Emails.send({
+                "from": FROM_ADDRESS,
+                "to": [to],
+                "subject": subject,
+                "html": html
+            })
+        
+        result = await asyncio.to_thread(send_email)
+        print(f"[email] Sent '{subject}' to {to}: {result}")
+        return result
+        
     except Exception as e:
         print(f"[email] Failed to send '{subject}' to {to}: {e}")
+        # Print full traceback for debugging
+        import traceback
+        traceback.print_exc()
 
 
 # ─────────────────────────────────────────────
 # BUSINESS EMAILS
 # ─────────────────────────────────────────────
 
-def send_business_welcome(email: str, business_name: str, slug: str):
+async def send_business_welcome(email: str, business_name: str, slug: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">Welcome to TradeRefer, {business_name}!</h1>
@@ -31,10 +53,10 @@ def send_business_welcome(email: str, business_name: str, slug: str):
       <p style="margin-top:24px">Head to your <a href="{FRONTEND_URL}/dashboard/business">dashboard</a> to manage leads and set your referral fee.</p>
     </div>
     """
-    _send(email, f"Welcome to TradeRefer — {business_name} is live!", html)
+    await _send(email, f"Welcome to TradeRefer — {business_name} is live!", html)
 
 
-def send_business_new_lead(email: str, business_name: str, consumer_name: str, suburb: str, job_description: str, lead_id: str, unlock_fee_dollars: float):
+async def send_business_new_lead(email: str, business_name: str, consumer_name: str, suburb: str, job_description: str, lead_id: str, unlock_fee_dollars: float):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">New Lead for {business_name}</h1>
@@ -48,10 +70,10 @@ def send_business_new_lead(email: str, business_name: str, consumer_name: str, s
       <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Unlock This Lead</a>
     </div>
     """
-    _send(email, f"New lead in {suburb} — Unlock now", html)
+    await _send(email, f"New lead in {suburb} — Unlock now", html)
 
 
-def send_business_lead_unlocked(email: str, business_name: str, consumer_name: str, consumer_phone: str, consumer_email: str, suburb: str, job_description: str):
+async def send_business_lead_unlocked(email: str, business_name: str, consumer_name: str, consumer_phone: str, consumer_email: str, suburb: str, job_description: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">Lead Unlocked — Contact Your Customer</h1>
@@ -66,14 +88,14 @@ def send_business_lead_unlocked(email: str, business_name: str, consumer_name: s
       <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View in Dashboard</a>
     </div>
     """
-    _send(email, f"Lead unlocked — {consumer_name} in {suburb}", html)
+    await _send(email, f"Lead unlocked — {consumer_name} in {suburb}", html)
 
 
 # ─────────────────────────────────────────────
 # REFERRER EMAILS
 # ─────────────────────────────────────────────
 
-def send_referrer_welcome(email: str, full_name: str):
+async def send_referrer_welcome(email: str, full_name: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">Welcome to TradeRefer, {full_name}!</h1>
@@ -82,10 +104,10 @@ def send_referrer_welcome(email: str, full_name: str):
       <p style="margin-top:24px;color:#666;font-size:14px">Browse businesses and generate your unique referral links to get started.</p>
     </div>
     """
-    _send(email, "Welcome to TradeRefer — start earning today!", html)
+    await _send(email, "Welcome to TradeRefer — start earning today!", html)
 
 
-def send_referrer_lead_unlocked(email: str, full_name: str, business_name: str, suburb: str, payout_dollars: float, available_date: str):
+async def send_referrer_lead_unlocked(email: str, full_name: str, business_name: str, suburb: str, payout_dollars: float, available_date: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">Your referral earned you money!</h1>
@@ -99,10 +121,10 @@ def send_referrer_lead_unlocked(email: str, full_name: str, business_name: str, 
       <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Earnings</a>
     </div>
     """
-    _send(email, f"You earned ${payout_dollars:.2f} from a referral!", html)
+    await _send(email, f"You earned ${payout_dollars:.2f} from a referral!", html)
 
 
-def send_referrer_payout_processed(email: str, full_name: str, amount_dollars: float, method: str):
+async def send_referrer_payout_processed(email: str, full_name: str, amount_dollars: float, method: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">Payout Processed</h1>
@@ -115,14 +137,14 @@ def send_referrer_payout_processed(email: str, full_name: str, amount_dollars: f
       <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
     </div>
     """
-    _send(email, f"Your ${amount_dollars:.2f} payout is on its way!", html)
+    await _send(email, f"Your ${amount_dollars:.2f} payout is on its way!", html)
 
 
 # ─────────────────────────────────────────────
 # CONSUMER EMAILS
 # ─────────────────────────────────────────────
 
-def send_referrer_earning_available(email: str, full_name: str, amount_dollars: float, business_name: str):
+async def send_referrer_earning_available(email: str, full_name: str, amount_dollars: float, business_name: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">Your earnings are now available!</h1>
@@ -134,10 +156,10 @@ def send_referrer_earning_available(email: str, full_name: str, amount_dollars: 
       <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Withdraw Earnings</a>
     </div>
     """
-    _send(email, f"${amount_dollars:.2f} is ready to withdraw!", html)
+    await _send(email, f"${amount_dollars:.2f} is ready to withdraw!", html)
 
 
-def send_consumer_on_the_way(email: str, consumer_name: str, business_name: str, pin: str):
+async def send_consumer_on_the_way(email: str, consumer_name: str, business_name: str, pin: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">{business_name} is on the way!</h1>
@@ -150,10 +172,10 @@ def send_consumer_on_the_way(email: str, consumer_name: str, business_name: str,
       <p style="color:#666;font-size:14px">Show this PIN to {business_name} when they arrive to confirm your job is complete.</p>
     </div>
     """
-    _send(email, f"Your PIN for {business_name} — they're on the way!", html)
+    await _send(email, f"Your PIN for {business_name} — they're on the way!", html)
 
 
-def send_business_dispute_raised(email: str, business_name: str, lead_id: str, reason: str):
+async def send_business_dispute_raised(email: str, business_name: str, lead_id: str, reason: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">Dispute Received</h1>
@@ -166,10 +188,10 @@ def send_business_dispute_raised(email: str, business_name: str, lead_id: str, r
       <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Leads</a>
     </div>
     """
-    _send(email, "Your dispute has been received — under review", html)
+    await _send(email, "Your dispute has been received — under review", html)
 
 
-def send_dispute_resolved_business(email: str, business_name: str, outcome: str, admin_notes: Optional[str] = None):
+async def send_dispute_resolved_business(email: str, business_name: str, outcome: str, admin_notes: Optional[str] = None):
     outcome_text = "confirmed in your favour" if outcome == "confirm" else "not upheld"
     colour = "#16a34a" if outcome == "confirm" else "#dc2626"
     html = f"""
@@ -183,10 +205,10 @@ def send_dispute_resolved_business(email: str, business_name: str, outcome: str,
       <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
     </div>
     """
-    _send(email, f"Dispute resolved — {outcome_text}", html)
+    await _send(email, f"Dispute resolved — {outcome_text}", html)
 
 
-def send_dispute_resolved_referrer(email: str, full_name: str, outcome: str, business_name: str, amount_dollars: float):
+async def send_dispute_resolved_referrer(email: str, full_name: str, outcome: str, business_name: str, amount_dollars: float):
     if outcome == "confirm":
         msg = f"The dispute was resolved in the business's favour. Your ${amount_dollars:.2f} earning for a referral to {business_name} has been released to your wallet."
     else:
@@ -199,10 +221,10 @@ def send_dispute_resolved_referrer(email: str, full_name: str, outcome: str, bus
       <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
     </div>
     """
-    _send(email, "Update on your referral dispute", html)
+    await _send(email, "Update on your referral dispute", html)
 
 
-def send_new_message_notification(email: str, recipient_name: str, sender_name: str, message_preview: str, conversation_url: str):
+async def send_new_message_notification(email: str, recipient_name: str, sender_name: str, message_preview: str, conversation_url: str):
     preview = message_preview[:120] + "..." if len(message_preview) > 120 else message_preview
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
@@ -214,10 +236,10 @@ def send_new_message_notification(email: str, recipient_name: str, sender_name: 
       <a href="{FRONTEND_URL}{conversation_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Reply</a>
     </div>
     """
-    _send(email, f"New message from {sender_name}", html)
+    await _send(email, f"New message from {sender_name}", html)
 
 
-def send_referrer_campaign_notification(email: str, full_name: str, business_name: str, campaign_title: str, promo_text: Optional[str], business_slug: str):
+async def send_referrer_campaign_notification(email: str, full_name: str, business_name: str, campaign_title: str, promo_text: Optional[str], business_slug: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">🔥 New campaign from {business_name}</h1>
@@ -229,10 +251,10 @@ def send_referrer_campaign_notification(email: str, full_name: str, business_nam
       <a href="{FRONTEND_URL}/b/{business_slug}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Share This Business</a>
     </div>
     """
-    _send(email, f"New campaign from {business_name} — share it now!", html)
+    await _send(email, f"New campaign from {business_name} — share it now!", html)
 
 
-def send_business_new_review(email: str, business_name: str, referrer_name: str, rating: int, comment: Optional[str], slug: str):
+async def send_business_new_review(email: str, business_name: str, referrer_name: str, rating: int, comment: Optional[str], slug: str):
     stars = "★" * rating + "☆" * (5 - rating)
     comment_html = f'<p style="margin:8px 0 0 0;color:#555;font-style:italic">"{comment}"</p>' if comment else ""
     html = f"""
@@ -247,10 +269,10 @@ def send_business_new_review(email: str, business_name: str, referrer_name: str,
       <a href="{FRONTEND_URL}/b/{slug}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Your Profile</a>
     </div>
     """
-    _send(email, f"New {rating}-star review from {referrer_name}", html)
+    await _send(email, f"New {rating}-star review from {referrer_name}", html)
 
 
-def send_referrer_review_request(email: str, full_name: str, business_name: str, slug: str):
+async def send_referrer_review_request(email: str, full_name: str, business_name: str, slug: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">How was referring {business_name}?</h1>
@@ -259,10 +281,10 @@ def send_referrer_review_request(email: str, full_name: str, business_name: str,
       <p style="margin-top:16px;color:#666;font-size:14px">It only takes 30 seconds.</p>
     </div>
     """
-    _send(email, f"How was referring {business_name}? Leave a quick review", html)
+    await _send(email, f"How was referring {business_name}? Leave a quick review", html)
 
 
-def send_consumer_lead_confirmation(email: str, consumer_name: str, business_name: str, trade_category: str, job_description: str):
+async def send_consumer_lead_confirmation(email: str, consumer_name: str, business_name: str, trade_category: str, job_description: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
       <h1 style="color:#ea580c">Your request has been received</h1>
@@ -274,4 +296,4 @@ def send_consumer_lead_confirmation(email: str, consumer_name: str, business_nam
       <p style="color:#666">The business will be in touch with you soon. You may receive a call or SMS from them directly.</p>
     </div>
     """
-    _send(email, f"Your request to {business_name} has been received", html)
+    await _send(email, f"Your request to {business_name} has been received", html)

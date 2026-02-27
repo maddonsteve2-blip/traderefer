@@ -166,7 +166,7 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
         )
         biz_row = biz_info.mappings().first()
         if biz_row and biz_row["business_email"]:
-            send_business_new_lead(
+            await send_business_new_lead(
                 email=biz_row["business_email"],
                 business_name=biz_row["business_name"],
                 consumer_name=lead.consumer_name,
@@ -177,7 +177,7 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             )
         # Notify the consumer
         if lead.consumer_email and biz_row:
-            send_consumer_lead_confirmation(
+            await send_consumer_lead_confirmation(
                 email=lead.consumer_email,
                 consumer_name=lead.consumer_name,
                 business_name=biz_row["business_name"],
