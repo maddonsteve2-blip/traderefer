@@ -19,6 +19,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
     const { isSignedIn, userId, getToken } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
 
     // Check if current user owns this business
@@ -106,6 +107,13 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
 
             const data = await response.json();
             
+            // Show success state briefly before redirect
+            setSubmitSuccess(true);
+            setIsLoading(false);
+            
+            // Small delay to show success message
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
             // If current user owns this business, skip PIN verification
             if (isOwner) {
                 router.push("/leads/success");
@@ -134,6 +142,16 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                 <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-center gap-3 text-red-600">
                     <AlertCircle className="w-5 h-5 flex-shrink-0" />
                     <p className="text-sm font-bold">{error}</p>
+                </div>
+            )}
+
+            {submitSuccess && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center gap-3 text-green-700">
+                    <CheckCircle2 className="w-6 h-6 flex-shrink-0" />
+                    <div>
+                        <p className="font-bold">Enquiry sent successfully!</p>
+                        <p className="text-sm">Check your email for confirmation...</p>
+                    </div>
                 </div>
             )}
 

@@ -16,6 +16,13 @@ export default function LeadSuccessPage() {
                         <CheckCircle2 className="w-12 h-12 text-green-600" />
                     </div>
 
+                    <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-8">
+                        <p className="text-green-800 font-bold flex items-center justify-center gap-2">
+                            <CheckCircle2 className="w-5 h-5" />
+                            Confirmation email sent to your inbox
+                        </p>
+                    </div>
+
                     <h1 className="text-4xl font-black text-zinc-900 mb-4 font-display">Enquiry sent!</h1>
                     <p className="text-xl text-zinc-600 mb-10 leading-relaxed">
                         Thanks for your enquiry. The business has received your details and will be in touch shortly.
@@ -55,7 +62,7 @@ export default function LeadSuccessPage() {
                 <div className="mt-8 flex flex-col items-center gap-4">
                     <Logo size="sm" showText={false} />
                     <p className="text-zinc-400 text-sm italic">
-                        You'll receive a confirmation text message shortly.
+                        Check your email for confirmation. The business will contact you shortly.
                     </p>
                 </div>
             </div>
