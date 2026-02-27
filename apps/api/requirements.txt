@@ -12,3 +12,4 @@ python-dotenv
 stripe
 boto3
 resend
+sentry-sdk[fastapi]

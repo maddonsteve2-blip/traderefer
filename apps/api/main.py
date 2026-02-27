@@ -3,9 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import public, leads, business, referrer, admin, webhooks, media, messages, deals, campaigns, notifications as notif_router
 import os
 from dotenv import load_dotenv
+from utils.sentry_config import init_sentry
 
+# Load environment variables
 load_dotenv(".env.local")
 load_dotenv() # Fallback to .env
+
+# Initialize Sentry for error tracking
+init_sentry()
 
 app = FastAPI(title="TradeRefer API")
 

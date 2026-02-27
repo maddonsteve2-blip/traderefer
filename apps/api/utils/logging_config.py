@@ -1,12 +1,20 @@
 """
 Centralized logging configuration for TradeRefer API.
 Creates separate log files for different types of events.
+Integrates with Sentry for error tracking.
 """
 import logging
 import logging.handlers
 import os
 from pathlib import Path
 from datetime import datetime
+
+# Import Sentry for error capture
+try:
+    import sentry_sdk
+    SENTRY_AVAILABLE = True
+except ImportError:
+    SENTRY_AVAILABLE = False
 
 # Base logs directory
 LOGS_DIR = Path(__file__).parent.parent / "logs"
@@ -24,6 +32,26 @@ LOG_DIRS = {
 
 for dir_path in LOG_DIRS.values():
     dir_path.mkdir(parents=True, exist_ok=True)
+
+
+class SentryHandler(logging.Handler):
+    """Custom logging handler that sends errors to Sentry."""
+    
+    def __init__(self, level=logging.ERROR):
+        super().__init__(level)
+    
+    def emit(self, record):
+        if SENTRY_AVAILABLE and sentry_sdk.Hub.current.client:
+            try:
+                # Capture exception if present
+                if record.exc_info:
+                    sentry_sdk.capture_exception(record.exc_info[1])
+                # Capture message for ERROR and above
+                elif record.levelno >= logging.ERROR:
+                    sentry_sdk.capture_message(self.format(record), level="error")
+            except Exception:
+                # Don't let Sentry errors break logging
+                pass
 
 
 def setup_logger(name: str, log_file: str, level=logging.INFO, max_bytes=10*1024*1024, backup_count=5):
@@ -72,6 +100,12 @@ def setup_logger(name: str, log_file: str, level=logging.INFO, max_bytes=10*1024
     
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
+    
+    # Add Sentry handler for ERROR level logs
+    if SENTRY_AVAILABLE:
+        sentry_handler = SentryHandler(level=logging.ERROR)
+        sentry_handler.setFormatter(file_formatter)
+        logger.addHandler(sentry_handler)
     
     return logger
 
