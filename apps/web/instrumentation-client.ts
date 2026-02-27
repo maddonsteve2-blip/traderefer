@@ -1,8 +1,2 @@
-import * as Sentry from "@sentry/nextjs";
-
-Sentry.init({
-  dsn: "https://b2b50766c882354af956b84736e50f60@o4508132350033920.ingest.us.sentry.io/4508132351410176",
-  tracesSampleRate: 0,
-  integrations: (defaults) =>
-    defaults.filter((i) => i.name !== "BrowserTracing"),
-});
+// Sentry client-side disabled — caused navigation loop with Next.js router
+// Error tracking is handled API-side via sentry-sdk[fastapi]
