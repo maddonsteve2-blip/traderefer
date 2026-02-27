@@ -19,7 +19,5 @@ const nextConfig: NextConfig = {
 export default withSentryConfig(nextConfig, {
   org: "jsp-bd",
   project: "javascript-nextjs",
-  // Route Sentry requests through your server (avoids ad-blockers)
-  tunnelRoute: "/monitoring",
   silent: !process.env.CI,
 });
