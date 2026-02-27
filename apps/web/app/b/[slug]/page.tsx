@@ -96,7 +96,7 @@ export default async function PublicProfilePage({
                 <div className="container mx-auto px-4 pt-0 pb-6">
                     {/* Breadcrumb */}
                     <div className="flex items-center gap-2 pt-4 pb-4 text-sm">
-                        <Link href="/businesses" className="text-zinc-400 hover:text-orange-500 font-medium transition-colors">Directory</Link>
+                        <Link href="/businesses" className="text-zinc-400 hover:text-zinc-700 font-medium transition-colors">Directory</Link>
                         <span className="text-zinc-300">/</span>
                         <span className="text-zinc-400 font-medium">{business.trade_category}</span>
                         <span className="text-zinc-300">/</span>
@@ -110,14 +110,14 @@ export default async function PublicProfilePage({
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img src={business.logo_url} alt={business.business_name} className="w-full h-full object-contain" />
                             ) : (
-                                <span className="text-3xl font-black text-orange-500">{business.business_name[0]}</span>
+                                <span className="text-3xl font-black text-zinc-400">{business.business_name[0]}</span>
                             )}
                         </div>
 
                         {/* Name + meta */}
                         <div className="flex-1 min-w-0 pb-2">
                             <div className="flex flex-wrap items-center gap-2 mb-2">
-                                <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-black uppercase tracking-widest">
+                                <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-full text-xs font-black uppercase tracking-widest">
                                     {business.trade_category}
                                 </span>
                                 {business.is_verified && (
@@ -136,7 +136,7 @@ export default async function PublicProfilePage({
                             </h1>
                             <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-zinc-500 font-medium">
                                 <span className="flex items-center gap-1.5">
-                                    <MapPin className="w-4 h-4 text-orange-500" />
+                                    <MapPin className="w-4 h-4 text-zinc-400" />
                                     {business.suburb}{business.state ? `, ${business.state}` : ''}
                                 </span>
                                 {business.service_radius_km && (
@@ -153,13 +153,13 @@ export default async function PublicProfilePage({
                                 )}
                                 {business.avg_response_minutes != null && (
                                     <span className="flex items-center gap-1.5">
-                                        <Clock className="w-4 h-4 text-blue-500" />
+                                        <Clock className="w-4 h-4 text-zinc-400" />
                                         Responds in {business.avg_response_minutes < 60 ? `< ${business.avg_response_minutes} min` : `< ${Math.ceil(business.avg_response_minutes / 60)} hrs`}
                                     </span>
                                 )}
                                 {business.website && (
-                                    <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-orange-600 transition-colors">
-                                        <Globe className="w-4 h-4 text-blue-500" /> Website
+                                    <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-zinc-900 transition-colors">
+                                        <Globe className="w-4 h-4 text-zinc-400" /> Website
                                     </a>
                                 )}
                             </div>
@@ -167,7 +167,7 @@ export default async function PublicProfilePage({
 
                         {/* CTAs */}
                         <div className="flex items-center gap-3 shrink-0 pb-2">
-                            <Button asChild variant="outline" className="rounded-full border-zinc-200 font-bold text-zinc-700 hover:border-orange-300 hover:text-orange-600 h-11 px-5">
+                            <Button asChild variant="outline" className="rounded-full border-zinc-200 font-bold text-zinc-700 hover:border-zinc-400 hover:text-zinc-900 h-11 px-5">
                                 <Link href={`/b/${slug}/refer`}>Refer This Business</Link>
                             </Button>
                             <BookNowButton />
@@ -186,7 +186,7 @@ export default async function PublicProfilePage({
                                     </span>
                                 ))}
                                 {business.specialties?.map((s: string) => (
-                                    <span key={s} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-orange-200 rounded-full text-xs font-bold text-orange-700 shadow-sm">
+                                    <span key={s} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-full text-xs font-bold text-zinc-600 shadow-sm">
                                         <Wrench className="w-3.5 h-3.5" /> {s}
                                     </span>
                                 ))}
@@ -206,8 +206,8 @@ export default async function PublicProfilePage({
                         {/* About Us */}
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
                             <h2 className="text-xl font-black text-zinc-900 mb-4 flex items-center gap-3">
-                                <span className="w-8 h-8 bg-orange-100 rounded-xl flex items-center justify-center">
-                                    <Briefcase className="w-4 h-4 text-orange-600" />
+                                <span className="w-8 h-8 bg-zinc-100 rounded-xl flex items-center justify-center">
+                                    <Briefcase className="w-4 h-4 text-zinc-500" />
                                 </span>
                                 About {business.business_name}
                             </h2>
@@ -218,14 +218,14 @@ export default async function PublicProfilePage({
 
                         {/* Why Choose Us */}
                         {business.why_refer_us && (
-                            <section className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-3xl p-8 shadow-lg shadow-orange-200">
-                                <h2 className="text-xl font-black text-white mb-3 flex items-center gap-3">
-                                    <span className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
-                                        <Star className="w-4 h-4 text-white" />
+                            <section className="bg-zinc-50 rounded-3xl border border-zinc-200 p-8">
+                                <h2 className="text-xl font-black text-zinc-900 mb-3 flex items-center gap-3">
+                                    <span className="w-8 h-8 bg-zinc-100 rounded-xl flex items-center justify-center">
+                                        <Star className="w-4 h-4 text-zinc-500" />
                                     </span>
                                     Why Choose {business.business_name}
                                 </h2>
-                                <p className="text-orange-50 leading-relaxed text-base font-medium">{business.why_refer_us}</p>
+                                <p className="text-zinc-600 leading-relaxed text-base">{business.why_refer_us}</p>
                             </section>
                         )}
 
@@ -233,18 +233,16 @@ export default async function PublicProfilePage({
                         {business.services && business.services.length > 0 && (
                             <section className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
                                 <h2 className="text-xl font-black text-zinc-900 mb-5 flex items-center gap-3">
-                                    <span className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
-                                        <Wrench className="w-4 h-4 text-blue-600" />
+                                    <span className="w-8 h-8 bg-zinc-100 rounded-xl flex items-center justify-center">
+                                        <Wrench className="w-4 h-4 text-zinc-500" />
                                     </span>
                                     Services We Provide
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                     {business.services.map((service: string) => (
-                                        <div key={service} className="flex items-center gap-3 px-4 py-3 bg-zinc-50 rounded-xl border border-zinc-100 hover:bg-orange-50 hover:border-orange-200 transition-all group">
-                                            <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center shrink-0 group-hover:bg-orange-500 transition-colors">
-                                                <CheckCircle2 className="w-3 h-3 text-orange-500 group-hover:text-white transition-colors" />
-                                            </div>
-                                            <span className="text-sm font-semibold text-zinc-700 group-hover:text-zinc-900">{service}</span>
+                                        <div key={service} className="flex items-center gap-3 px-4 py-3 bg-zinc-50 rounded-xl border border-zinc-100 hover:bg-zinc-100 transition-all">
+                                            <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                                            <span className="text-sm font-medium text-zinc-700">{service}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -255,8 +253,8 @@ export default async function PublicProfilePage({
                         {business.photo_urls && business.photo_urls.length > 0 && (
                             <section className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
                                 <h2 className="text-xl font-black text-zinc-900 mb-5 flex items-center gap-3">
-                                    <span className="w-8 h-8 bg-amber-100 rounded-xl flex items-center justify-center">
-                                        <ImageIcon className="w-4 h-4 text-amber-600" />
+                                    <span className="w-8 h-8 bg-zinc-100 rounded-xl flex items-center justify-center">
+                                        <ImageIcon className="w-4 h-4 text-zinc-500" />
                                     </span>
                                     Our Work
                                 </h2>
@@ -279,8 +277,8 @@ export default async function PublicProfilePage({
                         {projects.length > 0 && (
                             <section className="space-y-6">
                                 <h2 className="text-xl font-black text-zinc-900 flex items-center gap-3">
-                                    <span className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center">
-                                        <ImageIcon className="w-4 h-4 text-purple-600" />
+                                    <span className="w-8 h-8 bg-zinc-100 rounded-xl flex items-center justify-center">
+                                        <ImageIcon className="w-4 h-4 text-zinc-500" />
                                     </span>
                                     Recent Projects
                                 </h2>
@@ -297,7 +295,7 @@ export default async function PublicProfilePage({
                                             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
                                         </div>
                                         <div className="relative z-10">
-                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-500 rounded-full text-xs font-black uppercase tracking-widest mb-3">
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-xs font-black uppercase tracking-widest mb-3">
                                                 <Star className="w-3 h-3 fill-current" /> Featured
                                             </span>
                                             <h3 className="text-2xl font-black font-display mb-1">{featuredProject.title}</h3>
@@ -308,7 +306,7 @@ export default async function PublicProfilePage({
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     {otherProjects.map((project: any) => (
-                                        <div key={project.id} className="group bg-white rounded-3xl border border-zinc-100 overflow-hidden shadow-sm hover:shadow-lg hover:border-orange-100 transition-all duration-300">
+                                        <div key={project.id} className="group bg-white rounded-3xl border border-zinc-100 overflow-hidden shadow-sm hover:shadow-lg hover:border-zinc-200 transition-all duration-300">
                                             <div className="aspect-[16/9] relative overflow-hidden bg-zinc-100">
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img
@@ -318,11 +316,11 @@ export default async function PublicProfilePage({
                                                 />
                                             </div>
                                             <div className="p-5">
-                                                <h4 className="font-black text-zinc-900 group-hover:text-orange-600 transition-colors mb-1 line-clamp-1">{project.title}</h4>
+                                                <h4 className="font-black text-zinc-900 mb-1 line-clamp-1">{project.title}</h4>
                                                 <p className="text-sm text-zinc-500 line-clamp-2 leading-relaxed">{project.description}</p>
                                                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-zinc-100">
                                                     <span className="text-xs font-bold text-zinc-400">{project.photo_urls?.length || 0} photos</span>
-                                                    <ChevronRight className="w-4 h-4 text-orange-500 group-hover:translate-x-1 transition-transform" />
+                                                    <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-1 transition-transform" />
                                                 </div>
                                             </div>
                                         </div>
@@ -337,9 +335,9 @@ export default async function PublicProfilePage({
 
                         {/* Enquiry Card — sticky */}
                         <div id="enquiry-form" className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-lg shadow-zinc-200/50 lg:sticky lg:top-24 scroll-mt-24">
-                            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-5">
-                                <h3 className="text-lg font-black text-white">Get Your Free Quote</h3>
-                                <p className="text-orange-100 text-sm mt-0.5">Fast response · No obligation</p>
+                            <div className="p-5 border-b border-zinc-100">
+                                <h3 className="text-lg font-black text-zinc-900">Get Your Free Quote</h3>
+                                <p className="text-zinc-400 text-sm mt-0.5">Fast response · No obligation</p>
                             </div>
                             <div className="p-6">
                                 <LeadForm
@@ -356,7 +354,7 @@ export default async function PublicProfilePage({
 
                             <div className="space-y-3">
                                 <div className="flex items-start gap-3">
-                                    <MapPin className="w-4 h-4 text-orange-500 mt-0.5 shrink-0" />
+                                    <MapPin className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
                                     <div>
                                         <p className="text-sm font-bold text-zinc-800">{business.suburb}{business.state ? `, ${business.state}` : ''}</p>
                                         <p className="text-xs text-zinc-400">{business.service_radius_km}km service radius</p>
@@ -395,20 +393,20 @@ export default async function PublicProfilePage({
                                 <div className="pt-3 border-t border-zinc-100 space-y-2.5">
                                     <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Contact</p>
                                     {business.business_phone && (
-                                        <a href={`tel:${business.business_phone}`} className="flex items-center gap-3 text-sm font-semibold text-zinc-700 hover:text-orange-600 transition-colors">
-                                            <Phone className="w-4 h-4 text-orange-500 shrink-0" />
+                                        <a href={`tel:${business.business_phone}`} className="flex items-center gap-3 text-sm font-semibold text-zinc-700 hover:text-zinc-900 transition-colors">
+                                            <Phone className="w-4 h-4 text-zinc-400 shrink-0" />
                                             {business.business_phone}
                                         </a>
                                     )}
                                     {business.business_email && (
-                                        <a href={`mailto:${business.business_email}`} className="flex items-center gap-3 text-sm font-semibold text-zinc-700 hover:text-orange-600 transition-colors">
-                                            <Mail className="w-4 h-4 text-orange-500 shrink-0" />
+                                        <a href={`mailto:${business.business_email}`} className="flex items-center gap-3 text-sm font-semibold text-zinc-700 hover:text-zinc-900 transition-colors">
+                                            <Mail className="w-4 h-4 text-zinc-400 shrink-0" />
                                             <span className="break-all">{business.business_email}</span>
                                         </a>
                                     )}
                                     {business.website && (
-                                        <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm font-semibold text-zinc-700 hover:text-orange-600 transition-colors">
-                                            <Globe className="w-4 h-4 text-orange-500 shrink-0" />
+                                        <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm font-semibold text-zinc-700 hover:text-zinc-900 transition-colors">
+                                            <Globe className="w-4 h-4 text-zinc-400 shrink-0" />
                                             Visit Website
                                         </a>
                                     )}
@@ -418,8 +416,8 @@ export default async function PublicProfilePage({
 
                         {/* Refer CTA */}
                         <div className="bg-zinc-900 rounded-3xl p-6 text-white">
-                            <div className="w-10 h-10 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-4">
-                                <Users className="w-5 h-5 text-orange-400" />
+                            <div className="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center mb-4">
+                                <Users className="w-5 h-5 text-zinc-300" />
                             </div>
                             <h4 className="font-black text-lg mb-1">Know someone who needs this?</h4>
                             <p className="text-zinc-400 text-sm mb-4 leading-relaxed">Refer {business.business_name} and earn a reward when the job is confirmed.</p>
