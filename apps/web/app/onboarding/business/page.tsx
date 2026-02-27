@@ -130,6 +130,11 @@ export default function BusinessOnboardingPage() {
     const [suburbSearch, setSuburbSearch] = useState("");
     const [showSuburbs, setShowSuburbs] = useState(false);
 
+    // Scroll to top on every step change
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [step]);
+
     // Auto-scroll chat
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -778,9 +783,13 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                                 <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-2 block">About Us</label>
                                                 <textarea
                                                     value={formData.description}
-                                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                                    rows={4}
-                                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium resize-none leading-relaxed"
+                                                    onChange={(e) => {
+                                                        setFormData({ ...formData, description: e.target.value });
+                                                        e.target.style.height = 'auto';
+                                                        e.target.style.height = e.target.scrollHeight + 'px';
+                                                    }}
+                                                    ref={(el) => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; } }}
+                                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium resize-none leading-relaxed overflow-hidden"
                                                 />
                                             </div>
 
@@ -789,9 +798,13 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                                 <label className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-2 block">Why Refer Us</label>
                                                 <textarea
                                                     value={formData.why_refer_us}
-                                                    onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
-                                                    rows={3}
-                                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium resize-none leading-relaxed"
+                                                    onChange={(e) => {
+                                                        setFormData({ ...formData, why_refer_us: e.target.value });
+                                                        e.target.style.height = 'auto';
+                                                        e.target.style.height = e.target.scrollHeight + 'px';
+                                                    }}
+                                                    ref={(el) => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; } }}
+                                                    className="w-full px-4 py-3 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 text-sm font-medium resize-none leading-relaxed overflow-hidden"
                                                 />
                                             </div>
 
@@ -1036,7 +1049,7 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                                 <Camera className="w-3.5 h-3.5" /> Business Logo
                                             </label>
                                             <ImageUpload onUpload={handleLogoUpload} disabled={isUploadingMedia} maxFiles={1} folder="logos" hidePreview />
-                                            <p className="text-xs text-zinc-400 font-medium">Square PNG or JPG, at least 200x200 px.</p>
+                                            <p className="text-xs text-zinc-400 font-medium">Any shape — PNG with transparent background works great. At least 200x200 px.</p>
                                         </div>
                                         {/* Work Gallery */}
                                         <div className="bg-zinc-50 p-6 rounded-[28px] border border-zinc-100 space-y-4">
@@ -1058,7 +1071,7 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                             </div>
                                             <div className="p-8 space-y-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-16 h-16 rounded-full bg-zinc-100 border-2 border-white shadow-md overflow-hidden flex items-center justify-center shrink-0">
+                                                    <div className="w-16 h-16 rounded-2xl bg-zinc-100 border-2 border-white shadow-md overflow-hidden flex items-center justify-center shrink-0">
                                                         {logoUrl ? (
                                                             /* eslint-disable-next-line @next/next/no-img-element */
                                                             <img src={logoUrl} alt="Logo preview" className="w-full h-full object-cover" />
