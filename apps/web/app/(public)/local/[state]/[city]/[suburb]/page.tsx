@@ -3,7 +3,7 @@ import { ChevronRight, Wrench, Users, MapPin, Star, ArrowRight } from "lucide-re
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
-import { TRADE_CATEGORIES, AUSTRALIA_LOCATIONS } from "@/lib/constants";
+import { TRADE_CATEGORIES } from "@/lib/constants";
 import { Metadata } from "next";
 
 interface PageProps {
@@ -54,16 +54,22 @@ async function getTradesWithCounts(suburb: string): Promise<Array<{ trade: strin
 }
 
 async function getNearbySuburbs(state: string, city: string, currentSuburb: string): Promise<string[]> {
-    const stateKey = state.toUpperCase() as keyof typeof AUSTRALIA_LOCATIONS;
-    const stateData = AUSTRALIA_LOCATIONS[stateKey];
-    if (!stateData) return [];
-    const cityName = formatSlug(city);
-    const cityEntry = Object.keys(stateData).find(k => k.toLowerCase() === cityName.toLowerCase());
-    if (!cityEntry) return [];
-    const suburbName = formatSlug(currentSuburb);
-    return stateData[cityEntry]
-        .filter(s => s.toLowerCase() !== suburbName.toLowerCase())
-        .slice(0, 8);
+    try {
+        const cityName = formatSlug(city);
+        const suburbName = formatSlug(currentSuburb);
+        const results = await sql`
+            SELECT DISTINCT suburb
+            FROM businesses
+            WHERE city ILIKE ${'%' + cityName + '%'}
+              AND suburb NOT ILIKE ${'%' + suburbName + '%'}
+              AND status = 'active'
+            ORDER BY suburb ASC
+            LIMIT 8
+        `;
+        return results.map((r: any) => r.suburb as string);
+    } catch {
+        return [];
+    }
 }
 
 export default async function SuburbDirectoryPage({ params }: PageProps) {

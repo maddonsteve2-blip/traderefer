@@ -32,13 +32,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const businesses = await getBusinesses(trade, suburb);
     const count = businesses.length;
+    const topBiz = businesses[0];
     const avgRating = count > 0
-        ? (businesses.reduce((acc: number, biz: any) => acc + ((biz.trust_score || 0) / 20), 0) / count).toFixed(1)
+        ? (businesses.reduce((acc: number, biz: any) => acc + (parseFloat(biz.avg_rating) || 0), 0) / count).toFixed(1)
         : "4.8";
+    const totalReviews = businesses.reduce((acc: number, biz: any) => acc + (parseInt(biz.total_reviews) || 0), 0);
+    const topBizStr = topBiz && topBiz.avg_rating ? ` Top rated: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}\u2605).` : "";
 
     return {
         title: `${tradeName} in ${suburbName}, ${cityName}${priceStr} | TradeRefer`,
-        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateUpper}. Average rating ${avgRating}\u2605. Get free quotes from ABN-verified locals today.`,
+        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateUpper}.${topBizStr} ${totalReviews > 0 ? totalReviews + ' reviews.' : ''} Get free quotes from ABN-verified locals today.`,
         robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
         openGraph: {
             title: `${tradeName} in ${suburbName}, ${cityName} | TradeRefer`,
@@ -110,14 +113,15 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const nearbySuburbs = await getNearbySuburbs(city, suburb, tradeName);
 
     const avgRating = businesses.length > 0
-        ? (businesses.reduce((acc: number, biz: any) => acc + ((biz.trust_score || 0) / 20), 0) / businesses.length).toFixed(1)
+        ? (businesses.reduce((acc: number, biz: any) => acc + (parseFloat(biz.avg_rating) || 0), 0) / businesses.length).toFixed(1)
         : "4.8";
+    const totalReviews = businesses.reduce((acc: number, biz: any) => acc + (parseInt(biz.total_reviews) || 0), 0);
 
     const cost = TRADE_COST_GUIDE[tradeName];
     const faqs = TRADE_FAQ_BANK[tradeName] || TRADE_FAQ_BANK["Plumbing"];
     const licenceText = STATE_LICENSING[tradeName]?.[stateName] || null;
     const relatedJobs = JOB_TYPES[tradeName]?.slice(0, 6) || [];
-    const localizedIntro = generateLocalizedIntro(tradeName, suburbName, cityName, stateName, businesses.length, avgRating);
+    const localizedIntro = generateLocalizedIntro(tradeName, suburbName, cityName, stateName, businesses.length, avgRating, totalReviews);
 
     const breadcrumbs = [
         { name: stateName, href: `/local/${state}` },
@@ -366,7 +370,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                             <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
                                                                 <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
                                                             </div>
-                                                            {(biz.trust_score || 0) / 20} / 5.0
+                                                            {biz.avg_rating ? `${parseFloat(biz.avg_rating).toFixed(1)} ★` : 'Not rated'}{biz.total_reviews > 0 ? ` (${biz.total_reviews} reviews)` : ''}
                                                         </div>
                                                         <div className="flex items-center gap-2">
                                                             <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
@@ -504,9 +508,15 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                 </h3>
                                 <div className="space-y-4 text-sm text-zinc-600">
                                     <div className="flex justify-between items-center py-2 border-b border-zinc-50">
-                                        <span>Average Rating</span>
-                                        <span className="font-bold text-zinc-900 text-base">{avgRating} / 5.0</span>
+                                        <span>Avg Google Rating</span>
+                                        <span className="font-bold text-zinc-900 text-base">{avgRating} ★</span>
                                     </div>
+                                    {totalReviews > 0 && (
+                                        <div className="flex justify-between items-center py-2 border-b border-zinc-50">
+                                            <span>Total Reviews</span>
+                                            <span className="font-bold text-zinc-900 text-base">{totalReviews.toLocaleString()}</span>
+                                        </div>
+                                    )}
                                     <div className="flex justify-between items-center py-2 border-b border-zinc-50">
                                         <span>Verified Providers</span>
                                         <span className="font-bold text-zinc-900 text-base">{businesses.length}</span>

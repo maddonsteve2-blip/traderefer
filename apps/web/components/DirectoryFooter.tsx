@@ -1,6 +1,21 @@
 import Link from "next/link";
 import { MapPin, ArrowRight } from "lucide-react";
 
+const TOP_CATEGORIES = [
+    { name: "Electrician", slug: "electrician" },
+    { name: "Plumber", slug: "plumber" },
+    { name: "Painter", slug: "painter" },
+    { name: "Fencing", slug: "fencing" },
+    { name: "Landscaper", slug: "landscaper" },
+    { name: "Flooring", slug: "flooring" },
+    { name: "Air Conditioning & Heating", slug: "air-conditioning-heating" },
+    { name: "Cleaning", slug: "cleaning" },
+    { name: "Solar & Energy", slug: "solar-energy" },
+    { name: "Roofing", slug: "roofing" },
+    { name: "Cabinet Making", slug: "cabinet-making" },
+    { name: "Locksmith", slug: "locksmith" },
+];
+
 const TOP_CITIES = [
     { name: "Sydney", state: "nsw" },
     { name: "Melbourne", state: "vic" },
@@ -25,7 +40,7 @@ export function DirectoryFooter() {
     return (
         <footer className="bg-zinc-900 text-white pt-20 pb-10 border-t border-white/5">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
 
                     {/* Brand Section */}
                     <div className="space-y-6">
@@ -78,6 +93,31 @@ export function DirectoryFooter() {
                                     </Link>
                                 </li>
                             ))}
+                        </ul>
+                    </div>
+
+                    {/* Browse by Category */}
+                    <div>
+                        <h4 className="font-bold mb-6 text-sm uppercase tracking-widest text-zinc-500">
+                            Browse by Trade
+                        </h4>
+                        <ul className="space-y-3">
+                            {TOP_CATEGORIES.slice(0, 8).map((cat) => (
+                                <li key={cat.slug}>
+                                    <Link
+                                        href={`/categories#${cat.slug}`}
+                                        className="text-zinc-400 hover:text-orange-500 text-sm transition-colors flex items-center group"
+                                    >
+                                        <ArrowRight className="w-3 h-3 mr-2 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                                        {cat.name}
+                                    </Link>
+                                </li>
+                            ))}
+                            <li>
+                                <Link href="/categories" className="text-orange-500 hover:text-orange-400 text-xs font-bold uppercase tracking-widest transition-colors">
+                                    View All Categories →
+                                </Link>
+                            </li>
                         </ul>
                     </div>
 

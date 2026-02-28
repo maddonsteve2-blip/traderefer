@@ -146,14 +146,17 @@ export function Navbar() {
                         <SignedOut>
                             {!isDashboard && (
                                 <>
-                                    <Link href="/businesses" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                    <Link href="/categories" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                        Categories
+                                    </Link>
+                                    <Link href="/locations" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                        Locations
+                                    </Link>
+                                    <Link href="/businesses" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
                                         Browse Businesses
                                     </Link>
                                     <Link href="/support" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
                                         Support
-                                    </Link>
-                                    <Link href="/contact" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
-                                        Contact
                                     </Link>
                                 </>
                             )}
@@ -247,19 +250,19 @@ export function Navbar() {
                                 </>
                             ) : (
                                 <>
-                                    <Link href="/businesses" className="hidden sm:block">
+                                    <Link href="/categories" className="hidden md:block">
+                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                            Categories
+                                        </Button>
+                                    </Link>
+                                    <Link href="/locations" className="hidden md:block">
+                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                            Locations
+                                        </Button>
+                                    </Link>
+                                    <Link href="/businesses" className="hidden lg:block">
                                         <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
                                             Find Businesses
-                                        </Button>
-                                    </Link>
-                                    <Link href="/support" className="hidden lg:block">
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
-                                            Support
-                                        </Button>
-                                    </Link>
-                                    <Link href="/contact" className="hidden lg:block">
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
-                                            Contact
                                         </Button>
                                     </Link>
                                     <Link href="/dashboard" className="hidden sm:block">

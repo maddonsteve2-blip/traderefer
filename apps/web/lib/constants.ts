@@ -1949,6 +1949,93 @@ export const SUBURB_CONTEXT: Record<string, SuburbContext> = {
     },
 };
 
+export const HOW_TO_CHOOSE: Record<string, string[]> = {
+    "Electrician": [
+        "Verify their electrical licence is current at your state's electrical safety authority (e.g. Energy Safe Victoria, NSW Fair Trading).",
+        "Confirm they carry public liability insurance of at least $5 million — ask to see the certificate.",
+        "Get 2–3 written quotes for any job over $500. A written quote protects both parties and clarifies the full scope.",
+        "Check their Google and TradeRefer ratings — look for consistent reviews mentioning punctuality, clean workmanship, and clear communication.",
+        "Ask whether they'll provide a Certificate of Compliance (electrical safety certificate) on completion, as required by law in most states.",
+    ],
+    "Plumber": [
+        "Confirm they hold a current plumber's licence for your state — check via your state's plumbing regulator (e.g. VBA in Victoria, NSW Fair Trading).",
+        "Ensure they carry public liability insurance. Unlicensed or uninsured plumbing work can void your home insurance.",
+        "Ask upfront about callout fees and after-hours rates — these vary widely and can add significantly to your final bill.",
+        "Choose a plumber familiar with your area's water pressure, pipe age, and council requirements — local knowledge matters.",
+        "Request a Certificate of Compliance (plumbing) on completion for any drainage, gas, or hot water work.",
+    ],
+    "Painter": [
+        "Ask for a detailed written quote specifying number of coats, paint brand, surface preparation method, and what's included in cleanup.",
+        "Check whether they'll move your furniture and protect floors — professional painters include full preparation in their quotes.",
+        "Verify their public liability insurance — accidental damage to flooring, windows, or furnishings can be costly.",
+        "Request 2–3 references from recent jobs of a similar size and type (interior, exterior, new build, or repaint).",
+        "Discuss paint brands and sheens upfront — quality paint costs more but lasts 2–3× longer than budget alternatives.",
+    ],
+    "Builder": [
+        "Verify they hold a current builder's licence for your state and check their licence history for any disciplinary action.",
+        "Confirm they carry builder's warranty insurance (mandatory in most states for residential work over $12,000–$20,000).",
+        "Review their contract carefully — ensure it includes a fixed price or cost-plus breakdown, schedule of works, and variation process.",
+        "Check their portfolio of completed projects similar in scope and style to yours before signing anything.",
+        "Never pay more than 10% deposit upfront — progress payments tied to completed stages are the industry standard.",
+    ],
+    "Landscaper": [
+        "Clarify exactly what's included — site prep, soil, plants, mulch, edging, and cleanup vary significantly between quotes.",
+        "Ask about plant selection suited to your local climate and soil conditions — local landscapers know what thrives in your suburb.",
+        "Check whether they hold a contractor licence (required for structural landscaping, retaining walls over 1 metre, and drainage work in most states).",
+        "Confirm disposal of green waste is included in the quote — tipping fees can add hundreds to your final cost.",
+        "Request an irrigation plan if watering is part of the design — a well-designed system pays for itself within 2 seasons.",
+    ],
+    "Carpenter": [
+        "Ask whether they specialise in your type of work — a framing carpenter and a finish/joinery carpenter have very different skill sets.",
+        "Request to see examples of previous work similar to your project (decks, pergolas, cabinetry, framing, or fit-outs).",
+        "Clarify whether materials are included in the quote or supplied by you — material costs can double the quoted price.",
+        "Confirm they hold a relevant contractor licence where required (structural and high-value carpentry is licensed in most states).",
+        "For outdoor structures, ask specifically about the timber species and treatment level used — wrong timber in coastal or wet areas fails quickly.",
+    ],
+    "Roofing": [
+        "Verify they hold a roofing contractor licence or builder's licence (required for significant roof work in most Australian states).",
+        "Ask for a written scope of work specifying materials, brand, colour, warranty period, and what happens to old roofing material.",
+        "Confirm they carry both public liability and workers' compensation insurance — roof work carries significant injury risk.",
+        "Request a detailed written quote rather than a verbal estimate — price variations on roofing projects can be substantial.",
+        "Ask specifically about valley, flashing, and gutter work — these are where most roof leaks originate and should be included in any re-roof.",
+    ],
+    "Locksmith": [
+        "Confirm they are a licensed locksmith (required in VIC, QLD, SA, WA, and ACT) — unlicensed locksmiths operate illegally in these states.",
+        "Ask for a fixed price quote including callout fee, labour, and parts before work begins — locksmith pricing is highly variable.",
+        "For home security upgrades, ask whether they can supply and install deadbolts compliant with your home insurance policy requirements.",
+        "Choose a locksmith with a physical business address rather than a mobile-only operator — it provides greater accountability.",
+        "After any lockout, rekey or replace locks if you suspect others may have had access to your keys.",
+    ],
+    "Cleaning": [
+        "Clarify exactly what's included — standard clean, deep clean, end-of-lease clean, and carpet cleaning all have different scope and pricing.",
+        "Confirm whether they supply cleaning products and equipment, or whether you need to provide them.",
+        "Ask about their team — will the same person always attend, or do staff rotate? Consistent cleaners know your home's quirks.",
+        "Check they hold public liability insurance — accidental damage to valuables or surfaces should be covered.",
+        "For end-of-lease cleans, ask explicitly whether the quote is bond-back guaranteed and what the rectification process is if the agent objects.",
+    ],
+    "Air Conditioning & Heating": [
+        "Confirm they are a licensed refrigerant handling contractor (ARC licence) — required by law for any work on refrigerant-based systems.",
+        "Ask whether they service all major brands or are aligned with one manufacturer — brand-agnostic technicians often provide more objective advice.",
+        "Get a written quote that specifies the exact make, model, capacity (kW), star rating, and warranty of any unit being installed.",
+        "For ducted systems, ask for a room-by-room heat load calculation — undersized systems run continuously and fail early.",
+        "Confirm the quote includes the disconnect/reconnect of power and any required electrician attendance, which is a separate cost with some operators.",
+    ],
+    "Solar & Energy": [
+        "Confirm the installer holds a Clean Energy Council (CEC) Accreditation — required to install solar systems eligible for STCs and state rebates.",
+        "Verify panels and inverter brands against the CEC's approved product list — not all imported equipment qualifies for rebates.",
+        "Get a written quote specifying panel wattage, inverter brand, system size (kW), estimated annual generation, and expected payback period.",
+        "Ask whether the quote includes council approvals, network connection application (DNSP), and metering upgrade if required — these are often extras.",
+        "Confirm the warranty terms: panels typically carry 25-year performance warranties, inverters 5–10 years, and workmanship 5–10 years.",
+    ],
+    "Flooring": [
+        "Clarify whether the quote includes subfloor preparation — uneven or damaged subfloor work is often charged as an extra and can add significantly to costs.",
+        "Ask about the underlayment being used — quality underlayment affects acoustic performance, thermal comfort, and warranty validity.",
+        "For timber and laminate, ask about the AC rating and wear layer thickness — these determine how long the floor will last under your household's traffic.",
+        "Confirm all furniture removal, rubbish disposal, and stair nosing/threshold strips are included, or get a separate price.",
+        "Ask for the installation warranty in writing — most reputable flooring contractors offer 12–24 months on labour, separate from the product warranty.",
+    ],
+};
+
 export function generateLocalizedIntro(
     tradeName: string,
     suburbName: string,
@@ -1956,14 +2043,18 @@ export function generateLocalizedIntro(
     stateName: string,
     businessCount: number,
     avgRating: string,
+    totalReviews?: number,
 ): string {
     const suburbKey = suburbName.toLowerCase().replace(/\s+/g, "-");
     const ctx = SUBURB_CONTEXT[suburbKey];
     const cost = TRADE_COST_GUIDE[tradeName];
-    const year = new Date().getFullYear();
+
+    const reviewText = totalReviews && totalReviews > 0
+        ? ` across ${totalReviews.toLocaleString()} Google reviews`
+        : "";
 
     const countText = businessCount > 0
-        ? `TradeRefer currently lists ${businessCount} verified ${tradeName.toLowerCase()} in ${suburbName} with an average rating of ${avgRating} out of 5.`
+        ? `TradeRefer currently lists ${businessCount} verified ${tradeName.toLowerCase()} in ${suburbName} with an average Google rating of ${avgRating}★${reviewText}.`
         : `${tradeName} services are in high demand in ${suburbName} — be among the first to list your business and connect with local customers.`;
 
     let localDetail: string;

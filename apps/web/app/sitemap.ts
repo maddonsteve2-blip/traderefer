@@ -9,6 +9,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const staticPages: MetadataRoute.Sitemap = [
         { url: BASE_URL, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
         { url: `${BASE_URL}/businesses`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+        { url: `${BASE_URL}/categories`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
+        { url: `${BASE_URL}/locations`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
+        { url: `${BASE_URL}/local`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
         { url: `${BASE_URL}/login`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
         { url: `${BASE_URL}/register`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
         { url: `${BASE_URL}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
@@ -128,6 +131,58 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
 
+    // 9. Top-10 city pages — /top/[trade]/[state]/[city] (only combos with ≥10 businesses)
+    const top10CityRows = await sql`
+        SELECT LOWER(state) as state_slug,
+               LOWER(REPLACE(city, ' ', '-')) as city_slug,
+               trade_category,
+               COUNT(*) as cnt
+        FROM businesses
+        WHERE status = 'active'
+          AND state IS NOT NULL AND state != ''
+          AND city IS NOT NULL AND city != ''
+          AND trade_category IS NOT NULL AND trade_category != ''
+          AND avg_rating IS NOT NULL
+        GROUP BY state, city, trade_category
+        HAVING COUNT(*) >= 10
+    `;
+    const top10CityPages: MetadataRoute.Sitemap = top10CityRows.map((r) => {
+        const tradeSlug = (r.trade_category as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        return {
+            url: `${BASE_URL}/top/${tradeSlug}/${r.state_slug}/${r.city_slug}`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.85,
+        };
+    });
+
+    // 10. Top-10 suburb pages — /top/[trade]/[state]/[city]/[suburb] (only combos with ≥10 businesses)
+    const top10SuburbRows = await sql`
+        SELECT LOWER(state) as state_slug,
+               LOWER(REPLACE(city, ' ', '-')) as city_slug,
+               LOWER(REPLACE(suburb, ' ', '-')) as suburb_slug,
+               trade_category,
+               COUNT(*) as cnt
+        FROM businesses
+        WHERE status = 'active'
+          AND state IS NOT NULL AND state != ''
+          AND city IS NOT NULL AND city != ''
+          AND suburb IS NOT NULL AND suburb != ''
+          AND trade_category IS NOT NULL AND trade_category != ''
+          AND avg_rating IS NOT NULL
+        GROUP BY state, city, suburb, trade_category
+        HAVING COUNT(*) >= 10
+    `;
+    const top10SuburbPages: MetadataRoute.Sitemap = top10SuburbRows.map((r) => {
+        const tradeSlug = (r.trade_category as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        return {
+            url: `${BASE_URL}/top/${tradeSlug}/${r.state_slug}/${r.city_slug}/${r.suburb_slug}`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly' as const,
+            priority: 0.8,
+        };
+    });
+
     return [
         ...staticPages,
         ...businessPages,
@@ -137,5 +192,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...localPages,
         ...jobPages,
         ...tradeHubPages,
+        ...top10CityPages,
+        ...top10SuburbPages,
     ];
 }
