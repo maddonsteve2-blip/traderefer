@@ -10,7 +10,7 @@ import { neon } from "@neondatabase/serverless";
 import { readFileSync } from "fs";
 
 // Load env from apps/web/.env.local
-const envFile = readFileSync("apps/web/.env.local", "utf-8");
+const envFile = readFileSync(".env.local", "utf-8");
 for (const line of envFile.split("\n")) {
     const [key, ...rest] = line.split("=");
     if (key && rest.length) {
