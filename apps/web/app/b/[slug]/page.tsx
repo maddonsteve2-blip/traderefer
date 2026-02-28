@@ -36,8 +36,8 @@ import { EditableProfile } from "@/components/EditableProfile";
 import { BusinessClaimDialog } from "@/components/BusinessClaimDialog";
 import { BusinessDelistDialog } from "@/components/BusinessDelistDialog";
 import { BusinessLogo } from "@/components/BusinessLogo";
-import { proxyLogoUrl } from "@/lib/logo";
 import Script from "next/script";
+import { proxyLogoUrl } from "@/lib/logo";
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -157,7 +157,7 @@ export default async function PublicProfilePage({
                         <div className="flex flex-col md:flex-row gap-12 items-start md:items-end">
                             {/* Logo */}
                             <div className="w-36 h-36 md:w-48 md:h-48 bg-zinc-50 rounded-[40px] flex items-center justify-center overflow-hidden border-8 border-white shadow-2xl shadow-zinc-200 shrink-0 group">
-                                <BusinessLogo logoUrl={proxyLogoUrl(business.logo_url)} name={business.business_name} />
+                                <BusinessLogo logoUrl={business.logo_url} name={business.business_name} />
                             </div>
 
                             <div className="flex-1 space-y-6">
@@ -484,4 +484,5 @@ export default async function PublicProfilePage({
         </EditableProfile>
     );
 }
+
 

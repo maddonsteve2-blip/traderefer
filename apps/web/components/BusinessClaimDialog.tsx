@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -23,6 +23,7 @@ export function BusinessClaimDialog({
     businessId: string;
     businessName: string;
 }) {
+    const [mounted, setMounted] = useState(false);
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -32,6 +33,16 @@ export function BusinessClaimDialog({
         claimer_phone: "",
         proof_url: "",
     });
+
+    useEffect(() => { setMounted(true); }, []);
+
+    if (!mounted) {
+        return (
+            <Button className="bg-white text-orange-600 hover:bg-zinc-100 font-bold rounded-full px-6">
+                Claim This Business
+            </Button>
+        );
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

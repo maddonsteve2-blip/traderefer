@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Shield, Bell, Handshake, ChevronRight, TrendingUp, Users, Search } from "lucide-react";
+import { Shield, Bell, Handshake, ChevronRight, TrendingUp, Users, Search, Wrench, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { Logo } from "@/components/Logo";
+import { TRADE_CATEGORIES } from "@/lib/constants";
 
 
 export default function Home() {
@@ -136,6 +137,71 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Browse by Trade */}
+      <section className="py-24 bg-zinc-50">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-zinc-900 mb-4 font-display tracking-tight">Browse by Trade</h2>
+            <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">Find verified local specialists for every home and commercial trade across Australia.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
+            {TRADE_CATEGORIES.filter(t => t !== "Other").slice(0, 30).map((trade) => (
+              <Link
+                key={trade}
+                href={`/local?category=${encodeURIComponent(trade)}`}
+                className="group flex items-center gap-2.5 bg-white border border-zinc-200 rounded-2xl px-4 py-3.5 text-sm font-bold text-zinc-700 hover:border-orange-500 hover:text-orange-600 hover:shadow-md transition-all duration-200"
+              >
+                <Wrench className="w-3.5 h-3.5 text-zinc-400 group-hover:text-orange-500 shrink-0 transition-colors" />
+                <span className="leading-tight">{trade}</span>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link
+              href="/local"
+              className="inline-flex items-center gap-2 text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
+            >
+              Browse All Trades <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Browse by State */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-zinc-900 mb-4 font-display tracking-tight">Browse by State</h2>
+            <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">Local trade directories for every Australian state and territory.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {[
+              { name: "Victoria", slug: "vic", cities: "Geelong, Melbourne, Ballarat" },
+              { name: "New South Wales", slug: "nsw", cities: "Sydney, Newcastle, Wollongong" },
+              { name: "Queensland", slug: "qld", cities: "Brisbane, Gold Coast, Sunshine Coast" },
+              { name: "Western Australia", slug: "wa", cities: "Perth, Fremantle, Mandurah" },
+              { name: "South Australia", slug: "sa", cities: "Adelaide, Mount Gambier" },
+              { name: "Tasmania", slug: "tas", cities: "Hobart, Launceston" },
+              { name: "ACT", slug: "act", cities: "Canberra" },
+              { name: "Northern Territory", slug: "nt", cities: "Darwin" },
+            ].map(({ name, slug, cities }) => (
+              <Link
+                key={slug}
+                href={`/local/${slug}`}
+                className="group bg-zinc-50 border border-zinc-200 rounded-2xl p-5 hover:border-orange-500 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <MapPin className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                  <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 transition-colors" />
+                </div>
+                <h3 className="font-black text-zinc-900 group-hover:text-orange-600 transition-colors leading-tight mb-1">{name}</h3>
+                <p className="text-xs text-zinc-400 font-medium leading-relaxed">{cities}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

@@ -135,7 +135,7 @@ export default async function ReferrerBusinessPage({
                     <div className="flex flex-col md:flex-row gap-12 items-start md:items-end">
                         {/* Logo Container */}
                         <div className="w-36 h-36 md:w-48 md:h-48 bg-zinc-50 rounded-[40px] flex items-center justify-center overflow-hidden border-8 border-white shadow-2xl shadow-zinc-200 shrink-0 group">
-                            <BusinessLogo logoUrl={proxyLogoUrl(business.logo_url)} name={business.business_name} />
+                            <BusinessLogo logoUrl={business.logo_url} name={business.business_name} />
                         </div>
 
                         <div className="flex-1 space-y-6">
@@ -177,6 +177,7 @@ export default async function ReferrerBusinessPage({
                                 <span className="text-5xl font-black text-zinc-900 tracking-tighter">${referrerEarns.toFixed(2)}</span>
                                 <span className="text-lg font-black text-orange-600">80% of fee</span>
                             </div>
+                            <p className="text-sm text-zinc-500 font-bold">Standard payout per verified connection.</p>
                             <p className="text-sm text-zinc-500 font-bold">Standard payout per verified connection.</p>
                         </div>
                     </div>

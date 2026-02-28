@@ -12,6 +12,50 @@ export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 24;
 
+function mapCategory(sCat: string) {
+    if (sCat === "Plumbing") return "Plumb";
+    if (sCat === "Electrical") return "Electric";
+    if (sCat === "Carpentry") return "Carpent";
+    if (sCat === "Building") return "Builder";
+    if (sCat === "Landscaping") return "Landscap";
+    if (sCat === "Painting") return "Paint";
+    if (sCat === "Cleaning") return "Clean";
+    if (sCat === "Concreting") return "Concret";
+    if (sCat === "Gardening & Lawn Care") return "Garden";
+    return sCat;
+}
+
+// Get the centre lat/lng of a suburb from our DB (average of existing businesses in that suburb)
+async function getSuburbCentre(suburb: string, city: string, state: string): Promise<{ lat: number; lng: number } | null> {
+    try {
+        const res = await sql`
+            SELECT AVG(lat) as lat, AVG(lng) as lng
+            FROM businesses
+            WHERE (suburb ILIKE ${'%' + suburb + '%'} OR city ILIKE ${'%' + suburb + '%'})
+              AND state ILIKE ${state}
+              AND lat IS NOT NULL AND lng IS NOT NULL
+            LIMIT 1
+        `;
+        const row = res[0];
+        if (row?.lat && row?.lng) return { lat: Number(row.lat), lng: Number(row.lng) };
+
+        // Fall back to city centre
+        if (city) {
+            const res2 = await sql`
+                SELECT AVG(lat) as lat, AVG(lng) as lng
+                FROM businesses
+                WHERE city ILIKE ${'%' + city + '%'}
+                  AND state ILIKE ${state}
+                  AND lat IS NOT NULL AND lng IS NOT NULL
+                LIMIT 1
+            `;
+            const row2 = res2[0];
+            if (row2?.lat && row2?.lng) return { lat: Number(row2.lat), lng: Number(row2.lng) };
+        }
+    } catch {}
+    return null;
+}
+
 async function getBusinesses(
     category?: string, suburb?: string, search?: string,
     state?: string, city?: string, page = 1
@@ -23,27 +67,106 @@ async function getBusinesses(
         const sState = state?.trim() || "";
         const sCity = city?.trim() || "";
         const offset = (page - 1) * PAGE_SIZE;
+        const mappedCat = mapCategory(sCat);
 
-        let mappedCat = sCat;
-        if (sCat === "Plumbing") mappedCat = "Plumb";
-        else if (sCat === "Electrical") mappedCat = "Electric";
-        else if (sCat === "Carpentry") mappedCat = "Carpent";
-        else if (sCat === "Building") mappedCat = "Builder";
-        else if (sCat === "Landscaping") mappedCat = "Landscap";
-        else if (sCat === "Painting") mappedCat = "Paint";
-        else if (sCat === "Cleaning") mappedCat = "Clean";
-        else if (sCat === "Concreting") mappedCat = "Concret";
-        else if (sCat === "Gardening & Lawn Care") mappedCat = "Garden";
+        const catFilter = sCat ? sql`AND trade_category ILIKE ${'%' + mappedCat + '%'}` : sql``;
+        const stateFilter = sState ? sql`AND state ILIKE ${sState}` : sql``;
+        const searchFilter = sQ ? sql`AND (business_name ILIKE ${'%' + sQ + '%'} OR trade_category ILIKE ${'%' + sQ + '%'} OR description ILIKE ${'%' + sQ + '%'})` : sql``;
 
-        const whereClause = sql`
+        const baseWhere = sql`
             WHERE b.status = 'active'
               AND (b.listing_visibility = 'public' OR b.listing_visibility IS NULL)
-              ${sCat ? sql`AND trade_category ILIKE ${'%' + mappedCat + '%'}` : sql``}
-              ${sState ? sql`AND state ILIKE ${sState}` : sql``}
-              ${sCity ? sql`AND city ILIKE ${'%' + sCity + '%'}` : sql``}
-              ${sSub ? sql`AND (suburb ILIKE ${'%' + sSub + '%'} OR city ILIKE ${'%' + sSub + '%'})` : sql``}
-              ${sQ ? sql`AND (business_name ILIKE ${'%' + sQ + '%'} OR trade_category ILIKE ${'%' + sQ + '%'} OR description ILIKE ${'%' + sQ + '%'})` : sql``}
+              ${catFilter} ${stateFilter} ${searchFilter}
         `;
+
+        // Try exact suburb first
+        if (sSub) {
+            const suburbFilter = sql`AND (suburb ILIKE ${'%' + sSub + '%'} OR city ILIKE ${'%' + sSub + '%'})`;
+            const suburbWhere = sql`${baseWhere} ${suburbFilter}`;
+
+            const suburbCount = await sql`SELECT COUNT(*) as total FROM businesses b ${suburbWhere}`;
+            const suburbTotal = Number(suburbCount[0]?.total ?? 0);
+
+            if (suburbTotal > 0) {
+                // Has results — sort by distance if we have lat/lng for this suburb
+                const centre = await getSuburbCentre(sSub, sCity, sState);
+
+                let businesses;
+                if (centre) {
+                    businesses = await sql`
+                        SELECT b.*,
+                            (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count,
+                            (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count,
+                            CASE WHEN b.lat IS NOT NULL AND b.lng IS NOT NULL
+                                THEN ROUND(CAST(111.045 * SQRT(POWER(b.lat - ${centre.lat}, 2) + POWER(b.lng * COS(RADIANS(${centre.lat})) - ${centre.lng} * COS(RADIANS(${centre.lat})), 2)) AS numeric), 1)
+                                ELSE 999
+                            END as distance_km
+                        FROM businesses b
+                        ${suburbWhere}
+                        ORDER BY distance_km ASC, b.listing_rank DESC, b.avg_rating DESC
+                        LIMIT ${PAGE_SIZE} OFFSET ${offset}
+                    `;
+                } else {
+                    businesses = await sql`
+                        SELECT b.*,
+                            (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count,
+                            (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count
+                        FROM businesses b
+                        ${suburbWhere}
+                        ORDER BY b.listing_rank DESC, b.avg_rating DESC, b.created_at DESC
+                        LIMIT ${PAGE_SIZE} OFFSET ${offset}
+                    `;
+                }
+                return { businesses, total: suburbTotal, totalPages: Math.ceil(suburbTotal / PAGE_SIZE), nearbyFallback: null };
+            }
+
+            // No results in suburb — fall back to city, sorted by distance
+            const cityFilter = sCity
+                ? sql`AND (suburb ILIKE ${'%' + sCity + '%'} OR city ILIKE ${'%' + sCity + '%'})`
+                : sql`AND state ILIKE ${sState || 'NSW'}`;
+            const cityWhere = sql`${baseWhere} ${cityFilter}`;
+            const cityCount = await sql`SELECT COUNT(*) as total FROM businesses b ${cityWhere}`;
+            const cityTotal = Number(cityCount[0]?.total ?? 0);
+
+            const centre = await getSuburbCentre(sSub, sCity, sState);
+            let businesses;
+            if (centre) {
+                businesses = await sql`
+                    SELECT b.*,
+                        (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count,
+                        (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count,
+                        CASE WHEN b.lat IS NOT NULL AND b.lng IS NOT NULL
+                            THEN ROUND(CAST(111.045 * SQRT(POWER(b.lat - ${centre.lat}, 2) + POWER(b.lng * COS(RADIANS(${centre.lat})) - ${centre.lng} * COS(RADIANS(${centre.lat})), 2)) AS numeric), 1)
+                            ELSE 999
+                        END as distance_km
+                    FROM businesses b
+                    ${cityWhere}
+                    ORDER BY distance_km ASC, b.listing_rank DESC, b.avg_rating DESC
+                    LIMIT ${PAGE_SIZE} OFFSET ${offset}
+                `;
+            } else {
+                businesses = await sql`
+                    SELECT b.*,
+                        (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count,
+                        (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count
+                    FROM businesses b
+                    ${cityWhere}
+                    ORDER BY b.listing_rank DESC, b.avg_rating DESC
+                    LIMIT ${PAGE_SIZE} OFFSET ${offset}
+                `;
+            }
+            return {
+                businesses, total: cityTotal,
+                totalPages: Math.ceil(cityTotal / PAGE_SIZE),
+                nearbyFallback: sCity || sState || 'nearby area'
+            };
+        }
+
+        // No suburb — city or state filter only
+        const locationFilter = sCity
+            ? sql`AND (suburb ILIKE ${'%' + sCity + '%'} OR city ILIKE ${'%' + sCity + '%'})`
+            : sql``;
+        const whereClause = sql`${baseWhere} ${locationFilter}`;
 
         const [businesses, countResult] = await Promise.all([
             sql`
@@ -52,17 +175,17 @@ async function getBusinesses(
                     (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count
                 FROM businesses b
                 ${whereClause}
-                ORDER BY b.listing_rank DESC, b.created_at DESC
+                ORDER BY b.listing_rank DESC, b.avg_rating DESC, b.created_at DESC
                 LIMIT ${PAGE_SIZE} OFFSET ${offset}
             `,
             sql`SELECT COUNT(*) as total FROM businesses b ${whereClause}`,
         ]);
 
         const total = Number(countResult[0]?.total ?? 0);
-        return { businesses, total, totalPages: Math.ceil(total / PAGE_SIZE) };
+        return { businesses, total, totalPages: Math.ceil(total / PAGE_SIZE), nearbyFallback: null };
     } catch (error) {
         console.error("Database error:", error);
-        return { businesses: [], total: 0, totalPages: 0 };
+        return { businesses: [], total: 0, totalPages: 0, nearbyFallback: null };
     }
 }
 
@@ -84,7 +207,7 @@ export default async function BusinessDirectory({
     const params = await searchParams;
     const { category, suburb, q, state, city } = params;
     const page = Math.max(1, parseInt(params.page || "1", 10));
-    const { businesses, total, totalPages } = await getBusinesses(category, suburb, q, state, city, page);
+    const { businesses, total, totalPages, nearbyFallback } = await getBusinesses(category, suburb, q, state, city, page);
 
     const hasFilters = category || suburb || q || state || city;
 
@@ -113,6 +236,15 @@ export default async function BusinessDirectory({
                         <BusinessDirectoryFilters />
                     </Suspense>
                 </div>
+
+                {nearbyFallback && suburb && (
+                    <div className="mb-6 flex items-center gap-3 bg-orange-50 border border-orange-100 rounded-2xl px-5 py-3.5">
+                        <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
+                        <p className="text-sm font-medium text-orange-700">
+                            No businesses found in <span className="font-bold">{suburb}</span> — showing nearest results from <span className="font-bold">{nearbyFallback}</span>, sorted by distance.
+                        </p>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {businesses.map((biz: any) => (
@@ -264,6 +396,7 @@ export default async function BusinessDirectory({
                         )}
                     </div>
                 )}
+
             </div>
         </main>
     );

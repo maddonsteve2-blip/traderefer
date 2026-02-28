@@ -1,12 +1,11 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, ArrowRight, Shield, TrendingUp, Info } from "lucide-react";
+import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, ArrowRight, Shield, TrendingUp, Info, DollarSign, FileText, Wrench } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
-import { proxyLogoUrl } from "@/lib/logo";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
-import Script from "next/script";
+import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, JOB_TYPES, jobToSlug, generateLocalizedIntro } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -25,12 +24,25 @@ function formatSlug(slug: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { trade, suburb, city, state } = await params;
     const tradeName = formatSlug(trade);
-    const locationName = formatSlug(suburb);
+    const suburbName = formatSlug(suburb);
     const cityName = formatSlug(city);
+    const stateUpper = state.toUpperCase();
+    const cost = TRADE_COST_GUIDE[tradeName];
+    const priceStr = cost ? ` | $${cost.low}\u2013$${cost.high}${cost.unit}` : "";
+
+    const businesses = await getBusinesses(trade, suburb);
+    const count = businesses.length;
+    const avgRating = count > 0
+        ? (businesses.reduce((acc: number, biz: any) => acc + ((biz.trust_score || 0) / 20), 0) / count).toFixed(1)
+        : "4.8";
 
     return {
-        title: `Best ${tradeName} in ${locationName}, ${cityName} | Trusted Local Trades`,
-        description: `Find the highest-rated ${tradeName} services in ${locationName}, ${cityName}. Verified local businesses, transparent pricing, and trusted referrals.`,
+        title: `${tradeName} in ${suburbName}, ${cityName}${priceStr} | TradeRefer`,
+        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateUpper}. Average rating ${avgRating}\u2605. Get free quotes from ABN-verified locals today.`,
+        openGraph: {
+            title: `${tradeName} in ${suburbName}, ${cityName} | TradeRefer`,
+            description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbName}. Compare ratings, pricing and referrals.`,
+        },
     };
 }
 
@@ -96,10 +108,80 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const relatedTrades = await getRelatedTrades(suburb, tradeName);
     const nearbySuburbs = await getNearbySuburbs(city, suburb, tradeName);
 
-    // Schema Markup (JSON-LD)
     const avgRating = businesses.length > 0
         ? (businesses.reduce((acc: number, biz: any) => acc + ((biz.trust_score || 0) / 20), 0) / businesses.length).toFixed(1)
         : "4.8";
+
+    const cost = TRADE_COST_GUIDE[tradeName];
+    const faqs = TRADE_FAQ_BANK[tradeName] || TRADE_FAQ_BANK["Plumbing"];
+    const licenceText = STATE_LICENSING[tradeName]?.[stateName] || null;
+    const relatedJobs = JOB_TYPES[tradeName]?.slice(0, 6) || [];
+    const localizedIntro = generateLocalizedIntro(tradeName, suburbName, cityName, stateName, businesses.length, avgRating);
+
+    const breadcrumbs = [
+        { name: stateName, href: `/local/${state}` },
+        { name: cityName, href: `/local/${state}/${city}` },
+        { name: suburbName, href: `/local/${state}/${city}/${suburb}` },
+        { name: tradeName, href: "#" }
+    ];
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://traderefer.au" },
+            { "@type": "ListItem", "position": 2, "name": "Directory", "item": "https://traderefer.au/local" },
+            { "@type": "ListItem", "position": 3, "name": stateName, "item": `https://traderefer.au/local/${state}` },
+            { "@type": "ListItem", "position": 4, "name": cityName, "item": `https://traderefer.au/local/${state}/${city}` },
+            { "@type": "ListItem", "position": 5, "name": suburbName, "item": `https://traderefer.au/local/${state}/${city}/${suburb}` },
+            { "@type": "ListItem", "position": 6, "name": `${tradeName} in ${suburbName}` },
+        ]
+    };
+
+    const serviceJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": `${tradeName} in ${suburbName}`,
+        "serviceType": tradeName,
+        "areaServed": {
+            "@type": "City",
+            "name": suburbName,
+            "containedInPlace": { "@type": "AdministrativeArea", "name": stateName }
+        },
+        ...(businesses.length > 0 ? {
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": avgRating,
+                "reviewCount": businesses.length.toString(),
+                "bestRating": "5",
+                "worstRating": "1"
+            }
+        } : {}),
+        ...(cost ? {
+            "offers": {
+                "@type": "AggregateOffer",
+                "lowPrice": cost.low.toString(),
+                "highPrice": cost.high.toString(),
+                "priceCurrency": "AUD",
+                "priceSpecification": {
+                    "@type": "UnitPriceSpecification",
+                    "price": `${cost.low}–${cost.high}`,
+                    "priceCurrency": "AUD",
+                    "unitText": cost.unit
+                }
+            }
+        } : {})
+    };
+
+    const faqJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faqs.map(faq => ({
+            "@type": "Question",
+            "name": faq.q,
+            "acceptedAnswer": { "@type": "Answer", "text": faq.a }
+        }))
+    };
 
     const jsonLd = {
         "@context": "https://schema.org",
@@ -115,15 +197,14 @@ export default async function TradeLocationPage({ params }: PageProps) {
         }))
     };
 
-    const breadcrumbs = [
-        { name: stateName, href: `/local/${state}` },
-        { name: cityName, href: `/local/${state}/${city}` },
-        { name: suburbName, href: `/local/${state}/${city}/${suburb}` },
-        { name: tradeName, href: "#" }
-    ];
-
     return (
         <main className="min-h-screen bg-white">
+            {/* ── ALL JSON-LD SCHEMA ── */}
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
             {/* ── BREADCRUMBS ── */}
             <div className="bg-zinc-900 pt-32 pb-4">
                 <div className="container mx-auto px-4">
@@ -141,11 +222,6 @@ export default async function TradeLocationPage({ params }: PageProps) {
                             </div>
                         ))}
                     </nav>
-
-                    <script
-                        type="application/ld+json"
-                        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-                    />
                 </div>
             </div>
 
@@ -157,11 +233,17 @@ export default async function TradeLocationPage({ params }: PageProps) {
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-3xl">
                         <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-                            Best <span className="text-orange-500">{tradeName}</span> in {suburbName}
+                            <span className="text-orange-500">{tradeName}</span> in {suburbName}, {cityName}
                         </h1>
-                        <p className="text-xl text-zinc-400 mb-8 leading-relaxed">
-                            Trusted local experts serving <span className="text-white font-bold">{suburbName}</span> and the surrounding <span className="text-white font-bold">{cityName}</span> region. Verified referrals from people in your community.
+                        <p className="text-xl text-zinc-400 mb-4 leading-relaxed max-w-2xl">
+                            {localizedIntro}
                         </p>
+                        {cost && (
+                            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-4 py-2 mb-6 text-sm font-bold text-white">
+                                <DollarSign className="w-4 h-4 text-orange-400" />
+                                Typical cost: ${cost.low}–${cost.high}{cost.unit}
+                            </div>
+                        )}
                         <div className="flex flex-wrap gap-4">
                             <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold h-14 px-8 text-lg border-none">
                                 <Link href="#businesses">View Top {businesses.length > 0 ? businesses.length : ''} Trades</Link>
@@ -249,7 +331,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                             )}
                                             <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start">
                                                 <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-zinc-100 shadow-xl shrink-0">
-                                                    <BusinessLogo logoUrl={proxyLogoUrl(biz.logo_url)} name={biz.business_name} />
+                                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -310,57 +392,98 @@ export default async function TradeLocationPage({ params }: PageProps) {
 
                             {/* ── SEO CONTENT SECTION ── */}
                             <div className="mt-20 space-y-12">
-                                <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-12">
-                                    <h2 className="text-3xl font-black text-zinc-900 mb-6 font-display">How to choose the right {tradeName.toLowerCase()} in {suburbName}</h2>
-                                    <div className="prose prose-zinc prose-sm md:prose-base max-w-none text-zinc-600 leading-relaxed space-y-4">
-                                        <p>
-                                            Finding a reliable {tradeName.toLowerCase()} in {suburbName} is more than just searching for a phone number.
-                                            You need someone who understands the local regulations, the unique needs of {suburbName} properties,
-                                            and has a proven track record of satisfied customers.
-                                        </p>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 text-black">
-                                            <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100">
-                                                <h4 className="font-bold text-zinc-900 mb-2 flex items-center gap-2">
-                                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                                    Check Credentials
-                                                </h4>
-                                                <p className="text-xs text-zinc-500">Ensure they carry the correct Victoria trade licenses and insurance for work in {stateName}.</p>
+
+                                {/* Pricing Section */}
+                                {cost && (
+                                    <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
+                                        <h2 className="text-2xl font-black text-zinc-900 mb-2 flex items-center gap-2">
+                                            <DollarSign className="w-6 h-6 text-orange-500" />
+                                            How Much Do {tradeName} Cost in {suburbName}?
+                                        </h2>
+                                        <p className="text-zinc-500 mb-6 text-sm">Pricing data based on Australian industry averages for {stateName}.</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
+                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Typical Range</p>
+                                                <p className="text-2xl font-black text-zinc-900">${cost.low}–${cost.high}</p>
+                                                <p className="text-sm text-zinc-500">{cost.unit}</p>
                                             </div>
-                                            <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100">
-                                                <h4 className="font-bold text-zinc-900 mb-2 flex items-center gap-2">
-                                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                                    Read Real Reviews
-                                                </h4>
-                                                <p className="text-xs text-zinc-500">Look beyond star ratings. Use TradeRefer to see verified community referrals from neighbors in {suburbName}.</p>
+                                            <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
+                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Emergency Rate</p>
+                                                <p className="text-2xl font-black text-zinc-900">${Math.round(cost.high * 1.5)}</p>
+                                                <p className="text-sm text-zinc-500">After-hours callout</p>
                                             </div>
-                                            <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100">
-                                                <h4 className="font-bold text-zinc-900 mb-2 flex items-center gap-2">
-                                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                                    Get Multiple Quotes
-                                                </h4>
-                                                <p className="text-xs text-zinc-500">Always request 2-3 detailed quotes to compare scope, materials, and timeframes for your {cityName} project.</p>
-                                            </div>
-                                            <div className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100">
-                                                <h4 className="font-bold text-zinc-900 mb-2 flex items-center gap-2">
-                                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                                    Local Knowledge
-                                                </h4>
-                                                <p className="text-xs text-zinc-500">Local {suburbName} trades know the best suppliers and common property issues in the region.</p>
+                                            <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
+                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Get Quotes</p>
+                                                <p className="text-2xl font-black text-zinc-900">{businesses.length > 0 ? businesses.length : "Free"}</p>
+                                                <p className="text-sm text-zinc-500">{businesses.length > 0 ? "local providers" : "no obligation"}</p>
                                             </div>
                                         </div>
+                                        <p className="text-xs text-zinc-400 mt-4">Prices are estimates only. Always get 2–3 written quotes before proceeding with any work.</p>
+                                    </section>
+                                )}
+
+                                {/* Licensing Info */}
+                                {licenceText && (
+                                    <section className="bg-blue-50 border border-blue-100 rounded-3xl p-6 flex gap-4">
+                                        <FileText className="w-6 h-6 text-blue-500 shrink-0 mt-0.5" />
+                                        <div>
+                                            <h3 className="font-black text-zinc-900 mb-1">{tradeName} Licensing Requirements in {stateName}</h3>
+                                            <p className="text-sm text-zinc-600 leading-relaxed">{licenceText}</p>
+                                        </div>
+                                    </section>
+                                )}
+
+                                {/* How to Choose */}
+                                <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
+                                    <h2 className="text-2xl font-black text-zinc-900 mb-6">How to Choose the Right {tradeName} in {suburbName}</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {[
+                                            { title: "Verify Licence & Insurance", body: `Confirm they hold the correct ${stateName} trade licence and carry public liability insurance. All TradeRefer businesses have ABN verification.` },
+                                            { title: "Read Community Referrals", body: `Look beyond star ratings. TradeRefer shows verified peer referrals from real ${suburbName} residents — not anonymous reviews.` },
+                                            { title: "Get 2–3 Written Quotes", body: `Always compare quotes for any job over $500. A written quote protects you and clarifies exactly what's included in the scope.` },
+                                            { title: "Choose Local Knowledge", body: `A ${tradeName.toLowerCase()} who works regularly in ${suburbName} understands local council requirements, suppliers, and common property issues.` },
+                                        ].map((item, i) => (
+                                            <div key={i} className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100">
+                                                <h4 className="font-bold text-zinc-900 mb-2 flex items-center gap-2">
+                                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                                                    {item.title}
+                                                </h4>
+                                                <p className="text-xs text-zinc-500 leading-relaxed">{item.body}</p>
+                                            </div>
+                                        ))}
                                     </div>
                                 </section>
 
+                                {/* Related Job Types */}
+                                {relatedJobs.length > 0 && (
+                                    <section className="bg-white rounded-3xl border border-zinc-200 p-8">
+                                        <h2 className="text-xl font-black text-zinc-900 mb-2 flex items-center gap-2">
+                                            <Wrench className="w-5 h-5 text-orange-500" />
+                                            Specific {tradeName} Services in {suburbName}
+                                        </h2>
+                                        <p className="text-sm text-zinc-500 mb-6">Looking for a specific type of {tradeName.toLowerCase()} work? Browse by service:</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            {relatedJobs.map((job) => (
+                                                <Link
+                                                    key={job}
+                                                    href={`/local/${state}/${city}/${suburb}/${trade}/${jobToSlug(job)}`}
+                                                    className="flex items-center justify-between px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-sm font-bold text-zinc-600 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 transition-colors"
+                                                >
+                                                    <span className="capitalize">{job}</span>
+                                                    <ArrowRight className="w-4 h-4 text-zinc-300" />
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </section>
+                                )}
+
+                                {/* Trade-Specific FAQ */}
                                 <section>
-                                    <h2 className="text-2xl font-black text-zinc-900 mb-8 font-display">Frequently Asked Questions</h2>
+                                    <h2 className="text-2xl font-black text-zinc-900 mb-8">Frequently Asked Questions About {tradeName} in {suburbName}</h2>
                                     <div className="space-y-4">
-                                        {[
-                                            { q: `How much do ${tradeName.toLowerCase()} services cost in ${suburbName}?`, a: `Costs vary based on the specific job, but standard service calls in ${suburbName} usually range between $80 - $180 per hour, plus materials. Fixed pricing is common for standard tasks.` },
-                                            { q: `How do I know if a ${tradeName.toLowerCase()} is verified?`, a: `On TradeRefer, look for the 'Verified' badge. This means we've confirmed their ABN and active status. You can also view their referral count from other local users.` },
-                                            { q: `Do they service nearby suburbs of ${cityName}?`, a: `Most businesses listed here cover the entire ${cityName} region including ${suburbName} and surrounding areas.` },
-                                        ].map((faq, i) => (
+                                        {faqs.map((faq, i) => (
                                             <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
-                                                <h4 className="font-bold text-zinc-900 mb-2">{faq.q}</h4>
+                                                <h3 className="font-bold text-zinc-900 mb-2">{faq.q}</h3>
                                                 <p className="text-sm text-zinc-500 leading-relaxed">{faq.a}</p>
                                             </div>
                                         ))}
@@ -480,3 +603,4 @@ export default async function TradeLocationPage({ params }: PageProps) {
         </main>
     );
 }
+
