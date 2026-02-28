@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { ChevronLeft } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function BackToDashboard() {
     const { isSignedIn } = useAuth();
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
 
-    if (!isSignedIn) return null;
+    if (!mounted || !isSignedIn) return null;
 
     return (
         <Link

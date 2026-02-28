@@ -1,20 +1,24 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import Response
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
+import httpx
 
 router = APIRouter()
 
 # Public-safe columns only — never expose user_id, stripe_account_id, wallet, etc.
 PUBLIC_BUSINESS_COLUMNS = """
     id, business_name, slug, trade_category, description,
-    suburb, state, service_radius_km,
+    suburb, city, state, service_radius_km,
     business_phone, business_email, website,
-    trust_score, connection_rate, total_leads_unlocked, total_confirmed,
+    trust_score, avg_rating, total_reviews,
+    connection_rate, total_leads_unlocked, total_confirmed,
     is_verified, listing_rank, logo_url, cover_photo_url, photo_urls, features, abn,
     referral_fee_cents, listing_visibility, avg_response_minutes, why_refer_us, created_at,
-    years_experience, services, specialties, business_highlights
+    years_experience, services, specialties, business_highlights,
+    is_claimed, claim_status
 """
 
 @router.get("/businesses")
@@ -143,6 +147,41 @@ async def get_business_deals(slug: str, db: AsyncSession = Depends(get_db)):
             "created_at": str(row["created_at"])
         })
     return deals
+
+
+@router.get("/businesses/{slug}/google-reviews")
+async def get_business_google_reviews(slug: str, db: AsyncSession = Depends(get_db)):
+    """Get Google reviews (from DataForSEO) for a business."""
+    biz_result = await db.execute(
+        text("SELECT id FROM businesses WHERE slug = :slug"),
+        {"slug": slug}
+    )
+    biz = biz_result.fetchone()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    result = await db.execute(
+        text("""
+            SELECT id, profile_name, rating, review_text, owner_answer, source, created_at
+            FROM business_reviews
+            WHERE business_id = :bid
+            ORDER BY rating DESC, created_at DESC
+            LIMIT 20
+        """),
+        {"bid": biz[0]}
+    )
+    reviews = []
+    for row in result.mappings().all():
+        reviews.append({
+            "id": str(row["id"]),
+            "profile_name": row["profile_name"],
+            "rating": row["rating"],
+            "review_text": row["review_text"],
+            "owner_answer": row["owner_answer"],
+            "source": row["source"],
+            "created_at": str(row["created_at"]) if row["created_at"] else None
+        })
+    return reviews
 
 
 @router.get("/businesses/{slug}/reviews")
@@ -364,3 +403,22 @@ async def get_referrer_team(referrer_id: str, db: AsyncSession = Depends(get_db)
         "tier": referrer["tier"],
         "team": team
     }
+
+
+@router.get("/logo-proxy")
+async def logo_proxy(url: str = Query(...)):
+    """Proxy Google profile photo URLs to avoid browser hotlink blocking."""
+    if not url.startswith("https://lh") or "googleusercontent.com" not in url:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    try:
+        async with httpx.AsyncClient(follow_redirects=True, timeout=10.0) as client:
+            res = await client.get(url, headers={"User-Agent": "Mozilla/5.0 (compatible; TradeRefer/1.0)"})
+        if res.status_code != 200 or not res.headers.get("content-type", "").startswith("image/"):
+            raise HTTPException(status_code=404, detail="Image not found")
+        return Response(
+            content=res.content,
+            media_type=res.headers.get("content-type", "image/jpeg"),
+            headers={"Cache-Control": "public, max-age=86400, stale-while-revalidate=604800"},
+        )
+    except httpx.RequestError:
+        raise HTTPException(status_code=502, detail="Failed to fetch image")
