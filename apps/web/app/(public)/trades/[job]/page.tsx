@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
-import { JOB_TYPES, TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, AUSTRALIA_LOCATIONS, jobToSlug } from "@/lib/constants";
+import { JOB_TYPES, TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, jobToSlug } from "@/lib/constants";
 import { sql } from "@/lib/db";
 
 export const dynamic = "force-dynamic";

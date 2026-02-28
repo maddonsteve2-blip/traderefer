@@ -103,7 +103,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         };
     });
 
-    // 7. Australia-wide trade hub pages (one per job type)
+    // 7. Job-level pages — suburb+trade combos × all job types for that trade
+    const jobPages: MetadataRoute.Sitemap = tradeCombos.flatMap((r) => {
+        const tradeSlug = (r.trade_category as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const jobs = JOB_TYPES[r.trade_category as string] || [];
+        return jobs.map((job) => ({
+            url: `${BASE_URL}/local/${r.state_slug}/${r.city_slug}/${r.suburb_slug}/${tradeSlug}/${jobToSlug(job)}`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly' as const,
+            priority: 0.65,
+        }));
+    });
+
+    // 8. Australia-wide trade hub pages (one per job type)
     const tradeHubPages: MetadataRoute.Sitemap = [];
     for (const [, jobs] of Object.entries(JOB_TYPES)) {
         for (const job of jobs) {
@@ -123,6 +135,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...cityPages,
         ...suburbPages,
         ...localPages,
+        ...jobPages,
         ...tradeHubPages,
     ];
 }

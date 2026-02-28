@@ -39,6 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
         title: `${tradeName} in ${suburbName}, ${cityName}${priceStr} | TradeRefer`,
         description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateUpper}. Average rating ${avgRating}\u2605. Get free quotes from ABN-verified locals today.`,
+        robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
         openGraph: {
             title: `${tradeName} in ${suburbName}, ${cityName} | TradeRefer`,
             description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbName}. Compare ratings, pricing and referrals.`,
