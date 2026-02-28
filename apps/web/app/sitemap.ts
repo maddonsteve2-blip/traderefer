@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 import { sql } from '@/lib/db';
-import { AUSTRALIA_LOCATIONS, JOB_TYPES, jobToSlug } from '@/lib/constants';
+import { JOB_TYPES, jobToSlug } from '@/lib/constants';
 
 const BASE_URL = 'https://traderefer.au';
 
@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${BASE_URL}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     ];
 
-    // 2. Fetch Business Profile Pages
+    // 2. Business profile pages
     const businesses = await sql`
         SELECT slug, updated_at, created_at FROM businesses WHERE status = 'active'
     `;
@@ -22,76 +22,81 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         {
             url: `${BASE_URL}/b/${biz.slug}`,
             lastModified: biz.updated_at || biz.created_at || new Date(),
-            changeFrequency: 'weekly',
+            changeFrequency: 'weekly' as const,
             priority: 0.8,
         },
         {
             url: `${BASE_URL}/b/${biz.slug}/refer`,
             lastModified: biz.updated_at || biz.created_at || new Date(),
-            changeFrequency: 'weekly',
+            changeFrequency: 'weekly' as const,
             priority: 0.6,
         }
     ]);
 
-    // 3. State hub pages (from AUSTRALIA_LOCATIONS)
-    const stateMap: Record<string, string> = {
-        'VIC': 'vic', 'NSW': 'nsw', 'QLD': 'qld', 'WA': 'wa',
-        'SA': 'sa', 'TAS': 'tas', 'ACT': 'act', 'NT': 'nt'
-    };
-    const statePages: MetadataRoute.Sitemap = Object.keys(AUSTRALIA_LOCATIONS).map(stateKey => ({
-        url: `${BASE_URL}/local/${stateMap[stateKey] || stateKey.toLowerCase()}`,
+    // 3. State hub pages — all states that have active businesses
+    const stateRows = await sql`
+        SELECT DISTINCT LOWER(state) as state_slug
+        FROM businesses
+        WHERE status = 'active' AND state IS NOT NULL AND state != ''
+    `;
+    const statePages: MetadataRoute.Sitemap = stateRows.map((r) => ({
+        url: `${BASE_URL}/local/${r.state_slug}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.9,
     }));
 
-    // 4. City hub pages
-    const cityPages: MetadataRoute.Sitemap = [];
-    for (const [stateKey, cities] of Object.entries(AUSTRALIA_LOCATIONS)) {
-        const stateSlug = stateMap[stateKey] || stateKey.toLowerCase();
-        for (const cityName of Object.keys(cities)) {
-            cityPages.push({
-                url: `${BASE_URL}/local/${stateSlug}/${cityName.toLowerCase().replace(/\s+/g, '-')}`,
-                lastModified: new Date(),
-                changeFrequency: 'weekly' as const,
-                priority: 0.85,
-            });
-        }
-    }
-
-    // 5. Suburb hub pages (only suburbs in AUSTRALIA_LOCATIONS)
-    const suburbPages: MetadataRoute.Sitemap = [];
-    for (const [stateKey, cities] of Object.entries(AUSTRALIA_LOCATIONS)) {
-        const stateSlug = stateMap[stateKey] || stateKey.toLowerCase();
-        for (const [cityName, suburbs] of Object.entries(cities)) {
-            const citySlug = cityName.toLowerCase().replace(/\s+/g, '-');
-            for (const suburb of suburbs) {
-                suburbPages.push({
-                    url: `${BASE_URL}/local/${stateSlug}/${citySlug}/${suburb.toLowerCase().replace(/\s+/g, '-')}`,
-                    lastModified: new Date(),
-                    changeFrequency: 'weekly' as const,
-                    priority: 0.75,
-                });
-            }
-        }
-    }
-
-    // 6. Suburb+Trade pages (only for combos with ≥1 active business)
-    const dynamicCombos = await sql`
-        SELECT DISTINCT state, city, suburb, trade_category 
-        FROM businesses 
+    // 4. City hub pages — all cities that have active businesses
+    const cityRows = await sql`
+        SELECT DISTINCT LOWER(state) as state_slug,
+               LOWER(REPLACE(city, ' ', '-')) as city_slug
+        FROM businesses
         WHERE status = 'active'
+          AND state IS NOT NULL AND state != ''
+          AND city IS NOT NULL AND city != ''
+    `;
+    const cityPages: MetadataRoute.Sitemap = cityRows.map((r) => ({
+        url: `${BASE_URL}/local/${r.state_slug}/${r.city_slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.85,
+    }));
+
+    // 5. Suburb hub pages — all suburbs that have active businesses
+    const suburbRows = await sql`
+        SELECT DISTINCT LOWER(state) as state_slug,
+               LOWER(REPLACE(city, ' ', '-')) as city_slug,
+               LOWER(REPLACE(suburb, ' ', '-')) as suburb_slug
+        FROM businesses
+        WHERE status = 'active'
+          AND state IS NOT NULL AND state != ''
+          AND city IS NOT NULL AND city != ''
+          AND suburb IS NOT NULL AND suburb != ''
+    `;
+    const suburbPages: MetadataRoute.Sitemap = suburbRows.map((r) => ({
+        url: `${BASE_URL}/local/${r.state_slug}/${r.city_slug}/${r.suburb_slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.75,
+    }));
+
+    // 6. Suburb+Trade pages — only combos with ≥1 active business
+    const tradeCombos = await sql`
+        SELECT DISTINCT LOWER(state) as state_slug,
+               LOWER(REPLACE(city, ' ', '-')) as city_slug,
+               LOWER(REPLACE(suburb, ' ', '-')) as suburb_slug,
+               trade_category
+        FROM businesses
+        WHERE status = 'active'
+          AND state IS NOT NULL AND state != ''
+          AND city IS NOT NULL AND city != ''
           AND suburb IS NOT NULL AND suburb != ''
           AND trade_category IS NOT NULL AND trade_category != ''
     `;
-
-    const localPages: MetadataRoute.Sitemap = dynamicCombos.map((combo) => {
-        const stateSlug = (combo.state || 'vic').toLowerCase();
-        const citySlug = (combo.city || 'geelong').toLowerCase().replace(/\s+/g, '-');
-        const suburbSlug = (combo.suburb || '').toLowerCase().replace(/\s+/g, '-');
-        const tradeSlug = (combo.trade_category || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const localPages: MetadataRoute.Sitemap = tradeCombos.map((r) => {
+        const tradeSlug = (r.trade_category as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
         return {
-            url: `${BASE_URL}/local/${stateSlug}/${citySlug}/${suburbSlug}/${tradeSlug}`,
+            url: `${BASE_URL}/local/${r.state_slug}/${r.city_slug}/${r.suburb_slug}/${tradeSlug}`,
             lastModified: new Date(),
             changeFrequency: 'weekly' as const,
             priority: 0.7,
