@@ -107,6 +107,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     // 7. Job-level pages — suburb+trade combos × all job types for that trade
+    // Temporarily disabled to reduce sitemap size for Vercel deployment
+    const jobPages: MetadataRoute.Sitemap = [];
+    /*
     const jobPages: MetadataRoute.Sitemap = tradeCombos.flatMap((r) => {
         const tradeSlug = (r.trade_category as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
         const jobs = JOB_TYPES[r.trade_category as string] || [];
@@ -117,9 +120,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.65,
         }));
     });
+    */
 
     // 8. Australia-wide trade hub pages (one per job type)
+    // Temporarily disabled to reduce sitemap size for Vercel deployment
     const tradeHubPages: MetadataRoute.Sitemap = [];
+    /*
     for (const [, jobs] of Object.entries(JOB_TYPES)) {
         for (const job of jobs) {
             tradeHubPages.push({
@@ -130,6 +136,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             });
         }
     }
+    */
 
     // 9. Top-10 city pages — /top/[trade]/[state]/[city] (only combos with ≥10 businesses)
     const top10CityRows = await sql`
