@@ -117,18 +117,18 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
     ];
 
     return (
-        <div className="space-y-5">
+        <div className="space-y-8">
             {/* Quick Share Buttons */}
-            <div>
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Share Instantly</p>
-                <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-6">
+                <p className="text-sm font-black text-zinc-400 uppercase tracking-[0.2em] px-1">Share Instantly</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {shareButtons.map((btn) => (
                         <button
                             key={btn.label}
                             onClick={btn.onClick}
-                            className="flex items-center justify-center gap-1.5 px-2 py-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-700 transition-colors"
+                            className="flex items-center justify-center gap-4 px-6 py-5 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-[24px] text-base font-bold text-zinc-900 transition-all active:scale-[0.98] shadow-sm group"
                         >
-                            <btn.icon className="w-3.5 h-3.5 shrink-0" />
+                            <btn.icon className="w-6 h-6 shrink-0 transition-transform group-hover:scale-110" />
                             {btn.label}
                         </button>
                     ))}
@@ -146,40 +146,43 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
                                 toast.success("Link copied!");
                             }
                         }}
-                        className="flex items-center justify-center gap-1.5 px-2 py-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-700 transition-colors"
+                        className="flex items-center justify-center gap-4 px-6 py-5 bg-white hover:bg-zinc-50 border border-zinc-200 rounded-[24px] text-base font-bold text-zinc-900 transition-all active:scale-[0.98] shadow-sm group"
                     >
-                        <Share2 className="w-3.5 h-3.5 shrink-0" />
-                        More
+                        <Share2 className="w-6 h-6 shrink-0 transition-transform group-hover:scale-110" />
+                        System Share
                     </button>
                 </div>
             </div>
 
             {/* Pre-written Messages */}
-            <div>
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Copy & Paste Messages</p>
-                <div className="space-y-3">
+            <div className="space-y-6">
+                <p className="text-sm font-black text-zinc-400 uppercase tracking-[0.2em] px-1">Ready-to-use Messaging</p>
+                <div className="space-y-8">
                     {messages.map((msg, i) => (
-                        <div key={msg.label} className="rounded-xl border border-zinc-200 overflow-hidden">
-                            <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 border-b border-zinc-200">
-                                <span className="text-xs font-bold text-zinc-600 flex items-center gap-1.5">
-                                    <msg.icon className="w-3.5 h-3.5" /> {msg.label}
-                                </span>
-                                <button
+                        <div key={msg.label} className="group relative">
+                            <div className="absolute -inset-1 bg-zinc-900 rounded-[32px] blur opacity-0 group-hover:opacity-[0.05] transition duration-500"></div>
+                            <div className="relative rounded-[32px] border border-zinc-200 bg-white overflow-hidden transition-all group-hover:border-zinc-300 group-hover:shadow-lg">
+                                <div className="flex items-center justify-between px-8 py-5 bg-zinc-50 border-b border-zinc-100">
+                                    <span className="text-xs font-black text-zinc-500 flex items-center gap-3 uppercase tracking-widest">
+                                        <msg.icon className="w-5 h-5" /> {msg.label}
+                                    </span>
+                                    <button
+                                        onClick={() => handleCopy(msg.text, i)}
+                                        className={`text-xs font-black uppercase tracking-[0.1em] flex items-center gap-2.5 transition-all ${copiedIndex === i ? 'text-green-600' : 'text-zinc-500 hover:text-orange-600'}`}
+                                    >
+                                        {copiedIndex === i ? (
+                                            <><Check className="w-5 h-5" /> Copied</>
+                                        ) : (
+                                            <><Copy className="w-5 h-5 transition-transform group-hover:scale-110" /> Copy Text</>
+                                        )}
+                                    </button>
+                                </div>
+                                <div
                                     onClick={() => handleCopy(msg.text, i)}
-                                    className={`text-xs font-bold flex items-center gap-1 transition-colors ${copiedIndex === i ? 'text-green-600' : 'text-zinc-500 hover:text-zinc-900'}`}
+                                    className="p-10 text-lg text-zinc-800 font-medium leading-[1.7] cursor-pointer hover:bg-zinc-50/50 transition-colors whitespace-pre-wrap font-sans"
                                 >
-                                    {copiedIndex === i ? (
-                                        <><Check className="w-3.5 h-3.5" /> Copied</>
-                                    ) : (
-                                        <><Copy className="w-3.5 h-3.5" /> Copy</>
-                                    )}
-                                </button>
-                            </div>
-                            <div
-                                onClick={() => handleCopy(msg.text, i)}
-                                className="p-3 bg-white text-sm text-zinc-700 leading-relaxed cursor-pointer hover:bg-zinc-50 transition-colors whitespace-pre-wrap"
-                            >
-                                {msg.text}
+                                    {msg.text}
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -187,8 +190,8 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
             </div>
 
             {/* QR Code */}
-            <div>
-                <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">In-Person Referral</p>
+            <div className="space-y-6">
+                <p className="text-sm font-black text-zinc-400 uppercase tracking-[0.2em] px-1">Direct Referral (QR)</p>
                 <button
                     onClick={() => {
                         if (!showQR) {
@@ -196,25 +199,28 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
                         }
                         setShowQR(!showQR);
                     }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 transition-colors"
+                    className="w-full flex items-center justify-center gap-4 px-8 py-6 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-[28px] text-lg font-black text-zinc-900 transition-all active:scale-[0.98] shadow-sm"
                 >
-                    <QrCode className="w-4 h-4" />
-                    {showQR ? 'Hide QR Code' : 'Show QR Code'}
+                    <QrCode className="w-6 h-6" />
+                    {showQR ? 'Hide QR Code' : 'Generate Referral QR'}
                 </button>
                 {showQR && (
-                    <div className="mt-3 flex flex-col items-center gap-3 p-5 bg-zinc-50 border border-zinc-200 rounded-xl">
-                        <div ref={qrRef} className="bg-white p-3 rounded-lg border border-zinc-200">
-                            <QRCode value={referralUrl} size={150} />
+                    <div className="mt-8 flex flex-col items-center gap-8 p-12 bg-white border border-zinc-200 rounded-[40px] shadow-2xl animate-in fade-in zoom-in-95 duration-500 text-center">
+                        <div ref={qrRef} className="bg-white p-10 rounded-[40px] border border-zinc-100 shadow-2xl shadow-zinc-200/50">
+                            <QRCode value={referralUrl} size={240} />
                         </div>
-                        <p className="text-xs text-zinc-500 text-center">Show this to anyone who needs a {tradeCategory.toLowerCase()}</p>
+                        <div className="space-y-3">
+                            <p className="text-xl text-zinc-900 font-black">Scan to Refer</p>
+                            <p className="text-base text-zinc-500 font-medium leading-relaxed max-w-[280px]">Have your friend scan this to go directly to {businessName}.</p>
+                        </div>
                         <button
                             onClick={() => {
                                 navigator.clipboard.writeText(referralUrl);
                                 toast.success("Link copied!");
                             }}
-                            className="text-sm font-bold text-zinc-600 hover:text-zinc-900 flex items-center gap-1 transition-colors"
+                            className="px-10 py-4 rounded-full bg-zinc-900 text-base font-black text-white hover:bg-zinc-800 transition-all shadow-xl shadow-zinc-200/50"
                         >
-                            <Copy className="w-3.5 h-3.5" /> Copy Link
+                            Copy Direct Link
                         </button>
                     </div>
                 )}

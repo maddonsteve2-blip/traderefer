@@ -3,7 +3,7 @@ import json
 import os
 import re
 from playwright.async_api import async_playwright
-from tf_playwright_stealth import stealth_async
+from playwright_stealth import stealth_async
 
 async def scrape_google_maps(queries, output_file="scraped_businesses.json"):
     async with async_playwright() as p:
@@ -28,7 +28,7 @@ async def scrape_google_maps(queries, output_file="scraped_businesses.json"):
 
         for query in queries:
             print(f"\n--- Searching for: {query} ---")
-            search_url = f"https://www.google.com/maps/search/{query.replace(' ', '+')}"
+            search_url = f"https://www.google.com/maps/search/{query.replace(' ', '+')}?hl=en"
             await page.goto(search_url)
             
             # Handle cookies/consent if it appears

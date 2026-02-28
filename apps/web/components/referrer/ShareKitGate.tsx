@@ -64,24 +64,24 @@ export function ShareKitGate({
 
     if (!linked) {
         return (
-            <div className="flex flex-col items-center gap-3 py-6 text-center">
-                <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center">
-                    <Lock className="w-5 h-5 text-zinc-400" />
+            <div className="flex flex-col items-center gap-6 py-12 px-8 text-center bg-zinc-50/50 rounded-3xl border border-zinc-200 border-dashed">
+                <div className="w-16 h-16 rounded-2xl bg-white border border-zinc-200 flex items-center justify-center shadow-sm">
+                    <Lock className="w-6 h-6 text-zinc-400" />
                 </div>
-                <div>
-                    <p className="text-sm font-bold text-zinc-700">Referrers only</p>
-                    <p className="text-xs text-zinc-400 mt-0.5">
+                <div className="space-y-2">
+                    <p className="text-base font-black text-zinc-900 uppercase tracking-widest">Referrers Exclusive</p>
+                    <p className="text-base text-zinc-500 font-medium leading-relaxed max-w-[280px] mx-auto">
                         {isSignedIn
-                            ? "Start referring this business to unlock the Share Kit."
-                            : "Sign in and start referring to unlock the Share Kit."}
+                            ? "Start referring this business to unlock your custom Share Kit & tracking link."
+                            : "Sign in and start referring to unlock your custom Share Kit & tracking link."}
                     </p>
                 </div>
                 {!isSignedIn && (
                     <Link
                         href="/login"
-                        className="text-xs font-bold text-orange-500 hover:text-orange-600 underline"
+                        className="text-base font-black text-zinc-900 hover:text-orange-600 underline decoration-zinc-300 hover:decoration-orange-600 transition-all underline-offset-4"
                     >
-                        Sign in
+                        Sign in to unlock
                     </Link>
                 )}
             </div>

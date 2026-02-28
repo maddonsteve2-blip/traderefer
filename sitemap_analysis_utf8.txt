@@ -1,0 +1,86 @@
+﻿
+--- Analyzing Sitemap: https://www.serviceseeking.com.au/sitemaps/seo_snippet_pages/keywords.xml.gz ---
+Found 1074 URLs in set.
+Sample URLs:
+  https://www.serviceseeking.com.au/handymen
+  https://www.serviceseeking.com.au/removalists
+  https://www.serviceseeking.com.au/plumbers
+  https://www.serviceseeking.com.au/cleaners
+  https://www.serviceseeking.com.au/draftsman
+  https://www.serviceseeking.com.au/electricians
+  https://www.serviceseeking.com.au/renovations-and-extensions
+  https://www.serviceseeking.com.au/landscaping-and-gardening
+  https://www.serviceseeking.com.au/painters
+  https://www.serviceseeking.com.au/lawn-mowing-services
+
+--- Analyzing Sitemap: https://www.serviceseeking.com.au/sitemaps/job_requests/parent.xml.gz ---
+Found 1 URLs in set.
+Sample URLs:
+  https://www.serviceseeking.com.au/job-requests
+
+--- Analyzing Sitemap: https://www.serviceseeking.com.au/sitemaps/job_requests/suburbs.xml.gz ---
+Found 6 URLs in set.
+Sample URLs:
+  https://www.serviceseeking.com.au/job-requests/sydney
+  https://www.serviceseeking.com.au/job-requests/melbourne
+  https://www.serviceseeking.com.au/job-requests/brisbane
+  https://www.serviceseeking.com.au/job-requests/perth
+  https://www.serviceseeking.com.au/job-requests/gold-coast
+  https://www.serviceseeking.com.au/job-requests/adelaide
+
+--- Analyzing Sitemap: https://www.serviceseeking.com.au/sitemaps/job_requests/categories_and_suburbs.xml.gz ---
+Found 426 URLs in set.
+Sample URLs:
+  https://www.serviceseeking.com.au/job-requests/handyman/sydney
+  https://www.serviceseeking.com.au/job-requests/handyman/melbourne
+  https://www.serviceseeking.com.au/job-requests/handyman/brisbane
+  https://www.serviceseeking.com.au/job-requests/handyman/perth
+  https://www.serviceseeking.com.au/job-requests/handyman/gold-coast
+  https://www.serviceseeking.com.au/job-requests/handyman/adelaide
+  https://www.serviceseeking.com.au/job-requests/cleaner/sydney
+  https://www.serviceseeking.com.au/job-requests/cleaner/melbourne
+  https://www.serviceseeking.com.au/job-requests/cleaner/brisbane
+  https://www.serviceseeking.com.au/job-requests/cleaner/perth
+
+--- Analyzing Sitemap: https://www.serviceseeking.com.au/sitemaps/job_requests/categories.xml.gz ---
+Found 71 URLs in set.
+Sample URLs:
+  https://www.serviceseeking.com.au/job-requests/handyman
+  https://www.serviceseeking.com.au/job-requests/cleaner
+  https://www.serviceseeking.com.au/job-requests/electrician
+  https://www.serviceseeking.com.au/job-requests/plumber
+  https://www.serviceseeking.com.au/job-requests/removalist
+  https://www.serviceseeking.com.au/job-requests/gardener
+  https://www.serviceseeking.com.au/job-requests/carpenter
+  https://www.serviceseeking.com.au/job-requests/painter
+  https://www.serviceseeking.com.au/job-requests/builder
+  https://www.serviceseeking.com.au/job-requests/concreter
+
+--- Analyzing Sitemap: https://www.serviceseeking.com.au/sitemaps/main/sitemap.xml.gz ---
+Found 1 sub-sitemaps in index.
+Sample URLs:
+  https://www.serviceseeking.com.au/sitemaps/main/general.xml.gz
+
+--- Analyzing Sitemap: https://www.serviceseeking.com.au/sitemaps/main/general.xml.gz ---
+Found 5 URLs in set.
+Sample URLs:
+  https://www.serviceseeking.com.au/how-it-works
+  https://www.serviceseeking.com.au/blog/terms-and-conditions/
+  https://www.serviceseeking.com.au/categories
+  https://www.serviceseeking.com.au/job-requests
+  https://www.serviceseeking.com.au/jobs/new
+
+--- Analyzing Sitemap: https://www.serviceseeking.com.au/sitemaps/profile/profiles.xml.gz ---
+Found 50000 URLs in set.
+Sample URLs:
+  https://www.serviceseeking.com.au/profile/108-alan-harper
+  https://www.serviceseeking.com.au/profile/119-webfirm
+  https://www.serviceseeking.com.au/profile/121-lewislegal-business-property-lawyers
+  https://www.serviceseeking.com.au/profile/155-deepbase-creative
+  https://www.serviceseeking.com.au/profile/173-aaa-city-removalist
+  https://www.serviceseeking.com.au/profile/176-dunn-architects
+  https://www.serviceseeking.com.au/profile/254-industry
+  https://www.serviceseeking.com.au/profile/292-animantz-creative-animators-p-ltd
+  https://www.serviceseeking.com.au/profile/320-morpheus-cruises
+  https://www.serviceseeking.com.au/profile/358-creative-graphic-designer
+

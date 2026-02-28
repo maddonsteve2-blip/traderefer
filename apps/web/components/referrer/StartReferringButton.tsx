@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, ExternalLink, LogIn } from "lucide-react";
+import { Copy, Check, ExternalLink, LogIn, Plus } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -78,14 +78,14 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
 
     if (!isSignedIn) {
         return (
-            <div className="space-y-3">
-                <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full h-12 font-bold shadow-lg shadow-orange-500/20">
-                    <Link href="/login">
-                        <LogIn className="w-4 h-4 mr-2" /> Sign In to Start Referring
+            <div className="space-y-6">
+                <Button asChild className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-16 text-lg font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95">
+                    <Link href="/login" className="flex items-center justify-center gap-3">
+                        <LogIn className="w-6 h-6" /> Sign In to Start Referring
                     </Link>
                 </Button>
-                <p className="text-sm text-zinc-400 text-center">
-                    Create a free account to get your unique referral link
+                <p className="text-base text-zinc-500 text-center font-medium px-4 leading-[1.6]">
+                    Join our network of referrers to unlock exclusive rewards and track your earnings.
                 </p>
             </div>
         );
@@ -93,24 +93,41 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
 
     if (referralLink) {
         return (
-            <div className="space-y-3">
-                <div className="flex items-center gap-2 p-3 bg-zinc-50 rounded-xl border border-zinc-200">
-                    <div className="text-sm text-zinc-600 truncate flex-1 font-mono">{referralLink}</div>
-                    <button
-                        onClick={handleCopy}
-                        className="p-2 text-orange-500 hover:bg-orange-50 rounded-lg transition-colors shrink-0"
-                    >
-                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    </button>
+            <div className="space-y-6">
+                <div className="group relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl blur opacity-10 group-hover:opacity-25 transition duration-1000"></div>
+                    <div className="relative flex items-center gap-4 p-5 bg-white rounded-2xl border border-zinc-200 shadow-sm">
+                        <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0">
+                            <ExternalLink className="w-6 h-6" />
+                        </div>
+                        <div className="text-base text-zinc-600 truncate flex-1 font-bold tracking-tight">{referralLink}</div>
+                        <button
+                            onClick={handleCopy}
+                            className={`p-3 rounded-xl transition-all shrink-0 ${copied ? 'bg-green-50 text-green-600' : 'bg-zinc-50 text-zinc-400 hover:text-orange-500 hover:bg-orange-50'}`}
+                        >
+                            {copied ? <Check className="w-6 h-6" /> : <Copy className="w-6 h-6" />}
+                        </button>
+                    </div>
                 </div>
-                <Button onClick={handleCopy} className="w-full bg-green-600 hover:bg-green-700 text-white rounded-full h-12 font-bold">
-                    {copied ? "Copied!" : "Copy Your Referral Link"}
-                </Button>
-                <Button asChild variant="outline" className="w-full rounded-full h-10 font-medium border-zinc-200">
-                    <Link href="/dashboard/referrer">
-                        Go to Dashboard <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
+
+                <div className="grid grid-cols-1 gap-4">
+                    <Button onClick={handleCopy} className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-16 text-lg font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group">
+                        {copied ? (
+                            <div className="flex items-center gap-3 text-green-400">
+                                <Check className="w-6 h-6" /> Copied to Clipboard
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3">
+                                <Copy className="w-6 h-6 group-hover:scale-110 transition-transform" /> Copy Referral Link
+                            </div>
+                        )}
+                    </Button>
+                    <Link href="/dashboard/referrer" className="w-full">
+                        <Button variant="outline" className="w-full rounded-full h-14 text-base font-bold border-zinc-200 hover:bg-zinc-50 text-zinc-600 transition-all">
+                            Manage in Referrer Dashboard <ExternalLink className="w-5 h-5 ml-2 opacity-50" />
+                        </Button>
                     </Link>
-                </Button>
+                </div>
             </div>
         );
     }
@@ -119,9 +136,21 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
         <Button
             onClick={handleStartReferring}
             disabled={linking}
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full h-12 font-bold shadow-lg shadow-orange-500/20"
+            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-16 text-lg font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group overflow-hidden"
         >
-            {linking ? "Setting up..." : `Start Referring ${businessName}`}
+            {linking ? (
+                <div className="flex items-center gap-4">
+                    <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    Setting up...
+                </div>
+            ) : (
+                <div className="flex items-center justify-center gap-3 relative z-10">
+                    <p>Start Referring {businessName}</p>
+                    <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+                </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-white/5 to-orange-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
         </Button>
     );
 }
+

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { proxyLogoUrl } from "@/lib/logo";
 
 export function BusinessLogo({ logoUrl, name, size = "md" }: { logoUrl: string | null; name: string; size?: "sm" | "md" | "lg" }) {
     const [failed, setFailed] = useState(false);
@@ -13,9 +12,7 @@ export function BusinessLogo({ logoUrl, name, size = "md" }: { logoUrl: string |
         lg: "w-24 h-24 text-5xl"
     };
 
-    const displayUrl = logoUrl?.includes("googleusercontent.com")
-        ? proxyLogoUrl(logoUrl)
-        : logoUrl;
+    const displayUrl = logoUrl;
 
     const showFallback = !displayUrl || failed || !loaded;
 

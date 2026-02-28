@@ -1,0 +1,61 @@
+--- adb starting (pid 26328) ---
+02-22 16:30:09.094 26328 56388 I adb     : main.cpp:66 Android Debug Bridge version 1.0.41
+02-22 16:30:09.094 26328 56388 I adb     : main.cpp:66 Version 36.0.2-14143358
+02-22 16:30:09.094 26328 56388 I adb     : main.cpp:66 Installed as C:\Users\61479\AppData\Local\Android\Sdk\platform-tools\adb.exe
+02-22 16:30:09.094 26328 56388 I adb     : main.cpp:66 Running on Windows 10.0.22631
+02-22 16:30:09.094 26328 56388 I adb     : main.cpp:66 
+02-22 16:37:20.023 26328 56540 I adb     : transport.cpp:1171 emulator-5554: connection terminated: read failed
+02-22 16:42:37.032 26328 56388 W adb     : logging.cpp:50 (external/openscreen/discovery/dnssd/impl/dns_data_graph.cc:314) Unable to find child_name=Android-3.local
+02-22 16:45:40.922 26328 100576 I adb     : transport.cpp:1171 emulator-5554: connection terminated: read failed
+02-22 16:50:52.193 26328 81796 I adb     : transport.cpp:1171 emulator-5554: connection terminated: read failed
+02-22 17:16:33.886 26328 87108 I adb     : transport.cpp:1171 emulator-5554: connection terminated: read failed
+02-22 17:23:48.800 26328 56388 W adb     : sockets.cpp:310 timeout expired while flushing socket, closing
+02-22 17:23:58.441 26328 56388 W adb     : sockets.cpp:310 timeout expired while flushing socket, closing
+02-22 17:24:18.106 26328 56388 W adb     : sockets.cpp:310 timeout expired while flushing socket, closing
+02-22 17:40:56.654 26328 86288 I adb     : transport.cpp:1171 emulator-5554: connection terminated: read failed
+adb server killed by remote request
+--- adb starting (pid 61392) ---
+02-22 20:17:56.925 61392 60152 I adb     : main.cpp:66 Android Debug Bridge version 1.0.41
+02-22 20:17:56.925 61392 60152 I adb     : main.cpp:66 Version 36.0.2-14143358
+02-22 20:17:56.925 61392 60152 I adb     : main.cpp:66 Installed as C:\Users\61479\AppData\Local\Android\Sdk\platform-tools\adb.exe
+02-22 20:17:56.925 61392 60152 I adb     : main.cpp:66 Running on Windows 10.0.22631
+02-22 20:17:56.925 61392 60152 I adb     : main.cpp:66 
+02-22 20:22:32.771 61392 60152 W adb     : sockets.cpp:310 timeout expired while flushing socket, closing
+02-22 20:22:33.271 61392 60152 W adb     : sockets.cpp:310 timeout expired while flushing socket, closing
+02-22 20:22:34.276 61392 60152 W adb     : sockets.cpp:310 timeout expired while flushing socket, closing
+02-22 20:26:24.583 61392 60152 W adb     : sockets.cpp:310 timeout expired while flushing socket, closing
+adb server killed by remote request
+02-22 20:27:35.248 61392 60152 I adb     : transport.cpp:1072 kicking transport 012C4C58 emulator-5554
+02-22 20:27:35.248 61392 42048 I adb     : transport.cpp:1171 emulator-5554: connection terminated: read failed
+--- adb starting (pid 104204) ---
+02-22 20:33:13.803 104204 66544 I adb     : main.cpp:66 Android Debug Bridge version 1.0.41
+02-22 20:33:13.803 104204 66544 I adb     : main.cpp:66 Version 36.0.2-14143358
+02-22 20:33:13.803 104204 66544 I adb     : main.cpp:66 Installed as C:\Users\61479\AppData\Local\Android\Sdk\platform-tools\adb.exe
+02-22 20:33:13.803 104204 66544 I adb     : main.cpp:66 Running on Windows 10.0.22631
+02-22 20:33:13.803 104204 66544 I adb     : main.cpp:66 
+--- adb starting (pid 7044) ---
+02-22 20:49:14.174  7044  7108 I adb     : main.cpp:66 Android Debug Bridge version 1.0.41
+02-22 20:49:14.174  7044  7108 I adb     : main.cpp:66 Version 36.0.2-14143358
+02-22 20:49:14.174  7044  7108 I adb     : main.cpp:66 Installed as C:\Users\61479\AppData\Local\Android\Sdk\platform-tools\adb.exe
+02-22 20:49:14.174  7044  7108 I adb     : main.cpp:66 Running on Windows 10.0.22631
+02-22 20:49:14.174  7044  7108 I adb     : main.cpp:66 
+02-22 21:32:48.853  7044  7108 W adb     : sockets.cpp:310 timeout expired while flushing socket, closing
+02-22 21:34:58.769  7044 18668 I adb     : transport.cpp:1171 emulator-5554: connection terminated: read failed
+--- adb starting (pid 20804) ---
+02-22 23:39:34.433 20804 20840 I adb     : main.cpp:66 Android Debug Bridge version 1.0.41
+02-22 23:39:34.433 20804 20840 I adb     : main.cpp:66 Version 36.0.2-14143358
+02-22 23:39:34.433 20804 20840 I adb     : main.cpp:66 Installed as C:\Users\61479\AppData\Local\Android\Sdk\platform-tools\adb.exe
+02-22 23:39:34.433 20804 20840 I adb     : main.cpp:66 Running on Windows 10.0.22631
+02-22 23:39:34.433 20804 20840 I adb     : main.cpp:66 
+--- adb starting (pid 24204) ---
+02-22 23:59:09.997 24204 32004 I adb     : main.cpp:66 Android Debug Bridge version 1.0.41
+02-22 23:59:09.997 24204 32004 I adb     : main.cpp:66 Version 36.0.2-14143358
+02-22 23:59:09.997 24204 32004 I adb     : main.cpp:66 Installed as C:\Users\61479\AppData\Local\Android\Sdk\platform-tools\adb.exe
+02-22 23:59:09.997 24204 32004 I adb     : main.cpp:66 Running on Windows 10.0.22631
+02-22 23:59:09.997 24204 32004 I adb     : main.cpp:66 
+--- adb starting (pid 33308) ---
+02-23 00:04:38.412 33308 33056 I adb     : main.cpp:66 Android Debug Bridge version 1.0.41
+02-23 00:04:38.412 33308 33056 I adb     : main.cpp:66 Version 36.0.2-14143358
+02-23 00:04:38.412 33308 33056 I adb     : main.cpp:66 Installed as C:\Users\61479\AppData\Local\Android\Sdk\platform-tools\adb.exe
+02-23 00:04:38.412 33308 33056 I adb     : main.cpp:66 Running on Windows 10.0.22631
+02-23 00:04:38.412 33308 33056 I adb     : main.cpp:66 

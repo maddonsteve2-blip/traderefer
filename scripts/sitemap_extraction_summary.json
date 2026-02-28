@@ -1,0 +1,110 @@
+{
+  "categories.xml.gz": {
+    "count": 71,
+    "sample": [
+      "https://www.serviceseeking.com.au/job-requests/handyman",
+      "https://www.serviceseeking.com.au/job-requests/cleaner",
+      "https://www.serviceseeking.com.au/job-requests/electrician",
+      "https://www.serviceseeking.com.au/job-requests/plumber",
+      "https://www.serviceseeking.com.au/job-requests/removalist",
+      "https://www.serviceseeking.com.au/job-requests/gardener",
+      "https://www.serviceseeking.com.au/job-requests/carpenter",
+      "https://www.serviceseeking.com.au/job-requests/painter",
+      "https://www.serviceseeking.com.au/job-requests/builder",
+      "https://www.serviceseeking.com.au/job-requests/concreter"
+    ],
+    "unique_slugs_count": 1,
+    "slugs_sample": [
+      "job-requests"
+    ]
+  },
+  "categories_and_suburbs.xml.gz": {
+    "count": 426,
+    "sample": [
+      "https://www.serviceseeking.com.au/job-requests/handyman/sydney",
+      "https://www.serviceseeking.com.au/job-requests/handyman/melbourne",
+      "https://www.serviceseeking.com.au/job-requests/handyman/brisbane",
+      "https://www.serviceseeking.com.au/job-requests/handyman/perth",
+      "https://www.serviceseeking.com.au/job-requests/handyman/gold-coast",
+      "https://www.serviceseeking.com.au/job-requests/handyman/adelaide",
+      "https://www.serviceseeking.com.au/job-requests/cleaner/sydney",
+      "https://www.serviceseeking.com.au/job-requests/cleaner/melbourne",
+      "https://www.serviceseeking.com.au/job-requests/cleaner/brisbane",
+      "https://www.serviceseeking.com.au/job-requests/cleaner/perth"
+    ],
+    "unique_slugs_count": 1,
+    "slugs_sample": [
+      "job-requests"
+    ]
+  },
+  "keywords (1).xml.gz": {
+    "count": 1074,
+    "sample": [
+      "https://www.serviceseeking.com.au/handymen",
+      "https://www.serviceseeking.com.au/removalists",
+      "https://www.serviceseeking.com.au/plumbers",
+      "https://www.serviceseeking.com.au/cleaners",
+      "https://www.serviceseeking.com.au/draftsman",
+      "https://www.serviceseeking.com.au/electricians",
+      "https://www.serviceseeking.com.au/renovations-and-extensions",
+      "https://www.serviceseeking.com.au/landscaping-and-gardening",
+      "https://www.serviceseeking.com.au/painters",
+      "https://www.serviceseeking.com.au/lawn-mowing-services"
+    ],
+    "unique_slugs_count": 1074,
+    "slugs_sample": [
+      "property-development",
+      "septic-tank",
+      "harbour-cruises",
+      "flat-roof-skylight",
+      "glass-repair",
+      "cctv-installation",
+      "shed-builders",
+      "asphalt-driveways",
+      "criminal-law",
+      "mosaic-tiling",
+      "floor-installation",
+      "car-cleaning-and-detailing",
+      "ipad-and-tablet-repair",
+      "home-extensions",
+      "waterline-tiles",
+      "pvc-shutters",
+      "water-feature-installation",
+      "quantity-surveying",
+      "hot-water-repairs",
+      "t-shirt-printing"
+    ]
+  },
+  "parent.xml.gz": {
+    "count": 1,
+    "sample": [
+      "https://www.serviceseeking.com.au/job-requests"
+    ]
+  },
+  "profiles.xml.gz": {
+    "count": 50000,
+    "sample": [
+      "https://www.serviceseeking.com.au/profile/108-alan-harper",
+      "https://www.serviceseeking.com.au/profile/119-webfirm",
+      "https://www.serviceseeking.com.au/profile/121-lewislegal-business-property-lawyers",
+      "https://www.serviceseeking.com.au/profile/155-deepbase-creative",
+      "https://www.serviceseeking.com.au/profile/173-aaa-city-removalist",
+      "https://www.serviceseeking.com.au/profile/176-dunn-architects",
+      "https://www.serviceseeking.com.au/profile/254-industry",
+      "https://www.serviceseeking.com.au/profile/292-animantz-creative-animators-p-ltd",
+      "https://www.serviceseeking.com.au/profile/320-morpheus-cruises",
+      "https://www.serviceseeking.com.au/profile/358-creative-graphic-designer"
+    ]
+  },
+  "suburbs.xml.gz": {
+    "count": 6,
+    "sample": [
+      "https://www.serviceseeking.com.au/job-requests/sydney",
+      "https://www.serviceseeking.com.au/job-requests/melbourne",
+      "https://www.serviceseeking.com.au/job-requests/brisbane",
+      "https://www.serviceseeking.com.au/job-requests/perth",
+      "https://www.serviceseeking.com.au/job-requests/gold-coast",
+      "https://www.serviceseeking.com.au/job-requests/adelaide"
+    ]
+  }
+}

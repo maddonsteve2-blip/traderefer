@@ -15,6 +15,18 @@ import string
 import httpx
 import json
 
+class BusinessClaimRequest(BaseModel):
+    claimer_name: str
+    claimer_email: str
+    claimer_phone: Optional[str] = None
+    proof_url: Optional[str] = None
+
+class DelistingRequestRequest(BaseModel):
+    requester_name: str
+    requester_email: str
+    reason: str
+
+
 router = APIRouter()
 
 class ABNVerificationRequest(BaseModel):
@@ -1555,3 +1567,69 @@ async def get_my_invites(
             d["created_at"] = str(d["created_at"])
         invites.append(d)
     return invites
+
+@router.post("/{business_id}/claim")
+async def request_business_claim(
+    business_id: uuid.UUID,
+    request: BusinessClaimRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    # Verify business exists
+    biz = await db.execute(
+        text("SELECT id FROM businesses WHERE id = :bid"),
+        {"bid": business_id}
+    )
+    if not biz.fetchone():
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    await db.execute(
+        text("""
+            INSERT INTO business_claims (business_id, claimer_name, claimer_email, claimer_phone, proof_url)
+            VALUES (:bid, :name, :email, :phone, :proof)
+        """),
+        {
+            "bid": business_id,
+            "name": request.claimer_name,
+            "email": request.claimer_email,
+            "phone": request.claimer_phone,
+            "proof": request.proof_url
+        }
+    )
+    
+    # Update business status to pending claim if desired
+    await db.execute(
+        text("UPDATE businesses SET claim_status = 'pending' WHERE id = :bid AND (claim_status = 'unclaimed' OR claim_status IS NULL)"),
+        {"bid": business_id}
+    )
+    
+    await db.commit()
+    return {"status": "success", "message": "Claim request submitted for verification"}
+
+@router.post("/{business_id}/delist")
+async def request_delisting(
+    business_id: uuid.UUID,
+    request: DelistingRequestRequest,
+    db: AsyncSession = Depends(get_db)
+):
+    # Verify business exists
+    biz = await db.execute(
+        text("SELECT id FROM businesses WHERE id = :bid"),
+        {"bid": business_id}
+    )
+    if not biz.fetchone():
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    await db.execute(
+        text("""
+            INSERT INTO delisting_requests (business_id, requester_name, requester_email, reason)
+            VALUES (:bid, :name, :email, :reason)
+        """),
+        {
+            "bid": business_id,
+            "name": request.requester_name,
+            "email": request.requester_email,
+            "reason": request.reason
+        }
+    )
+    await db.commit()
+    return {"status": "success", "message": "Delisting request received and will be processed manually"}
