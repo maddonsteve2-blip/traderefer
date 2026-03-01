@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Pencil, Save, Loader2, X, Plus, Phone, Camera } from "lucide-react";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 import { ImageUpload } from "@/components/ImageUpload";
+import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 
 interface EditableProfileProps {
     businessSlug: string;
@@ -282,7 +283,15 @@ export function EditableProfile({ businessSlug, children }: EditableProfileProps
                                     </div>
                                     <div>
                                         <label className={lbl}>Address</label>
-                                        <input type="text" value={fields.address} onChange={(e) => setFields({ ...fields, address: e.target.value })} className={inp} />
+                                        <AddressAutocomplete
+                                            addressValue={fields.address}
+                                            suburbValue={fields.suburb}
+                                            stateValue={fields.state}
+                                            onAddressSelect={(address, suburb, state, postcode) =>
+                                                setFields({ ...fields, address, suburb, state: state || fields.state })
+                                            }
+                                            placeholder="Search for your address..."
+                                        />
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
                                         <div>

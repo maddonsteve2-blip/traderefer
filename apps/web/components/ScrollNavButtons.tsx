@@ -47,7 +47,7 @@ export function ScrollNavButtons({ hasServices, hasGallery, hasReviews }: Scroll
                 onClick={() => scrollTo("enquiry-form")}
                 className="px-4 py-2 bg-orange-500 border border-orange-500 rounded-full text-sm font-black text-white hover:bg-orange-600 transition-all shadow-sm"
             >
-                Get a Quote
+                Make an Enquiry
             </button>
         </div>
     );
