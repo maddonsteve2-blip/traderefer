@@ -10,6 +10,7 @@ from services.email import (
     send_consumer_on_the_way, send_business_lead_unlocked,
     send_referrer_lead_unlocked, send_business_dispute_raised
 )
+from services.sms import send_sms_claimed_new_lead, send_sms_unclaimed_teaser
 import uuid
 import random
 import os
@@ -82,9 +83,9 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             referral_link_id = ref_data[0]
             referrer_id = ref_data[1]
 
-    # 2. Get Business Pricing (Spec Part 3.1)
+    # 2. Get Business Pricing + contact info
     biz_query = text("""
-        SELECT referral_fee_cents
+        SELECT referral_fee_cents, business_phone
         FROM businesses WHERE id = :bid LIMIT 1
     """)
     biz_result = await db.execute(biz_query, {"bid": lead.business_id})
@@ -96,9 +97,17 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
     referral_fee = business["referral_fee_cents"]
     platform_fee_percent = 20 # Fixed at 20% per spec
     
-    # Calculate fees (dynamic markup logic)
+    # Check if this is the first lead for the business (first = free)
+    first_lead_result = await db.execute(
+        text("SELECT COUNT(*) FROM leads WHERE business_id = :bid"),
+        {"bid": lead.business_id}
+    )
+    existing_lead_count = first_lead_result.scalar() or 0
+    is_first_lead = existing_lead_count == 0
+
+    # Calculate fees (dynamic markup logic). First lead is always free.
     platform_fee = int(referral_fee * (platform_fee_percent / 100))
-    total_unlock_fee = referral_fee + platform_fee
+    total_unlock_fee = 0 if is_first_lead else referral_fee + platform_fee
 
     # 3. Insert Lead
     insert_query = text("""
@@ -162,30 +171,55 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
 
         # Fetch business info to notify them
         biz_info = await db.execute(
-            text("SELECT business_name, business_email, trade_category, is_claimed, slug FROM businesses WHERE id = :id"),
+            text("SELECT business_name, business_email, business_phone, trade_category, is_claimed, slug FROM businesses WHERE id = :id"),
             {"id": lead.business_id}
         )
         biz_row = biz_info.mappings().first()
-        if biz_row and biz_row["business_email"]:
-            if biz_row["is_claimed"]:
-                await send_business_new_lead(
-                    email=biz_row["business_email"],
-                    business_name=biz_row["business_name"],
-                    consumer_name=lead.consumer_name,
-                    suburb=lead.consumer_suburb,
-                    job_description=lead.job_description,
-                    lead_id=str(new_lead_id),
-                    unlock_fee_dollars=total_unlock_fee / 100,
-                )
+        if biz_row:
+            biz_name = biz_row["business_name"]
+            biz_email = biz_row["business_email"]
+            biz_phone = biz_row["business_phone"]
+            biz_slug = biz_row["slug"] or ""
+            claimed = biz_row["is_claimed"]
+
+            if claimed:
+                # Claimed: notify by email + SMS, teaser only — drive login
+                if biz_email:
+                    await send_business_new_lead(
+                        email=biz_email,
+                        business_name=biz_name,
+                        consumer_name=lead.consumer_name,
+                        suburb=lead.consumer_suburb,
+                        job_description=lead.job_description,
+                        lead_id=str(new_lead_id),
+                        unlock_fee_dollars=total_unlock_fee / 100,
+                        is_first_lead=is_first_lead,
+                    )
+                if biz_phone:
+                    await send_sms_claimed_new_lead(
+                        phone=biz_phone,
+                        business_name=biz_name,
+                        suburb=lead.consumer_suburb,
+                    )
             else:
-                await send_business_enquiry_teaser(
-                    email=biz_row["business_email"],
-                    business_name=biz_row["business_name"],
-                    business_id=str(lead.business_id),
-                    slug=biz_row["slug"] or "",
-                    suburb=lead.consumer_suburb,
-                    job_description=lead.job_description,
-                )
+                # Unclaimed: send teaser prompting them to claim — no message details
+                if biz_email:
+                    await send_business_enquiry_teaser(
+                        email=biz_email,
+                        business_name=biz_name,
+                        business_id=str(lead.business_id),
+                        slug=biz_slug,
+                        suburb=lead.consumer_suburb,
+                        job_description=lead.job_description,
+                    )
+                if biz_phone:
+                    await send_sms_unclaimed_teaser(
+                        phone=biz_phone,
+                        business_name=biz_name,
+                        slug=biz_slug,
+                        suburb=lead.consumer_suburb,
+                    )
+
         # Notify the consumer
         if lead.consumer_email and biz_row:
             await send_consumer_lead_confirmation(

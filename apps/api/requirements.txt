@@ -12,4 +12,5 @@ python-dotenv
 stripe
 boto3
 resend
+twilio
 sentry-sdk[fastapi]

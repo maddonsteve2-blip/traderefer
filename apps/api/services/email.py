@@ -5,7 +5,7 @@ from typing import Optional
 from utils.logging_config import email_logger, error_logger
 
 resend.api_key = os.getenv("RESEND_API_KEY", "")
-FROM_ADDRESS = os.getenv("RESEND_FROM", "TradeRefer <no-reply@traderefer.au>")
+FROM_ADDRESS = os.getenv("RESEND_FROM", "traderefer.au <no-reply@traderefer.au>")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://traderefer.au")
 
 
@@ -47,30 +47,42 @@ async def _send(to: str, subject: str, html: str):
 async def send_business_welcome(email: str, business_name: str, slug: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
-      <h1 style="color:#ea580c">Welcome to TradeRefer, {business_name}!</h1>
+      <h1 style="color:#ea580c">Welcome to traderefer.au, {business_name}!</h1>
       <p>Your business profile is live. Referrers can now start sending you leads.</p>
       <a href="{FRONTEND_URL}/b/{slug}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Your Profile</a>
       <p style="margin-top:24px">Head to your <a href="{FRONTEND_URL}/dashboard/business">dashboard</a> to manage leads and set your referral fee.</p>
     </div>
     """
-    await _send(email, f"Welcome to TradeRefer — {business_name} is live!", html)
+    await _send(email, f"Welcome to traderefer.au — {business_name} is live!", html)
 
 
-async def send_business_new_lead(email: str, business_name: str, consumer_name: str, suburb: str, job_description: str, lead_id: str, unlock_fee_dollars: float):
+async def send_business_new_lead(email: str, business_name: str, consumer_name: str, suburb: str, job_description: str, lead_id: str, unlock_fee_dollars: float, is_first_lead: bool = False):
+    fee_line = (
+        '<p style="color:#16a34a;font-weight:bold">&#127881; Your first enquiry is free to unlock!</p>'
+        if is_first_lead
+        else f'<p>Unlock fee: <strong style="color:#ea580c">${unlock_fee_dollars:.2f}</strong></p>'
+    )
     html = f"""
-    <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
-      <h1 style="color:#ea580c">New Lead for {business_name}</h1>
-      <p>You have a new lead waiting to be unlocked.</p>
-      <table style="width:100%;border-collapse:collapse;margin:16px 0">
-        <tr><td style="padding:8px;color:#666;font-weight:bold">Customer</td><td style="padding:8px">{consumer_name[:1]}*** (hidden until unlocked)</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Suburb</td><td style="padding:8px">{suburb}</td></tr>
-        <tr><td style="padding:8px;color:#666;font-weight:bold">Job</td><td style="padding:8px">{job_description[:200]}</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Unlock Fee</td><td style="padding:8px;font-weight:bold;color:#ea580c">${unlock_fee_dollars:.2f}</td></tr>
-      </table>
-      <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Unlock This Lead</a>
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#fff">
+      <div style="background:#ea580c;padding:28px 24px;text-align:center;border-radius:12px 12px 0 0">
+        <h1 style="color:#fff;margin:0;font-size:26px;font-weight:900">New enquiry for {business_name}</h1>
+        <p style="color:#fed7aa;margin:8px 0 0;font-size:15px">A customer in {suburb} wants to hire you</p>
+      </div>
+      <div style="padding:28px 24px">
+        <p style="font-size:16px;color:#333">Hi {business_name},</p>
+        <p style="font-size:16px;color:#333">You have a new customer enquiry waiting on <strong>traderefer.au</strong>. To protect customer privacy, full details are only revealed once you log in and view the lead.</p>
+        <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:20px 0">
+          <p style="margin:0;color:#666;font-size:14px">Enquiry from: <strong>{consumer_name[:1]}***</strong> &nbsp;|&nbsp; Location: <strong>{suburb}</strong></p>
+        </div>
+        {fee_line}
+        <div style="text-align:center;margin:28px 0">
+          <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:900;font-size:16px">Log In to View Enquiry &rarr;</a>
+        </div>
+        <p style="font-size:12px;color:#999;border-top:1px solid #eee;padding-top:16px">You're receiving this as a registered business on traderefer.au. <a href="{FRONTEND_URL}/dashboard/business" style="color:#999">Manage notifications</a>.</p>
+      </div>
     </div>
     """
-    await _send(email, f"New lead in {suburb} — Unlock now", html)
+    await _send(email, f"New enquiry in {suburb} — log in to view", html)
 
 
 async def send_business_lead_unlocked(email: str, business_name: str, consumer_name: str, consumer_phone: str, consumer_email: str, suburb: str, job_description: str):
@@ -98,13 +110,13 @@ async def send_business_lead_unlocked(email: str, business_name: str, consumer_n
 async def send_referrer_welcome(email: str, full_name: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
-      <h1 style="color:#ea580c">Welcome to TradeRefer, {full_name}!</h1>
+      <h1 style="color:#ea580c">Welcome to traderefer.au, {full_name}!</h1>
       <p>You're now set up as a referrer. Start referring customers to tradies and earn money for every successful lead.</p>
       <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Go to Your Dashboard</a>
       <p style="margin-top:24px;color:#666;font-size:14px">Browse businesses and generate your unique referral links to get started.</p>
     </div>
     """
-    await _send(email, "Welcome to TradeRefer — start earning today!", html)
+    await _send(email, f"Welcome to traderefer.au — start earning today!", html)
 
 
 async def send_referrer_lead_unlocked(email: str, full_name: str, business_name: str, suburb: str, payout_dollars: float, available_date: str):
@@ -288,29 +300,28 @@ async def send_business_enquiry_teaser(email: str, business_name: str, business_
     claim_url = f"{FRONTEND_URL}/onboarding/business?claim={business_id}&slug={slug}"
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#fff">
-      <div style="background:#ea580c;padding:32px 24px;text-align:center;border-radius:12px 12px 0 0">
-        <h1 style="color:#fff;margin:0;font-size:28px;font-weight:900">You have a new enquiry!</h1>
-        <p style="color:#fed7aa;margin:8px 0 0;font-size:16px">Someone wants to hire {business_name}</p>
+      <div style="background:#ea580c;padding:28px 24px;text-align:center;border-radius:12px 12px 0 0">
+        <h1 style="color:#fff;margin:0;font-size:26px;font-weight:900">You have a new enquiry!</h1>
+        <p style="color:#fed7aa;margin:8px 0 0;font-size:15px">A customer in {suburb} wants to hire {business_name}</p>
       </div>
-      <div style="padding:32px 24px">
+      <div style="padding:28px 24px">
         <p style="font-size:16px;color:#333">Hi {business_name},</p>
-        <p style="font-size:16px;color:#333">Great news — someone in <strong>{suburb}</strong> just submitted an enquiry for your services on <a href="{FRONTEND_URL}" style="color:#ea580c">TradeRefer.au</a>.</p>
-        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:16px;margin:20px 0">
-          <p style="margin:0;color:#78350f;font-weight:bold">Their enquiry:</p>
-          <p style="margin:8px 0 0;color:#92400e">{job_description[:300]}</p>
+        <p style="font-size:16px;color:#333">Someone in <strong>{suburb}</strong> just submitted an enquiry through your listing on <a href="{FRONTEND_URL}" style="color:#ea580c">traderefer.au</a>.</p>
+        <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:20px 0">
+          <p style="margin:0;color:#666;font-size:14px">&#128274; Contact details and message are hidden until you claim your profile.</p>
         </div>
-        <p style="font-size:16px;color:#333">To see their full contact details and respond to this lead, claim your <strong>free</strong> business profile on TradeRefer. It only takes a few minutes.</p>
-        <div style="text-align:center;margin:32px 0">
-          <a href="{claim_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:16px 40px;border-radius:8px;text-decoration:none;font-weight:900;font-size:18px">Claim Your Free Lead →</a>
+        <p style="font-size:16px;color:#333">Claim your <strong>free</strong> business profile to see who enquired and respond directly. Takes 2 minutes.</p>
+        <div style="text-align:center;margin:28px 0">
+          <a href="{claim_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:900;font-size:16px">Claim Your Free Profile &rarr;</a>
         </div>
-        <p style="font-size:14px;color:#666;border-top:1px solid #eee;padding-top:16px;margin-top:24px">
-          Your business listing on TradeRefer is completely free. Claiming your profile gives you access to all enquiries and lets you manage your online reputation.
+        <p style="font-size:14px;color:#666;border-top:1px solid #eee;padding-top:16px;margin-top:20px">
+          Your first enquiry is completely free to view. traderefer.au is a free directory — claiming your profile takes 2 minutes and gives you full access to all future enquiries.
         </p>
-        <p style="font-size:12px;color:#999">You received this because {business_name} is listed on TradeRefer.au. <a href="{FRONTEND_URL}/b/{slug}" style="color:#999">View profile</a>.</p>
+        <p style="font-size:12px;color:#999">You received this because {business_name} is listed on traderefer.au. <a href="{FRONTEND_URL}/b/{slug}" style="color:#999">View your public profile</a> &nbsp;|&nbsp; To opt out of these notifications reply to this email.</p>
       </div>
     </div>
     """
-    await _send(email, f"New enquiry in {suburb} — Claim your free lead on TradeRefer", html)
+    await _send(email, f"New enquiry in {suburb} — claim your free profile on traderefer.au", html)
 
 
 async def send_consumer_lead_confirmation(email: str, consumer_name: str, business_name: str, trade_category: str, job_description: str):
