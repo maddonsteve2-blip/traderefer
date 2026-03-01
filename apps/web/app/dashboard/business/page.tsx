@@ -43,11 +43,11 @@ async function getBusinessDashboardData() {
     });
 
     if (res.status === 404) {
-        redirect("/onboarding/business");
+        return { error: true, noProfile: true };
     }
 
     if (!res.ok) {
-        return { error: true };
+        return { error: true, noProfile: false };
     }
 
     return res.json();
@@ -60,12 +60,14 @@ export default async function BusinessDashboardPage() {
     try {
         data = await getBusinessDashboardData();
     } catch (err) {
+        // Re-throw Next.js redirect/not-found errors — do NOT swallow them
+        if (err && typeof err === 'object' && 'digest' in err) throw err;
         fetchError = err instanceof Error ? err.message : 'Unknown error';
         data = { error: true };
     }
 
     if (!data || data.error) {
-        return <DashboardError fetchError={fetchError} />;
+        return <DashboardError fetchError={fetchError} noProfile={data?.noProfile} profileType="business" />;
     }
 
     const { business, stats: apiStats, recent_leads } = data;

@@ -28,6 +28,7 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
+const isOnboardingRootOnly = createRouteMatcher(["/onboarding"]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
     const { userId, sessionClaims, redirectToSignIn } = await auth();
@@ -54,8 +55,9 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
         return NextResponse.redirect(new URL("/onboarding", req.url));
     }
 
-    // 4. Signed in AND onboarding IS complete → don't let them revisit onboarding
-    if (onboardingComplete && isOnboardingRoute(req)) {
+    // 4. Signed in AND onboarding IS complete → only block the root /onboarding choice page
+    // Allow /onboarding/business and /onboarding/referrer so users can create a missing profile
+    if (onboardingComplete && isOnboardingRootOnly(req)) {
         return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 

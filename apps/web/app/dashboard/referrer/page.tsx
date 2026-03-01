@@ -37,21 +37,28 @@ async function getDashboardData() {
     });
 
     if (res.status === 404) {
-        redirect("/onboarding/referrer");
+        return { error: true, noProfile: true };
     }
 
     if (!res.ok) {
-        return { error: true };
+        return { error: true, noProfile: false };
     }
 
     return res.json();
 }
 
 export default async function ReferrerDashboardPage() {
-    const data = await getDashboardData();
+    let data;
+    try {
+        data = await getDashboardData();
+    } catch (err) {
+        // Re-throw Next.js redirect/not-found errors — do NOT swallow them
+        if (err && typeof err === 'object' && 'digest' in err) throw err;
+        data = { error: true, noProfile: false };
+    }
 
     if (!data || data.error) {
-        return <DashboardError fetchError={null} />;
+        return <DashboardError fetchError={null} noProfile={data?.noProfile} profileType="referrer" />;
     }
 
     const { stats, links, referrer } = data;
