@@ -441,7 +441,6 @@ export default async function PublicProfilePage({
 
                                     </div>
 
-                                    )}
                                 </div>
 
                             </div>
@@ -677,7 +676,6 @@ export default async function PublicProfilePage({
 
                                                 </div>
 
-                                            ))}
                                             </div>
 
                                         )}
@@ -828,14 +826,6 @@ export default async function PublicProfilePage({
 
                                         <p className="text-base text-zinc-500 mt-4 leading-relaxed font-medium">Successful jobs in {business.suburb}.</p>
 
-                                    <div className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100 text-center">
-
-                                        <p className="text-5xl font-black text-zinc-900 mb-2">{jobsCompleted}</p>
-
-                                        <p className="text-sm font-black text-zinc-500 uppercase tracking-widest">Connections</p>
-
-                                        <p className="text-base text-zinc-500 mt-4 leading-relaxed font-medium">Successful jobs in {business.suburb}.</p>
-
                                     </div>
 
                                 </div>
@@ -921,8 +911,6 @@ export default async function PublicProfilePage({
                                                         <p className="text-zinc-600 text-base leading-relaxed">{review.owner_answer}</p>
 
                                                     </div>
-
-                                                )}
 
                                                 )}
 
