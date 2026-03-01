@@ -284,6 +284,35 @@ async def send_referrer_review_request(email: str, full_name: str, business_name
     await _send(email, f"How was referring {business_name}? Leave a quick review", html)
 
 
+async def send_business_enquiry_teaser(email: str, business_name: str, business_id: str, slug: str, suburb: str, job_description: str):
+    claim_url = f"{FRONTEND_URL}/onboarding/business?claim={business_id}&slug={slug}"
+    html = f"""
+    <div style="font-family:sans-serif;max-width:600px;margin:0 auto;background:#fff">
+      <div style="background:#ea580c;padding:32px 24px;text-align:center;border-radius:12px 12px 0 0">
+        <h1 style="color:#fff;margin:0;font-size:28px;font-weight:900">You have a new enquiry!</h1>
+        <p style="color:#fed7aa;margin:8px 0 0;font-size:16px">Someone wants to hire {business_name}</p>
+      </div>
+      <div style="padding:32px 24px">
+        <p style="font-size:16px;color:#333">Hi {business_name},</p>
+        <p style="font-size:16px;color:#333">Great news — someone in <strong>{suburb}</strong> just submitted an enquiry for your services on <a href="{FRONTEND_URL}" style="color:#ea580c">TradeRefer.au</a>.</p>
+        <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:16px;margin:20px 0">
+          <p style="margin:0;color:#78350f;font-weight:bold">Their enquiry:</p>
+          <p style="margin:8px 0 0;color:#92400e">{job_description[:300]}</p>
+        </div>
+        <p style="font-size:16px;color:#333">To see their full contact details and respond to this lead, claim your <strong>free</strong> business profile on TradeRefer. It only takes a few minutes.</p>
+        <div style="text-align:center;margin:32px 0">
+          <a href="{claim_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:16px 40px;border-radius:8px;text-decoration:none;font-weight:900;font-size:18px">Claim Your Free Lead →</a>
+        </div>
+        <p style="font-size:14px;color:#666;border-top:1px solid #eee;padding-top:16px;margin-top:24px">
+          Your business listing on TradeRefer is completely free. Claiming your profile gives you access to all enquiries and lets you manage your online reputation.
+        </p>
+        <p style="font-size:12px;color:#999">You received this because {business_name} is listed on TradeRefer.au. <a href="{FRONTEND_URL}/b/{slug}" style="color:#999">View profile</a>.</p>
+      </div>
+    </div>
+    """
+    await _send(email, f"New enquiry in {suburb} — Claim your free lead on TradeRefer", html)
+
+
 async def send_consumer_lead_confirmation(email: str, consumer_name: str, business_name: str, trade_category: str, job_description: str):
     html = f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">

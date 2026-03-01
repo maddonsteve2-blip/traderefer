@@ -33,8 +33,8 @@ import { notFound } from "next/navigation";
 import { LeadForm } from "@/components/LeadForm";
 import { BookNowButton } from "@/components/BookNowButton";
 import { EditableProfile } from "@/components/EditableProfile";
-import { BusinessClaimDialog } from "@/components/BusinessClaimDialog";
 import { BusinessDelistDialog } from "@/components/BusinessDelistDialog";
+import { ScrollNavButtons } from "@/components/ScrollNavButtons";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import Script from "next/script";
 import { proxyLogoUrl } from "@/lib/logo";
@@ -166,6 +166,18 @@ export default async function PublicProfilePage({
                                             <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-zinc-50 to-zinc-200" />
                                         )}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                                        {/* Claim CTA overlay for unclaimed businesses with no cover photo */}
+                                        {business.is_claimed === false && !business.cover_photo_url && (
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-zinc-900/60">
+                                                <p className="text-white text-xs font-black uppercase tracking-widest">This business is unclaimed</p>
+                                                <Link
+                                                    href={`/onboarding/business?claim=${business.id}&slug=${slug}`}
+                                                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-lg"
+                                                >
+                                                    Claim This Business
+                                                </Link>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Logo overlapping bottom-left of cover */}
@@ -296,11 +308,18 @@ export default async function PublicProfilePage({
                                 )}
                             </div>
 
-                            {/* Claim / Delist */}
+                            {/* Claim banner (sidebar) */}
                             {business.is_claimed === false && (
-                                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4">
-                                    <BusinessClaimDialog businessId={business.id} businessName={business.business_name} />
-                                </div>
+                                <Link
+                                    href={`/onboarding/business?claim=${business.id}&slug=${slug}`}
+                                    className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-2xl p-4 hover:border-orange-400 hover:bg-orange-100 transition-all group"
+                                >
+                                    <ShieldCheck className="w-5 h-5 text-orange-500 shrink-0" />
+                                    <div>
+                                        <p className="text-sm font-black text-orange-800">Own this business?</p>
+                                        <p className="text-xs text-orange-600 font-bold group-hover:underline">Claim your free profile →</p>
+                                    </div>
+                                </Link>
                             )}
                             <BusinessDelistDialog businessId={business.id} businessName={business.business_name} />
                         </div>
@@ -308,8 +327,15 @@ export default async function PublicProfilePage({
                         {/* ── MAIN CONTENT ── */}
                         <div className="space-y-6 min-w-0">
 
+                            {/* Scroll nav buttons */}
+                            <ScrollNavButtons
+                                hasServices={!!(business.services?.length > 0 || business.specialties?.length > 0)}
+                                hasGallery={!!(business.photo_urls?.length > 0)}
+                                hasReviews={googleReviews.length > 0}
+                            />
+
                             {/* About */}
-                            <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                            <section id="about" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
                                 <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
                                     <div className="w-6 h-px bg-zinc-200" /> About the Business
                                 </h2>
@@ -336,7 +362,7 @@ export default async function PublicProfilePage({
 
                             {/* Services & Expertise */}
                             {(business.services?.length > 0 || business.specialties?.length > 0) && (
-                                <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                <section id="services" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
                                     <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
                                         <div className="w-6 h-px bg-zinc-200" /> Expertise &amp; Services
                                     </h2>
@@ -364,7 +390,7 @@ export default async function PublicProfilePage({
 
                             {/* Project Gallery */}
                             {business.photo_urls?.length > 0 && (
-                                <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                <section id="gallery" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
                                     <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between">
                                         <span className="flex items-center gap-3"><div className="w-6 h-px bg-zinc-200" /> Project Gallery</span>
                                         <span className="text-xs font-bold text-zinc-300 normal-case tracking-normal">{business.trade_category}</span>
@@ -409,7 +435,7 @@ export default async function PublicProfilePage({
 
                             {/* Google Reviews */}
                             {googleReviews.length > 0 && (
-                                <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                <section id="reviews" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
                                     <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between">
                                         <span className="flex items-center gap-3"><div className="w-6 h-px bg-zinc-200" /> Google Reviews</span>
                                         <span className="flex items-center gap-1.5 text-orange-500">

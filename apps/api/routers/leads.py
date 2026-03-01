@@ -6,7 +6,7 @@ from sqlalchemy import text
 from services.database import get_db
 from routers.notifications import create_notification
 from services.email import (
-    send_business_new_lead, send_consumer_lead_confirmation,
+    send_business_new_lead, send_business_enquiry_teaser, send_consumer_lead_confirmation,
     send_consumer_on_the_way, send_business_lead_unlocked,
     send_referrer_lead_unlocked, send_business_dispute_raised
 )
@@ -160,22 +160,32 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
         new_lead_id = result.scalar()
         await db.commit()
 
-        # Fetch business email + name to notify them
+        # Fetch business info to notify them
         biz_info = await db.execute(
-            text("SELECT business_name, business_email, trade_category FROM businesses WHERE id = :id"),
+            text("SELECT business_name, business_email, trade_category, is_claimed, slug FROM businesses WHERE id = :id"),
             {"id": lead.business_id}
         )
         biz_row = biz_info.mappings().first()
         if biz_row and biz_row["business_email"]:
-            await send_business_new_lead(
-                email=biz_row["business_email"],
-                business_name=biz_row["business_name"],
-                consumer_name=lead.consumer_name,
-                suburb=lead.consumer_suburb,
-                job_description=lead.job_description,
-                lead_id=str(new_lead_id),
-                unlock_fee_dollars=total_unlock_fee / 100,
-            )
+            if biz_row["is_claimed"]:
+                await send_business_new_lead(
+                    email=biz_row["business_email"],
+                    business_name=biz_row["business_name"],
+                    consumer_name=lead.consumer_name,
+                    suburb=lead.consumer_suburb,
+                    job_description=lead.job_description,
+                    lead_id=str(new_lead_id),
+                    unlock_fee_dollars=total_unlock_fee / 100,
+                )
+            else:
+                await send_business_enquiry_teaser(
+                    email=biz_row["business_email"],
+                    business_name=biz_row["business_name"],
+                    business_id=str(lead.business_id),
+                    slug=biz_row["slug"] or "",
+                    suburb=lead.consumer_suburb,
+                    job_description=lead.job_description,
+                )
         # Notify the consumer
         if lead.consumer_email and biz_row:
             await send_consumer_lead_confirmation(

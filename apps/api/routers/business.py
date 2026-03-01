@@ -1568,6 +1568,121 @@ async def get_my_invites(
         invites.append(d)
     return invites
 
+@router.post("/{business_id}/claim-and-onboard")
+async def claim_and_onboard_business(
+    business_id: uuid.UUID,
+    data: BusinessOnboarding,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    user_uuid = uuid.UUID(user.id)
+
+    # Check user doesn't already own a different business
+    existing = await db.execute(
+        text("SELECT id FROM businesses WHERE user_id = :uid AND id != :bid LIMIT 1"),
+        {"uid": user_uuid, "bid": business_id}
+    )
+    if existing.fetchone():
+        raise HTTPException(status_code=400, detail="You already have a business registered")
+
+    # Get the business to claim
+    biz_result = await db.execute(
+        text("SELECT id, slug FROM businesses WHERE id = :bid"),
+        {"bid": business_id}
+    )
+    biz_row = biz_result.fetchone()
+    if not biz_row:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    biz_id = biz_row[0]
+    existing_slug = biz_row[1]
+
+    # Determine slug — keep existing if none provided or unchanged
+    slug = data.slug or existing_slug
+    if data.slug and data.slug != existing_slug:
+        slug_check = await db.execute(
+            text("SELECT id FROM businesses WHERE slug = :slug AND id != :id"),
+            {"slug": data.slug, "id": biz_id}
+        )
+        if slug_check.fetchone():
+            raise HTTPException(status_code=400, detail="That handle is already taken")
+
+    # Geocode
+    lat, lng = await get_lat_lng(data.suburb, data.state)
+
+    # Full update: claim ownership + update all fields
+    await db.execute(
+        text("""
+            UPDATE businesses SET
+                user_id = :user_id,
+                is_claimed = true,
+                claim_status = 'claimed',
+                business_name = :business_name,
+                slug = :slug,
+                trade_category = :trade_category,
+                description = :description,
+                suburb = :suburb,
+                address = :address,
+                state = :state,
+                business_phone = :business_phone,
+                business_email = :business_email,
+                website = :website,
+                service_radius_km = :service_radius_km,
+                referral_fee_cents = :referral_fee_cents,
+                logo_url = COALESCE(:logo_url, logo_url),
+                cover_photo_url = COALESCE(:cover_photo_url, cover_photo_url),
+                photo_urls = COALESCE(:photo_urls, photo_urls),
+                listing_visibility = :listing_visibility,
+                years_experience = :years_experience,
+                services = :services,
+                specialties = :specialties,
+                business_highlights = :business_highlights,
+                why_refer_us = :why_refer_us,
+                features = :features,
+                abn = :abn,
+                lat = COALESCE(:lat, lat),
+                lng = COALESCE(:lng, lng),
+                updated_at = now()
+            WHERE id = :id
+        """),
+        {
+            "id": biz_id,
+            "user_id": user_uuid,
+            "business_name": data.business_name,
+            "slug": slug,
+            "trade_category": data.trade_category,
+            "description": data.description,
+            "suburb": data.suburb,
+            "address": data.address,
+            "state": data.state,
+            "business_phone": data.business_phone,
+            "business_email": data.business_email,
+            "website": data.website,
+            "service_radius_km": data.service_radius_km,
+            "referral_fee_cents": data.referral_fee_cents,
+            "logo_url": data.logo_url,
+            "cover_photo_url": data.cover_photo_url,
+            "photo_urls": data.photo_urls or None,
+            "listing_visibility": data.listing_visibility or "public",
+            "years_experience": data.years_experience,
+            "services": data.services or [],
+            "specialties": data.specialties or [],
+            "business_highlights": data.business_highlights or [],
+            "why_refer_us": data.why_refer_us,
+            "features": data.features or [],
+            "abn": data.abn,
+            "lat": lat,
+            "lng": lng,
+        }
+    )
+    await db.commit()
+
+    if data.business_email:
+        await send_business_welcome(data.business_email, data.business_name, slug)
+
+    return {"id": str(biz_id), "slug": slug}
+
+
 @router.post("/{business_id}/claim")
 async def request_business_claim(
     business_id: uuid.UUID,

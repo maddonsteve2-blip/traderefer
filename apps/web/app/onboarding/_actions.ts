@@ -2,7 +2,7 @@
 
 import { auth, clerkClient } from "@clerk/nextjs/server"
 
-export async function completeOnboarding(role: "business" | "referrer") {
+export async function completeOnboarding(role: "business" | "referrer", businessSlug?: string) {
     const { userId } = await auth()
     if (!userId) return { error: "Not authenticated" }
 
@@ -12,6 +12,7 @@ export async function completeOnboarding(role: "business" | "referrer") {
             publicMetadata: {
                 onboardingComplete: true,
                 role,
+                ...(businessSlug ? { businessSlug } : {}),
             },
         })
 

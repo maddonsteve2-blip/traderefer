@@ -16,6 +16,7 @@ import {
     Loader2,
     Mail,
     Shield,
+    ShieldCheck,
     Camera,
     Image as ImageIcon,
     X,
@@ -32,7 +33,7 @@ import { Logo } from "@/components/Logo";
 import { getSuburbs } from "@/lib/locations";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { WelcomeTour } from "@/components/onboarding/WelcomeTour";
@@ -56,6 +57,12 @@ export default function BusinessOnboardingPage() {
     const { getToken } = useAuth();
     const { user } = useUser();
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    // Claim mode: existing business being claimed
+    const claimBusinessId = searchParams.get('claim');
+    const claimSlug = searchParams.get('slug');
+    const isClaiming = !!claimBusinessId;
 
     const [formData, setFormData] = useState({
         business_name: "",
@@ -82,6 +89,7 @@ export default function BusinessOnboardingPage() {
     });
     const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
     const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+    const [originalClaimSlug, setOriginalClaimSlug] = useState<string | null>(null);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [coverPhotoUrl, setCoverPhotoUrl] = useState<string | null>(null);
     const [photoUrls, setPhotoUrls] = useState<string[]>([]);
@@ -131,6 +139,53 @@ export default function BusinessOnboardingPage() {
     const [suburbSearch, setSuburbSearch] = useState("");
     const [showSuburbs, setShowSuburbs] = useState(false);
 
+    // Prefill form from existing business when claiming
+    useEffect(() => {
+        if (!isClaiming || !claimSlug) return;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        fetch(`${apiUrl}/businesses/${claimSlug}`)
+            .then(r => r.ok ? r.json() : null)
+            .then(biz => {
+                if (!biz) return;
+                const existingSlug = biz.slug || claimSlug;
+                setOriginalClaimSlug(existingSlug);
+                setFormData(prev => ({
+                    ...prev,
+                    business_name: biz.business_name || '',
+                    trade_category: biz.trade_category || 'Plumbing',
+                    description: biz.description || '',
+                    suburb: biz.suburb || '',
+                    address: biz.address || '',
+                    state: biz.state || 'VIC',
+                    postcode: biz.postcode || '',
+                    business_phone: biz.business_phone || '',
+                    business_email: biz.business_email || '',
+                    website: biz.website || '',
+                    slug: existingSlug,
+                    service_radius_km: biz.service_radius_km || 25,
+                    referral_fee_cents: biz.referral_fee_cents || 1000,
+                    listing_visibility: biz.listing_visibility || 'public',
+                    years_experience: biz.years_experience || '',
+                    specialty: biz.specialties?.[0] || '',
+                    highlights: biz.business_highlights || [],
+                    why_refer_us: biz.why_refer_us || '',
+                    services: biz.services || [],
+                    features: biz.features || [],
+                    abn: biz.abn || '',
+                }));
+                if (biz.logo_url) setLogoUrl(biz.logo_url);
+                if (biz.cover_photo_url) setCoverPhotoUrl(biz.cover_photo_url);
+                if (biz.photo_urls?.length) setPhotoUrls(biz.photo_urls);
+                // Existing slug is valid — mark as available
+                setSlugStatus('available');
+                setSlugManuallyEdited(false);
+                // Skip the welcome tour in claim mode
+                setShowTour(false);
+            })
+            .catch(() => { setShowTour(false); });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isClaiming, claimSlug]);
+
     // Scroll to top on every step change
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -151,6 +206,11 @@ export default function BusinessOnboardingPage() {
 
     const checkSlug = async (val: string) => {
         if (!val) { setSlugStatus('idle'); return; }
+        // In claim mode, the original slug is always valid
+        if (isClaiming && originalClaimSlug && val === originalClaimSlug) {
+            setSlugStatus('available');
+            return;
+        }
         setSlugStatus('checking');
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/check-slug/${val}`);
@@ -369,12 +429,23 @@ Respond with ONLY a JSON object (no markdown, no code fences):
             return;
         }
 
+        // Step 1 → skip chat+AI steps when claiming
+        if (step === 1 && isClaiming) {
+            posthog.capture('business_onboarding_step_completed', { step: 1, trade_category: formData.trade_category });
+            setStep(4);
+            return;
+        }
+
         // Step 5: submit to API
         if (step === 5) {
             setIsLoading(true);
             try {
                 const token = await getToken();
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/business/onboarding`, {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+                const endpoint = isClaiming
+                    ? `${apiUrl}/business/${claimBusinessId}/claim-and-onboard`
+                    : `${apiUrl}/business/onboarding`;
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -392,16 +463,20 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                 });
                 if (!res.ok) {
                     const errData = await res.json();
-                    throw new Error(errData.detail || 'Onboarding failed');
+                    throw new Error(errData.detail || (isClaiming ? 'Claim failed' : 'Onboarding failed'));
                 }
 
+                const resData = await res.json();
+                const savedSlug: string | undefined = resData.slug || formData.slug || undefined;
+
                 // Set Clerk publicMetadata so middleware knows onboarding is done
-                const clerkRes = await completeOnboarding("business");
+                // Also store businessSlug so navbar/dashboard can show profile link without extra API call
+                const clerkRes = await completeOnboarding("business", savedSlug);
                 if (clerkRes.error) {
                     throw new Error(clerkRes.error);
                 }
 
-                posthog.capture('business_onboarding_completed', {
+                posthog.capture(isClaiming ? 'business_claimed' : 'business_onboarding_completed', {
                     trade_category: formData.trade_category,
                     suburb: formData.suburb,
                     state: formData.state,
@@ -416,8 +491,8 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                 // Force session token refresh so middleware sees updated claims
                 await user?.reload();
 
-                // Redirect to dashboard
-                router.push("/dashboard/business");
+                // Redirect to leads if claiming, dashboard otherwise
+                router.push(isClaiming ? "/dashboard/business/leads" : "/dashboard/business");
             } catch (err: any) {
                 posthog.captureException(err);
                 toast.error(err.message);
@@ -473,8 +548,20 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                         {step === 1 && (
                             <>
                                 <div>
-                                    <h1 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight font-display">Tell us about your business</h1>
-                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed">The basics — our AI assistant will chat with you to build the rest.</p>
+                                    <h1 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight font-display">
+                                        {isClaiming ? 'Claim your business' : 'Tell us about your business'}
+                                    </h1>
+                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed">
+                                        {isClaiming
+                                            ? 'Review and update your business details — we\'ve pre-filled what we know.'
+                                            : 'The basics — our AI assistant will chat with you to build the rest.'}
+                                    </p>
+                                    {isClaiming && (
+                                        <div className="mt-3 px-4 py-2.5 bg-orange-50 border border-orange-200 rounded-xl text-sm font-bold text-orange-700 flex items-center gap-2">
+                                            <ShieldCheck className="w-4 h-4 shrink-0" />
+                                            Claiming: you\'re taking ownership of this business profile
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="space-y-6">
                                     <div className="bg-zinc-50 p-6 rounded-[32px] border border-zinc-100 space-y-6">
@@ -1180,11 +1267,24 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                         {step === 6 && (
                             <>
                                 <div className="text-center">
-                                    <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                        <CheckCircle2 className="w-10 h-10 text-green-600" />
+                                    <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${isClaiming ? 'bg-orange-50' : 'bg-green-50'}`}>
+                                        {isClaiming
+                                            ? <ShieldCheck className="w-10 h-10 text-orange-600" />
+                                            : <CheckCircle2 className="w-10 h-10 text-green-600" />}
                                     </div>
-                                    <h1 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight font-display">You&apos;re all set!</h1>
-                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed max-w-md mx-auto">Your AI-powered business profile is live. Time to start receiving quality referrals.</p>
+                                    <h1 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight font-display">
+                                        {isClaiming ? 'Business claimed!' : 'You\'re all set!'}
+                                    </h1>
+                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed max-w-md mx-auto">
+                                        {isClaiming
+                                            ? 'Your business profile is now claimed and live. You have a free lead waiting in your dashboard.'
+                                            : 'Your AI-powered business profile is live. Time to start receiving quality referrals.'}
+                                    </p>
+                                    {isClaiming && (
+                                        <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-2xl text-sm font-bold text-orange-800">
+                                            Head to your leads dashboard to see your first free enquiry!
+                                        </div>
+                                    )}
                                 </div>
                             </>
                         )}
@@ -1207,7 +1307,12 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                         setProfileLocked(false);
                                         setTweakInput("");
                                     }
-                                    setStep(step - 1);
+                                    // In claim mode, skip chat steps going back too
+                                    if (isClaiming && step === 4) {
+                                        setStep(1);
+                                    } else {
+                                        setStep(step - 1);
+                                    }
                                 }} disabled={isLoading || isGenerating} className="rounded-full h-16 px-8 text-zinc-400 hover:text-zinc-900 font-bold">
                                     <ChevronLeft className="w-5 h-5 mr-2" /> Back
                                 </Button>
@@ -1245,7 +1350,7 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                     disabled={isLoading || isGenerating || (step === 4 && formData.referral_fee_cents < 300) || isUploadingMedia}
                                     className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
                                 >
-                                    {isLoading ? 'Completing...' : step === 6 ? 'Go to Dashboard' : 'Continue'} <ChevronRight className="ml-2 w-6 h-6" />
+                                    {isLoading ? 'Completing...' : step === 6 ? (isClaiming ? 'View My Free Lead' : 'Go to Dashboard') : 'Continue'} <ChevronRight className="ml-2 w-6 h-6" />
                                 </Button>
                             )}
                         </div>
