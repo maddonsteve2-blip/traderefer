@@ -36,13 +36,12 @@ export function Logo({ size = "md", variant = "full", showText, className = "" }
         return <LogoIcon size={s.icon} />;
     }
 
-    const textClassName = variant === "white" ? "text-white" : "text-zinc-900";
-
     return (
         <span className={`inline-flex items-center ${s.gap} ${className}`}>
             <LogoIcon size={s.icon} />
-            <span className={`${s.text} font-extrabold tracking-tight leading-none ${textClassName}`}>
-                traderefer
+            <span className={`${s.text} font-black tracking-tight leading-none uppercase`}>
+                <span className={variant === "white" ? "text-white" : "text-zinc-900"}>TRADE</span>
+                <span className="text-orange-500">REFER</span>
             </span>
         </span>
     );
