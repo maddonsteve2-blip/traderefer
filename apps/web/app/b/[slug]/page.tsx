@@ -131,7 +131,7 @@ export default async function PublicProfilePage({
                 />
 
                 {/* ── BREADCRUMBS ── */}
-                <div className="bg-white border-b border-zinc-100 pt-32 pb-4">
+                <div className="bg-white border-b border-zinc-100 pt-20 pb-3">
                     <div className="container mx-auto px-4">
                         <nav className="flex items-center gap-2 text-sm font-bold text-zinc-400 uppercase tracking-widest">
                             <Link href="/" className="hover:text-zinc-900 transition-colors">Home</Link>
@@ -143,272 +143,307 @@ export default async function PublicProfilePage({
                     </div>
                 </div>
 
-                {/* ── HERO SECTION ── */}
-                <div className="bg-white border-b border-zinc-100">
+                {/* ── TWO-COLUMN LAYOUT ── */}
+                <div className="container mx-auto px-4 py-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start">
 
-                    {/* Cover photo banner */}
-                    <div className="relative h-44 md:h-64 overflow-hidden bg-zinc-200">
-                        {business.cover_photo_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                                src={business.cover_photo_url}
-                                alt={`${business.business_name} cover photo`}
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-zinc-50 to-zinc-200" />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-                    </div>
+                        {/* ── LEFT SIDEBAR ── */}
+                        <div className="space-y-4 lg:sticky lg:top-24 self-start">
 
-                    {/* Content — logo pulls up with negative margin over the cover */}
-                    <div className="container mx-auto px-4 pb-10">
-                        <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
+                            {/* Cover photo card with logo overlay */}
+                            <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm">
+                                <div className="relative">
+                                    {/* Cover photo */}
+                                    <div className="h-36 relative overflow-hidden bg-zinc-200">
+                                        {business.cover_photo_url ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img
+                                                src={business.cover_photo_url}
+                                                alt={`${business.business_name} cover`}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-zinc-50 to-zinc-200" />
+                                        )}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                                    </div>
 
-                            {/* Logo overlapping cover photo */}
-                            <div className="-mt-10 md:-mt-14 shrink-0 relative z-10">
-                                <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center">
-                                    <BusinessLogo logoUrl={business.logo_url} name={business.business_name} />
+                                    {/* Logo overlapping bottom-left of cover */}
+                                    <div className="absolute bottom-0 left-4 translate-y-1/2 z-10">
+                                        <div className="w-16 h-16 rounded-xl bg-white border-4 border-white shadow-lg overflow-hidden flex items-center justify-center">
+                                            <BusinessLogo logoUrl={business.logo_url} name={business.business_name} />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Business info */}
-                            <div className="flex-1 pt-4 space-y-4">
-                                <div className="flex flex-wrap items-center gap-3">
-                                    <span className="px-4 py-1.5 bg-zinc-100 text-zinc-600 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200">
-                                        {business.trade_category}
-                                    </span>
-                                    {business.is_verified && (
-                                        <span className="flex items-center gap-2 px-4 py-1.5 bg-orange-600 text-white rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-orange-600/20">
-                                            <ShieldCheck className="w-4 h-4" /> Verified
+                                {/* Business info */}
+                                <div className="pt-10 px-5 pb-5 space-y-3">
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200">
+                                            {business.trade_category}
                                         </span>
-                                    )}
-                                    {business.is_claimed === false && (
-                                        <BusinessClaimDialog
-                                            businessId={business.id}
-                                            businessName={business.business_name}
-                                        />
-                                    )}
-                                </div>
-                                <h1 className="text-3xl md:text-5xl font-black leading-tight tracking-tight text-zinc-900">
-                                    {business.business_name}
-                                </h1>
-                                <div className="flex flex-wrap items-center gap-5 text-sm text-zinc-500 font-bold">
+                                        {business.is_verified && (
+                                            <span className="flex items-center gap-1.5 px-3 py-1 bg-orange-600 text-white rounded-full text-xs font-black uppercase tracking-widest">
+                                                <ShieldCheck className="w-3.5 h-3.5" /> Verified
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <h1 className="text-xl font-black text-zinc-900 leading-tight">
+                                        {business.business_name}
+                                    </h1>
+
                                     <div className="flex items-center gap-2">
-                                        <MapPin className="w-4 h-4 text-orange-500" />
+                                        <div className="flex items-center gap-0.5">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(Number(trustScore)) ? 'fill-orange-400 text-orange-400' : 'fill-zinc-200 text-zinc-200'}`} />
+                                            ))}
+                                        </div>
+                                        <span className="text-sm font-black text-zinc-700">{trustScore}</span>
+                                        {reviewCount > 0 && (
+                                            <span className="text-xs text-zinc-400 font-medium">({reviewCount})</span>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center gap-2 text-sm text-zinc-500 font-medium">
+                                        <MapPin className="w-3.5 h-3.5 text-orange-500 shrink-0" />
                                         {business.suburb}, {business.state}
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Star className="w-4 h-4 text-orange-400 fill-orange-400" />
-                                        {trustScore}/5.0 Trust Score
-                                    </div>
-                                </div>
-                            </div>
 
-                            {/* CTA buttons */}
-                            <div className="flex flex-col gap-3 w-full md:w-auto pt-4 md:self-end">
-                                <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black h-14 px-8 text-lg border-none shadow-lg shadow-orange-200 transition-all active:scale-95">
-                                    <Link href="#enquiry-form">Get a Free Quote</Link>
-                                </Button>
-                                <Button asChild variant="outline" size="lg" className="bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 rounded-full font-black h-14 px-8 text-lg shadow-sm">
-                                    <Link href={`/b/${slug}/refer`}>Refer &amp; Earn <ArrowRight className="w-5 h-5 ml-2" /></Link>
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* ── BODY ── */}
-                <div className="container mx-auto px-4 py-16">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-
-                        {/* ── MAIN COLUMN ── */}
-                        <div className="lg:col-span-2 space-y-12">
-
-                            {/* About Section */}
-                            <section className="bg-white rounded-[40px] border border-zinc-200 p-8 md:p-14 shadow-sm relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-orange-500/10 transition-colors duration-1000" />
-                                <div className="relative z-10">
-                                    <h2 className="text-sm font-black text-zinc-500 uppercase tracking-[0.2em] mb-10 flex items-center gap-3">
-                                        <div className="w-8 h-px bg-zinc-200" />
-                                        About the Business
-                                    </h2>
-                                    <div className="prose prose-zinc max-w-none">
-                                        <p className="text-2xl text-zinc-800 leading-[1.8] font-medium tracking-tight">
-                                            {business.description || (
-                                                <>
-                                                    {business.business_name} is a highly-rated {business.trade_category} specialist serving {business.suburb} and the wider {business.city || 'Geelong'} region.
-                                                    {googleRating && ` With a stellar ${googleRating} star rating from ${reviewCount} local reviews, `}
-                                                    they are recognized for their reliability, quality craftsmanship, and exceptional customer service across the VIC region.
-                                                </>
-                                            )}
-                                        </p>
-                                    </div>
-
-                                    {/* Feature Badges */}
-                                    {allFeatures.length > 0 && (
-                                        <div className="flex flex-wrap gap-3 mt-12 p-3 bg-zinc-50 border border-zinc-100 rounded-[32px]">
-                                            {allFeatures.map((feature: string) => (
-                                                <div key={feature} className="px-6 py-3.5 bg-white border border-zinc-200 rounded-2xl text-base font-black text-zinc-900 flex items-center gap-3 shadow-sm transform transition-transform hover:-translate-y-1">
-                                                    <div className="w-2.5 h-2.5 bg-orange-500 rounded-full" />
-                                                    {feature}
-                                                </div>
-                                            ))}
+                                    {memberSinceYear && (
+                                        <div className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
+                                            <Clock className="w-3.5 h-3.5 shrink-0" />
+                                            Member since {memberSinceYear}
                                         </div>
                                     )}
 
                                     {business.years_experience && (
-                                        <div className="mt-16 pt-12 border-t border-zinc-100 flex items-center gap-8">
-                                            <div className="w-20 h-20 bg-orange-50 border border-orange-100 rounded-[28px] flex items-center justify-center text-orange-500">
-                                                <Award className="w-10 h-10" />
-                                            </div>
-                                            <div>
-                                                <p className="text-2xl font-black text-zinc-900 tracking-tight">{business.years_experience} of Industry Excellence</p>
-                                                <p className="text-base text-zinc-500 font-medium mt-1">Verified professional experience in {business.trade_category}.</p>
-                                            </div>
+                                        <div className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
+                                            <Award className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                                            {business.years_experience} experience
                                         </div>
                                     )}
                                 </div>
+                            </div>
+
+                            {/* CTA Buttons */}
+                            <div className="space-y-2">
+                                <Button asChild size="lg" className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black h-12 text-base border-none shadow-md shadow-orange-200 transition-all active:scale-95">
+                                    <Link href="#enquiry-form">Get a Free Quote</Link>
+                                </Button>
+                                <Button asChild variant="outline" size="lg" className="w-full bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 rounded-xl font-black h-12 text-base shadow-sm">
+                                    <Link href={`/b/${slug}/refer`}>Refer &amp; Earn <ArrowRight className="w-4 h-4 ml-2" /></Link>
+                                </Button>
+                            </div>
+
+                            {/* Contact details */}
+                            <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-4">
+                                <h3 className="text-xs font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100">Contact & Location</h3>
+                                {business.business_phone && (
+                                    <a href={`tel:${business.business_phone}`} className="flex items-center gap-3 group">
+                                        <div className="w-9 h-9 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0">
+                                            <Phone className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Phone</p>
+                                            <p className="text-sm font-black text-orange-600">{business.business_phone}</p>
+                                        </div>
+                                    </a>
+                                )}
+                                {business.address && (
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-9 h-9 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-400 shrink-0">
+                                            <MapPin className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Address</p>
+                                            <p className="text-sm font-bold text-zinc-700 leading-snug">{business.address}</p>
+                                        </div>
+                                    </div>
+                                )}
+                                {business.website && (
+                                    <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
+                                        <div className="w-9 h-9 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0">
+                                            <Globe className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Website</p>
+                                            <p className="text-sm font-bold text-orange-600 flex items-center gap-1">Visit Site <ExternalLink className="w-3.5 h-3.5" /></p>
+                                        </div>
+                                    </a>
+                                )}
+                                {business.business_email && (
+                                    <a href={`mailto:${business.business_email}`} className="flex items-center gap-3 group">
+                                        <div className="w-9 h-9 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0">
+                                            <Mail className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Email</p>
+                                            <p className="text-sm font-bold text-zinc-700 break-all">{business.business_email}</p>
+                                        </div>
+                                    </a>
+                                )}
+                                {business.abn && (
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-9 h-9 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-400 shrink-0">
+                                            <Briefcase className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">ABN</p>
+                                            <p className="text-sm font-bold text-zinc-700 uppercase tracking-widest">{business.abn}</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Claim / Delist */}
+                            {business.is_claimed === false && (
+                                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4">
+                                    <BusinessClaimDialog businessId={business.id} businessName={business.business_name} />
+                                </div>
+                            )}
+                            <BusinessDelistDialog businessId={business.id} businessName={business.business_name} />
+                        </div>
+
+                        {/* ── MAIN CONTENT ── */}
+                        <div className="space-y-6 min-w-0">
+
+                            {/* About */}
+                            <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
+                                    <div className="w-6 h-px bg-zinc-200" /> About the Business
+                                </h2>
+                                <p className="text-base text-zinc-700 leading-relaxed font-medium">
+                                    {business.description || (
+                                        <>
+                                            {business.business_name} is a highly-rated {business.trade_category} specialist serving {business.suburb} and the wider {business.city || 'region'}.
+                                            {googleRating && ` With a ${googleRating} star rating from ${reviewCount} local reviews, `}
+                                            they are recognized for their reliability, quality craftsmanship, and exceptional customer service.
+                                        </>
+                                    )}
+                                </p>
+                                {allFeatures.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mt-5">
+                                        {allFeatures.map((feature: string) => (
+                                            <div key={feature} className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-black text-zinc-700 flex items-center gap-2 hover:border-orange-200 transition-all">
+                                                <div className="w-1.5 h-1.5 bg-orange-500 rounded-full shrink-0" />
+                                                {feature}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </section>
 
-                            {/* Service Capabilities */}
+                            {/* Services & Expertise */}
                             {(business.services?.length > 0 || business.specialties?.length > 0) && (
-                                <section className="bg-white rounded-[40px] border border-zinc-200 p-8 md:p-14 shadow-sm">
-                                    <h2 className="text-sm font-black text-zinc-500 uppercase tracking-[0.2em] mb-10 flex items-center gap-3">
-                                        <div className="w-8 h-px bg-zinc-200" />
-                                        Expertise & Services
+                                <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                    <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
+                                        <div className="w-6 h-px bg-zinc-200" /> Expertise &amp; Services
                                     </h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {business.services && business.services.length > 0 && (
-                                            <div className="col-span-full mb-8">
-                                                <h3 className="text-sm font-black text-zinc-400 mb-6 px-1 uppercase tracking-widest">Primary Services</h3>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {business.services.map((service: string) => (
-                                                        <div key={service} className="flex items-center gap-5 p-6 bg-zinc-50 rounded-3xl border border-zinc-100 group hover:border-orange-200 transition-all hover:bg-white hover:shadow-xl hover:shadow-zinc-200/50">
-                                                            <div className="w-12 h-12 bg-white border border-zinc-100 rounded-2xl flex items-center justify-center text-orange-600 shadow-sm group-hover:scale-110 transition-transform">
-                                                                <CheckCircle2 className="w-6 h-6" />
-                                                            </div>
-                                                            <span className="text-xl text-zinc-800 font-bold tracking-tight">{service}</span>
-                                                        </div>
-                                                    ))}
+                                    {business.services?.length > 0 && (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                                            {business.services.map((service: string) => (
+                                                <div key={service} className="flex items-center gap-3 p-3 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-orange-200 hover:bg-white transition-all">
+                                                    <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0" />
+                                                    <span className="text-sm text-zinc-800 font-bold">{service}</span>
                                                 </div>
-                                            </div>
-                                        )}
-
-                                        {business.specialties && business.specialties.length > 0 && (
-                                            <div className="col-span-full mt-8">
-                                                <h3 className="text-sm font-black text-zinc-400 mb-6 px-1 uppercase tracking-widest">Key Specialties</h3>
-                                                <div className="flex flex-wrap gap-3">
-                                                    {business.specialties.map((spec: string) => (
-                                                        <div key={spec} className="px-6 py-3 bg-zinc-50 border border-zinc-200 text-zinc-800 rounded-2xl text-lg font-black transition-all hover:-translate-y-1 hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700">
-                                                            {spec}
-                                                        </div>
-                                                    ))}
+                                            ))}
+                                        </div>
+                                    )}
+                                    {business.specialties?.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mt-3">
+                                            {business.specialties.map((spec: string) => (
+                                                <div key={spec} className="px-3 py-1.5 bg-orange-50 border border-orange-100 text-orange-800 rounded-lg text-xs font-black hover:bg-orange-100 transition-all">
+                                                    {spec}
                                                 </div>
-                                            </div>
-                                        )}
-                                    </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </section>
                             )}
 
-                            {/* Work Gallery */}
-                            {business.photo_urls && business.photo_urls.length > 0 ? (
-                                <section className="bg-white rounded-[32px] border border-zinc-200 p-8 md:p-12 shadow-sm">
-                                    <div className="flex items-center justify-between mb-8">
-                                        <h2 className="text-2xl font-black text-zinc-900 font-display">Project Gallery</h2>
-                                        <span className="text-sm font-bold text-zinc-400 capitalize">{business.trade_category} Projects</span>
-                                    </div>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            {/* Project Gallery */}
+                            {business.photo_urls?.length > 0 && (
+                                <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                    <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between">
+                                        <span className="flex items-center gap-3"><div className="w-6 h-px bg-zinc-200" /> Project Gallery</span>
+                                        <span className="text-xs font-bold text-zinc-300 normal-case tracking-normal">{business.trade_category}</span>
+                                    </h2>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                         {business.photo_urls.map((url: string, i: number) => (
-                                            <div key={i} className="aspect-square rounded-2xl overflow-hidden bg-zinc-100 group relative cursor-pointer">
-                                                <img src={url} alt={`${business.business_name} work`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 font-display" />
+                                            <div key={i} className="aspect-square rounded-xl overflow-hidden bg-zinc-100 group relative cursor-pointer">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img src={url} alt={`${business.business_name} work`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
                                         ))}
                                     </div>
                                 </section>
-                            ) : (
-                                <section className="bg-zinc-50 border border-zinc-200 rounded-[32px] p-12 text-center relative overflow-hidden">
-                                    <ImageIcon className="absolute -bottom-10 -left-10 w-48 h-48 text-zinc-200" />
-                                    <div className="relative z-10">
-                                        <h3 className="text-2xl font-black text-zinc-800 mb-2">Want to see more work?</h3>
-                                        <p className="text-zinc-500 mb-8 max-w-md mx-auto">This business hasn&apos;t uploaded their latest project photos yet. Request a quote to see their recent portfolio.</p>
-                                        <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold border-none">
-                                            <Link href="#enquiry-form">Contact Business</Link>
-                                        </Button>
-                                    </div>
-                                </section>
                             )}
 
-                            {/* Testimonials / Trust Section */}
-                            <section className="bg-white rounded-2xl border border-zinc-200 p-8 md:p-10 shadow-sm">
-                                <div className="flex items-center gap-3 mb-8">
-                                    <div className="p-2.5 bg-zinc-50 border border-zinc-100 text-zinc-500 rounded-xl">
-                                        <TrendingUp className="w-5 h-5" />
+                            {/* Trust & Reliability */}
+                            <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
+                                    <div className="w-6 h-px bg-zinc-200" /> Trust &amp; Reliability
+                                </h2>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100">
+                                        <p className="text-3xl font-black text-zinc-900">{trustScore}</p>
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mt-1">TradeRefer Score</p>
                                     </div>
-                                    <h2 className="text-2xl font-black text-zinc-900 font-display">Trust & Reliability</h2>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                    <div className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100 text-center">
-                                        <p className="text-5xl font-black text-zinc-900 mb-2">{trustScore}</p>
-                                        <p className="text-sm font-black text-zinc-500 uppercase tracking-widest">TradeRefer Score</p>
-                                        <p className="text-base text-zinc-500 mt-4 leading-relaxed italic">Verified local community rating.</p>
-                                    </div>
-                                    <div className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100 text-center flex flex-col items-center justify-center">
-                                        <div className="flex items-center text-orange-400 mb-4">
+                                    <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100 flex flex-col items-center justify-center">
+                                        <div className="flex items-center text-orange-400 mb-1">
                                             {[...Array(5)].map((_, i) => (
-                                                <Star key={i} className={`w-6 h-6 ${i < Math.floor(googleRating || 5) ? 'fill-current' : 'opacity-30'}`} />
+                                                <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(googleRating || 5) ? 'fill-current' : 'opacity-30'}`} />
                                             ))}
                                         </div>
-                                        <p className="text-sm font-black text-zinc-500 uppercase tracking-widest leading-none">Google Rating</p>
-                                        <p className="text-base text-zinc-500 mt-3 font-medium">From {reviewCount} verified reviews</p>
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Google</p>
+                                        <p className="text-xs text-zinc-400 mt-0.5">{reviewCount} reviews</p>
                                     </div>
-                                    <div className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100 text-center">
-                                        <p className="text-5xl font-black text-zinc-900 mb-2">{jobsCompleted}</p>
-                                        <p className="text-sm font-black text-zinc-500 uppercase tracking-widest">Connections</p>
-                                        <p className="text-base text-zinc-500 mt-4 leading-relaxed font-medium">Successful jobs in {business.suburb}.</p>
+                                    <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100">
+                                        <p className="text-3xl font-black text-zinc-900">{jobsCompleted}</p>
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mt-1">Connections</p>
                                     </div>
                                 </div>
                             </section>
 
-                            {/* Google Reviews Section */}
+                            {/* Google Reviews */}
                             {googleReviews.length > 0 && (
-                                <section className="bg-white rounded-[40px] border border-zinc-200 p-8 md:p-14 shadow-sm">
-                                    <h2 className="text-sm font-black text-zinc-500 uppercase tracking-[0.2em] mb-10 flex items-center gap-3">
-                                        <div className="w-8 h-px bg-zinc-200" />
-                                        Google Reviews
-                                        <span className="ml-auto flex items-center gap-2 text-orange-500">
-                                            <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                                            <span className="text-zinc-900 font-black text-base">{googleRating}</span>
-                                            <span className="text-zinc-400 font-medium text-sm">({reviewCount})</span>
+                                <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                    <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between">
+                                        <span className="flex items-center gap-3"><div className="w-6 h-px bg-zinc-200" /> Google Reviews</span>
+                                        <span className="flex items-center gap-1.5 text-orange-500">
+                                            <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
+                                            <span className="text-zinc-900 font-black text-sm">{googleRating}</span>
+                                            <span className="text-zinc-400 text-xs">({reviewCount})</span>
                                         </span>
                                     </h2>
-                                    <div className="space-y-6">
+                                    <div className="space-y-4">
                                         {googleReviews.map((review: any) => (
-                                            <div key={review.id} className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100 group hover:border-orange-100 hover:bg-white hover:shadow-lg transition-all duration-300">
-                                                <div className="flex items-start justify-between gap-4 mb-4">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-orange-200">
+                                            <div key={review.id} className="p-5 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-orange-100 hover:bg-white hover:shadow-sm transition-all">
+                                                <div className="flex items-start justify-between gap-3 mb-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-black text-sm shrink-0">
                                                             {(review.profile_name || 'A')[0].toUpperCase()}
                                                         </div>
                                                         <div>
-                                                            <p className="font-black text-zinc-900 text-lg leading-none">{review.profile_name || 'Google Reviewer'}</p>
-                                                            <p className="text-xs text-zinc-400 font-medium mt-1 uppercase tracking-widest">Google Review</p>
+                                                            <p className="font-black text-zinc-900 text-sm leading-none">{review.profile_name || 'Google Reviewer'}</p>
+                                                            <p className="text-xs text-zinc-400 font-medium mt-0.5">Google Review</p>
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center gap-1 shrink-0">
+                                                    <div className="flex items-center gap-0.5 shrink-0">
                                                         {[...Array(5)].map((_, i) => (
-                                                            <Star key={i} className={`w-4 h-4 ${i < (review.rating || 5) ? 'fill-orange-400 text-orange-400' : 'text-zinc-200 fill-zinc-200'}`} />
+                                                            <Star key={i} className={`w-3.5 h-3.5 ${i < (review.rating || 5) ? 'fill-orange-400 text-orange-400' : 'text-zinc-200 fill-zinc-200'}`} />
                                                         ))}
                                                     </div>
                                                 </div>
                                                 {review.review_text && (
-                                                    <p className="text-zinc-700 text-lg leading-relaxed font-medium pl-16">&ldquo;{review.review_text}&rdquo;</p>
+                                                    <p className="text-zinc-600 text-sm leading-relaxed">&ldquo;{review.review_text}&rdquo;</p>
                                                 )}
                                                 {review.owner_answer && (
-                                                    <div className="mt-5 ml-16 pl-6 border-l-2 border-orange-200">
-                                                        <p className="text-xs font-black text-orange-600 uppercase tracking-widest mb-2">Owner Response</p>
-                                                        <p className="text-zinc-600 text-base leading-relaxed">{review.owner_answer}</p>
+                                                    <div className="mt-3 pl-4 border-l-2 border-orange-200">
+                                                        <p className="text-xs font-black text-orange-600 uppercase tracking-widest mb-1">Owner Response</p>
+                                                        <p className="text-zinc-500 text-xs leading-relaxed">{review.owner_answer}</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -416,78 +451,22 @@ export default async function PublicProfilePage({
                                     </div>
                                 </section>
                             )}
-                        </div>
-
-                        {/* ── SIDEBAR ── */}
-                        <div className="space-y-6 lg:sticky lg:top-24 self-start">
-
-                            {/* Contact Box */}
-                            <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-sm">
-                                <h3 className="text-sm font-black text-zinc-400 mb-10 uppercase tracking-[0.2em] px-1 border-b border-zinc-50 pb-6">Contact & Location</h3>
-                                <div className="space-y-6">
-                                    {business.address && (
-                                        <div className="flex items-start gap-6 p-6 bg-zinc-50 rounded-3xl border border-zinc-100 group">
-                                            <div className="w-14 h-14 bg-white border border-zinc-100 rounded-2xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0 shadow-sm">
-                                                <MapPin className="w-7 h-7" />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1.5">Business Address</p>
-                                                <p className="text-lg text-zinc-800 font-bold leading-tight break-words">{business.address}</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {business.abn && (
-                                        <div className="flex items-start gap-6 p-6 bg-zinc-50 rounded-3xl border border-zinc-100 group">
-                                            <div className="w-14 h-14 bg-white border border-zinc-100 rounded-2xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0 shadow-sm">
-                                                <Briefcase className="w-7 h-7" />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1.5">Registered ABN</p>
-                                                <p className="text-lg text-zinc-800 font-bold leading-tight uppercase tracking-widest">{business.abn}</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {business.business_phone && (
-                                        <a href={`tel:${business.business_phone}`} className="flex items-start gap-6 p-6 bg-zinc-50 rounded-3xl border border-orange-100 group hover:border-orange-500 hover:bg-white hover:shadow-2xl transition-all h-28">
-                                            <div className="w-14 h-14 bg-white border border-zinc-100 rounded-2xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0 shadow-sm">
-                                                <Phone className="w-7 h-7" />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1.5">Office Phone</p>
-                                                <p className="text-lg text-orange-600 font-black break-all">{business.business_phone}</p>
-                                            </div>
-                                        </a>
-                                    )}
-                                    {business.website && (
-                                        <a href={business.website.startsWith('http') ? business.website : `https://${business.website}`} target="_blank" rel="noopener noreferrer" className="flex items-start gap-6 p-6 bg-zinc-50 rounded-3xl border border-zinc-100 group hover:border-orange-500 hover:bg-white hover:shadow-2xl transition-all">
-                                            <div className="w-14 h-14 bg-white border border-zinc-100 rounded-2xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0 shadow-sm">
-                                                <Globe className="w-7 h-7" />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1.5">Official Website</p>
-                                                <p className="text-lg text-zinc-700 font-bold flex items-center gap-2">Visit Site <ExternalLink className="w-5 h-5" /></p>
-                                            </div>
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
 
                             {/* Enquiry Form */}
-                            <div id="enquiry-form" className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm relative overflow-hidden scroll-mt-24">
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-bl-[100px]" />
-                                <h3 className="text-xl font-black text-zinc-900 mb-2 relative z-10">Get a Free Quote</h3>
-                                <p className="text-sm text-zinc-400 mb-8 relative z-10 italic">Expect a response within 24 hours.</p>
+                            <div id="enquiry-form" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
+                                <h3 className="text-lg font-black text-zinc-900 mb-1">Get a Free Quote</h3>
+                                <p className="text-sm text-zinc-400 mb-6 italic">Expect a response within 24 hours.</p>
                                 <LeadForm businessName={business.business_name} businessId={business.id} referralCode={referralCode} />
-                            </div >
+                            </div>
 
-                            {/* Share & refer Card */}
-                            <div className="bg-orange-50 border border-orange-100 rounded-3xl p-8 relative overflow-hidden">
-                                <Zap className="absolute -bottom-10 -right-10 w-48 h-48 text-orange-300/30 rotate-12" />
+                            {/* Refer & Earn */}
+                            <div className="bg-orange-50 border border-orange-100 rounded-2xl p-7 relative overflow-hidden">
+                                <Zap className="absolute -bottom-8 -right-8 w-36 h-36 text-orange-300/30 rotate-12" />
                                 <div className="relative z-10">
-                                    <h3 className="text-2xl font-black text-zinc-900 mb-3">Refer & Earn</h3>
-                                    <p className="text-zinc-600 text-lg mb-8 leading-relaxed font-medium">Know someone who needs {business.trade_category} services? Refer {business.business_name} and earn a reward when the job closes.</p>
-                                    <Button asChild size="lg" className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black h-16 text-xl border-none shadow-lg shadow-orange-200">
-                                        <Link href={`/b/${slug}/refer`}>Get Referral Link <Share2 className="w-6 h-6 ml-3" /></Link>
+                                    <h3 className="text-lg font-black text-zinc-900 mb-2">Refer &amp; Earn</h3>
+                                    <p className="text-zinc-600 text-sm mb-5 leading-relaxed">Know someone who needs {business.trade_category} services? Refer {business.business_name} and earn a reward when the job closes.</p>
+                                    <Button asChild size="lg" className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black h-12 text-base border-none shadow-md shadow-orange-200">
+                                        <Link href={`/b/${slug}/refer`}>Get Referral Link <Share2 className="w-5 h-5 ml-2" /></Link>
                                     </Button>
                                 </div>
                             </div>
