@@ -433,6 +433,16 @@ export function Navbar() {
 
                                                 </Link>
 
+                                                <Link href="/dashboard/business" className="hidden sm:block ml-1">
+
+                                                    <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-5 font-bold text-sm shadow-sm">
+
+                                                        Dashboard
+
+                                                    </Button>
+
+                                                </Link>
+
                                             </>
 
                                         )}

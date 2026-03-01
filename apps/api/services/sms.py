@@ -3,15 +3,18 @@ import asyncio
 from typing import Optional
 from utils.logging_config import email_logger, error_logger
 
+import random
+
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
-TWILIO_FROM_NUMBER = os.getenv("TWILIO_FROM_NUMBER", "")
+_from_numbers_raw = os.getenv("TWILIO_FROM_NUMBERS", os.getenv("TWILIO_FROM_NUMBER", ""))
+TWILIO_FROM_NUMBERS = [n.strip() for n in _from_numbers_raw.split(",") if n.strip()]
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://traderefer.au")
 
 
 async def _send_sms(to: str, body: str):
     """Send SMS via Twilio. Skips gracefully if credentials not set."""
-    if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not TWILIO_FROM_NUMBER:
+    if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not TWILIO_FROM_NUMBERS:
         email_logger.warning(f"Twilio credentials not set — skipping SMS to {to}")
         return
 
@@ -26,10 +29,11 @@ async def _send_sms(to: str, body: str):
         from twilio.rest import Client
 
         def _send():
+            from_number = random.choice(TWILIO_FROM_NUMBERS)
             client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
             return client.messages.create(
                 body=body,
-                from_=TWILIO_FROM_NUMBER,
+                from_=from_number,
                 to=phone,
             )
 
