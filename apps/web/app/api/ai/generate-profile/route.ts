@@ -47,7 +47,7 @@ export async function POST(req: Request) {
 
         return Response.json({ raw: text });
     } catch (err: any) {
-        console.error("AI generate-profile error:", err);
+        console.error("AI generate-profile error — status:", err?.status, "message:", err?.message, "cause:", err?.cause);
         return Response.json({ error: err.message || "AI generation failed" }, { status: 500 });
     }
 }
