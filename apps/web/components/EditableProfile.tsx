@@ -194,8 +194,8 @@ export function EditableProfile({ businessSlug, children }: EditableProfileProps
                 </div>
             </div>
 
-            {/* Spacer: main navbar (h-16) + secondary owner bar (h-10) */}
-            <div className="h-[104px]" />
+            {/* Spacer: owner bar only (h-10) — page children already have pt-20 covering the navbar */}
+            <div className="h-[40px]" />
 
             {/* Normal view — [data-claim-banner] hidden for owners */}
             {!editMode && (
