@@ -3,9 +3,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
-import { Pencil, Save, Loader2, X, Eye } from "lucide-react";
+import { Pencil, Save, Loader2, X, Eye, LayoutDashboard } from "lucide-react";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 import { ImageUpload } from "@/components/ImageUpload";
+import Link from "next/link";
+import { Logo } from "@/components/Logo";
 
 interface EditableProfileProps {
     businessSlug: string;
@@ -135,11 +137,29 @@ export function EditableProfile({ businessSlug, children }: EditableProfileProps
 
     return (
         <>
-            {/* Owner Edit Toggle Bar — always visible to owner */}
+            {/* Owner Edit Toggle Bar — replaces navbar for the owner */}
             <div className="fixed top-0 left-0 right-0 z-[100] bg-white/95 backdrop-blur-xl border-b border-zinc-200 shadow-lg shadow-zinc-200/50">
-                <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+                <div className="container mx-auto px-4 h-14 flex items-center justify-between gap-4">
+                    {/* Left: Logo + nav */}
+                    <div className="flex items-center gap-4 shrink-0">
+                        <Link href="/"><Logo size="sm" /></Link>
+                        <Link
+                            href="/dashboard/business"
+                            className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
+                        >
+                            <LayoutDashboard className="w-4 h-4" /> Dashboard
+                        </Link>
+                        <Link
+                            href="/dashboard/business/leads"
+                            className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
+                        >
+                            Leads
+                        </Link>
+                    </div>
+
+                    {/* Centre: owner mode label */}
                     <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold text-zinc-500">
+                        <span className="text-sm font-bold text-zinc-400 hidden md:block">
                             {editMode ? "Editing your profile" : "Viewing as owner"}
                         </span>
                         {editMode && hasChanges && (
