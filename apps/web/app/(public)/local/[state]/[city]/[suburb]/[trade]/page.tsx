@@ -153,15 +153,6 @@ export default async function TradeLocationPage({ params }: PageProps) {
             "name": suburbName,
             "containedInPlace": { "@type": "AdministrativeArea", "name": stateName }
         },
-        ...(businesses.length > 0 ? {
-            "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": avgRating,
-                "reviewCount": businesses.length.toString(),
-                "bestRating": "5",
-                "worstRating": "1"
-            }
-        } : {}),
         ...(cost ? {
             "offers": {
                 "@type": "AggregateOffer",

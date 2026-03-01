@@ -174,15 +174,6 @@ export default async function Top10SuburbPage({ params }: PageProps) {
             "name": suburbName,
             "containedInPlace": { "@type": "City", "name": cityName }
         },
-        ...(businesses.length > 0 ? {
-            "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": avgRating,
-                "reviewCount": totalReviews.toString(),
-                "bestRating": "5",
-                "worstRating": "1"
-            }
-        } : {}),
         ...(cost ? {
             "offers": {
                 "@type": "AggregateOffer",

@@ -112,24 +112,32 @@ export default async function PublicProfilePage({
     const reviewCount = business.total_reviews || 0;
 
     // Schema Markup
-    const jsonLd = {
+    const parsedRating = parseFloat(String(googleRating));
+    const parsedReviewCount = parseInt(String(reviewCount), 10);
+    const hasValidRating = !isNaN(parsedRating) && parsedRating > 0 && parsedReviewCount > 0;
+
+    const jsonLd: Record<string, unknown> = {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
         "name": business.business_name,
         "description": business.description || `Specialist ${business.trade_category} in ${business.suburb}.`,
         "url": `https://traderefer.au/b/${slug}`,
-        "telephone": business.business_phone,
+        ...(business.business_phone ? { "telephone": business.business_phone } : {}),
         "address": {
             "@type": "PostalAddress",
             "addressLocality": business.suburb,
             "addressRegion": business.state,
             "addressCountry": "AU"
         },
-        "aggregateRating": googleRating ? {
-            "@type": "AggregateRating",
-            "ratingValue": googleRating,
-            "reviewCount": reviewCount
-        } : undefined
+        ...(hasValidRating ? {
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": parsedRating,
+                "reviewCount": parsedReviewCount,
+                "bestRating": 5,
+                "worstRating": 1
+            }
+        } : {})
     };
 
     return (
