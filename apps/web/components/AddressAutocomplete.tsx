@@ -34,6 +34,8 @@ export function AddressAutocomplete({
     const [showDropdown, setShowDropdown] = useState(false);
     const [ready, setReady] = useState(false);
     const [loadError, setLoadError] = useState(false);
+    const [fetchError, setFetchError] = useState(false);
+    const [manualMode, setManualMode] = useState(false);
     const sessionTokenRef = useRef<any>(null);
     const onSelectRef = useRef(onAddressSelect);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -74,9 +76,16 @@ export function AddressAutocomplete({
                 sessionToken: sessionTokenRef.current,
                 includedRegionCodes: ["au"],
             });
+            if (!results || results.length === 0) {
+                setFetchError(true);
+            } else {
+                setFetchError(false);
+            }
             setSuggestions(results || []);
             setShowDropdown(true);
-        } catch {
+        } catch (err) {
+            console.error("Places autocomplete error:", err);
+            setFetchError(true);
             setSuggestions([]);
         }
     }, []);
@@ -137,7 +146,29 @@ export function AddressAutocomplete({
         }
     }, []);
 
-    if (loadError) return <div className="text-red-500 text-sm">Error loading address search</div>;
+    if (loadError || manualMode) {
+        return (
+            <div className="space-y-2">
+                <input
+                    type="text"
+                    placeholder="Street address (e.g. 42 Main St)"
+                    defaultValue={addressValue}
+                    onChange={(e) => onSelectRef.current(e.target.value, suburbValue, stateValue)}
+                    className={className}
+                    autoComplete="street-address"
+                />
+                {!loadError && (
+                    <button
+                        type="button"
+                        onClick={() => setManualMode(false)}
+                        className="text-xs text-orange-600 hover:underline"
+                    >
+                        ← Back to address search
+                    </button>
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="relative">
@@ -147,7 +178,7 @@ export function AddressAutocomplete({
                 onChange={handleInputChange}
                 onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
                 onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-                placeholder={ready ? placeholder : "Loading..."}
+                placeholder={ready ? placeholder : "Loading address search..."}
                 className={className}
                 disabled={!ready}
                 autoComplete="off"
@@ -167,6 +198,14 @@ export function AddressAutocomplete({
                         </li>
                     ))}
                 </ul>
+            )}
+            {fetchError && (
+                <p className="mt-1 text-xs text-zinc-400">
+                    Can&apos;t find your address?{" "}
+                    <button type="button" onClick={() => setManualMode(true)} className="text-orange-600 hover:underline font-medium">
+                        Enter manually
+                    </button>
+                </p>
             )}
         </div>
     );

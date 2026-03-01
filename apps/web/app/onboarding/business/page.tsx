@@ -527,6 +527,19 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                                     {slugStatus === 'taken' && <AlertCircle className="w-5 h-5 text-red-500" />}
                                                 </div>
                                             </div>
+                                            {slugStatus === 'taken' && (
+                                                <div className="mt-2 flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">
+                                                    <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                                                    <p className="text-sm font-bold text-red-600">
+                                                        That handle is already taken — please choose a different one
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {slugStatus === 'available' && (
+                                                <p className="mt-2 text-sm font-bold text-green-600 flex items-center gap-1.5">
+                                                    <Check className="w-4 h-4" /> Handle is available!
+                                                </p>
+                                            )}
                                             <p className="mt-2 text-sm font-bold text-zinc-400 uppercase tracking-wider">
                                                 Your profile: <span className="text-zinc-900 lowercase">traderefer.au/b/{formData.slug || '...'}</span>
                                             </p>
