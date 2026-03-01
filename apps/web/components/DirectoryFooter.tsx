@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MapPin, ArrowRight } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 const TOP_CATEGORIES = [
     { name: "Electrician", slug: "electrician" },
@@ -44,8 +45,8 @@ export function DirectoryFooter() {
 
                     {/* Brand Section */}
                     <div className="space-y-6">
-                        <Link href="/" className="text-2xl font-black tracking-tighter flex items-center gap-2">
-                            <span className="text-orange-500">TRADE</span>REFER
+                        <Link href="/">
+                            <Logo size="sm" variant="white" />
                         </Link>
                         <p className="text-zinc-400 text-sm leading-relaxed">
                             Australia's trusted referral network for local trades. We connect you with verified experts recommended by your own community.

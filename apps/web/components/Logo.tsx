@@ -15,14 +15,14 @@ const sizeMap = {
     xl: { icon: 108, text: "text-5xl", gap: "gap-3" },
 };
 
-function LogoIcon({ size = 28, alt = "traderefer" }: { size?: number; alt?: string }) {
+function LogoIcon({ size = 28, alt = "traderefer", ring = false }: { size?: number; alt?: string; ring?: boolean }) {
     return (
         <Image
             src="/logo.png"
             alt={alt}
             width={size}
             height={size}
-            className="rounded-lg"
+            className={`rounded-lg${ring ? " ring-2 ring-white ring-offset-1 ring-offset-transparent" : ""}`}
             priority
         />
     );
@@ -32,15 +32,17 @@ export function Logo({ size = "md", variant = "full", showText, className = "" }
     const s = sizeMap[size];
     const isIconOnly = variant === "icon-only" || showText === false;
 
+    const isDark = variant === "white";
+
     if (isIconOnly) {
-        return <LogoIcon size={s.icon} />;
+        return <LogoIcon size={s.icon} ring={isDark} />;
     }
 
     return (
         <span className={`inline-flex items-center ${s.gap} ${className}`}>
-            <LogoIcon size={s.icon} />
+            <LogoIcon size={s.icon} ring={isDark} />
             <span className={`${s.text} font-black tracking-tight leading-none uppercase`}>
-                <span className={variant === "white" ? "text-white" : "text-zinc-900"}>TRADE</span>
+                <span className={isDark ? "text-white" : "text-zinc-900"}>TRADE</span>
                 <span className="text-orange-500">REFER</span>
             </span>
         </span>

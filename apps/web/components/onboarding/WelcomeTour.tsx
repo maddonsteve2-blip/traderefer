@@ -100,7 +100,7 @@ export function WelcomeTour({ type, onComplete }: WelcomeTourProps) {
             <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center relative z-10">
                 <div className="space-y-8 order-2 lg:order-1">
                     <div className="flex items-center gap-3">
-                        <Logo size="sm" variant="orange" />
+                        <Logo size="sm" variant="white" />
                     </div>
 
                     <div key={step} className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-both">
