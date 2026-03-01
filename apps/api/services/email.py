@@ -51,8 +51,8 @@ def _logo_bar() -> str:
       <tr>
         <td style="padding:18px 24px">
           <a href="{FRONTEND_URL}" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px">
-            <img src="{FRONTEND_URL}/logo.png" alt="traderefer" width="36" height="36"
-                 style="border-radius:8px;outline:2px solid #fff;outline-offset:2px;display:block" />
+            <img src="{FRONTEND_URL}/logo-dark.png" alt="traderefer" width="36" height="36"
+                 style="border-radius:8px;display:block" />
             <span style="font-size:20px;font-weight:900;letter-spacing:-0.5px;line-height:1;font-family:sans-serif">
               <span style="color:#ffffff">TRADE</span><span style="color:#ea580c">REFER</span>
             </span>
