@@ -214,7 +214,7 @@ export function Navbar() {
 
     const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
 
-    const { getToken, isSignedIn } = useAuth();
+    const { getToken, isSignedIn, isLoaded } = useAuth();
 
     const [walletBalance, setWalletBalance] = useState<number | null>(null);
 
@@ -288,153 +288,208 @@ export function Navbar() {
 
                     <nav className="flex items-center gap-1">
 
-                        <SignedOut>
+                        {/* Stable placeholder while Clerk resolves — prevents sign-in flash */}
+                        {!isLoaded && (
+                            <div className="flex items-center gap-2" aria-hidden>
+                                <div className="w-16 h-8 rounded-full bg-zinc-100 animate-pulse" />
+                                <div className="w-20 h-8 rounded-full bg-zinc-100 animate-pulse" />
+                            </div>
+                        )}
+                        {isLoaded && (<>
 
-                            {!isDashboard && (
+                            <SignedOut>
 
-                                <>
+                                {!isDashboard && (
 
-                                    <Link href="/businesses" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                    <>
 
-                                        Browse Businesses
+                                        <Link href="/businesses" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
 
-                                    </Link>
+                                            Browse Businesses
 
-                                    <Link href="/support" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                        </Link>
 
-                                        Support
+                                        <Link href="/support" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
 
-                                    </Link>
+                                            Support
 
-                                    <Link href="/contact" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                        </Link>
 
-                                        Contact
+                                        <Link href="/contact" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
 
-                                    </Link>
+                                            Contact
 
-                                </>
+                                        </Link>
 
-                            )}
+                                    </>
 
-                            <SignInButton mode="modal">
+                                )}
 
-                                <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900 ml-2">
+                                <SignInButton mode="modal">
 
-                                    Sign In
+                                    <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900 ml-2">
 
-                                </Button>
+                                        Sign In
 
-                            </SignInButton>
+                                    </Button>
 
-                            <SignUpButton mode="modal">
+                                </SignInButton>
 
-                                <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-6 font-bold shadow-lg shadow-orange-500/20">
+                                <SignUpButton mode="modal">
 
-                                    Sign Up
+                                    <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-6 font-bold shadow-lg shadow-orange-500/20">
 
-                                </Button>
+                                        Sign Up
 
-                            </SignUpButton>
+                                    </Button>
 
-                        </SignedOut>
+                                </SignUpButton>
 
+                            </SignedOut>
 
 
-                        <SignedIn>
 
-                            {isDashboard ? (
+                            <SignedIn>
 
-                                <>
+                                {isDashboard ? (
 
-                                    {isBusinessDashboard && (
+                                    <>
 
-                                        <>
+                                        {isBusinessDashboard && (
 
-                                            {/* Wallet balance */}
+                                            <>
 
-                                            {walletBalance !== null && (
+                                                {/* Wallet balance */}
 
-                                                <button
+                                                {walletBalance !== null && (
 
-                                                    onClick={() => setShowTopUp(true)}
+                                                    <button
 
-                                                    className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-200 rounded-full transition-all group mr-2"
+                                                        onClick={() => setShowTopUp(true)}
 
-                                                >
+                                                        className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-200 rounded-full transition-all group mr-2"
 
-                                                    <Wallet className="w-4 h-4 text-zinc-400 group-hover:text-orange-500" />
+                                                    >
 
-                                                    <span className="text-sm font-bold text-zinc-700">${(walletBalance / 100).toFixed(2)}</span>
+                                                        <Wallet className="w-4 h-4 text-zinc-400 group-hover:text-orange-500" />
 
-                                                    <Plus className="w-3.5 h-3.5 text-orange-500" />
+                                                        <span className="text-sm font-bold text-zinc-700">${(walletBalance / 100).toFixed(2)}</span>
 
-                                                </button>
+                                                        <Plus className="w-3.5 h-3.5 text-orange-500" />
 
-                                            )}
+                                                    </button>
 
-                                            {/* Core nav — 5 items max */}
+                                                )}
 
-                                            <Link href="/dashboard/business/leads" className="hidden sm:block">
+                                                {/* Core nav — 5 items max */}
 
-                                                <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/leads" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                <Link href="/dashboard/business/leads" className="hidden sm:block">
 
-                                                    Leads
+                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/leads" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
-                                                </Button>
+                                                        Leads
 
-                                            </Link>
+                                                    </Button>
 
-                                            <Link href="/dashboard/business/messages" className="hidden sm:block">
+                                                </Link>
 
-                                                <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                <Link href="/dashboard/business/messages" className="hidden sm:block">
 
-                                                    Messages
+                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
-                                                </Button>
+                                                        Messages
 
-                                            </Link>
+                                                    </Button>
 
-                                            <Link href="/dashboard/business/referrers" className="hidden sm:block">
+                                                </Link>
 
-                                                <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/referrers" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                <Link href="/dashboard/business/referrers" className="hidden sm:block">
 
-                                                    Referrers
+                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/referrers" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
-                                                </Button>
+                                                        Referrers
 
-                                            </Link>
+                                                    </Button>
 
-                                            <Link href="/dashboard/business/deals" className="hidden sm:block">
+                                                </Link>
 
-                                                <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/deals" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                <Link href="/dashboard/business/deals" className="hidden sm:block">
 
-                                                    Deals
+                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/deals" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
-                                                </Button>
+                                                        Deals
 
-                                            </Link>
+                                                    </Button>
 
-                                            <Link href="/dashboard/business/campaigns" className="hidden sm:block">
+                                                </Link>
 
-                                                <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/campaigns" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                <Link href="/dashboard/business/campaigns" className="hidden sm:block">
 
-                                                    Campaigns
+                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/campaigns" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
-                                                </Button>
+                                                        Campaigns
 
-                                            </Link>
+                                                    </Button>
 
-                                        </>
+                                                </Link>
 
-                                    )}
+                                            </>
 
-                                    {isReferrerDashboard && (
+                                        )}
 
-                                        <>
+                                        {isReferrerDashboard && (
 
-                                            <Link href="/dashboard/referrer" className="hidden sm:block">
+                                            <>
 
-                                                <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                <Link href="/dashboard/referrer" className="hidden sm:block">
+
+                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+
+                                                        Dashboard
+
+                                                    </Button>
+
+                                                </Link>
+
+                                                <Link href="/businesses" className="hidden sm:block">
+
+                                                    <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600">
+
+                                                        Find Businesses
+
+                                                    </Button>
+
+                                                </Link>
+
+                                                <Link href="/dashboard/referrer/messages" className="hidden sm:block">
+
+                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+
+                                                        Messages
+
+                                                    </Button>
+
+                                                </Link>
+
+                                                <Link href="/dashboard/referrer/withdraw" className="hidden sm:block">
+
+                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/withdraw" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+
+                                                        Withdraw
+
+                                                    </Button>
+
+                                                </Link>
+
+                                            </>
+
+                                        )}
+
+                                        {!isBusinessDashboard && !isReferrerDashboard && (
+
+                                            <Link href="/dashboard" className="hidden sm:block">
+
+                                                <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600">
 
                                                     Dashboard
 
@@ -442,109 +497,64 @@ export function Navbar() {
 
                                             </Link>
 
-                                            <Link href="/businesses" className="hidden sm:block">
+                                        )}
 
-                                                <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600">
+                                    </>
 
-                                                    Find Businesses
+                                ) : (
 
-                                                </Button>
+                                    <>
 
-                                            </Link>
+                                        <Link href="/businesses" className="hidden sm:block">
 
-                                            <Link href="/dashboard/referrer/messages" className="hidden sm:block">
+                                            <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
 
-                                                <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
-
-                                                    Messages
-
-                                                </Button>
-
-                                            </Link>
-
-                                            <Link href="/dashboard/referrer/withdraw" className="hidden sm:block">
-
-                                                <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/withdraw" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
-
-                                                    Withdraw
-
-                                                </Button>
-
-                                            </Link>
-
-                                        </>
-
-                                    )}
-
-                                    {!isBusinessDashboard && !isReferrerDashboard && (
-
-                                        <Link href="/dashboard" className="hidden sm:block">
-
-                                            <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600">
-
-                                                Dashboard
+                                                Find Businesses
 
                                             </Button>
 
                                         </Link>
 
-                                    )}
+                                        <Link href="/support" className="hidden lg:block">
 
-                                </>
+                                            <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
 
-                            ) : (
+                                                Support
 
-                                <>
+                                            </Button>
 
-                                    <Link href="/businesses" className="hidden sm:block">
+                                        </Link>
 
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                        <Link href="/contact" className="hidden lg:block">
 
-                                            Find Businesses
+                                            <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
 
-                                        </Button>
+                                                Contact
 
-                                    </Link>
+                                            </Button>
 
-                                    <Link href="/support" className="hidden lg:block">
+                                        </Link>
 
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                        <Link href="/dashboard" className="hidden sm:block">
 
-                                            Support
+                                            <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-6 font-bold">
 
-                                        </Button>
+                                                My Dashboard
 
-                                    </Link>
+                                            </Button>
 
-                                    <Link href="/contact" className="hidden lg:block">
+                                        </Link>
 
-                                        <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                    </>
 
-                                            Contact
+                                )}
 
-                                        </Button>
+                                <NotificationBell />
 
-                                    </Link>
+                                <ProfileDropdown />
 
-                                    <Link href="/dashboard" className="hidden sm:block">
-
-                                        <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-6 font-bold">
-
-                                            My Dashboard
-
-                                        </Button>
-
-                                    </Link>
-
-                                </>
-
-                            )}
-
-                            <NotificationBell />
-
-                            <ProfileDropdown />
-
-                        </SignedIn>
+                            </SignedIn>
+                        </>)}
 
                     </nav>
 

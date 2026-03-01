@@ -6,7 +6,7 @@ import {
   Search, MapPin, ArrowRight, ArrowLeft,
   Megaphone, CheckCircle2, XCircle, ShieldCheck,
   Construction, TrendingUp, Zap, HardHat, Home as HomeIcon,
-  Wrench, ShoppingCart, Headphones, Printer
+  Wrench, ShoppingCart, Headphones, Printer, ChevronRight
 } from "lucide-react";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 
@@ -336,45 +336,67 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── SEO DIRECTORY (Browse by Trade & Location) ── */}
-      <section className="py-16 bg-[#F2F2F2] border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-            {/* Top Suburbs */}
-            <div>
-              <h4 className="font-display font-bold text-lg mb-6 border-b border-gray-300 pb-2 text-[#1A1A1A]">Top Suburbs</h4>
-              <ul className="grid grid-cols-2 gap-2 text-sm text-gray-500">
-                {[
-                  { label: "Trades in Geelong", href: "/local/vic/geelong" },
-                  { label: "Trades in Surry Hills", href: "/local/nsw/sydney/surry-hills" },
-                  { label: "Trades in Richmond", href: "/local/vic/melbourne/richmond" },
-                  { label: "Trades in Parramatta", href: "/local/nsw/sydney/parramatta" },
-                  { label: "Trades in Fremantle", href: "/local/wa/perth/fremantle" },
-                  { label: "Trades in St Kilda", href: "/local/vic/melbourne/st-kilda" },
-                  { label: "Trades in Fortitude Valley", href: "/local/qld/brisbane/fortitude-valley" },
-                ].map(({ label, href }) => (
-                  <li key={href}><Link className="hover:text-[#FF6600] transition-colors" href={href}>{label}</Link></li>
-                ))}
-              </ul>
-            </div>
+      {/* Browse by Trade */}
+      <section className="py-24 bg-zinc-50">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-zinc-900 mb-4 font-display tracking-tight">Browse by Trade</h2>
+            <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">Find verified local specialists for every home and commercial trade across Australia.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
+            {TRADE_CATEGORIES.filter(t => t !== "Other").slice(0, 30).map((trade) => (
+              <Link
+                key={trade}
+                href={`/local?category=${encodeURIComponent(trade)}`}
+                className="group flex items-center gap-2.5 bg-white border border-zinc-200 rounded-2xl px-4 py-3.5 text-sm font-bold text-zinc-700 hover:border-orange-500 hover:text-orange-600 hover:shadow-md transition-all duration-200"
+              >
+                <Wrench className="w-3.5 h-3.5 text-zinc-400 group-hover:text-orange-500 shrink-0 transition-colors" />
+                <span className="leading-tight">{trade}</span>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link
+              href="/local"
+              className="inline-flex items-center gap-2 text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
+            >
+              Browse All Trades <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
 
-            {/* Popular Trades */}
-            <div>
-              <h4 className="font-display font-bold text-lg mb-6 border-b border-gray-300 pb-2 text-[#1A1A1A]">Popular Trades</h4>
-              <ul className="grid grid-cols-2 gap-2 text-sm text-gray-500">
-                {[
-                  { label: "Emergency Plumbers", trade: "Plumbing" },
-                  { label: "Licensed Electricians", trade: "Electrical" },
-                  { label: "Commercial Builders", trade: "Building" },
-                  { label: "HVAC Specialists", trade: "Air Conditioning & Heating" },
-                  { label: "Roofing Contractors", trade: "Roofing" },
-                  { label: "Landscape Gardeners", trade: "Landscaping" },
-                  { label: "Interior Painters", trade: "Painting" },
-                ].map(({ label, trade }) => (
-                  <li key={label}><Link className="hover:text-[#FF6600] transition-colors" href={`/local?category=${encodeURIComponent(trade)}`}>{label}</Link></li>
-                ))}
-              </ul>
-            </div>
+      {/* Browse by State */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-zinc-900 mb-4 font-display tracking-tight">Browse by State</h2>
+            <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">Local trade directories for every Australian state and territory.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {[
+              { name: "Victoria", slug: "vic", cities: "Geelong, Melbourne, Ballarat" },
+              { name: "New South Wales", slug: "nsw", cities: "Sydney, Newcastle, Wollongong" },
+              { name: "Queensland", slug: "qld", cities: "Brisbane, Gold Coast, Sunshine Coast" },
+              { name: "Western Australia", slug: "wa", cities: "Perth, Fremantle, Mandurah" },
+              { name: "South Australia", slug: "sa", cities: "Adelaide, Mount Gambier" },
+              { name: "Tasmania", slug: "tas", cities: "Hobart, Launceston" },
+              { name: "ACT", slug: "act", cities: "Canberra" },
+              { name: "Northern Territory", slug: "nt", cities: "Darwin" },
+            ].map(({ name, slug, cities }) => (
+              <Link
+                key={slug}
+                href={`/local/${slug}`}
+                className="group bg-zinc-50 border border-zinc-200 rounded-2xl p-5 hover:border-orange-500 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <MapPin className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                  <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 transition-colors" />
+                </div>
+                <h3 className="font-black text-zinc-900 group-hover:text-orange-600 transition-colors leading-tight mb-1">{name}</h3>
+                <p className="text-xs text-zinc-400 font-medium leading-relaxed">{cities}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
