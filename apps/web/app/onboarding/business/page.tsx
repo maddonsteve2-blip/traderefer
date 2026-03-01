@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Building2,
@@ -49,6 +49,14 @@ type ChatMessage = {
 };
 
 export default function BusinessOnboardingPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center"><div className="w-8 h-8 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin" /></div>}>
+            <BusinessOnboardingContent />
+        </Suspense>
+    );
+}
+
+function BusinessOnboardingContent() {
     const TOTAL_STEPS = 6;
     const [step, setStep] = useState(1);
     const [showTour, setShowTour] = useState(true);
