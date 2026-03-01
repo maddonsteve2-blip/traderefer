@@ -1,17 +1,11 @@
-import { auth } from "@clerk/nextjs/server"
-import { redirect } from "next/navigation"
-
-export default async function OnboardingLayout({
+export default function OnboardingLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
-    const { sessionClaims } = await auth()
-
-    if (sessionClaims?.metadata?.onboardingComplete === true) {
-        const role = sessionClaims.metadata.role
-        redirect(role === "referrer" ? "/dashboard/referrer" : "/dashboard/business")
-    }
-
+    // Route protection is handled by proxy.ts middleware.
+    // The root /onboarding choice page is blocked for complete users there.
+    // Sub-routes (/onboarding/business, /onboarding/referrer) are always
+    // accessible so users can create a missing backend profile.
     return <>{children}</>
 }
