@@ -1,9 +1,62 @@
 "use client";
 
-import { Building2, Rocket, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Building2, Rocket, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { completeOnboarding } from "@/app/onboarding/_actions";
 
 export default function OnboardingChoicePage() {
+    const { getToken } = useAuth();
+    const { user } = useUser();
+    const [repairing, setRepairing] = useState(false);
+
+    // Session repair: if user already onboarded in backend but lacks Clerk metadata, fix it
+    useEffect(() => {
+        const repair = async () => {
+            try {
+                const token = await getToken();
+                if (!token) return;
+
+                const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                const res = await fetch(`${apiBase}/auth/status`, {
+                    cache: "no-store",
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                if (data.has_business || data.has_referrer) {
+                    setRepairing(true);
+                    const role: "business" | "referrer" = data.has_referrer ? "referrer" : "business";
+                    await completeOnboarding(role);
+                    // Reload session token so middleware sees updated claims
+                    await user?.reload();
+                    // Hard redirect so middleware re-evaluates with fresh token
+                    window.location.href = "/dashboard";
+                }
+            } catch {
+                // Silent — user stays on onboarding choice page normally
+            }
+        };
+
+        repair();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    if (repairing) {
+        return (
+            <main className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
+                    <p className="text-zinc-600 font-medium">Restoring your session…</p>
+                </div>
+            </main>
+        );
+    }
+
     return (
         <main className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
             <div className="w-full max-w-4xl">
