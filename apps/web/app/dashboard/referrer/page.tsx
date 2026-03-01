@@ -20,6 +20,7 @@ import { MyTradesTeam } from "@/components/referrer/MyTradesTeam";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { StripeConnectButton } from "@/components/dashboard/StripeConnectButton";
+import { DashboardError } from "@/components/dashboard/DashboardError";
 
 async function getDashboardData() {
     const { userId, getToken } = await auth();
@@ -50,20 +51,7 @@ export default async function ReferrerDashboardPage() {
     const data = await getDashboardData();
 
     if (!data || data.error) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-                <div className="text-center p-8 bg-white rounded-3xl border shadow-sm max-w-md">
-                    <h2 className="text-xl font-bold mb-4 text-zinc-900">Portal Limited</h2>
-                    <p className="text-zinc-500 mb-6 text-sm">We couldn&apos;t connect to your referrer profile. Please try refreshing.</p>
-                    <Button 
-                        onClick={() => window.location.reload()} 
-                        className="bg-orange-500 hover:bg-orange-600 rounded-full px-8"
-                    >
-                        Refresh Dashboard
-                    </Button>
-                </div>
-            </div>
-        );
+        return <DashboardError fetchError={null} />;
     }
 
     const { stats, links, referrer } = data;
