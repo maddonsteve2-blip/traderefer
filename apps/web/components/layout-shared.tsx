@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard } from "lucide-react";
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
@@ -110,7 +110,7 @@ export function Navbar() {
     const [walletBalance, setWalletBalance] = useState<number | null>(null);
     const [showTopUp, setShowTopUp] = useState(false);
 
-    const fetchBalance = async () => {
+    const fetchBalance = useCallback(async () => {
         if (!isSignedIn || !isBusinessDashboard) return;
         try {
             const token = await getToken();
@@ -122,17 +122,19 @@ export function Navbar() {
                 setWalletBalance(data.wallet_balance_cents ?? 0);
             }
         } catch { }
-    };
+    // getToken is intentionally omitted — it is functionally stable from Clerk
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSignedIn, isBusinessDashboard]);
 
     useEffect(() => {
         fetchBalance();
-    }, [isSignedIn, isBusinessDashboard, getToken, pathname]);
+    }, [fetchBalance, pathname]);
 
     useEffect(() => {
         const handler = () => fetchBalance();
         window.addEventListener('wallet-updated', handler);
         return () => window.removeEventListener('wallet-updated', handler);
-    }, [isSignedIn, isBusinessDashboard, getToken]);
+    }, [fetchBalance]);
 
     return (
         <>
