@@ -15,10 +15,10 @@ const sizeMap = {
     xl: { icon: 108, text: "text-5xl", gap: "gap-3" },
 };
 
-function LogoIcon({ size = 28, alt = "TradeRefer" }: { size?: number; alt?: string }) {
+function LogoIcon({ size = 28, alt = "traderefer" }: { size?: number; alt?: string }) {
     return (
         <Image
-            src="/logo.svg"
+            src="/logo.png"
             alt={alt}
             width={size}
             height={size}
@@ -36,14 +36,13 @@ export function Logo({ size = "md", variant = "full", showText, className = "" }
         return <LogoIcon size={s.icon} />;
     }
 
-    const textClassName = variant === "white" ? "text-white" : variant === "orange" ? "text-orange-500" : "text-zinc-900";
+    const textClassName = variant === "white" ? "text-white" : "text-zinc-900";
 
     return (
         <span className={`inline-flex items-center ${s.gap} ${className}`}>
             <LogoIcon size={s.icon} />
             <span className={`${s.text} font-extrabold tracking-tight leading-none ${textClassName}`}>
-                <span className={variant === "orange" ? "text-zinc-900" : ""}>Trade</span>
-                <span className={variant === "orange" ? "text-orange-500" : ""}>Refer</span>
+                traderefer
             </span>
         </span>
     );
