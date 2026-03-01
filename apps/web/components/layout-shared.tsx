@@ -208,9 +208,9 @@ export function Navbar() {
 
     const pathname = usePathname();
 
-    const isDashboard = pathname?.startsWith("/dashboard");
+    const isDashboard = pathname?.startsWith("/dashboard") || pathname?.startsWith("/b/");
 
-    const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
+    const isBusinessDashboard = pathname?.startsWith("/dashboard/business") || pathname?.startsWith("/b/");
 
     const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
 
