@@ -61,8 +61,11 @@ export default async function BusinessDashboardPage() {
                 <div className="text-center p-8 bg-white rounded-3xl border shadow-sm max-w-md">
                     <h2 className="text-xl font-bold mb-4 text-zinc-900">Dashboard Unavailable</h2>
                     <p className="text-zinc-500 mb-6 text-sm">We couldn&apos;t load your business profile. This might be a temporary issue with our connection.</p>
-                    <Button asChild className="bg-orange-500 hover:bg-orange-600 rounded-full px-8">
-                        <Link href="/dashboard/business">Retry Connection</Link>
+                    <Button 
+                        onClick={() => window.location.reload()} 
+                        className="bg-orange-500 hover:bg-orange-600 rounded-full px-8"
+                    >
+                        Retry Connection
                     </Button>
                 </div>
             </div>

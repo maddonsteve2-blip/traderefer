@@ -55,8 +55,11 @@ export default async function ReferrerDashboardPage() {
                 <div className="text-center p-8 bg-white rounded-3xl border shadow-sm max-w-md">
                     <h2 className="text-xl font-bold mb-4 text-zinc-900">Portal Limited</h2>
                     <p className="text-zinc-500 mb-6 text-sm">We couldn&apos;t connect to your referrer profile. Please try refreshing.</p>
-                    <Button asChild className="bg-orange-500 hover:bg-orange-600 rounded-full px-8">
-                        <Link href="/dashboard/referrer">Refresh Dashboard</Link>
+                    <Button 
+                        onClick={() => window.location.reload()} 
+                        className="bg-orange-500 hover:bg-orange-600 rounded-full px-8"
+                    >
+                        Refresh Dashboard
                     </Button>
                 </div>
             </div>
