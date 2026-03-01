@@ -196,8 +196,12 @@ export function EditableProfile({ businessSlug, children }: EditableProfileProps
             {/* Spacer: main navbar (h-16) + secondary owner bar (h-10) */}
             <div className="h-[104px]" />
 
-            {/* Normal view */}
-            {!editMode && children}
+            {/* Normal view — [data-claim-banner] hidden for owners */}
+            {!editMode && (
+                <div className="[&_[data-claim-banner]]:hidden">
+                    {children}
+                </div>
+            )}
 
             {/* Edit mode — same 2-column layout as the real profile page */}
             {editMode && fields && (

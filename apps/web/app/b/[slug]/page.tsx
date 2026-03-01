@@ -26,7 +26,8 @@ import {
     ExternalLink,
     Facebook,
     Twitter,
-    Linkedin
+    Linkedin,
+    Tag
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -66,6 +67,15 @@ async function getGoogleReviews(slug: string) {
     return res.json();
 }
 
+async function getDeals(slug: string) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const res = await fetch(`${apiUrl}/businesses/${slug}/deals`, {
+        cache: 'no-store'
+    });
+    if (!res.ok) return [];
+    return res.json();
+}
+
 export default async function PublicProfilePage({
     params,
     searchParams
@@ -75,10 +85,11 @@ export default async function PublicProfilePage({
 }) {
     const { slug } = await params;
     const { ref: referralCode } = await searchParams;
-    const [business, projects, googleReviews] = await Promise.all([
+    const [business, projects, googleReviews, deals] = await Promise.all([
         getBusiness(slug),
         getProjects(slug),
         getGoogleReviews(slug),
+        getDeals(slug),
     ]);
 
     if (!business) {
@@ -168,7 +179,7 @@ export default async function PublicProfilePage({
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                                         {/* Claim CTA overlay for unclaimed businesses with no cover photo */}
                                         {business.is_claimed === false && !business.cover_photo_url && (
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-zinc-900/60">
+                                            <div data-claim-banner className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-zinc-900/60">
                                                 <p className="text-white text-xs font-black uppercase tracking-widest">This business is unclaimed</p>
                                                 <Link
                                                     href={`/onboarding/business?claim=${business.id}&slug=${slug}`}
@@ -308,9 +319,10 @@ export default async function PublicProfilePage({
                                 )}
                             </div>
 
-                            {/* Claim banner (sidebar) */}
+                            {/* Claim banner (sidebar) — hidden for owners via data-claim-banner */}
                             {business.is_claimed === false && (
                                 <Link
+                                    data-claim-banner
                                     href={`/onboarding/business?claim=${business.id}&slug=${slug}`}
                                     className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-2xl p-4 hover:border-orange-400 hover:bg-orange-100 transition-all group"
                                 >
@@ -320,6 +332,29 @@ export default async function PublicProfilePage({
                                         <p className="text-xs text-orange-600 font-bold group-hover:underline">Claim your free profile →</p>
                                     </div>
                                 </Link>
+                            )}
+
+                            {/* Active Deals */}
+                            {deals.length > 0 && (
+                                <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
+                                    <h3 className="text-xs font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2">
+                                        <Tag className="w-3.5 h-3.5 text-orange-500" /> Special Offers
+                                    </h3>
+                                    {deals.map((deal: any) => (
+                                        <div key={deal.id} className="bg-orange-50 border border-orange-100 rounded-xl p-3 space-y-1">
+                                            {deal.discount_text && (
+                                                <span className="inline-block px-2 py-0.5 bg-orange-500 text-white text-xs font-black rounded-full mb-1">{deal.discount_text}</span>
+                                            )}
+                                            <p className="text-sm font-black text-zinc-900">{deal.title}</p>
+                                            {deal.description && (
+                                                <p className="text-xs text-zinc-500 font-medium leading-snug">{deal.description}</p>
+                                            )}
+                                            {deal.expires_at && (
+                                                <p className="text-xs text-zinc-400 font-bold">Expires {new Date(deal.expires_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                             <BusinessDelistDialog businessId={business.id} businessName={business.business_name} />
                         </div>
