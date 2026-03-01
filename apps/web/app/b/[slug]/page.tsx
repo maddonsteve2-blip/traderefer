@@ -144,24 +144,37 @@ export default async function PublicProfilePage({
                 </div>
 
                 {/* ── HERO SECTION ── */}
-                <div className="bg-white pb-20 relative overflow-hidden text-zinc-900 border-b border-zinc-100">
+                <div className="bg-white border-b border-zinc-100">
 
-                    {business.cover_photo_url && (
-                        <div className="absolute inset-0 opacity-5">
-                            <img src={business.cover_photo_url} alt="" className="w-full h-full object-cover grayscale" />
-                            <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-white" />
-                        </div>
-                    )}
+                    {/* Cover photo banner */}
+                    <div className="relative h-44 md:h-64 overflow-hidden bg-zinc-200">
+                        {business.cover_photo_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                                src={business.cover_photo_url}
+                                alt={`${business.business_name} cover photo`}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-zinc-50 to-zinc-200" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                    </div>
 
-                    <div className="container mx-auto px-4 relative z-10 pt-16">
-                        <div className="flex flex-col md:flex-row gap-12 items-start md:items-end">
-                            {/* Logo */}
-                            <div className="w-36 h-36 md:w-48 md:h-48 bg-zinc-50 rounded-[40px] flex items-center justify-center overflow-hidden border-8 border-white shadow-2xl shadow-zinc-200 shrink-0 group">
-                                <BusinessLogo logoUrl={business.logo_url} name={business.business_name} />
+                    {/* Content — logo pulls up with negative margin over the cover */}
+                    <div className="container mx-auto px-4 pb-10">
+                        <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
+
+                            {/* Logo overlapping cover photo */}
+                            <div className="-mt-10 md:-mt-14 shrink-0 relative z-10">
+                                <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-white border-4 border-white shadow-xl overflow-hidden flex items-center justify-center">
+                                    <BusinessLogo logoUrl={business.logo_url} name={business.business_name} />
+                                </div>
                             </div>
 
-                            <div className="flex-1 space-y-6">
-                                <div className="flex flex-wrap items-center gap-4">
+                            {/* Business info */}
+                            <div className="flex-1 pt-4 space-y-4">
+                                <div className="flex flex-wrap items-center gap-3">
                                     <span className="px-4 py-1.5 bg-zinc-100 text-zinc-600 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200">
                                         {business.trade_category}
                                     </span>
@@ -177,27 +190,28 @@ export default async function PublicProfilePage({
                                         />
                                     )}
                                 </div>
-                                <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight">
+                                <h1 className="text-3xl md:text-5xl font-black leading-tight tracking-tight text-zinc-900">
                                     {business.business_name}
                                 </h1>
-                                <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-400 font-bold">
+                                <div className="flex flex-wrap items-center gap-5 text-sm text-zinc-500 font-bold">
                                     <div className="flex items-center gap-2">
                                         <MapPin className="w-4 h-4 text-orange-500" />
                                         {business.suburb}, {business.state}
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <Star className="w-5 h-5 text-orange-400 fill-orange-400" />
+                                    <div className="flex items-center gap-2">
+                                        <Star className="w-4 h-4 text-orange-400 fill-orange-400" />
                                         {trustScore}/5.0 Trust Score
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex flex-col gap-4 w-full md:w-auto self-start md:self-end">
-                                <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black h-16 px-10 text-xl border-none shadow-lg shadow-orange-200 transition-all active:scale-95">
+                            {/* CTA buttons */}
+                            <div className="flex flex-col gap-3 w-full md:w-auto pt-4 md:self-end">
+                                <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black h-14 px-8 text-lg border-none shadow-lg shadow-orange-200 transition-all active:scale-95">
                                     <Link href="#enquiry-form">Get a Free Quote</Link>
                                 </Button>
-                                <Button asChild variant="outline" size="lg" className="bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 rounded-full font-black h-16 px-10 text-xl shadow-sm">
-                                    <Link href={`/b/${slug}/refer`}>Refer & Earn <ArrowRight className="w-6 h-6 ml-2" /></Link>
+                                <Button asChild variant="outline" size="lg" className="bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 rounded-full font-black h-14 px-8 text-lg shadow-sm">
+                                    <Link href={`/b/${slug}/refer`}>Refer &amp; Earn <ArrowRight className="w-5 h-5 ml-2" /></Link>
                                 </Button>
                             </div>
                         </div>
