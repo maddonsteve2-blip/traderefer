@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { sql } from '@/lib/db';
 import { JOB_TYPES, jobToSlug } from '@/lib/constants';
 
-export const revalidate = 86400; // Regenerate sitemap at most once per 24 hours
+export const dynamic = 'force-dynamic';
 
 const BASE_URL = 'https://traderefer.au';
 const BUSINESS_CHUNK_SIZE = 5000;
