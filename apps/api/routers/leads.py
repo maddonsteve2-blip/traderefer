@@ -10,7 +10,11 @@ from services.email import (
     send_consumer_on_the_way, send_business_lead_unlocked,
     send_referrer_lead_unlocked, send_business_dispute_raised
 )
-from services.sms import send_sms_claimed_new_lead, send_sms_unclaimed_teaser
+from services.sms import (
+    send_sms_claimed_new_lead, send_sms_unclaimed_teaser,
+    send_sms_business_lead_unlocked, send_sms_consumer_lead_confirmation,
+    send_sms_consumer_on_the_way, send_sms_referrer_earning_confirmed,
+)
 import uuid
 import random
 import os
@@ -220,15 +224,22 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
                         suburb=lead.consumer_suburb,
                     )
 
-        # Notify the consumer
-        if lead.consumer_email and biz_row:
-            await send_consumer_lead_confirmation(
-                email=lead.consumer_email,
-                consumer_name=lead.consumer_name,
-                business_name=biz_row["business_name"],
-                trade_category=biz_row["trade_category"],
-                job_description=lead.job_description,
-            )
+        # Notify the consumer (email + SMS)
+        if biz_row:
+            if lead.consumer_email:
+                await send_consumer_lead_confirmation(
+                    email=lead.consumer_email,
+                    consumer_name=lead.consumer_name,
+                    business_name=biz_row["business_name"],
+                    trade_category=biz_row["trade_category"],
+                    job_description=lead.job_description,
+                )
+            if lead.consumer_phone:
+                await send_sms_consumer_lead_confirmation(
+                    phone=lead.consumer_phone,
+                    consumer_name=lead.consumer_name,
+                    business_name=biz_row["business_name"],
+                )
 
         return {"id": str(new_lead_id), "status": "PENDING"}
     except Exception as e:
@@ -428,12 +439,9 @@ async def on_the_way(
     await db.execute(update_query, {"id": lead_id})
     await db.commit()
 
-    # 6. TODO: Trigger SMS via Twilio (Part 4.4)
-    lead_logger.info(f"SMS notification | phone={lead['consumer_phone']} | business={business['id']} | pin={pin}")
-
-    # 7. Email consumer their PIN
+    # 6. Notify consumer: email + SMS with PIN
     consumer_info = await db.execute(
-        text("SELECT consumer_name, consumer_email FROM leads WHERE id = :id"),
+        text("SELECT consumer_name, consumer_email, consumer_phone FROM leads WHERE id = :id"),
         {"id": lead_id}
     )
     consumer_row = consumer_info.mappings().first()
@@ -442,13 +450,23 @@ async def on_the_way(
         {"id": business["id"]}
     )
     biz_name_row = biz_name_res.mappings().first()
-    if consumer_row and consumer_row["consumer_email"] and biz_name_row:
-        send_consumer_on_the_way(
-            email=consumer_row["consumer_email"],
-            consumer_name=consumer_row["consumer_name"],
-            business_name=biz_name_row["business_name"],
-            pin=pin,
-        )
+    if consumer_row and biz_name_row:
+        biz_name = biz_name_row["business_name"]
+        if consumer_row["consumer_email"]:
+            await send_consumer_on_the_way(
+                email=consumer_row["consumer_email"],
+                consumer_name=consumer_row["consumer_name"],
+                business_name=biz_name,
+                pin=pin,
+            )
+        if consumer_row["consumer_phone"]:
+            await send_sms_consumer_on_the_way(
+                phone=consumer_row["consumer_phone"],
+                consumer_name=consumer_row["consumer_name"],
+                business_name=biz_name,
+                pin=pin,
+            )
+    lead_logger.info(f"ON_THE_WAY notifications sent | phone={lead['consumer_phone']} | pin={pin}")
 
     return {"status": "ON_THE_WAY", "expires_at": expires_at.isoformat()}
 
@@ -580,6 +598,24 @@ async def confirm_pin(
 
         await db.commit()
 
+        # SMS + email referrer: earning confirmed
+        if row["referrer_id"] and payout > 0:
+            try:
+                ref_sms_res = await db.execute(
+                    text("SELECT r.phone, r.full_name, b.business_name FROM referrers r, businesses b WHERE r.id = :rid AND b.id = :bid"),
+                    {"rid": row["referrer_id"], "bid": row["business_id"]}
+                )
+                ref_sms_row = ref_sms_res.mappings().first()
+                if ref_sms_row and ref_sms_row["phone"]:
+                    await send_sms_referrer_earning_confirmed(
+                        phone=ref_sms_row["phone"],
+                        full_name=ref_sms_row["full_name"] or "there",
+                        business_name=ref_sms_row["business_name"],
+                        amount_dollars=payout / 100,
+                    )
+            except Exception as sms_err:
+                error_logger.warning(f"Referrer earning SMS error (non-fatal): {sms_err}")
+
         # Send notification to referrer
         if row["referrer_id"] and payout > 0:
             try:
@@ -620,7 +656,7 @@ async def confirm_pin(
                 biz_name_row2 = biz_name_res2.mappings().first()
                 if ref_email_row and ref_email_row["email"]:
                     from services.email import send_referrer_earning_available
-                    send_referrer_earning_available(
+                    await send_referrer_earning_available(
                         email=ref_email_row["email"],
                         full_name=ref_email_row["full_name"] or ref_email_row["email"],
                         amount_dollars=payout / 100,
@@ -644,7 +680,7 @@ async def confirm_pin(
                 biz_slug_row = biz_slug_res.mappings().first()
                 if ref_rev_row and ref_rev_row["email"] and biz_slug_row:
                     from services.email import send_referrer_review_request
-                    send_referrer_review_request(
+                    await send_referrer_review_request(
                         email=ref_rev_row["email"],
                         full_name=ref_rev_row["full_name"] or ref_rev_row["email"],
                         business_name=biz_slug_row["business_name"],
@@ -718,7 +754,7 @@ async def create_dispute(
             )
             biz_email_row = biz_email_res.mappings().first()
             if biz_email_row and biz_email_row["business_email"]:
-                send_business_dispute_raised(
+                await send_business_dispute_raised(
                     email=biz_email_row["business_email"],
                     business_name=biz_email_row["business_name"],
                     lead_id=lead_id,

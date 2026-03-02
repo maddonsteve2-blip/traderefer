@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request, HTTPException, Header, Depends
 from services.stripe_service import StripeService
 from services.database import get_db
 from services.email import send_business_lead_unlocked, send_referrer_lead_unlocked
+from services.sms import send_sms_business_lead_unlocked
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 import stripe
@@ -137,16 +138,31 @@ async def stripe_webhook(
                 WHERE l.id = :id
             """), {"id": lead_id})
             full = full_lead.mappings().first()
-            if full and full["business_email"]:
-                send_business_lead_unlocked(
-                    email=full["business_email"],
-                    business_name=full["business_name"],
-                    consumer_name=full["consumer_name"],
-                    consumer_phone=full["consumer_phone"],
-                    consumer_email=full["consumer_email"],
-                    suburb=full["consumer_suburb"],
-                    job_description=full["job_description"],
+            if full:
+                if full["business_email"]:
+                    await send_business_lead_unlocked(
+                        email=full["business_email"],
+                        business_name=full["business_name"],
+                        consumer_name=full["consumer_name"],
+                        consumer_phone=full["consumer_phone"],
+                        consumer_email=full["consumer_email"],
+                        suburb=full["consumer_suburb"],
+                        job_description=full["job_description"],
+                    )
+                # Also fetch business phone for SMS
+                biz_phone_res = await db.execute(
+                    text("SELECT business_phone FROM businesses WHERE id = :id"),
+                    {"id": business_id}
                 )
+                biz_phone_row = biz_phone_res.mappings().first()
+                if biz_phone_row and biz_phone_row["business_phone"]:
+                    await send_sms_business_lead_unlocked(
+                        phone=biz_phone_row["business_phone"],
+                        business_name=full["business_name"],
+                        consumer_name=full["consumer_name"],
+                        consumer_phone=full["consumer_phone"],
+                        suburb=full["consumer_suburb"],
+                    )
 
             # Email: notify referrer of pending earning
             if referrer_id:
@@ -163,7 +179,7 @@ async def stripe_webhook(
                     )
                     biz_name_row = biz_name_res.mappings().first()
                     available = (datetime.utcnow() + timedelta(days=7)).strftime("%d %b %Y")
-                    send_referrer_lead_unlocked(
+                    await send_referrer_lead_unlocked(
                         email=ref_row["email"],
                         full_name=ref_row["full_name"] or ref_row["email"],
                         business_name=biz_name_row["business_name"] if biz_name_row else "the business",
