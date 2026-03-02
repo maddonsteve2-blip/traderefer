@@ -175,17 +175,17 @@ export default async function CityDirectoryPage({ params }: PageProps) {
                             {totalBusinesses > 0 && (
                                 <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-full px-5 py-2.5">
                                     <Users className="w-4 h-4 text-orange-500" />
-                                    <span className="text-sm font-bold text-zinc-700">{totalBusinesses.toLocaleString()} verified businesses</span>
+                                    <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>{totalBusinesses.toLocaleString()} verified businesses</span>
                                 </div>
                             )}
                             <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-full px-5 py-2.5">
                                 <MapPin className="w-4 h-4 text-orange-500" />
-                                <span className="text-sm font-bold text-zinc-700">{suburbs.length} suburbs covered</span>
+                                <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>{suburbs.length} suburbs covered</span>
                             </div>
                             {referralCount > 0 && (
                                 <div className="flex items-center gap-2 bg-green-50 border border-green-100 rounded-full px-5 py-2.5">
                                     <Clock className="w-4 h-4 text-green-600" />
-                                    <span className="text-sm font-bold text-green-700">{referralCount.toLocaleString()} referrals matched in {cityName} (last 30 days)</span>
+                                    <span className="font-bold text-green-700" style={{ fontSize: '16px' }}>{referralCount.toLocaleString()} referrals matched in {cityName} (last 30 days)</span>
                                 </div>
                             )}
                         </div>
@@ -210,10 +210,10 @@ export default async function CityDirectoryPage({ params }: PageProps) {
                                                 {count > 0 ? (
                                                     <div>
                                                         <span className="text-2xl font-black text-[#FF6600]">{count}</span>
-                                                        <span className="text-sm text-zinc-400 font-bold uppercase tracking-wider ml-2">Verified Pros</span>
+                                                        <span className="text-zinc-400 font-bold uppercase tracking-wider ml-2" style={{ fontSize: '16px' }}>Verified Pros</span>
                                                     </div>
                                                 ) : (
-                                                    <p className="text-sm text-zinc-400 font-medium">Browse trades</p>
+                                                    <p className="text-zinc-400 font-medium" style={{ fontSize: '16px' }}>Browse trades</p>
                                                 )}
                                             </div>
                                         </Link>
@@ -226,15 +226,15 @@ export default async function CityDirectoryPage({ params }: PageProps) {
                         <div className="flex flex-wrap items-center gap-6 bg-white rounded-2xl border border-zinc-200 p-6">
                             <div className="flex items-center gap-2">
                                 <ShieldCheck className="w-5 h-5 text-green-500" />
-                                <span className="text-sm font-bold text-zinc-700">100% ABN verified</span>
+                                <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>100% ABN verified</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Users className="w-5 h-5 text-orange-500" />
-                                <span className="text-sm font-bold text-zinc-700">Community-ranked, not paid ads</span>
+                                <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>Community-ranked, not paid ads</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <MapPin className="w-5 h-5 text-blue-500" />
-                                <span className="text-sm font-bold text-zinc-700">Local experts only</span>
+                                <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>Local experts only</span>
                             </div>
                         </div>
 

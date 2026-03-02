@@ -212,14 +212,14 @@ export default async function BusinessDirectory({
     const hasFilters = category || suburb || q || state || city;
 
     return (
-        <main className="flex-1 pt-24 pb-12 bg-zinc-50 min-h-screen">
+        <main className="flex-1 pt-20 md:pt-28 pb-12 bg-zinc-50 min-h-screen">
             <div className="container mx-auto px-4">
                 <Suspense fallback={null}><BackToDashboard /></Suspense>
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-zinc-900 mb-2 font-display">Business Directory</h1>
                         <p className="text-zinc-600">Find the best local trades recommended by people you trust.</p>
-                        <p className="text-sm font-medium text-orange-600 mt-2">
+                        <p className="font-bold text-orange-600 mt-2" style={{ fontSize: '16px' }}>
                             {total > 0
                                 ? `Showing ${(page - 1) * PAGE_SIZE + 1}–${Math.min(page * PAGE_SIZE, total)} of ${total} ${total === 1 ? 'business' : 'businesses'}${hasFilters ? ' for your search' : ''}`
                                 : `No businesses found${hasFilters ? ' for your search' : ''}`
@@ -240,7 +240,7 @@ export default async function BusinessDirectory({
                 {nearbyFallback && suburb && (
                     <div className="mb-6 flex items-center gap-3 bg-orange-50 border border-orange-100 rounded-2xl px-5 py-3.5">
                         <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
-                        <p className="text-sm font-medium text-orange-700">
+                        <p className="font-bold text-orange-700" style={{ fontSize: '16px' }}>
                             No businesses found in <span className="font-bold">{suburb}</span> — showing nearest results from <span className="font-bold">{nearbyFallback}</span>, sorted by distance.
                         </p>
                     </div>
@@ -261,11 +261,11 @@ export default async function BusinessDirectory({
                                                     {biz.business_name}
                                                 </h3>
                                             </Link>
-                                            <div className="flex items-center gap-1.5 text-sm text-zinc-500 font-medium">
+                                            <div className="flex items-center gap-1.5 font-bold text-zinc-500" style={{ fontSize: '16px' }}>
                                                 <span className="text-orange-600">{biz.trade_category}</span>
                                                 <span>•</span>
                                                 <span className="flex items-center gap-1">
-                                                    <MapPin className="w-3 h-3" />
+                                                    <MapPin className="w-3.5 h-3.5" />
                                                     {biz.suburb}
                                                 </span>
                                             </div>
@@ -283,44 +283,42 @@ export default async function BusinessDirectory({
                                         <div className="flex items-center gap-0.5 text-orange-500">
                                             <Star className="w-4 h-4 fill-current" />
                                         </div>
-                                        <span className="text-sm font-bold text-zinc-900">{biz.connection_rate}% connection rate</span>
-                                        <span className="text-sm text-zinc-400">• {biz.total_confirmed} verified leads</span>
+                                        <span className="font-bold text-zinc-900" style={{ fontSize: '16px' }}>{biz.connection_rate}% connection rate</span>
+                                        <span className="text-zinc-400" style={{ fontSize: '16px' }}>• {biz.total_confirmed} verified leads</span>
                                     </div>
-                                    <p className="text-sm text-zinc-600 line-clamp-2 leading-relaxed h-10">
+                                    <p className="text-zinc-600 line-clamp-2 leading-relaxed" style={{ fontSize: '16px' }}>
                                         {biz.description || `Expert ${biz.trade_category} serving the ${biz.suburb} area. High quality workmanship and reliable service.`}
                                     </p>
                                 </div>
 
                                 <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-bold border border-green-100">
-                                            <DollarSign className="w-3 h-3" />
+                                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full font-bold border border-green-100" style={{ fontSize: '16px' }}>
+                                            <DollarSign className="w-3.5 h-3.5" />
                                             ${((biz.referral_fee_cents || 1000) / 100).toFixed(0)} per lead
                                         </div>
                                         {Number(biz.deal_count) > 0 && (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-sm font-bold border border-orange-100">
-                                                <Gift className="w-3 h-3" />
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full font-bold border border-orange-100" style={{ fontSize: '16px' }}>
+                                                <Gift className="w-3.5 h-3.5" />
                                                 {biz.deal_count} {Number(biz.deal_count) === 1 ? 'deal' : 'deals'}
                                             </div>
                                         )}
                                         {biz.avg_response_minutes != null && biz.avg_response_minutes <= 120 && (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-bold border border-blue-100">
-                                                <Zap className="w-3 h-3" />
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full font-bold border border-blue-100" style={{ fontSize: '16px' }}>
+                                                <Zap className="w-3.5 h-3.5" />
                                                 {biz.avg_response_minutes < 60 ? `< ${biz.avg_response_minutes}m` : `< ${Math.ceil(biz.avg_response_minutes / 60)}h`} response
                                             </div>
                                         )}
                                         {Number(biz.campaign_count) > 0 && (
-                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-full text-sm font-bold border border-red-100 animate-pulse">
-                                                <Flame className="w-3 h-3" />
+                                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 rounded-full font-bold border border-red-100 animate-pulse" style={{ fontSize: '16px' }}>
+                                                <Flame className="w-3.5 h-3.5" />
                                                 Bonus active
                                             </div>
                                         )}
                                     </div>
-                                    <Button asChild className="bg-zinc-900 hover:bg-black text-white rounded-full px-5 group/btn h-10">
-                                        <Link href={`/b/${biz.slug}/refer`}>
-                                            Start Referring <ChevronRight className="ml-1 w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-                                        </Link>
-                                    </Button>
+                                    <Link href={`/b/${biz.slug}/refer`} className="bg-[#1A1A1A] hover:bg-black text-white font-black rounded-full px-6 inline-flex items-center justify-center gap-1.5 transition-colors" style={{ minHeight: '48px', fontSize: '16px' }}>
+                                        Start Referring <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -348,11 +346,11 @@ export default async function BusinessDirectory({
                         {/* Prev */}
                         {page > 1 ? (
                             <Link href={buildPageUrl(params, page - 1)}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 transition-all">
+                                className="inline-flex items-center gap-1.5 px-5 py-3 bg-white border-2 border-zinc-200 rounded-xl font-bold text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 transition-all" style={{ fontSize: '16px' }}>
                                 <ChevronLeft className="w-4 h-4" /> Prev
                             </Link>
                         ) : (
-                            <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-xl text-sm font-bold text-zinc-300 cursor-not-allowed">
+                            <span className="inline-flex items-center gap-1.5 px-5 py-3 bg-zinc-50 border border-zinc-100 rounded-xl font-bold text-zinc-300 cursor-not-allowed" style={{ fontSize: '16px' }}>
                                 <ChevronLeft className="w-4 h-4" /> Prev
                             </span>
                         )}
@@ -368,14 +366,14 @@ export default async function BusinessDirectory({
                                 }, [])
                                 .map((p, idx) =>
                                     p === "..." ? (
-                                        <span key={`ellipsis-${idx}`} className="px-2 text-zinc-400 text-sm font-bold">…</span>
+                                        <span key={`ellipsis-${idx}`} className="px-2 text-zinc-400 font-bold" style={{ fontSize: '16px' }}>…</span>
                                     ) : (
                                         <Link key={p} href={buildPageUrl(params, p as number)}
-                                            className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                                            className={`w-12 h-12 flex items-center justify-center rounded-xl font-bold transition-all ${
                                                 p === page
                                                     ? "bg-orange-500 text-white shadow-sm"
                                                     : "bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
-                                            }`}>
+                                            }`} style={{ fontSize: '16px' }}>
                                             {p}
                                         </Link>
                                     )
@@ -386,11 +384,11 @@ export default async function BusinessDirectory({
                         {/* Next */}
                         {page < totalPages ? (
                             <Link href={buildPageUrl(params, page + 1)}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 transition-all">
+                                className="inline-flex items-center gap-1.5 px-5 py-3 bg-white border-2 border-zinc-200 rounded-xl font-bold text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300 transition-all" style={{ fontSize: '16px' }}>
                                 Next <ChevronRight className="w-4 h-4" />
                             </Link>
                         ) : (
-                            <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-zinc-50 border border-zinc-100 rounded-xl text-sm font-bold text-zinc-300 cursor-not-allowed">
+                            <span className="inline-flex items-center gap-1.5 px-5 py-3 bg-zinc-50 border border-zinc-100 rounded-xl font-bold text-zinc-300 cursor-not-allowed" style={{ fontSize: '16px' }}>
                                 Next <ChevronRight className="w-4 h-4" />
                             </span>
                         )}

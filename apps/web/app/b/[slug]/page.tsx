@@ -150,14 +150,14 @@ export default async function PublicProfilePage({
                 />
 
                 {/* ── BREADCRUMBS ── */}
-                <div className="bg-white border-b border-zinc-100 pt-20 pb-3">
+                <div className="bg-white border-b border-zinc-100 pt-20 md:pt-28 pb-3">
                     <div className="container mx-auto px-4">
-                        <nav className="flex items-center gap-2 text-sm font-bold text-zinc-400 uppercase tracking-widest">
+                        <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>
                             <Link href="/" className="hover:text-zinc-900 transition-colors">Home</Link>
-                            <ChevronRight className="w-3.5 h-3.5" />
+                            <ChevronRight className="w-4 h-4" />
                             <Link href="/businesses" className="hover:text-zinc-900 transition-colors">Directory</Link>
-                            <ChevronRight className="w-3.5 h-3.5" />
-                            <span className="text-orange-600">{business.business_name}</span>
+                            <ChevronRight className="w-4 h-4" />
+                            <span className="text-[#FF6600]">{business.business_name}</span>
                         </nav>
                     </div>
                 </div>
@@ -188,10 +188,10 @@ export default async function PublicProfilePage({
                                         {/* Claim CTA overlay for unclaimed businesses with no cover photo */}
                                         {business.is_claimed === false && !business.cover_photo_url && (
                                             <div data-claim-banner className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-zinc-900/60">
-                                                <p className="text-white text-xs font-black uppercase tracking-widest">This business is unclaimed</p>
+                                                <p className="text-white font-black uppercase tracking-widest" style={{ fontSize: '16px' }}>This business is unclaimed</p>
                                                 <Link
                                                     href={`/onboarding/business?claim=${business.id}&slug=${slug}`}
-                                                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-lg"
+                                                    className="px-5 py-3 bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-full font-black uppercase tracking-widest transition-all shadow-lg" style={{ fontSize: '16px' }}
                                                 >
                                                     Claim This Business
                                                 </Link>
@@ -210,11 +210,11 @@ export default async function PublicProfilePage({
                                 {/* Business info */}
                                 <div className="pt-10 px-5 pb-5 space-y-3">
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200">
+                                        <span className="px-3 py-1.5 bg-zinc-100 text-zinc-600 rounded-full font-black uppercase tracking-widest border border-zinc-200" style={{ fontSize: '16px' }}>
                                             {business.trade_category}
                                         </span>
                                         {business.is_verified && (
-                                            <span className="flex items-center gap-1.5 px-3 py-1 bg-orange-600 text-white rounded-full text-xs font-black uppercase tracking-widest">
+                                            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FF6600] text-white rounded-full font-black uppercase tracking-widest" style={{ fontSize: '16px' }}>
                                                 <ShieldCheck className="w-3.5 h-3.5" /> Verified
                                             </span>
                                         )}
@@ -230,27 +230,27 @@ export default async function PublicProfilePage({
                                                 <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(Number(trustScore)) ? 'fill-orange-400 text-orange-400' : 'fill-zinc-200 text-zinc-200'}`} />
                                             ))}
                                         </div>
-                                        <span className="text-sm font-black text-zinc-700">{trustScore}</span>
+                                        <span className="font-black text-zinc-700" style={{ fontSize: '16px' }}>{trustScore}</span>
                                         {reviewCount > 0 && (
-                                            <span className="text-xs text-zinc-400 font-medium">({reviewCount})</span>
+                                            <span className="text-zinc-400 font-medium" style={{ fontSize: '16px' }}>({reviewCount})</span>
                                         )}
                                     </div>
 
-                                    <div className="flex items-center gap-2 text-sm text-zinc-500 font-medium">
-                                        <MapPin className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                                    <div className="flex items-center gap-2 font-bold text-zinc-600" style={{ fontSize: '16px' }}>
+                                        <MapPin className="w-4 h-4 text-[#FF6600] shrink-0" />
                                         {business.suburb}, {business.state}
                                     </div>
 
                                     {memberSinceYear && (
-                                        <div className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
-                                            <Clock className="w-3.5 h-3.5 shrink-0" />
+                                        <div className="flex items-center gap-2 font-medium text-zinc-500" style={{ fontSize: '16px' }}>
+                                            <Clock className="w-4 h-4 shrink-0" />
                                             Member since {memberSinceYear}
                                         </div>
                                     )}
 
                                     {business.years_experience && (
-                                        <div className="flex items-center gap-2 text-sm text-zinc-400 font-medium">
-                                            <Award className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+                                        <div className="flex items-center gap-2 font-medium text-zinc-500" style={{ fontSize: '16px' }}>
+                                            <Award className="w-4 h-4 text-[#FF6600] shrink-0" />
                                             {business.years_experience} experience
                                         </div>
                                     )}
@@ -259,25 +259,21 @@ export default async function PublicProfilePage({
 
                             {/* CTA Buttons */}
                             <div className="space-y-2">
-                                <Button asChild size="lg" className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black h-12 text-base border-none shadow-md shadow-orange-200 transition-all active:scale-95">
-                                    <Link href="#enquiry-form">Get a Free Quote</Link>
-                                </Button>
-                                <Button asChild variant="outline" size="lg" className="w-full bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50 rounded-xl font-black h-12 text-base shadow-sm">
-                                    <Link href={`/b/${slug}/refer`}>Refer &amp; Earn <ArrowRight className="w-4 h-4 ml-2" /></Link>
-                                </Button>
+                                <Link href="#enquiry-form" className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 transition-all active:scale-95 flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>Get a Free Quote</Link>
+                                <Link href={`/b/${slug}/refer`} className="w-full bg-white border-2 border-zinc-200 text-zinc-700 hover:bg-zinc-50 rounded-xl font-black shadow-sm flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '16px' }}>Refer &amp; Earn <ArrowRight className="w-4 h-4" /></Link>
                             </div>
 
                             {/* Contact details */}
                             <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-4">
-                                <h3 className="text-xs font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100">Contact & Location</h3>
+                                <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100" style={{ fontSize: '16px' }}>Contact &amp; Location</h3>
                                 {business.business_phone && (
                                     <a href={`tel:${business.business_phone}`} className="flex items-center gap-3 group">
                                         <div className="w-9 h-9 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0">
                                             <Phone className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Phone</p>
-                                            <p className="text-sm font-black text-orange-600">{business.business_phone}</p>
+                                            <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>Phone</p>
+                                            <p className="font-black text-[#FF6600]" style={{ fontSize: '16px' }}>{business.business_phone}</p>
                                         </div>
                                     </a>
                                 )}
@@ -287,8 +283,8 @@ export default async function PublicProfilePage({
                                             <MapPin className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Address</p>
-                                            <p className="text-sm font-bold text-zinc-700 leading-snug">{business.address}</p>
+                                            <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>Address</p>
+                                            <p className="font-bold text-zinc-700 leading-snug" style={{ fontSize: '16px' }}>{business.address}</p>
                                         </div>
                                     </div>
                                 )}
@@ -298,8 +294,8 @@ export default async function PublicProfilePage({
                                             <Globe className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Website</p>
-                                            <p className="text-sm font-bold text-orange-600 flex items-center gap-1">Visit Site <ExternalLink className="w-3.5 h-3.5" /></p>
+                                            <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>Website</p>
+                                            <p className="font-bold text-[#FF6600] flex items-center gap-1" style={{ fontSize: '16px' }}>Visit Site <ExternalLink className="w-4 h-4" /></p>
                                         </div>
                                     </a>
                                 )}
@@ -309,8 +305,8 @@ export default async function PublicProfilePage({
                                             <Mail className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Email</p>
-                                            <p className="text-sm font-bold text-zinc-700 break-all">{business.business_email}</p>
+                                            <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>Email</p>
+                                            <p className="font-bold text-zinc-700 break-all" style={{ fontSize: '16px' }}>{business.business_email}</p>
                                         </div>
                                     </a>
                                 )}
@@ -320,8 +316,8 @@ export default async function PublicProfilePage({
                                             <Briefcase className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">ABN</p>
-                                            <p className="text-sm font-bold text-zinc-700 uppercase tracking-widest">{business.abn}</p>
+                                            <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>ABN</p>
+                                            <p className="font-bold text-zinc-700 uppercase tracking-widest" style={{ fontSize: '16px' }}>{business.abn}</p>
                                         </div>
                                     </div>
                                 )}
@@ -336,8 +332,8 @@ export default async function PublicProfilePage({
                                 >
                                     <ShieldCheck className="w-5 h-5 text-orange-500 shrink-0" />
                                     <div>
-                                        <p className="text-sm font-black text-orange-800">Own this business?</p>
-                                        <p className="text-xs text-orange-600 font-bold group-hover:underline">Claim your free profile →</p>
+                                        <p className="font-black text-orange-800" style={{ fontSize: '16px' }}>Own this business?</p>
+                                        <p className="text-[#FF6600] font-bold group-hover:underline" style={{ fontSize: '16px' }}>Claim your free profile →</p>
                                     </div>
                                 </Link>
                             )}
@@ -345,20 +341,20 @@ export default async function PublicProfilePage({
                             {/* Active Deals */}
                             {deals.length > 0 && (
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
-                                    <h3 className="text-xs font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2">
-                                        <Tag className="w-3.5 h-3.5 text-orange-500" /> Special Offers
+                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2" style={{ fontSize: '16px' }}>
+                                        <Tag className="w-4 h-4 text-[#FF6600]" /> Special Offers
                                     </h3>
                                     {deals.map((deal: any) => (
-                                        <div key={deal.id} className="bg-orange-50 border border-orange-100 rounded-xl p-3 space-y-1">
+                                        <div key={deal.id} className="bg-orange-50 border border-orange-100 rounded-xl p-4 space-y-1">
                                             {deal.discount_text && (
-                                                <span className="inline-block px-2 py-0.5 bg-orange-500 text-white text-xs font-black rounded-full mb-1">{deal.discount_text}</span>
+                                                <span className="inline-block px-3 py-1 bg-[#FF6600] text-white font-black rounded-full mb-1" style={{ fontSize: '16px' }}>{deal.discount_text}</span>
                                             )}
-                                            <p className="text-sm font-black text-zinc-900">{deal.title}</p>
+                                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>{deal.title}</p>
                                             {deal.description && (
-                                                <p className="text-xs text-zinc-500 font-medium leading-snug">{deal.description}</p>
+                                                <p className="text-zinc-600 font-medium" style={{ fontSize: '16px', lineHeight: 1.5 }}>{deal.description}</p>
                                             )}
                                             {deal.expires_at && (
-                                                <p className="text-xs text-zinc-400 font-bold">Expires {new Date(deal.expires_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                                <p className="text-zinc-500 font-bold" style={{ fontSize: '16px' }}>Expires {new Date(deal.expires_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                                             )}
                                         </div>
                                     ))}
@@ -379,10 +375,10 @@ export default async function PublicProfilePage({
 
                             {/* About */}
                             <section id="about" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
+                                <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3" style={{ fontSize: '16px' }}>
                                     <div className="w-6 h-px bg-zinc-200" /> About the Business
                                 </h2>
-                                <p className="text-base text-zinc-700 leading-relaxed font-medium">
+                                <p className="text-zinc-700 font-medium" style={{ fontSize: '18px', lineHeight: 1.7 }}>
                                     {business.description || (
                                         <>
                                             {business.business_name} is a highly-rated {business.trade_category} specialist serving {business.suburb} and the wider {business.city || 'region'}.
@@ -394,7 +390,7 @@ export default async function PublicProfilePage({
                                 {allFeatures.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mt-5">
                                         {allFeatures.map((feature: string) => (
-                                            <div key={feature} className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-black text-zinc-700 flex items-center gap-2 hover:border-orange-200 transition-all">
+                                            <div key={feature} className="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-lg font-black text-zinc-700 flex items-center gap-2 hover:border-orange-200 transition-all" style={{ fontSize: '16px' }}>
                                                 <div className="w-1.5 h-1.5 bg-orange-500 rounded-full shrink-0" />
                                                 {feature}
                                             </div>
@@ -406,15 +402,15 @@ export default async function PublicProfilePage({
                             {/* Services & Expertise */}
                             {(business.services?.length > 0 || business.specialties?.length > 0) && (
                                 <section id="services" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                    <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
+                                    <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3" style={{ fontSize: '16px' }}>
                                         <div className="w-6 h-px bg-zinc-200" /> Expertise &amp; Services
                                     </h2>
                                     {business.services?.length > 0 && (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
                                             {business.services.map((service: string) => (
-                                                <div key={service} className="flex items-center gap-3 p-3 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-orange-200 hover:bg-white transition-all">
-                                                    <CheckCircle2 className="w-4 h-4 text-orange-500 shrink-0" />
-                                                    <span className="text-sm text-zinc-800 font-bold">{service}</span>
+                                                <div key={service} className="flex items-center gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-orange-200 hover:bg-white transition-all">
+                                                    <CheckCircle2 className="w-5 h-5 text-[#FF6600] shrink-0" />
+                                                    <span className="text-zinc-800 font-bold" style={{ fontSize: '16px' }}>{service}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -422,7 +418,7 @@ export default async function PublicProfilePage({
                                     {business.specialties?.length > 0 && (
                                         <div className="flex flex-wrap gap-2 mt-3">
                                             {business.specialties.map((spec: string) => (
-                                                <div key={spec} className="px-3 py-1.5 bg-orange-50 border border-orange-100 text-orange-800 rounded-lg text-xs font-black hover:bg-orange-100 transition-all">
+                                                <div key={spec} className="px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-lg font-black hover:bg-orange-100 transition-all" style={{ fontSize: '16px' }}>
                                                     {spec}
                                                 </div>
                                             ))}
@@ -434,9 +430,9 @@ export default async function PublicProfilePage({
                             {/* Project Gallery */}
                             {business.photo_urls?.length > 0 && (
                                 <section id="gallery" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                    <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between">
+                                    <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between" style={{ fontSize: '16px' }}>
                                         <span className="flex items-center gap-3"><div className="w-6 h-px bg-zinc-200" /> Project Gallery</span>
-                                        <span className="text-xs font-bold text-zinc-300 normal-case tracking-normal">{business.trade_category}</span>
+                                        <span className="font-bold text-zinc-300 normal-case tracking-normal" style={{ fontSize: '16px' }}>{business.trade_category}</span>
                                     </h2>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                         {business.photo_urls.map((url: string, i: number) => (
@@ -452,26 +448,26 @@ export default async function PublicProfilePage({
 
                             {/* Trust & Reliability */}
                             <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
-                                <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3">
+                                <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3" style={{ fontSize: '16px' }}>
                                     <div className="w-6 h-px bg-zinc-200" /> Trust &amp; Reliability
                                 </h2>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100">
                                         <p className="text-3xl font-black text-zinc-900">{trustScore}</p>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mt-1">TradeRefer Score</p>
+                                        <p className="font-black text-zinc-400 uppercase tracking-widest mt-1" style={{ fontSize: '16px' }}>TradeRefer Score</p>
                                     </div>
                                     <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100 flex flex-col items-center justify-center">
                                         <div className="flex items-center text-orange-400 mb-1">
                                             {[...Array(5)].map((_, i) => (
-                                                <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(googleRating || 5) ? 'fill-current' : 'opacity-30'}`} />
+                                                <Star key={i} className={`w-4 h-4 ${i < Math.floor(googleRating || 5) ? 'fill-current' : 'opacity-30'}`} />
                                             ))}
                                         </div>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Google</p>
-                                        <p className="text-xs text-zinc-400 mt-0.5">{reviewCount} reviews</p>
+                                        <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>Google</p>
+                                        <p className="text-zinc-400 mt-0.5" style={{ fontSize: '16px' }}>{reviewCount} reviews</p>
                                     </div>
                                     <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100">
                                         <p className="text-3xl font-black text-zinc-900">{jobsCompleted}</p>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mt-1">Connections</p>
+                                        <p className="font-black text-zinc-400 uppercase tracking-widest mt-1" style={{ fontSize: '16px' }}>Connections</p>
                                     </div>
                                 </div>
                             </section>
@@ -479,12 +475,12 @@ export default async function PublicProfilePage({
                             {/* Google Reviews */}
                             {googleReviews.length > 0 && (
                                 <section id="reviews" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                    <h2 className="text-xs font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between">
+                                    <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between" style={{ fontSize: '16px' }}>
                                         <span className="flex items-center gap-3"><div className="w-6 h-px bg-zinc-200" /> Google Reviews</span>
-                                        <span className="flex items-center gap-1.5 text-orange-500">
-                                            <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                                            <span className="text-zinc-900 font-black text-sm">{googleRating}</span>
-                                            <span className="text-zinc-400 text-xs">({reviewCount})</span>
+                                        <span className="flex items-center gap-1.5 text-[#FF6600]">
+                                            <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
+                                            <span className="text-zinc-900 font-black" style={{ fontSize: '16px' }}>{googleRating}</span>
+                                            <span className="text-zinc-400" style={{ fontSize: '16px' }}>({reviewCount})</span>
                                         </span>
                                     </h2>
                                     <div className="space-y-4">
@@ -492,12 +488,12 @@ export default async function PublicProfilePage({
                                             <div key={review.id} className="p-5 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-orange-100 hover:bg-white hover:shadow-sm transition-all">
                                                 <div className="flex items-start justify-between gap-3 mb-3">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-black text-sm shrink-0">
+                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-[#FF6600] flex items-center justify-center text-white font-black shrink-0" style={{ fontSize: '18px' }}>
                                                             {(review.profile_name || 'A')[0].toUpperCase()}
                                                         </div>
                                                         <div>
-                                                            <p className="font-black text-zinc-900 text-sm leading-none">{review.profile_name || 'Google Reviewer'}</p>
-                                                            <p className="text-xs text-zinc-400 font-medium mt-0.5">Google Review</p>
+                                                            <p className="font-black text-zinc-900 leading-none" style={{ fontSize: '16px' }}>{review.profile_name || 'Google Reviewer'}</p>
+                                                            <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: '16px' }}>Google Review</p>
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center gap-0.5 shrink-0">
@@ -507,12 +503,12 @@ export default async function PublicProfilePage({
                                                     </div>
                                                 </div>
                                                 {review.review_text && (
-                                                    <p className="text-zinc-600 text-sm leading-relaxed">&ldquo;{review.review_text}&rdquo;</p>
+                                                    <p className="text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.6 }}>&ldquo;{review.review_text}&rdquo;</p>
                                                 )}
                                                 {review.owner_answer && (
                                                     <div className="mt-3 pl-4 border-l-2 border-orange-200">
-                                                        <p className="text-xs font-black text-orange-600 uppercase tracking-widest mb-1">Owner Response</p>
-                                                        <p className="text-zinc-500 text-xs leading-relaxed">{review.owner_answer}</p>
+                                                        <p className="font-black text-[#FF6600] uppercase tracking-widest mb-1" style={{ fontSize: '16px' }}>Owner Response</p>
+                                                        <p className="text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.6 }}>{review.owner_answer}</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -523,8 +519,8 @@ export default async function PublicProfilePage({
 
                             {/* Enquiry Form */}
                             <div id="enquiry-form" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                <h3 className="text-lg font-black text-zinc-900 mb-1">Get a Free Quote</h3>
-                                <p className="text-sm text-zinc-400 mb-6 italic">Expect a response within 24 hours.</p>
+                                <h3 className="font-black text-zinc-900 mb-1" style={{ fontSize: '24px' }}>Get a Free Quote</h3>
+                                <p className="text-zinc-500 mb-6 italic" style={{ fontSize: '16px' }}>Expect a response within 24 hours.</p>
                                 <LeadForm businessName={business.business_name} businessId={business.id} referralCode={referralCode} />
                             </div>
 
@@ -532,11 +528,9 @@ export default async function PublicProfilePage({
                             <div className="bg-orange-50 border border-orange-100 rounded-2xl p-7 relative overflow-hidden">
                                 <Zap className="absolute -bottom-8 -right-8 w-36 h-36 text-orange-300/30 rotate-12" />
                                 <div className="relative z-10">
-                                    <h3 className="text-lg font-black text-zinc-900 mb-2">Refer &amp; Earn</h3>
-                                    <p className="text-zinc-600 text-sm mb-5 leading-relaxed">Know someone who needs {business.trade_category} services? Refer {business.business_name} and earn a reward when the job closes.</p>
-                                    <Button asChild size="lg" className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black h-12 text-base border-none shadow-md shadow-orange-200">
-                                        <Link href={`/b/${slug}/refer`}>Get Referral Link <Share2 className="w-5 h-5 ml-2" /></Link>
-                                    </Button>
+                                    <h3 className="font-black text-zinc-900 mb-2" style={{ fontSize: '24px' }}>Refer &amp; Earn</h3>
+                                    <p className="text-zinc-700 mb-5" style={{ fontSize: '18px', lineHeight: 1.6 }}>Know someone who needs {business.trade_category} services? Refer {business.business_name} and earn a reward when the job closes.</p>
+                                    <Link href={`/b/${slug}/refer`} className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '18px' }}>Get Referral Link <Share2 className="w-5 h-5" /></Link>
                                 </div>
                             </div>
                         </div>

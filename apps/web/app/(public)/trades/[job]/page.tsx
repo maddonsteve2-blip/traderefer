@@ -172,38 +172,38 @@ export default async function TradeHubPage({ params }: PageProps) {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
             {/* Hero */}
-            <div className="bg-zinc-900 pt-32 pb-20 text-white">
+            <div className="bg-[#1A1A1A] pt-32 pb-20 text-white">
                 <div className="container mx-auto px-4">
-                    <nav className="flex flex-wrap items-center gap-2 text-xs font-bold text-zinc-500 uppercase tracking-widest mb-8">
+                    <nav className="flex flex-wrap items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest mb-8" style={{ fontSize: '16px' }}>
                         <Link href="/" className="hover:text-white transition-colors">Home</Link>
-                        <ChevronRight className="w-3 h-3" />
+                        <ChevronRight className="w-4 h-4" />
                         <Link href="/local" className="hover:text-white transition-colors">Directory</Link>
-                        <ChevronRight className="w-3 h-3" />
-                        <span className="text-orange-400">{jobName} Cost Guide</span>
+                        <ChevronRight className="w-4 h-4" />
+                        <span className="text-[#FF6600]">{jobName} Cost Guide</span>
                     </nav>
 
                     <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-1.5 text-xs font-black text-orange-400 uppercase tracking-widest mb-6">
-                            <Wrench className="w-3 h-3" />
+                        <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: '16px' }}>
+                            <Wrench className="w-4 h-4" />
                             Australia-Wide Cost Guide · {year}
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
-                            How Much Does <span className="text-orange-500">{jobName}</span> Cost in Australia?
+                        <h1 className="font-black mb-6 leading-[1.1] font-display" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
+                            How Much Does <span className="text-[#FF6600]">{jobName}</span> Cost in Australia?
                         </h1>
-                        <p className="text-xl text-zinc-400 mb-6 leading-relaxed">
+                        <p className="text-zinc-400 mb-6" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             {jobName} costs vary significantly across Australia depending on your state, the complexity of the work, and local market conditions.
                             {cost && ` Typical ${tradeName!.toLowerCase()} rates range from $${cost.low}–$${cost.high}${cost.unit} nationally.`}
                             {" "}Use this guide to understand what to expect, how to compare quotes, and find verified local specialists near you.
                         </p>
                         {totalBusinesses > 0 && (
-                            <div className="flex flex-wrap gap-6 text-sm text-zinc-400 font-medium">
+                            <div className="flex flex-wrap gap-6 text-white font-bold" style={{ fontSize: '16px' }}>
                                 <span className="flex items-center gap-1.5">
-                                    <Users className="w-4 h-4 text-orange-500" />
+                                    <Users className="w-4 h-4 text-[#FF6600]" />
                                     {totalBusinesses.toLocaleString()} verified {tradeName!.toLowerCase()} across Australia
                                 </span>
                                 <span className="flex items-center gap-1.5">
-                                    <MapPin className="w-4 h-4 text-orange-500" />
-                                    Available in {Object.keys(countsByState).length} states & territories
+                                    <MapPin className="w-4 h-4 text-[#FF6600]" />
+                                    Available in {Object.keys(countsByState).length} states &amp; territories
                                 </span>
                             </div>
                         )}
@@ -217,58 +217,58 @@ export default async function TradeHubPage({ params }: PageProps) {
                     {/* National Pricing Overview */}
                     {cost && (
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                            <h2 className="text-2xl font-black text-zinc-900 mb-2 flex items-center gap-2">
-                                <DollarSign className="w-6 h-6 text-orange-500" />
+                            <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: '32px' }}>
+                                <DollarSign className="w-6 h-6 text-[#FF6600]" />
                                 {jobName} Cost Guide Australia {year}
                             </h2>
-                            <p className="text-zinc-500 mb-8 text-sm leading-relaxed">
+                            <p className="text-zinc-500 mb-8" style={{ fontSize: '16px', lineHeight: 1.6 }}>
                                 The following pricing is based on national industry averages. Costs may be 10–20% higher in capital cities (Sydney, Melbourne) and lower in regional areas. Always get 2–3 written quotes before committing to any {tradeName!.toLowerCase()} work.
                             </p>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                                 <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                    <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">National Average</p>
+                                    <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>National Average</p>
                                     <p className="text-3xl font-black text-zinc-900">${cost.low}–${cost.high}</p>
-                                    <p className="text-sm text-zinc-500">{cost.unit}</p>
+                                    <p className="text-zinc-500" style={{ fontSize: '16px' }}>{cost.unit}</p>
                                 </div>
                                 <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                    <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Emergency / After-Hours</p>
+                                    <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>Emergency / After-Hours</p>
                                     <p className="text-3xl font-black text-zinc-900">${Math.round(cost.high * 1.5)}</p>
-                                    <p className="text-sm text-zinc-500">Estimated peak rate</p>
+                                    <p className="text-zinc-500" style={{ fontSize: '16px' }}>Estimated peak rate</p>
                                 </div>
                                 <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                    <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Quotes Recommended</p>
+                                    <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>Quotes Recommended</p>
                                     <p className="text-3xl font-black text-zinc-900">2–3</p>
-                                    <p className="text-sm text-zinc-500">Before any work begins</p>
+                                    <p className="text-zinc-500" style={{ fontSize: '16px' }}>Before any work begins</p>
                                 </div>
                             </div>
 
                             {/* State-by-state breakdown */}
                             {Object.keys(countsByState).length > 0 && (
                                 <div>
-                                    <h3 className="text-lg font-black text-zinc-900 mb-4">{jobName} Availability by State</h3>
+                                    <h3 className="font-black text-zinc-900 mb-4" style={{ fontSize: '20px' }}>{jobName} Availability by State</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                         {Object.entries(countsByState).map(([stateCode, count]) => (
                                             <div key={stateCode} className="bg-zinc-50 rounded-xl p-4 border border-zinc-100 text-center">
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">{stateCode}</p>
+                                                <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>{stateCode}</p>
                                                 <p className="text-xl font-black text-zinc-900">{count}</p>
-                                                <p className="text-xs text-zinc-400">listed</p>
+                                                <p className="text-zinc-400" style={{ fontSize: '16px' }}>listed</p>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             )}
-                            <p className="text-xs text-zinc-400 mt-6">Prices are estimates only and may change without notice. Verify current pricing directly with your chosen contractor.</p>
+                            <p className="text-zinc-400 mt-6" style={{ fontSize: '16px' }}>Prices are estimates only and may change without notice. Verify current pricing directly with your chosen contractor.</p>
                         </section>
                     )}
 
                     {/* Top Cities */}
                     {topCities.length > 0 && (
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8">
-                            <h2 className="text-2xl font-black text-zinc-900 mb-2 flex items-center gap-2">
-                                <MapPin className="w-6 h-6 text-orange-500" />
+                            <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: '32px' }}>
+                                <MapPin className="w-6 h-6 text-[#FF6600]" />
                                 Find {jobName} Specialists Near You
                             </h2>
-                            <p className="text-sm text-zinc-500 mb-6">Browse verified {tradeName!.toLowerCase()} by city across Australia:</p>
+                            <p className="text-zinc-500 mb-6" style={{ fontSize: '16px' }}>Browse verified {tradeName!.toLowerCase()} by city across Australia:</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {topCities.map(({ city, state, count }) => {
                                     const stateSlug = STATE_SLUGS[state?.toUpperCase()] || state?.toLowerCase();
@@ -277,13 +277,13 @@ export default async function TradeHubPage({ params }: PageProps) {
                                         <Link
                                             key={`${city}-${state}`}
                                             href={`/local/${stateSlug}/${citySlug}`}
-                                            className="flex items-center justify-between px-5 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl hover:bg-orange-50 hover:border-orange-200 transition-colors group"
+                                            className="flex items-center justify-between px-5 py-4 bg-zinc-50 border-2 border-zinc-200 rounded-2xl hover:bg-orange-50 hover:border-[#FF6600] transition-colors group"
                                         >
                                             <div>
-                                                <span className="text-sm font-black text-zinc-900 group-hover:text-orange-700">{city}</span>
-                                                <p className="text-xs text-zinc-400">{STATE_NAMES[state?.toUpperCase()] || state} · {count} listed</p>
+                                                <span className="font-black text-zinc-900 group-hover:text-[#FF6600]" style={{ fontSize: '16px' }}>{city}</span>
+                                                <p className="text-zinc-400" style={{ fontSize: '16px' }}>{STATE_NAMES[state?.toUpperCase()] || state} · {count} listed</p>
                                             </div>
-                                            <ArrowRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500" />
+                                            <ArrowRight className="w-5 h-5 text-zinc-300 group-hover:text-[#FF6600]" />
                                         </Link>
                                     );
                                 })}
@@ -294,18 +294,18 @@ export default async function TradeHubPage({ params }: PageProps) {
                     {/* State Licensing */}
                     {STATE_LICENSING[tradeName!] && (
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8">
-                            <h2 className="text-2xl font-black text-zinc-900 mb-2 flex items-center gap-2">
+                            <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: '32px' }}>
                                 <FileText className="w-6 h-6 text-blue-500" />
                                 {tradeName} Licensing Requirements in Australia
                             </h2>
-                            <p className="text-sm text-zinc-500 mb-6">Licensing requirements vary by state. Always verify your contractor holds the correct licence for your location.</p>
+                            <p className="text-zinc-500 mb-6" style={{ fontSize: '16px' }}>Licensing requirements vary by state. Always verify your contractor holds the correct licence for your location.</p>
                             <div className="space-y-3">
                                 {Object.entries(STATE_LICENSING[tradeName!]).map(([stateCode, text]) => (
                                     <div key={stateCode} className="bg-blue-50 border border-blue-100 rounded-2xl p-5">
-                                        <p className="text-xs font-black text-blue-600 uppercase tracking-wider mb-2">
+                                        <p className="font-black text-blue-600 uppercase tracking-wider mb-2" style={{ fontSize: '16px' }}>
                                             {STATE_NAMES[stateCode] || stateCode}
                                         </p>
-                                        <p className="text-sm text-zinc-700 leading-relaxed">{text}</p>
+                                        <p className="text-zinc-700" style={{ fontSize: '16px', lineHeight: 1.6 }}>{text}</p>
                                     </div>
                                 ))}
                             </div>
@@ -315,17 +315,17 @@ export default async function TradeHubPage({ params }: PageProps) {
                     {/* Related Services */}
                     {relatedJobs.length > 0 && (
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8">
-                            <h2 className="text-xl font-black text-zinc-900 mb-2 flex items-center gap-2">
-                                <Wrench className="w-5 h-5 text-orange-500" />
+                            <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: '28px' }}>
+                                <Wrench className="w-5 h-5 text-[#FF6600]" />
                                 Related {tradeName} Services
                             </h2>
-                            <p className="text-sm text-zinc-500 mb-6">Also looking for other {tradeName!.toLowerCase()} services in Australia?</p>
+                            <p className="text-zinc-500 mb-6" style={{ fontSize: '16px' }}>Also looking for other {tradeName!.toLowerCase()} services in Australia?</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 {relatedJobs.map((j) => (
                                     <Link
                                         key={j}
                                         href={`/trades/${jobToSlug(j)}`}
-                                        className="flex items-center justify-between px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-sm font-bold text-zinc-600 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 transition-colors"
+                                        className="flex items-center justify-between px-5 py-4 bg-zinc-50 border-2 border-zinc-200 rounded-xl font-bold text-zinc-700 hover:bg-orange-50 hover:border-[#FF6600] hover:text-[#FF6600] transition-colors" style={{ fontSize: '16px' }}
                                     >
                                         <span className="capitalize">{j}</span>
                                         <ArrowRight className="w-4 h-4 text-zinc-300" />
@@ -338,14 +338,14 @@ export default async function TradeHubPage({ params }: PageProps) {
                     {/* FAQ */}
                     {faqs.length > 0 && (
                         <section>
-                            <h2 className="text-2xl font-black text-zinc-900 mb-8">
+                            <h2 className="font-black text-[#1A1A1A] mb-8 font-display" style={{ fontSize: '32px' }}>
                                 {jobName}: Frequently Asked Questions
                             </h2>
                             <div className="space-y-4">
                                 {faqs.map((faq, i) => (
                                     <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
-                                        <h3 className="font-bold text-zinc-900 mb-2">{faq.q}</h3>
-                                        <p className="text-sm text-zinc-500 leading-relaxed">{faq.a}</p>
+                                        <h3 className="font-black text-zinc-900 mb-2" style={{ fontSize: '18px' }}>{faq.q}</h3>
+                                        <p className="text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.6 }}>{faq.a}</p>
                                     </div>
                                 ))}
                             </div>
@@ -353,14 +353,14 @@ export default async function TradeHubPage({ params }: PageProps) {
                     )}
 
                     {/* CTA */}
-                    <section className="bg-zinc-900 rounded-3xl p-8 md:p-12 text-center text-white">
-                        <h2 className="text-3xl font-black mb-4">Find a {tradeName} Near You</h2>
-                        <p className="text-zinc-400 mb-8 max-w-xl mx-auto">
+                    <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
+                        <h2 className="font-black mb-4" style={{ fontSize: '40px' }}>Find a {tradeName} Near You</h2>
+                        <p className="text-zinc-400 mb-8 max-w-xl mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             TradeRefer lists verified, ABN-checked {tradeName!.toLowerCase()} across Australia, ranked by real community referrals — not paid placement.
                         </p>
                         <Link
                             href="/local"
-                            className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl px-8 py-4 text-lg transition-colors"
+                            className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}
                         >
                             Browse Your Area <ArrowRight className="w-5 h-5" />
                         </Link>

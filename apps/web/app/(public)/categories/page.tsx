@@ -60,27 +60,27 @@ export default async function CategoriesPage() {
             />
 
             {/* Hero */}
-            <div className="bg-zinc-900 pt-32 pb-16 text-white">
+            <div className="bg-[#1A1A1A] pt-32 pb-16 text-white">
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 text-xs font-bold text-zinc-500 uppercase tracking-widest mb-8">
+                    <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest mb-8" style={{ fontSize: '16px' }}>
                         <Link href="/" className="hover:text-white transition-colors">Home</Link>
-                        <ChevronRight className="w-3 h-3" />
-                        <span className="text-orange-400">All Categories</span>
+                        <ChevronRight className="w-4 h-4" />
+                        <span className="text-[#FF6600]">All Categories</span>
                     </nav>
-                    <div className="flex items-center gap-3 text-orange-500 font-black text-sm uppercase tracking-widest mb-4">
+                    <div className="flex items-center gap-3 text-[#FF6600] font-black uppercase tracking-widest mb-4" style={{ fontSize: '16px' }}>
                         <Wrench className="w-5 h-5" />
                         Trade Directory
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black mb-4 leading-tight">
-                        All Trade <span className="text-orange-500">Categories</span>
+                    <h1 className="font-black mb-6 leading-[1.1] font-display" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
+                        All Trade <span className="text-[#FF6600]">Categories</span>
                     </h1>
-                    <p className="text-xl text-zinc-400 max-w-2xl mb-8">
+                    <p className="text-zinc-400 max-w-2xl mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                         Browse {totalTrades} trade categories across Australia. Find verified, ABN-checked local tradies with real community ratings.
                     </p>
-                    <div className="flex flex-wrap gap-6 text-sm text-zinc-400 font-medium">
-                        <span className="flex items-center gap-2"><Users className="w-4 h-4 text-orange-500" />{totalBusinesses.toLocaleString()} verified businesses</span>
-                        <span className="flex items-center gap-2"><Wrench className="w-4 h-4 text-orange-500" />{totalTrades} trade categories</span>
-                        <span className="flex items-center gap-2"><Search className="w-4 h-4 text-orange-500" />Free quotes, no obligation</span>
+                    <div className="flex flex-wrap gap-6 text-white font-bold" style={{ fontSize: '16px' }}>
+                        <span className="flex items-center gap-2"><Users className="w-4 h-4 text-[#FF6600]" />{totalBusinesses.toLocaleString()} verified businesses</span>
+                        <span className="flex items-center gap-2"><Wrench className="w-4 h-4 text-[#FF6600]" />{totalTrades} trade categories</span>
+                        <span className="flex items-center gap-2"><Search className="w-4 h-4 text-[#FF6600]" />Free quotes, no obligation</span>
                     </div>
                 </div>
             </div>
@@ -92,8 +92,8 @@ export default async function CategoriesPage() {
                     {/* Trades with job types (JOB_TYPES mapped trades) */}
                     {tradeStats.length > 0 && (
                         <section className="mb-16">
-                            <h2 className="text-2xl font-black text-zinc-900 mb-2">Browse by Trade</h2>
-                            <p className="text-zinc-500 text-sm mb-8">Click any trade to find verified local specialists in your area.</p>
+                            <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '40px' }}>Browse by Trade</h2>
+                            <p className="text-zinc-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>Click any trade to find verified local specialists in your area.</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                 {tradeStats.map(({ trade, count, suburbs }) => {
                                     const slug = tradeToSlug(trade);
@@ -102,18 +102,18 @@ export default async function CategoriesPage() {
                                         <div
                                             key={trade}
                                             id={slug}
-                                            className="bg-white rounded-2xl border border-zinc-200 hover:border-orange-400 hover:shadow-lg transition-all duration-300 overflow-hidden group"
+                                            className="bg-white rounded-2xl border-2 border-zinc-200 hover:border-[#FF6600] hover:shadow-lg transition-all duration-300 overflow-hidden group"
                                         >
-                                            <Link href={`/local?category=${encodeURIComponent(trade)}`} className="block p-5">
+                                            <Link href={`/local?category=${encodeURIComponent(trade)}`} className="block p-6">
                                                 <div className="flex items-start justify-between mb-3">
-                                                    <h3 className="text-base font-black text-zinc-900 group-hover:text-orange-600 transition-colors leading-tight">
+                                                    <h3 className="font-black text-[#1A1A1A] group-hover:text-[#FF6600] transition-colors leading-tight" style={{ fontSize: '20px' }}>
                                                         {trade}
                                                     </h3>
-                                                    <ArrowRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 shrink-0 mt-0.5 transition-colors" />
+                                                    <ArrowRight className="w-5 h-5 text-zinc-300 group-hover:text-[#FF6600] shrink-0 mt-0.5 transition-colors" />
                                                 </div>
-                                                <div className="flex items-center gap-3 text-xs text-zinc-500 font-medium mb-3">
-                                                    <span className="flex items-center gap-1">
-                                                        <Users className="w-3 h-3 text-orange-400" />
+                                                <div className="flex items-center gap-3 text-zinc-500 font-bold" style={{ fontSize: '16px' }}>
+                                                    <span className="flex items-center gap-1.5">
+                                                        <Users className="w-4 h-4 text-[#FF6600]" />
                                                         {count} businesses
                                                     </span>
                                                     <span className="text-zinc-300">·</span>
@@ -121,14 +121,14 @@ export default async function CategoriesPage() {
                                                 </div>
                                             </Link>
                                             {jobs.length > 0 && (
-                                                <div className="border-t border-zinc-100 px-5 py-3">
-                                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-wider mb-2">Common Services</p>
-                                                    <div className="flex flex-wrap gap-1.5">
+                                                <div className="border-t border-zinc-100 px-6 py-4">
+                                                    <p className="font-black text-zinc-400 uppercase tracking-wider mb-3" style={{ fontSize: '16px' }}>Common Services</p>
+                                                    <div className="flex flex-wrap gap-2">
                                                         {jobs.slice(0, 3).map(job => (
                                                             <Link
                                                                 key={job}
                                                                 href={`/trades/${jobToSlug(job)}`}
-                                                                className="px-2 py-1 bg-zinc-50 border border-zinc-100 rounded-lg text-[10px] font-bold text-zinc-600 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200 transition-colors capitalize"
+                                                                className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-lg font-bold text-zinc-600 hover:bg-orange-50 hover:text-[#FF6600] hover:border-orange-200 transition-colors capitalize" style={{ fontSize: '16px' }}
                                                             >
                                                                 {job}
                                                             </Link>
@@ -145,9 +145,9 @@ export default async function CategoriesPage() {
 
                     {/* Quick Links to Top 10 pages */}
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10 mb-16">
-                        <h2 className="text-xl font-black text-zinc-900 mb-2">Top Rated Tradies by City</h2>
-                        <p className="text-zinc-500 text-sm mb-6">Find the highest-rated tradies in Australia's major cities, ranked by verified customer reviews.</p>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '32px' }}>Top Rated Tradies by City</h2>
+                        <p className="text-zinc-500 mb-6" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find the highest-rated tradies in Australia&apos;s major cities, ranked by verified customer reviews.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                             {[
                                 { label: "Top Electricians Melbourne", href: "/top/electrician/vic/melbourne" },
                                 { label: "Top Plumbers Sydney", href: "/top/plumber/nsw/sydney" },
@@ -161,24 +161,24 @@ export default async function CategoriesPage() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="flex items-center justify-between px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-xs font-bold text-zinc-600 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 transition-colors"
+                                    className="flex items-center justify-between px-5 py-4 bg-zinc-50 border-2 border-zinc-200 rounded-xl font-bold text-zinc-700 hover:bg-orange-50 hover:border-[#FF6600] hover:text-[#FF6600] transition-colors" style={{ fontSize: '16px' }}
                                 >
                                     <span>{link.label}</span>
-                                    <ChevronRight className="w-3 h-3 shrink-0 text-zinc-300" />
+                                    <ChevronRight className="w-4 h-4 shrink-0 text-zinc-300" />
                                 </Link>
                             ))}
                         </div>
                     </section>
 
                     {/* Browse by Location CTA */}
-                    <section className="bg-zinc-900 rounded-3xl p-8 md:p-10 text-white text-center">
-                        <h2 className="text-2xl font-black mb-2">Browse by Location</h2>
-                        <p className="text-zinc-400 mb-6 max-w-lg mx-auto">Find trades specifically in your suburb, city or state. All businesses are ABN-verified and ranked by real community referrals.</p>
+                    <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-10 text-white text-center">
+                        <h2 className="font-black mb-4" style={{ fontSize: '32px' }}>Browse by Location</h2>
+                        <p className="text-zinc-400 mb-8 max-w-lg mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find trades specifically in your suburb, city or state. All businesses are ABN-verified and ranked by real community referrals.</p>
                         <div className="flex flex-wrap gap-4 justify-center">
-                            <Link href="/locations" className="bg-orange-500 hover:bg-orange-600 text-white font-black px-8 py-3 rounded-xl transition-colors">
+                            <Link href="/locations" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>
                                 Browse All Locations
                             </Link>
-                            <Link href="/local" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 py-3 rounded-xl transition-colors border border-white/10">
+                            <Link href="/local" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>
                                 State Directory
                             </Link>
                         </div>

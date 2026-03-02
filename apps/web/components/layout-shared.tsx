@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search } from "lucide-react";
+import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search, Menu, X } from "lucide-react";
 
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
@@ -283,11 +283,22 @@ export function Navbar() {
         }
     }, [searchQuery, router]);
 
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [mobileMenuOpen]);
+
     return (
 
         <>
 
-            <header className="fixed top-0 w-full border-b bg-white/90 backdrop-blur-md z-50" style={{ height: '100px' }}>
+            <header className="fixed top-0 w-full border-b bg-white/90 backdrop-blur-md z-50 h-[72px] md:h-[100px]">
 
                 <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4">
 
@@ -595,11 +606,117 @@ export function Navbar() {
 
                     </nav>
 
+                    {/* Mobile hamburger */}
+                    <button
+                        onClick={() => setMobileMenuOpen(o => !o)}
+                        className="md:hidden flex items-center justify-center w-11 h-11 rounded-xl text-zinc-700 hover:bg-zinc-100 transition-colors ml-1 shrink-0"
+                        aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                    >
+                        {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
+
                 </div>
 
             </header>
 
-
+            {/* ── MOBILE DRAWER ── */}
+            {mobileMenuOpen && (
+                <div className="fixed inset-0 z-[45] md:hidden">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+                    <div className="absolute top-0 right-0 h-full w-[85vw] max-w-sm bg-white shadow-2xl flex flex-col">
+                        {/* Drawer header */}
+                        <div className="flex items-center justify-between px-5 border-b border-zinc-100 h-[72px] shrink-0">
+                            <Link href="/" onClick={() => setMobileMenuOpen(false)}><Logo size="sm" /></Link>
+                            <button onClick={() => setMobileMenuOpen(false)} className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-500 hover:bg-zinc-100 transition-colors">
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+                        {/* Nav links */}
+                        <div className="flex-1 overflow-y-auto py-3 px-3">
+                            {!isDashboard && (
+                                <nav className="space-y-1">
+                                    {[
+                                        { href: "/businesses", label: "Find Businesses" },
+                                        { href: "/local", label: "Directory" },
+                                        { href: "/categories", label: "Browse Trades" },
+                                        { href: "/support", label: "Support" },
+                                        { href: "/contact", label: "Contact" },
+                                    ].map(({ href, label }) => (
+                                        <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
+                                            className="flex items-center px-4 py-4 rounded-xl text-zinc-700 hover:bg-orange-50 hover:text-[#FF6600] font-bold transition-colors"
+                                            style={{ fontSize: '18px' }}>
+                                            {label}
+                                        </Link>
+                                    ))}
+                                </nav>
+                            )}
+                            {isDashboard && isBusinessDashboard && (
+                                <nav className="space-y-1">
+                                    {[
+                                        { href: "/dashboard/business", label: "Overview" },
+                                        { href: "/dashboard/business/leads", label: "Leads" },
+                                        { href: "/dashboard/business/messages", label: "Messages" },
+                                        { href: "/dashboard/business/referrers", label: "Referrers" },
+                                        { href: "/dashboard/business/deals", label: "Deals" },
+                                        { href: "/dashboard/business/campaigns", label: "Campaigns" },
+                                        { href: "/dashboard/business/analytics", label: "Analytics" },
+                                    ].map(({ href, label }) => (
+                                        <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
+                                            className={`flex items-center px-4 py-4 rounded-xl font-bold transition-colors ${pathname === href ? 'bg-orange-50 text-[#FF6600]' : 'text-zinc-700 hover:bg-orange-50 hover:text-[#FF6600]'}`}
+                                            style={{ fontSize: '18px' }}>
+                                            {label}
+                                        </Link>
+                                    ))}
+                                </nav>
+                            )}
+                            {isDashboard && isReferrerDashboard && (
+                                <nav className="space-y-1">
+                                    {[
+                                        { href: "/dashboard/referrer", label: "Dashboard" },
+                                        { href: "/businesses", label: "Find Businesses" },
+                                        { href: "/dashboard/referrer/messages", label: "Messages" },
+                                        { href: "/dashboard/referrer/withdraw", label: "Withdraw" },
+                                    ].map(({ href, label }) => (
+                                        <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
+                                            className={`flex items-center px-4 py-4 rounded-xl font-bold transition-colors ${pathname === href ? 'bg-orange-50 text-[#FF6600]' : 'text-zinc-700 hover:bg-orange-50 hover:text-[#FF6600]'}`}
+                                            style={{ fontSize: '18px' }}>
+                                            {label}
+                                        </Link>
+                                    ))}
+                                </nav>
+                            )}
+                        </div>
+                        {/* Bottom CTA */}
+                        <div className="p-4 border-t border-zinc-100 space-y-2 shrink-0">
+                            <SignedOut>
+                                <SignInButton mode="modal">
+                                    <button onClick={() => setMobileMenuOpen(false)}
+                                        className="w-full border-2 border-zinc-200 text-zinc-700 font-black rounded-xl flex items-center justify-center transition-colors hover:border-zinc-300"
+                                        style={{ minHeight: '52px', fontSize: '17px' }}>
+                                        Sign In
+                                    </button>
+                                </SignInButton>
+                                <SignUpButton mode="modal">
+                                    <button onClick={() => setMobileMenuOpen(false)}
+                                        className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl flex items-center justify-center transition-colors"
+                                        style={{ minHeight: '52px', fontSize: '17px' }}>
+                                        Sign Up Free
+                                    </button>
+                                </SignUpButton>
+                            </SignedOut>
+                            <SignedIn>
+                                {!isDashboard && (
+                                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}
+                                        className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl flex items-center justify-center transition-colors"
+                                        style={{ minHeight: '52px', fontSize: '17px', display: 'flex' }}>
+                                        My Dashboard
+                                    </Link>
+                                )}
+                            </SignedIn>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {isBusinessDashboard && walletBalance !== null && (
 

@@ -29,7 +29,7 @@ export default function HomePage() {
     <main className="bg-[#FCFCFC] text-[#1A1A1A] antialiased">
 
       {/* ── HERO ── */}
-      <section className="relative bg-[#FCFCFC] py-20 lg:py-28 overflow-hidden border-b border-gray-200">
+      <section className="relative bg-[#FCFCFC] pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-36 lg:pb-28 overflow-hidden border-b border-gray-200">
         {/* Construction site bg with 30% light overlay */}
         <div
           className="absolute inset-0 z-0 bg-cover bg-center"
@@ -38,12 +38,12 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0 bg-[#FCFCFC]/75" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-extrabold text-[#1A1A1A] mb-6 leading-[1.1] tracking-tight font-display">
+          <h1 className="text-[36px] sm:text-[48px] md:text-7xl lg:text-[80px] font-extrabold text-[#1A1A1A] mb-4 md:mb-6 leading-[1.1] tracking-tight font-display">
             Australia&apos;s Verified{" "}
             <span className="text-[#FF6600]">Trade Referral</span>{" "}
             Marketplace.
           </h1>
-          <p className="text-2xl md:text-3xl text-gray-600 mb-16 max-w-3xl mx-auto leading-relaxed" style={{ lineHeight: 1.7 }}>
+          <p className="text-xl md:text-2xl lg:text-3xl text-gray-600 mb-8 md:mb-16 max-w-3xl mx-auto leading-relaxed" style={{ lineHeight: 1.7 }}>
             Built on Trust, Paid on Success. The smartest way to scale your trade business.
           </p>
 
@@ -113,7 +113,7 @@ export default function HomePage() {
       </section>
 
       {/* ── ROI HUB: THE POWER OF THE NETWORK ── */}
-      <section className="py-20 bg-[#FCFCFC] border-b border-gray-200">
+      <section className="py-12 md:py-20 bg-[#FCFCFC] border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Section Header */}
@@ -132,15 +132,15 @@ export default function HomePage() {
             {/* ── LEFT: BUSINESS SAVINGS ── */}
             <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden flex flex-col">
               {/* Header */}
-              <div className="bg-[#1A1A1A] px-8 py-7">
+              <div className="bg-[#1A1A1A] px-5 py-5 md:px-8 md:py-7">
                 <p className="text-[#FF6600] font-black text-xl uppercase tracking-widest mb-2">For Trade Businesses</p>
-                <h3 className="text-4xl md:text-5xl font-extrabold text-white font-display leading-tight">Protect Your Profit.</h3>
-                <p className="text-zinc-400 text-lg mt-3 leading-relaxed">
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white font-display leading-tight">Protect Your Profit.</h3>
+                <p className="text-zinc-400 text-base md:text-lg mt-3 leading-relaxed">
                   Stop paying $21+ per lead just to quote. See what you&apos;d save by switching to pay-on-success.
                 </p>
               </div>
               {/* Body — flex-1 so button stays at bottom */}
-              <div className="p-8 flex flex-col flex-1 gap-7">
+              <div className="p-5 md:p-8 flex flex-col flex-1 gap-5 md:gap-7">
                 {/* Slider 1 — Monthly Spend */}
                 <div>
                   <div className="flex justify-between items-center mb-4">
@@ -201,15 +201,15 @@ export default function HomePage() {
             {/* ── RIGHT: REFERRER EARNINGS ── */}
             <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden flex flex-col">
               {/* Header */}
-              <div className="bg-[#FF6600] px-8 py-7">
+              <div className="bg-[#FF6600] px-5 py-5 md:px-8 md:py-7">
                 <p className="text-white font-black text-xl uppercase tracking-widest mb-2">For Referrers</p>
-                <h3 className="text-4xl md:text-5xl font-extrabold text-white font-display leading-tight">Earn Your Worth.</h3>
-                <p className="text-white/85 text-lg mt-3 leading-relaxed">
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white font-display leading-tight">Earn Your Worth.</h3>
+                <p className="text-white/85 text-base md:text-lg mt-3 leading-relaxed">
                   Know a tradie? That&apos;s money. See what your network is worth in gift cards every month.
                 </p>
               </div>
               {/* Body — flex-1 so button stays at bottom */}
-              <div className="p-8 flex flex-col flex-1 gap-7">
+              <div className="p-5 md:p-8 flex flex-col flex-1 gap-5 md:gap-7">
                 {/* Slider 1 */}
                 <div>
                   <div className="flex justify-between items-center mb-4">
@@ -285,7 +285,7 @@ export default function HomePage() {
               </div>
               <div>
                 <p className="font-black text-xl text-[#1A1A1A] font-display">ABN &amp; License Verified</p>
-                <p className="text-sm font-bold text-green-600 uppercase tracking-widest">● Live Network Active</p>
+                <p className="font-bold text-green-600 uppercase tracking-widest" style={{ fontSize: '16px' }}>● Live Network Active</p>
               </div>
             </div>
 
@@ -293,21 +293,21 @@ export default function HomePage() {
               <HardHat className="w-12 h-12 text-blue-800" />
               <div>
                 <p className="font-extrabold text-xl font-display">Master Builders</p>
-                <p className="text-sm text-gray-400 font-medium">Association Member</p>
+                <p className="text-gray-400 font-medium" style={{ fontSize: '16px' }}>Association Member</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <Zap className="w-12 h-12 text-yellow-600" />
               <div>
                 <p className="font-extrabold text-xl font-display">NECA</p>
-                <p className="text-sm text-gray-400 font-medium">National Electrical</p>
+                <p className="text-gray-400 font-medium" style={{ fontSize: '16px' }}>National Electrical</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <HomeIcon className="w-12 h-12 text-red-700" />
               <div>
                 <p className="font-extrabold text-xl font-display">HIA</p>
-                <p className="text-sm text-gray-400 font-medium">Housing Industry</p>
+                <p className="text-gray-400 font-medium" style={{ fontSize: '16px' }}>Housing Industry</p>
               </div>
             </div>
 
@@ -353,7 +353,7 @@ export default function HomePage() {
               Search
             </Link>
           </div>
-          <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm text-gray-400 font-sans">
+          <div className="mt-6 flex flex-wrap justify-center gap-3 text-gray-400 font-sans" style={{ fontSize: '16px' }}>
             <span className="text-gray-500">Popular:</span>
             <Link className="hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/local?category=Plumbing">Plumbers in Sydney</Link>
             <Link className="hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/local?category=Electrical">Electricians in Melbourne</Link>
@@ -478,8 +478,8 @@ export default function HomePage() {
               </div>
               <div className="p-6">
                 <h4 className="font-bold text-xl mb-2 font-display">Bunnings Gift Card</h4>
-                <p className="text-gray-500 text-sm mb-6 h-10">Perfect for tools, timber, and the weekend sausage sizzle.</p>
-                <span className="text-[#FF6600] font-bold text-sm uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all">
+                <p className="text-gray-500 mb-4" style={{ fontSize: '16px' }}>Perfect for tools, timber, and the weekend sausage sizzle.</p>
+                <span className="text-[#FF6600] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all" style={{ fontSize: '16px' }}>
                   Redeem Now <ArrowRight className="w-4 h-4" />
                 </span>
               </div>
@@ -493,8 +493,8 @@ export default function HomePage() {
               </div>
               <div className="p-6">
                 <h4 className="font-bold text-xl mb-2 font-display">Coles Group Card</h4>
-                <p className="text-gray-500 text-sm mb-6 h-10">Groceries, liquor, and fuel discounts for your family.</p>
-                <span className="text-[#FF6600] font-bold text-sm uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all">
+                <p className="text-gray-500 mb-4" style={{ fontSize: '16px' }}>Groceries, liquor, and fuel discounts for your family.</p>
+                <span className="text-[#FF6600] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all" style={{ fontSize: '16px' }}>
                   Redeem Now <ArrowRight className="w-4 h-4" />
                 </span>
               </div>
@@ -508,8 +508,8 @@ export default function HomePage() {
               </div>
               <div className="p-6">
                 <h4 className="font-bold text-xl mb-2 font-display">JB Hi-Fi Voucher</h4>
-                <p className="text-gray-500 text-sm mb-6 h-10">Get the latest tech, cameras, and home entertainment.</p>
-                <span className="text-[#FF6600] font-bold text-sm uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all">
+                <p className="text-gray-500 mb-4" style={{ fontSize: '16px' }}>Get the latest tech, cameras, and home entertainment.</p>
+                <span className="text-[#FF6600] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all" style={{ fontSize: '16px' }}>
                   Redeem Now <ArrowRight className="w-4 h-4" />
                 </span>
               </div>
@@ -523,8 +523,8 @@ export default function HomePage() {
               </div>
               <div className="p-6">
                 <h4 className="font-bold text-xl mb-2 font-display">Officeworks Credit</h4>
-                <p className="text-gray-500 text-sm mb-6 h-10">Upgrade your office supplies and admin setup.</p>
-                <span className="text-[#FF6600] font-bold text-sm uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all">
+                <p className="text-gray-500 mb-4" style={{ fontSize: '16px' }}>Upgrade your office supplies and admin setup.</p>
+                <span className="text-[#FF6600] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all" style={{ fontSize: '16px' }}>
                   Redeem Now <ArrowRight className="w-4 h-4" />
                 </span>
               </div>
@@ -551,7 +551,7 @@ export default function HomePage() {
               <Link
                 key={trade}
                 href={`/local?category=${encodeURIComponent(trade)}`}
-                className="group flex items-center gap-2.5 bg-white border border-zinc-200 rounded-2xl px-4 py-3.5 text-sm font-bold text-zinc-700 hover:border-orange-500 hover:text-orange-600 hover:shadow-md transition-all duration-200"
+                className="group flex items-center gap-2.5 bg-white border border-zinc-200 rounded-2xl px-4 py-3.5 font-bold text-zinc-700 hover:border-orange-500 hover:text-orange-600 hover:shadow-md transition-all duration-200" style={{ fontSize: '16px' }}
               >
                 <Wrench className="w-3.5 h-3.5 text-zinc-400 group-hover:text-orange-500 shrink-0 transition-colors" />
                 <span className="leading-tight">{trade}</span>
@@ -561,7 +561,7 @@ export default function HomePage() {
           <div className="text-center mt-10">
             <Link
               href="/local"
-              className="inline-flex items-center gap-2 text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
+              className="inline-flex items-center gap-2 font-bold text-orange-600 hover:text-orange-700 transition-colors" style={{ fontSize: '16px' }}
             >
               Browse All Trades <ChevronRight className="w-4 h-4" />
             </Link>
@@ -596,8 +596,8 @@ export default function HomePage() {
                   <MapPin className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
                   <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 transition-colors" />
                 </div>
-                <h3 className="font-black text-zinc-900 group-hover:text-orange-600 transition-colors leading-tight mb-1">{name}</h3>
-                <p className="text-xs text-zinc-400 font-medium leading-relaxed">{cities}</p>
+                <h3 className="font-black text-zinc-900 group-hover:text-orange-600 transition-colors leading-tight mb-1" style={{ fontSize: '16px' }}>{name}</h3>
+                <p className="text-zinc-400 font-medium leading-relaxed" style={{ fontSize: '16px' }}>{cities}</p>
               </Link>
             ))}
           </div>

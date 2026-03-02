@@ -175,7 +175,7 @@ export default async function StateDirectoryPage({ params }: PageProps) {
                                                     {city}
                                                 </h3>
                                                 <p className="text-3xl font-black text-[#FF6600]">{count.toLocaleString()}</p>
-                                                <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">Verified Pros</p>
+                                                <p className="text-gray-400 font-bold uppercase tracking-wider" style={{ fontSize: '16px' }}>Verified Pros</p>
                                             </div>
                                             <div className="w-14 h-14 bg-zinc-50 rounded-2xl flex items-center justify-center text-zinc-300 group-hover:bg-orange-50 group-hover:text-orange-500 transition-colors shrink-0">
                                                 <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
@@ -199,7 +199,7 @@ export default async function StateDirectoryPage({ params }: PageProps) {
                                         <div key={trade} className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100">
                                             <p className="font-black text-[#1A1A1A] mb-1" style={{ fontSize: '20px' }}>{trade}</p>
                                             <p className="text-3xl font-black text-[#FF6600]">{count.toLocaleString()}</p>
-                                            <p className="text-sm text-gray-400 uppercase tracking-wider font-bold">businesses</p>
+                                            <p className="text-gray-400 uppercase tracking-wider font-bold" style={{ fontSize: '16px' }}>businesses</p>
                                         </div>
                                     ))}
                                 </div>
@@ -219,13 +219,13 @@ export default async function StateDirectoryPage({ params }: PageProps) {
                                         <div className="space-y-3 mb-6">
                                             {stateLicensedTrades.map(({ trade, text }) => (
                                                 <div key={trade} className="bg-white rounded-2xl border border-blue-100 p-4">
-                                                    <p className="font-black text-zinc-900 text-sm mb-1">{trade}</p>
+                                                    <p className="font-black text-zinc-900 mb-1" style={{ fontSize: '16px' }}>{trade}</p>
                                                     <p className="text-base text-zinc-600 leading-[1.6] line-clamp-2">{text}</p>
                                                 </div>
                                             ))}
                                         </div>
                                         <a href={authorityLink.url} target="_blank" rel="noopener noreferrer"
-                                           className="inline-flex items-center gap-2 text-blue-600 font-bold text-sm hover:underline">
+                                           className="inline-flex items-center gap-2 text-blue-600 font-bold hover:underline" style={{ fontSize: '16px' }}>
                                             <ExternalLink className="w-4 h-4" />
                                             View full requirements on {authorityLink.name}
                                         </a>
@@ -240,15 +240,15 @@ export default async function StateDirectoryPage({ params }: PageProps) {
                                 <div className="flex items-center gap-2 text-zinc-600">
                                     <Users className="w-5 h-5 text-orange-500" />
                                     <span className="text-lg font-black text-zinc-900">{businessCount.toLocaleString()}</span>
-                                    <span className="text-sm">verified businesses in {stateName}</span>
+                                    <span style={{ fontSize: '16px' }}>verified businesses in {stateName}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-zinc-600">
                                     <ShieldCheck className="w-5 h-5 text-green-500" />
-                                    <span className="text-sm font-bold">100% ABN verified</span>
+                                    <span className="font-bold" style={{ fontSize: '16px' }}>100% ABN verified</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-zinc-600">
                                     <TrendingUp className="w-5 h-5 text-blue-500" />
-                                    <span className="text-sm font-bold">Community-ranked, not paid</span>
+                                    <span className="font-bold" style={{ fontSize: '16px' }}>Community-ranked, not paid</span>
                                 </div>
                             </div>
                         )}
