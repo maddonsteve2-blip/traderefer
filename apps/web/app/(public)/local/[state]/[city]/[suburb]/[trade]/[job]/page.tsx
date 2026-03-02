@@ -5,7 +5,7 @@ import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
-import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, JOB_TYPES, jobToSlug } from "@/lib/constants";
+import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, JOB_TYPES, jobToSlug, normalizeTradeName } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +25,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const cityName = formatSlug(city);
     const stateUpper = state.toUpperCase();
     const jobName = formatSlug(job);
-    const cost = TRADE_COST_GUIDE[tradeName];
+    const tradeKey = normalizeTradeName(tradeName);
+    const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
     const priceStr = cost ? ` | Est. $${cost.low}–$${cost.high}${cost.unit}` : "";
 
     return {
@@ -97,10 +98,11 @@ export default async function JobTypePage({ params }: PageProps) {
         ? (businesses.reduce((acc: number, biz: any) => acc + ((biz.trust_score || 0) / 20), 0) / businesses.length).toFixed(1)
         : "4.8";
 
-    const cost = TRADE_COST_GUIDE[tradeName];
-    const faqs = TRADE_FAQ_BANK[tradeName] || TRADE_FAQ_BANK["Plumbing"];
-    const licenceText = STATE_LICENSING[tradeName]?.[stateName] || null;
-    const relatedJobs = (JOB_TYPES[tradeName] || [])
+    const tradeKey = normalizeTradeName(tradeName);
+    const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
+    const faqs = TRADE_FAQ_BANK[tradeKey] || TRADE_FAQ_BANK[tradeName] || [];
+    const licenceText = STATE_LICENSING[tradeKey]?.[stateName] || STATE_LICENSING[tradeName]?.[stateName] || null;
+    const relatedJobs = (JOB_TYPES[tradeKey] || JOB_TYPES[tradeName] || [])
         .filter(j => jobToSlug(j) !== job)
         .slice(0, 6);
 
