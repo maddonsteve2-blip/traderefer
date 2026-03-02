@@ -20,6 +20,10 @@ export default function HomePage() {
   const bizWinRate = 0.30;
   const bizSaved = Math.round(bizSpend * (1 - bizWinRate));
 
+  const bizPct = `${((bizSpend - 100) / (3000 - 100)) * 100}%`;
+  const tradiesPct = `${((tradies - 1) / (50 - 1)) * 100}%`;
+  const jobsPct = `${((jobsPerMonth - 1) / (10 - 1)) * 100}%`;
+
   return (
     <main className="bg-[#F2F2F2] text-[#1A1A1A] antialiased">
 
@@ -120,15 +124,17 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
             {/* ── LEFT: BUSINESS SAVINGS ── */}
-            <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden">
-              <div className="bg-[#1A1A1A] px-8 py-6">
-                <p className="text-[#FF6600] font-black text-sm uppercase tracking-widest mb-1">For Trade Businesses</p>
-                <h3 className="text-3xl md:text-4xl font-extrabold text-white font-display">Protect Your Profit.</h3>
-                <p className="text-zinc-400 text-lg mt-2 leading-relaxed">
+            <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden flex flex-col">
+              {/* Header */}
+              <div className="bg-[#1A1A1A] px-8 py-7">
+                <p className="text-[#FF6600] font-black text-xl uppercase tracking-widest mb-2">For Trade Businesses</p>
+                <h3 className="text-4xl md:text-5xl font-extrabold text-white font-display leading-tight">Protect Your Profit.</h3>
+                <p className="text-zinc-400 text-lg mt-3 leading-relaxed">
                   Stop paying $21+ per lead just to quote. See what you&apos;d save by switching to pay-on-success.
                 </p>
               </div>
-              <div className="p-8 space-y-8">
+              {/* Body — flex-1 so button stays at bottom */}
+              <div className="p-8 flex flex-col flex-1 gap-7">
                 {/* Slider */}
                 <div>
                   <div className="flex justify-between items-center mb-4">
@@ -139,10 +145,10 @@ export default function HomePage() {
                     type="range" min={100} max={3000} step={50}
                     value={bizSpend}
                     onChange={e => setBizSpend(Number(e.target.value))}
-                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
-                    style={{ accentColor: "#1A1A1A" }}
+                    className="slider-dark w-full"
+                    style={{ "--val": bizPct } as React.CSSProperties}
                   />
-                  <div className="flex justify-between text-base text-gray-500 mt-2 font-medium">
+                  <div className="flex justify-between text-base text-gray-500 mt-3 font-medium">
                     <span>$100/mo</span><span>$3,000/mo</span>
                   </div>
                 </div>
@@ -154,13 +160,13 @@ export default function HomePage() {
                   <p className="text-lg text-green-700 mt-3 font-medium">per month — saved with $0 upfront</p>
                 </div>
 
-                <p className="text-base text-gray-500 leading-relaxed">
+                <p className="text-base text-gray-500 leading-relaxed flex-1">
                   Based on an industry-average 30% win rate on traditional lead platforms. TradeRefer charges nothing until you win the job.
                 </p>
 
                 <Link
                   href="/register?type=business"
-                  className="flex items-center justify-center gap-3 w-full bg-[#1A1A1A] hover:bg-zinc-800 text-white font-black text-xl py-5 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+                  className="flex items-center justify-center gap-3 w-full bg-[#1A1A1A] hover:bg-zinc-800 text-white font-black text-xl rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
                   style={{ minHeight: "60px" }}
                 >
                   Grow Risk-Free <TrendingUp className="w-6 h-6" />
@@ -169,15 +175,17 @@ export default function HomePage() {
             </div>
 
             {/* ── RIGHT: REFERRER EARNINGS ── */}
-            <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden">
-              <div className="bg-[#FF6600] px-8 py-6">
-                <p className="text-white/80 font-black text-sm uppercase tracking-widest mb-1">For Referrers</p>
-                <h3 className="text-3xl md:text-4xl font-extrabold text-white font-display">Earn Your Worth.</h3>
-                <p className="text-white/80 text-lg mt-2 leading-relaxed">
+            <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden flex flex-col">
+              {/* Header */}
+              <div className="bg-[#FF6600] px-8 py-7">
+                <p className="text-white font-black text-xl uppercase tracking-widest mb-2">For Referrers</p>
+                <h3 className="text-4xl md:text-5xl font-extrabold text-white font-display leading-tight">Earn Your Worth.</h3>
+                <p className="text-white/85 text-lg mt-3 leading-relaxed">
                   Know a tradie? That&apos;s money. See what your network is worth in gift cards every month.
                 </p>
               </div>
-              <div className="p-8 space-y-8">
+              {/* Body — flex-1 so button stays at bottom */}
+              <div className="p-8 flex flex-col flex-1 gap-7">
                 {/* Slider 1 */}
                 <div>
                   <div className="flex justify-between items-center mb-4">
@@ -188,10 +196,10 @@ export default function HomePage() {
                     type="range" min={1} max={50} step={1}
                     value={tradies}
                     onChange={e => setTradies(Number(e.target.value))}
-                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
-                    style={{ accentColor: "#FF6600" }}
+                    className="slider-orange w-full"
+                    style={{ "--val": tradiesPct } as React.CSSProperties}
                   />
-                  <div className="flex justify-between text-base text-gray-500 mt-2 font-medium">
+                  <div className="flex justify-between text-base text-gray-500 mt-3 font-medium">
                     <span>1 contact</span><span>50 contacts</span>
                   </div>
                 </div>
@@ -206,10 +214,10 @@ export default function HomePage() {
                     type="range" min={1} max={10} step={1}
                     value={jobsPerMonth}
                     onChange={e => setJobsPerMonth(Number(e.target.value))}
-                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
-                    style={{ accentColor: "#FF6600" }}
+                    className="slider-orange w-full"
+                    style={{ "--val": jobsPct } as React.CSSProperties}
                   />
-                  <div className="flex justify-between text-base text-gray-500 mt-2 font-medium">
+                  <div className="flex justify-between text-base text-gray-500 mt-3 font-medium">
                     <span>1 job</span><span>10 jobs</span>
                   </div>
                 </div>
@@ -221,9 +229,12 @@ export default function HomePage() {
                   <p className="text-lg text-orange-700 mt-3 font-medium">per month in tax-deductible gift cards</p>
                 </div>
 
+                {/* spacer to push button to bottom */}
+                <div className="flex-1" />
+
                 <Link
                   href="/register?type=referrer"
-                  className="flex items-center justify-center gap-3 w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black text-xl py-5 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+                  className="flex items-center justify-center gap-3 w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black text-xl rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
                   style={{ minHeight: "60px" }}
                 >
                   Start Earning Now <ArrowRight className="w-6 h-6" />
