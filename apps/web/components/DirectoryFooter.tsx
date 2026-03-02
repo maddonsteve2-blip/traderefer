@@ -150,14 +150,27 @@ export async function DirectoryFooter() {
                     </div>
                 </div>
 
-                <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-zinc-600 text-xs">
-                        &copy; {new Date().getFullYear()} TradeRefer Australia. All rights reserved.
+                {/* Section 47B Disclosure */}
+                <div className="pt-8 border-t border-white/5 mb-6">
+                    <p className="text-zinc-600 text-xs leading-relaxed max-w-4xl">
+                        <strong className="text-zinc-500">Section 47B Disclosure:</strong> TradeRefer receives a platform fee for successful connections. Referral rewards are provided in gift card format and comply with Australian Consumer Law. The 20% success fee qualifies as a Marketing &amp; Promotion expense deductible under Section 8-1 of the ITAA 1997. All trades are independently verified via ABN and licence checks.
                     </p>
+                </div>
+
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="text-left">
+                        <p className="text-zinc-600 text-xs">
+                            &copy; {new Date().getFullYear()} TradeRefer Pty Ltd. All rights reserved.
+                        </p>
+                        <p className="text-zinc-700 text-xs mt-1">
+                            ABN: 00 000 000 000 &nbsp;|&nbsp; Level 1, 123 Collins Street, Melbourne VIC 3000 Australia &nbsp;|&nbsp; Made in Australia 🇦🇺
+                        </p>
+                    </div>
                     <div className="flex gap-8 text-zinc-600 text-xs font-bold uppercase tracking-widest">
                         <Link href="/privacy" className="hover:text-zinc-400">Privacy</Link>
                         <Link href="/terms" className="hover:text-zinc-400">Terms</Link>
                         <Link href="/cookies" className="hover:text-zinc-400">Cookies</Link>
+                        <Link href="/compare" className="hover:text-zinc-400">Compare</Link>
                     </div>
                 </div>
             </div>

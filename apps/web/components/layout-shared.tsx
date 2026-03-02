@@ -287,9 +287,9 @@ export function Navbar() {
 
         <>
 
-            <header className="fixed top-0 w-full border-b bg-white/80 backdrop-blur-md z-50">
+            <header className="fixed top-0 w-full border-b bg-white/90 backdrop-blur-md z-50" style={{ height: '90px' }}>
 
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
+                <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4">
 
                     <Link href="/" className="flex items-center gap-2 group shrink-0">
 
@@ -297,16 +297,16 @@ export function Navbar() {
 
                     </Link>
 
-                    {/* ── DIRECTORY SEARCH BAR ── */}
-                    {isDirectoryPage && (
-                        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-sm items-center gap-2 bg-zinc-100 hover:bg-zinc-50 border border-zinc-200 rounded-full px-4 py-2 transition-colors">
-                            <Search className="w-4 h-4 text-zinc-400 shrink-0" />
+                    {/* ── PERSISTENT SEARCH BAR ── */}
+                    {!isDashboard && (
+                        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md items-center gap-3 bg-zinc-100 hover:bg-white border-2 border-zinc-200 hover:border-orange-400 rounded-2xl px-5 transition-all" style={{ height: '56px' }}>
+                            <Search className="w-5 h-5 text-zinc-400 shrink-0" />
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
-                                placeholder="Search trades or suburbs..."
-                                className="flex-1 bg-transparent text-sm text-zinc-700 placeholder:text-zinc-400 outline-none min-w-0"
+                                placeholder="Find a Tradie in your suburb..."
+                                className="flex-1 bg-transparent text-base text-zinc-700 placeholder:text-zinc-400 outline-none min-w-0 font-medium"
                             />
                         </form>
                     )}
@@ -574,7 +574,7 @@ export function Navbar() {
 
                                         <Link href="/dashboard" className="hidden sm:block">
 
-                                            <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-6 font-bold">
+                                            <Button className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl px-6 font-bold text-base shadow-lg shadow-orange-500/20" style={{ minHeight: '48px' }}>
 
                                                 My Dashboard
 

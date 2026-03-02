@@ -17,88 +17,94 @@ export default function HomePage() {
   const monthlyEarnings = tradies * jobsPerMonth * 15;
 
   const [bizSpend, setBizSpend] = useState(500);
-  const bizWinRate = 0.30;
-  const bizSaved = Math.round(bizSpend * (1 - bizWinRate));
+  const [bizConvRate, setBizConvRate] = useState(30);
+  const bizSaved = Math.round(bizSpend * (1 - bizConvRate / 100));
 
-  const bizPct = `${((bizSpend - 100) / (3000 - 100)) * 100}%`;
+  const bizPct = `${((bizSpend - 0) / 5000) * 100}%`;
+  const bizConvPct = `${((bizConvRate - 5) / (90 - 5)) * 100}%`;
   const tradiesPct = `${((tradies - 1) / (50 - 1)) * 100}%`;
   const jobsPct = `${((jobsPerMonth - 1) / (10 - 1)) * 100}%`;
 
   return (
-    <main className="bg-[#F2F2F2] text-[#1A1A1A] antialiased">
+    <main className="bg-[#FCFCFC] text-[#1A1A1A] antialiased">
 
       {/* ── HERO ── */}
-      <section className="relative bg-[#F2F2F2] py-16 lg:py-24 overflow-hidden border-b border-gray-200">
-        {/* Background image overlay */}
+      <section className="relative bg-[#FCFCFC] py-20 lg:py-28 overflow-hidden border-b border-gray-200">
+        {/* Construction site bg with 30% light overlay */}
         <div
-          className="absolute inset-0 z-0 opacity-10 bg-cover bg-center mix-blend-multiply"
+          className="absolute inset-0 z-0 bg-cover bg-center"
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2670&auto=format&fit=crop')" }}
         />
+        <div className="absolute inset-0 z-0 bg-[#FCFCFC]/75" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1A1A1A] mb-6 leading-tight tracking-tight font-display">
-            Australia's Verified{" "}
+          <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-extrabold text-[#1A1A1A] mb-6 leading-[1.1] tracking-tight font-display">
+            Australia&apos;s Verified{" "}
             <span className="text-[#FF6600]">Trade Referral</span>{" "}
             Marketplace.
           </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-16 max-w-3xl mx-auto font-light">
+          <p className="text-2xl md:text-3xl text-gray-600 mb-16 max-w-3xl mx-auto leading-relaxed" style={{ lineHeight: 1.7 }}>
             Built on Trust, Paid on Success. The smartest way to scale your trade business.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 max-w-5xl mx-auto">
             {/* Referrers card */}
-            <div className="bg-white rounded-xl p-8 lg:p-10 shadow-xl border-t-8 border-[#FF6600] hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center h-full">
-              <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mb-6 text-[#FF6600] ring-4 ring-orange-100">
-                <Megaphone className="w-10 h-10" />
+            <div className="bg-white rounded-2xl p-8 lg:p-10 shadow-xl border-t-8 border-[#FF6600] hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center h-full">
+              <div className="w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mb-6 text-[#FF6600] ring-4 ring-orange-100">
+                <Megaphone className="w-12 h-12" />
               </div>
               <h3 className="text-3xl font-extrabold mb-3 font-display text-[#1A1A1A]">Referrers</h3>
-              <p className="text-gray-600 mb-8 text-center text-lg flex-grow">
-                Monetize your network by referring trusted trades. Earn gift cards for every successful job.
+              <p className="text-gray-600 mb-8 text-center text-xl leading-relaxed flex-grow" style={{ lineHeight: 1.7 }}>
+                Monetize your network. Earn gift cards for every trade job you refer — no selling, just connecting.
               </p>
               <SignedOut>
                 <Link
                   href="/register?type=referrer"
-                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white py-5 rounded-lg shadow-lg transition-all active:scale-95 font-cta text-xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                  style={{ minHeight: "64px" }}
                 >
-                  Earn Gift Cards <ArrowRight className="w-5 h-5" />
+                  Earn Gift Card Rewards <ArrowRight className="w-6 h-6" />
                 </Link>
               </SignedOut>
               <SignedIn>
                 <Link
                   href="/dashboard/referrer"
-                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white py-5 rounded-lg shadow-lg transition-all active:scale-95 font-cta text-xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                  style={{ minHeight: "64px" }}
                 >
-                  My Dashboard <ArrowRight className="w-5 h-5" />
+                  My Dashboard <ArrowRight className="w-6 h-6" />
                 </Link>
               </SignedIn>
             </div>
 
             {/* Trades card */}
-            <div className="bg-[#1A1A1A] rounded-xl p-8 lg:p-10 shadow-xl border-t-8 border-gray-500 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center h-full text-white relative overflow-hidden">
+            <div className="bg-[#1A1A1A] rounded-2xl p-8 lg:p-10 shadow-xl border-t-8 border-[#FF6600] hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center h-full text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Construction className="w-32 h-32" />
+                <Construction className="w-36 h-36" />
               </div>
-              <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-6 text-white ring-4 ring-gray-700 z-10">
-                <ShieldCheck className="w-10 h-10" />
+              <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-6 text-white ring-4 ring-gray-700 z-10">
+                <ShieldCheck className="w-12 h-12" />
               </div>
-              <h3 className="text-3xl font-extrabold mb-3 font-display z-10">Trades</h3>
-              <p className="text-gray-300 mb-8 text-center text-lg flex-grow z-10">
-                Get high-quality, verified leads. Only pay when you win the work. Zero upfront risk.
+              <h3 className="text-3xl font-extrabold mb-3 font-display z-10">Trade Businesses</h3>
+              <p className="text-gray-300 mb-8 text-center text-xl leading-relaxed flex-grow z-10" style={{ lineHeight: 1.7 }}>
+                Get exclusive, verified leads. Zero upfront cost — only pay a 20% fee when you win the job.
               </p>
               <SignedOut>
                 <Link
                   href="/register?type=business"
-                  className="w-full bg-white hover:bg-gray-200 text-[#1A1A1A] py-5 rounded-lg shadow-lg transition-all active:scale-95 font-cta text-xl font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
+                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
+                  style={{ minHeight: "64px" }}
                 >
-                  Grow Risk-Free <TrendingUp className="w-5 h-5" />
+                  Grow Your Network <TrendingUp className="w-6 h-6" />
                 </Link>
               </SignedOut>
               <SignedIn>
                 <Link
                   href="/dashboard/business"
-                  className="w-full bg-white hover:bg-gray-200 text-[#1A1A1A] py-5 rounded-lg shadow-lg transition-all active:scale-95 font-cta text-xl font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
+                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
+                  style={{ minHeight: "64px" }}
                 >
-                  View Leads <TrendingUp className="w-5 h-5" />
+                  View My Leads <TrendingUp className="w-6 h-6" />
                 </Link>
               </SignedIn>
             </div>
@@ -112,11 +118,11 @@ export default function HomePage() {
 
           {/* Section Header */}
           <div className="text-center mb-14">
-            <p className="text-[#FF6600] font-black text-base uppercase tracking-widest mb-4">The Power of the Network</p>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A1A1A] font-display leading-tight">
+            <p className="text-[#FF6600] font-black text-lg uppercase tracking-widest mb-4">The Power of the Network</p>
+            <h2 className="text-[32px] md:text-[52px] font-extrabold text-[#1A1A1A] font-display leading-tight">
               Built for Everyone<br />Who Wins When Trades Win.
             </h2>
-            <p className="mt-5 text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="mt-5 text-xl text-gray-600 max-w-2xl mx-auto" style={{ lineHeight: 1.7, fontSize: '20px' }}>
               Move the sliders to see your real numbers. No sign-up needed to calculate.
             </p>
           </div>
@@ -135,33 +141,51 @@ export default function HomePage() {
               </div>
               {/* Body — flex-1 so button stays at bottom */}
               <div className="p-8 flex flex-col flex-1 gap-7">
-                {/* Slider */}
+                {/* Slider 1 — Monthly Spend */}
                 <div>
                   <div className="flex justify-between items-center mb-4">
-                    <label className="text-lg font-bold text-[#1A1A1A]">Monthly spend on lead sites</label>
+                    <label className="text-lg font-bold text-[#1A1A1A]">Average monthly lead spend</label>
                     <span className="text-4xl font-black text-[#1A1A1A]">${bizSpend}</span>
                   </div>
                   <input
-                    type="range" min={100} max={3000} step={50}
+                    type="range" min={0} max={5000} step={50}
                     value={bizSpend}
                     onChange={e => setBizSpend(Number(e.target.value))}
                     className="slider-dark w-full"
                     style={{ "--val": bizPct } as React.CSSProperties}
                   />
                   <div className="flex justify-between text-base text-gray-500 mt-3 font-medium">
-                    <span>$100/mo</span><span>$3,000/mo</span>
+                    <span>$0/mo</span><span>$5,000/mo</span>
+                  </div>
+                </div>
+
+                {/* Slider 2 — Conversion Rate */}
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="text-lg font-bold text-[#1A1A1A]">Current lead conversion rate</label>
+                    <span className="text-4xl font-black text-[#1A1A1A]">{bizConvRate}%</span>
+                  </div>
+                  <input
+                    type="range" min={5} max={90} step={5}
+                    value={bizConvRate}
+                    onChange={e => setBizConvRate(Number(e.target.value))}
+                    className="slider-dark w-full"
+                    style={{ "--val": bizConvPct } as React.CSSProperties}
+                  />
+                  <div className="flex justify-between text-base text-gray-500 mt-3 font-medium">
+                    <span>5% win rate</span><span>90% win rate</span>
                   </div>
                 </div>
 
                 {/* Result */}
                 <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 text-center">
-                  <p className="text-base font-black text-green-700 uppercase tracking-widest mb-2">Total Sunk-Cost Risk Eliminated</p>
+                  <p className="text-base font-black text-green-700 uppercase tracking-widest mb-2">Total Marketing Waste Eliminated</p>
                   <p className="text-6xl md:text-7xl font-black text-green-600 leading-none">${bizSaved.toLocaleString()}</p>
                   <p className="text-lg text-green-700 mt-3 font-medium">per month — saved with $0 upfront</p>
                 </div>
 
-                <p className="text-base text-gray-500 leading-relaxed flex-1">
-                  Based on an industry-average 30% win rate on traditional lead platforms. TradeRefer charges nothing until you win the job.
+                <p className="text-base text-gray-500 leading-relaxed flex-1" style={{ fontSize: '17px', lineHeight: 1.7 }}>
+                  TradeRefer charges $0 upfront. The 20% success fee on won jobs qualifies as a marketing &amp; promotion expense deductible under <strong>Section 8-1 of the ITAA 1997</strong>.
                 </p>
 
                 <Link
@@ -247,26 +271,46 @@ export default function HomePage() {
       </section>
 
       {/* ── TRUST BAR ── */}
-      <section className="bg-white border-b border-gray-200 py-10 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8 font-display">Trusted by Industry Leaders</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60 hover:opacity-100 transition-all duration-500 grayscale hover:grayscale-0">
-            <div className="flex items-center gap-3 group">
-              <ShieldCheck className="w-9 h-9 text-green-600 group-hover:scale-110 transition-transform" />
-              <span className="font-extrabold text-xl font-display">ABN Verified</span>
+      <section className="bg-white border-b border-gray-200 py-12 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-base font-black text-gray-400 uppercase tracking-widest mb-10 text-center font-display">Trusted by Industry Leaders</p>
+          <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
+
+            {/* Pulsing ABN Live badge */}
+            <div className="flex items-center gap-4 bg-green-50 border-2 border-green-200 rounded-2xl px-6 py-4">
+              <div className="relative">
+                <ShieldCheck className="w-12 h-12 text-green-600" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 animate-ping" />
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500" />
+              </div>
+              <div>
+                <p className="font-black text-xl text-[#1A1A1A] font-display">ABN &amp; License Verified</p>
+                <p className="text-sm font-bold text-green-600 uppercase tracking-widest">● Live Network Active</p>
+              </div>
             </div>
-            <div className="flex items-center gap-3 group">
-              <HardHat className="w-9 h-9 text-blue-800 group-hover:scale-110 transition-transform" />
-              <span className="font-extrabold text-xl font-display">Master Builders</span>
+
+            <div className="flex items-center gap-4">
+              <HardHat className="w-12 h-12 text-blue-800" />
+              <div>
+                <p className="font-extrabold text-xl font-display">Master Builders</p>
+                <p className="text-sm text-gray-400 font-medium">Association Member</p>
+              </div>
             </div>
-            <div className="flex items-center gap-3 group">
-              <Zap className="w-9 h-9 text-yellow-600 group-hover:scale-110 transition-transform" />
-              <span className="font-extrabold text-xl font-display">NECA Member</span>
+            <div className="flex items-center gap-4">
+              <Zap className="w-12 h-12 text-yellow-600" />
+              <div>
+                <p className="font-extrabold text-xl font-display">NECA</p>
+                <p className="text-sm text-gray-400 font-medium">National Electrical</p>
+              </div>
             </div>
-            <div className="flex items-center gap-3 group">
-              <HomeIcon className="w-9 h-9 text-red-700 group-hover:scale-110 transition-transform" />
-              <span className="font-extrabold text-xl font-display">HIA</span>
+            <div className="flex items-center gap-4">
+              <HomeIcon className="w-12 h-12 text-red-700" />
+              <div>
+                <p className="font-extrabold text-xl font-display">HIA</p>
+                <p className="text-sm text-gray-400 font-medium">Housing Industry</p>
+              </div>
             </div>
+
           </div>
         </div>
       </section>
@@ -323,8 +367,8 @@ export default function HomePage() {
       <section className="py-20 bg-[#F2F2F2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A1A1A] mb-4 font-display">The Math Behind Success</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-lg">See exactly why our model puts more money in your pocket.</p>
+            <h2 className="text-[32px] md:text-[52px] font-extrabold text-[#1A1A1A] mb-4 font-display leading-tight">The Math Behind Success</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>See exactly why our model puts more money in your pocket.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch max-w-5xl mx-auto">
@@ -334,30 +378,30 @@ export default function HomePage() {
               <h3 className="text-xl font-bold text-gray-500 mb-6 uppercase font-display text-center">Traditional Lead Sites</h3>
               <ul className="space-y-6 text-gray-600 mb-8 flex-grow">
                 <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <XCircle className="w-4 h-4 text-red-600" />
+                  <div className="mt-1 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <XCircle className="w-5 h-5 text-red-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-lg mb-1">Pay $21+ per lead just to quote</strong>
-                    <span className="text-sm">Paying for the *chance* to work, even if 5 others are quoting too.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">Pay $21+ per lead just to quote</strong>
+                    <span style={{ fontSize: '17px', lineHeight: 1.7 }} className="text-gray-500">Paying for the chance to work, even if 5 others are quoting too. High Risk.</span>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <XCircle className="w-4 h-4 text-red-600" />
+                  <div className="mt-1 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <XCircle className="w-5 h-5 text-red-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-lg mb-1">No guarantee of work</strong>
-                    <span className="text-sm">If you don't win the job, that money is gone forever.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">Shared leads, no guarantee</strong>
+                    <span style={{ fontSize: '17px', lineHeight: 1.7 }} className="text-gray-500">If you don&apos;t win the job, that money is gone forever.</span>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <XCircle className="w-4 h-4 text-red-600" />
+                  <div className="mt-1 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <XCircle className="w-5 h-5 text-red-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-lg mb-1">Sunk marketing cost</strong>
-                    <span className="text-sm">Burn through budget without securing a single invoice.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">Sunk marketing cost</strong>
+                    <span style={{ fontSize: '17px', lineHeight: 1.7 }} className="text-gray-500">Burn through budget without securing a single invoice.</span>
                   </div>
                 </li>
               </ul>
@@ -372,30 +416,30 @@ export default function HomePage() {
               <h3 className="text-xl font-bold text-[#FF6600] mb-6 uppercase font-display text-center">Pay-For-Success Model</h3>
               <ul className="space-y-6 text-gray-700 mb-8 flex-grow">
                 <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  <div className="mt-1 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-lg mb-1">$0 Upfront Cost</strong>
-                    <span className="text-sm">Join, list your business, and receive leads completely free.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">$0 Upfront Cost — Exclusive Leads</strong>
+                    <span style={{ fontSize: '17px', lineHeight: 1.7 }} className="text-gray-500">Join, list your business, and receive exclusive leads completely free.</span>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  <div className="mt-1 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-lg mb-1">Only pay a 20% fee when you WIN</strong>
-                    <span className="text-sm">We only get paid when money hits your bank account. Fair and square.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">Only pay 20% fee when you WIN</strong>
+                    <span style={{ fontSize: '17px', lineHeight: 1.7 }} className="text-gray-500">We only get paid when money hits your account. Zero risk.</span>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  <div className="mt-1 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle2 className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-lg mb-1">Fully Tax-Deductible</strong>
-                    <span className="text-sm">The success fee is a 100% legitimate business promotion expense.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">Tax-Deductible — Section 8-1 ITAA 1997</strong>
+                    <span style={{ fontSize: '17px', lineHeight: 1.7 }} className="text-gray-500">The 20% success fee qualifies as a Marketing &amp; Promotion expense under Australian tax law.</span>
                   </div>
                 </li>
               </ul>
@@ -490,11 +534,17 @@ export default function HomePage() {
       </section>
 
       {/* Browse by Trade */}
-      <section className="py-24 bg-zinc-50">
+      <section className="py-24 bg-[#F2F2F2]">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-black text-zinc-900 mb-4 font-display tracking-tight">Browse by Trade</h2>
-            <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">Find verified local specialists for every home and commercial trade across Australia.</p>
+          <div className="text-center mb-6">
+            <h2 className="text-[32px] md:text-[52px] font-black text-zinc-900 mb-4 font-display tracking-tight leading-tight">Browse by Trade</h2>
+            <p className="text-zinc-600 font-medium max-w-2xl mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find verified local specialists for every home and commercial trade across Australia.</p>
+          </div>
+          {/* GEO BLUF snippet for AI crawlers */}
+          <div className="bg-white border-l-4 border-[#FF6600] rounded-xl px-6 py-4 max-w-3xl mx-auto mb-12">
+            <p className="text-[#1A1A1A]" style={{ fontSize: '18px', lineHeight: 1.7 }}>
+              TradeRefer provides access to 12,000+ verified Australian trades across every state and territory. Our network eliminates upfront lead risk for businesses while rewarding local communities for high-quality introductions.
+            </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
             {TRADE_CATEGORIES.filter(t => t !== "Other").slice(0, 30).map((trade) => (
@@ -523,8 +573,8 @@ export default function HomePage() {
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-black text-zinc-900 mb-4 font-display tracking-tight">Browse by State</h2>
-            <p className="text-xl text-zinc-600 font-medium max-w-2xl mx-auto">Local trade directories for every Australian state and territory.</p>
+            <h2 className="text-[32px] md:text-[52px] font-black text-zinc-900 mb-4 font-display tracking-tight leading-tight">Browse by State</h2>
+            <p className="text-zinc-600 font-medium max-w-2xl mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>Local trade directories for every Australian state and territory.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
             {[
