@@ -134,40 +134,41 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
             {/* ── BREADCRUMBS ── */}
-            <div className="bg-zinc-900 pt-32 pb-4">
+            <div className="bg-gray-100 border-b border-gray-200" style={{ paddingTop: '108px', paddingBottom: '12px' }}>
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center flex-wrap gap-2 text-sm font-bold text-zinc-500 uppercase tracking-widest">
-                        <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                    <nav className="flex items-center flex-wrap gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '14px' }}>
+                        <Link href="/" className="hover:text-[#FF6600] transition-colors">Home</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href="/local" className="hover:text-white transition-colors">Directory</Link>
+                        <Link href="/local" className="hover:text-[#FF6600] transition-colors">Directory</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href={`/local/${state}`} className="hover:text-white transition-colors">{stateUpper}</Link>
+                        <Link href={`/local/${state}`} className="hover:text-[#FF6600] transition-colors">{stateUpper}</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href={`/local/${state}/${city}`} className="hover:text-white transition-colors">{cityName}</Link>
+                        <Link href={`/local/${state}/${city}`} className="hover:text-[#FF6600] transition-colors">{cityName}</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <span className="text-orange-500">{suburbName}</span>
+                        <span className="text-[#FF6600]">{suburbName}</span>
                     </nav>
                 </div>
             </div>
 
             {/* ── HERO ── */}
-            <div className="bg-zinc-900 pb-20 relative overflow-hidden text-white">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                </div>
+            <div className="bg-[#FCFCFC] pb-20 pt-12 relative overflow-hidden border-b border-gray-200">
+                <div className="absolute inset-0 z-0 bg-cover bg-center opacity-8" style={{ backgroundImage: 'url(\'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2670&auto=format&fit=crop\')' }} />
+                <div className="absolute inset-0 z-0 bg-[#FCFCFC]/85" />
                 <div className="container mx-auto px-4 relative z-10">
-                    <div className="max-w-3xl">
-                        <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-                            Best Trades in <span className="text-orange-500">{suburbName}</span>
-                        </h1>
-                        {/* BLUF — first 100 words, structured for AI overview extraction */}
-                        <p className="text-xl text-zinc-300 mb-2 font-bold leading-[1.6] max-w-2xl">
+                    {/* BLUF — 40-word AI-crawlable expert summary */}
+                    <div className="bg-white border-l-4 border-[#FF6600] rounded-xl px-6 py-4 max-w-3xl mb-8">
+                        <p className="text-[#1A1A1A]" style={{ fontSize: '18px', lineHeight: 1.7 }}>
                             {suburbStats.total > 0
-                                ? `${suburbName} currently has ${suburbStats.total} verified trade businesses across ${suburbStats.categories} categories.`
-                                : `Find trusted local trade professionals in ${suburbName}, ${cityName}.`
+                                ? `${suburbName} has ${suburbStats.total} verified trade businesses across ${suburbStats.categories} categories. TradeRefer eliminates the $21 lead-risk for ${suburbName} pros — pay only when you win the work.`
+                                : `Find trusted local trade professionals in ${suburbName}, ${cityName}. All businesses are ABN-verified. TradeRefer eliminates upfront lead risk — pay only when you win.`
                             }
                         </p>
-                        <p className="text-lg text-zinc-400 leading-[1.6] max-w-2xl">
+                    </div>
+                    <div className="max-w-4xl">
+                        <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
+                            Best Trades in <span className="text-[#FF6600]">{suburbName}</span>
+                        </h1>
+                        <p className="text-gray-600 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             All businesses ABN-verified and ranked by real community referrals — not paid placement.
                         </p>
                     </div>
@@ -181,8 +182,8 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
 
                         {/* Trade category grid — oversized 120px icons */}
                         <section>
-                            <h2 className="text-2xl font-black text-zinc-900 mb-2">Select a Trade Category</h2>
-                            <p className="text-lg text-zinc-500 mb-8 leading-[1.6]">Find verified local specialists in {suburbName} for your project.</p>
+                            <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '32px' }}>Select a Trade Category</h2>
+                            <p className="text-gray-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find verified local specialists in {suburbName} for your project.</p>
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                                 {displayTrades.map(({ trade, count }) => {
                                     const Icon = TRADE_ICONS[trade] || Wrench;
@@ -194,11 +195,11 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                                                     <Icon className="w-12 h-12" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-base font-black text-zinc-900 group-hover:text-orange-600 transition-colors leading-tight mb-1">
+                                                    <p className="font-black text-[#1A1A1A] group-hover:text-[#FF6600] transition-colors leading-tight mb-1" style={{ fontSize: '22px' }}>
                                                         {trade}
                                                     </p>
                                                     {count > 0 && (
-                                                        <p className="text-sm font-bold text-orange-500">{count} verified</p>
+                                                        <p className="font-bold text-[#FF6600]" style={{ fontSize: '16px' }}>{count} verified</p>
                                                     )}
                                                 </div>
                                             </div>
@@ -213,8 +214,8 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                             <section className="bg-amber-50 border border-amber-100 rounded-3xl p-8 flex gap-4">
                                 <MapPin className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
                                 <div>
-                                    <h2 className="text-xl font-black text-zinc-900 mb-2">Local Knowledge: {suburbName}</h2>
-                                    <p className="text-lg text-zinc-700 leading-[1.6]">
+                                    <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '24px' }}>Local Knowledge: {suburbName}</h2>
+                                    <p className="text-gray-700" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                                         {suburbName} features {suburbCtx.housing} under {suburbCtx.climate}. Local tradies understand the specific requirements of properties in the {suburbCtx.region} area under {suburbCtx.council}.
                                     </p>
                                 </div>
@@ -225,8 +226,8 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                         <section className="bg-white rounded-3xl border border-zinc-200 p-8 flex gap-4">
                             <ShieldCheck className="w-6 h-6 text-green-500 shrink-0 mt-0.5" />
                             <div>
-                                <h2 className="text-xl font-black text-zinc-900 mb-2">How TradeRefer Verifies {suburbName} Businesses</h2>
-                                <p className="text-lg text-zinc-600 leading-[1.6]">
+                                <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '24px' }}>How TradeRefer Verifies {suburbName} Businesses</h2>
+                                <p className="text-gray-600" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                                     Every business listed in {suburbName} is checked against the Australian Business Register for an active ABN, has their state trade licence confirmed, and is ranked by real peer referrals from {cityName} residents — never paid ads.
                                 </p>
                             </div>
@@ -235,17 +236,17 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                         {/* Nearby suburbs cluster */}
                         {nearbySuburbs.length > 0 && (
                             <section>
-                                <h2 className="text-xl font-black text-zinc-900 mb-2 flex items-center gap-2">
-                                    <MapPin className="w-5 h-5 text-orange-500" />
+                                <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: '24px' }}>
+                                    <MapPin className="w-6 h-6 text-[#FF6600]" />
                                     Nearby Suburbs in {cityName}
                                 </h2>
-                                <p className="text-lg text-zinc-500 mb-6 leading-[1.6]">Find trade professionals in suburbs adjacent to {suburbName}:</p>
-                                <div className="flex flex-wrap gap-2">
+                                <p className="text-gray-500 mb-6" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find trade professionals in suburbs adjacent to {suburbName}:</p>
+                                <div className="flex flex-wrap gap-3">
                                     {nearbySuburbs.map((s) => (
                                         <Link
                                             key={s}
                                             href={`/local/${state}/${city}/${s.toLowerCase().replace(/ /g, '-')}`}
-                                            className="px-4 py-2.5 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 transition-colors"
+                                            className="px-5 py-3 bg-white border-2 border-zinc-200 rounded-xl font-bold text-[#1A1A1A] hover:bg-orange-50 hover:border-[#FF6600] hover:text-[#FF6600] transition-colors" style={{ fontSize: '16px' }}
                                         >
                                             {s}
                                         </Link>

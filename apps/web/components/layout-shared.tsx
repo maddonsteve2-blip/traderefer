@@ -287,7 +287,7 @@ export function Navbar() {
 
         <>
 
-            <header className="fixed top-0 w-full border-b bg-white/90 backdrop-blur-md z-50" style={{ height: '90px' }}>
+            <header className="fixed top-0 w-full border-b bg-white/90 backdrop-blur-md z-50" style={{ height: '100px' }}>
 
                 <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4">
 
@@ -299,14 +299,14 @@ export function Navbar() {
 
                     {/* ── PERSISTENT SEARCH BAR ── */}
                     {!isDashboard && (
-                        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md items-center gap-3 bg-zinc-100 hover:bg-white border-2 border-zinc-200 hover:border-orange-400 rounded-2xl px-5 transition-all" style={{ height: '56px' }}>
-                            <Search className="w-5 h-5 text-zinc-400 shrink-0" />
+                        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md items-center gap-3 bg-zinc-100 hover:bg-white border-2 border-zinc-200 hover:border-orange-400 rounded-2xl px-5 transition-all" style={{ height: '60px' }}>
+                            <Search className="w-5 h-5 text-[#FF6600] shrink-0" />
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
                                 placeholder="Find a Tradie in your suburb..."
-                                className="flex-1 bg-transparent text-base text-zinc-700 placeholder:text-zinc-400 outline-none min-w-0 font-medium"
+                                className="flex-1 bg-transparent text-[18px] text-zinc-700 placeholder:text-zinc-400 outline-none min-w-0 font-medium"
                             />
                         </form>
                     )}
@@ -544,7 +544,7 @@ export function Navbar() {
 
                                         <Link href="/businesses" className="hidden sm:block">
 
-                                            <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                            <Button variant="ghost" className="font-bold text-zinc-600 hover:text-orange-600 text-[18px]">
 
                                                 Find Businesses
 
@@ -554,7 +554,7 @@ export function Navbar() {
 
                                         <Link href="/support" className="hidden lg:block">
 
-                                            <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                            <Button variant="ghost" className="font-bold text-zinc-600 hover:text-orange-600 text-[18px]">
 
                                                 Support
 
@@ -564,7 +564,7 @@ export function Navbar() {
 
                                         <Link href="/contact" className="hidden lg:block">
 
-                                            <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-orange-600">
+                                            <Button variant="ghost" className="font-bold text-zinc-600 hover:text-orange-600 text-[18px]">
 
                                                 Contact
 
@@ -574,7 +574,7 @@ export function Navbar() {
 
                                         <Link href="/dashboard" className="hidden sm:block">
 
-                                            <Button className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl px-6 font-bold text-base shadow-lg shadow-orange-500/20" style={{ minHeight: '48px' }}>
+                                            <Button className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl px-6 font-bold shadow-lg shadow-orange-500/20" style={{ minHeight: '56px', fontSize: '20px' }}>
 
                                                 My Dashboard
 

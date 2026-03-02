@@ -247,18 +247,18 @@ export default async function TradeLocationPage({ params }: PageProps) {
             {localBusinessJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />}
 
             {/* ── BREADCRUMBS ── */}
-            <div className="bg-zinc-900 pt-32 pb-4">
+            <div className="bg-gray-100 border-b border-gray-200" style={{ paddingTop: '108px', paddingBottom: '12px' }}>
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 text-xs font-bold text-zinc-500 uppercase tracking-widest">
-                        <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                    <nav className="flex items-center flex-wrap gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '14px' }}>
+                        <Link href="/" className="hover:text-[#FF6600] transition-colors">Home</Link>
                         <ChevronRight className="w-3 h-3" />
                         {breadcrumbs.map((bc, i) => (
                             <div key={i} className="flex items-center gap-2">
                                 {i > 0 && <ChevronRight className="w-3 h-3" />}
                                 {bc.href !== "#" ? (
-                                    <Link href={bc.href} className="hover:text-white transition-colors">{bc.name}</Link>
+                                    <Link href={bc.href} className="hover:text-[#FF6600] transition-colors">{bc.name}</Link>
                                 ) : (
-                                    <span className="text-orange-500">{bc.name}</span>
+                                    <span className="text-[#FF6600]">{bc.name}</span>
                                 )}
                             </div>
                         ))}
@@ -267,31 +267,36 @@ export default async function TradeLocationPage({ params }: PageProps) {
             </div>
 
             {/* ── HERO SECTION ── */}
-            <div className="bg-zinc-900 pb-20 relative overflow-hidden text-white">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                </div>
+            <div className="bg-[#FCFCFC] pb-20 pt-12 relative overflow-hidden border-b border-gray-200">
+                <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: 'url(\'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2670&auto=format&fit=crop\')' }} />
+                <div className="absolute inset-0 z-0 bg-[#FCFCFC]/82" />
                 <div className="container mx-auto px-4 relative z-10">
-                    <div className="max-w-3xl">
-                        <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-                            <span className="text-orange-500">{tradeName}</span> in {suburbName}, {cityName}
+                    <div className="max-w-4xl">
+                        <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
+                            <span className="text-[#FF6600]">{tradeName}</span> in {suburbName}, {cityName}
                         </h1>
-                        <p className="text-xl text-zinc-400 mb-4 leading-relaxed max-w-2xl">
+                        <p className="text-gray-600 mb-6 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             {localizedIntro}
                         </p>
                         {cost && (
-                            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-4 py-2 mb-6 text-sm font-bold text-white">
-                                <DollarSign className="w-4 h-4 text-orange-400" />
+                            <div className="inline-flex items-center gap-2 bg-white border-2 border-gray-200 rounded-xl px-5 py-3 mb-6 font-bold text-[#1A1A1A]" style={{ fontSize: '18px' }}>
+                                <DollarSign className="w-5 h-5 text-[#FF6600]" />
                                 Typical cost: ${cost.low}–${cost.high}{cost.unit}
                             </div>
                         )}
                         <div className="flex flex-wrap gap-4">
-                            <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold h-14 px-8 text-lg border-none">
-                                <Link href="#businesses">View Top {businesses.length > 0 ? businesses.length : ''} Trades</Link>
-                            </Button>
-                            <Button asChild variant="outline" size="lg" className="bg-white/5 border-white/10 text-white hover:bg-white/10 rounded-xl font-bold h-14 px-8 text-lg">
-                                <Link href="/register?type=business">List Your Business</Link>
-                            </Button>
+                            <Link href="#businesses"
+                                className="inline-flex items-center justify-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-all hover:scale-105 active:scale-95 font-cta"
+                                style={{ minHeight: '64px', fontSize: '20px' }}
+                            >
+                                View Top {businesses.length > 0 ? businesses.length : ''} Trades
+                            </Link>
+                            <Link href="/register?type=business"
+                                className="inline-flex items-center justify-center gap-2 bg-white border-2 border-gray-200 hover:border-[#FF6600] text-[#1A1A1A] font-black rounded-xl px-8 transition-all"
+                                style={{ minHeight: '64px', fontSize: '20px' }}
+                            >
+                                List Your Business
+                            </Link>
                         </div>
                     </div>
                 </div>

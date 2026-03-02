@@ -118,38 +118,46 @@ export default async function CityDirectoryPage({ params }: PageProps) {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
 
             {/* ── BREADCRUMBS ── */}
-            <div className="bg-zinc-900 pt-32 pb-4">
+            <div className="bg-gray-100 border-b border-gray-200" style={{ paddingTop: '108px', paddingBottom: '12px' }}>
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 text-sm font-bold text-zinc-500 uppercase tracking-widest">
-                        <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                    <nav className="flex items-center gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '14px' }}>
+                        <Link href="/" className="hover:text-[#FF6600] transition-colors">Home</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href="/local" className="hover:text-white transition-colors">Directory</Link>
+                        <Link href="/local" className="hover:text-[#FF6600] transition-colors">Directory</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href={`/local/${state}`} className="hover:text-white transition-colors">{stateUpper}</Link>
+                        <Link href={`/local/${state}`} className="hover:text-[#FF6600] transition-colors">{stateUpper}</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <span className="text-orange-500">{cityName}</span>
+                        <span className="text-[#FF6600]">{cityName}</span>
                     </nav>
                 </div>
             </div>
 
             {/* ── HERO ── */}
-            <div className="bg-zinc-900 pb-20 relative overflow-hidden text-white">
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                </div>
+            <div className="bg-[#FCFCFC] pb-20 pt-12 relative overflow-hidden border-b border-gray-200">
+                <div className="absolute inset-0 z-0 bg-cover bg-center opacity-8" style={{ backgroundImage: 'url(\'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2670&auto=format&fit=crop\')' }} />
+                <div className="absolute inset-0 z-0 bg-[#FCFCFC]/85" />
                 <div className="container mx-auto px-4 relative z-10">
-                    <div className="max-w-3xl">
-                        <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-                            Trades in <span className="text-orange-500">{cityName}</span>, {stateUpper}
+                    {/* BLUF snippet */}
+                    <div className="bg-white border-l-4 border-[#FF6600] rounded-xl px-6 py-4 max-w-3xl mb-8">
+                        <p className="text-[#1A1A1A]" style={{ fontSize: '18px', lineHeight: 1.7 }}>
+                            {totalBusinesses > 0
+                                ? `${cityName} has ${totalBusinesses.toLocaleString()} ABN-verified trade businesses across ${suburbs.length} suburbs. TradeRefer eliminates the $21 upfront lead risk — ${cityName} pros only pay when they win the job.`
+                                : `${cityName} verified trade directory across ${suburbs.length > 0 ? suburbs.length : 'all'} suburbs. Find ABN-checked local experts. TradeRefer eliminates upfront lead risk for all ${cityName} tradies.`
+                            }
+                        </p>
+                    </div>
+                    <div className="max-w-4xl">
+                        <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
+                            Trades in <span className="text-[#FF6600]">{cityName}</span>, {stateUpper}
                         </h1>
-                        <p className="text-xl text-zinc-400 mb-4 leading-[1.6] max-w-2xl">
+                        <p className="text-gray-600 mb-4 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             {totalBusinesses > 0
                                 ? `${totalBusinesses.toLocaleString()} verified tradespeople across ${suburbs.length} suburbs in ${cityName}. Find the right expert for your job.`
                                 : `Find verified local trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to connect with experts near you.`
                             }
                         </p>
                         {suburbs.length > 0 && (
-                            <p className="text-zinc-500 text-sm font-medium">
+                            <p className="text-gray-400 font-medium" style={{ fontSize: '16px' }}>
                                 Servicing {cityName} including {suburbs.slice(0, 3).join(', ')}{suburbs.length > 3 ? ` and ${suburbs.length - 3} more suburbs` : ''}.
                             </p>
                         )}
@@ -184,28 +192,28 @@ export default async function CityDirectoryPage({ params }: PageProps) {
 
                         {/* Suburb grid */}
                         <section>
-                            <h2 className="text-2xl font-black text-zinc-900 mb-2">Browse by Suburb</h2>
-                            <p className="text-lg text-zinc-500 mb-8 leading-[1.6]">Select your suburb to find verified local trade experts near you.</p>
+                            <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '32px' }}>Browse by Suburb</h2>
+                            <p className="text-gray-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>Select your suburb to find verified local trade experts near you.</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                 {suburbs.map((suburb) => {
                                     const count = businessCounts[suburb] || 0;
                                     const suburbSlug = suburb.toLowerCase().replace(/ /g, '-');
                                     return (
                                         <Link key={suburb} href={`/local/${state}/${city}/${suburbSlug}`} className="group">
-                                            <div className="bg-white rounded-2xl border border-zinc-200 hover:border-orange-500 hover:shadow-lg transition-all duration-300 p-5">
+                                            <div className="bg-white rounded-2xl border-2 border-zinc-200 hover:border-[#FF6600] hover:shadow-lg transition-all duration-300 p-5">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <span className="text-base font-black text-zinc-800 group-hover:text-orange-600 transition-colors">
+                                                    <span className="font-black text-[#1A1A1A] group-hover:text-[#FF6600] transition-colors" style={{ fontSize: '22px' }}>
                                                         {suburb}
                                                     </span>
-                                                    <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 shrink-0 group-hover:translate-x-0.5 transition-all" />
+                                                    <ChevronRight className="w-5 h-5 text-zinc-300 group-hover:text-[#FF6600] shrink-0 group-hover:translate-x-0.5 transition-all" />
                                                 </div>
                                                 {count > 0 ? (
                                                     <div>
-                                                        <span className="text-lg font-black text-orange-500">{count}</span>
-                                                        <span className="text-xs text-zinc-400 font-medium uppercase tracking-wider ml-1.5">Verified Pros</span>
+                                                        <span className="text-2xl font-black text-[#FF6600]">{count}</span>
+                                                        <span className="text-sm text-zinc-400 font-bold uppercase tracking-wider ml-2">Verified Pros</span>
                                                     </div>
                                                 ) : (
-                                                    <p className="text-xs text-zinc-400 font-medium">Browse trades</p>
+                                                    <p className="text-sm text-zinc-400 font-medium">Browse trades</p>
                                                 )}
                                             </div>
                                         </Link>

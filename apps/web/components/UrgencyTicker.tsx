@@ -36,16 +36,16 @@ export async function UrgencyTicker() {
     }
 
     return (
-        <div className="bg-zinc-950 border-t border-white/5 py-2.5 px-4">
-            <div className="container mx-auto flex items-center justify-center gap-2 text-xs text-zinc-400">
-                <Zap className="w-3 h-3 text-orange-500 shrink-0" />
-                <span>
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A1A] border-t-2 border-[#FF6600] shadow-2xl" style={{ height: '56px' }}>
+            <div className="container mx-auto h-full flex items-center justify-center gap-3 px-4">
+                <Zap className="w-5 h-5 text-[#FF6600] shrink-0 animate-pulse" />
+                <span className="text-white font-bold" style={{ fontSize: '18px' }}>
                     Last referral matched:{" "}
-                    <span className="text-white font-bold">{trade}</span>
+                    <span className="text-[#FF6600]">{trade}</span>
                     {" "}in{" "}
-                    <span className="text-white font-bold">{suburb}</span>
+                    <span className="text-[#FF6600]">{suburb}</span>
                     {" "}
-                    <span className="text-zinc-500">({ago})</span>
+                    <span className="text-zinc-400 font-normal">— {ago}</span>
                 </span>
             </div>
         </div>

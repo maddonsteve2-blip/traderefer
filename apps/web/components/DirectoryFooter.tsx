@@ -42,7 +42,7 @@ export async function DirectoryFooter() {
     return (
         <>
         <UrgencyTicker />
-        <footer className="bg-zinc-900 text-white pt-20 pb-10 border-t border-white/5">
+        <footer className="bg-zinc-900 text-white pt-20 border-t border-white/5" style={{ paddingBottom: '74px' }}>
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
 
@@ -150,14 +150,20 @@ export async function DirectoryFooter() {
                     </div>
                 </div>
 
-                {/* Section 47B Disclosure */}
+                {/* E-E-A-T Authority Links */}
                 <div className="pt-8 border-t border-white/5 mb-6">
-                    <p className="text-zinc-600 text-xs leading-relaxed max-w-4xl">
-                        <strong className="text-zinc-500">Section 47B Disclosure:</strong> TradeRefer receives a platform fee for successful connections. Referral rewards are provided in gift card format and comply with Australian Consumer Law. The 20% success fee qualifies as a Marketing &amp; Promotion expense deductible under Section 8-1 of the ITAA 1997. All trades are independently verified via ABN and licence checks.
-                    </p>
+                    <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-4">Industry Bodies &amp; Licensing Authorities</p>
+                    <div className="flex flex-wrap gap-6">
+                        <a href="https://www.vba.vic.gov.au" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-orange-400 text-xs font-bold flex items-center gap-1 transition-colors">VBA Victoria ↗</a>
+                        <a href="https://www.masterbuilders.com.au" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-orange-400 text-xs font-bold flex items-center gap-1 transition-colors">Master Builders ↗</a>
+                        <a href="https://www.neca.asn.au" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-orange-400 text-xs font-bold flex items-center gap-1 transition-colors">NECA ↗</a>
+                        <a href="https://hia.com.au" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-orange-400 text-xs font-bold flex items-center gap-1 transition-colors">HIA ↗</a>
+                        <a href="https://www.abr.business.gov.au" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-orange-400 text-xs font-bold flex items-center gap-1 transition-colors">ABR ↗</a>
+                        <a href="https://www.fairtrading.nsw.gov.au" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-orange-400 text-xs font-bold flex items-center gap-1 transition-colors">NSW Fair Trading ↗</a>
+                    </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-6 border-t border-white/5">
                     <div className="text-left">
                         <p className="text-zinc-600 text-xs">
                             &copy; {new Date().getFullYear()} TradeRefer Pty Ltd. All rights reserved.
