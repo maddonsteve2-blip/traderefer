@@ -99,6 +99,77 @@ npm run dev          # starts web + api simultaneously
 
 ---
 
+## Sitemap Architecture
+
+The sitemap uses **dedicated API routes** (not Next.js `generateSitemaps`) so it is reliable, cacheable, and fully scalable. This mirrors how large Australian directory sites like ServiceSeeking handle sitemaps.
+
+### How It Works
+
+`/sitemap.xml` is a **rewrite** (defined in `next.config.ts`) pointing to an API route that returns a sitemap INDEX. The index lists individual sub-sitemaps, each also served via API routes.
+
+```
+/sitemap.xml              → /api/sitemaps           (index — lists all sub-sitemaps)
+/sitemaps/general.xml     → /api/sitemaps/general   (static pages, state hubs, city hubs)
+/sitemaps/profiles.xml    → /api/sitemaps/profiles  (all business profile pages)
+/sitemaps/suburbs.xml     → /api/sitemaps/suburbs   (suburb hub pages)
+/sitemaps/trades.xml      → /api/sitemaps/trades    (suburb + trade combo pages)
+/sitemaps/jobs/0.xml      → /api/sitemaps/jobs/0    (job-level pages, chunk 0)
+/sitemaps/jobs/1.xml      → /api/sitemaps/jobs/1    (job-level pages, chunk 1)
+... (as many job chunks as needed)
+```
+
+All responses are cached by Vercel's CDN for 24 hours (`s-maxage=86400`). Google only triggers a fresh generation on the first uncached request; all subsequent hits within 24 hours are served from the CDN edge.
+
+### Key Files
+
+| File | Purpose |
+|---|---|
+| `apps/web/app/api/sitemaps/route.ts` | **INDEX** — queries DB to calculate how many job chunks exist, then lists all sub-sitemap URLs |
+| `apps/web/app/api/sitemaps/general/route.ts` | Static pages + state + city hub pages |
+| `apps/web/app/api/sitemaps/profiles/route.ts` | All active business profile pages |
+| `apps/web/app/api/sitemaps/suburbs/route.ts` | Suburb hub pages (`/local/[state]/[city]/[suburb]`) |
+| `apps/web/app/api/sitemaps/trades/route.ts` | Suburb + trade combo pages (`/local/.../[trade]`) |
+| `apps/web/app/api/sitemaps/jobs/[chunk]/route.ts` | Job-level pages chunked at 5,000 URLs per file |
+| `apps/web/next.config.ts` | Rewrites that map the clean `.xml` URLs to the API routes |
+| `apps/web/app/robots.ts` | Points Google to `/sitemap.xml`; allows `/api/sitemaps` |
+| `apps/web/app/sitemap.ts` | **Intentionally disabled** — do not add exports back to this file |
+
+### What To Update When The Site Changes
+
+#### Adding a new page type (e.g. `/top/[trade]/[state]/[city]` pages)
+1. Create a new API route: `apps/web/app/api/sitemaps/top/route.ts`
+2. Add a rewrite in `next.config.ts`: `{ source: '/sitemaps/top.xml', destination: '/api/sitemaps/top' }`
+3. Add the new URL to the INDEX in `apps/web/app/api/sitemaps/route.ts`: push `${BASE_URL}/sitemaps/top.xml` into the `sitemaps` array
+
+#### Adding a new static page (e.g. `/how-it-works`)
+- Edit `apps/web/app/api/sitemaps/general/route.ts` and add a `urlEntry(...)` line for the new page.
+
+#### Changing the trade/job data (`JOB_TYPES` in `constants.ts`)
+- No sitemap file changes needed. The `jobs/[chunk]/route.ts` dynamically reads `JOB_TYPES` on every request — adding or removing trades/jobs is automatically reflected in the sitemap.
+
+#### Adding new URL patterns to trade or suburb pages
+- Update `apps/web/app/api/sitemaps/trades/route.ts` or `suburbs/route.ts` to include the new URL format.
+
+#### The job chunk count grows (URL count exceeds 5,000 per chunk)
+- Nothing to change — the INDEX route (`/api/sitemaps/route.ts`) recalculates the number of required chunks on every request by counting trade combos × jobs in the DB.
+
+#### Changing chunk size (currently 5,000 URLs per file)
+- Change `const JOB_CHUNK_SIZE = 5000;` in both:
+  - `apps/web/app/api/sitemaps/route.ts` (so the index knows how many chunks to list)
+  - `apps/web/app/api/sitemaps/jobs/[chunk]/route.ts` (so each chunk slices correctly)
+
+#### Google Search Console shows errors on a specific sitemap
+1. Visit the URL directly in a browser (e.g. `traderefer.au/sitemaps/trades.xml`) to see the raw XML
+2. Check the corresponding API route file for DB query errors
+3. All routes have try/catch — if the DB is down, they return empty but valid XML (no 500s)
+
+### Do Not
+- **Do not add exports back to `apps/web/app/sitemap.ts`** — it was intentionally cleared. Adding a default export there re-enables Next.js's built-in sitemap handling, which conflicts with the rewrites.
+- **Do not use `export const revalidate`** on sitemap routes — this forces build-time static generation, which caused the original 404 issue on Vercel.
+- **Do not remove `'Content-Type': 'application/xml'`** from any sitemap route — without it, Google won't parse the response as XML.
+
+---
+
 ## Core Business Rules (Never Break These)
 
 1. A lead is never created without phone OTP verification
