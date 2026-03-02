@@ -1,8 +1,6 @@
-import { MetadataRoute } from 'next';
-import { sql } from '@/lib/db';
-import { JOB_TYPES, jobToSlug } from '@/lib/constants';
-
-export const dynamic = 'force-dynamic';
+// Sitemap is now served via /api/sitemap (API route) + next.config.ts rewrites.
+// This file intentionally exports nothing so Next.js does not register it as a metadata route.
+export {};
 
 const BASE_URL = 'https://traderefer.au';
 const BUSINESS_CHUNK_SIZE = 5000;
