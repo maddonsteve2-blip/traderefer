@@ -2,7 +2,6 @@ import { sql } from "@/lib/db";
 import { ChevronRight, MapPin, Users, Building2 } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -109,8 +108,6 @@ export default async function LocalDirectoryPage() {
                         ))}
                     </div>
                 </div>
-            </div>
-            <DirectoryFooter />
-        </main>
+            </div>        </main>
     );
 }

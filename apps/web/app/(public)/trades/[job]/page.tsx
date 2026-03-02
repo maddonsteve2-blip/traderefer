@@ -1,7 +1,6 @@
 import { ChevronRight, DollarSign, MapPin, FileText, Wrench, ArrowRight, Users, Star } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
 import { JOB_TYPES, TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, jobToSlug } from "@/lib/constants";
 import { sql } from "@/lib/db";
@@ -369,8 +368,6 @@ export default async function TradeHubPage({ params }: PageProps) {
 
                 </div>
             </div>
-
-            <DirectoryFooter />
         </main>
     );
 }

@@ -23,10 +23,10 @@ export async function UrgencyTicker() {
             JOIN businesses b ON b.id = rl.business_id
             WHERE b.trade_category IS NOT NULL AND b.suburb IS NOT NULL
             ORDER BY rl.created_at DESC
-            LIMIT 1
+            LIMIT 20
         `;
         if (result.length > 0) {
-            const row = result[0];
+            const row = result[Math.floor(Math.random() * result.length)];
             trade = row.trade_category || trade;
             suburb = row.suburb || suburb;
             ago = timeAgo(new Date(row.created_at));

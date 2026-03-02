@@ -1,7 +1,6 @@
 import { sql } from "@/lib/db";
 import { Metadata } from "next";
 import Link from "next/link";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { ChevronRight, MapPin, Users, Building2, ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -196,8 +195,6 @@ export default async function LocationsPage() {
                     </section>
                 </div>
             </div>
-
-            <DirectoryFooter />
         </main>
     );
 }

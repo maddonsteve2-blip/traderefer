@@ -1,7 +1,6 @@
 import { sql } from "@/lib/db";
 import { Metadata } from "next";
 import Link from "next/link";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { JOB_TYPES, jobToSlug } from "@/lib/constants";
 import { ChevronRight, Wrench, Users, ArrowRight, Search } from "lucide-react";
 
@@ -186,8 +185,6 @@ export default async function CategoriesPage() {
                     </section>
                 </div>
             </div>
-
-            <DirectoryFooter />
         </main>
     );
 }

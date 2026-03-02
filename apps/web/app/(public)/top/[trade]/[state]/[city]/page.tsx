@@ -2,7 +2,6 @@ import { sql } from "@/lib/db";
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { Button } from "@/components/ui/button";
 import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, HOW_TO_CHOOSE, jobToSlug } from "@/lib/constants";
@@ -456,8 +455,6 @@ export default async function Top10CityPage({ params }: PageProps) {
                     </div>
                 </div>
             </div>
-
-            <DirectoryFooter />
         </main>
     );
 }
