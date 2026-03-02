@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next';
 import { sql } from '@/lib/db';
 import { JOB_TYPES, jobToSlug } from '@/lib/constants';
 
+export const revalidate = 86400; // Regenerate sitemap at most once per 24 hours
+
 const BASE_URL = 'https://traderefer.au';
 const BUSINESS_CHUNK_SIZE = 5000;
 
@@ -21,29 +23,21 @@ async function getBusinessCount(): Promise<number> {
 }
 
 async function getJobPageCount(): Promise<number> {
-    const tradeCombos = await sql`
-        SELECT DISTINCT trade_category
+    // Single query: count distinct suburb+trade combos, then multiply by avg job count in JS
+    const rows = await sql`
+        SELECT trade_category, COUNT(DISTINCT (state || '|' || city || '|' || suburb)) as combo_count
         FROM businesses
         WHERE status = 'active'
           AND state IS NOT NULL AND state != ''
           AND city IS NOT NULL AND city != ''
           AND suburb IS NOT NULL AND suburb != ''
           AND trade_category IS NOT NULL AND trade_category != ''
+        GROUP BY trade_category
     `;
     let total = 0;
-    for (const row of tradeCombos) {
+    for (const row of rows) {
         const jobs = JOB_TYPES[row.trade_category as string] || [];
-        // Each suburb+trade combo generates one URL per job type
-        const comboCount = await sql`
-            SELECT count(DISTINCT (state || city || suburb)) as cnt
-            FROM businesses
-            WHERE status = 'active'
-              AND trade_category = ${row.trade_category}
-              AND state IS NOT NULL AND state != ''
-              AND city IS NOT NULL AND city != ''
-              AND suburb IS NOT NULL AND suburb != ''
-        `;
-        total += Number(comboCount[0].cnt) * jobs.length;
+        total += Number(row.combo_count) * jobs.length;
     }
     return total;
 }
