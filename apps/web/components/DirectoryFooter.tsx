@@ -169,7 +169,7 @@ export async function DirectoryFooter() {
                             &copy; {new Date().getFullYear()} TradeRefer Pty Ltd. All rights reserved.
                         </p>
                         <p className="text-zinc-700 mt-1" style={{ fontSize: '16px' }}>
-                            ABN: 00 000 000 000 &nbsp;|&nbsp; Level 1, 123 Collins Street, Melbourne VIC 3000 Australia &nbsp;|&nbsp; Made in Australia 🇦🇺
+                            ABN: 88 764 351 213 &nbsp;|&nbsp; Level 1, 123 Collins Street, Melbourne VIC 3000 Australia &nbsp;|&nbsp; Made in Australia 🇦🇺
                         </p>
                     </div>
                     <div className="flex gap-8 text-zinc-600 font-bold uppercase tracking-widest" style={{ fontSize: '16px' }}>

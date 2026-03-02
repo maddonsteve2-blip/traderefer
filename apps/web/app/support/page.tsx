@@ -10,7 +10,7 @@ import {
     MessageSquare,
     Mail,
     Send,
-    ChevronLeft,
+    ChevronRight,
     CheckCircle2,
     Loader2
 } from "lucide-react";
@@ -49,28 +49,30 @@ export default function SupportPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#fafafa] flex flex-col">
-            <header className="p-6 border-b border-zinc-100 bg-white sticky top-0 z-50">
-                <div className="container mx-auto max-w-[1024px] flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 text-zinc-900 hover:text-orange-600 transition-colors">
-                        <ChevronLeft className="w-5 h-5" />
-                        <span className="font-bold">Back to Home</span>
-                    </Link>
-                </div>
-            </header>
+        <div className="min-h-screen bg-[#fafafa]">
 
-            <main className="flex-1 container mx-auto max-w-[1024px] px-6 py-12 lg:py-20">
-                <div className="text-center mb-16">
-                    <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <LifeBuoy className="w-10 h-10 text-orange-600" />
+            {/* Hero + Breadcrumb */}
+            <div className="bg-[#1A1A1A] pt-20 md:pt-28 pb-14 text-white">
+                <div className="container mx-auto px-4">
+                    <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest mb-8" style={{ fontSize: '16px' }}>
+                        <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                        <ChevronRight className="w-4 h-4" />
+                        <span className="text-[#FF6600]">Support</span>
+                    </nav>
+                    <div className="flex items-center gap-3 text-[#FF6600] font-black uppercase tracking-widest mb-4" style={{ fontSize: '16px' }}>
+                        <LifeBuoy className="w-5 h-5" />
+                        Help Centre
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-zinc-900 mb-6 font-display tracking-tight">
+                    <h1 className="font-black mb-4 font-display leading-tight" style={{ fontSize: 'clamp(42px, 8vw, 72px)' }}>
                         How can we help?
                     </h1>
-                    <p className="text-xl text-zinc-500 max-w-2xl mx-auto font-medium leading-relaxed">
-                        Whether you&apos;re a business looking to connect with leads, or a referrer with questions about payouts, our team is here to assist you.
+                    <p className="text-zinc-300 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
+                        Whether you&apos;re a business looking to connect with leads, or a referrer with questions about payouts, our team is here to assist.
                     </p>
                 </div>
+            </div>
+
+            <main className="container mx-auto max-w-[1024px] px-6 py-12 lg:py-20">
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                     {/* Contact Info Sidebar */}
@@ -126,7 +128,7 @@ export default function SupportPage() {
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-3">
-                                            <label className="text-sm font-bold uppercase tracking-wider text-zinc-500 ml-1">Your Name</label>
+                                            <label className="font-bold uppercase tracking-wider text-zinc-500 ml-1" style={{ fontSize: '16px' }}>Your Name</label>
                                             <Input 
                                                 value={formData.name}
                                                 onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -136,7 +138,7 @@ export default function SupportPage() {
                                             />
                                         </div>
                                         <div className="space-y-3">
-                                            <label className="text-sm font-bold uppercase tracking-wider text-zinc-500 ml-1">Email Address</label>
+                                            <label className="font-bold uppercase tracking-wider text-zinc-500 ml-1" style={{ fontSize: '16px' }}>Email Address</label>
                                             <Input 
                                                 type="email"
                                                 value={formData.email}
@@ -149,7 +151,7 @@ export default function SupportPage() {
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="text-sm font-bold uppercase tracking-wider text-zinc-500 ml-1">Subject (Optional)</label>
+                                        <label className="font-bold uppercase tracking-wider text-zinc-500 ml-1" style={{ fontSize: '16px' }}>Subject (Optional)</label>
                                         <Input 
                                             value={formData.subject}
                                             onChange={(e) => setFormData({...formData, subject: e.target.value})}
@@ -159,7 +161,7 @@ export default function SupportPage() {
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="text-sm font-bold uppercase tracking-wider text-zinc-500 ml-1">Message</label>
+                                        <label className="font-bold uppercase tracking-wider text-zinc-500 ml-1" style={{ fontSize: '16px' }}>Message</label>
                                         <Textarea 
                                             value={formData.message}
                                             onChange={(e) => setFormData({...formData, message: e.target.value})}
@@ -190,7 +192,6 @@ export default function SupportPage() {
                     </div>
                 </div>
             </main>
-
         </div>
     );
 }
