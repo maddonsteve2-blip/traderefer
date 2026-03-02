@@ -18,28 +18,31 @@ const BUSINESS_CHUNK_SIZE = 5000;
 // ──────────────────────────────────────────────────────────────────────
 
 async function getBusinessCount(): Promise<number> {
-    const rows = await sql`SELECT count(*) as cnt FROM businesses WHERE status = 'active'`;
-    return Number(rows[0].cnt);
+    try {
+        const rows = await sql`SELECT count(*) as cnt FROM businesses WHERE status = 'active'`;
+        return Number(rows[0].cnt);
+    } catch { return 0; }
 }
 
 async function getJobPageCount(): Promise<number> {
-    // Single query: count distinct suburb+trade combos, then multiply by avg job count in JS
-    const rows = await sql`
-        SELECT trade_category, COUNT(DISTINCT (state || '|' || city || '|' || suburb)) as combo_count
-        FROM businesses
-        WHERE status = 'active'
-          AND state IS NOT NULL AND state != ''
-          AND city IS NOT NULL AND city != ''
-          AND suburb IS NOT NULL AND suburb != ''
-          AND trade_category IS NOT NULL AND trade_category != ''
-        GROUP BY trade_category
-    `;
-    let total = 0;
-    for (const row of rows) {
-        const jobs = JOB_TYPES[row.trade_category as string] || [];
-        total += Number(row.combo_count) * jobs.length;
-    }
-    return total;
+    try {
+        const rows = await sql`
+            SELECT trade_category, COUNT(DISTINCT (state || '|' || city || '|' || suburb)) as combo_count
+            FROM businesses
+            WHERE status = 'active'
+              AND state IS NOT NULL AND state != ''
+              AND city IS NOT NULL AND city != ''
+              AND suburb IS NOT NULL AND suburb != ''
+              AND trade_category IS NOT NULL AND trade_category != ''
+            GROUP BY trade_category
+        `;
+        let total = 0;
+        for (const row of rows) {
+            const jobs = JOB_TYPES[row.trade_category as string] || [];
+            total += Number(row.combo_count) * jobs.length;
+        }
+        return total;
+    } catch { return 0; }
 }
 
 export async function generateSitemaps() {
@@ -82,6 +85,7 @@ export async function generateSitemaps() {
 }
 
 export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
+    try {
     const bizCount = await getBusinessCount();
     const bizChunks = Math.ceil(bizCount / BUSINESS_CHUNK_SIZE);
     const baseAfterBiz = bizChunks + 1;
@@ -307,4 +311,8 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
     }
 
     return [];
+    } catch (e) {
+        console.error(`Sitemap chunk ${id} failed:`, e);
+        return [];
+    }
 }
