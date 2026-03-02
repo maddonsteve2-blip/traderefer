@@ -9,9 +9,10 @@ const CHUNK_SIZE = 5000;
 
 export async function GET(
     _req: NextRequest,
-    { params }: { params: { chunk: string } }
+    { params }: { params: Promise<{ chunk: string }> }
 ) {
-    const chunkIndex = parseInt(params.chunk, 10);
+    const { chunk } = await params;
+    const chunkIndex = parseInt(chunk, 10);
     if (isNaN(chunkIndex) || chunkIndex < 0) {
         return new NextResponse('Not Found', { status: 404 });
     }
