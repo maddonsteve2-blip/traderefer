@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Users, ArrowRight, DollarSign, FileText, Wrench } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
 import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, JOB_TYPES, jobToSlug, normalizeTradeName } from "@/lib/constants";
 
@@ -407,7 +406,6 @@ export default async function JobTypePage({ params }: PageProps) {
                 </div>
             </div>
 
-            <DirectoryFooter />
         </main>
     );
 }

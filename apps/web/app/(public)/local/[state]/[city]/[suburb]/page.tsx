@@ -2,7 +2,6 @@ import { sql } from "@/lib/db";
 import { ChevronRight, Hammer, Lightbulb, Pipette as Pipe, Paintbrush, Wrench, Home, Truck, Trash2, Shovel, Scissors, Lock, Wind, Bug, PenTool, HardHat, Construction, LayoutGrid, Fence, MapPin, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { SUBURB_CONTEXT } from "@/lib/constants";
 
 interface PageProps {
@@ -257,7 +256,6 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                     </div>
                 </div>
             </div>
-            <DirectoryFooter />
         </main>
     );
 }

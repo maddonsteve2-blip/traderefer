@@ -2,7 +2,6 @@ import { sql } from "@/lib/db";
 import { ChevronRight, MapPin, Users, Clock, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { AUSTRALIA_LOCATIONS } from "@/lib/constants";
 import { Metadata } from "next";
 
@@ -233,7 +232,6 @@ export default async function CityDirectoryPage({ params }: PageProps) {
                     </div>
                 </div>
             </div>
-            <DirectoryFooter />
         </main>
     );
 }

@@ -1,7 +1,6 @@
 import { ChevronRight, Users, ShieldCheck, ExternalLink, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
 import { sql } from "@/lib/db";
 import { STATE_LICENSING, STATE_AUTHORITY_LINKS } from "@/lib/constants";
@@ -248,7 +247,6 @@ export default async function StateDirectoryPage({ params }: PageProps) {
                     </div>
                 </div>
             </div>
-            <DirectoryFooter />
         </main>
     );
 }
