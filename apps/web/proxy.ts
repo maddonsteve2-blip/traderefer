@@ -25,6 +25,8 @@ const isPublicRoute = createRouteMatcher([
     "/api/webhooks(.*)",
     "/api/ai(.*)",
     "/ingest(.*)",
+    "/sitemap.xml",
+    "/sitemaps(.*)",
 ]);
 
 const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
