@@ -16,6 +16,10 @@ export default function HomePage() {
   const [jobsPerMonth, setJobsPerMonth] = useState(3);
   const monthlyEarnings = tradies * jobsPerMonth * 15;
 
+  const [bizSpend, setBizSpend] = useState(500);
+  const bizWinRate = 0.30;
+  const bizSaved = Math.round(bizSpend * (1 - bizWinRate));
+
   return (
     <main className="bg-[#F2F2F2] text-[#1A1A1A] antialiased">
 
@@ -98,61 +102,135 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── REFERRER EARNINGS ESTIMATOR ── */}
-      <section className="py-16 bg-[#1A1A1A] text-white">
-        <div className="max-w-3xl mx-auto px-4">
-          <div className="text-center mb-10">
-            <p className="text-orange-500 font-black text-sm uppercase tracking-widest mb-3">For Referrers</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold font-display">How Much Could You Earn?</h2>
-            <p className="text-zinc-400 mt-3 text-lg">Move the sliders to see your potential monthly gift card earnings.</p>
+      {/* ── ROI HUB: THE POWER OF THE NETWORK ── */}
+      <section className="py-20 bg-[#FCFCFC] border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Section Header */}
+          <div className="text-center mb-14">
+            <p className="text-[#FF6600] font-black text-base uppercase tracking-widest mb-4">The Power of the Network</p>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A1A1A] font-display leading-tight">
+              Built for Everyone<br />Who Wins When Trades Win.
+            </h2>
+            <p className="mt-5 text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              Move the sliders to see your real numbers. No sign-up needed to calculate.
+            </p>
           </div>
 
-          <div className="bg-zinc-900 rounded-2xl p-8 space-y-8 border border-white/5">
-            {/* Slider 1 */}
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <label className="font-bold text-zinc-300">Tradies you know</label>
-                <span className="text-3xl font-black text-[#FF6600]">{tradies}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            {/* ── LEFT: BUSINESS SAVINGS ── */}
+            <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden">
+              <div className="bg-[#1A1A1A] px-8 py-6">
+                <p className="text-[#FF6600] font-black text-sm uppercase tracking-widest mb-1">For Trade Businesses</p>
+                <h3 className="text-3xl md:text-4xl font-extrabold text-white font-display">Protect Your Profit.</h3>
+                <p className="text-zinc-400 text-lg mt-2 leading-relaxed">
+                  Stop paying $21+ per lead just to quote. See what you&apos;d save by switching to pay-on-success.
+                </p>
               </div>
-              <input
-                type="range" min={1} max={50} step={1}
-                value={tradies}
-                onChange={e => setTradies(Number(e.target.value))}
-                className="w-full h-2 rounded-full appearance-none cursor-pointer"
-                style={{ accentColor: "#FF6600" }}
-              />
-              <div className="flex justify-between text-xs text-zinc-600 mt-1"><span>1</span><span>50</span></div>
-            </div>
+              <div className="p-8 space-y-8">
+                {/* Slider */}
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="text-lg font-bold text-[#1A1A1A]">Monthly spend on lead sites</label>
+                    <span className="text-4xl font-black text-[#1A1A1A]">${bizSpend}</span>
+                  </div>
+                  <input
+                    type="range" min={100} max={3000} step={50}
+                    value={bizSpend}
+                    onChange={e => setBizSpend(Number(e.target.value))}
+                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                    style={{ accentColor: "#1A1A1A" }}
+                  />
+                  <div className="flex justify-between text-base text-gray-500 mt-2 font-medium">
+                    <span>$100/mo</span><span>$3,000/mo</span>
+                  </div>
+                </div>
 
-            {/* Slider 2 */}
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <label className="font-bold text-zinc-300">Est. jobs referred per tradie / month</label>
-                <span className="text-3xl font-black text-[#FF6600]">{jobsPerMonth}</span>
+                {/* Result */}
+                <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 text-center">
+                  <p className="text-base font-black text-green-700 uppercase tracking-widest mb-2">Total Sunk-Cost Risk Eliminated</p>
+                  <p className="text-6xl md:text-7xl font-black text-green-600 leading-none">${bizSaved.toLocaleString()}</p>
+                  <p className="text-lg text-green-700 mt-3 font-medium">per month — saved with $0 upfront</p>
+                </div>
+
+                <p className="text-base text-gray-500 leading-relaxed">
+                  Based on an industry-average 30% win rate on traditional lead platforms. TradeRefer charges nothing until you win the job.
+                </p>
+
+                <Link
+                  href="/register?type=business"
+                  className="flex items-center justify-center gap-3 w-full bg-[#1A1A1A] hover:bg-zinc-800 text-white font-black text-xl py-5 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+                  style={{ minHeight: "60px" }}
+                >
+                  Grow Risk-Free <TrendingUp className="w-6 h-6" />
+                </Link>
               </div>
-              <input
-                type="range" min={1} max={10} step={1}
-                value={jobsPerMonth}
-                onChange={e => setJobsPerMonth(Number(e.target.value))}
-                className="w-full h-2 rounded-full appearance-none cursor-pointer"
-                style={{ accentColor: "#FF6600" }}
-              />
-              <div className="flex justify-between text-xs text-zinc-600 mt-1"><span>1</span><span>10</span></div>
             </div>
 
-            {/* Result */}
-            <div className="bg-[#FF6600]/10 border border-[#FF6600]/30 rounded-xl p-6 text-center">
-              <p className="text-zinc-400 text-sm font-bold uppercase tracking-widest mb-2">You&apos;re leaving on the table</p>
-              <p className="text-6xl font-black text-[#FF6600]">${monthlyEarnings.toLocaleString()}</p>
-              <p className="text-zinc-400 mt-1">per month in gift cards</p>
+            {/* ── RIGHT: REFERRER EARNINGS ── */}
+            <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden">
+              <div className="bg-[#FF6600] px-8 py-6">
+                <p className="text-white/80 font-black text-sm uppercase tracking-widest mb-1">For Referrers</p>
+                <h3 className="text-3xl md:text-4xl font-extrabold text-white font-display">Earn Your Worth.</h3>
+                <p className="text-white/80 text-lg mt-2 leading-relaxed">
+                  Know a tradie? That&apos;s money. See what your network is worth in gift cards every month.
+                </p>
+              </div>
+              <div className="p-8 space-y-8">
+                {/* Slider 1 */}
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="text-lg font-bold text-[#1A1A1A]">Tradie contacts you know</label>
+                    <span className="text-4xl font-black text-[#FF6600]">{tradies}</span>
+                  </div>
+                  <input
+                    type="range" min={1} max={50} step={1}
+                    value={tradies}
+                    onChange={e => setTradies(Number(e.target.value))}
+                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                    style={{ accentColor: "#FF6600" }}
+                  />
+                  <div className="flex justify-between text-base text-gray-500 mt-2 font-medium">
+                    <span>1 contact</span><span>50 contacts</span>
+                  </div>
+                </div>
+
+                {/* Slider 2 */}
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="text-lg font-bold text-[#1A1A1A]">Est. jobs referred per tradie / month</label>
+                    <span className="text-4xl font-black text-[#FF6600]">{jobsPerMonth}</span>
+                  </div>
+                  <input
+                    type="range" min={1} max={10} step={1}
+                    value={jobsPerMonth}
+                    onChange={e => setJobsPerMonth(Number(e.target.value))}
+                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                    style={{ accentColor: "#FF6600" }}
+                  />
+                  <div className="flex justify-between text-base text-gray-500 mt-2 font-medium">
+                    <span>1 job</span><span>10 jobs</span>
+                  </div>
+                </div>
+
+                {/* Result */}
+                <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-6 text-center">
+                  <p className="text-base font-black text-[#FF6600] uppercase tracking-widest mb-2">Monthly Gift Card Potential</p>
+                  <p className="text-6xl md:text-7xl font-black text-[#FF6600] leading-none">${monthlyEarnings.toLocaleString()}</p>
+                  <p className="text-lg text-orange-700 mt-3 font-medium">per month in tax-deductible gift cards</p>
+                </div>
+
+                <Link
+                  href="/register?type=referrer"
+                  className="flex items-center justify-center gap-3 w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black text-xl py-5 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
+                  style={{ minHeight: "60px" }}
+                >
+                  Start Earning Now <ArrowRight className="w-6 h-6" />
+                </Link>
+              </div>
             </div>
 
-            <Link
-              href="/register?type=referrer"
-              className="flex items-center justify-center gap-3 w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black text-xl py-5 rounded-xl shadow-xl transition-all hover:scale-105 active:scale-95"
-            >
-              Start Earning Now <ArrowRight className="w-5 h-5" />
-            </Link>
           </div>
         </div>
       </section>
