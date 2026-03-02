@@ -6,11 +6,12 @@ import { usePathname } from "next/navigation";
 
 import Link from "next/link";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard } from "lucide-react";
+import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search } from "lucide-react";
 
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
@@ -270,19 +271,45 @@ export function Navbar() {
 
 
 
+    const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState("");
+    const isDirectoryPage = pathname?.startsWith("/local");
+
+    const handleSearch = useCallback((e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/businesses?q=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchQuery("");
+        }
+    }, [searchQuery, router]);
+
     return (
 
         <>
 
             <header className="fixed top-0 w-full border-b bg-white/80 backdrop-blur-md z-50">
 
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+                <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
 
                     <Link href="/" className="flex items-center gap-2 group shrink-0">
 
                         <Logo size="sm" />
 
                     </Link>
+
+                    {/* ── DIRECTORY SEARCH BAR ── */}
+                    {isDirectoryPage && (
+                        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-sm items-center gap-2 bg-zinc-100 hover:bg-zinc-50 border border-zinc-200 rounded-full px-4 py-2 transition-colors">
+                            <Search className="w-4 h-4 text-zinc-400 shrink-0" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                placeholder="Search trades or suburbs..."
+                                className="flex-1 bg-transparent text-sm text-zinc-700 placeholder:text-zinc-400 outline-none min-w-0"
+                            />
+                        </form>
+                    )}
 
 
 

@@ -2202,6 +2202,17 @@ export const TRADE_FAQ_BANK: Record<string, Array<{ q: string; a: string }>> = {
     ],
 };
 
+export const STATE_AUTHORITY_LINKS: Record<string, { name: string; url: string }> = {
+    VIC: { name: "Victorian Building Authority", url: "https://www.vba.vic.gov.au" },
+    NSW: { name: "NSW Fair Trading", url: "https://www.fairtrading.nsw.gov.au" },
+    QLD: { name: "QBCC", url: "https://www.qbcc.qld.gov.au" },
+    WA:  { name: "Building Commission WA", url: "https://www.commerce.wa.gov.au/building-and-energy" },
+    SA:  { name: "CBS South Australia", url: "https://www.cbs.sa.gov.au" },
+    TAS: { name: "CBOS Tasmania", url: "https://www.cbos.tas.gov.au" },
+    ACT: { name: "Access Canberra", url: "https://www.accesscanberra.act.gov.au" },
+    NT:  { name: "NT Building Advisory Services", url: "https://nt.gov.au/industry/building-and-construction" },
+};
+
 export type SuburbContext = {
     housing: string;
     climate: string;
@@ -2732,8 +2743,8 @@ export function generateLocalizedIntro(
         : "";
 
     const priceText = cost
-        ? ` ${tradeName} in ${suburbName} typically cost $${cost.low}–$${cost.high}${cost.unit}.`
+        ? `Qualified ${tradeName.toLowerCase()} in ${suburbName} typically charge $${cost.low}–$${cost.high}${cost.unit} depending on job complexity. `
         : "";
 
-    return `Finding the right ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} can make the difference between a job done right and an expensive fix-up.${priceText} ${localDetail} ${countText}${licenceText} All businesses listed on TradeRefer are ABN-verified and ranked by real community referrals — not paid placement.`;
+    return `${priceText}${localDetail} ${countText}${licenceText} All businesses listed on TradeRefer are ABN-verified and ranked by real community referrals — not paid placement.`;
 }

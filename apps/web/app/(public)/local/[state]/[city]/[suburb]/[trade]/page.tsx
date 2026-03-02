@@ -1,11 +1,11 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, ArrowRight, Shield, TrendingUp, Info, DollarSign, FileText, Wrench } from "lucide-react";
+import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, ArrowRight, Shield, TrendingUp, Info, DollarSign, FileText, Wrench, ExternalLink, BadgeCheck, Clock } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
-import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, JOB_TYPES, jobToSlug, generateLocalizedIntro, normalizeTradeName } from "@/lib/constants";
+import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, STATE_AUTHORITY_LINKS, SUBURB_CONTEXT, JOB_TYPES, jobToSlug, generateLocalizedIntro, normalizeTradeName } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -102,6 +102,21 @@ async function getNearbySuburbs(city: string, suburb: string, currentTrade: stri
     return suburbs;
 }
 
+async function getCityReferralCount(city: string): Promise<number> {
+    try {
+        const cityName = formatSlug(city);
+        const result = await sql`
+            SELECT COUNT(*) as count FROM referral_links rl
+            JOIN businesses b ON rl.business_id = b.id
+            WHERE b.city ILIKE ${'%' + cityName + '%'}
+              AND rl.created_at > NOW() - INTERVAL '30 days'
+        `;
+        return parseInt(result[0]?.count ?? '0', 10);
+    } catch {
+        return 0;
+    }
+}
+
 export default async function TradeLocationPage({ params }: PageProps) {
     const { trade, suburb, city, state } = await params;
     const tradeName = formatSlug(trade);
@@ -109,9 +124,12 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const cityName = formatSlug(city);
     const stateName = state.toUpperCase();
 
-    const businesses = await getBusinesses(trade, suburb);
-    const relatedTrades = await getRelatedTrades(suburb, tradeName);
-    const nearbySuburbs = await getNearbySuburbs(city, suburb, tradeName);
+    const [businesses, relatedTrades, nearbySuburbs, cityReferralCount] = await Promise.all([
+        getBusinesses(trade, suburb),
+        getRelatedTrades(suburb, tradeName),
+        getNearbySuburbs(city, suburb, tradeName),
+        getCityReferralCount(city),
+    ]);
 
     const avgRating = businesses.length > 0
         ? (businesses.reduce((acc: number, biz: any) => acc + (parseFloat(biz.avg_rating) || 0), 0) / businesses.length).toFixed(1)
@@ -124,6 +142,13 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const licenceText = STATE_LICENSING[tradeKey]?.[stateName] || STATE_LICENSING[tradeName]?.[stateName] || null;
     const relatedJobs = (JOB_TYPES[tradeKey] || JOB_TYPES[tradeName])?.slice(0, 6) || [];
     const localizedIntro = generateLocalizedIntro(tradeName, suburbName, cityName, stateName, businesses.length, avgRating, totalReviews);
+
+    const availabilityLabel = businesses.length >= 5 ? "High" : businesses.length >= 2 ? "Moderate" : "Limited";
+    const availabilityColor = businesses.length >= 5 ? "text-green-600" : businesses.length >= 2 ? "text-yellow-600" : "text-red-500";
+    const authorityLink = STATE_AUTHORITY_LINKS[stateName];
+    const suburbCtxKey = suburbName.toLowerCase().replace(/\s+/g, "-");
+    const suburbCtx = SUBURB_CONTEXT[suburbCtxKey];
+    const tradeNote = suburbCtx?.tradeNotes?.[tradeKey] ?? suburbCtx?.tradeNotes?.[tradeName] ?? null;
 
     const breadcrumbs = [
         { name: stateName, href: `/local/${state}` },
@@ -181,6 +206,22 @@ export default async function TradeLocationPage({ params }: PageProps) {
         }))
     };
 
+    const localBusinessJsonLd = businesses.length > 0 && totalReviews > 0 ? {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": `${tradeName} in ${suburbName} — TradeRefer`,
+        "description": `Find verified ${tradeName.toLowerCase()} in ${suburbName}, ${cityName}. ABN-checked, community-ranked.`,
+        "url": `https://traderefer.au/local/${state}/${city}/${suburb}/${trade}`,
+        "areaServed": { "@type": "City", "name": suburbName, "containedInPlace": { "@type": "AdministrativeArea", "name": stateName } },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": avgRating,
+            "reviewCount": totalReviews,
+            "bestRating": "5",
+            "worstRating": "1"
+        }
+    } : null;
+
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "ItemList",
@@ -202,6 +243,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+            {localBusinessJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />}
 
             {/* ── BREADCRUMBS ── */}
             <div className="bg-zinc-900 pt-32 pb-4">
@@ -230,7 +272,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                 </div>
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-3xl">
-                        <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
+                        <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
                             <span className="text-orange-500">{tradeName}</span> in {suburbName}, {cityName}
                         </h1>
                         <p className="text-xl text-zinc-400 mb-4 leading-relaxed max-w-2xl">
@@ -254,35 +296,38 @@ export default async function TradeLocationPage({ params }: PageProps) {
                 </div>
             </div>
 
-            {/* ── STATS BAR ── */}
-            <div className="bg-white border-b border-zinc-100 py-6">
+            {/* ── VERIFICATION PROCESS BAR ── */}
+            <div className="bg-white border-b border-zinc-100 py-5">
                 <div className="container mx-auto px-4">
-                    <div className="flex flex-wrap justify-between items-center gap-8">
+                    <div className="flex flex-wrap items-center justify-between gap-6">
+                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest hidden sm:block">How We Verify</p>
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
-                                <ShieldCheck className="w-6 h-6" />
+                            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 shrink-0">
+                                <BadgeCheck className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-sm font-black text-zinc-900">100% Verified</p>
-                                <p className="text-xs text-zinc-500 font-medium">ABN & License Checked</p>
+                                <p className="text-sm font-black text-zinc-900">Step 1 — ABN Check</p>
+                                <p className="text-xs text-zinc-500">Verified via Australian Business Register</p>
                             </div>
                         </div>
+                        <div className="hidden sm:block w-px h-8 bg-zinc-100" />
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
-                                <Users className="w-6 h-6" />
+                            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
+                                <FileText className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-sm font-black text-zinc-900">Community Validated</p>
-                                <p className="text-xs text-zinc-500 font-medium">Real Referrals Only</p>
+                                <p className="text-sm font-black text-zinc-900">Step 2 — Licence Check</p>
+                                <p className="text-xs text-zinc-500">State trade licence confirmed</p>
                             </div>
                         </div>
+                        <div className="hidden sm:block w-px h-8 bg-zinc-100" />
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
-                                <Award className="w-6 h-6" />
+                            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-green-600 shrink-0">
+                                <Users className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-sm font-black text-zinc-900">Top 5% Talent</p>
-                                <p className="text-xs text-zinc-500 font-medium">Quality Work Guaranteed</p>
+                                <p className="text-sm font-black text-zinc-900">Step 3 — Community Referrals</p>
+                                <p className="text-xs text-zinc-500">Ranked by peer-verified trust links</p>
                             </div>
                         </div>
                     </div>
@@ -290,12 +335,23 @@ export default async function TradeLocationPage({ params }: PageProps) {
             </div>
 
             {/* ── MAIN CONTENT ── */}
-            <div className="bg-zinc-50 py-20" id="businesses">
+            <div className="bg-[#FCFCFC] py-20" id="businesses">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col lg:flex-row gap-12">
 
                         {/* ── RESULTS LISTING ── */}
                         <div className="lg:col-span-2 flex-1 space-y-8">
+                            {/* ── AGGREGATED REVIEW STARS BANNER ── */}
+                            {totalReviews > 10 && (
+                                <div className="flex flex-wrap items-center gap-4 bg-orange-50 border border-orange-100 rounded-2xl px-6 py-4">
+                                    <div className="flex items-center gap-1.5">
+                                        {[1,2,3,4,5].map(s => <Star key={s} className="w-5 h-5 fill-orange-400 text-orange-400" />)}
+                                    </div>
+                                    <p className="text-zinc-800 font-bold text-lg">{avgRating} average</p>
+                                    <p className="text-zinc-500 font-medium">across <span className="font-bold text-zinc-700">{totalReviews.toLocaleString()} verified reviews</span> from {suburbName} {tradeName.toLowerCase()} businesses</p>
+                                </div>
+                            )}
+
                             <div className="flex items-center justify-between">
                                 <h2 className="text-2xl font-black text-zinc-900">
                                     {businesses.length} {tradeName} Businesses Found
@@ -348,7 +404,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                     <h3 className="text-2xl md:text-3xl font-black text-zinc-900 mb-2 group-hover:text-orange-600 transition-colors">
                                                         {biz.business_name}
                                                     </h3>
-                                                    <p className="text-zinc-500 text-sm mb-6 line-clamp-2 leading-relaxed">
+                                                    <p className="text-zinc-500 text-lg mb-6 line-clamp-2" style={{lineHeight: '1.6'}}>
                                                         {biz.description || `Specialist ${biz.trade_category} based in ${biz.suburb}, serving the ${suburbName} community with expert solutions.`}
                                                     </p>
 
@@ -374,10 +430,10 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                     </div>
 
                                                     <div className="flex flex-wrap items-center gap-3">
-                                                        <Button asChild size="lg" className="bg-zinc-900 hover:bg-black text-white rounded-xl font-bold h-12 px-6 border-none">
+                                                        <Button asChild size="lg" className="bg-zinc-900 hover:bg-black text-white rounded-xl font-bold h-14 px-6 border-none">
                                                             <Link href={`/b/${biz.slug}`}>View Profile</Link>
                                                         </Button>
-                                                        <Button asChild variant="outline" size="lg" className="border-zinc-200 hover:bg-zinc-50 rounded-xl font-bold h-12 px-6">
+                                                        <Button asChild variant="outline" size="lg" className="border-zinc-200 hover:bg-zinc-50 rounded-xl font-bold h-14 px-6">
                                                             <Link href={`/b/${biz.slug}#enquiry-form`}>Request Quote</Link>
                                                         </Button>
                                                     </div>
@@ -386,6 +442,40 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         </div>
                                     ))}
                                 </div>
+                            )}
+
+                            {/* ── COMPARISON BLOCK ── */}
+                            {businesses.length > 0 && (
+                                <section className="bg-zinc-900 rounded-3xl p-8 md:p-10 text-white">
+                                    <h2 className="text-xl font-black mb-6 text-center">Why TradeRefer vs. Traditional Lead Sites?</h2>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm">
+                                            <thead>
+                                                <tr className="border-b border-white/10">
+                                                    <th className="text-left py-3 pr-6 font-black text-zinc-400 uppercase tracking-wider text-xs">Feature</th>
+                                                    <th className="text-center py-3 px-4 font-black text-orange-400 uppercase tracking-wider text-xs">TradeRefer</th>
+                                                    <th className="text-center py-3 pl-4 font-black text-zinc-400 uppercase tracking-wider text-xs">Lead Sites</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-white/5">
+                                                {[
+                                                    ["Cost model", "20% success fee only", "$21–$80 per lead (win or lose)"],
+                                                    ["Verification", "ABN + licence checked", "Self-reported"],
+                                                    ["Rankings", "Community referrals", "Paid placement"],
+                                                    ["Risk", "Zero upfront cost", "High waste if job not won"],
+                                                ].map(([feature, ours, theirs]) => (
+                                                    <tr key={feature}>
+                                                        <td className="py-3 pr-6 text-zinc-400 font-medium">{feature}</td>
+                                                        <td className="py-3 px-4 text-center">
+                                                            <span className="inline-flex items-center gap-1.5 text-green-400 font-bold"><CheckCircle2 className="w-4 h-4" />{ours}</span>
+                                                        </td>
+                                                        <td className="py-3 pl-4 text-center text-zinc-500">{theirs}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </section>
                             )}
 
                             {/* ── SEO CONTENT SECTION ── */}
@@ -398,7 +488,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                             <DollarSign className="w-6 h-6 text-orange-500" />
                                             How Much Do {tradeName} Cost in {suburbName}?
                                         </h2>
-                                        <p className="text-zinc-500 mb-6 text-sm">Pricing data based on Australian industry averages for {stateName}.</p>
+                                        <p className="text-lg text-zinc-500 mb-6" style={{lineHeight: '1.6'}}>Pricing data based on Australian industry averages for {stateName}.</p>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
                                                 <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Typical Range</p>
@@ -420,20 +510,37 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     </section>
                                 )}
 
+                                {/* Regional Climate / Local Specialist Block */}
+                                {tradeNote && (
+                                    <section className="bg-amber-50 border border-amber-100 rounded-3xl p-6 flex gap-4">
+                                        <MapPin className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
+                                        <div>
+                                            <h3 className="font-black text-zinc-900 mb-1">Local Conditions for {tradeName} in {suburbName}</h3>
+                                            <p className="text-lg text-zinc-700 leading-relaxed" style={{lineHeight: '1.6'}}>{tradeNote}</p>
+                                        </div>
+                                    </section>
+                                )}
+
                                 {/* Licensing Info */}
                                 {licenceText && (
                                     <section className="bg-blue-50 border border-blue-100 rounded-3xl p-6 flex gap-4">
                                         <FileText className="w-6 h-6 text-blue-500 shrink-0 mt-0.5" />
                                         <div>
                                             <h3 className="font-black text-zinc-900 mb-1">{tradeName} Licensing Requirements in {stateName}</h3>
-                                            <p className="text-sm text-zinc-600 leading-relaxed">{licenceText}</p>
+                                            <p className="text-lg text-zinc-600 leading-relaxed" style={{lineHeight: '1.6'}}>{licenceText}</p>
+                                            {authorityLink && (
+                                                <a href={authorityLink.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-blue-600 font-bold text-sm hover:underline">
+                                                    <ExternalLink className="w-3.5 h-3.5" />
+                                                    Verify on {authorityLink.name}
+                                                </a>
+                                            )}
                                         </div>
                                     </section>
                                 )}
 
                                 {/* How to Choose */}
                                 <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                                    <h2 className="text-2xl font-black text-zinc-900 mb-6">How to Choose the Right {tradeName} in {suburbName}</h2>
+                                    <h2 className="text-2xl font-black text-zinc-900 mb-6">How Do I Find a Reliable {tradeName} in {suburbName}?</h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {[
                                             { title: "Verify Licence & Insurance", body: `Confirm they hold the correct ${stateName} trade licence and carry public liability insurance. All TradeRefer businesses have ABN verification.` },
@@ -446,7 +553,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                     <CheckCircle2 className="w-4 h-4 text-green-500" />
                                                     {item.title}
                                                 </h4>
-                                                <p className="text-xs text-zinc-500 leading-relaxed">{item.body}</p>
+                                                <p className="text-base text-zinc-500 leading-relaxed" style={{lineHeight: '1.6'}}>{item.body}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -459,7 +566,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                             <Wrench className="w-5 h-5 text-orange-500" />
                                             Specific {tradeName} Services in {suburbName}
                                         </h2>
-                                        <p className="text-sm text-zinc-500 mb-6">Looking for a specific type of {tradeName.toLowerCase()} work? Browse by service:</p>
+                                        <p className="text-lg text-zinc-500 mb-6">Looking for a specific type of {tradeName.toLowerCase()} work? Browse by service:</p>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                             {relatedJobs.map((job) => (
                                                 <Link
@@ -477,12 +584,12 @@ export default async function TradeLocationPage({ params }: PageProps) {
 
                                 {/* Trade-Specific FAQ */}
                                 <section>
-                                    <h2 className="text-2xl font-black text-zinc-900 mb-8">Frequently Asked Questions About {tradeName} in {suburbName}</h2>
+                                    <h2 className="text-2xl font-black text-zinc-900 mb-8">What Do People Ask About {tradeName} in {suburbName}?</h2>
                                     <div className="space-y-4">
                                         {faqs.map((faq, i) => (
                                             <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
                                                 <h3 className="font-bold text-zinc-900 mb-2">{faq.q}</h3>
-                                                <p className="text-sm text-zinc-500 leading-relaxed">{faq.a}</p>
+                                                <p className="text-lg text-zinc-500 leading-relaxed" style={{lineHeight: '1.6'}}>{faq.a}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -514,11 +621,42 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         <span>Verified Providers</span>
                                         <span className="font-bold text-zinc-900 text-base">{businesses.length}</span>
                                     </div>
+                                    <div className="flex justify-between items-center py-2 border-b border-zinc-50">
+                                        <span>Availability</span>
+                                        <span className={`font-bold text-base ${availabilityColor}`}>{availabilityLabel}</span>
+                                    </div>
                                     <div className="pt-2">
                                         <p className="leading-relaxed">
                                             Currently there are {businesses.length > 0 ? businesses.length : 'multiple'} trusted <span className="font-bold text-zinc-800">{tradeName.toLowerCase()}</span> listed in <span className="font-bold text-zinc-800">{suburbName}</span>.
                                             Our directory prioritizes businesses based on community verified links and historical performance.
                                         </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Geographic Urgency */}
+                            {cityReferralCount > 0 && (
+                                <div className="bg-green-50 border border-green-100 rounded-3xl p-6 flex gap-3">
+                                    <Clock className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-black text-zinc-900">{cityReferralCount.toLocaleString()} referrals matched in {cityName}</p>
+                                        <p className="text-xs text-zinc-500 mt-0.5">in the last 30 days — active network</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Trade Editor Bio */}
+                            <div className="bg-white border border-zinc-200 rounded-3xl p-6">
+                                <div className="flex items-start gap-3">
+                                    <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 shrink-0">
+                                        <BadgeCheck className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-black text-zinc-900">Verified by TradeRefer</p>
+                                        <p className="text-xs text-zinc-500 mt-1 leading-relaxed">Market insights on this page are reviewed by our Verification Team — ABN, licence, and community referral checks since 2024.</p>
+                                        <Link href="/about" className="inline-flex items-center gap-1 mt-2 text-xs font-bold text-orange-600 hover:underline">
+                                            How we verify <ArrowRight className="w-3 h-3" />
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
