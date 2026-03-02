@@ -669,6 +669,8 @@ export function Footer() {
 
                             <li><Link href="/onboarding" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">List Your Business</Link></li>
 
+                            <li><Link href="/compare" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Compare Us</Link></li>
+
                             <li><Link href="/dashboard" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Dashboard</Link></li>
 
                         </ul>
@@ -706,6 +708,8 @@ export function Footer() {
                             <li><Link href="/privacy" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Privacy Policy</Link></li>
 
                             <li><Link href="/terms" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Terms of Service</Link></li>
+
+                            <li><Link href="/cookies" className="text-sm text-zinc-400 hover:text-orange-400 transition-colors">Cookie Policy</Link></li>
 
                         </ul>
 

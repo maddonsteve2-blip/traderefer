@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MapPin, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { UrgencyTicker } from "@/components/UrgencyTicker";
 
 const TOP_CATEGORIES = [
     { name: "Electrician", slug: "electrician" },
@@ -37,8 +38,10 @@ const STATES = [
     { name: "Tasmania", slug: "tas" }
 ];
 
-export function DirectoryFooter() {
+export async function DirectoryFooter() {
     return (
+        <>
+        <UrgencyTicker />
         <footer className="bg-zinc-900 text-white pt-20 pb-10 border-t border-white/5">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
@@ -159,5 +162,6 @@ export function DirectoryFooter() {
                 </div>
             </div>
         </footer>
+        </>
     );
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { useState } from "react";
 import {
   Search, MapPin, ArrowRight, ArrowLeft,
   Megaphone, CheckCircle2, XCircle, ShieldCheck,
@@ -11,6 +12,10 @@ import {
 import { TRADE_CATEGORIES } from "@/lib/constants";
 
 export default function HomePage() {
+  const [tradies, setTradies] = useState(10);
+  const [jobsPerMonth, setJobsPerMonth] = useState(3);
+  const monthlyEarnings = tradies * jobsPerMonth * 15;
+
   return (
     <main className="bg-[#F2F2F2] text-[#1A1A1A] antialiased">
 
@@ -89,6 +94,65 @@ export default function HomePage() {
                 </Link>
               </SignedIn>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── REFERRER EARNINGS ESTIMATOR ── */}
+      <section className="py-16 bg-[#1A1A1A] text-white">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <p className="text-orange-500 font-black text-sm uppercase tracking-widest mb-3">For Referrers</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold font-display">How Much Could You Earn?</h2>
+            <p className="text-zinc-400 mt-3 text-lg">Move the sliders to see your potential monthly gift card earnings.</p>
+          </div>
+
+          <div className="bg-zinc-900 rounded-2xl p-8 space-y-8 border border-white/5">
+            {/* Slider 1 */}
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <label className="font-bold text-zinc-300">Tradies you know</label>
+                <span className="text-3xl font-black text-[#FF6600]">{tradies}</span>
+              </div>
+              <input
+                type="range" min={1} max={50} step={1}
+                value={tradies}
+                onChange={e => setTradies(Number(e.target.value))}
+                className="w-full h-2 rounded-full appearance-none cursor-pointer"
+                style={{ accentColor: "#FF6600" }}
+              />
+              <div className="flex justify-between text-xs text-zinc-600 mt-1"><span>1</span><span>50</span></div>
+            </div>
+
+            {/* Slider 2 */}
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <label className="font-bold text-zinc-300">Est. jobs referred per tradie / month</label>
+                <span className="text-3xl font-black text-[#FF6600]">{jobsPerMonth}</span>
+              </div>
+              <input
+                type="range" min={1} max={10} step={1}
+                value={jobsPerMonth}
+                onChange={e => setJobsPerMonth(Number(e.target.value))}
+                className="w-full h-2 rounded-full appearance-none cursor-pointer"
+                style={{ accentColor: "#FF6600" }}
+              />
+              <div className="flex justify-between text-xs text-zinc-600 mt-1"><span>1</span><span>10</span></div>
+            </div>
+
+            {/* Result */}
+            <div className="bg-[#FF6600]/10 border border-[#FF6600]/30 rounded-xl p-6 text-center">
+              <p className="text-zinc-400 text-sm font-bold uppercase tracking-widest mb-2">You&apos;re leaving on the table</p>
+              <p className="text-6xl font-black text-[#FF6600]">${monthlyEarnings.toLocaleString()}</p>
+              <p className="text-zinc-400 mt-1">per month in gift cards</p>
+            </div>
+
+            <Link
+              href="/register?type=referrer"
+              className="flex items-center justify-center gap-3 w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black text-xl py-5 rounded-xl shadow-xl transition-all hover:scale-105 active:scale-95"
+            >
+              Start Earning Now <ArrowRight className="w-5 h-5" />
+            </Link>
           </div>
         </div>
       </section>

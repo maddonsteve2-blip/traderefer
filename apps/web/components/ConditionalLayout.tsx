@@ -5,7 +5,7 @@ import { Navbar, Footer } from "@/components/layout-shared";
 
 // Pages that have their own header/footer — hide the global Navbar & Footer
 const STANDALONE_ROUTES = ["/login", "/register", "/signup", "/onboarding", "/leads/verify", "/leads/success", "/admin", "/join"];
-const NO_FOOTER_ROUTES = ["/dashboard/business/messages", "/dashboard/referrer/messages"];
+const NO_FOOTER_ROUTES = ["/dashboard/business/messages", "/dashboard/referrer/messages", "/local"];
 
 export function ConditionalLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
