@@ -11,6 +11,8 @@ interface PageProps {
 }
 
 function formatSlug(slug: string) {
+    if (!slug) return "";
+    try { slug = decodeURIComponent(slug); } catch { /* already decoded */ }
     return slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
