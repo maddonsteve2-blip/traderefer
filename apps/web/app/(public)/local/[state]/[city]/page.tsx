@@ -1,5 +1,5 @@
 import { sql } from "@/lib/db";
-import { ChevronRight, MapPin, Users, Briefcase } from "lucide-react";
+import { ChevronRight, MapPin, Users, Clock, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
@@ -10,48 +10,38 @@ interface PageProps {
     params: Promise<{ state: string; city: string }>;
 }
 
+function formatSlug(slug: string) {
+    return slug.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { state, city } = await params;
     const cityName = formatSlug(city);
     const stateUpper = state.toUpperCase();
     return {
-        title: `Trades in ${cityName}, ${stateUpper} | Find Local Experts | TradeRefer`,
+        title: `Top ${cityName} Tradies — 100% ABN Verified | TradeRefer`,
         description: `Find verified local trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to discover top-rated plumbers, electricians, painters and more in your area.`,
     };
-}
-
-function formatSlug(slug: string) {
-    return slug
-        .split("-")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
 }
 
 async function getSuburbsInCity(state: string, city: string): Promise<string[]> {
     const stateKey = state.toUpperCase() as keyof typeof AUSTRALIA_LOCATIONS;
     const stateData = AUSTRALIA_LOCATIONS[stateKey];
-    if (!stateData) return [];
-
-    const cityName = formatSlug(city);
-    const cityEntry = Object.keys(stateData).find(
-        k => k.toLowerCase() === cityName.toLowerCase()
-    );
-    if (cityEntry) return stateData[cityEntry];
-
-    // Fallback: query DB for suburbs that match this city
+    if (stateData) {
+        const cityName = formatSlug(city);
+        const cityEntry = Object.keys(stateData).find(k => k.toLowerCase() === cityName.toLowerCase());
+        if (cityEntry) return stateData[cityEntry];
+    }
     try {
+        const cityName = formatSlug(city);
         const results = await sql`
             SELECT DISTINCT suburb
             FROM businesses
-            WHERE status = 'active'
-              AND city ILIKE ${'%' + cityName + '%'}
+            WHERE status = 'active' AND city ILIKE ${'%' + cityName + '%'}
             ORDER BY suburb ASC
         `;
         return results.map((r: any) => r.suburb).filter(Boolean);
-    } catch (error) {
-        console.error("Error fetching suburbs:", error);
-        return [];
-    }
+    } catch { return []; }
 }
 
 async function getBusinessCountsBySuburb(suburbs: string[]): Promise<Record<string, number>> {
@@ -60,18 +50,27 @@ async function getBusinessCountsBySuburb(suburbs: string[]): Promise<Record<stri
         const results = await sql`
             SELECT suburb, COUNT(*) as count
             FROM businesses
-            WHERE status = 'active'
-              AND suburb = ANY(${suburbs})
+            WHERE status = 'active' AND suburb = ANY(${suburbs})
             GROUP BY suburb
         `;
         const map: Record<string, number> = {};
         results.forEach((r: any) => { map[r.suburb] = parseInt(r.count, 10); });
         return map;
-    } catch {
-        return {};
-    }
+    } catch { return {}; }
 }
 
+async function getCityReferralCount(city: string): Promise<number> {
+    try {
+        const cityName = formatSlug(city);
+        const result = await sql`
+            SELECT COUNT(*) as count FROM referral_links rl
+            JOIN businesses b ON rl.business_id = b.id
+            WHERE b.city ILIKE ${'%' + cityName + '%'}
+              AND rl.created_at > NOW() - INTERVAL '30 days'
+        `;
+        return parseInt(result[0]?.count ?? '0', 10);
+    } catch { return 0; }
+}
 
 export default async function CityDirectoryPage({ params }: PageProps) {
     const { state, city } = await params;
@@ -81,7 +80,10 @@ export default async function CityDirectoryPage({ params }: PageProps) {
     const suburbs = await getSuburbsInCity(state, city);
     if (suburbs.length === 0) notFound();
 
-    const businessCounts = await getBusinessCountsBySuburb(suburbs);
+    const [businessCounts, referralCount] = await Promise.all([
+        getBusinessCountsBySuburb(suburbs),
+        getCityReferralCount(city),
+    ]);
     const totalBusinesses = Object.values(businessCounts).reduce((a, b) => a + b, 0);
 
     const breadcrumbJsonLd = {
@@ -91,62 +93,141 @@ export default async function CityDirectoryPage({ params }: PageProps) {
             { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://traderefer.au" },
             { "@type": "ListItem", "position": 2, "name": "Directory", "item": "https://traderefer.au/local" },
             { "@type": "ListItem", "position": 3, "name": stateUpper, "item": `https://traderefer.au/local/${state}` },
-            { "@type": "ListItem", "position": 4, "name": `Trades in ${cityName}` },
+            { "@type": "ListItem", "position": 4, "name": `Top ${cityName} Tradies` },
         ]
     };
 
+    const localBusinessJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": `Trade Services in ${cityName}`,
+        "description": `Verified local tradies across ${cityName}, ${stateUpper}. ABN-checked, community-ranked.`,
+        "url": `https://traderefer.au/local/${state}/${city}`,
+        "areaServed": {
+            "@type": "City",
+            "name": cityName,
+            "containedInPlace": { "@type": "AdministrativeArea", "name": stateUpper }
+        }
+    };
+
     return (
-        <main className="min-h-screen bg-zinc-50 pt-32 pb-20">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-            />
-            <div className="container mx-auto px-4">
-                <div className="max-w-5xl mx-auto">
-                    <nav className="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest mb-8">
-                        <Link href="/" className="hover:text-zinc-900 transition-colors">Home</Link>
+        <main className="min-h-screen bg-[#FCFCFC]">
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
+
+            {/* ── BREADCRUMBS ── */}
+            <div className="bg-zinc-900 pt-32 pb-4">
+                <div className="container mx-auto px-4">
+                    <nav className="flex items-center gap-2 text-sm font-bold text-zinc-500 uppercase tracking-widest">
+                        <Link href="/" className="hover:text-white transition-colors">Home</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href="/local" className="hover:text-zinc-900 transition-colors">Directory</Link>
+                        <Link href="/local" className="hover:text-white transition-colors">Directory</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href={`/local/${state}`} className="hover:text-zinc-900 transition-colors">{stateUpper}</Link>
+                        <Link href={`/local/${state}`} className="hover:text-white transition-colors">{stateUpper}</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <span className="text-orange-600">{cityName}</span>
+                        <span className="text-orange-500">{cityName}</span>
                     </nav>
+                </div>
+            </div>
 
-                    <h1 className="text-4xl md:text-5xl font-black text-zinc-900 mb-4 font-display">
-                        Trades in {cityName}, {stateUpper}
-                    </h1>
-                    <p className="text-xl text-zinc-600 mb-4 leading-relaxed max-w-3xl">
-                        Find highly-rated trades across {cityName}. Browse by suburb below to find verified local experts near you.
-                    </p>
-                    {totalBusinesses > 0 && (
-                        <div className="flex items-center gap-6 mb-12 text-sm text-zinc-500 font-medium">
-                            <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-orange-500" />{totalBusinesses} verified businesses</span>
-                            <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-orange-500" />{suburbs.length} suburbs covered</span>
+            {/* ── HERO ── */}
+            <div className="bg-zinc-900 pb-20 relative overflow-hidden text-white">
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                </div>
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="max-w-3xl">
+                        <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+                            Trades in <span className="text-orange-500">{cityName}</span>, {stateUpper}
+                        </h1>
+                        <p className="text-xl text-zinc-400 mb-4 leading-[1.6] max-w-2xl">
+                            {totalBusinesses > 0
+                                ? `${totalBusinesses.toLocaleString()} verified tradespeople across ${suburbs.length} suburbs in ${cityName}. Find the right expert for your job.`
+                                : `Find verified local trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to connect with experts near you.`
+                            }
+                        </p>
+                        {suburbs.length > 0 && (
+                            <p className="text-zinc-500 text-sm font-medium">
+                                Servicing {cityName} including {suburbs.slice(0, 3).join(', ')}{suburbs.length > 3 ? ` and ${suburbs.length - 3} more suburbs` : ''}.
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* ── MAIN CONTENT ── */}
+            <div className="py-20">
+                <div className="container mx-auto px-4">
+                    <div className="max-w-5xl mx-auto space-y-12">
+
+                        {/* Stats + urgency bar */}
+                        <div className="flex flex-wrap gap-4 items-center">
+                            {totalBusinesses > 0 && (
+                                <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-full px-5 py-2.5">
+                                    <Users className="w-4 h-4 text-orange-500" />
+                                    <span className="text-sm font-bold text-zinc-700">{totalBusinesses.toLocaleString()} verified businesses</span>
+                                </div>
+                            )}
+                            <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-full px-5 py-2.5">
+                                <MapPin className="w-4 h-4 text-orange-500" />
+                                <span className="text-sm font-bold text-zinc-700">{suburbs.length} suburbs covered</span>
+                            </div>
+                            {referralCount > 0 && (
+                                <div className="flex items-center gap-2 bg-green-50 border border-green-100 rounded-full px-5 py-2.5">
+                                    <Clock className="w-4 h-4 text-green-600" />
+                                    <span className="text-sm font-bold text-green-700">{referralCount.toLocaleString()} referrals matched in {cityName} (last 30 days)</span>
+                                </div>
+                            )}
                         </div>
-                    )}
-                    {!totalBusinesses && <div className="mb-12" />}
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                        {suburbs.map((suburb) => {
-                            const count = businessCounts[suburb] || 0;
-                            const suburbSlug = suburb.toLowerCase().replace(/ /g, '-');
-                            return (
-                                <Link key={suburb} href={`/local/${state}/${city}/${suburbSlug}`} className="group">
-                                    <div className="bg-white p-4 rounded-xl border border-zinc-200 hover:border-orange-500 hover:shadow-md transition-all duration-300">
-                                        <div className="flex items-center justify-between mb-1">
-                                            <span className="text-sm font-bold text-zinc-700 group-hover:text-orange-600 transition-colors">
-                                                {suburb}
-                                            </span>
-                                            <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 transition-all shrink-0" />
-                                        </div>
-                                        {count > 0 && (
-                                            <p className="text-xs text-zinc-400 font-medium">{count} business{count !== 1 ? 'es' : ''}</p>
-                                        )}
-                                    </div>
-                                </Link>
-                            );
-                        })}
+                        {/* Suburb grid */}
+                        <section>
+                            <h2 className="text-2xl font-black text-zinc-900 mb-2">Browse by Suburb</h2>
+                            <p className="text-lg text-zinc-500 mb-8 leading-[1.6]">Select your suburb to find verified local trade experts near you.</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                {suburbs.map((suburb) => {
+                                    const count = businessCounts[suburb] || 0;
+                                    const suburbSlug = suburb.toLowerCase().replace(/ /g, '-');
+                                    return (
+                                        <Link key={suburb} href={`/local/${state}/${city}/${suburbSlug}`} className="group">
+                                            <div className="bg-white rounded-2xl border border-zinc-200 hover:border-orange-500 hover:shadow-lg transition-all duration-300 p-5">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="text-base font-black text-zinc-800 group-hover:text-orange-600 transition-colors">
+                                                        {suburb}
+                                                    </span>
+                                                    <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 shrink-0 group-hover:translate-x-0.5 transition-all" />
+                                                </div>
+                                                {count > 0 ? (
+                                                    <div>
+                                                        <span className="text-lg font-black text-orange-500">{count}</span>
+                                                        <span className="text-xs text-zinc-400 font-medium uppercase tracking-wider ml-1.5">Verified Pros</span>
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-xs text-zinc-400 font-medium">Browse trades</p>
+                                                )}
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </section>
+
+                        {/* Trust signal */}
+                        <div className="flex flex-wrap items-center gap-6 bg-white rounded-2xl border border-zinc-200 p-6">
+                            <div className="flex items-center gap-2">
+                                <ShieldCheck className="w-5 h-5 text-green-500" />
+                                <span className="text-sm font-bold text-zinc-700">100% ABN verified</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Users className="w-5 h-5 text-orange-500" />
+                                <span className="text-sm font-bold text-zinc-700">Community-ranked, not paid ads</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <MapPin className="w-5 h-5 text-blue-500" />
+                                <span className="text-sm font-bold text-zinc-700">Local experts only</span>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
