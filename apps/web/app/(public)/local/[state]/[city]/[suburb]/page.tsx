@@ -3,6 +3,7 @@ import { ChevronRight, Hammer, Lightbulb, Pipette as Pipe, Paintbrush, Wrench, H
 import Link from "next/link";
 import { Metadata } from "next";
 import { SUBURB_CONTEXT } from "@/lib/constants";
+import { DirectoryFooter } from "@/components/DirectoryFooter";
 
 interface PageProps {
     params: Promise<{ state: string; city: string; suburb: string }>;
@@ -129,6 +130,7 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
     };
 
     return (
+        <>
         <main className="min-h-screen bg-[#FCFCFC]">
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
@@ -257,6 +259,8 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                 </div>
             </div>
         </main>
+        <DirectoryFooter />
+        </>
     );
 }
 

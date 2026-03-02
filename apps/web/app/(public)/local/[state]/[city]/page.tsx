@@ -3,6 +3,7 @@ import { ChevronRight, MapPin, Users, Clock, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AUSTRALIA_LOCATIONS } from "@/lib/constants";
+import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
 
 interface PageProps {
@@ -112,6 +113,7 @@ export default async function CityDirectoryPage({ params }: PageProps) {
     };
 
     return (
+        <>
         <main className="min-h-screen bg-[#FCFCFC]">
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
@@ -233,5 +235,7 @@ export default async function CityDirectoryPage({ params }: PageProps) {
                 </div>
             </div>
         </main>
+        <DirectoryFooter />
+        </>
     );
 }

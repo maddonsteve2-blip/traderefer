@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { sql } from "@/lib/db";
 import { STATE_LICENSING, STATE_AUTHORITY_LINKS } from "@/lib/constants";
+import { DirectoryFooter } from "@/components/DirectoryFooter";
 
 interface PageProps {
     params: Promise<{ state: string }>;
@@ -104,6 +105,7 @@ export default async function StateDirectoryPage({ params }: PageProps) {
     };
 
     return (
+        <>
         <main className="min-h-screen bg-[#FCFCFC]">
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
@@ -248,5 +250,7 @@ export default async function StateDirectoryPage({ params }: PageProps) {
                 </div>
             </div>
         </main>
+        <DirectoryFooter />
+        </>
     );
 }
