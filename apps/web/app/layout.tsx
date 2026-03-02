@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
+import { DirectoryFooter } from "@/components/DirectoryFooter";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -43,7 +44,7 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${outfit.variable} ${montserrat.variable} ${oswald.variable} font-sans antialiased`}
         >
-          <ConditionalLayout>
+          <ConditionalLayout footer={<DirectoryFooter />}>
             {children}
           </ConditionalLayout>
           <Toaster position="top-center" richColors />

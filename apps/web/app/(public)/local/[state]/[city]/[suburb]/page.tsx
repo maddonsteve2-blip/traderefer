@@ -3,7 +3,6 @@ import { ChevronRight, Hammer, Lightbulb, Pipette as Pipe, Paintbrush, Wrench, H
 import Link from "next/link";
 import { Metadata } from "next";
 import { SUBURB_CONTEXT } from "@/lib/constants";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 
 interface PageProps {
     params: Promise<{ state: string; city: string; suburb: string }>;
@@ -259,7 +258,6 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                 </div>
             </div>
         </main>
-        <DirectoryFooter />
         </>
     );
 }

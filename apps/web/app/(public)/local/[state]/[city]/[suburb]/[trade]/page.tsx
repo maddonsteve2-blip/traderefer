@@ -5,7 +5,6 @@ import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { Metadata } from "next";
 import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, STATE_AUTHORITY_LINKS, SUBURB_CONTEXT, JOB_TYPES, jobToSlug, generateLocalizedIntro, normalizeTradeName } from "@/lib/constants";
-import { DirectoryFooter } from "@/components/DirectoryFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -744,7 +743,6 @@ export default async function TradeLocationPage({ params }: PageProps) {
                 </div>
             </div>
         </main>
-        <DirectoryFooter />
         </>
     );
 }

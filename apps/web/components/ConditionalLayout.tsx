@@ -1,13 +1,11 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Navbar, Footer } from "@/components/layout-shared";
+import { Navbar } from "@/components/layout-shared";
 
-// Pages that have their own header/footer — hide the global Navbar & Footer
 const STANDALONE_ROUTES = ["/login", "/register", "/signup", "/onboarding", "/leads/verify", "/leads/success", "/admin", "/join"];
-const NO_FOOTER_ROUTES = ["/dashboard/business/messages", "/dashboard/referrer/messages", "/local"];
 
-export function ConditionalLayout({ children }: { children: React.ReactNode }) {
+export function ConditionalLayout({ children, footer }: { children: React.ReactNode; footer: React.ReactNode }) {
     const pathname = usePathname();
     const isStandalone = STANDALONE_ROUTES.some((route) => pathname?.startsWith(route));
 
@@ -15,13 +13,11 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
         return <>{children}</>;
     }
 
-    const hideFooter = NO_FOOTER_ROUTES.some((route) => pathname?.startsWith(route));
-
     return (
         <>
             <Navbar />
             {children}
-            {!hideFooter && <Footer />}
+            {footer}
         </>
     );
 }
