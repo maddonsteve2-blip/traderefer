@@ -97,7 +97,7 @@ async function getNearbySuburbs(city: string, suburb: string, currentTrade: stri
           AND suburb != ${suburbName}
           AND trade_category ILIKE ${'%' + currentTrade + '%'}
           AND status = 'active'
-        LIMIT 6
+        LIMIT 12
     `;
     return suburbs;
 }
@@ -249,7 +249,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
             {/* ── BREADCRUMBS ── */}
             <div className="bg-gray-100 border-b border-gray-200" style={{ paddingTop: '108px', paddingBottom: '12px' }}>
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center flex-wrap gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '14px' }}>
+                    <nav className="flex items-center flex-wrap gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '16px' }}>
                         <Link href="/" className="hover:text-[#FF6600] transition-colors">Home</Link>
                         <ChevronRight className="w-3 h-3" />
                         {breadcrumbs.map((bc, i) => (
@@ -306,14 +306,14 @@ export default async function TradeLocationPage({ params }: PageProps) {
             <div className="bg-white border-b border-zinc-100 py-5">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap items-center justify-between gap-6">
-                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest hidden sm:block">How We Verify</p>
+                        <p className="font-black text-zinc-400 uppercase tracking-widest hidden sm:block" style={{ fontSize: '16px' }}>How We Verify</p>
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 shrink-0">
                                 <BadgeCheck className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-sm font-black text-zinc-900">Step 1 — ABN Check</p>
-                                <p className="text-xs text-zinc-500">Verified via Australian Business Register</p>
+                                <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Step 1 — ABN Check</p>
+                                <p className="text-zinc-500" style={{ fontSize: '16px' }}>Verified via Australian Business Register</p>
                             </div>
                         </div>
                         <div className="hidden sm:block w-px h-8 bg-zinc-100" />
@@ -322,8 +322,8 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                 <FileText className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-sm font-black text-zinc-900">Step 2 — Licence Check</p>
-                                <p className="text-xs text-zinc-500">State trade licence confirmed</p>
+                                <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Step 2 — Licence Check</p>
+                                <p className="text-zinc-500" style={{ fontSize: '16px' }}>State trade licence confirmed</p>
                             </div>
                         </div>
                         <div className="hidden sm:block w-px h-8 bg-zinc-100" />
@@ -332,8 +332,8 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                 <Users className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-sm font-black text-zinc-900">Step 3 — Community Referrals</p>
-                                <p className="text-xs text-zinc-500">Ranked by peer-verified trust links</p>
+                                <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Step 3 — Community Referrals</p>
+                                <p className="text-zinc-500" style={{ fontSize: '16px' }}>Ranked by peer-verified trust links</p>
                             </div>
                         </div>
                     </div>
@@ -362,7 +362,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                 <h2 className="text-2xl font-black text-zinc-900">
                                     {businesses.length} {tradeName} Businesses Found
                                 </h2>
-                                <div className="text-sm text-zinc-500 font-medium">
+                                <div className="text-zinc-500 font-medium" style={{ fontSize: '16px' }}>
                                     Sorted by Trust Score
                                 </div>
                             </div>
@@ -385,7 +385,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     {businesses.map((biz: any, index: number) => (
                                         <div key={biz.id} className="bg-white rounded-3xl border border-zinc-200 overflow-hidden hover:shadow-2xl hover:border-zinc-300 transition-all duration-500 group relative">
                                             {index === 0 && (
-                                                <div className="absolute top-0 right-0 bg-zinc-900 text-white px-4 py-1.5 rounded-bl-2xl text-[10px] font-black uppercase tracking-widest z-10">
+                                                <div className="absolute top-0 right-0 bg-zinc-900 text-white px-4 py-1.5 rounded-bl-2xl font-black uppercase tracking-widest z-10" style={{ fontSize: '16px' }}>
                                                     Top Rated
                                                 </div>
                                             )}
@@ -395,14 +395,14 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                                                        <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-full text-[10px] font-black uppercase tracking-wider">{biz.trade_category}</span>
+                                                        <span className="px-3 py-1.5 bg-zinc-100 text-zinc-600 rounded-full font-black uppercase tracking-wider" style={{ fontSize: '16px' }}>{biz.trade_category}</span>
                                                         {biz.is_verified && (
-                                                            <span className="flex items-center gap-1 px-3 py-1 bg-green-50 text-green-700 border border-green-100 rounded-full text-[10px] font-black uppercase">
-                                                                <ShieldCheck className="w-3 h-3" /> Verified
+                                                            <span className="verified-pulse flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-full font-black uppercase" style={{ fontSize: '16px' }}>
+                                                                <ShieldCheck className="w-4 h-4" /> Verified
                                                             </span>
                                                         )}
                                                         {biz.is_claimed === false && (
-                                                            <span className="flex items-center gap-1 px-3 py-1 bg-orange-50 text-orange-600 border border-orange-100 rounded-full text-[10px] font-black uppercase">
+                                                            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-600 border border-orange-100 rounded-full font-black uppercase" style={{ fontSize: '16px' }}>
                                                                 Unclaimed
                                                             </span>
                                                         )}
@@ -414,7 +414,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                         {biz.description || `Specialist ${biz.trade_category} based in ${biz.suburb}, serving the ${suburbName} community with expert solutions.`}
                                                     </p>
 
-                                                    <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-600 font-bold mb-8">
+                                                    <div className="flex flex-wrap items-center gap-6 text-zinc-600 font-bold mb-8" style={{ fontSize: '16px' }}>
                                                         <div className="flex items-center gap-2">
                                                             <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
                                                                 <MapPin className="w-3.5 h-3.5" />
@@ -453,14 +453,14 @@ export default async function TradeLocationPage({ params }: PageProps) {
                             {/* ── COMPARISON BLOCK ── */}
                             {businesses.length > 0 && (
                                 <section className="bg-zinc-900 rounded-3xl p-8 md:p-10 text-white">
-                                    <h2 className="text-xl font-black mb-6 text-center">Why TradeRefer vs. Traditional Lead Sites?</h2>
+                                    <h2 className="font-black mb-6 text-center" style={{ fontSize: '28px' }}>Why TradeRefer vs. Traditional Lead Sites?</h2>
                                     <div className="overflow-x-auto">
-                                        <table className="w-full text-sm">
+                                        <table className="w-full" style={{ fontSize: '16px' }}>
                                             <thead>
                                                 <tr className="border-b border-white/10">
-                                                    <th className="text-left py-3 pr-6 font-black text-zinc-400 uppercase tracking-wider text-xs">Feature</th>
-                                                    <th className="text-center py-3 px-4 font-black text-orange-400 uppercase tracking-wider text-xs">TradeRefer</th>
-                                                    <th className="text-center py-3 pl-4 font-black text-zinc-400 uppercase tracking-wider text-xs">Lead Sites</th>
+                                                    <th className="text-left py-3 pr-6 font-black text-zinc-400 uppercase tracking-wider" style={{ fontSize: '16px' }}>Feature</th>
+                                                    <th className="text-center py-3 px-4 font-black text-orange-400 uppercase tracking-wider" style={{ fontSize: '16px' }}>TradeRefer</th>
+                                                    <th className="text-center py-3 pl-4 font-black text-zinc-400 uppercase tracking-wider" style={{ fontSize: '16px' }}>Lead Sites</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-white/5">
@@ -497,22 +497,22 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         <p className="text-lg text-zinc-500 mb-6" style={{lineHeight: '1.6'}}>Pricing data based on Australian industry averages for {stateName}.</p>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Typical Range</p>
+                                                <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>Typical Range</p>
                                                 <p className="text-2xl font-black text-zinc-900">${cost.low}–${cost.high}</p>
-                                                <p className="text-sm text-zinc-500">{cost.unit}</p>
+                                                <p className="text-zinc-500" style={{ fontSize: '16px' }}>{cost.unit}</p>
                                             </div>
                                             <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Emergency Rate</p>
+                                                <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>Emergency Rate</p>
                                                 <p className="text-2xl font-black text-zinc-900">${Math.round(cost.high * 1.5)}</p>
-                                                <p className="text-sm text-zinc-500">After-hours callout</p>
+                                                <p className="text-zinc-500" style={{ fontSize: '16px' }}>After-hours callout</p>
                                             </div>
                                             <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Get Quotes</p>
+                                                <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>Get Quotes</p>
                                                 <p className="text-2xl font-black text-zinc-900">{businesses.length > 0 ? businesses.length : "Free"}</p>
-                                                <p className="text-sm text-zinc-500">{businesses.length > 0 ? "local providers" : "no obligation"}</p>
+                                                <p className="text-zinc-500" style={{ fontSize: '16px' }}>{businesses.length > 0 ? "local providers" : "no obligation"}</p>
                                             </div>
                                         </div>
-                                        <p className="text-xs text-zinc-400 mt-4">Prices are estimates only. Always get 2–3 written quotes before proceeding with any work.</p>
+                                        <p className="text-zinc-400 mt-4" style={{ fontSize: '16px' }}>Prices are estimates only. Always get 2–3 written quotes before proceeding with any work.</p>
                                     </section>
                                 )}
 
@@ -535,7 +535,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                             <h3 className="font-black text-zinc-900 mb-1">{tradeName} Licensing Requirements in {stateName}</h3>
                                             <p className="text-lg text-zinc-600 leading-relaxed" style={{lineHeight: '1.6'}}>{licenceText}</p>
                                             {authorityLink && (
-                                                <a href={authorityLink.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-blue-600 font-bold text-sm hover:underline">
+                                                <a href={authorityLink.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-3 text-blue-600 font-bold hover:underline" style={{ fontSize: '16px' }}>
                                                     <ExternalLink className="w-3.5 h-3.5" />
                                                     Verify on {authorityLink.name}
                                                 </a>

@@ -191,7 +191,7 @@ export default function HomePage() {
                 <Link
                   href="/register?type=business"
                   className="flex items-center justify-center gap-3 w-full bg-[#1A1A1A] hover:bg-zinc-800 text-white font-black text-xl rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
-                  style={{ minHeight: "60px" }}
+                  style={{ minHeight: "64px" }}
                 >
                   Grow Risk-Free <TrendingUp className="w-6 h-6" />
                 </Link>

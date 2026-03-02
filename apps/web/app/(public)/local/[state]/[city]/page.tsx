@@ -120,7 +120,7 @@ export default async function CityDirectoryPage({ params }: PageProps) {
             {/* ── BREADCRUMBS ── */}
             <div className="bg-gray-100 border-b border-gray-200" style={{ paddingTop: '108px', paddingBottom: '12px' }}>
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '14px' }}>
+                    <nav className="flex items-center gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '16px' }}>
                         <Link href="/" className="hover:text-[#FF6600] transition-colors">Home</Link>
                         <ChevronRight className="w-3 h-3" />
                         <Link href="/local" className="hover:text-[#FF6600] transition-colors">Directory</Link>

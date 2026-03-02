@@ -87,7 +87,7 @@ async function getNearbySuburbs(city: string, currentSuburb: string): Promise<st
               AND suburb NOT ILIKE ${'%' + suburbName + '%'}
               AND suburb IS NOT NULL
             ORDER BY suburb ASC
-            LIMIT 8
+            LIMIT 12
         `;
         return results.map((r: any) => r.suburb).filter(Boolean);
     } catch { return []; }
@@ -136,7 +136,7 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
             {/* ── BREADCRUMBS ── */}
             <div className="bg-gray-100 border-b border-gray-200" style={{ paddingTop: '108px', paddingBottom: '12px' }}>
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center flex-wrap gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '14px' }}>
+                    <nav className="flex items-center flex-wrap gap-2 font-bold text-gray-500 uppercase tracking-widest" style={{ fontSize: '16px' }}>
                         <Link href="/" className="hover:text-[#FF6600] transition-colors">Home</Link>
                         <ChevronRight className="w-3 h-3" />
                         <Link href="/local" className="hover:text-[#FF6600] transition-colors">Directory</Link>
