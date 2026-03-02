@@ -5,7 +5,7 @@ import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { Metadata } from "next";
-import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, JOB_TYPES, jobToSlug, generateLocalizedIntro } from "@/lib/constants";
+import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, JOB_TYPES, jobToSlug, generateLocalizedIntro, normalizeTradeName } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +27,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const suburbName = formatSlug(suburb);
     const cityName = formatSlug(city);
     const stateUpper = state.toUpperCase();
-    const cost = TRADE_COST_GUIDE[tradeName];
+    const tradeKey = normalizeTradeName(tradeName);
+    const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
     const priceStr = cost ? ` | $${cost.low}\u2013$${cost.high}${cost.unit}` : "";
 
     const businesses = await getBusinesses(trade, suburb);
@@ -117,10 +118,11 @@ export default async function TradeLocationPage({ params }: PageProps) {
         : "4.8";
     const totalReviews = businesses.reduce((acc: number, biz: any) => acc + (parseInt(biz.total_reviews) || 0), 0);
 
-    const cost = TRADE_COST_GUIDE[tradeName];
-    const faqs = TRADE_FAQ_BANK[tradeName] || TRADE_FAQ_BANK["Plumbing"];
-    const licenceText = STATE_LICENSING[tradeName]?.[stateName] || null;
-    const relatedJobs = JOB_TYPES[tradeName]?.slice(0, 6) || [];
+    const tradeKey = normalizeTradeName(tradeName);
+    const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
+    const faqs = TRADE_FAQ_BANK[tradeKey] || TRADE_FAQ_BANK[tradeName] || [];
+    const licenceText = STATE_LICENSING[tradeKey]?.[stateName] || STATE_LICENSING[tradeName]?.[stateName] || null;
+    const relatedJobs = (JOB_TYPES[tradeKey] || JOB_TYPES[tradeName])?.slice(0, 6) || [];
     const localizedIntro = generateLocalizedIntro(tradeName, suburbName, cityName, stateName, businesses.length, avgRating, totalReviews);
 
     const breadcrumbs = [

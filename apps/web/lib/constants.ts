@@ -832,6 +832,32 @@ export function slugToJob(slug: string): string {
     return slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
+const TRADE_NAME_ALIASES: Record<string, string> = {
+    "Plumber": "Plumbing",
+    "Electrician": "Electrical",
+    "Carpenter": "Carpentry",
+    "Landscaper": "Landscaping",
+    "Painter": "Painting",
+    "Cleaner": "Cleaning",
+    "Plasterer": "Plastering",
+    "Tiler": "Tiling",
+    "Concreter": "Concreting",
+    "Roofer": "Roofing",
+    "Renderer": "Rendering",
+    "Waterproofer": "Waterproofing",
+    "Air Conditioning": "Air Conditioning & Heating",
+    "Air-conditioning": "Air Conditioning & Heating",
+    "Handyman": "Handyman",
+    "Fencer": "Fencing",
+    "Demolisher": "Demolition",
+    "Tree Lopper": "Tree Lopping",
+    "Arborist": "Tree Lopping",
+};
+
+export function normalizeTradeName(tradeName: string): string {
+    return TRADE_NAME_ALIASES[tradeName] ?? tradeName;
+}
+
 export const TRADE_COST_GUIDE: Record<string, { unit: string; low: number; high: number }> = {
     "Plumbing": { unit: "/hr", low: 80, high: 200 },
     "Electrical": { unit: "/hr", low: 70, high: 130 },
