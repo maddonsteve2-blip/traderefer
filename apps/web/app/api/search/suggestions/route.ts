@@ -54,8 +54,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Search suburbs and postcodes from database
-    const suburbs: Array<{ suburb: string; city: string; state: string; postcode: string; count: number }> = [];
-    const postcodes: Array<{ postcode: string; suburb: string; city: string; state: string; count: number }> = [];
+    const suburbs: Array<{ suburb: string; city: string; state: string; count: number }> = [];
 
     if (type === "all" || type === "location") {
       // Search for suburbs by name
@@ -64,42 +63,41 @@ export async function GET(request: NextRequest) {
           suburb,
           city,
           state,
-          COALESCE(postcode, '') as postcode,
           COUNT(*)::int as count
         FROM businesses
         WHERE status = 'active'
           AND suburb ILIKE ${'%' + query + '%'}
           AND suburb IS NOT NULL
-        GROUP BY suburb, city, state, postcode
+          AND suburb != ''
+        GROUP BY suburb, city, state
         ORDER BY count DESC, suburb ASC
-        LIMIT 6
+        LIMIT 8
       `;
       suburbResults.forEach(r => suburbs.push(r as any));
 
-      // If query looks like a postcode (digits only), search by postcode
-      if (/^\d+$/.test(query)) {
-        const postcodeResults = await sql`
-          SELECT 
-            COALESCE(postcode, '') as postcode,
-            suburb,
-            city,
-            state,
-            COUNT(*)::int as count
-          FROM businesses
-          WHERE status = 'active'
-            AND postcode ILIKE ${query + '%'}
-            AND postcode IS NOT NULL
-          GROUP BY postcode, suburb, city, state
-          ORDER BY count DESC, suburb ASC
-          LIMIT 6
-        `;
-        postcodeResults.forEach(r => postcodes.push(r as any));
-      }
+      // Also search by city name
+      const cityResults = await sql`
+        SELECT 
+          city as suburb,
+          city,
+          state,
+          COUNT(*)::int as count
+        FROM businesses
+        WHERE status = 'active'
+          AND city ILIKE ${'%' + query + '%'}
+          AND city IS NOT NULL
+          AND city != ''
+          AND (suburb IS NULL OR suburb NOT ILIKE ${'%' + query + '%'})
+        GROUP BY city, state
+        ORDER BY count DESC, city ASC
+        LIMIT 4
+      `;
+      cityResults.forEach(r => suburbs.push(r as any));
     }
 
-    return NextResponse.json({ trades, suburbs, postcodes });
+    return NextResponse.json({ trades, suburbs });
   } catch (error) {
     console.error("Search suggestions error:", error);
-    return NextResponse.json({ trades: [], suburbs: [], postcodes: [] });
+    return NextResponse.json({ trades: [], suburbs: [] });
   }
 }

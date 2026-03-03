@@ -305,7 +305,7 @@ export function Navbar() {
                     {/* ── PERSISTENT SEARCH BAR ── */}
                     {!isDashboard && (
                         <div className="hidden md:block flex-1 max-w-xl">
-                            <SmartSearch variant="compact" />
+                            <SmartSearch variant="navbar" />
                         </div>
                     )}
 
