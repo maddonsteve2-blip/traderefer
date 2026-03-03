@@ -187,9 +187,9 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                                 {displayTrades.map(({ trade, count }) => {
                                     const Icon = TRADE_ICONS[trade] || Wrench;
-                                    const tradeSlug = trade.toLowerCase().replace(/ /g, '-');
+                                    const businessesUrl = `/businesses?category=${encodeURIComponent(trade)}&suburb=${encodeURIComponent(suburbName)}&city=${encodeURIComponent(cityName)}&state=${stateUpper}`;
                                     return (
-                                        <Link key={trade} href={`/local/${state}/${city}/${suburb}/${tradeSlug}`} className="group">
+                                        <Link key={trade} href={businessesUrl} className="group">
                                             <div className="bg-white rounded-2xl border border-zinc-200 hover:border-orange-500 hover:shadow-xl transition-all duration-300 p-5 flex flex-col items-center text-center gap-4">
                                                 <div className="w-[120px] h-[120px] bg-zinc-50 rounded-2xl flex items-center justify-center text-zinc-400 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
                                                     <Icon className="w-12 h-12" />

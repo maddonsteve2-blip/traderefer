@@ -4,18 +4,18 @@ import { Logo } from "@/components/Logo";
 import { UrgencyTicker } from "@/components/UrgencyTicker";
 
 const TOP_CATEGORIES = [
-    { name: "Electrician", slug: "electrician" },
-    { name: "Plumber", slug: "plumber" },
-    { name: "Painter", slug: "painter" },
-    { name: "Fencing", slug: "fencing" },
-    { name: "Landscaper", slug: "landscaper" },
-    { name: "Flooring", slug: "flooring" },
-    { name: "Air Conditioning & Heating", slug: "air-conditioning-heating" },
-    { name: "Cleaning", slug: "cleaning" },
-    { name: "Solar & Energy", slug: "solar-energy" },
-    { name: "Roofing", slug: "roofing" },
-    { name: "Cabinet Making", slug: "cabinet-making" },
-    { name: "Locksmith", slug: "locksmith" },
+    { name: "Electrician", category: "Electrical" },
+    { name: "Plumber", category: "Plumbing" },
+    { name: "Painter", category: "Painting" },
+    { name: "Fencing", category: "Fencing" },
+    { name: "Landscaper", category: "Landscaping" },
+    { name: "Flooring", category: "Flooring" },
+    { name: "Air Conditioning & Heating", category: "Air Conditioning & Heating" },
+    { name: "Cleaning", category: "Cleaning" },
+    { name: "Solar & Energy", category: "Solar & Energy" },
+    { name: "Roofing", category: "Roofing" },
+    { name: "Cabinet Making", category: "Cabinet Making" },
+    { name: "Locksmith", category: "Locksmith" },
 ];
 
 const TOP_CITIES = [
@@ -107,9 +107,9 @@ export async function DirectoryFooter() {
                         </h4>
                         <ul className="space-y-3">
                             {TOP_CATEGORIES.slice(0, 8).map((cat) => (
-                                <li key={cat.slug}>
+                                <li key={cat.category}>
                                     <Link
-                                        href={`/categories#${cat.slug}`}
+                                        href={`/businesses?category=${encodeURIComponent(cat.category)}`}
                                         className="text-zinc-400 hover:text-orange-500 transition-colors flex items-center group" style={{ fontSize: '16px' }}
                                     >
                                         <ArrowRight className="w-3 h-3 mr-2 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />

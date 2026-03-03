@@ -196,11 +196,11 @@ export default async function StateDirectoryPage({ params }: PageProps) {
                                 <p className="text-gray-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>Based on verified businesses currently listed across {stateName}.</p>
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     {topTrades.map(({ trade, count }) => (
-                                        <div key={trade} className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100">
-                                            <p className="font-black text-[#1A1A1A] mb-1" style={{ fontSize: '20px' }}>{trade}</p>
+                                        <Link key={trade} href={`/businesses?category=${encodeURIComponent(trade)}&state=${stateUpper}`} className="group bg-zinc-50 rounded-2xl p-4 border border-zinc-100 hover:border-orange-500 hover:shadow-md hover:bg-orange-50 transition-all duration-200 block">
+                                            <p className="font-black text-[#1A1A1A] group-hover:text-[#FF6600] mb-1 transition-colors" style={{ fontSize: '20px' }}>{trade}</p>
                                             <p className="text-3xl font-black text-[#FF6600]">{count.toLocaleString()}</p>
-                                            <p className="text-gray-400 uppercase tracking-wider font-bold" style={{ fontSize: '16px' }}>businesses</p>
-                                        </div>
+                                            <p className="text-gray-400 uppercase tracking-wider font-bold" style={{ fontSize: '16px' }}>businesses →</p>
+                                        </Link>
                                     ))}
                                 </div>
                             </section>
