@@ -120,41 +120,57 @@ async function getBusinesses(
                 return { businesses, total: suburbTotal, totalPages: Math.ceil(suburbTotal / PAGE_SIZE), nearbyFallback: null };
             }
 
-            // No results in suburb — fall back to city, sorted by distance
+            // No results in exact suburb — try radius-based proximity (50km, then 150km)
+            const centre = await getSuburbCentre(sSub, sCity, sState);
+
+            if (centre) {
+                for (const radiusKm of [50, 150]) {
+                    const distExpr = sql`111.045 * SQRT(POWER(b.lat - ${centre.lat}, 2) + POWER(b.lng * COS(RADIANS(${centre.lat})) - ${centre.lng} * COS(RADIANS(${centre.lat})), 2))`;
+                    const radiusResults = await sql`
+                        SELECT b.*,
+                            (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count,
+                            (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count,
+                            ROUND(CAST(${distExpr} AS numeric), 1) as distance_km
+                        FROM businesses b
+                        ${baseWhere}
+                          AND b.lat IS NOT NULL AND b.lng IS NOT NULL
+                          AND ${distExpr} < ${radiusKm}
+                        ORDER BY distance_km ASC, b.listing_rank DESC, b.avg_rating DESC
+                        LIMIT ${PAGE_SIZE} OFFSET ${offset}
+                    `;
+                    if (radiusResults.length > 0) {
+                        const countRes = await sql`
+                            SELECT COUNT(*) as total FROM businesses b
+                            ${baseWhere}
+                              AND b.lat IS NOT NULL AND b.lng IS NOT NULL
+                              AND ${distExpr} < ${radiusKm}
+                        `;
+                        return {
+                            businesses: radiusResults,
+                            total: Number(countRes[0]?.total ?? 0),
+                            totalPages: Math.ceil(Number(countRes[0]?.total ?? 0) / PAGE_SIZE),
+                            nearbyFallback: `within ${radiusKm}km of ${sSub}`
+                        };
+                    }
+                }
+            }
+
+            // Last resort: city or state filter
             const cityFilter = sCity
                 ? sql`AND (suburb ILIKE ${'%' + sCity + '%'} OR city ILIKE ${'%' + sCity + '%'})`
-                : sql`AND state ILIKE ${sState || 'NSW'}`;
+                : sState ? sql`AND state ILIKE ${sState}` : sql``;
             const cityWhere = sql`${baseWhere} ${cityFilter}`;
             const cityCount = await sql`SELECT COUNT(*) as total FROM businesses b ${cityWhere}`;
             const cityTotal = Number(cityCount[0]?.total ?? 0);
-
-            const centre = await getSuburbCentre(sSub, sCity, sState);
-            let businesses;
-            if (centre) {
-                businesses = await sql`
-                    SELECT b.*,
-                        (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count,
-                        (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count,
-                        CASE WHEN b.lat IS NOT NULL AND b.lng IS NOT NULL
-                            THEN ROUND(CAST(111.045 * SQRT(POWER(b.lat - ${centre.lat}, 2) + POWER(b.lng * COS(RADIANS(${centre.lat})) - ${centre.lng} * COS(RADIANS(${centre.lat})), 2)) AS numeric), 1)
-                            ELSE 999
-                        END as distance_km
-                    FROM businesses b
-                    ${cityWhere}
-                    ORDER BY distance_km ASC, b.listing_rank DESC, b.avg_rating DESC
-                    LIMIT ${PAGE_SIZE} OFFSET ${offset}
-                `;
-            } else {
-                businesses = await sql`
-                    SELECT b.*,
-                        (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count,
-                        (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count
-                    FROM businesses b
-                    ${cityWhere}
-                    ORDER BY b.listing_rank DESC, b.avg_rating DESC
-                    LIMIT ${PAGE_SIZE} OFFSET ${offset}
-                `;
-            }
+            const businesses = await sql`
+                SELECT b.*,
+                    (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id AND d.is_active = true AND (d.expires_at IS NULL OR d.expires_at > now())) as deal_count,
+                    (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count
+                FROM businesses b
+                ${cityWhere}
+                ORDER BY b.listing_rank DESC, b.avg_rating DESC
+                LIMIT ${PAGE_SIZE} OFFSET ${offset}
+            `;
             return {
                 businesses, total: cityTotal,
                 totalPages: Math.ceil(cityTotal / PAGE_SIZE),
@@ -241,7 +257,10 @@ export default async function BusinessDirectory({
                     <div className="mb-6 flex items-center gap-3 bg-orange-50 border border-orange-100 rounded-2xl px-5 py-3.5">
                         <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
                         <p className="font-bold text-orange-700" style={{ fontSize: '16px' }}>
-                            No businesses found in <span className="font-bold">{suburb}</span> — showing nearest results from <span className="font-bold">{nearbyFallback}</span>, sorted by distance.
+                            {nearbyFallback.startsWith('within')
+                                ? <>No exact match in <span className="font-bold">{suburb}</span> — showing the nearest available results <span className="font-bold">{nearbyFallback}</span>, sorted by distance.</>
+                                : <>No businesses found in <span className="font-bold">{suburb}</span> — showing nearest results from <span className="font-bold">{nearbyFallback}</span>, sorted by distance.</>
+                            }
                         </p>
                     </div>
                 )}

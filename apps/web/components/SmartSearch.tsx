@@ -94,12 +94,17 @@ export function SmartSearch({ variant = "landing" }: SmartSearchProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const navigate = useCallback((t: string, s: string) => {
+  const [selectedSuburbMeta, setSelectedSuburbMeta] = useState<{ city: string; state: string } | null>(null);
+
+  const navigate = useCallback((t: string, s: string, meta?: { city: string; state: string } | null) => {
     const params = new URLSearchParams();
     if (t) params.set("category", t);
     if (s) params.set("suburb", s);
+    const m = meta ?? selectedSuburbMeta;
+    if (m?.city) params.set("city", m.city);
+    if (m?.state) params.set("state", m.state);
     router.push(`/businesses${params.toString() ? `?${params}` : ""}`);
-  }, [router]);
+  }, [router, selectedSuburbMeta]);
 
   const selectTrade = (t: string) => {
     setTrade(t);
@@ -109,8 +114,9 @@ export function SmartSearch({ variant = "landing" }: SmartSearchProps) {
 
   const selectSuburb = (s: SuburbResult) => {
     setSuburb(s.suburb);
+    setSelectedSuburbMeta({ city: s.city, state: s.state });
     setSuburbOpen(false);
-    navigate(trade, s.suburb); // auto-navigate immediately
+    navigate(trade, s.suburb, { city: s.city, state: s.state }); // auto-navigate immediately
   };
 
   const p = isLanding;
