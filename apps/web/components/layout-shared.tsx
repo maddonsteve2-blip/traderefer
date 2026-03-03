@@ -205,6 +205,12 @@ function ProfileDropdown() {
 
 
 
+import { SmartSearch } from "@/components/SmartSearch";
+
+
+
+
+
 export function Navbar() {
 
     const pathname = usePathname();
@@ -271,18 +277,6 @@ export function Navbar() {
 
 
 
-    const router = useRouter();
-    const [searchQuery, setSearchQuery] = useState("");
-    const isDirectoryPage = pathname?.startsWith("/local");
-
-    const handleSearch = useCallback((e: React.FormEvent) => {
-        e.preventDefault();
-        if (searchQuery.trim()) {
-            router.push(`/businesses?q=${encodeURIComponent(searchQuery.trim())}`);
-            setSearchQuery("");
-        }
-    }, [searchQuery, router]);
-
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
@@ -310,16 +304,9 @@ export function Navbar() {
 
                     {/* ── PERSISTENT SEARCH BAR ── */}
                     {!isDashboard && (
-                        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md items-center gap-3 bg-zinc-100 hover:bg-white border-2 border-zinc-200 hover:border-orange-400 rounded-2xl px-5 transition-all" style={{ height: '60px' }}>
-                            <Search className="w-5 h-5 text-[#FF6600] shrink-0" />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={e => setSearchQuery(e.target.value)}
-                                placeholder="Find a Tradie in your suburb..."
-                                className="flex-1 bg-transparent text-[18px] text-zinc-700 placeholder:text-zinc-400 outline-none min-w-0 font-medium"
-                            />
-                        </form>
+                        <div className="hidden md:block flex-1 max-w-xl">
+                            <SmartSearch variant="compact" />
+                        </div>
                     )}
 
 

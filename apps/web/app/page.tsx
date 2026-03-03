@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 
+import { SmartSearch } from "@/components/SmartSearch";
+
 export default function HomePage() {
   const [tradies, setTradies] = useState(10);
   const [jobsPerMonth, setJobsPerMonth] = useState(3);
@@ -321,44 +323,25 @@ export default function HomePage() {
           className="absolute inset-0 opacity-10"
           style={{ backgroundImage: "radial-gradient(#FF6600 1px, transparent 1px)", backgroundSize: "32px 32px" }}
         />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl md:text-5xl font-extrabold mb-10 font-display">
-            Search Our National Network of <span className="text-[#FF6600]">Verified Trades</span>.
-          </h2>
-          <div className="bg-white p-2 rounded-xl shadow-2xl flex flex-col md:flex-row gap-2">
-            <div className="relative flex-grow">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="w-5 h-5 text-gray-400" />
-              </div>
-              <input
-                className="w-full pl-12 pr-4 py-4 text-gray-900 placeholder-gray-500 focus:outline-none rounded-lg font-sans text-lg"
-                placeholder="What trade do you need? (e.g. Electrician)"
-                type="text"
-              />
-            </div>
-            <div className="relative md:w-1/3 border-t md:border-t-0 md:border-l border-gray-200">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <MapPin className="w-5 h-5 text-gray-400" />
-              </div>
-              <input
-                className="w-full pl-12 pr-4 py-4 text-gray-900 placeholder-gray-500 focus:outline-none rounded-lg font-sans text-lg"
-                placeholder="Postcode or Suburb"
-                type="text"
-              />
-            </div>
-            <Link
-              href="/local"
-              className="bg-[#FF6600] hover:bg-[#E65C00] text-white px-10 py-4 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 md:w-auto w-full font-cta text-xl uppercase tracking-wide flex items-center justify-center"
-            >
-              Search
-            </Link>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-5xl font-extrabold font-display mb-3">
+              Find <span className="text-[#FF6600]">Verified Trades</span>
+            </h2>
+            <p className="text-gray-400 text-lg">
+              Search thousands of verified Australian tradespeople
+            </p>
           </div>
-          <div className="mt-6 flex flex-wrap justify-center gap-3 text-gray-400 font-sans" style={{ fontSize: '16px' }}>
-            <span className="text-gray-500">Popular:</span>
-            <Link className="hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/local?category=Plumbing">Plumbers in Sydney</Link>
-            <Link className="hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/local?category=Electrical">Electricians in Melbourne</Link>
-            <Link className="hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/local?category=Building">Builders in Brisbane</Link>
-            <Link className="hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/local?category=Painting">Painters in Perth</Link>
+          
+          <SmartSearch variant="landing" />
+          
+          <div className="mt-6 flex flex-wrap justify-center gap-2 md:gap-3 text-gray-400">
+            <span className="text-gray-500 text-sm hidden sm:inline">Popular:</span>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Plumbing">Plumbers</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Electrical">Electricians</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Building">Builders</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Painting">Painters</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Landscaping">Landscapers</Link>
           </div>
         </div>
       </section>
