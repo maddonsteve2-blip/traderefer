@@ -54,8 +54,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Search suburbs and postcodes from database
-    let suburbs: Array<{ suburb: string; city: string; state: string; postcode: string; count: number }> = [];
-    let postcodes: Array<{ postcode: string; suburb: string; city: string; state: string; count: number }> = [];
+    const suburbs: Array<{ suburb: string; city: string; state: string; postcode: string; count: number }> = [];
+    const postcodes: Array<{ postcode: string; suburb: string; city: string; state: string; count: number }> = [];
 
     if (type === "all" || type === "location") {
       // Search for suburbs by name
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
         ORDER BY count DESC, suburb ASC
         LIMIT 6
       `;
-      suburbs = suburbResults;
+      suburbResults.forEach(r => suburbs.push(r as any));
 
       // If query looks like a postcode (digits only), search by postcode
       if (/^\d+$/.test(query)) {
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
           ORDER BY count DESC, suburb ASC
           LIMIT 6
         `;
-        postcodes = postcodeResults;
+        postcodeResults.forEach(r => postcodes.push(r as any));
       }
     }
 
