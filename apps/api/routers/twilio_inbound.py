@@ -260,14 +260,16 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
 
 async def _screening_fail(lead_id: str, lead: dict, db: AsyncSession):
     await db.execute(text("""
-        UPDATE leads SET screening_status = 'FAIL', status = 'SCREENING_FAILED'
+        UPDATE leads SET screening_status = 'FAIL', status = 'SCREENING_FAILED', requires_admin_review = true
         WHERE id = :id
     """), {"id": lead_id})
     await db.commit()
 
-    # Fetch consumer phone and business info
+    # Fetch full lead details for admin notification
     res = await db.execute(text("""
-        SELECT l.consumer_phone, l.twilio_from_number, b.business_name, b.trade_category
+        SELECT l.consumer_phone, l.consumer_name, l.consumer_email, l.job_description, 
+               l.screening_conversation, l.twilio_from_number,
+               b.business_name, b.trade_category, b.slug
         FROM leads l JOIN businesses b ON b.id = l.business_id
         WHERE l.id = :id
     """), {"id": lead_id})
@@ -283,6 +285,58 @@ async def _screening_fail(lead_id: str, lead: dict, db: AsyncSession):
             f"Reply YES if you'd like assistance. TradeRefer"
         )
         await _send_sms(row["consumer_phone"], fail_msg, from_number=row["twilio_from_number"])
+    
+    # Send QA email to admin
+    if row:
+        from services.email import send_email
+        import json
+        
+        conversation_text = "\n".join([
+            f"{msg.get('role', 'unknown').upper()}: {msg.get('content', '')}"
+            for msg in (row["screening_conversation"] or [])
+        ])
+        
+        admin_email_body = f"""
+<h2>⚠️ Lead Screening Failed - Requires Review</h2>
+
+<p><strong>Lead ID:</strong> {lead_id}</p>
+<p><strong>Status:</strong> Flagged for admin review</p>
+
+<h3>Consumer Details:</h3>
+<ul>
+    <li><strong>Name:</strong> {row['consumer_name']}</li>
+    <li><strong>Phone:</strong> {row['consumer_phone']}</li>
+    <li><strong>Email:</strong> {row['consumer_email'] or 'N/A'}</li>
+</ul>
+
+<h3>Business Details:</h3>
+<ul>
+    <li><strong>Business:</strong> {row['business_name']}</li>
+    <li><strong>Category:</strong> {row['trade_category']}</li>
+    <li><strong>Slug:</strong> {row['slug']}</li>
+</ul>
+
+<h3>Job Description:</h3>
+<p>{row['job_description']}</p>
+
+<h3>Screening Conversation:</h3>
+<pre>{conversation_text}</pre>
+
+<p><strong>Action Required:</strong> Review this lead in the admin dashboard and determine if it should be manually assigned to a different business or escalated to customer service.</p>
+
+<p><a href="https://traderefer.au/admin/leads/{lead_id}">View Lead in Admin Dashboard</a></p>
+"""
+        
+        try:
+            await send_email(
+                to_email="stevejford007@gmail.com",
+                subject=f"🚨 QA Alert: Failed Lead Screening - {row['business_name']}",
+                html_body=admin_email_body
+            )
+            lead_logger.info(f"QA email sent to admin for failed lead {lead_id}")
+        except Exception as e:
+            from utils.logging_config import error_logger
+            error_logger.error(f"Failed to send QA email for lead {lead_id}: {e}", exc_info=True)
 
     # Notify referrer
     if lead["referrer_id"]:
