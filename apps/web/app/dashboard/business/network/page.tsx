@@ -137,6 +137,7 @@ export default function BusinessNetworkPage() {
     }
 
     return (
+        <div className="min-h-screen bg-zinc-50 pt-16">
         <div className="max-w-4xl mx-auto py-10 px-4 space-y-8">
             <div>
                 <h1 className="text-3xl font-black text-zinc-900 tracking-tight">My Network</h1>
@@ -274,6 +275,7 @@ export default function BusinessNetworkPage() {
                     )}
                 </div>
             )}
+        </div>
         </div>
     );
 }

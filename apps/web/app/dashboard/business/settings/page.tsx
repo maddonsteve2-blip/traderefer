@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { StripeConnectButton } from "@/components/dashboard/StripeConnectButton";
 
 export default function BusinessSettingsPage() {
     const { getToken, isLoaded } = useAuth();
