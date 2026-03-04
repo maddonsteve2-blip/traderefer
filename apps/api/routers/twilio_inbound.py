@@ -266,7 +266,7 @@ async def _screening_fail(lead_id: str, lead: dict, db: AsyncSession):
 async def _save_conversation(lead_id: str, conversation: list, status: str, db: AsyncSession):
     await db.execute(text("""
         UPDATE leads
-        SET screening_conversation = :conv::jsonb, screening_status = :status
+        SET screening_conversation = CAST(:conv AS jsonb), screening_status = :status
         WHERE id = :id
     """), {"conv": json.dumps(conversation), "status": status, "id": lead_id})
     await db.commit()
