@@ -81,7 +81,7 @@ async def _find_screening_lead(phone: str, db: AsyncSession):
     res = await db.execute(text("""
         SELECT l.id, l.screening_conversation, l.screening_status,
                l.referrer_id, l.business_id, l.consumer_name, l.consumer_suburb,
-               l.job_description, b.trade_category
+               l.job_description, l.twilio_from_number, b.trade_category
         FROM leads l
         LEFT JOIN businesses b ON b.id = l.business_id
         WHERE l.consumer_phone = :phone
@@ -127,6 +127,7 @@ async def _find_customer_survey_lead(phone: str, db: AsyncSession):
 async def handle_screening_reply(lead: dict, body: str, db: AsyncSession):
     lead_id = str(lead["id"])
     phone = None
+    twilio_from = lead.get("twilio_from_number")
 
     # Fetch phone
     phone_res = await db.execute(
@@ -151,14 +152,14 @@ async def handle_screening_reply(lead: dict, body: str, db: AsyncSession):
         conversation.append({"role": "assistant", "content": "Q2: Timeframe?"})
         await _save_conversation(lead_id, conversation, "Q2_SENT", db)
         if phone:
-            await send_sms_screening_q2(phone)
+            await send_sms_screening_q2(phone, from_number=twilio_from)
 
     elif screening_status == "Q2_SENT":
         # Ask Q3
         conversation.append({"role": "assistant", "content": "Q3: Scope?"})
         await _save_conversation(lead_id, conversation, "Q3_SENT", db)
         if phone:
-            await send_sms_screening_q3(phone)
+            await send_sms_screening_q3(phone, from_number=twilio_from)
 
     elif screening_status in ("Q3_SENT", "UNCLEAR"):
         # Classify
@@ -173,7 +174,7 @@ async def handle_screening_reply(lead: dict, body: str, db: AsyncSession):
             conversation.append({"role": "assistant", "content": follow_up})
             await _save_conversation(lead_id, conversation, "UNCLEAR", db)
             if phone:
-                await send_sms_screening_follow_up(phone, follow_up)
+                await send_sms_screening_follow_up(phone, follow_up, from_number=twilio_from)
 
         else:
             # FAIL or second UNCLEAR
@@ -184,7 +185,7 @@ async def handle_screening_reply(lead: dict, body: str, db: AsyncSession):
         conversation.append({"role": "assistant", "content": "Q2: Timeframe?"})
         await _save_conversation(lead_id, conversation, "Q2_SENT", db)
         if phone:
-            await send_sms_screening_q2(phone)
+            await send_sms_screening_q2(phone, from_number=twilio_from)
 
 
 async def _screening_pass(lead_id: str, db: AsyncSession):

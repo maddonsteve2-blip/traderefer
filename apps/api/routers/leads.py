@@ -151,7 +151,8 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             referrer_payout_amount_cents,
             consumer_ip,
             consumer_device_hash,
-            lead_urgency
+            lead_urgency,
+            twilio_from_number
         ) VALUES (
             :business_id, 
             :referral_link_id, 
@@ -169,9 +170,14 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             :payout_snapshot,
             :ip,
             :device_hash,
-            :lead_urgency
+            :lead_urgency,
+            :twilio_from_number
         ) RETURNING id
     """)
+    
+    # Pick a random Twilio number for this lead's entire conversation
+    from services.sms import TWILIO_FROM_NUMBERS
+    twilio_from = random.choice(TWILIO_FROM_NUMBERS) if TWILIO_FROM_NUMBERS else None
     
     try:
         result = await db.execute(insert_query, {
@@ -189,7 +195,8 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             "payout_snapshot": int(referral_fee * 0.8), # 80% referrer payout
             "ip": client_ip,
             "device_hash": lead.device_hash,
-            "lead_urgency": lead.lead_urgency
+            "lead_urgency": lead.lead_urgency,
+            "twilio_from_number": twilio_from
         })
         new_lead_id = result.scalar()
         await db.commit()
@@ -202,12 +209,13 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
         biz_row = biz_info.mappings().first()
 
         # Send consumer AI screening Q1 (business notified only after screening PASS)
-        if lead.consumer_phone and biz_row:
+        if lead.consumer_phone and biz_row and twilio_from:
             await send_sms_screening_q1(
                 phone=lead.consumer_phone,
                 consumer_name=lead.consumer_name,
                 business_name=biz_row["business_name"],
                 trade_category=biz_row["trade_category"] or "trade",
+                from_number=twilio_from,
             )
 
         return {"id": str(new_lead_id), "status": "SCREENING"}

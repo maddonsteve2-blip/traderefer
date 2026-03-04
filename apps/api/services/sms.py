@@ -12,8 +12,14 @@ TWILIO_FROM_NUMBERS = [n.strip() for n in _from_numbers_raw.split(",") if n.stri
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://traderefer.au")
 
 
-async def _send_sms(to: str, body: str):
-    """Send SMS via Twilio. Skips gracefully if credentials not set."""
+async def _send_sms(to: str, body: str, from_number: Optional[str] = None):
+    """Send SMS via Twilio. Skips gracefully if credentials not set.
+    
+    Args:
+        to: Recipient phone number
+        body: SMS message body
+        from_number: Specific Twilio number to send from (optional, random if not provided)
+    """
     if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not TWILIO_FROM_NUMBERS:
         email_logger.warning(f"Twilio credentials not set — skipping SMS to {to}")
         return
@@ -29,16 +35,16 @@ async def _send_sms(to: str, body: str):
         from twilio.rest import Client
 
         def _send():
-            from_number = random.choice(TWILIO_FROM_NUMBERS)
+            _from = from_number if from_number else random.choice(TWILIO_FROM_NUMBERS)
             client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
             return client.messages.create(
                 body=body,
-                from_=from_number,
+                from_=_from,
                 to=phone,
             )
 
         result = await asyncio.to_thread(_send)
-        email_logger.info(f"SMS sent | to={phone} | sid={result.sid}")
+        email_logger.info(f"SMS sent | to={phone} | from={from_number or 'random'} | sid={result.sid}")
         return result
     except Exception as e:
         error_logger.error(f"SMS failed | to={phone} | error={e}", exc_info=True)
@@ -154,32 +160,33 @@ async def send_sms_new_message(phone: str, recipient_name: str, sender_name: str
 # CONSUMER — AI screening questions
 # ─────────────────────────────────────────────
 
-async def send_sms_screening_q1(phone: str, consumer_name: str, business_name: str, trade_category: str):
+async def send_sms_screening_q1(phone: str, consumer_name: str, business_name: str, trade_category: str, from_number: Optional[str] = None):
     body = (
         f"Hi {consumer_name}, {business_name} received your job enquiry via TradeRefer.\n\n"
         f"Quick 3 questions to confirm your request:\n"
         f"1. What type of {trade_category} work do you need?\n"
         f"Reply with a short description. TradeRefer"
     )
-    await _send_sms(phone, body)
+    result = await _send_sms(phone, body, from_number)
+    return result
 
-async def send_sms_screening_q2(phone: str):
+async def send_sms_screening_q2(phone: str, from_number: Optional[str] = None):
     body = (
         "Thanks! Q2: What's your timeframe? (e.g. urgent, within a week, flexible)\n"
         "Reply now. TradeRefer"
     )
-    await _send_sms(phone, body)
+    await _send_sms(phone, body, from_number)
 
-async def send_sms_screening_q3(phone: str):
+async def send_sms_screening_q3(phone: str, from_number: Optional[str] = None):
     body = (
         "Last one! Q3: What's the scope? (e.g. small repair, full renovation, new install)\n"
         "Reply now. TradeRefer"
     )
-    await _send_sms(phone, body)
+    await _send_sms(phone, body, from_number)
 
-async def send_sms_screening_follow_up(phone: str, follow_up: str):
+async def send_sms_screening_follow_up(phone: str, follow_up: str, from_number: Optional[str] = None):
     body = f"TradeRefer: {follow_up}\nReply with your answer."
-    await _send_sms(phone, body)
+    await _send_sms(phone, body, from_number)
 
 async def send_sms_referrer_screening_failed(phone: str, full_name: str, business_name: str):
     body = (
