@@ -37,6 +37,40 @@ async def _get_user_identity(db: AsyncSession, user: AuthenticatedUser):
     }
 
 
+@router.get("/unread-count")
+async def get_unread_count(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
+):
+    """Get total unread message count for notification badge."""
+    identity = await _get_user_identity(db, user)
+    biz_id = identity["business_id"]
+    ref_id = identity["referrer_id"]
+
+    if not biz_id and not ref_id:
+        return {"unread_count": 0}
+
+    my_type = "business" if biz_id else "referrer"
+    my_id = biz_id if biz_id else ref_id
+
+    # Count unread messages where sender_type != my_type
+    result = await db.execute(
+        text("""
+            SELECT COUNT(*) as unread_count
+            FROM messages m
+            JOIN conversations c ON m.conversation_id = c.id
+            WHERE (
+                (c.business_id = :my_id AND m.sender_type != 'business' AND m.is_read = false)
+                OR
+                (c.referrer_id = :my_id AND m.sender_type != 'referrer' AND m.is_read = false)
+            )
+        """),
+        {"my_id": my_id}
+    )
+    row = result.mappings().first()
+    return {"unread_count": row["unread_count"] if row else 0}
+
+
 @router.get("/contacts")
 async def list_contacts(
     db: AsyncSession = Depends(get_db),
@@ -257,40 +291,60 @@ async def send_message(
     )
     await db.commit()
 
-    # Email the recipient a nudge
+    # Notify the recipient via email AND SMS
     try:
+        from services.sms import _send_sms
+        
         if sender_type == "business":
             # Notify the referrer
             ref_info = await db.execute(
-                text("SELECT r.email, r.full_name, b.business_name FROM referrers r, businesses b WHERE r.id = :rid AND b.id = :bid"),
+                text("SELECT r.email, r.phone, r.full_name, b.business_name FROM referrers r, businesses b WHERE r.id = :rid AND b.id = :bid"),
                 {"rid": conv["referrer_id"], "bid": conv["business_id"]}
             )
             row = ref_info.mappings().first()
-            if row and row["email"] and body_text:
-                send_new_message_notification(
-                    email=row["email"],
-                    recipient_name=row["full_name"] or row["email"],
-                    sender_name=row["business_name"],
-                    message_preview=body_text,
-                    conversation_url="/dashboard/referrer/messages",
-                )
+            if row and body_text:
+                # Email notification
+                if row["email"]:
+                    send_new_message_notification(
+                        email=row["email"],
+                        recipient_name=row["full_name"] or row["email"],
+                        sender_name=row["business_name"],
+                        message_preview=body_text,
+                        conversation_url="/dashboard/referrer/messages",
+                    )
+                # SMS notification
+                if row["phone"]:
+                    sms_preview = body_text[:100] + "..." if len(body_text) > 100 else body_text
+                    await _send_sms(
+                        row["phone"],
+                        f"💬 New message from {row['business_name']}: {sms_preview}\n\nReply at traderefer.au/dashboard/referrer/messages"
+                    )
         else:
             # Notify the business
             biz_info = await db.execute(
-                text("SELECT b.business_email, b.business_name, r.full_name as ref_name FROM businesses b, referrers r WHERE b.id = :bid AND r.id = :rid"),
+                text("SELECT b.business_email, b.business_phone, b.business_name, r.full_name as ref_name FROM businesses b, referrers r WHERE b.id = :bid AND r.id = :rid"),
                 {"bid": conv["business_id"], "rid": conv["referrer_id"]}
             )
             row = biz_info.mappings().first()
-            if row and row["business_email"] and body_text:
-                send_new_message_notification(
-                    email=row["business_email"],
-                    recipient_name=row["business_name"],
-                    sender_name=row["ref_name"] or "A referrer",
-                    message_preview=body_text,
-                    conversation_url="/dashboard/business/messages",
-                )
-    except Exception as email_err:
-        error_logger.warning(f"Message notification email error (non-fatal): {email_err}")
+            if row and body_text:
+                # Email notification
+                if row["business_email"]:
+                    send_new_message_notification(
+                        email=row["business_email"],
+                        recipient_name=row["business_name"],
+                        sender_name=row["ref_name"] or "A referrer",
+                        message_preview=body_text,
+                        conversation_url="/dashboard/business/messages",
+                    )
+                # SMS notification
+                if row["business_phone"]:
+                    sms_preview = body_text[:100] + "..." if len(body_text) > 100 else body_text
+                    await _send_sms(
+                        row["business_phone"],
+                        f"💬 New message from {row['ref_name'] or 'a referrer'}: {sms_preview}\n\nReply at traderefer.au/dashboard/business/messages"
+                    )
+    except Exception as notify_err:
+        error_logger.warning(f"Message notification error (non-fatal): {notify_err}")
 
     return {
         "id": str(msg["id"]),
