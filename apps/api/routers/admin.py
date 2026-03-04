@@ -29,16 +29,24 @@ async def trigger_lifecycle_tasks(
     expired_unlocked = await jobs.expire_unlocked_leads(db)
     released_earnings = await jobs.release_pending_earnings(db)
     expired_pins = await jobs.cleanup_expired_pins(db)
-    
+    d7_followups = await jobs.send_d7_survey_followups(db)
+    d14_followups = await jobs.send_d14_survey_followups(db)
+    closed_unconfirmed = await jobs.close_unconfirmed_leads(db)
+    auto_passed = await jobs.auto_pass_stalled_screening(db)
+
     await db.commit()
-    
+
     return {
         "status": "success",
         "tasks": {
             "expired_leads": expired_leads,
             "expired_unlocked": expired_unlocked,
             "released_earnings": released_earnings,
-            "expired_pins": expired_pins
+            "expired_pins": expired_pins,
+            "d7_survey_followups": d7_followups,
+            "d14_survey_followups": d14_followups,
+            "closed_unconfirmed": closed_unconfirmed,
+            "auto_passed_screening": auto_passed,
         }
     }
 

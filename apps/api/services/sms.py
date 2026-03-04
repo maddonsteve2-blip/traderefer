@@ -148,3 +148,166 @@ async def send_sms_new_message(phone: str, recipient_name: str, sender_name: str
         f"Reply STOP to opt out."
     )
     await _send_sms(phone, body)
+
+
+# ─────────────────────────────────────────────
+# CONSUMER — AI screening questions
+# ─────────────────────────────────────────────
+
+async def send_sms_screening_q1(phone: str, consumer_name: str, business_name: str, trade_category: str):
+    body = (
+        f"Hi {consumer_name}, {business_name} received your job enquiry via TradeRefer.\n\n"
+        f"Quick 3 questions to confirm your request:\n"
+        f"1. What type of {trade_category} work do you need?\n"
+        f"Reply with a short description. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_screening_q2(phone: str):
+    body = (
+        "Thanks! Q2: What's your timeframe? (e.g. urgent, within a week, flexible)\n"
+        "Reply now. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_screening_q3(phone: str):
+    body = (
+        "Last one! Q3: What's the scope? (e.g. small repair, full renovation, new install)\n"
+        "Reply now. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_screening_follow_up(phone: str, follow_up: str):
+    body = f"TradeRefer: {follow_up}\nReply with your answer."
+    await _send_sms(phone, body)
+
+async def send_sms_referrer_screening_failed(phone: str, full_name: str, business_name: str):
+    body = (
+        f"Hi {full_name}, we couldn't confirm the job details for your referral to {business_name}. "
+        f"Please contact the customer and resubmit if still active. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+
+# ─────────────────────────────────────────────
+# BUSINESS — post-meeting outcome survey
+# ─────────────────────────────────────────────
+
+async def send_sms_business_survey(phone: str, suburb: str, job_type: str):
+    body = (
+        f"TradeRefer: Outcome for your lead in {suburb} ({job_type})?\n"
+        f"1 = Won job\n2 = Not won\n3 = Still pending\n"
+        f"Reply 1, 2 or 3."
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_business_survey_followup(phone: str, suburb: str, round_num: int):
+    body = (
+        f"TradeRefer follow-up #{round_num}: Lead in {suburb} — outcome?\n"
+        f"1 = Won  2 = Not won  3 = Pending\nReply 1, 2 or 3."
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_business_survey_job_value(phone: str):
+    body = "Great! Estimated job value in dollars? (e.g. 1200, or 0 to skip) TradeRefer"
+    await _send_sms(phone, body)
+
+async def send_sms_business_survey_reason(phone: str):
+    body = (
+        "Reason?\nA Price  B Customer chose another  C Out of scope  D No response  E Other\n"
+        "Reply A–E. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+
+# ─────────────────────────────────────────────
+# CUSTOMER — post-meeting outcome survey
+# ─────────────────────────────────────────────
+
+async def send_sms_customer_survey(phone: str, consumer_name: str, business_name: str, job_type: str):
+    body = (
+        f"Hi {consumer_name}, TradeRefer here.\n"
+        f"Did you go ahead with {business_name} for your {job_type}?\n"
+        f"1 = Yes, booked/started\n2 = Not yet / deciding\n3 = No, chose someone else\n4 = No longer needed\n"
+        f"Reply 1, 2, 3 or 4."
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_customer_survey_followup(phone: str, consumer_name: str, business_name: str, round_num: int):
+    body = (
+        f"Hi {consumer_name}, TradeRefer follow-up #{round_num}: Did you hire {business_name}?\n"
+        f"1 = Yes  2 = No  3 = No longer needed\nReply 1, 2 or 3."
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_customer_survey_reason(phone: str):
+    body = (
+        "Thanks. Main reason?\nA Price  B Timing  C Didn't respond  D Wrong service  E Attitude  F Other\n"
+        "Reply A–F. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+
+# ─────────────────────────────────────────────
+# BUSINESS — wallet & refund notifications
+# ─────────────────────────────────────────────
+
+async def send_sms_business_lead_refunded(phone: str, business_name: str, amount_dollars: float, reason: str):
+    body = (
+        f"TradeRefer: {business_name}, your ${amount_dollars:.2f} referral fee has been refunded "
+        f"to your wallet. Reason: {reason}. "
+        f"View: {FRONTEND_URL}/dashboard/business\nReply STOP to opt out."
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_business_wallet_low(phone: str, business_name: str, balance_dollars: float):
+    body = (
+        f"TradeRefer: {business_name}, your wallet is low (${balance_dollars:.2f}). "
+        f"Top up to keep unlocking leads: {FRONTEND_URL}/dashboard/business\nReply STOP to opt out."
+    )
+    await _send_sms(phone, body)
+
+
+# ─────────────────────────────────────────────
+# REFERRER — Prezzee gift card & rewards
+# ─────────────────────────────────────────────
+
+async def send_sms_referrer_prezzee_issued(phone: str, full_name: str, amount_dollars: float, email: str):
+    body = (
+        f"Congrats {full_name}! Your ${amount_dollars:.2f} Prezzee gift card is on its way to {email}. "
+        f"Check your inbox! TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_referrer_reward_accumulating(phone: str, full_name: str, balance_dollars: float):
+    body = (
+        f"Hi {full_name}, ${balance_dollars:.2f} added to your reward balance. "
+        f"Issued as Prezzee gift card once balance reaches $5. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+
+# ─────────────────────────────────────────────
+# REFERRER — accountability notices
+# ─────────────────────────────────────────────
+
+async def send_sms_referrer_advisory(phone: str, full_name: str, score: int):
+    body = (
+        f"Hi {full_name}, your TradeRefer quality score has dropped to {score}/100. "
+        f"Ensure leads are genuine and in the correct trade category. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_referrer_warning(phone: str, full_name: str, score: int):
+    body = (
+        f"TradeRefer Warning: {full_name}, your quality score is {score}/100 — below threshold. "
+        f"Continued low quality will pause your account. TradeRefer"
+    )
+    await _send_sms(phone, body)
+
+async def send_sms_referrer_paused(phone: str, full_name: str):
+    body = (
+        f"TradeRefer: {full_name}, your referrer account has been temporarily paused due to low lead quality. "
+        f"Contact support to review. TradeRefer"
+    )
+    await _send_sms(phone, body)

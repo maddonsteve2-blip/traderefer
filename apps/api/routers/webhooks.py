@@ -194,3 +194,63 @@ async def stripe_webhook(
         pass
 
     return {"status": "success"}
+
+
+@router.post("/stripe/wallet-topup")
+async def stripe_wallet_topup_webhook(
+    request: Request,
+    stripe_signature: str = Header(None),
+    db: AsyncSession = Depends(get_db)
+):
+    """Dedicated webhook handler for wallet top-up payment_intent.succeeded events."""
+    payload = await request.body()
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, stripe_signature, STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid payload")
+    except stripe.error.SignatureVerificationError:
+        if STRIPE_WEBHOOK_SECRET:
+            raise HTTPException(status_code=400, detail="Invalid signature")
+        import json
+        event = json.loads(payload)
+
+    if event["type"] == "payment_intent.succeeded":
+        payment_intent = event["data"]["object"]
+        metadata = payment_intent.get("metadata", {})
+
+        if metadata.get("type") == "wallet_topup":
+            business_id = metadata.get("business_id")
+            amount = payment_intent["amount"]
+
+            biz_q = await db.execute(
+                text("SELECT id, wallet_balance_cents FROM businesses WHERE id = :id"),
+                {"id": business_id}
+            )
+            biz = biz_q.mappings().first()
+            if not biz:
+                return {"status": "error", "message": "Business not found"}
+
+            already_credited = await db.execute(
+                text("SELECT id FROM wallet_transactions WHERE payment_ref = :ref"),
+                {"ref": payment_intent["id"]}
+            )
+            if already_credited.first():
+                return {"status": "already_processed"}
+
+            new_balance = (biz["wallet_balance_cents"] or 0) + amount
+            await db.execute(
+                text("UPDATE businesses SET wallet_balance_cents = :bal WHERE id = :id"),
+                {"bal": new_balance, "id": business_id}
+            )
+            await db.execute(
+                text("""INSERT INTO wallet_transactions (business_id, amount_cents, type, payment_ref, notes, balance_after_cents)
+                        VALUES (:biz_id, :amt, 'TOPUP', :pay_ref, 'Stripe wallet top-up (webhook)', :bal)"""),
+                {"biz_id": business_id, "amt": amount, "pay_ref": payment_intent["id"], "bal": new_balance}
+            )
+            await db.commit()
+            payment_logger.info(f"Wallet top-up via webhook: business {business_id} +${amount/100:.2f}")
+
+    return {"status": "success"}

@@ -14,6 +14,7 @@ from services.sms import (
     send_sms_claimed_new_lead, send_sms_unclaimed_teaser,
     send_sms_business_lead_unlocked, send_sms_consumer_lead_confirmation,
     send_sms_consumer_on_the_way, send_sms_referrer_earning_confirmed,
+    send_sms_screening_q1, send_sms_business_lead_refunded, send_sms_business_wallet_low,
 )
 import uuid
 import random
@@ -113,6 +114,16 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
     platform_fee = int(referral_fee * (platform_fee_percent / 100))
     total_unlock_fee = 0 if is_first_lead else referral_fee + platform_fee
 
+    # Check referrer accountability stage
+    if referrer_id:
+        acct_res = await db.execute(
+            text("SELECT accountability_stage FROM referrers WHERE id = :rid"),
+            {"rid": referrer_id}
+        )
+        acct_row = acct_res.fetchone()
+        if acct_row and acct_row[0] == 'paused':
+            raise HTTPException(status_code=403, detail="Your referrer account is paused. Please contact support.")
+
     # 3. Insert Lead
     insert_query = text("""
         INSERT INTO leads (
@@ -126,6 +137,7 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             consumer_address,
             job_description,
             status,
+            screening_status,
             unlock_fee_cents,
             referral_fee_snapshot_cents,
             referrer_payout_amount_cents,
@@ -142,7 +154,8 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             :consumer_suburb,
             :consumer_address,
             :job_description, 
-            'PENDING',
+            'SCREENING',
+            'Q1_SENT',
             :total_fee,
             :referral_fee_snapshot,
             :payout_snapshot,
@@ -165,7 +178,7 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
             "job_description": lead.job_description,
             "total_fee": total_unlock_fee,
             "referral_fee_snapshot": referral_fee,
-            "payout_snapshot": int(referral_fee * 0.7), # Default 70% payout
+            "payout_snapshot": int(referral_fee * 0.8), # 80% referrer payout
             "ip": client_ip,
             "device_hash": lead.device_hash,
             "lead_urgency": lead.lead_urgency
@@ -173,75 +186,23 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
         new_lead_id = result.scalar()
         await db.commit()
 
-        # Fetch business info to notify them
+        # Fetch business info for screening SMS
         biz_info = await db.execute(
-            text("SELECT business_name, business_email, business_phone, trade_category, is_claimed, slug FROM businesses WHERE id = :id"),
+            text("SELECT business_name, trade_category FROM businesses WHERE id = :id"),
             {"id": lead.business_id}
         )
         biz_row = biz_info.mappings().first()
-        if biz_row:
-            biz_name = biz_row["business_name"]
-            biz_email = biz_row["business_email"]
-            biz_phone = biz_row["business_phone"]
-            biz_slug = biz_row["slug"] or ""
-            claimed = biz_row["is_claimed"]
 
-            if claimed:
-                # Claimed: notify by email + SMS, teaser only — drive login
-                if biz_email:
-                    await send_business_new_lead(
-                        email=biz_email,
-                        business_name=biz_name,
-                        consumer_name=lead.consumer_name,
-                        suburb=lead.consumer_suburb,
-                        job_description=lead.job_description,
-                        lead_id=str(new_lead_id),
-                        unlock_fee_dollars=total_unlock_fee / 100,
-                        is_first_lead=is_first_lead,
-                    )
-                if biz_phone:
-                    await send_sms_claimed_new_lead(
-                        phone=biz_phone,
-                        business_name=biz_name,
-                        suburb=lead.consumer_suburb,
-                    )
-            else:
-                # Unclaimed: send teaser prompting them to claim — no message details
-                if biz_email:
-                    await send_business_enquiry_teaser(
-                        email=biz_email,
-                        business_name=biz_name,
-                        business_id=str(lead.business_id),
-                        slug=biz_slug,
-                        suburb=lead.consumer_suburb,
-                        job_description=lead.job_description,
-                    )
-                if biz_phone:
-                    await send_sms_unclaimed_teaser(
-                        phone=biz_phone,
-                        business_name=biz_name,
-                        slug=biz_slug,
-                        suburb=lead.consumer_suburb,
-                    )
+        # Send consumer AI screening Q1 (business notified only after screening PASS)
+        if lead.consumer_phone and biz_row:
+            await send_sms_screening_q1(
+                phone=lead.consumer_phone,
+                consumer_name=lead.consumer_name,
+                business_name=biz_row["business_name"],
+                trade_category=biz_row["trade_category"] or "trade",
+            )
 
-        # Notify the consumer (email + SMS)
-        if biz_row:
-            if lead.consumer_email:
-                await send_consumer_lead_confirmation(
-                    email=lead.consumer_email,
-                    consumer_name=lead.consumer_name,
-                    business_name=biz_row["business_name"],
-                    trade_category=biz_row["trade_category"],
-                    job_description=lead.job_description,
-                )
-            if lead.consumer_phone:
-                await send_sms_consumer_lead_confirmation(
-                    phone=lead.consumer_phone,
-                    consumer_name=lead.consumer_name,
-                    business_name=biz_row["business_name"],
-                )
-
-        return {"id": str(new_lead_id), "status": "PENDING"}
+        return {"id": str(new_lead_id), "status": "SCREENING"}
     except Exception as e:
         await db.rollback()
         error_logger.error(f"Error creating lead: {e}")
@@ -293,7 +254,9 @@ async def get_lead(lead_id: str, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Lead not found")
 
     # Masking logic
-    unlocked_statuses = ["UNLOCKED", "ON_THE_WAY", "CONFIRMED"]
+    unlocked_statuses = ["UNLOCKED", "ON_THE_WAY", "MEETING_VERIFIED", "VALID_LEAD",
+                         "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS",
+                         "DECLINED", "UNCONFIRMED", "DISPUTED", "CONFIRMED"]
     is_unlocked = l["status"].upper() in unlocked_statuses
     
     data = dict(l)
@@ -305,7 +268,6 @@ async def get_lead(lead_id: str, db: AsyncSession = Depends(get_db)):
     return data
 
 from services.auth import get_current_user, AuthenticatedUser
-from services.stripe_service import StripeService
 from decimal import Decimal
 
 class UnlockRequest(BaseModel):
@@ -313,88 +275,145 @@ class UnlockRequest(BaseModel):
 
 @router.post("/{lead_id}/unlock")
 async def unlock_lead(
-    lead_id: str, 
+    lead_id: str,
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user)
 ):
     # 1. Verify business belongs to user
     user_uuid = uuid.UUID(user.id)
-    biz_query = text("SELECT id, stripe_account_id FROM businesses WHERE user_id = :uid LIMIT 1")
+    biz_query = text("SELECT id, wallet_balance_cents FROM businesses WHERE user_id = :uid LIMIT 1")
     biz_result = await db.execute(biz_query, {"uid": user_uuid})
     business = biz_result.mappings().first()
-    
+
     if not business:
         raise HTTPException(status_code=403, detail="No business associated with this account")
 
     # 2. Check lead exists and belongs to this business
     check_query = text("""
-        SELECT status, referrer_id, business_id, unlock_fee_cents, platform_fee_cents
-        FROM leads 
-        WHERE id = :id
+        SELECT status, referrer_id, business_id, unlock_fee_cents, referral_link_id
+        FROM leads WHERE id = :id
     """)
     res = await db.execute(check_query, {"id": lead_id})
     lead = res.mappings().first()
-    
+
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
     if str(lead["business_id"]) != str(business["id"]):
         raise HTTPException(status_code=403, detail="Not authorized to unlock this lead")
-    if lead["status"] == "UNLOCKED":
-        return {"message": "Lead already unlocked", "status": "UNLOCKED"}
-    
-    # 3. Handle Payment
-    amount = lead["unlock_fee_cents"] or 0
-    stripe_key = os.getenv("STRIPE_SECRET_KEY")
+    if lead["status"] in ("UNLOCKED", "ON_THE_WAY", "MEETING_VERIFIED", "VALID_LEAD",
+                           "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS"):
+        return {"message": "Lead already unlocked", "status": lead["status"]}
+    if lead["status"] not in ("READY_FOR_BUSINESS", "SCREENING"):
+        raise HTTPException(status_code=400, detail=f"Lead cannot be unlocked in status: {lead['status']}")
 
-    # Dev/test mode: skip Stripe, unlock directly (deduct from wallet if possible)
-    is_dev_mode = not stripe_key or stripe_key == "" or "x8x8x8" in stripe_key or stripe_key.startswith("pk_test_mock")
-    if is_dev_mode:
-        # Deduct from wallet if balance available, otherwise unlock for free in dev
-        wallet_q = await db.execute(
-            text("SELECT wallet_balance_cents FROM businesses WHERE id = :id"),
-            {"id": business["id"]}
+    # 3. Wallet balance checks
+    unlock_fee = lead["unlock_fee_cents"] or 0
+    wallet_balance = business["wallet_balance_cents"] or 0
+
+    if wallet_balance < 2500:  # $25 minimum floor
+        raise HTTPException(
+            status_code=402,
+            detail=f"Wallet balance must be at least $25.00 to unlock leads. Current balance: ${wallet_balance/100:.2f}."
         )
-        wallet_balance = wallet_q.scalar() or 0
-
-        if wallet_balance >= amount:
-            new_balance = wallet_balance - amount
-            await db.execute(
-                text("UPDATE businesses SET wallet_balance_cents = :bal WHERE id = :id"),
-                {"bal": new_balance, "id": business["id"]}
-            )
-
-        # Unlock the lead directly
-        pin = str(random.randint(1000, 9999))
-        await db.execute(
-            text("""UPDATE leads SET status = 'UNLOCKED', unlocked_at = now(),
-                    unlock_payment_type = 'dev_bypass', payment_reference = :pin
-                    WHERE id = :id"""),
-            {"id": lead_id, "pin": pin}
+    if wallet_balance < unlock_fee:
+        raise HTTPException(
+            status_code=402,
+            detail=f"Insufficient wallet balance. Need ${unlock_fee/100:.2f}, have ${wallet_balance/100:.2f}."
         )
-        await db.commit()
-        return {"status": "UNLOCKED", "message": "Lead unlocked (dev mode)"}
 
-    # Production: create Stripe PaymentIntent
+    # 4. Deduct from wallet and unlock
+    new_balance = wallet_balance - unlock_fee
     try:
-        intent = await StripeService.create_payment_intent(
-            amount=amount,
-            currency="aud",
-            metadata={
-                "lead_id": lead_id,
-                "business_id": str(business["id"]),
-                "referrer_id": str(lead["referrer_id"]) if lead["referrer_id"] else None
-            }
+        await db.execute(
+            text("UPDATE businesses SET wallet_balance_cents = :bal, total_leads_unlocked = total_leads_unlocked + 1 WHERE id = :id"),
+            {"bal": new_balance, "id": business["id"]}
         )
-            
-        return {
-            "client_secret": intent.client_secret,
-            "publishable_key": StripeService.get_publishable_key(),
-            "status": "REQUIRES_PAYMENT"
-        }
-        
+        await db.execute(text("""
+            INSERT INTO wallet_transactions (business_id, amount_cents, type, lead_id, notes, balance_after_cents)
+            VALUES (:bid, :amt, 'LEAD_UNLOCK', :lid, 'Lead unlocked — fee held', :bal)
+        """), {"bid": business["id"], "amt": unlock_fee, "lid": lead_id, "bal": new_balance})
+
+        await db.execute(
+            text("UPDATE leads SET status = 'UNLOCKED', unlocked_at = now(), unlock_payment_type = 'WALLET' WHERE id = :id"),
+            {"id": lead_id}
+        )
+
+        # Referrer pending earnings record
+        if lead["referrer_id"]:
+            payout_res = await db.execute(
+                text("SELECT referrer_payout_amount_cents FROM leads WHERE id = :id"),
+                {"id": lead_id}
+            )
+            payout_cents = payout_res.scalar() or int(unlock_fee * 0.8)
+            await db.execute(text("""
+                INSERT INTO referrer_earnings (referrer_id, lead_id, gross_cents, platform_cut_cents, status, available_at)
+                VALUES (:rid, :lid, :gross, :cut, 'PENDING', now() + interval '30 days')
+                ON CONFLICT DO NOTHING
+            """), {
+                "rid": lead["referrer_id"], "lid": lead_id,
+                "gross": payout_cents, "cut": unlock_fee - payout_cents,
+            })
+            await db.execute(text("""
+                UPDATE referrers SET total_leads_unlocked = total_leads_unlocked + 1,
+                    pending_cents = pending_cents + :amt WHERE id = :rid
+            """), {"amt": payout_cents, "rid": lead["referrer_id"]})
+
+        await db.commit()
+
+        # Low balance warning
+        if new_balance < 3000:  # < $30
+            try:
+                biz_phone_res = await db.execute(
+                    text("SELECT business_phone, business_name FROM businesses WHERE id = :id"),
+                    {"id": business["id"]}
+                )
+                biz_ph = biz_phone_res.mappings().first()
+                if biz_ph and biz_ph["business_phone"]:
+                    await send_sms_business_wallet_low(
+                        biz_ph["business_phone"], biz_ph["business_name"], new_balance / 100
+                    )
+            except Exception:
+                pass
+
+        # Notify business of unlocked lead (full contact details)
+        try:
+            full_res = await db.execute(text("""
+                SELECT l.consumer_name, l.consumer_phone, l.consumer_email, l.consumer_suburb, l.job_description,
+                       b.business_name, b.business_email, b.business_phone
+                FROM leads l JOIN businesses b ON b.id = l.business_id WHERE l.id = :id
+            """), {"id": lead_id})
+            full = full_res.mappings().first()
+            if full:
+                if full["business_email"]:
+                    await send_business_lead_unlocked(
+                        email=full["business_email"],
+                        business_name=full["business_name"],
+                        consumer_name=full["consumer_name"],
+                        consumer_phone=full["consumer_phone"],
+                        consumer_email=full["consumer_email"],
+                        suburb=full["consumer_suburb"],
+                        job_description=full["job_description"],
+                    )
+                if full["business_phone"]:
+                    await send_sms_business_lead_unlocked(
+                        phone=full["business_phone"],
+                        business_name=full["business_name"],
+                        consumer_name=full["consumer_name"],
+                        consumer_phone=full["consumer_phone"],
+                        suburb=full["consumer_suburb"],
+                    )
+        except Exception as e:
+            error_logger.warning(f"Unlock notification error (non-fatal): {e}")
+
+        payment_logger.info(f"Lead unlocked via wallet | lead={lead_id} | fee=${unlock_fee/100:.2f} | wallet_after=${new_balance/100:.2f}")
+        return {"status": "UNLOCKED"}
+
+    except HTTPException:
+        raise
     except Exception as e:
-        payment_logger.error(f"Stripe setup error: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail="Failed to initialize payment")
+        await db.rollback()
+        error_logger.error(f"Unlock error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to unlock lead")
 
 @router.post("/{lead_id}/on-the-way")
 async def on_the_way(
@@ -501,8 +520,10 @@ async def confirm_pin(
     if not row or str(row["business_id"]) != str(business["id"]):
         raise HTTPException(status_code=404, detail="Lead or PIN not found")
     
-    if row["is_used"] or row["status"] == "CONFIRMED":
-         return {"message": "Lead already confirmed", "status": "CONFIRMED"}
+    confirmed_statuses = ("CONFIRMED", "MEETING_VERIFIED", "VALID_LEAD",
+                          "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS")
+    if row["is_used"] or row["status"] in confirmed_statuses:
+        return {"message": "Lead already confirmed", "status": row["status"]}
 
     if datetime.now() > row["expires_at"]:
         raise HTTPException(status_code=400, detail="PIN has expired")
@@ -522,174 +543,34 @@ async def confirm_pin(
             msg = f"Invalid PIN. {remaining} attempt{'s' if remaining != 1 else ''} remaining."
         raise HTTPException(status_code=400, detail=msg)
 
-    # 4. Success — Atomic Update (Spec Part 3.4)
-    # Mark Lead as CONFIRMED, PIN as used, Release referral payout
+    # 4. Success — Mark meeting verified, send surveys
     try:
-        # Update Lead & PIN
         await db.execute(text("""
-            UPDATE leads 
-            SET status = 'CONFIRMED', confirmed_at = now()
+            UPDATE leads
+            SET status = 'MEETING_VERIFIED', meeting_verified_at = now()
             WHERE id = :id
         """), {"id": lead_id})
-        
         await db.execute(text("UPDATE lead_pins SET is_used = true WHERE lead_id = :lid"), {"lid": lead_id})
-
-        # Handle Referrer Earning: Move from PENDING to AVAILABLE
-        payout = row["referrer_payout_amount_cents"] or 0
-
-        if row["referrer_id"]:
-            # 1. Update existing earning record if it exists (created by Stripe webhook)
-            earning_query = text("""
-                UPDATE referrer_earnings 
-                SET status = 'AVAILABLE', available_at = now()
-                WHERE lead_id = :lid AND referrer_id = :rid AND status = 'PENDING'
-                RETURNING gross_cents
-            """)
-            earning_res = await db.execute(earning_query, {"lid": lead_id, "rid": row["referrer_id"]})
-            earning = earning_res.fetchone()
-            
-            # 2. Update Referrer Balances
-            if earning:
-                # Move from pending to wallet
-                await db.execute(text("""
-                    UPDATE referrers 
-                    SET wallet_balance_cents = wallet_balance_cents + :amount,
-                        pending_cents = GREATEST(0, pending_cents - :amount),
-                        total_earned_cents = total_earned_cents + :amount
-                    WHERE id = :rid
-                """), {"amount": payout, "rid": row["referrer_id"]})
-            else:
-                # If no pending record found (e.g. race condition or manual unlock), create one as AVAILABLE
-                await db.execute(text("""
-                    INSERT INTO referrer_earnings (referrer_id, lead_id, gross_cents, platform_cut_cents, status, available_at)
-                    VALUES (:rid, :lid, :gross, :cut, 'AVAILABLE', now())
-                """), {
-                    "rid": row["referrer_id"],
-                    "lid": lead_id,
-                    "gross": payout,
-                    "cut": 0, # Platform cut taken during unlock
-                })
-                
-                await db.execute(text("""
-                    UPDATE referrers 
-                    SET wallet_balance_cents = wallet_balance_cents + :amount,
-                        total_earned_cents = total_earned_cents + :amount
-                    WHERE id = :rid
-                """), {"amount": payout, "rid": row["referrer_id"]})
-
-            # 3. Log Payout Transaction
-            await db.execute(text("""
-                INSERT INTO payment_transactions (lead_id, business_id, referrer_id, type, amount_cents, status)
-                VALUES (:lid, :bid, :rid, 'referrer_payout', :amount, 'completed')
-            """), {
-                "lid": lead_id,
-                "bid": row["business_id"],
-                "rid": row["referrer_id"],
-                "amount": payout
-            })
-
-            # 4. Update Referral Link Stats
-            await db.execute(text("""
-                UPDATE referral_links 
-                SET leads_unlocked = leads_unlocked + 1,
-                    total_earned_cents = total_earned_cents + :amount
-                WHERE id = :link_id
-            """), {"amount": payout, "link_id": row["referral_link_id"]})
-
         await db.commit()
 
-        # SMS + email referrer: earning confirmed
-        if row["referrer_id"] and payout > 0:
-            try:
-                ref_sms_res = await db.execute(
-                    text("SELECT r.phone, r.full_name, b.business_name FROM referrers r, businesses b WHERE r.id = :rid AND b.id = :bid"),
-                    {"rid": row["referrer_id"], "bid": row["business_id"]}
-                )
-                ref_sms_row = ref_sms_res.mappings().first()
-                if ref_sms_row and ref_sms_row["phone"]:
-                    await send_sms_referrer_earning_confirmed(
-                        phone=ref_sms_row["phone"],
-                        full_name=ref_sms_row["full_name"] or "there",
-                        business_name=ref_sms_row["business_name"],
-                        amount_dollars=payout / 100,
-                    )
-            except Exception as sms_err:
-                error_logger.warning(f"Referrer earning SMS error (non-fatal): {sms_err}")
-
-        # Send notification to referrer
-        if row["referrer_id"] and payout > 0:
-            try:
-                ref_user = await db.execute(
-                    text("SELECT user_id FROM referrers WHERE id = :rid"),
-                    {"rid": row["referrer_id"]}
-                )
-                ref_row = ref_user.fetchone()
-                biz_name_res = await db.execute(
-                    text("SELECT business_name, slug FROM businesses WHERE id = :bid"),
-                    {"bid": row["business_id"]}
-                )
-                biz_row = biz_name_res.fetchone()
-                if ref_row and biz_row:
-                    await create_notification(
-                        db,
-                        str(ref_row[0]),
-                        "lead_accepted",
-                        f"You earned ${payout / 100:.2f}!",
-                        f"Your referral to {biz_row[0]} was confirmed. The money is in your wallet.",
-                        f"/dashboard/referrer"
-                    )
-            except Exception as notif_err:
-                error_logger.warning(f"Notification error (non-fatal): {notif_err}")
-
-        # Email referrer: earning confirmed and available
-        if row["referrer_id"] and payout > 0:
-            try:
-                ref_email_res = await db.execute(
-                    text("SELECT email, full_name FROM referrers WHERE id = :rid"),
-                    {"rid": row["referrer_id"]}
-                )
-                ref_email_row = ref_email_res.mappings().first()
-                biz_name_res2 = await db.execute(
-                    text("SELECT business_name FROM businesses WHERE id = :bid"),
-                    {"bid": row["business_id"]}
-                )
-                biz_name_row2 = biz_name_res2.mappings().first()
-                if ref_email_row and ref_email_row["email"]:
-                    from services.email import send_referrer_earning_available
-                    await send_referrer_earning_available(
-                        email=ref_email_row["email"],
-                        full_name=ref_email_row["full_name"] or ref_email_row["email"],
-                        amount_dollars=payout / 100,
-                        business_name=biz_name_row2["business_name"] if biz_name_row2 else "the business",
-                    )
-            except Exception as email_err:
-                error_logger.warning(f"Earning email error (non-fatal): {email_err}")
-
-        # Email referrer: ask for a review of the business
+        # Update referrer quality score (OTP verified is a positive signal)
         if row["referrer_id"]:
             try:
-                ref_rev_res = await db.execute(
-                    text("SELECT email, full_name FROM referrers WHERE id = :rid"),
-                    {"rid": row["referrer_id"]}
-                )
-                ref_rev_row = ref_rev_res.mappings().first()
-                biz_slug_res = await db.execute(
-                    text("SELECT business_name, slug FROM businesses WHERE id = :bid"),
-                    {"bid": row["business_id"]}
-                )
-                biz_slug_row = biz_slug_res.mappings().first()
-                if ref_rev_row and ref_rev_row["email"] and biz_slug_row:
-                    from services.email import send_referrer_review_request
-                    await send_referrer_review_request(
-                        email=ref_rev_row["email"],
-                        full_name=ref_rev_row["full_name"] or ref_rev_row["email"],
-                        business_name=biz_slug_row["business_name"],
-                        slug=biz_slug_row["slug"],
-                    )
-            except Exception as rev_email_err:
-                error_logger.warning(f"Review request email error (non-fatal): {rev_email_err}")
+                from services.quality_service import update_referrer_quality_score
+                await update_referrer_quality_score(str(row["referrer_id"]), db)
+            except Exception as qs_err:
+                error_logger.warning(f"Quality score update error (non-fatal): {qs_err}")
 
-        return {"confirmed": True, "message": "Lead confirmed and payment released to referrer."}
+        # Send post-meeting surveys to business + consumer
+        try:
+            from services.survey_service import send_post_meeting_surveys
+            await send_post_meeting_surveys(lead_id, db)
+        except Exception as survey_err:
+            error_logger.warning(f"Survey send error (non-fatal): {survey_err}")
+
+        lead_logger.info(f"Meeting verified | lead={lead_id}")
+        return {"confirmed": True, "status": "MEETING_VERIFIED", "message": "Meeting confirmed. Surveys sent to business and customer."}
+
     except Exception as e:
         await db.rollback()
         error_logger.error(f"PIN Confirmation Error: {e}", exc_info=True)

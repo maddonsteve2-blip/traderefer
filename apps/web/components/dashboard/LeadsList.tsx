@@ -10,13 +10,16 @@ import {
     MessageSquare,
     CheckCircle2,
     Zap,
-    Loader2
+    Loader2,
+    Wallet,
+    Clock,
+    Gift,
 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
-import { StripePaymentModal } from "./StripePaymentModal";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PinConfirmationModal } from "./PinConfirmationModal";
+import Link from "next/link";
 import posthog from "posthog-js";
 
 interface Lead {
@@ -39,9 +42,8 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
     const [leads, setLeads] = useState(initialLeads);
     const [isUnlocking, setIsUnlocking] = useState<string | null>(null);
     const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
-    const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null);
-    const [activeLeadId, setActiveLeadId] = useState<string | null>(null);
     const [showPinModal, setShowPinModal] = useState<string | null>(null);
+    const [walletError, setWalletError] = useState<string | null>(null);
 
     const { userId, getToken } = useAuth();
 
@@ -61,6 +63,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
 
         setIsUnlocking(leadId);
 
+        setWalletError(null);
         try {
             const token = await getToken();
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/leads/${leadId}/unlock`, {
@@ -71,9 +74,15 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                 }
             });
 
+            if (res.status === 402) {
+                const err = await res.json();
+                setWalletError(err.detail || "Insufficient wallet balance.");
+                return;
+            }
+
             if (!res.ok) {
                 const err = await res.json();
-                throw new Error(err.detail || "Failed to initiate unlock");
+                throw new Error(err.detail || "Failed to unlock lead");
             }
 
             const data = await res.json();
@@ -86,12 +95,6 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                 });
                 await refreshLead(leadId);
                 window.dispatchEvent(new Event('wallet-updated'));
-            } else if (data.status === "REQUIRES_PAYMENT" && data.client_secret && !data.client_secret.includes("mock")) {
-                setStripeClientSecret(data.client_secret);
-                setActiveLeadId(leadId);
-            } else if (data.status === "REQUIRES_PAYMENT") {
-                // Dev mode fallback — mock secret returned, treat as error
-                alert("Stripe is not configured. Please set up Stripe keys to process payments.");
             }
         } catch (error) {
             posthog.captureException(error);
@@ -155,20 +158,6 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
         }));
     };
 
-    const handlePaymentSuccess = async () => {
-        if (activeLeadId) {
-            const lead = leads.find(l => l.id === activeLeadId);
-            posthog.capture('lead_unlocked', {
-                lead_id: activeLeadId,
-                payment_method: 'stripe',
-                unlock_fee_cents: lead?.unlock_fee_cents,
-            });
-            await refreshLead(activeLeadId);
-        }
-        setStripeClientSecret(null);
-        setActiveLeadId(null);
-    };
-
     const handlePinConfirmed = async (leadId: string) => {
         posthog.capture('lead_job_confirmed', {
             lead_id: leadId,
@@ -177,17 +166,23 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
         setShowPinModal(null);
     };
 
+    const UNLOCKED_STATUSES = ["UNLOCKED", "ON_THE_WAY", "MEETING_VERIFIED", "VALID_LEAD",
+        "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS", "CONFIRMED"];
+    const LOCKED_STATUSES = ["PENDING", "VERIFIED", "READY_FOR_BUSINESS", "SCREENING"];
+
     return (
         <>
-            {stripeClientSecret && (
-                <StripePaymentModal
-                    clientSecret={stripeClientSecret}
-                    onSuccess={handlePaymentSuccess}
-                    onCancel={() => {
-                        setStripeClientSecret(null);
-                        setActiveLeadId(null);
-                    }}
-                />
+            {walletError && (
+                <div className="mb-6 p-5 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-4">
+                    <Wallet className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
+                    <div className="flex-1">
+                        <p className="text-sm font-bold text-red-700">{walletError}</p>
+                        <Link href="/dashboard/business" className="text-sm text-red-600 underline font-semibold mt-1 inline-block">
+                            Top up wallet →
+                        </Link>
+                    </div>
+                    <button onClick={() => setWalletError(null)} className="text-red-400 hover:text-red-600 text-lg leading-none">&times;</button>
+                </div>
             )}
 
             {showPinModal && (
@@ -205,12 +200,12 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                             <div className="flex flex-col lg:flex-row gap-8">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-4">
-                                        <div className={`w-12 h-12 ${['PENDING', 'VERIFIED'].includes(lead.status) ? 'bg-orange-100/50' : 'bg-zinc-100'} rounded-2xl flex items-center justify-center`}>
-                                            <Users className={['PENDING', 'VERIFIED'].includes(lead.status) ? 'text-orange-600' : 'text-zinc-400'} />
+                                        <div className={`w-12 h-12 ${LOCKED_STATUSES.includes(lead.status) ? 'bg-orange-100/50' : 'bg-zinc-100'} rounded-2xl flex items-center justify-center`}>
+                                            <Users className={LOCKED_STATUSES.includes(lead.status) ? 'text-orange-600' : 'text-zinc-400'} />
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-bold text-zinc-900">
-                                                {['PENDING', 'VERIFIED'].includes(lead.status) ? `${lead.customer_name[0]}*** *****` : lead.customer_name}
+                                                {LOCKED_STATUSES.includes(lead.status) ? `${lead.customer_name[0]}*** *****` : lead.customer_name}
                                             </h3>
                                             <div className="flex items-center gap-2 text-base text-zinc-400 font-medium tracking-tight">
                                                 <MapPin className="w-3.5 h-3.5" />
@@ -218,9 +213,9 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                                 <span>•</span>
                                                 <Badge
                                                     variant={
-                                                        lead.status === 'CONFIRMED' ? 'success' :
-                                                            lead.status === 'ON_THE_WAY' ? 'info' :
-                                                                ['UNLOCKED'].includes(lead.status) ? 'warning' : 'outline'
+                                                        ['CONFIRMED', 'CONFIRMED_SUCCESS'].includes(lead.status) ? 'success' :
+                                                        lead.status === 'ON_THE_WAY' ? 'info' :
+                                                        ['UNLOCKED', 'MEETING_VERIFIED', 'PAYMENT_PENDING_CONFIRMATION'].includes(lead.status) ? 'warning' : 'outline'
                                                     }
                                                     className="uppercase text-sm"
                                                 >
@@ -228,12 +223,12 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                                 </Badge>
                                             </div>
                                         </div>
-                                        {['PENDING', 'VERIFIED'].includes(lead.status) && (
-                                            <Badge className="ml-auto bg-orange-500 text-white border-none">NEW</Badge>
+                                        {LOCKED_STATUSES.includes(lead.status) && (
+                                            <Badge className="ml-auto bg-orange-500 text-white border-none">{lead.status === 'SCREENING' ? 'SCREENING' : 'NEW'}</Badge>
                                         )}
                                     </div>
 
-                                    {['UNLOCKED', 'ON_THE_WAY', 'CONFIRMED'].includes(lead.status) ? (
+                                    {UNLOCKED_STATUSES.includes(lead.status) ? (
                                         <div className="space-y-4 mb-4">
                                             <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
                                                 <div className="text-xs font-bold text-orange-500 uppercase tracking-wider mb-1">Job Description</div>
@@ -267,7 +262,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                 </div>
 
                                 <div className="w-full lg:w-72 flex flex-col justify-center gap-4 lg:border-l lg:pl-8 border-zinc-100">
-                                    {['PENDING', 'VERIFIED'].includes(lead.status) ? (
+                                    {LOCKED_STATUSES.includes(lead.status) && lead.status !== 'SCREENING' ? (
                                         <>
                                             <div className="text-center mb-2">
                                                 <div className="text-base text-zinc-400 font-bold uppercase tracking-wider mb-1">Unlock Fee</div>
@@ -289,6 +284,12 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                                 )}
                                             </Button>
                                         </>
+                                    ) : lead.status === 'SCREENING' ? (
+                                        <div className="flex flex-col items-center gap-2 p-4 bg-zinc-50 rounded-3xl border border-zinc-100 text-center">
+                                            <Clock className="w-8 h-8 text-zinc-400" />
+                                            <div className="text-sm font-bold text-zinc-600">Screening in progress</div>
+                                            <div className="text-xs text-zinc-400">Verifying customer details via SMS</div>
+                                        </div>
                                     ) : lead.status === 'UNLOCKED' ? (
                                         <Button
                                             onClick={() => handleOnTheWay(lead.id)}
@@ -303,6 +304,12 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                                 </>
                                             )}
                                         </Button>
+                                    ) : lead.status === 'MEETING_VERIFIED' || lead.status === 'PAYMENT_PENDING_CONFIRMATION' ? (
+                                        <div className="flex flex-col items-center gap-2 p-4 bg-amber-50 rounded-3xl border border-amber-100 text-center">
+                                            <Clock className="w-8 h-8 text-amber-500" />
+                                            <div className="text-sm font-bold text-amber-700">Awaiting confirmation</div>
+                                            <div className="text-xs text-amber-600">Surveys sent to you and the customer</div>
+                                        </div>
                                     ) : lead.status === 'ON_THE_WAY' ? (
                                         <Button
                                             onClick={() => setShowPinModal(lead.id)}
@@ -310,6 +317,12 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                         >
                                             <CheckCircle2 className="w-5 h-5 mr-2" /> Confirm Job (PIN)
                                         </Button>
+                                    ) : lead.status === 'CONFIRMED_SUCCESS' ? (
+                                        <div className="flex flex-col items-center gap-2 p-4 bg-emerald-50 rounded-3xl border border-emerald-100 text-center">
+                                            <Gift className="w-8 h-8 text-emerald-500" />
+                                            <div className="text-base font-bold text-emerald-700">Job Confirmed ✓</div>
+                                            <div className="text-xs font-medium text-emerald-600">Referrer gift card issued</div>
+                                        </div>
                                     ) : (
                                         <div className="flex flex-col items-center gap-2 p-4 bg-emerald-50 rounded-3xl border border-emerald-100">
                                             <CheckCircle2 className="w-8 h-8 text-emerald-500" />
@@ -318,9 +331,13 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                         </div>
                                     )}
 
-                                    {lead.status !== 'CONFIRMED' && (
+                                    {!['CONFIRMED', 'CONFIRMED_SUCCESS'].includes(lead.status) && (
                                         <p className="text-base text-zinc-400 text-center leading-tight px-4">
-                                            {lead.status === 'ON_THE_WAY' ? 'Get the 4-digit PIN from the customer to confirm the job.' : 'Standard 20% platform markup applies.'}
+                                            {lead.status === 'ON_THE_WAY'
+                                            ? 'Get the 4-digit PIN from the customer to confirm the job.'
+                                            : lead.status === 'SCREENING'
+                                            ? 'Verifying customer intent via SMS.'
+                                            : 'Deducted from your wallet balance.'}
                                         </p>
                                     )}
                                 </div>

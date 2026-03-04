@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from services.email import send_referrer_earning_available
 import os
 from utils.logging_config import cron_logger, error_logger
+from services.sms import send_sms_business_survey_followup, send_sms_customer_survey_followup
 
 async def expire_pending_leads(db: AsyncSession):
     """
@@ -115,3 +116,177 @@ async def cleanup_expired_pins(db: AsyncSession):
         cron_logger.info(f"Moved {len(expired_pins)} leads to UNCONFIRMED due to expired PINs")
         
     return len(expired_pins)
+
+
+async def send_d7_survey_followups(db: AsyncSession):
+    """
+    Sends D7 follow-up surveys to business + customer for leads where:
+    - status = PAYMENT_PENDING_CONFIRMATION
+    - surveys_sent_at is between 7 and 8 days ago (D7 window)
+    - No round-1 survey record exists yet
+    """
+    res = await db.execute(text("""
+        SELECT l.id, l.consumer_suburb, l.job_description,
+               l.consumer_name, l.consumer_phone,
+               b.business_phone, b.business_name
+        FROM leads l
+        JOIN businesses b ON b.id = l.business_id
+        WHERE l.status = 'PAYMENT_PENDING_CONFIRMATION'
+          AND l.surveys_sent_at < (now() - interval '7 days')
+          AND l.surveys_sent_at > (now() - interval '8 days')
+          AND NOT EXISTS (
+              SELECT 1 FROM lead_surveys ls
+              WHERE ls.lead_id = l.id AND ls.survey_round = 1
+          )
+    """))
+    leads = res.mappings().all()
+
+    for lead in leads:
+        lead_id = str(lead["id"])
+        suburb = lead["consumer_suburb"] or "your area"
+
+        for respondent_type in ("business", "customer"):
+            await db.execute(text("""
+                INSERT INTO lead_surveys (lead_id, respondent_type, survey_round, sent_at)
+                VALUES (:lid, :rtype, 1, now())
+            """), {"lid": lead_id, "rtype": respondent_type})
+
+        if lead["business_phone"]:
+            await send_sms_business_survey_followup(lead["business_phone"], suburb, 1)
+        if lead["consumer_phone"]:
+            await send_sms_customer_survey_followup(
+                lead["consumer_phone"],
+                lead["consumer_name"] or "there",
+                lead["business_name"] or "the business",
+                1
+            )
+
+    await db.commit()
+    if leads:
+        cron_logger.info(f"Sent D7 survey follow-ups to {len(leads)} leads")
+    return len(leads)
+
+
+async def send_d14_survey_followups(db: AsyncSession):
+    """
+    Sends D14 follow-up surveys. Last chance before auto-UNCONFIRMED.
+    """
+    res = await db.execute(text("""
+        SELECT l.id, l.consumer_suburb, l.job_description,
+               l.consumer_name, l.consumer_phone,
+               b.business_phone, b.business_name
+        FROM leads l
+        JOIN businesses b ON b.id = l.business_id
+        WHERE l.status = 'PAYMENT_PENDING_CONFIRMATION'
+          AND l.surveys_sent_at < (now() - interval '14 days')
+          AND l.surveys_sent_at > (now() - interval '15 days')
+          AND NOT EXISTS (
+              SELECT 1 FROM lead_surveys ls
+              WHERE ls.lead_id = l.id AND ls.survey_round = 2
+          )
+    """))
+    leads = res.mappings().all()
+
+    for lead in leads:
+        lead_id = str(lead["id"])
+        suburb = lead["consumer_suburb"] or "your area"
+
+        for respondent_type in ("business", "customer"):
+            await db.execute(text("""
+                INSERT INTO lead_surveys (lead_id, respondent_type, survey_round, sent_at)
+                VALUES (:lid, :rtype, 2, now())
+            """), {"lid": lead_id, "rtype": respondent_type})
+
+        if lead["business_phone"]:
+            await send_sms_business_survey_followup(lead["business_phone"], suburb, 2)
+        if lead["consumer_phone"]:
+            await send_sms_customer_survey_followup(
+                lead["consumer_phone"],
+                lead["consumer_name"] or "there",
+                lead["business_name"] or "the business",
+                2
+            )
+
+    await db.commit()
+    if leads:
+        cron_logger.info(f"Sent D14 survey follow-ups to {len(leads)} leads")
+    return len(leads)
+
+
+async def close_unconfirmed_leads(db: AsyncSession):
+    """
+    After D14 with no dual YES: move to UNCONFIRMED and refund business wallet.
+    """
+    res = await db.execute(text("""
+        SELECT l.id
+        FROM leads l
+        WHERE l.status = 'PAYMENT_PENDING_CONFIRMATION'
+          AND l.surveys_sent_at < (now() - interval '15 days')
+    """))
+    leads = res.mappings().all()
+
+    count = 0
+    for lead in leads:
+        try:
+            from services.survey_service import trigger_unconfirmed
+            await trigger_unconfirmed(str(lead["id"]), db)
+            count += 1
+        except Exception as e:
+            error_logger.error(f"Error closing unconfirmed lead {lead['id']}: {e}")
+
+    if count:
+        cron_logger.info(f"Closed {count} unconfirmed leads (D14+) and refunded wallets")
+    return count
+
+
+async def auto_pass_stalled_screening(db: AsyncSession):
+    """
+    Auto-PASS leads stuck in SCREENING for > 24 hours (consumer didn't reply).
+    Prevents good leads from stalling.
+    """
+    res = await db.execute(text("""
+        SELECT l.id, l.referrer_id,
+               b.business_name, b.business_email, b.business_phone, b.is_claimed, b.slug,
+               l.consumer_name, l.consumer_suburb, l.job_description, l.unlock_fee_cents
+        FROM leads l
+        JOIN businesses b ON b.id = l.business_id
+        WHERE l.status = 'SCREENING'
+          AND l.created_at < (now() - interval '24 hours')
+    """))
+    leads = res.mappings().all()
+
+    for lead in leads:
+        lead_id = str(lead["id"])
+        await db.execute(text("""
+            UPDATE leads SET screening_status = 'SKIPPED', status = 'READY_FOR_BUSINESS'
+            WHERE id = :id
+        """), {"id": lead_id})
+
+        if lead["is_claimed"]:
+            try:
+                from services.email import send_business_new_lead
+                from services.sms import send_sms_claimed_new_lead
+                if lead["business_email"]:
+                    await send_business_new_lead(
+                        email=lead["business_email"],
+                        business_name=lead["business_name"],
+                        consumer_name=lead["consumer_name"],
+                        suburb=lead["consumer_suburb"],
+                        job_description=lead["job_description"],
+                        lead_id=lead_id,
+                        unlock_fee_dollars=(lead["unlock_fee_cents"] or 0) / 100,
+                        is_first_lead=False,
+                    )
+                if lead["business_phone"]:
+                    await send_sms_claimed_new_lead(
+                        phone=lead["business_phone"],
+                        business_name=lead["business_name"],
+                        suburb=lead["consumer_suburb"],
+                    )
+            except Exception as e:
+                error_logger.warning(f"Auto-pass notify error for lead {lead_id}: {e}")
+
+    await db.commit()
+    if leads:
+        cron_logger.info(f"Auto-passed {len(leads)} stalled screening leads (24h timeout)")
+    return len(leads)

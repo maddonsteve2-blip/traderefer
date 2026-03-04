@@ -368,7 +368,8 @@ async def get_business_dashboard(
         })
         recent_leads = leads_result.mappings().all()
 
-        unlocked_statuses = ["UNLOCKED", "ON_THE_WAY", "CONFIRMED"]
+        unlocked_statuses = ["UNLOCKED", "ON_THE_WAY", "CONFIRMED", "MEETING_VERIFIED",
+                              "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS"]
         formatted_recent = []
         for l in recent_leads:
             is_unlocked = l["status"].upper() in unlocked_statuses
@@ -395,6 +396,7 @@ async def get_business_dashboard(
                 "trust_score": biz["trust_score"],
                 "connection_rate": float(biz["connection_rate"] or 0),
                 "unlocked_count": biz["total_leads_unlocked"],
+                "wallet_balance_cents": biz["wallet_balance_cents"] or 0,
                 "stripe_connected": biz["stripe_account_id"] is not None
             },
             "stats": [
@@ -471,7 +473,8 @@ async def get_business_leads(
     leads = result.mappings().all()
 
     formatted_leads = []
-    unlocked_statuses = ["UNLOCKED", "ON_THE_WAY", "CONFIRMED"]
+    unlocked_statuses = ["UNLOCKED", "ON_THE_WAY", "CONFIRMED", "MEETING_VERIFIED",
+                         "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS"]
     for l in leads:
         is_unlocked = l["status"].upper() in unlocked_statuses
 
@@ -482,8 +485,11 @@ async def get_business_leads(
             "description": l["job_description"],
             "status": l["status"].upper(),
             "created_at": "Recently",
+            "unlock_fee_cents": l["unlock_fee_cents"] or 0,
             "unlock_fee": (l["unlock_fee_cents"] or 0) / 100,
+            "referral_fee_snapshot_cents": l["referral_fee_snapshot_cents"] or 0,
             "referral_fee": (l["referral_fee_snapshot_cents"] or 0) / 100,
+            "platform_fee_cents": 0,
             "phone": l["consumer_phone"] if is_unlocked else None,
             "email": l["consumer_email"] if is_unlocked else None,
             "address": l["consumer_address"] if is_unlocked else None
@@ -1244,17 +1250,49 @@ async def _process_bonus(
     }
 
 
-class WalletTopUp(BaseModel):
+class WalletTopUpIntent(BaseModel):
+    amount_cents: int
+
+class WalletTopUpConfirm(BaseModel):
+    payment_intent_id: str
     amount_cents: int
 
 
-@router.post("/wallet/topup")
-async def wallet_topup(
-    data: WalletTopUp,
+@router.post("/wallet/topup/intent")
+async def wallet_topup_intent(
+    data: WalletTopUpIntent,
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user),
 ):
-    """Top up the business wallet balance. In production this would create a Stripe PaymentIntent first."""
+    """Create a Stripe PaymentIntent for wallet top-up. Returns client_secret for frontend."""
+    if data.amount_cents < 500:
+        raise HTTPException(status_code=400, detail="Minimum top-up is $5.00")
+
+    user_uuid = uuid.UUID(user.id)
+    biz_q = await db.execute(
+        text("SELECT id FROM businesses WHERE user_id = :uid"),
+        {"uid": user_uuid},
+    )
+    biz = biz_q.mappings().first()
+    if not biz:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    intent = await StripeService.create_payment_intent(
+        amount=data.amount_cents,
+        currency="aud",
+        metadata={"type": "wallet_topup", "business_id": str(biz["id"])},
+    )
+
+    return {"client_secret": intent.client_secret, "payment_intent_id": intent.id}
+
+
+@router.post("/wallet/topup/confirm")
+async def wallet_topup_confirm(
+    data: WalletTopUpConfirm,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
+):
+    """Verify a completed Stripe PaymentIntent and credit the business wallet."""
     if data.amount_cents < 500:
         raise HTTPException(status_code=400, detail="Minimum top-up is $5.00")
 
@@ -1267,6 +1305,19 @@ async def wallet_topup(
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
+    import stripe as stripe_lib
+    stripe_lib.api_key = os.getenv("STRIPE_SECRET_KEY", "")
+    try:
+        intent = stripe_lib.PaymentIntent.retrieve(data.payment_intent_id)
+        if intent.status != "succeeded":
+            raise HTTPException(status_code=400, detail=f"Payment not completed. Status: {intent.status}")
+        if intent.metadata.get("type") != "wallet_topup":
+            raise HTTPException(status_code=400, detail="Invalid payment type")
+        if intent.metadata.get("business_id") != str(biz["id"]):
+            raise HTTPException(status_code=403, detail="Payment does not belong to this business")
+    except stripe_lib.error.StripeError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
     new_balance = (biz["wallet_balance_cents"] or 0) + data.amount_cents
 
     await db.execute(
@@ -1274,9 +1325,9 @@ async def wallet_topup(
         {"bal": new_balance, "id": biz["id"]},
     )
     await db.execute(
-        text("""INSERT INTO wallet_transactions (business_id, amount_cents, type, notes, balance_after_cents)
-                VALUES (:biz_id, :amt, 'TOPUP', 'Manual wallet top-up', :bal)"""),
-        {"biz_id": biz["id"], "amt": data.amount_cents, "bal": new_balance},
+        text("""INSERT INTO wallet_transactions (business_id, amount_cents, type, payment_ref, notes, balance_after_cents)
+                VALUES (:biz_id, :amt, 'TOPUP', :pay_ref, 'Stripe wallet top-up', :bal)"""),
+        {"biz_id": biz["id"], "amt": data.amount_cents, "pay_ref": data.payment_intent_id, "bal": new_balance},
     )
     await db.commit()
 

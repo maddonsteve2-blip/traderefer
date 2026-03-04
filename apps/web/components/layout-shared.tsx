@@ -81,7 +81,7 @@ function ProfileDropdown() {
 
         { href: "/dashboard/referrer", label: "Overview", icon: LayoutDashboard },
 
-        { href: "/dashboard/referrer/settings", label: "Settings", icon: Settings },
+        { href: "/dashboard/referrer/withdraw", label: "Rewards", icon: Settings },
 
     ];
 
@@ -510,7 +510,7 @@ export function Navbar() {
 
                                                     <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/withdraw" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
-                                                        Withdraw
+                                                        Rewards
 
                                                     </Button>
 
@@ -662,7 +662,7 @@ export function Navbar() {
                                         { href: "/dashboard/referrer", label: "Dashboard" },
                                         { href: "/businesses", label: "Find Businesses" },
                                         { href: "/dashboard/referrer/messages", label: "Messages" },
-                                        { href: "/dashboard/referrer/withdraw", label: "Withdraw" },
+                                        { href: "/dashboard/referrer/withdraw", label: "Rewards" },
                                     ].map(({ href, label }) => (
                                         <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
                                             className={`flex items-center px-4 py-4 rounded-xl font-bold transition-colors ${pathname === href ? 'bg-orange-50 text-[#FF6600]' : 'text-zinc-700 hover:bg-orange-50 hover:text-[#FF6600]'}`}

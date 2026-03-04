@@ -213,22 +213,27 @@ async def get_payout_history(
         raise HTTPException(status_code=404, detail="Referrer profile not found")
         
     query = text("""
-        SELECT amount_cents, method, destination, status, processed_at, payment_ref, created_at
-        FROM payout_requests 
+        SELECT id, amount_cents, method, destination, destination_email, status,
+               processed_at, payment_ref, created_at
+        FROM payout_requests
         WHERE referrer_id = :rid
         ORDER BY created_at DESC
     """)
     res = await db.execute(query, {"rid": ref["id"]})
     payouts = res.mappings().all()
-    
+
     return [
         {
+            "id": str(p["id"]),
             "amount": p["amount_cents"] / 100,
+            "amount_cents": p["amount_cents"],
             "method": p["method"],
             "destination": p["destination"],
+            "destination_email": p["destination_email"],
             "status": p["status"],
             "processed_at": p["processed_at"],
             "payment_ref": p["payment_ref"],
+            "created_at": p["created_at"],
             "date": p["created_at"]
         } for p in payouts
     ]
@@ -284,7 +289,7 @@ async def get_referrer_stats(
 
     # Count confirmed leads as total referrals
     count_result = await db.execute(
-        text("SELECT COUNT(*) as cnt FROM leads WHERE referrer_id = :rid AND status = 'CONFIRMED'"),
+        text("SELECT COUNT(*) as cnt FROM leads WHERE referrer_id = :rid AND status IN ('CONFIRMED','CONFIRMED_SUCCESS')"),
         {"rid": ref_id}
     )
     total_referrals = count_result.scalar() or 0
@@ -298,7 +303,8 @@ async def get_referrer_stats(
                 COALESCE(SUM(unlock_fee_cents), 0) as lifetime_cents,
                 COALESCE(SUM(CASE WHEN created_at >= date_trunc('month', now()) - interval '1 month' AND created_at < date_trunc('month', now()) THEN unlock_fee_cents ELSE 0 END), 0) as last_month_cents
             FROM leads
-            WHERE referrer_id = :rid AND status IN ('UNLOCKED', 'CONFIRMED', 'ON_THE_WAY')
+            WHERE referrer_id = :rid AND status IN ('UNLOCKED', 'CONFIRMED', 'ON_THE_WAY',
+                  'MEETING_VERIFIED', 'VALID_LEAD', 'PAYMENT_PENDING_CONFIRMATION', 'CONFIRMED_SUCCESS')
         """),
         {"rid": ref_id}
     )
@@ -306,7 +312,7 @@ async def get_referrer_stats(
 
     # Pending earnings (leads not yet confirmed)
     pending_result = await db.execute(
-        text("SELECT COALESCE(SUM(unlock_fee_cents), 0) as pending FROM leads WHERE referrer_id = :rid AND status = 'UNLOCKED'"),
+        text("SELECT COALESCE(SUM(unlock_fee_cents), 0) as pending FROM leads WHERE referrer_id = :rid AND status IN ('UNLOCKED','ON_THE_WAY','MEETING_VERIFIED','VALID_LEAD','PAYMENT_PENDING_CONFIRMATION')"),
         {"rid": ref_id}
     )
     pending_cents = pending_result.scalar() or 0
@@ -319,7 +325,8 @@ async def get_referrer_stats(
                    COALESCE(SUM(l.unlock_fee_cents), 0) as earned_cents
             FROM leads l
             JOIN businesses b ON b.id = l.business_id
-            WHERE l.referrer_id = :rid AND l.status IN ('UNLOCKED', 'CONFIRMED', 'ON_THE_WAY')
+            WHERE l.referrer_id = :rid AND l.status IN ('UNLOCKED', 'CONFIRMED', 'ON_THE_WAY',
+                  'MEETING_VERIFIED', 'VALID_LEAD', 'PAYMENT_PENDING_CONFIRMATION', 'CONFIRMED_SUCCESS')
             GROUP BY b.id, b.business_name, b.slug, b.trade_category
             ORDER BY earned_cents DESC
             LIMIT 10

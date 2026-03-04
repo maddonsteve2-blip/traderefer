@@ -45,7 +45,8 @@ export default async function BusinessLeadsPage() {
     if (!bizId) redirect("/onboarding/business");
     const leads = await getLeads(bizId, token);
 
-    const pendingCount = leads.filter((l: any) => l.status === 'VERIFIED' || l.status === 'PENDING').length;
+    const PENDING_STATUSES = ['PENDING', 'VERIFIED', 'READY_FOR_BUSINESS', 'SCREENING'];
+    const pendingCount = leads.filter((l: any) => PENDING_STATUSES.includes(l.status)).length;
 
     return (
         <div className="min-h-screen bg-zinc-50 pt-16">

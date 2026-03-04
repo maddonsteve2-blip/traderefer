@@ -8,8 +8,10 @@ import {
     Pencil,
     User,
     Image as ImageIcon,
-    DollarSign
+    DollarSign,
+    AlertTriangle,
 } from "lucide-react";
+import { WalletWidget } from "@/components/dashboard/WalletWidget";
 import Link from "next/link";
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -71,6 +73,7 @@ export default async function BusinessDashboardPage() {
     }
 
     const { business, stats: apiStats, recent_leads } = data;
+    const walletCents: number = business.wallet_balance_cents || 0;
 
     return (
         <div className="min-h-screen bg-zinc-50 pt-16">
@@ -102,6 +105,17 @@ export default async function BusinessDashboardPage() {
                         <InviteReferrersButton businessName={business.name} slug={business.slug} />
                     </div>
                 </div>
+
+                {walletCents < 2500 && (
+                    <div className="mb-8 p-5 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-4">
+                        <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" />
+                        <div className="flex-1">
+                            <p className="font-bold text-red-700 text-sm">Wallet below minimum</p>
+                            <p className="text-xs text-red-600">You need at least $25.00 to unlock leads. Current balance: ${(walletCents/100).toFixed(2)}</p>
+                        </div>
+                        <WalletWidget currentBalance={walletCents} />
+                    </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                     {apiStats.map((stat: { label: string; icon: string; bg: string; color: string; value: string | number }) => {
