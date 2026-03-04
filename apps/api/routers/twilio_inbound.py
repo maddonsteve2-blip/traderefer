@@ -212,27 +212,37 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
     from services.email import send_business_new_lead
     from services.sms import send_sms_claimed_new_lead
 
+    lead_logger.info(f"Screening PASSED | lead={lead_id} | is_claimed={row['is_claimed']} | email={row['business_email']} | phone={row['business_phone']}")
+    
     if row["is_claimed"]:
         is_first = False
-        if row["business_email"]:
-            await send_business_new_lead(
-                email=row["business_email"],
-                business_name=row["business_name"],
-                consumer_name=row["consumer_name"],
-                suburb=row["consumer_suburb"],
-                job_description=row["job_description"],
-                lead_id=lead_id,
-                unlock_fee_dollars=(row["unlock_fee_cents"] or 0) / 100,
-                is_first_lead=is_first,
-            )
-        if row["business_phone"]:
-            await send_sms_claimed_new_lead(
-                phone=row["business_phone"],
-                business_name=row["business_name"],
-                suburb=row["consumer_suburb"],
-            )
-
-    lead_logger.info(f"Screening PASSED | lead={lead_id}")
+        try:
+            if row["business_email"]:
+                lead_logger.info(f"Sending email notification to {row['business_email']}")
+                await send_business_new_lead(
+                    email=row["business_email"],
+                    business_name=row["business_name"],
+                    consumer_name=row["consumer_name"],
+                    suburb=row["consumer_suburb"],
+                    job_description=row["job_description"],
+                    lead_id=lead_id,
+                    unlock_fee_dollars=(row["unlock_fee_cents"] or 0) / 100,
+                    is_first_lead=is_first,
+                )
+                lead_logger.info(f"Email notification sent successfully")
+            if row["business_phone"]:
+                lead_logger.info(f"Sending SMS notification to {row['business_phone']}")
+                await send_sms_claimed_new_lead(
+                    phone=row["business_phone"],
+                    business_name=row["business_name"],
+                    suburb=row["consumer_suburb"],
+                )
+                lead_logger.info(f"SMS notification sent successfully")
+        except Exception as e:
+            from utils.logging_config import error_logger
+            error_logger.error(f"Failed to send business notifications: {e}", exc_info=True)
+    else:
+        lead_logger.info(f"Business not claimed - skipping notifications")
 
     # Update referrer quality score
     if row["referrer_id"]:
