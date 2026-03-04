@@ -33,9 +33,11 @@ A consumer has been sent 3 questions about their job enquiry. Your job is to cla
 Trade category: {trade_category}
 
 Classify as:
-- PASS: The consumer's job is genuine and matches the trade category. Description is specific enough.
-- UNCLEAR: The response is too vague, ambiguous, or incomplete. Provide a short follow-up question.
+- PASS: The consumer has provided a genuine job request that matches the trade category. They've described what they need, when they need it, and the general scope. Don't overthink it - if it's a real job request, PASS it.
+- UNCLEAR: Only use this if the consumer's responses are extremely vague (e.g., just "yes" or "maybe") OR they haven't actually described what work they need. If they've mentioned a specific problem or task, that's enough to PASS.
 - FAIL: The job is clearly wrong category, spam, test data, gibberish, or the consumer is unresponsive/rude.
+
+IMPORTANT: Be practical, not perfectionist. A blocked toilet, leaking tap, broken fence, etc. are all clear enough to PASS. Don't ask follow-up questions unless the consumer literally hasn't told you what work they need.
 
 Return ONLY a valid JSON object with keys: "status" ("PASS", "UNCLEAR", or "FAIL"), "reason" (1 sentence), "follow_up" (string or null).
 No markdown, no explanation, just the JSON object."""
