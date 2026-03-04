@@ -177,7 +177,11 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
     
     # Pick a random Twilio number for this lead's entire conversation
     from services.sms import TWILIO_FROM_NUMBERS
+    from utils.logging_config import email_logger
+    
+    email_logger.info(f"TWILIO_FROM_NUMBERS available: {TWILIO_FROM_NUMBERS}")
     twilio_from = random.choice(TWILIO_FROM_NUMBERS) if TWILIO_FROM_NUMBERS else None
+    email_logger.info(f"Selected twilio_from: {twilio_from}")
     
     try:
         result = await db.execute(insert_query, {
