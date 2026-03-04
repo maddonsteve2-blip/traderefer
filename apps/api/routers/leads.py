@@ -71,7 +71,15 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
     
     # 0. Fraud Check (Placeholder)
     await check_ip_velocity(client_ip, db)
-    
+
+    # Normalize consumer phone to E.164
+    _ph = lead.consumer_phone.strip().replace(" ", "").replace("-", "")
+    if _ph.startswith("04"):
+        _ph = "+61" + _ph[1:]
+    elif _ph.startswith("4") and len(_ph) == 9:
+        _ph = "+61" + _ph
+    lead = lead.model_copy(update={"consumer_phone": _ph})
+
     referral_link_id = None
     referrer_id = None
     
