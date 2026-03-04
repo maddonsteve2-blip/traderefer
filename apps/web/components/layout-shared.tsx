@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search, Menu, X } from "lucide-react";
+import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search, Menu, X, Gift, MessageSquare } from "lucide-react";
 
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
@@ -81,7 +81,9 @@ function ProfileDropdown() {
 
         { href: "/dashboard/referrer", label: "Overview", icon: LayoutDashboard },
 
-        { href: "/dashboard/referrer/withdraw", label: "Rewards", icon: Settings },
+        { href: "/dashboard/referrer/messages", label: "Messages", icon: MessageSquare },
+
+        { href: "/dashboard/referrer/withdraw", label: "Rewards", icon: Gift },
 
     ];
 
