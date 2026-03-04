@@ -199,8 +199,8 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
 
     # Fetch data to notify business
     res = await db.execute(text("""
-        SELECT l.consumer_name, l.consumer_suburb, l.job_description,
-               l.unlock_fee_cents, l.referrer_id,
+        SELECT l.consumer_name, l.consumer_suburb, l.job_description, l.consumer_phone,
+               l.unlock_fee_cents, l.referrer_id, l.twilio_from_number,
                b.business_name, b.business_email, b.business_phone, b.is_claimed, b.slug
         FROM leads l JOIN businesses b ON b.id = l.business_id
         WHERE l.id = :id
@@ -210,9 +210,18 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
         return
 
     from services.email import send_business_new_lead
-    from services.sms import send_sms_claimed_new_lead
+    from services.sms import send_sms_claimed_new_lead, _send_sms
 
     lead_logger.info(f"Screening PASSED | lead={lead_id} | is_claimed={row['is_claimed']} | email={row['business_email']} | phone={row['business_phone']}")
+    
+    # Send thank you message to consumer
+    if row["consumer_phone"]:
+        thank_you_msg = (
+            f"Thank you for providing those details! "
+            f"We've passed your job request to {row['business_name']}. "
+            f"They'll be in touch soon. TradeRefer"
+        )
+        await _send_sms(row["consumer_phone"], thank_you_msg, from_number=row["twilio_from_number"])
     
     if row["is_claimed"]:
         is_first = False
@@ -255,6 +264,25 @@ async def _screening_fail(lead_id: str, lead: dict, db: AsyncSession):
         WHERE id = :id
     """), {"id": lead_id})
     await db.commit()
+
+    # Fetch consumer phone and business info
+    res = await db.execute(text("""
+        SELECT l.consumer_phone, l.twilio_from_number, b.business_name, b.trade_category
+        FROM leads l JOIN businesses b ON b.id = l.business_id
+        WHERE l.id = :id
+    """), {"id": lead_id})
+    row = res.mappings().first()
+    
+    # Send professional message to consumer
+    if row and row["consumer_phone"]:
+        from services.sms import _send_sms
+        fail_msg = (
+            f"Thank you for your enquiry. Unfortunately, your request doesn't match "
+            f"{row['business_name']}'s service category ({row['trade_category']}). "
+            f"Would you like us to connect you with our customer service team to find the right tradesperson? "
+            f"Reply YES if you'd like assistance. TradeRefer"
+        )
+        await _send_sms(row["consumer_phone"], fail_msg, from_number=row["twilio_from_number"])
 
     # Notify referrer
     if lead["referrer_id"]:
