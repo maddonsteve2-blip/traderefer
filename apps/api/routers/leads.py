@@ -380,6 +380,28 @@ async def unlock_lead(
 
         await db.commit()
 
+        # On first lead unlock: mark this business as active in the invitation system
+        # (triggers inviter's $25 Prezzee reward milestone if they've hit 5 active invitees)
+        if business.get("total_leads_unlocked", 1) <= 1:
+            try:
+                inv_res = await db.execute(text("""
+                    UPDATE user_invitations ui
+                    SET status = 'active', became_active_at = now()
+                    FROM businesses b
+                    WHERE b.id = :biz_id
+                      AND ui.inviter_id = b.invited_by_id
+                      AND ui.invitation_type = 'business'
+                      AND ui.status = 'accepted'
+                    RETURNING ui.inviter_id, ui.inviter_type
+                """), {"biz_id": str(business["id"])})
+                inv_row = inv_res.fetchone()
+                if inv_row:
+                    await db.commit()
+                    from services.referral_rewards import check_and_reward
+                    await check_and_reward(str(inv_row[0]), db)
+            except Exception as reward_err:
+                error_logger.warning(f"Business first-unlock reward check (non-fatal): {reward_err}")
+
         # Low balance warning
         if new_balance < 3000:  # < $30
             try:

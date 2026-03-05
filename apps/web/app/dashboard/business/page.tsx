@@ -29,6 +29,9 @@ import { InviteReferrersButton } from "@/components/dashboard/InviteReferrersBut
 import { DashboardError } from "@/components/dashboard/DashboardError";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { BusinessWelcomeDialog } from "@/components/dashboard/BusinessWelcomeDialog";
+import { BusinessReferralProgress } from "@/components/business/BusinessReferralProgress";
+import { BusinessInviteButton } from "@/components/business/BusinessInviteButton";
 
 async function getBusinessDashboardData() {
     const { userId, getToken } = await auth();
@@ -77,6 +80,9 @@ export default async function BusinessDashboardPage() {
 
     return (
         <div className="min-h-screen bg-zinc-50 pt-16">
+            {/* First-time welcome dialog */}
+            <BusinessWelcomeDialog />
+
             <div className="container mx-auto px-4 py-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                     <div className="flex items-center gap-3">
@@ -102,6 +108,7 @@ export default async function BusinessDashboardPage() {
                                 <User className="w-3.5 h-3.5" /> Edit Profile Media
                             </Link>
                         </Button>
+                        <BusinessInviteButton />
                         <InviteReferrersButton businessName={business.name} slug={business.slug} />
                     </div>
                 </div>
@@ -117,7 +124,7 @@ export default async function BusinessDashboardPage() {
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div id="invite" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                     {apiStats.map((stat: { label: string; icon: string; bg: string; color: string; value: string | number }) => {
                         const Icon = ICON_MAP[stat.icon] || Target;
                         return (
@@ -132,6 +139,11 @@ export default async function BusinessDashboardPage() {
                             </Card>
                         );
                     })}
+                </div>
+
+                {/* Referral progress widget */}
+                <div className="mb-10">
+                    <BusinessReferralProgress />
                 </div>
 
                 <Card className="p-8 mb-10 shadow-xl shadow-zinc-200/50">

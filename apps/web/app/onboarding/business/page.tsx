@@ -71,6 +71,14 @@ function BusinessOnboardingContent() {
     const claimBusinessId = searchParams.get('claim');
     const claimSlug = searchParams.get('slug');
     const isClaiming = !!claimBusinessId;
+    const inviteCode = searchParams.get('invite') || '';
+
+    // Owner mobile OTP state
+    const [ownerPhone, setOwnerPhone] = useState('');
+    const [ownerOtpSent, setOwnerOtpSent] = useState(false);
+    const [ownerOtpVerified, setOwnerOtpVerified] = useState(false);
+    const [ownerOtpCode, setOwnerOtpCode] = useState('');
+    const [ownerOtpLoading, setOwnerOtpLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         business_name: "",
@@ -211,6 +219,47 @@ function BusinessOnboardingContent() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [step]);
+
+    const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+    const sendOwnerOtp = async () => {
+        if (!ownerPhone.trim()) { toast.error("Enter your mobile number first"); return; }
+        setOwnerOtpLoading(true);
+        try {
+            const res = await fetch(`${API}/referrer/otp/send`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phone: ownerPhone.trim() }),
+            });
+            if (!res.ok) throw new Error("Failed to send OTP");
+            setOwnerOtpSent(true);
+            toast.success("Code sent! Check your mobile.");
+        } catch {
+            toast.error("Could not send code — check the number and try again");
+        } finally {
+            setOwnerOtpLoading(false);
+        }
+    };
+
+    const verifyOwnerOtp = async () => {
+        if (!ownerOtpCode.trim()) { toast.error("Enter the 6-digit code"); return; }
+        setOwnerOtpLoading(true);
+        try {
+            const res = await fetch(`${API}/referrer/otp/verify`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phone: ownerPhone.trim(), code: ownerOtpCode.trim() }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.verified) throw new Error(data.detail || "Incorrect code");
+            setOwnerOtpVerified(true);
+            toast.success("Mobile verified!");
+        } catch (err: any) {
+            toast.error(err.message || "Verification failed");
+        } finally {
+            setOwnerOtpLoading(false);
+        }
+    };
 
     const checkSlug = async (val: string) => {
         if (!val) { setSlugStatus('idle'); return; }
@@ -422,6 +471,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
             if (!formData.address.trim() || !formData.suburb.trim() || !formData.postcode.trim()) { toast.error("Please select a full address including postcode"); return; }
             if (!formData.business_phone.trim()) { toast.error("Business phone is required"); return; }
             if (!formData.business_email.trim()) { toast.error("Business email is required"); return; }
+            if (!ownerOtpVerified) { toast.error("Please verify your mobile number to continue"); return; }
         }
 
         // Step 2 → Step 3: trigger AI generation from chat
@@ -467,6 +517,9 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                         business_highlights: formData.highlights,
                         specialties: formData.specialty ? [formData.specialty] : [],
                         abn: formData.abn || undefined,
+                        owner_phone: ownerPhone || undefined,
+                        owner_phone_verified: ownerOtpVerified,
+                        invite_code: inviteCode || undefined,
                     })
                 });
                 if (!res.ok) {
@@ -706,6 +759,64 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                             </label>
                                             <input type="email" value={formData.business_email} onChange={(e) => setFormData({ ...formData, business_email: e.target.value })} placeholder="hi@business.com" className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300" />
                                         </div>
+                                    </div>
+
+                                    {/* Owner's Mobile — OTP verification */}
+                                    <div className={`p-6 rounded-[24px] border transition-all ${ownerOtpVerified ? 'bg-green-50 border-green-200' : 'bg-zinc-50 border-zinc-100'}`}>
+                                        <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            <ShieldCheck className="w-3.5 h-3.5" />
+                                            {ownerOtpVerified ? <span className="text-green-600">Mobile Verified ✓</span> : "Verify Your Mobile"}
+                                        </label>
+                                        <p className="text-xs text-zinc-400 font-medium mb-4">Your personal mobile — for account security and lead alerts. Not shown publicly.</p>
+                                        {!ownerOtpVerified ? (
+                                            <>
+                                                <div className="flex gap-3">
+                                                    <input
+                                                        type="tel"
+                                                        value={ownerPhone}
+                                                        onChange={(e) => { setOwnerPhone(e.target.value); setOwnerOtpSent(false); setOwnerOtpCode(''); }}
+                                                        placeholder="e.g. 0412 000 000"
+                                                        className="flex-1 px-5 py-3.5 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-base font-medium placeholder:text-zinc-300"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={sendOwnerOtp}
+                                                        disabled={ownerOtpLoading || !ownerPhone.trim()}
+                                                        className="px-5 py-3.5 bg-zinc-900 hover:bg-black text-white rounded-2xl font-bold text-sm disabled:opacity-40 transition-all flex items-center gap-2 whitespace-nowrap"
+                                                    >
+                                                        {ownerOtpLoading && !ownerOtpSent ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                                                        {ownerOtpSent ? 'Resend' : 'Send Code'}
+                                                    </button>
+                                                </div>
+                                                {ownerOtpSent && (
+                                                    <div className="flex gap-3 mt-3">
+                                                        <input
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            maxLength={6}
+                                                            value={ownerOtpCode}
+                                                            onChange={(e) => setOwnerOtpCode(e.target.value.replace(/\D/g, ''))}
+                                                            placeholder="6-digit code"
+                                                            className="flex-1 px-5 py-3.5 bg-white border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-base font-medium tracking-[0.3em] placeholder:tracking-normal placeholder:text-zinc-300"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={verifyOwnerOtp}
+                                                            disabled={ownerOtpLoading || ownerOtpCode.length < 6}
+                                                            className="px-5 py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold text-sm disabled:opacity-40 transition-all flex items-center gap-2"
+                                                        >
+                                                            {ownerOtpLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                                                            Verify
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <div className="flex items-center gap-3 text-green-700 font-bold">
+                                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                                {ownerPhone} verified
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </>

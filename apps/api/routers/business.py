@@ -56,6 +56,9 @@ class BusinessOnboarding(BaseModel):
     why_refer_us: Optional[str] = None
     features: Optional[list[str]] = None
     abn: Optional[str] = None
+    owner_phone: Optional[str] = None
+    owner_phone_verified: Optional[bool] = False
+    invite_code: Optional[str] = None
 
 class BusinessUpdate(BaseModel):
     business_name: Optional[str] = None
@@ -178,6 +181,28 @@ async def onboarding(
         if slug_check.fetchone():
             raise HTTPException(status_code=400, detail="Slug already in use")
 
+    # Resolve invited_by_id from invite_code (can be from a referrer or another business)
+    invited_by_id = None
+    invite_source_type = None  # 'referrer' | 'business'
+    if data.invite_code:
+        ref_res = await db.execute(
+            text("SELECT id FROM referrers WHERE onboarding_invite_code = :code"),
+            {"code": data.invite_code}
+        )
+        ref_row = ref_res.fetchone()
+        if ref_row:
+            invited_by_id = ref_row[0]
+            invite_source_type = "referrer"
+        else:
+            biz_res = await db.execute(
+                text("SELECT id FROM businesses WHERE onboarding_invite_code = :code"),
+                {"code": data.invite_code}
+            )
+            biz_row = biz_res.fetchone()
+            if biz_row:
+                invited_by_id = biz_row[0]
+                invite_source_type = "business"
+
     query = text("""
         INSERT INTO businesses (
             user_id, business_name, slug, trade_category,
@@ -185,14 +210,16 @@ async def onboarding(
             website, service_radius_km, referral_fee_cents, status,
             state, lat, lng, logo_url, cover_photo_url, photo_urls, stripe_account_id,
             listing_visibility, years_experience, services, specialties,
-            business_highlights, why_refer_us, features, abn
+            business_highlights, why_refer_us, features, abn,
+            owner_phone, owner_phone_verified, invited_by_id
         ) VALUES (
             :user_id, :business_name, :slug, :trade_category,
             :description, :suburb, :address, :business_phone, :business_email,
             :website, :service_radius_km, :referral_fee_cents, 'active',
             :state, :lat, :lng, :logo_url, :cover_photo_url, :photo_urls, :stripe_account_id,
             :listing_visibility, :years_experience, :services, :specialties,
-            :business_highlights, :why_refer_us, :features, :abn
+            :business_highlights, :why_refer_us, :features, :abn,
+            :owner_phone, :owner_phone_verified, :invited_by_id
         ) RETURNING id, slug
     """)
 
@@ -224,13 +251,40 @@ async def onboarding(
             "business_highlights": data.business_highlights or [],
             "why_refer_us": data.why_refer_us,
             "features": data.features or [],
-            "abn": data.abn
+            "abn": data.abn,
+            "owner_phone": data.owner_phone,
+            "owner_phone_verified": data.owner_phone_verified or False,
+            "invited_by_id": invited_by_id,
         })
         await db.commit()
         row = result.fetchone()
+        business_id = str(row[0])
         new_slug = row[1]
-        send_business_welcome(data.business_email, data.business_name, new_slug)
-        return {"id": str(row[0]), "slug": new_slug}
+
+        # Generate unique invite code for this business
+        invite_code = str(uuid.uuid4())[:8].upper()
+        await db.execute(
+            text("UPDATE businesses SET onboarding_invite_code = :code WHERE id = :id"),
+            {"code": invite_code, "id": business_id}
+        )
+        await db.commit()
+
+        # If invited, mark the invitation as accepted
+        if invited_by_id and data.invite_code and invite_source_type:
+            inviter_type = invite_source_type
+            await db.execute(text("""
+                UPDATE user_invitations
+                SET status = 'accepted', accepted_at = now()
+                WHERE inviter_id = :inv_id AND referral_code = :code
+                  AND status = 'pending' AND inviter_type = :itype
+            """), {"inv_id": invited_by_id, "code": data.invite_code, "itype": inviter_type})
+            await db.commit()
+
+        try:
+            send_business_welcome(data.business_email, data.business_name, new_slug)
+        except Exception as email_err:
+            print(f"Welcome email failed (non-fatal): {email_err}")
+        return {"id": business_id, "slug": new_slug, "invite_code": invite_code}
     except Exception as e:
         await db.rollback()
         print(f"Onboarding error: {e}")
