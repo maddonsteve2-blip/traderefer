@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Search, MapPin, ArrowRight,
   Megaphone, CheckCircle2, XCircle, ShieldCheck,
@@ -17,6 +17,35 @@ export default function HomePage() {
   const [tradies, setTradies] = useState(10);
   const [jobsPerMonth, setJobsPerMonth] = useState(3);
   const monthlyEarnings = tradies * jobsPerMonth * 15;
+
+  const carouselRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const CARD_W = 336; // 320px card + 16px gap
+    const PAUSE = 3200;
+    const ANIM = 700; // matches smooth scroll duration
+    let timer: ReturnType<typeof setTimeout>;
+    const advance = () => {
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
+      if (atEnd) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: CARD_W, behavior: "smooth" });
+      }
+      timer = setTimeout(advance, PAUSE + ANIM);
+    };
+    timer = setTimeout(advance, PAUSE);
+    const pause = () => clearTimeout(timer);
+    const resume = () => { timer = setTimeout(advance, PAUSE); };
+    el.addEventListener("mouseenter", pause);
+    el.addEventListener("mouseleave", resume);
+    return () => {
+      clearTimeout(timer);
+      el.removeEventListener("mouseenter", pause);
+      el.removeEventListener("mouseleave", resume);
+    };
+  }, []);
 
   const [bizSpend, setBizSpend] = useState(500);
   const [bizConvRate, setBizConvRate] = useState(30);
@@ -460,7 +489,7 @@ export default function HomePage() {
           </div>
 
           {/* Real Prezzee card image scroll */}
-          <div className="flex gap-4 overflow-x-auto pb-6 snap-x" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+          <div ref={carouselRef} className="flex gap-4 overflow-x-auto pb-6 snap-x" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
             {[
               { name: "Prezzee Smart Card", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif", desc: "One card. Swap into 400+ brands. The ultimate gift." },
               { name: "Groceries", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e1ffa9be-102f-427c-b96d-4bcfe883f1e3/AU_Prezzee_Groceries_SKU_452_280.png", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
