@@ -210,6 +210,40 @@ async def create_referral_link(
             "link_code": link_code
         })
         await db.commit()
+
+        # Check if this is the referrer's first link — if so, mark them active in
+        # the invitation system so their inviter's milestone counter increments.
+        count_res = await db.execute(
+            text("SELECT COUNT(*) FROM referral_links WHERE referrer_id = :id"),
+            {"id": referrer_id}
+        )
+        total_links = count_res.scalar() or 0
+        if total_links == 1:
+            # Find any pending accepted invitation for this referrer
+            inv_res = await db.execute(text("""
+                SELECT ui.referral_code
+                FROM user_invitations ui
+                JOIN referrers r ON r.invited_by_referrer_id = ui.inviter_id
+                WHERE r.id = :rid AND ui.status = 'accepted'
+                LIMIT 1
+            """), {"rid": referrer_id})
+            inv_row = inv_res.fetchone()
+            if inv_row:
+                try:
+                    from services.referral_rewards import check_and_reward
+                    upd = await db.execute(text("""
+                        UPDATE user_invitations
+                        SET status = 'active', became_active_at = now()
+                        WHERE referral_code = :code AND status = 'accepted'
+                        RETURNING inviter_id
+                    """), {"code": inv_row[0]})
+                    upd_row = upd.fetchone()
+                    await db.commit()
+                    if upd_row:
+                        await check_and_reward(str(upd_row[0]), db)
+                except Exception as reward_err:
+                    error_logger.warning(f"Reward check on first link (non-fatal): {reward_err}")
+
         return {"link_code": link_code}
     except Exception as e:
         await db.rollback()

@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-    Mail, Phone, UserPlus, Send, CheckCircle, Loader2,
-    Building2, Users, X, Plus, Contact, ChevronDown
+    UserPlus, Send, CheckCircle, Loader2,
+    Building2, Users, X, Plus, Contact
 } from "lucide-react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
