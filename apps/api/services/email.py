@@ -331,6 +331,55 @@ async def send_business_enquiry_teaser(email: str, business_name: str, business_
     await _send(email, f"New enquiry in {suburb} — claim your free profile on traderefer.au", _wrap(body, f"You received this because {business_name} is listed on traderefer.au. To opt out reply to this email."))
 
 
+async def send_invitation_email(to_email: str, invitee_name: str, inviter_name: str, invitation_type: str, signup_url: str):
+    if invitation_type == "business":
+        headline = f"{inviter_name} invited you to get more leads — for free"
+        sub = "Join TradeRefer and start receiving qualified job enquiries from referrers who know you."
+        cta = "Claim Your Free Business Profile"
+        benefit = "Get leads, grow your business, pay only when you unlock a customer's details."
+    else:
+        headline = f"{inviter_name} thinks you'd be great at this"
+        sub = "Join TradeRefer and earn Prezzee gift cards just by recommending tradies to people you know."
+        cta = "Start Earning Rewards"
+        benefit = "Refer customers to tradies, earn $25+ Prezzee gift cards. No experience needed."
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">{headline}</h1>
+      <p>Hi {invitee_name}, <strong>{inviter_name}</strong> has invited you to join <strong>traderefer.au</strong>.</p>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:16px 20px;margin:20px 0">
+        <p style="margin:0;color:#9a3412;font-weight:600">{sub}</p>
+      </div>
+      <p style="color:#555">{benefit}</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{signup_url}"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          {cta} →
+        </a>
+      </div>
+      <p style="color:#9ca3af;font-size:13px">This invitation was sent by {inviter_name} via traderefer.au.</p>
+    """
+    await _send(to_email, f"{inviter_name} invited you to join traderefer.au", _wrap(body))
+
+
+async def send_referral_reward_email(email: str, full_name: str, friends_count: int, amount_dollars: float):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">🎉 You've earned a ${amount_dollars:.0f} gift card!</h1>
+      <p>Congratulations {full_name}! You've successfully invited <strong>{friends_count} active friends</strong> to TradeRefer.</p>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:16px 20px;margin:20px 0;text-align:center">
+        <p style="font-size:32px;font-weight:900;color:#16a34a;margin:0">${amount_dollars:.0f}</p>
+        <p style="color:#15803d;font-weight:600;margin:4px 0 0">Prezzee Gift Card — on its way to your inbox!</p>
+      </div>
+      <p style="color:#555">Your Prezzee gift card will be delivered to this email address shortly. You can spend it at hundreds of retailers across Australia.</p>
+      <p style="color:#555">Keep inviting friends — every 5 active referrals earns you another $25!</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          View My Dashboard →
+        </a>
+      </div>
+    """
+    await _send(email, f"🎉 Your ${amount_dollars:.0f} Prezzee gift card is on its way!", _wrap(body))
+
+
 async def send_consumer_lead_confirmation(email: str, consumer_name: str, business_name: str, trade_category: str, job_description: str):
     body = f"""
       <h1 style="color:#ea580c;margin-top:0">Your request has been received</h1>

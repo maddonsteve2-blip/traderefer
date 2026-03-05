@@ -16,6 +16,8 @@ import { HotCampaigns } from "@/components/referrer/HotCampaigns";
 import { EarningsDashboard } from "@/components/referrer/EarningsDashboard";
 import { DiscoverSection } from "@/components/referrer/DiscoverSection";
 import { MyTradesTeam } from "@/components/referrer/MyTradesTeam";
+import { WelcomeDialog } from "@/components/dashboard/WelcomeDialog";
+import { ReferralProgress } from "@/components/referrer/ReferralProgress";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -62,15 +64,21 @@ export default async function ReferrerDashboardPage() {
 
     return (
         <div className="min-h-screen bg-zinc-50 pt-16">
+            {/* First-time welcome dialog (client component) */}
+            <WelcomeDialog />
+
             <div className="container mx-auto px-4 py-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                     <div>
                         <h1 className="text-3xl font-black text-zinc-900 font-display">Your Earnings</h1>
                         <p className="text-zinc-500 font-medium">Track your referrals and collect Prezzee gift card rewards.</p>
                     </div>
-                    <div className="flex gap-3">
-                        <Button asChild variant="outline" className="rounded-full px-8 h-12 font-bold border-zinc-200">
+                    <div className="flex gap-3 flex-wrap">
+                        <Button asChild variant="outline" className="rounded-full px-6 h-12 font-bold border-zinc-200">
                             <Link href="/dashboard/referrer/messages">Messages</Link>
+                        </Button>
+                        <Button asChild variant="outline" className="rounded-full px-6 h-12 font-bold border-orange-200 text-orange-600 hover:bg-orange-50">
+                            <Link href="#invite"><Users className="w-4 h-4 mr-2" />Invite Friends</Link>
                         </Button>
                         <Button asChild className="bg-zinc-900 hover:bg-black text-white rounded-full px-8 h-12 font-bold shadow-lg shadow-zinc-200">
                             <Link href="/dashboard/referrer/withdraw">Gift Card Rewards</Link>
@@ -79,6 +87,11 @@ export default async function ReferrerDashboardPage() {
                 </div>
 
                 <EarningsDashboard />
+
+                {/* Referral progress widget */}
+                <div id="invite" className="mb-10">
+                    <ReferralProgress />
+                </div>
 
                 <DiscoverSection />
 

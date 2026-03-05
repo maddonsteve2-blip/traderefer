@@ -9,14 +9,33 @@ from services.stripe_service import StripeService
 from services.email import send_referrer_welcome, send_referrer_payout_processed, send_business_new_review, send_referrer_review_request
 import uuid
 import os
+import random
+import asyncio
+from datetime import datetime, timedelta
 from utils.logging_config import error_logger, general_logger
 
 router = APIRouter()
 
+# In-memory OTP store (keyed by phone number). Fine for single-instance Railway deployment.
+# Format: { "+61412345678": {"code": "123456", "expires_at": datetime} }
+_otp_store: dict = {}
+
 class ReferrerOnboarding(BaseModel):
     full_name: Optional[str] = None
     phone: str
-    region: str
+    street_address: Optional[str] = None
+    suburb: Optional[str] = None
+    state: Optional[str] = "VIC"
+    postcode: Optional[str] = None
+    phone_verified: Optional[bool] = False
+    invite_code: Optional[str] = None
+
+class OTPSendRequest(BaseModel):
+    phone: str
+
+class OTPVerifyRequest(BaseModel):
+    phone: str
+    code: str
 
 class ReviewCreate(BaseModel):
     business_slug: str
@@ -28,44 +47,119 @@ class ReviewBusiness(BaseModel):
     rating: int  # 1-5
     comment: Optional[str] = None
 
+@router.post("/otp/send")
+async def send_otp(data: OTPSendRequest):
+    """Send a 6-digit OTP to the given phone number via Twilio SMS."""
+    from services.sms import _send_sms
+    phone = data.phone.strip()
+    code = str(random.randint(100000, 999999))
+    _otp_store[phone] = {"code": code, "expires_at": datetime.utcnow() + timedelta(minutes=10)}
+    try:
+        await _send_sms(phone, f"Your TradeRefer verification code is: {code}\nExpires in 10 minutes.")
+        return {"sent": True}
+    except Exception as e:
+        error_logger.error(f"OTP send failed for {phone}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send OTP")
+
+
+@router.post("/otp/verify")
+async def verify_otp(data: OTPVerifyRequest):
+    """Verify a previously sent OTP code."""
+    phone = data.phone.strip()
+    entry = _otp_store.get(phone)
+    if not entry:
+        raise HTTPException(status_code=400, detail="No OTP found for this number. Please request a new code.")
+    if datetime.utcnow() > entry["expires_at"]:
+        _otp_store.pop(phone, None)
+        raise HTTPException(status_code=400, detail="OTP has expired. Please request a new code.")
+    if entry["code"] != data.code.strip():
+        raise HTTPException(status_code=400, detail="Incorrect code. Please try again.")
+    _otp_store.pop(phone, None)
+    return {"verified": True}
+
+
 @router.post("/onboarding")
 async def onboarding(
-    data: ReferrerOnboarding, 
+    data: ReferrerOnboarding,
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user)
 ):
     user_uuid = uuid.UUID(user.id)
-    
+
     # Check if existing
     check_query = text("SELECT id FROM referrers WHERE user_id = :user_id")
     result = await db.execute(check_query, {"user_id": user_uuid})
     if result.fetchone():
         return {"status": "already_exists"}
 
-    # Use email from token if available, or placeholder
     email = user.email or f"user_{user.id}@clerk.com"
-    
+    full_name = data.full_name or email.split("@")[0].replace(".", " ").title()
+
+    # Resolve invited_by referrer id from invite code
+    invited_by_id = None
+    if data.invite_code:
+        inv_res = await db.execute(
+            text("SELECT id FROM referrers WHERE onboarding_invite_code = :code"),
+            {"code": data.invite_code}
+        )
+        inv_row = inv_res.fetchone()
+        if inv_row:
+            invited_by_id = inv_row[0]
+
     query = text("""
         INSERT INTO referrers (
-            user_id, full_name, email, phone, region, status, stripe_account_id
+            user_id, full_name, email, phone, region,
+            street_address, suburb, state, postcode,
+            phone_verified, invited_by_referrer_id,
+            status, stripe_account_id
         ) VALUES (
-            :user_id, :full_name, :email, :phone, :region, 'active', :stripe_account_id
+            :user_id, :full_name, :email, :phone, :suburb,
+            :street_address, :suburb, :state, :postcode,
+            :phone_verified, :invited_by_id,
+            'active', :stripe_account_id
         ) RETURNING id
     """)
-    
+
     try:
         result = await db.execute(query, {
             "user_id": user_uuid,
-            "full_name": data.full_name or email.split("@")[0].replace(".", " ").title(),
+            "full_name": full_name,
             "email": email,
             "phone": data.phone,
-            "region": data.region,
+            "street_address": data.street_address,
+            "suburb": data.suburb or "",
+            "state": data.state or "VIC",
+            "postcode": data.postcode,
+            "phone_verified": data.phone_verified or False,
+            "invited_by_id": invited_by_id,
             "stripe_account_id": f"acct_mock_ref_{user.id[:8]}"
         })
         await db.commit()
         row = result.fetchone()
-        send_referrer_welcome(email, data.full_name or email.split("@")[0].replace(".", " ").title())
-        return {"id": str(row[0])}
+        referrer_id = str(row[0])
+
+        # Generate unique invite code for this referrer
+        invite_code = str(uuid.uuid4())[:8].upper()
+        await db.execute(
+            text("UPDATE referrers SET onboarding_invite_code = :code WHERE id = :id"),
+            {"code": invite_code, "id": referrer_id}
+        )
+        await db.commit()
+
+        # If invited, mark the invitation as accepted and check for reward
+        if invited_by_id and data.invite_code:
+            await db.execute(text("""
+                UPDATE user_invitations
+                SET status = 'accepted', accepted_at = now()
+                WHERE inviter_id = :inv_id AND referral_code = :code AND status = 'pending'
+            """), {"inv_id": invited_by_id, "code": data.invite_code})
+            await db.commit()
+
+        try:
+            await send_referrer_welcome(email, full_name)
+        except Exception as email_err:
+            error_logger.warning(f"Welcome email failed (non-fatal): {email_err}")
+        return {"id": referrer_id, "invite_code": invite_code}
     except Exception as e:
         await db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to create referrer: {str(e)}")
