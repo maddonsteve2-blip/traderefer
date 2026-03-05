@@ -100,16 +100,41 @@ export default async function ReferrerDashboardPage() {
                 <HotCampaigns />
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <Card className="bg-zinc-900 p-8 text-white relative overflow-hidden shadow-2xl group">
-                        <Rocket className="absolute -right-8 -bottom-8 w-40 h-40 text-orange-500/10 rotate-12 group-hover:scale-125 transition-transform duration-500" />
-                        <h3 className="text-xl font-bold mb-4 relative z-10">Prezzee Gift Cards</h3>
-                        <p className="text-zinc-400 text-sm mb-6 relative z-10 leading-relaxed">
-                            Earn 80% of every unlock fee as a Prezzee Swap gift card — issued automatically after job confirmation. Spend it anywhere.
-                        </p>
+                    <Card className="bg-zinc-900 p-8 text-white relative overflow-hidden shadow-2xl">
+                        {/* Prezzee Smart Card image — top right corner */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
+                            alt="Prezzee Smart Card"
+                            className="absolute -right-4 -top-4 w-36 opacity-20 rounded-xl pointer-events-none"
+                        />
                         <div className="relative z-10">
-                            <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full font-bold h-12">
-                                <Link href="/dashboard/referrer/withdraw">View Rewards</Link>
-                            </Button>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="text-zinc-500 text-xs font-bold">Rewards by</span>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src="https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg"
+                                    alt="Prezzee"
+                                    className="h-4 w-auto brightness-0 invert opacity-70"
+                                />
+                            </div>
+                            <h3 className="text-xl font-bold mb-1">Earn $25 Gift Cards</h3>
+                            <p className="text-zinc-400 text-sm mb-3 leading-relaxed">
+                                Invite 5 people who join TradeRefer → <span className="text-white font-bold">$25 Prezzee Smart Card</span>, automatically issued.
+                            </p>
+                            <div className="flex flex-wrap gap-1.5 mb-5">
+                                {["Woolworths", "Bunnings", "Uber", "Netflix", "+400 more"].map((b) => (
+                                    <span key={b} className="text-xs font-bold bg-white/10 text-zinc-300 px-2.5 py-1 rounded-full">{b}</span>
+                                ))}
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full font-bold h-11">
+                                    <Link href="/dashboard/referrer/withdraw">View My Rewards</Link>
+                                </Button>
+                                <Button asChild variant="ghost" className="w-full text-zinc-400 hover:text-white hover:bg-white/10 rounded-full h-9 text-sm">
+                                    <Link href="/rewards">See all 332 brands →</Link>
+                                </Button>
+                            </div>
                         </div>
                     </Card>
 

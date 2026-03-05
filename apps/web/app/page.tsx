@@ -4,10 +4,10 @@ import Link from "next/link";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { useState } from "react";
 import {
-  Search, MapPin, ArrowRight, ArrowLeft,
+  Search, MapPin, ArrowRight,
   Megaphone, CheckCircle2, XCircle, ShieldCheck,
   Construction, TrendingUp, Zap, HardHat, Home as HomeIcon,
-  Wrench, ShoppingCart, Headphones, Printer, ChevronRight
+  Wrench, ChevronRight
 } from "lucide-react";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 
@@ -437,81 +437,60 @@ export default function HomePage() {
       {/* ── REWARDS CAROUSEL ── */}
       <section className="py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
             <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-sm font-bold text-gray-400">Rewards powered by</span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg"
+                  alt="Prezzee"
+                  className="h-5 w-auto"
+                />
+              </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A1A1A] mb-2 font-display">Cash in Your Goodwill</h2>
-              <p className="text-gray-600 text-lg">Turn your professional network into tangible rewards from Australia's top retailers.</p>
+              <p className="text-gray-600 text-lg">Invite 5 people → earn a $25 Prezzee Smart Card. Spend it at 400+ brands.</p>
             </div>
-            <div className="flex gap-3">
-              <button className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors text-[#1A1A1A]" aria-label="Previous">
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <button className="w-12 h-12 rounded-full bg-[#FF6600] text-white flex items-center justify-center hover:bg-[#E65C00] transition-colors shadow-lg" aria-label="Next">
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
+            <Link
+              href="/rewards"
+              className="shrink-0 inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-7 py-3 rounded-full transition-colors shadow-lg"
+            >
+              See all 332 brands <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
 
-          <div className="flex gap-6 overflow-x-auto pb-8 snap-x" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-            {/* Bunnings */}
-            <div className="min-w-[300px] md:min-w-[340px] bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 snap-center group cursor-pointer hover:shadow-xl transition-all flex-shrink-0">
-              <div className="h-44 bg-green-700 group-hover:bg-green-600 flex items-center justify-center p-6 transition-colors relative overflow-hidden">
-                <div className="absolute -right-4 -bottom-4 opacity-20"><Wrench className="w-32 h-32 text-white" /></div>
-                <h4 className="text-white text-4xl font-black font-display tracking-tighter z-10">Bunnings</h4>
-              </div>
-              <div className="p-6">
-                <h4 className="font-bold text-xl mb-2 font-display">Bunnings Gift Card</h4>
-                <p className="text-gray-500 mb-4" style={{ fontSize: '16px' }}>Perfect for tools, timber, and the weekend sausage sizzle.</p>
-                <span className="text-[#FF6600] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all" style={{ fontSize: '16px' }}>
-                  Redeem Now <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
-            </div>
-
-            {/* Coles */}
-            <div className="min-w-[300px] md:min-w-[340px] bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 snap-center group cursor-pointer hover:shadow-xl transition-all flex-shrink-0">
-              <div className="h-44 bg-red-600 group-hover:bg-red-500 flex items-center justify-center p-6 transition-colors relative overflow-hidden">
-                <div className="absolute -right-4 -bottom-4 opacity-20"><ShoppingCart className="w-32 h-32 text-white" /></div>
-                <h4 className="text-white text-4xl font-black font-display tracking-tighter z-10">Coles</h4>
-              </div>
-              <div className="p-6">
-                <h4 className="font-bold text-xl mb-2 font-display">Coles Group Card</h4>
-                <p className="text-gray-500 mb-4" style={{ fontSize: '16px' }}>Groceries, liquor, and fuel discounts for your family.</p>
-                <span className="text-[#FF6600] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all" style={{ fontSize: '16px' }}>
-                  Redeem Now <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
-            </div>
-
-            {/* JB Hi-Fi */}
-            <div className="min-w-[300px] md:min-w-[340px] bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 snap-center group cursor-pointer hover:shadow-xl transition-all flex-shrink-0">
-              <div className="h-44 bg-yellow-400 group-hover:bg-yellow-300 flex items-center justify-center p-6 transition-colors relative overflow-hidden">
-                <div className="absolute -right-4 -bottom-4 opacity-20"><Headphones className="w-32 h-32 text-black" /></div>
-                <h4 className="text-black text-4xl font-black font-display tracking-tighter z-10">JB Hi-Fi</h4>
-              </div>
-              <div className="p-6">
-                <h4 className="font-bold text-xl mb-2 font-display">JB Hi-Fi Voucher</h4>
-                <p className="text-gray-500 mb-4" style={{ fontSize: '16px' }}>Get the latest tech, cameras, and home entertainment.</p>
-                <span className="text-[#FF6600] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all" style={{ fontSize: '16px' }}>
-                  Redeem Now <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
-            </div>
-
-            {/* Officeworks */}
-            <div className="min-w-[300px] md:min-w-[340px] bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 snap-center group cursor-pointer hover:shadow-xl transition-all flex-shrink-0">
-              <div className="h-44 bg-blue-600 group-hover:bg-blue-500 flex items-center justify-center p-6 transition-colors relative overflow-hidden">
-                <div className="absolute -right-4 -bottom-4 opacity-20"><Printer className="w-32 h-32 text-white" /></div>
-                <h4 className="text-white text-3xl font-black font-display tracking-tighter z-10">Officeworks</h4>
-              </div>
-              <div className="p-6">
-                <h4 className="font-bold text-xl mb-2 font-display">Officeworks Credit</h4>
-                <p className="text-gray-500 mb-4" style={{ fontSize: '16px' }}>Upgrade your office supplies and admin setup.</p>
-                <span className="text-[#FF6600] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:gap-2 transition-all" style={{ fontSize: '16px' }}>
-                  Redeem Now <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
-            </div>
+          {/* Real Prezzee card image scroll */}
+          <div className="flex gap-4 overflow-x-auto pb-6 snap-x" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+            {[
+              { name: "Prezzee Smart Card", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif", desc: "One card. Swap into 400+ brands. The ultimate gift." },
+              { name: "Groceries", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e1ffa9be-102f-427c-b96d-4bcfe883f1e3/AU_Prezzee_Groceries_SKU_452_280.png", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
+              { name: "Foodie", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/18ceb08f-a6ea-4676-80e0-a4044a0647c0/AU_Prezzee_Foodie_452_280.png", desc: "DoorDash, Menulog and restaurant gift cards for nights off." },
+              { name: "Entertainment", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/91f8ddc2-9f41-47dd-b657-aef3dadb89f6/Prezzee_Entertainment_SKU_452_280.png", desc: "Netflix, Spotify, Xbox, Hoyts and more — pick your favourite." },
+              { name: "Fuel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8375906a-b45f-4acc-8c1e-019a2df55842/Prezzee_Fuel_Category_452_280.png", desc: "Ampol, Shell and fuel cards — save at the bowser." },
+              { name: "Travel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/0517fd0a-e366-41f1-9a10-567eb7b4e698/Prezzee_Travel_SKU_452_280.png", desc: "Flights, hotels and experiences — your next getaway covered." },
+              { name: "Luxury", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/9513c78c-2e6e-48a3-8db4-8f18fe3541ad/Prezzee_Luxury_Category_SKU_Updated_29725_452_280.png", desc: "Myer, David Jones and premium brands for a treat." },
+            ].map((card) => (
+              <Link
+                key={card.name}
+                href="/rewards"
+                className="min-w-[280px] md:min-w-[320px] bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 snap-center group cursor-pointer hover:shadow-xl transition-all flex-shrink-0"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={card.url}
+                  alt={card.name}
+                  className="w-full aspect-[452/280] object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+                <div className="p-5">
+                  <h4 className="font-bold text-lg mb-1.5 font-display">{card.name}</h4>
+                  <p className="text-gray-500 mb-3 text-sm leading-relaxed">{card.desc}</p>
+                  <span className="text-[#FF6600] font-bold flex items-center gap-1 group-hover:gap-2 transition-all text-sm">
+                    Start earning <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

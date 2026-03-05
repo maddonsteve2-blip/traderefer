@@ -624,6 +624,39 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Prezzee "What you'll earn" strip */}
+                                <div className="rounded-3xl bg-[#EAF4FF] border border-blue-100 p-5 flex items-center gap-5">
+                                    <div className="shrink-0 hidden sm:block">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
+                                            alt="Prezzee Smart Card"
+                                            className="w-28 rounded-xl shadow-md"
+                                        />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-xs font-bold text-zinc-400">Rewards by</span>
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                                src="https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg"
+                                                alt="Prezzee"
+                                                className="h-4 w-auto"
+                                            />
+                                        </div>
+                                        <p className="font-black text-zinc-900 text-base leading-tight mb-1">
+                                            Invite 5 → earn a <span className="text-[#FF6600]">$25 Smart Card</span>
+                                        </p>
+                                        <p className="text-zinc-500 font-medium text-xs leading-relaxed mb-3">
+                                            Invite referrers or businesses who join → $25 Prezzee Smart Card, automatically. Spend at Bunnings, Coles, Uber + 400 more.
+                                        </p>
+                                        <a href="/rewards" className="text-xs font-black text-[#FF6600] hover:underline">
+                                            See all 332 brands →
+                                        </a>
+                                    </div>
+                                </div>
+
                                 <div className="space-y-6">
                                     <div className="bg-zinc-50 p-6 rounded-[32px] border border-zinc-100 space-y-6">
                                         {/* Business name */}
