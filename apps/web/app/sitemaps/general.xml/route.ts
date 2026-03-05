@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
+import { JOB_TYPES, jobToSlug } from '@/lib/constants';
 
 export const revalidate = 86400;
 
@@ -49,6 +50,13 @@ export async function GET() {
         `;
         for (const r of cityRows) {
             urlset += `\n  <url><loc>${BASE_URL}/local/${r.state_slug}/${r.city_slug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>`;
+        }
+
+        // Australia-wide trade hub pages (/trades/[job])
+        for (const jobs of Object.values(JOB_TYPES)) {
+            for (const job of jobs) {
+                urlset += `\n  <url><loc>${BASE_URL}/trades/${jobToSlug(job)}</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`;
+            }
         }
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
