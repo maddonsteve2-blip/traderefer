@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { MapPin, ChevronRight, Phone, CheckCircle, Loader2, User, ShieldCheck } from "lucide-react";
 import Link from "next/link";
@@ -16,7 +16,8 @@ const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 const STEPS = ["Details", "Verify", "Address"];
 
-export default function ReferrerOnboardingPage() {
+// Inner component uses useSearchParams — must be inside Suspense
+function ReferrerOnboardingInner() {
     const { getToken } = useAuth();
     const { user } = useUser();
     const router = useRouter();
@@ -306,5 +307,17 @@ export default function ReferrerOnboardingPage() {
                 <p className="text-zinc-300 text-xs font-bold uppercase tracking-[0.2em]">© 2026 TradeRefer Pty Ltd</p>
             </footer>
         </main>
+    );
+}
+
+export default function ReferrerOnboardingPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-zinc-300" />
+            </div>
+        }>
+            <ReferrerOnboardingInner />
+        </Suspense>
     );
 }
