@@ -116,12 +116,42 @@ export default async function PublicProfilePage({
     const parsedReviewCount = parseInt(String(reviewCount), 10);
     const hasValidRating = !isNaN(parsedRating) && parsedRating > 0 && parsedReviewCount > 0;
 
+    // Map trade category to specific Schema.org type for richer SERP treatment
+    const tradeCategory = (business.trade_category || "").toLowerCase();
+    const schemaType = tradeCategory.includes("plumb") ? "Plumber"
+        : tradeCategory.includes("electr") ? "Electrician"
+        : tradeCategory.includes("paint") ? "HousePainter"
+        : tradeCategory.includes("lock") ? "Locksmith"
+        : tradeCategory.includes("pest") ? "PestControlBusiness"
+        : tradeCategory.includes("roof") ? "RoofingContractor"
+        : tradeCategory.includes("air con") || tradeCategory.includes("hvac") || tradeCategory.includes("heating") ? "HVACBusiness"
+        : tradeCategory.includes("mov") || tradeCategory.includes("remov") ? "MovingCompany"
+        : tradeCategory.includes("build") || tradeCategory.includes("construct") || tradeCategory.includes("carpent") ? "GeneralContractor"
+        : "HomeAndConstructionBusiness";
+
+    // Individual reviews for JSON-LD (only reviews with text, max 5 — must match what's visible on page)
+    const reviewItems = googleReviews
+        .filter((r: any) => r.review_text && r.profile_name && r.rating)
+        .slice(0, 5)
+        .map((r: any) => ({
+            "@type": "Review",
+            "author": { "@type": "Person", "name": r.profile_name },
+            "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": r.rating,
+                "bestRating": 5,
+                "worstRating": 1,
+            },
+            "reviewBody": r.review_text,
+        }));
+
     const jsonLd: Record<string, unknown> = {
         "@context": "https://schema.org",
-        "@type": "LocalBusiness",
+        "@type": schemaType,
         "name": business.business_name,
         "description": business.description || `Specialist ${business.trade_category} in ${business.suburb}.`,
         "url": `https://traderefer.au/b/${slug}`,
+        ...(business.logo_url ? { "image": proxyLogoUrl(business.logo_url) } : {}),
         ...(business.business_phone ? { "telephone": business.business_phone } : {}),
         "address": {
             "@type": "PostalAddress",
@@ -135,9 +165,10 @@ export default async function PublicProfilePage({
                 "ratingValue": parsedRating,
                 "reviewCount": parsedReviewCount,
                 "bestRating": 5,
-                "worstRating": 1
+                "worstRating": 1,
             }
-        } : {})
+        } : {}),
+        ...(reviewItems.length > 0 ? { "review": reviewItems } : {}),
     };
 
     return (
