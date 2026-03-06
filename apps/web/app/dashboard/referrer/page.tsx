@@ -6,7 +6,6 @@ import { DiscoverSection } from "@/components/referrer/DiscoverSection";
 import { MyTradesTeam } from "@/components/referrer/MyTradesTeam";
 import { WelcomeDialog } from "@/components/dashboard/WelcomeDialog";
 import { ReferralProgress } from "@/components/referrer/ReferralProgress";
-import { MonthlyGoalWidget } from "@/components/referrer/MonthlyGoalWidget";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -74,8 +73,8 @@ export default async function ReferrerDashboardPage() {
                             </Link>
                         </div>
 
-                        {/* Tier + Earnings cards (goal hidden — moved to sidebar) */}
-                        <EarningsDashboard hideGoal />
+                        {/* Tier + Earnings cards + Monthly Goal inline */}
+                        <EarningsDashboard />
 
                         {/* Tabbed Opportunities: Hot Right Now / New */}
                         <DiscoverSection />
@@ -93,7 +92,7 @@ export default async function ReferrerDashboardPage() {
                             <img
                                 src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
                                 alt="Prezzee Smart Card"
-                                className="absolute -right-4 -bottom-4 w-36 rounded-xl pointer-events-none"
+                                className="absolute -right-3 -top-3 w-28 rounded-xl pointer-events-none"
                             />
                             <div className="relative z-10">
                                 <div className="flex items-center gap-1.5 mb-2">
@@ -124,9 +123,6 @@ export default async function ReferrerDashboardPage() {
                                 </Link>
                             </div>
                         </div>
-
-                        {/* Monthly Goal Widget */}
-                        <MonthlyGoalWidget />
 
                         {/* Friend Rewards / Invite */}
                         <div id="invite">

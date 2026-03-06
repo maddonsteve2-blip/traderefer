@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Flame, Trophy, Sparkles, Star, Zap, Award, Crown, ChevronRight } from "lucide-react";
+import { Flame, Trophy, Sparkles, Star, Zap, Award, Crown, ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 
 interface Business {
     id: string;
@@ -62,20 +63,37 @@ export function DiscoverSection() {
     const [newBiz, setNewBiz] = useState<Business[]>([]);
     const [topEarners, setTopEarners] = useState<Earner[]>([]);
     const [activeTab, setActiveTab] = useState<"hot" | "new">("hot");
+    const [suburb, setSuburb] = useState<string | null>(null);
+    const [state, setRefState] = useState<string | null>(null);
 
+    const { getToken, isSignedIn } = useAuth();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     useEffect(() => {
+        if (!isSignedIn) return;
+        getToken().then(token =>
+            fetch(`${apiUrl}/referrer/me`, { headers: { Authorization: `Bearer ${token}` } })
+                .then(r => r.ok ? r.json() : null)
+                .then(d => { if (d?.suburb) { setSuburb(d.suburb); setRefState(d.state ?? null); } })
+                .catch(() => {})
+        );
+    }, [isSignedIn]);
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (suburb) params.set('suburb', suburb);
+        if (state) params.set('state', state);
+        const q = params.toString() ? `?${params.toString()}` : '';
         Promise.all([
-            fetch(`${apiUrl}/discover/hot`).then(r => r.ok ? r.json() : []),
-            fetch(`${apiUrl}/discover/new`).then(r => r.ok ? r.json() : []),
+            fetch(`${apiUrl}/discover/hot${q}`).then(r => r.ok ? r.json() : []),
+            fetch(`${apiUrl}/discover/new${q}`).then(r => r.ok ? r.json() : []),
             fetch(`${apiUrl}/discover/top-earners`).then(r => r.ok ? r.json() : []),
         ]).then(([h, n, t]) => {
             setHot(h);
             setNewBiz(n);
             setTopEarners(t);
         }).catch(() => {});
-    }, [apiUrl]);
+    }, [apiUrl, suburb, state]);
 
     if (hot.length === 0 && newBiz.length === 0 && topEarners.length === 0) return null;
 
@@ -88,27 +106,34 @@ export function DiscoverSection() {
             {(hasHot || hasNew) && (
                 <div>
                     <div className="flex items-center justify-between mb-2">
-                        {/* Tabs */}
-                        <div className="flex items-center gap-1 bg-zinc-100 rounded-xl p-1">
-                            {hasHot && (
-                                <button
-                                    onClick={() => setActiveTab("hot")}
-                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-base font-black transition-all ${
-                                        activeTab === "hot" ? "bg-white text-orange-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
-                                    }`}
-                                >
-                                    <Flame className="w-4 h-4" /> Hot Right Now
-                                </button>
-                            )}
-                            {hasNew && (
-                                <button
-                                    onClick={() => setActiveTab("new")}
-                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-base font-black transition-all ${
-                                        activeTab === "new" ? "bg-white text-purple-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
-                                    }`}
-                                >
-                                    <Sparkles className="w-4 h-4" /> New
-                                </button>
+                        {/* Tabs + suburb label */}
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1 bg-zinc-100 rounded-xl p-1">
+                                {hasHot && (
+                                    <button
+                                        onClick={() => setActiveTab("hot")}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-base font-black transition-all ${
+                                            activeTab === "hot" ? "bg-white text-orange-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+                                        }`}
+                                    >
+                                        <Flame className="w-4 h-4" /> Hot Right Now
+                                    </button>
+                                )}
+                                {hasNew && (
+                                    <button
+                                        onClick={() => setActiveTab("new")}
+                                        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-base font-black transition-all ${
+                                            activeTab === "new" ? "bg-white text-purple-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+                                        }`}
+                                    >
+                                        <Sparkles className="w-4 h-4" /> New
+                                    </button>
+                                )}
+                            </div>
+                            {suburb && (
+                                <span className="hidden sm:flex items-center gap-1 text-base font-semibold text-zinc-500">
+                                    <MapPin className="w-3.5 h-3.5 text-orange-400" /> Near {suburb}
+                                </span>
                             )}
                         </div>
                         <Link href="/businesses" className="text-lg font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-2">
