@@ -23,16 +23,25 @@ export async function GET(
         if (type === "hot") {
             rows = suburbPat
                 ? await sql`
+                    WITH user_centroid AS (
+                        SELECT AVG(lat) AS clat, AVG(lng) AS clng
+                        FROM businesses
+                        WHERE suburb ILIKE ${suburbPat} AND lat IS NOT NULL
+                    )
                     SELECT id::text, business_name, slug, trade_category, suburb, state,
                            referral_fee_cents, logo_url, trust_score, is_verified
-                    FROM businesses
+                    FROM businesses, user_centroid
                     WHERE status = 'active'
                       AND (listing_visibility = 'public' OR listing_visibility IS NULL)
                       AND referral_fee_cents > 0
                     ORDER BY
-                        CASE WHEN suburb ILIKE ${suburbPat} THEN 0
-                             WHEN state  ILIKE ${statePat ?? suburbPat} THEN 1
-                             ELSE 2 END,
+                        CASE
+                            WHEN suburb ILIKE ${suburbPat} THEN 0
+                            WHEN lat IS NOT NULL AND clat IS NOT NULL
+                                 AND SQRT(POWER(lat - clat, 2) + POWER(lng - clng, 2)) < 0.45 THEN 1
+                            WHEN state ILIKE ${statePat ?? '%'} THEN 2
+                            ELSE 3
+                        END,
                         referral_fee_cents DESC, trust_score DESC
                     LIMIT 8`
                 : await sql`
@@ -47,15 +56,24 @@ export async function GET(
         } else if (type === "new") {
             rows = suburbPat
                 ? await sql`
+                    WITH user_centroid AS (
+                        SELECT AVG(lat) AS clat, AVG(lng) AS clng
+                        FROM businesses
+                        WHERE suburb ILIKE ${suburbPat} AND lat IS NOT NULL
+                    )
                     SELECT id::text, business_name, slug, trade_category, suburb, state,
                            referral_fee_cents, logo_url, trust_score, is_verified, created_at::text
-                    FROM businesses
+                    FROM businesses, user_centroid
                     WHERE status = 'active'
                       AND (listing_visibility = 'public' OR listing_visibility IS NULL)
                     ORDER BY
-                        CASE WHEN suburb ILIKE ${suburbPat} THEN 0
-                             WHEN state  ILIKE ${statePat ?? suburbPat} THEN 1
-                             ELSE 2 END,
+                        CASE
+                            WHEN suburb ILIKE ${suburbPat} THEN 0
+                            WHEN lat IS NOT NULL AND clat IS NOT NULL
+                                 AND SQRT(POWER(lat - clat, 2) + POWER(lng - clng, 2)) < 0.45 THEN 1
+                            WHEN state ILIKE ${statePat ?? '%'} THEN 2
+                            ELSE 3
+                        END,
                         created_at DESC
                     LIMIT 8`
                 : await sql`
