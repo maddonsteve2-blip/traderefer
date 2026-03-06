@@ -132,7 +132,7 @@ export default async function ReferrerDashboardPage() {
                                     <Link href="/dashboard/referrer/withdraw">View My Rewards</Link>
                                 </Button>
                                 <Button asChild variant="ghost" className="w-full text-zinc-400 hover:text-white hover:bg-white/10 rounded-full h-9 text-sm">
-                                    <Link href="/rewards">See all 332 brands →</Link>
+                                    <Link href="/rewards">See all 335 brands →</Link>
                                 </Button>
                             </div>
                         </div>

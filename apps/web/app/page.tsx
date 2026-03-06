@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
   Search, MapPin, ArrowRight,
   Megaphone, CheckCircle2, XCircle, ShieldCheck,
@@ -18,34 +18,7 @@ export default function HomePage() {
   const [jobsPerMonth, setJobsPerMonth] = useState(3);
   const monthlyEarnings = tradies * jobsPerMonth * 15;
 
-  const carouselRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const CARD_W = 336; // 320px card + 16px gap
-    const PAUSE = 3200;
-    const ANIM = 700; // matches smooth scroll duration
-    let timer: ReturnType<typeof setTimeout>;
-    const advance = () => {
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
-      if (atEnd) {
-        el.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        el.scrollBy({ left: CARD_W, behavior: "smooth" });
-      }
-      timer = setTimeout(advance, PAUSE + ANIM);
-    };
-    timer = setTimeout(advance, PAUSE);
-    const pause = () => clearTimeout(timer);
-    const resume = () => { timer = setTimeout(advance, PAUSE); };
-    el.addEventListener("mouseenter", pause);
-    el.addEventListener("mouseleave", resume);
-    return () => {
-      clearTimeout(timer);
-      el.removeEventListener("mouseenter", pause);
-      el.removeEventListener("mouseleave", resume);
-    };
-  }, []);
+  const [carouselPaused, setCarouselPaused] = useState(false);
 
   const [bizSpend, setBizSpend] = useState(500);
   const [bizConvRate, setBizConvRate] = useState(30);
@@ -484,42 +457,82 @@ export default function HomePage() {
               href="/rewards"
               className="shrink-0 inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-7 py-3 rounded-full transition-colors shadow-lg"
             >
-              See all 332 brands <ArrowRight className="w-4 h-4" />
+              See all 335 brands <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          {/* Real Prezzee card image scroll */}
-          <div ref={carouselRef} className="flex gap-4 overflow-x-auto pb-6 snap-x" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
-            {[
-              { name: "Prezzee Smart Card", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif", desc: "One card. Swap into 400+ brands. The ultimate gift." },
-              { name: "Groceries", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e1ffa9be-102f-427c-b96d-4bcfe883f1e3/AU_Prezzee_Groceries_SKU_452_280.png", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
-              { name: "Foodie", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/18ceb08f-a6ea-4676-80e0-a4044a0647c0/AU_Prezzee_Foodie_452_280.png", desc: "DoorDash, Menulog and restaurant gift cards for nights off." },
-              { name: "Entertainment", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/91f8ddc2-9f41-47dd-b657-aef3dadb89f6/Prezzee_Entertainment_SKU_452_280.png", desc: "Netflix, Spotify, Xbox, Hoyts and more — pick your favourite." },
-              { name: "Fuel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8375906a-b45f-4acc-8c1e-019a2df55842/Prezzee_Fuel_Category_452_280.png", desc: "Ampol, Shell and fuel cards — save at the bowser." },
-              { name: "Travel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/0517fd0a-e366-41f1-9a10-567eb7b4e698/Prezzee_Travel_SKU_452_280.png", desc: "Flights, hotels and experiences — your next getaway covered." },
-              { name: "Luxury", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/9513c78c-2e6e-48a3-8db4-8f18fe3541ad/Prezzee_Luxury_Category_SKU_Updated_29725_452_280.png", desc: "Myer, David Jones and premium brands for a treat." },
-            ].map((card) => (
-              <Link
-                key={card.name}
-                href="/rewards"
-                className="min-w-[280px] md:min-w-[320px] bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 snap-center group cursor-pointer hover:shadow-xl transition-all flex-shrink-0"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={card.url}
-                  alt={card.name}
-                  className="w-full aspect-[452/280] object-cover group-hover:scale-105 transition-transform duration-300"
-                  loading="lazy"
-                />
-                <div className="p-5">
-                  <h4 className="font-bold text-lg mb-1.5 font-display">{card.name}</h4>
-                  <p className="text-gray-500 mb-3 text-sm leading-relaxed">{card.desc}</p>
-                  <span className="text-[#FF6600] font-bold flex items-center gap-1 group-hover:gap-2 transition-all text-sm">
-                    Start earning <ArrowRight className="w-4 h-4" />
-                  </span>
-                </div>
-              </Link>
-            ))}
+          {/* Real Prezzee card image scroll — CSS marquee, no JS scroll jank */}
+          <style>{`
+            @keyframes prezzee-marquee {
+              0%   { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+          `}</style>
+          <div
+            className="overflow-hidden relative"
+            onMouseEnter={() => setCarouselPaused(true)}
+            onMouseLeave={() => setCarouselPaused(false)}
+          >
+            {/* Left/right fade masks so edge cards look clean */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-gradient-to-r from-white to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-white to-transparent" />
+            <div
+              className="flex gap-5 pb-4"
+              style={{
+                width: "max-content",
+                animation: "prezzee-marquee 32s linear infinite",
+                animationPlayState: carouselPaused ? "paused" : "running",
+              }}
+            >
+              {[
+                { name: "Prezzee Smart Card", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif", desc: "One card. Swap into 400+ brands. The ultimate gift." },
+                { name: "Groceries", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e1ffa9be-102f-427c-b96d-4bcfe883f1e3/AU_Prezzee_Groceries_SKU_452_280.png", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
+                { name: "Foodie", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/18ceb08f-a6ea-4676-80e0-a4044a0647c0/AU_Prezzee_Foodie_452_280.png", desc: "DoorDash, Menulog and restaurant gift cards for nights off." },
+                { name: "Entertainment", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/91f8ddc2-9f41-47dd-b657-aef3dadb89f6/Prezzee_Entertainment_SKU_452_280.png", desc: "Netflix, Spotify, Xbox, Hoyts and more — pick your favourite." },
+                { name: "Fuel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8375906a-b45f-4acc-8c1e-019a2df55842/Prezzee_Fuel_Category_452_280.png", desc: "Ampol, Shell and fuel cards — save at the bowser." },
+                { name: "Travel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/0517fd0a-e366-41f1-9a10-567eb7b4e698/Prezzee_Travel_SKU_452_280.png", desc: "Flights, hotels and experiences — your next getaway covered." },
+                { name: "Luxury", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/9513c78c-2e6e-48a3-8db4-8f18fe3541ad/Prezzee_Luxury_Category_SKU_Updated_29725_452_280.png", desc: "Myer, David Jones and premium brands for a treat." },
+                { name: "Bunnings", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/c587b0fd-e805-4640-aa0a-770928a2f2c0/Bunnings_Warehouse_Updated_452_280.jpg", desc: "Tools, hardware and garden — everything for the home." },
+                { name: "Chemist Warehouse", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e9a06e06-a56f-4a1b-8ab0-26a49e49d7a4/ChemistWarehouse_GC_452_280.png", desc: "Health, beauty and vitamins — stocked up for less." },
+                { name: "Coles", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/b3ff6a24-1cc8-4e46-8bf3-cc45e2d9c9c6/coles_gc_452_280.jpg", desc: "Weekly groceries covered at Coles supermarkets." },
+                { name: "Aesop", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e2e08a45-a21b-4559-9265-df2225e65813/Aesop_452_280.png", desc: "Premium skincare and fragrance — a luxurious treat." },
+                { name: "ASOS", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/b2c07a42-5e26-4d76-a3ee-aabaedc18d6c/ASOS_AUD_452_280.png", desc: "Fashion, beauty and accessories — thousands of styles." },
+                // ── duplicate set for seamless loop ──
+                { name: "Prezzee Smart Card", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif", desc: "One card. Swap into 400+ brands. The ultimate gift." },
+                { name: "Groceries", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e1ffa9be-102f-427c-b96d-4bcfe883f1e3/AU_Prezzee_Groceries_SKU_452_280.png", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
+                { name: "Foodie", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/18ceb08f-a6ea-4676-80e0-a4044a0647c0/AU_Prezzee_Foodie_452_280.png", desc: "DoorDash, Menulog and restaurant gift cards for nights off." },
+                { name: "Entertainment", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/91f8ddc2-9f41-47dd-b657-aef3dadb89f6/Prezzee_Entertainment_SKU_452_280.png", desc: "Netflix, Spotify, Xbox, Hoyts and more — pick your favourite." },
+                { name: "Fuel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8375906a-b45f-4acc-8c1e-019a2df55842/Prezzee_Fuel_Category_452_280.png", desc: "Ampol, Shell and fuel cards — save at the bowser." },
+                { name: "Travel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/0517fd0a-e366-41f1-9a10-567eb7b4e698/Prezzee_Travel_SKU_452_280.png", desc: "Flights, hotels and experiences — your next getaway covered." },
+                { name: "Luxury", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/9513c78c-2e6e-48a3-8db4-8f18fe3541ad/Prezzee_Luxury_Category_SKU_Updated_29725_452_280.png", desc: "Myer, David Jones and premium brands for a treat." },
+                { name: "Bunnings", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/c587b0fd-e805-4640-aa0a-770928a2f2c0/Bunnings_Warehouse_Updated_452_280.jpg", desc: "Tools, hardware and garden — everything for the home." },
+                { name: "Chemist Warehouse", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e9a06e06-a56f-4a1b-8ab0-26a49e49d7a4/ChemistWarehouse_GC_452_280.png", desc: "Health, beauty and vitamins — stocked up for less." },
+                { name: "Coles", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/b3ff6a24-1cc8-4e46-8bf3-cc45e2d9c9c6/coles_gc_452_280.jpg", desc: "Weekly groceries covered at Coles supermarkets." },
+                { name: "Aesop", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e2e08a45-a21b-4559-9265-df2225e65813/Aesop_452_280.png", desc: "Premium skincare and fragrance — a luxurious treat." },
+                { name: "ASOS", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/b2c07a42-5e26-4d76-a3ee-aabaedc18d6c/ASOS_AUD_452_280.png", desc: "Fashion, beauty and accessories — thousands of styles." },
+              ].map((card, i) => (
+                <Link
+                  key={i}
+                  href="/rewards"
+                  className="w-[280px] md:w-[320px] flex-shrink-0 bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 group cursor-pointer hover:shadow-xl transition-shadow"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={card.url}
+                    alt={card.name}
+                    className="w-full aspect-[452/280] object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="p-5">
+                    <h4 className="font-bold text-lg mb-1.5 font-display">{card.name}</h4>
+                    <p className="text-gray-500 mb-3 text-sm leading-relaxed">{card.desc}</p>
+                    <span className="text-[#FF6600] font-bold flex items-center gap-1 group-hover:gap-2 transition-all text-sm">
+                      Start earning <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>

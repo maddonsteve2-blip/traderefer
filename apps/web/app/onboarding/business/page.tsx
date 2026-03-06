@@ -652,7 +652,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                             Invite referrers or businesses who join → $25 Prezzee Smart Card, automatically. Spend at Bunnings, Coles, Uber + 400 more.
                                         </p>
                                         <a href="/rewards" className="text-xs font-black text-[#FF6600] hover:underline">
-                                            See all 332 brands →
+                                            See all 335 brands →
                                         </a>
                                     </div>
                                 </div>

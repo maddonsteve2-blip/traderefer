@@ -191,7 +191,7 @@ function ReferrerOnboardingInner() {
                                             Spend at Woolworths, Bunnings, Uber, Netflix + 400 more. Issued automatically.
                                         </p>
                                         <a href="/rewards" className="text-xs font-black text-[#FF6600] hover:underline flex items-center gap-1">
-                                            See all 332 brands →
+                                            See all 335 brands →
                                         </a>
                                     </div>
                                 </div>
