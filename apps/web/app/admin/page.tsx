@@ -8,7 +8,8 @@ import {
     CheckCircle2,
     XCircle,
     Clock,
-    LayoutDashboard
+    LayoutDashboard,
+    ListTodo
 } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
@@ -117,16 +118,20 @@ export default async function AdminDashboardPage() {
                                 </div>
                             </div>
 
-                            <div className="mt-10 pt-8 border-t border-zinc-800">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center">
-                                        <Clock className="w-6 h-6 text-zinc-400" />
+                            <div className="mt-10 pt-8 border-t border-zinc-800 space-y-3">
+                                <Link
+                                    href="/admin/fill-queue"
+                                    className="flex items-center justify-between bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl p-4 transition-colors group"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <ListTodo className="w-5 h-5 text-orange-400" />
+                                        <div>
+                                            <div className="text-sm font-bold">Fill Queue</div>
+                                            <div className="text-xs text-zinc-400">Empty suburb+trade pages</div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div className="text-base font-bold text-zinc-400 uppercase tracking-widest mb-1">Last Update</div>
-                                        <div className="text-sm font-bold text-zinc-200">Today at 2:15 AM</div>
-                                    </div>
-                                </div>
+                                    <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-white" />
+                                </Link>
                                 <Button variant="ghost" className="w-full bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-bold h-12">
                                     Refresh Data
                                 </Button>

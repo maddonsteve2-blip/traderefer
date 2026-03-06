@@ -54,6 +54,47 @@ class DisputeResolve(BaseModel):
     outcome: str # 'confirm' or 'reject'
     admin_notes: Optional[str] = None
 
+@router.get("/fill-queue")
+async def get_fill_queue(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+    status: Optional[str] = "pending"
+):
+    """List fill_queue entries. status=pending|filled|all"""
+    if status == "pending":
+        where = "WHERE filled_at IS NULL"
+    elif status == "filled":
+        where = "WHERE filled_at IS NOT NULL"
+    else:
+        where = ""
+    result = await db.execute(text(f"""
+        SELECT id, state, city, suburb, trade, first_seen_at, filled_at
+        FROM fill_queue
+        {where}
+        ORDER BY first_seen_at DESC
+        LIMIT 200
+    """))
+    rows = [dict(r) for r in result.mappings().all()]
+    for r in rows:
+        if r.get("first_seen_at"): r["first_seen_at"] = str(r["first_seen_at"])
+        if r.get("filled_at"): r["filled_at"] = str(r["filled_at"])
+    return rows
+
+@router.get("/fill-queue/stats")
+async def get_fill_queue_stats(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    result = await db.execute(text("""
+        SELECT
+            COUNT(*) FILTER (WHERE filled_at IS NULL) as pending,
+            COUNT(*) FILTER (WHERE filled_at IS NOT NULL) as filled,
+            COUNT(*) as total
+        FROM fill_queue
+    """))
+    row = result.mappings().first()
+    return dict(row) if row else {"pending": 0, "filled": 0, "total": 0}
+
 @router.get("/fraud-queue")
 async def get_fraud_queue(db: AsyncSession = Depends(get_db), user: AuthenticatedUser = Depends(require_admin)):
     """List all leads in disputed or suspended state."""

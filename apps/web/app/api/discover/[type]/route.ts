@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sql } from "@/lib/db";
 
 const ALLOWED = new Set(["hot", "new", "top-earners"]);
 
@@ -11,15 +12,73 @@ export async function GET(
         return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    const search = req.nextUrl.searchParams.toString();
-    const upstream = `${apiUrl}/discover/${type}${search ? `?${search}` : ""}`;
+    const suburb = req.nextUrl.searchParams.get("suburb") || null;
+    const state = req.nextUrl.searchParams.get("state") || null;
+    const suburbPat = suburb ? `%${suburb}%` : null;
+    const statePat = state ? `%${state}%` : null;
 
     try {
-        const res = await fetch(upstream, { next: { revalidate: 60 } });
-        const data = await res.json();
-        return NextResponse.json(data);
-    } catch {
+        let rows: any[];
+
+        if (type === "hot") {
+            rows = await sql`
+                SELECT id::text, business_name, slug, trade_category, suburb, state,
+                       referral_fee_cents, logo_url, trust_score, is_verified,
+                       CASE
+                           WHEN ${suburbPat} IS NOT NULL AND suburb ILIKE ${suburbPat} THEN 0
+                           WHEN ${statePat} IS NOT NULL AND state ILIKE ${statePat} THEN 1
+                           ELSE 2
+                       END AS locality_rank
+                FROM businesses
+                WHERE status = 'active'
+                  AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+                  AND referral_fee_cents > 0
+                ORDER BY locality_rank ASC, referral_fee_cents DESC, trust_score DESC
+                LIMIT 8
+            `;
+        } else if (type === "new") {
+            rows = await sql`
+                SELECT id::text, business_name, slug, trade_category, suburb, state,
+                       referral_fee_cents, logo_url, trust_score, is_verified, created_at::text
+                FROM businesses
+                WHERE status = 'active'
+                  AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+                ORDER BY
+                    CASE
+                        WHEN ${suburbPat} IS NOT NULL AND suburb ILIKE ${suburbPat} THEN 0
+                        WHEN ${statePat} IS NOT NULL AND state ILIKE ${statePat} THEN 1
+                        ELSE 2
+                    END ASC,
+                    created_at DESC
+                LIMIT 8
+            `;
+        } else {
+            rows = await sql`
+                SELECT r.tier,
+                       COALESCE(SUM(e.gross_cents), 0)::int as month_earnings_cents,
+                       COUNT(DISTINCT e.lead_id)::int as leads_this_month
+                FROM referrer_earnings e
+                JOIN referrers r ON r.id = e.referrer_id
+                WHERE e.created_at >= date_trunc('month', now())
+                GROUP BY r.id, r.tier
+                ORDER BY month_earnings_cents DESC
+                LIMIT 5
+            `;
+            return NextResponse.json(
+                rows.map((r: any, i: number) => ({ rank: i + 1, ...r })),
+                { headers: { "Cache-Control": "public, s-maxage=300" } }
+            );
+        }
+
+        const cleaned = rows.map((r: any) => {
+            const { locality_rank, ...rest } = r;
+            return rest;
+        });
+        return NextResponse.json(cleaned, {
+            headers: { "Cache-Control": "public, s-maxage=60" },
+        });
+    } catch (e) {
+        console.error(`[discover/${type}]`, e);
         return NextResponse.json([], { status: 200 });
     }
 }
