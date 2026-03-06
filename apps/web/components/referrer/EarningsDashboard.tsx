@@ -36,12 +36,13 @@ interface Stats {
 
 const TIER_CONFIG: Record<string, {
     label: string; color: string; bg: string; border: string;
+    activeBg: string; activeBorder: string;
     icon: any; gradient: string; split: number; rangeLabel: string;
 }> = {
-    bronze:   { label: "Bronze",   color: "text-amber-700",  bg: "bg-amber-50",   border: "border-amber-200",  icon: Star,  gradient: "from-amber-50 to-orange-50",   split: 80,   rangeLabel: "0–4 refs/mo" },
-    silver:   { label: "Silver",   color: "text-zinc-500",   bg: "bg-zinc-100",   border: "border-zinc-300",   icon: Zap,   gradient: "from-zinc-100 to-zinc-50",    split: 82.5, rangeLabel: "5–9 refs/mo" },
-    gold:     { label: "Gold",     color: "text-yellow-600", bg: "bg-yellow-50",  border: "border-yellow-300", icon: Award, gradient: "from-yellow-50 to-amber-50",  split: 85,   rangeLabel: "10–19 refs/mo" },
-    platinum: { label: "Platinum", color: "text-blue-600",   bg: "bg-blue-50",   border: "border-blue-300",   icon: Crown, gradient: "from-blue-50 to-indigo-50",  split: 90,   rangeLabel: "20+ refs/mo" },
+    bronze:   { label: "Bronze",   color: "text-amber-700",  bg: "bg-amber-50",  border: "border-amber-200",  activeBg: "bg-amber-200",  activeBorder: "border-amber-500",  icon: Star,  gradient: "from-amber-50 to-orange-50",  split: 80,   rangeLabel: "0–4 refs/mo" },
+    silver:   { label: "Silver",   color: "text-zinc-600",   bg: "bg-zinc-100",  border: "border-zinc-300",   activeBg: "bg-zinc-200",   activeBorder: "border-zinc-500",   icon: Zap,   gradient: "from-zinc-100 to-zinc-50",   split: 82.5, rangeLabel: "5–9 refs/mo" },
+    gold:     { label: "Gold",     color: "text-yellow-700", bg: "bg-yellow-50", border: "border-yellow-300",  activeBg: "bg-yellow-200", activeBorder: "border-yellow-500", icon: Award, gradient: "from-yellow-50 to-amber-50", split: 85,   rangeLabel: "10–19 refs/mo" },
+    platinum: { label: "Platinum", color: "text-blue-700",   bg: "bg-blue-50",   border: "border-blue-300",   activeBg: "bg-blue-200",   activeBorder: "border-blue-500",   icon: Crown, gradient: "from-blue-50 to-indigo-50",  split: 90,   rangeLabel: "20+ refs/mo" },
 };
 
 const TIER_ORDER = ["bronze", "silver", "gold", "platinum"];
@@ -122,7 +123,9 @@ export function EarningsDashboard() {
     const currentMin = TIER_MINS[stats.tier];
     const nextMin = stats.next_tier ? TIER_MINS[stats.next_tier] : currentMin + 20;
     const tierRange = nextMin - currentMin;
-    const tierProgress = tierRange > 0 ? Math.min(100, Math.round(((stats.monthly_referrals - currentMin) / tierRange) * 100)) : 100;
+    const tierProgress = (tierRange > 0 && currentMin !== undefined && !isNaN(tierRange))
+        ? Math.min(100, Math.max(0, Math.round(((stats.monthly_referrals - currentMin) / tierRange) * 100)))
+        : 0;
 
     return (
         <div className="space-y-4 mb-0">
@@ -156,12 +159,12 @@ export function EarningsDashboard() {
                         const isPast = tIdx < currentIdx;
                         const Icon = cfg.icon;
                         return (
-                            <div key={t} className={`p-3 rounded-xl border text-center transition-all ${
+                            <div key={t} className={`p-3 rounded-xl border-2 text-center transition-all ${
                                 isActive
-                                    ? `${cfg.bg} ${cfg.border} shadow-sm`
+                                    ? `${cfg.activeBg} ${cfg.activeBorder} shadow-md`
                                     : isPast
-                                        ? `${cfg.bg} ${cfg.border}`
-                                        : "bg-zinc-50 border-zinc-200"
+                                        ? `${cfg.bg} ${cfg.border} border`
+                                        : "bg-white border-zinc-200"
                             }`}>
                                 <Icon className={`w-4 h-4 mx-auto mb-1 ${
                                     isActive ? cfg.color : isPast ? cfg.color : "text-zinc-400"
