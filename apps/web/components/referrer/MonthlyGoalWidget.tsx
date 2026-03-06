@@ -68,39 +68,28 @@ export function MonthlyGoalWidget() {
 
     return (
         <div className="bg-white rounded-2xl border border-zinc-200 p-4">
-            <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-black text-zinc-900">Monthly Goal</span>
-                <button
-                    onClick={() => setEditingGoal(!editingGoal)}
-                    className="text-sm font-bold text-orange-500 hover:text-orange-600 underline underline-offset-2"
-                >
-                    {editingGoal ? "Cancel" : stats.monthly_goal_cents ? "Edit" : "Set Goal"}
-                </button>
-            </div>
-
             {editingGoal ? (
                 <div className="flex items-center gap-2">
                     <div className="relative flex-1">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 font-bold text-sm">$</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 font-bold">$</span>
                         <input
                             type="number"
-                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-7 pr-3 py-2 text-zinc-900 font-bold text-sm focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-7 pr-3 py-2.5 text-zinc-900 font-bold text-lg focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
                             placeholder="500"
                             value={goalInput}
                             onChange={e => setGoalInput(e.target.value)}
+                            autoFocus
                         />
                     </div>
-                    <button
-                        onClick={saveGoal}
-                        className="bg-orange-500 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors"
-                    >
+                    <button onClick={saveGoal} className="bg-orange-500 text-white px-4 py-2.5 rounded-xl font-bold text-lg hover:bg-orange-600 transition-colors">
                         Save
                     </button>
+                    <button onClick={() => setEditingGoal(false)} className="text-zinc-400 hover:text-zinc-600 text-lg font-bold px-2">×</button>
                 </div>
             ) : stats.monthly_goal_cents ? (
                 <div className="flex items-center gap-4">
-                    {/* Circular progress ring */}
-                    <div className="relative shrink-0 w-16 h-16">
+                    {/* Ring — click to edit */}
+                    <button onClick={() => setEditingGoal(true)} className="relative shrink-0 w-[72px] h-[72px] group">
                         <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
                             <circle cx="18" cy="18" r={radius} fill="none" stroke="#e4e4e7" strokeWidth="3" />
                             <circle
@@ -111,25 +100,29 @@ export function MonthlyGoalWidget() {
                                 style={{ transition: "stroke-dasharray 0.5s ease" }}
                             />
                         </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-[13px] font-black text-zinc-900">{pct}%</span>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <span className="text-base font-black text-zinc-900 leading-none">{pct}%</span>
+                            <span className="text-[11px] text-zinc-400 leading-none mt-0.5 group-hover:text-orange-500">edit</span>
                         </div>
-                    </div>
+                    </button>
                     <div className="flex-1 min-w-0">
-                        <div className="text-base font-black text-zinc-900">{cents(stats.earnings.this_month)}</div>
-                        <div className="text-xs text-zinc-400 font-semibold">of {cents(stats.monthly_goal_cents)}</div>
+                        <div className="text-2xl font-black text-zinc-900 leading-none">{cents(stats.earnings.this_month)}</div>
+                        <div className="text-base font-semibold text-zinc-400 mt-1">of {cents(stats.monthly_goal_cents)} goal</div>
                         {pct >= 100 && (
-                            <p className="text-xs font-bold text-green-600 flex items-center gap-1 mt-1">
-                                <Flame className="w-3 h-3" /> Goal reached!
-                            </p>
+                            <div className="text-base font-bold text-green-600 flex items-center gap-1 mt-1">
+                                <Flame className="w-4 h-4" /> Goal reached!
+                            </div>
                         )}
                     </div>
                 </div>
             ) : (
-                <div>
-                    <p className="text-sm text-zinc-500 font-medium">Set a target to track your progress.</p>
-                    <p className="text-xs text-zinc-400 mt-0.5">Top referrers aim for $500–$2,000/month.</p>
-                </div>
+                <button
+                    onClick={() => setEditingGoal(true)}
+                    className="w-full flex items-center justify-between group"
+                >
+                    <span className="text-base font-semibold text-zinc-500 group-hover:text-zinc-700">Set a monthly earnings goal</span>
+                    <span className="text-lg font-black text-orange-500 group-hover:text-orange-600 underline underline-offset-2">Set Goal →</span>
+                </button>
             )}
         </div>
     );

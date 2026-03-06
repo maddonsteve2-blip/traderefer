@@ -63,12 +63,12 @@ export function HotCampaigns() {
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-black text-zinc-900 flex items-center gap-2">
+            <div className="flex items-center justify-between mb-2">
+                <h2 className="text-lg font-black text-zinc-900 flex items-center gap-2">
                     <Flame className="w-4 h-4 text-orange-500" /> Hot Campaigns
                 </h2>
-                <Link href="/businesses" className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5">
-                    All <ChevronRight className="w-3.5 h-3.5" />
+                <Link href="/businesses" className="text-lg font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-2">
+                    All <ChevronRight className="w-4 h-4" />
                 </Link>
             </div>
             <div className="space-y-2">
@@ -89,11 +89,11 @@ export function HotCampaigns() {
                                 )}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="text-sm font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors leading-tight">{c.business_name}</div>
-                                <div className="text-[11px] text-zinc-400 truncate">{c.trade_category} · {daysLeft(c.ends_at)}</div>
+                                <div className="text-base font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors leading-tight">{c.business_name}</div>
+                                <div className="text-base text-zinc-400 truncate">{c.trade_category} · {daysLeft(c.ends_at)}</div>
                             </div>
                             <div className="text-right shrink-0">
-                                <div className="text-[15px] font-black text-orange-600 leading-tight">{badgeText(c)}</div>
+                                <div className="text-lg font-black text-orange-600 leading-tight">{badgeText(c)}</div>
                             </div>
                         </Link>
                     );

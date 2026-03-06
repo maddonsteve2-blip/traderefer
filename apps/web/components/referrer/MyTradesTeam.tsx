@@ -113,24 +113,28 @@ export function MyTradesTeam() {
                 </div>
             </div>
 
-            {/* High-density dock: 60px circles */}
-            <div className="flex flex-wrap gap-3">
+            {/* Tag-cloud: 32px avatar + 16px name side-by-side */}
+            <div className="flex flex-wrap gap-2">
                 {/* Filled slots */}
                 {filledCategories.map(cat => {
                     const biz = teamMap.get(cat)!;
                     return (
-                        <Link key={cat} href={`/dashboard/referrer/refer/${biz.slug}`} className="flex flex-col items-center gap-1.5 group w-[60px]">
-                            <div className="w-[60px] h-[60px] rounded-full border-2 border-zinc-100 group-hover:border-orange-300 transition-all overflow-hidden bg-zinc-100 flex items-center justify-center shadow-sm">
+                        <Link
+                            key={cat}
+                            href={`/dashboard/referrer/refer/${biz.slug}`}
+                            className="inline-flex items-center gap-2 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-full pl-1 pr-3 py-1 group transition-all"
+                        >
+                            <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-200 flex items-center justify-center shrink-0">
                                 {biz.logo_url ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
                                 ) : (
-                                    <span className="text-lg font-black text-zinc-500 group-hover:text-orange-500 transition-colors">{biz.name.charAt(0)}</span>
+                                    <span className="text-base font-black text-zinc-500 group-hover:text-orange-500">{biz.name.charAt(0)}</span>
                                 )}
                             </div>
-                            <div className="text-[10px] font-semibold text-zinc-500 text-center leading-tight truncate w-full group-hover:text-orange-600 transition-colors">{cat}</div>
+                            <span className="text-base font-semibold text-zinc-700 group-hover:text-orange-600 transition-colors">{cat}</span>
                             {biz.earned > 0 && (
-                                <div className="text-[10px] font-black text-green-600">${biz.earned.toFixed(0)}</div>
+                                <span className="text-base font-black text-green-600">${biz.earned.toFixed(0)}</span>
                             )}
                         </Link>
                     );
@@ -138,11 +142,15 @@ export function MyTradesTeam() {
 
                 {/* Empty slots */}
                 {emptySlots.map(trade => (
-                    <Link key={trade} href={`/businesses?category=${encodeURIComponent(trade)}`} className="flex flex-col items-center gap-1.5 group w-[60px]">
-                        <div className="w-[60px] h-[60px] rounded-full border-2 border-dashed border-zinc-200 group-hover:border-orange-300 group-hover:bg-orange-50 transition-all flex items-center justify-center bg-zinc-50">
-                            <Plus className="w-5 h-5 text-zinc-300 group-hover:text-orange-400 transition-colors" />
+                    <Link
+                        key={trade}
+                        href={`/businesses?category=${encodeURIComponent(trade)}`}
+                        className="inline-flex items-center gap-2 border-2 border-dashed border-zinc-200 hover:border-orange-300 hover:bg-orange-50/50 rounded-full pl-1 pr-3 py-1 group transition-all"
+                    >
+                        <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+                            <Plus className="w-4 h-4 text-zinc-300 group-hover:text-orange-400" />
                         </div>
-                        <div className="text-[10px] font-semibold text-zinc-400 text-center leading-tight truncate w-full">{trade}</div>
+                        <span className="text-base font-semibold text-zinc-400 group-hover:text-orange-500">+ {trade}</span>
                     </Link>
                 ))}
             </div>

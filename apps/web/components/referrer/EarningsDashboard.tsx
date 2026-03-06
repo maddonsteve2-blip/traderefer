@@ -176,7 +176,7 @@ export function EarningsDashboard({ hideGoal }: { hideGoal?: boolean } = {}) {
                                         />
                                     )}
                                 </div>
-                                <div className={`text-[13px] font-bold mt-1.5 text-center ${isActive ? cfg.color : "text-zinc-300"}`}>
+                                <div className={`text-base font-bold mt-1.5 text-center ${isActive ? cfg.color : "text-zinc-300"}`}>
                                     {cfg.label}
                                 </div>
                             </div>
@@ -185,31 +185,37 @@ export function EarningsDashboard({ hideGoal }: { hideGoal?: boolean } = {}) {
                 </div>
             </div>
 
-            {/* Earnings Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="bg-white rounded-2xl border border-zinc-200 p-3.5">
-                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">This Week</div>
-                    <div className={`text-2xl font-black ${stats.earnings.this_week > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_week)}</div>
+            {/* Earnings Cards — horizontal label:value layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                    <span className="text-base font-bold text-zinc-500">This Week</span>
+                    <span className={`text-2xl font-black ${stats.earnings.this_week > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_week)}</span>
                 </div>
-                <div className="bg-white rounded-2xl border border-zinc-200 p-3.5">
-                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">This Month</div>
-                    <div className={`text-2xl font-black ${stats.earnings.this_month > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_month)}</div>
-                    {stats.earnings.month_trend !== 0 && (
-                        <div className={`text-sm font-bold flex items-center gap-1 mt-1 ${stats.earnings.month_trend > 0 ? "text-green-600" : "text-red-500"}`}>
-                            {stats.earnings.month_trend > 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                            {Math.abs(stats.earnings.month_trend)}% vs last month
-                        </div>
-                    )}
+                <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <span className="text-base font-bold text-zinc-500">This Month</span>
+                        {stats.earnings.month_trend !== 0 && (
+                            <span className={`text-base font-bold flex items-center gap-0.5 ${stats.earnings.month_trend > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                {stats.earnings.month_trend > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                                {Math.abs(stats.earnings.month_trend)}%
+                            </span>
+                        )}
+                    </div>
+                    <span className={`text-2xl font-black ${stats.earnings.this_month > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_month)}</span>
                 </div>
-                <div className="bg-white rounded-2xl border border-zinc-200 p-3.5">
-                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Pending</div>
-                    <div className="text-2xl font-black text-orange-500">{cents(stats.earnings.pending)}</div>
-                    {stats.earnings.pending > 0 && <div className="text-xs text-zinc-400 mt-0.5">Awaiting confirmation</div>}
+                <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                    <div>
+                        <span className="text-base font-bold text-zinc-500">Pending</span>
+                        {stats.earnings.pending > 0 && <span className="text-base text-zinc-400 ml-2">· awaiting</span>}
+                    </div>
+                    <span className="text-2xl font-black text-orange-500">{cents(stats.earnings.pending)}</span>
                 </div>
-                <div className="bg-white rounded-2xl border border-zinc-200 p-3.5">
-                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Lifetime</div>
-                    <div className="text-2xl font-black text-green-600">{cents(stats.earnings.lifetime)}</div>
-                    {stats.earnings.lifetime === 0 && <div className="text-xs text-zinc-400 mt-0.5">First lead soon!</div>}
+                <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                    <div>
+                        <span className="text-base font-bold text-zinc-500">Lifetime</span>
+                        {stats.earnings.lifetime === 0 && <span className="text-base text-zinc-400 ml-2">· first lead soon!</span>}
+                    </div>
+                    <span className="text-2xl font-black text-green-600">{cents(stats.earnings.lifetime)}</span>
                 </div>
             </div>
 

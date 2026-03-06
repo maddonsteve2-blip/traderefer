@@ -51,16 +51,16 @@ export function ReferralProgress() {
                         <div>
                             <div className="flex items-center gap-2 mb-1">
                                 <Gift className="w-4 h-4 text-orange-400" />
-                                <span className="text-orange-400 text-xs font-black uppercase tracking-widest">Friend Rewards</span>
+                                <span className="text-orange-400 text-base font-black uppercase tracking-widest">Friend Rewards</span>
                             </div>
-                            <h3 className="text-lg font-black leading-snug text-white">
+                            <h3 className="text-xl font-black leading-snug text-white">
                                 Invite 5 friends,<br />
                                 <span className="text-orange-400">earn ${reward_amount_dollars}</span>
                             </h3>
                         </div>
                         <div className="text-right">
-                            <p className="text-3xl font-black text-white">{progress_to_next}<span className="text-zinc-400 text-lg font-semibold">/5</span></p>
-                            <p className="text-zinc-300 text-xs font-semibold">active</p>
+                            <p className="text-3xl font-black text-white">{progress_to_next}<span className="text-zinc-300 text-xl font-bold">/5</span></p>
+                            <p className="text-base text-zinc-300 font-bold">active</p>
                         </div>
                     </div>
 
@@ -73,12 +73,12 @@ export function ReferralProgress() {
                             />
                         </div>
                         <div className="flex justify-between mt-2">
-                            <p className="text-sm font-semibold text-zinc-300">
+                            <p className="text-base font-bold text-zinc-300">
                                 {active_invitees > 0
                                     ? `${active_invitees} friend${active_invitees !== 1 ? "s" : ""} active`
                                     : "Invite your first friend!"}
                             </p>
-                            <p className="text-sm font-semibold text-zinc-300">
+                            <p className="text-base font-bold text-zinc-300">
                                 {remaining > 0 ? `${remaining} more to go` : "🎉 Milestone reached!"}
                             </p>
                         </div>
@@ -99,14 +99,14 @@ export function ReferralProgress() {
                     <div className="flex gap-2">
                         <Button
                             onClick={() => setShowInvite(true)}
-                            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-10 font-black text-sm"
+                            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-11 font-black text-lg"
                         >
                             <Users className="w-4 h-4 mr-1.5" />
                             Invite Friends
                         </Button>
                         <Button
                             variant="outline"
-                            className="border-zinc-600 text-white hover:bg-zinc-700 hover:text-white rounded-xl h-10 px-4 font-bold text-sm bg-white/5"
+                            className="border-zinc-600 text-white hover:bg-zinc-700 hover:text-white rounded-xl h-11 px-4 font-bold text-lg bg-white/5"
                             onClick={() => setShowInvite(true)}
                         >
                             View <ChevronRight className="w-4 h-4 ml-1" />
