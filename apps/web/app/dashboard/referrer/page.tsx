@@ -89,6 +89,12 @@ export default async function ReferrerDashboardPage() {
 
                         {/* Prezzee Rewards — dark authority card */}
                         <div className="bg-[#0F172A] rounded-2xl p-5 text-white relative overflow-hidden shadow-xl">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
+                                alt="Prezzee Smart Card"
+                                className="absolute -right-4 -bottom-4 w-36 rounded-xl pointer-events-none"
+                            />
                             <div className="relative z-10">
                                 <div className="flex items-center gap-1.5 mb-2">
                                     <span className="text-zinc-400 text-base font-semibold uppercase tracking-wider">Rewards by</span>
@@ -145,17 +151,6 @@ export default async function ReferrerDashboardPage() {
                             </Link>
                         </div>
 
-                        {/* Pro Tip */}
-                        <div className="bg-white rounded-2xl border border-zinc-200 p-4">
-                            <p className="text-sm font-black text-zinc-900 mb-2">Pro Tip</p>
-                            <p className="text-sm text-zinc-500 font-medium leading-relaxed">
-                                Sharing your link in local Facebook groups increases lead volume by <span className="font-bold text-zinc-700">3×</span>. Try suburb-specific groups.
-                            </p>
-                            <Link href="/contact"
-                                className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-orange-600 hover:text-orange-700 underline underline-offset-2 transition-colors">
-                                Get support →
-                            </Link>
-                        </div>
                     </aside>
                 </div>
             </div>

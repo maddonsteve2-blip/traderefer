@@ -42,6 +42,8 @@ export function ReferralProgress() {
     return (
         <>
             <div className="bg-[#0F172A] rounded-2xl p-5 text-white relative overflow-hidden">
+                <div className="absolute -right-6 -top-6 w-36 h-36 bg-orange-500/30 rounded-full" />
+                <div className="absolute -right-2 -bottom-8 w-24 h-24 bg-orange-400/20 rounded-full" />
                 <div className="relative z-10">
                     <div className="flex items-start justify-between mb-4">
                         <div>
