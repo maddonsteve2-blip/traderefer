@@ -126,14 +126,14 @@ export function EarningsDashboard() {
         : 0;
 
     return (
-        <div className="space-y-4 mb-0">
+        <div className="space-y-3 mb-0">
             {/* Tier Card — white card matching rest of dashboard */}
-            <div className="bg-white border border-zinc-200 rounded-2xl p-4 md:p-5">
+            <div className="bg-white border border-zinc-200 rounded-2xl p-3">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 bg-orange-50 border border-orange-200 rounded-2xl flex items-center justify-center">
-                            <TierIcon className="w-6 h-6 text-[#FF7A00]" />
+                        <div className="w-9 h-9 bg-orange-50 border border-orange-200 rounded-xl flex items-center justify-center">
+                            <TierIcon className="w-5 h-5 text-[#FF7A00]" />
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-zinc-900 leading-none">{tierCfg.label} Tier</h2>
@@ -149,7 +149,7 @@ export function EarningsDashboard() {
                 </div>
 
                 {/* 4-tier breakdown — condensed, authority style */}
-                <div className="grid grid-cols-4 gap-2 mb-2">
+                <div className="grid grid-cols-4 gap-2 mb-1">
                     {TIER_ORDER.map((t) => {
                         const cfg = TIER_CONFIG[t];
                         const tIdx = TIER_ORDER.indexOf(t);
@@ -157,20 +157,20 @@ export function EarningsDashboard() {
                         const isPast = tIdx < currentIdx;
                         const Icon = cfg.icon;
                         return (
-                            <div key={t} className={`py-2 px-1.5 rounded-xl text-center transition-all ${
+                            <div key={t} className={`py-1 px-1.5 rounded-xl text-center transition-all ${
                                 isActive
                                     ? "bg-white border-[3px] border-[#FF7A00] shadow-sm"
                                     : isPast
                                     ? "bg-zinc-50 border border-zinc-300"
                                     : "bg-zinc-50 border border-zinc-200 opacity-50"
                             }`}>
-                                <Icon className={`w-4 h-4 mx-auto mb-0.5 ${
+                                <Icon className={`w-3.5 h-3.5 mx-auto mb-0 ${
                                     isActive ? "text-[#FF7A00]" : isPast ? "text-zinc-500" : "text-zinc-300"
                                 }`} />
-                                <div className={`text-xl font-bold leading-tight ${
+                                <div className={`text-base font-bold leading-tight ${
                                     isActive ? "text-[#FF7A00]" : isPast ? "text-zinc-600" : "text-zinc-400"
                                 }`}>{cfg.label}</div>
-                                <div className={`text-lg font-black leading-tight ${
+                                <div className={`text-base font-black leading-tight ${
                                     isActive ? "text-zinc-900" : "text-zinc-500"
                                 }`}>{cfg.split}%</div>
                                 <div className="text-xs font-medium text-zinc-400 mt-0.5">{cfg.rangeLabel}</div>
@@ -178,12 +178,12 @@ export function EarningsDashboard() {
                         );
                     })}
                 </div>
-                <p className="text-base font-medium text-zinc-500 mb-3">Status based on your last 30 days of activity.</p>
+                <p className="text-sm font-medium text-zinc-500 mb-2">Status based on your last 30 days of activity.</p>
 
                 {/* Progress toward next tier */}
                 {stats.next_tier ? (
                     <div>
-                        <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center justify-between mb-1">
                             <span className="text-base font-bold text-zinc-700">
                                 {stats.monthly_referrals} referral{stats.monthly_referrals !== 1 ? "s" : ""} this month
                             </span>
@@ -199,7 +199,7 @@ export function EarningsDashboard() {
                                 />
                             )}
                         </div>
-                        <div className="text-base font-medium text-zinc-400 mt-1.5">Upgrades automatically</div>
+                        <div className="text-sm font-medium text-zinc-400 mt-1">Upgrades automatically</div>
                     </div>
                 ) : (
                     <div className="flex items-center justify-between">
@@ -210,14 +210,14 @@ export function EarningsDashboard() {
             </div>
 
             {/* Earnings Cards + Monthly Goal — side by side */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-2">
                 {/* Left 3/5: 2×2 earnings cards */}
                 <div className="lg:col-span-3 grid grid-cols-2 gap-2">
-                    <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                    <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center justify-between">
                         <span className="text-base font-bold text-zinc-500">This Week</span>
                         <span className={`text-2xl font-black ${stats.earnings.this_week > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_week)}</span>
                     </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                    <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
                             <span className="text-base font-bold text-zinc-500">This Month</span>
                             {stats.earnings.month_trend !== 0 && (
@@ -229,14 +229,14 @@ export function EarningsDashboard() {
                         </div>
                         <span className={`text-2xl font-black ${stats.earnings.this_month > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_month)}</span>
                     </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                    <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center justify-between">
                         <div>
                             <span className="text-base font-bold text-zinc-500">Pending</span>
                             {stats.earnings.pending > 0 && <span className="text-base text-zinc-400 ml-1.5">· awaiting</span>}
                         </div>
                         <span className="text-2xl font-black text-orange-500">{cents(stats.earnings.pending)}</span>
                     </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                    <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center justify-between">
                         <div>
                             <span className="text-base font-bold text-zinc-500">Lifetime</span>
                             {stats.earnings.lifetime === 0 && <span className="text-base text-zinc-400 ml-1.5">· soon!</span>}
@@ -246,8 +246,8 @@ export function EarningsDashboard() {
                 </div>
 
                 {/* Right 2/5: Monthly Goal */}
-                <div className="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 p-4 flex flex-col">
-                    <div className="flex items-center justify-between mb-3">
+                <div className="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex flex-col">
+                    <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-2">
                             <Target className="w-4 h-4 text-orange-500" />
                             <span className="text-base font-bold text-zinc-700">Monthly Goal</span>
