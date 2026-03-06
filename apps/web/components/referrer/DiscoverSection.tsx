@@ -74,7 +74,10 @@ export function DiscoverSection() {
         getToken().then(token =>
             fetch(`${apiUrl}/referrer/me`, { headers: { Authorization: `Bearer ${token}` } })
                 .then(r => r.ok ? r.json() : null)
-                .then(d => { if (d?.suburb) { setSuburb(d.suburb); setRefState(d.state ?? null); } })
+                .then(d => {
+                    if (d?.suburb) setSuburb(d.suburb);
+                    if (d?.state) setRefState(d.state);
+                })
                 .catch(() => {})
         );
     }, [isSignedIn]);

@@ -299,8 +299,8 @@ async def hot_right_now(
                    referral_fee_cents, logo_url, trust_score, is_verified,
                    avg_response_minutes,
                    CASE
-                       WHEN :suburb IS NOT NULL AND suburb ILIKE :suburb THEN 0
-                       WHEN :state IS NOT NULL AND state ILIKE :state THEN 1
+                       WHEN :suburb IS NOT NULL AND suburb ILIKE '%' || :suburb || '%' THEN 0
+                       WHEN :state IS NOT NULL AND state ILIKE '%' || :state || '%' THEN 1
                        ELSE 2
                    END AS locality_rank
             FROM businesses
@@ -334,8 +334,8 @@ async def new_on_traderefer(
                    referral_fee_cents, logo_url, trust_score, is_verified,
                    created_at,
                    CASE
-                       WHEN :suburb IS NOT NULL AND suburb ILIKE :suburb THEN 0
-                       WHEN :state IS NOT NULL AND state ILIKE :state THEN 1
+                       WHEN :suburb IS NOT NULL AND suburb ILIKE '%' || :suburb || '%' THEN 0
+                       WHEN :state IS NOT NULL AND state ILIKE '%' || :state || '%' THEN 1
                        ELSE 2
                    END AS locality_rank
             FROM businesses
