@@ -136,20 +136,19 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
         <Button
             onClick={handleStartReferring}
             disabled={linking}
-            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-16 text-lg font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group overflow-hidden"
+            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[56px] h-auto py-4 px-6 text-base font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group"
         >
             {linking ? (
-                <div className="flex items-center gap-4">
-                    <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin shrink-0"></div>
                     Setting up...
                 </div>
             ) : (
-                <div className="flex items-center justify-center gap-3 relative z-10">
-                    <p>Start Referring {businessName}</p>
-                    <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+                <div className="flex items-center justify-center gap-2 w-full">
+                    <span className="text-center leading-tight">Start Referring {businessName}</span>
+                    <Plus className="w-5 h-5 shrink-0 group-hover:rotate-90 transition-transform duration-300" />
                 </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/0 via-white/5 to-orange-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
         </Button>
     );
 }

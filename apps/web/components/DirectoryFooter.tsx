@@ -141,11 +141,6 @@ export async function DirectoryFooter() {
                                     Claim Your Profile
                                 </Link>
                             </li>
-                            <li>
-                                <Link href="/remove" className="text-zinc-500 hover:text-zinc-300 block text-center uppercase tracking-widest" style={{ fontSize: '16px' }}>
-                                    Request Removal
-                                </Link>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -172,11 +167,12 @@ export async function DirectoryFooter() {
                             ABN: 88 764 351 213 &nbsp;|&nbsp; Level 1, 123 Collins Street, Melbourne VIC 3000 Australia &nbsp;|&nbsp; Made in Australia 🇦🇺
                         </p>
                     </div>
-                    <div className="flex gap-8 text-zinc-600 font-bold uppercase tracking-widest" style={{ fontSize: '16px' }}>
+                    <div className="flex flex-wrap gap-6 text-zinc-600 font-bold uppercase tracking-widest" style={{ fontSize: '14px' }}>
                         <Link href="/privacy" className="hover:text-zinc-400">Privacy</Link>
                         <Link href="/terms" className="hover:text-zinc-400">Terms</Link>
                         <Link href="/cookies" className="hover:text-zinc-400">Cookies</Link>
                         <Link href="/compare" className="hover:text-zinc-400">Compare</Link>
+                        <Link href="/remove" className="text-zinc-700 hover:text-zinc-500 transition-colors">Request Removal</Link>
                     </div>
                 </div>
             </div>

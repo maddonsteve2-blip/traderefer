@@ -1,33 +1,25 @@
-import { Button } from "@/components/ui/button";
 import {
-    Shield,
     Star,
     MapPin,
     DollarSign,
     Clock,
     Users,
     TrendingUp,
-    ChevronLeft,
     ChevronRight,
-    Copy,
     MessageSquare,
-    Share2,
     Zap,
-    CheckCircle2,
-    ExternalLink,
-    Phone,
     Tag,
     Gift,
     Flame,
     Award,
-    Wrench,
     Briefcase,
-    Image as ImageIcon,
     ArrowRight,
-    TrendingDown,
     ShieldCheck,
-    Banknote,
-    Rocket
+    Rocket,
+    CheckCircle,
+    Building2,
+    Phone,
+    Info
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -35,7 +27,7 @@ import { ShareKitGate } from "@/components/referrer/ShareKitGate";
 import { StartReferringButton } from "@/components/referrer/StartReferringButton";
 import { PrivateFeedback } from "@/components/referrer/PrivateFeedback";
 import { BusinessLogo } from "@/components/BusinessLogo";
-import { proxyLogoUrl } from "@/lib/logo";
+import { DashboardBackBar } from "@/components/referrer/DashboardBackBar";
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -100,85 +92,116 @@ export default async function ReferrerBusinessPage({
         : business.business_highlights?.length > 0 ? business.business_highlights
             : ["Licensed & Insured", "Verified Business", "Fast Response Time", "TradeRefer Trusted"];
 
+    const formatEarnings = (amount: number) =>
+        Number.isInteger(amount) ? `$${amount}` : `$${amount.toFixed(2)}`;
+
     return (
         <main className="min-h-screen bg-zinc-50">
+            <DashboardBackBar />
 
             {/* ── BREADCRUMBS ── */}
-            <div className="bg-white border-b border-zinc-100 pt-32 pb-4">
+            <div className="bg-white border-b border-zinc-100 pt-36 pb-4">
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 text-sm font-bold text-zinc-400 uppercase tracking-widest">
-                        <Link href="/" className="hover:text-zinc-900 transition-colors">Home</Link>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                        <Link href="/businesses" className="hover:text-zinc-900 transition-colors">Directory</Link>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                        <Link href={`/b/${slug}`} className="hover:text-zinc-900 transition-colors">{business.business_name}</Link>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                        <span className="text-orange-600">Refer & Earn</span>
+                    <nav className="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                        <Link href="/" className="hover:text-zinc-600 transition-colors">Home</Link>
+                        <ChevronRight className="w-3 h-3" />
+                        <Link href="/businesses" className="hover:text-zinc-600 transition-colors">Directory</Link>
+                        <ChevronRight className="w-3 h-3" />
+                        <Link href={`/b/${slug}`} className="hover:text-zinc-600 transition-colors truncate max-w-[180px]">{business.business_name}</Link>
+                        <ChevronRight className="w-3 h-3" />
+                        <span className="text-orange-600 font-black">Refer & Earn</span>
                     </nav>
                 </div>
             </div>
 
             {/* ── HERO SECTION ── */}
-            <div className="bg-white pb-20 relative overflow-hidden text-zinc-900 border-b border-zinc-200">
-                <div className="absolute inset-0 opacity-[0.03]">
-                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                </div>
+            <div className="bg-white pb-16 border-b border-zinc-200">
+                <div className="container mx-auto px-4 pt-12">
+                    <div className="flex flex-col lg:flex-row gap-10 items-start">
 
-                {business.cover_photo_url && (
-                    <div className="absolute inset-0 opacity-5">
-                        <img src={business.cover_photo_url} alt="" className="w-full h-full object-cover grayscale" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-white" />
-                    </div>
-                )}
-
-                <div className="container mx-auto px-4 relative z-10 pt-16">
-                    <div className="flex flex-col md:flex-row gap-12 items-start md:items-end">
-                        {/* Logo Container */}
-                        <div className="w-36 h-36 md:w-48 md:h-48 bg-zinc-50 rounded-[40px] flex items-center justify-center overflow-hidden border-8 border-white shadow-2xl shadow-zinc-200 shrink-0 group">
-                            <BusinessLogo logoUrl={business.logo_url} name={business.business_name} />
-                        </div>
-
+                        {/* Left: Business Identity */}
                         <div className="flex-1 space-y-6">
-                            <div className="flex flex-wrap items-center gap-4">
-                                <span className="px-4 py-1.5 bg-zinc-100 text-zinc-600 rounded-full text-xs font-black uppercase tracking-widest border border-zinc-200">
-                                    Referral Program
+                            {/* Consistent badge pills */}
+                            <div className="flex flex-wrap items-center gap-3">
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-xs font-black uppercase tracking-widest border border-orange-100">
+                                    <Briefcase className="w-3.5 h-3.5" /> Referral Program
                                 </span>
                                 {business.is_verified && (
-                                    <span className="flex items-center gap-2 px-4 py-1.5 bg-orange-600 text-white rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-orange-600/20">
-                                        <ShieldCheck className="w-4 h-4" /> Verified Partner
+                                    <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white rounded-full text-xs font-black uppercase tracking-widest">
+                                        <ShieldCheck className="w-3.5 h-3.5" /> Verified Partner
                                     </span>
                                 )}
                             </div>
 
-                            <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight text-zinc-900">
-                                Earn ${referrerEarns.toFixed(2)} per verified lead
-                            </h1>
-
-                            <div className="flex flex-wrap items-center gap-8 text-base text-zinc-500 font-bold">
-                                <div className="flex items-center gap-3">
-                                    <Briefcase className="w-5 h-5 text-orange-600" />
-                                    Referring {business.business_name}
+                            <div className="flex items-center gap-6">
+                                {/* Logo — properly sized, no excessive padding */}
+                                <div className="w-20 h-20 md:w-24 md:h-24 bg-zinc-50 rounded-3xl flex items-center justify-center overflow-hidden border-4 border-white shadow-xl shadow-zinc-200/60 shrink-0">
+                                    <BusinessLogo logoUrl={business.logo_url} name={business.business_name} />
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <Star className="w-5 h-5 text-orange-400 fill-orange-400" />
+                                <div>
+                                    <h1 className="text-3xl md:text-4xl font-black text-zinc-900 leading-tight tracking-tight">
+                                        {business.business_name}
+                                    </h1>
+                                    <p className="text-base text-zinc-500 font-bold mt-1 flex items-center gap-2">
+                                        <MapPin className="w-4 h-4 text-orange-500" />
+                                        {business.suburb}{business.state ? `, ${business.state}` : ''}
+                                        {business.trade_category && (
+                                            <span className="text-zinc-300">·</span>
+                                        )}
+                                        {business.trade_category}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Earnings headline */}
+                            <div className="pt-2">
+                                <p className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-1">You earn</p>
+                                <div className="flex items-baseline gap-3">
+                                    <span className="text-6xl md:text-7xl font-black text-zinc-900 tracking-tighter">{formatEarnings(referrerEarns)}</span>
+                                    <span className="text-xl font-black text-zinc-500">per verified lead</span>
+                                </div>
+                            </div>
+
+                            {/* Stats row — hide 0% connection rate */}
+                            <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-500 font-bold">
+                                <div className="flex items-center gap-2">
+                                    <Star className="w-4 h-4 text-orange-400 fill-orange-400" />
                                     Trust Score: {trustScore}/5.0
                                 </div>
-                                <div className="flex items-center gap-3">
-                                    <TrendingUp className="w-5 h-5 text-green-500" />
-                                    {connectionRate}% Connection Rate
-                                </div>
+                                {totalConfirmed > 0 && (
+                                    <div className="flex items-center gap-2">
+                                        <CheckCircle className="w-4 h-4 text-orange-500" />
+                                        {totalConfirmed} jobs closed
+                                    </div>
+                                )}
+                                {connectionRate > 0 ? (
+                                    <div className="flex items-center gap-2">
+                                        <TrendingUp className="w-4 h-4 text-orange-500" />
+                                        {connectionRate}% connection rate
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <Zap className="w-4 h-4 text-orange-500" />
+                                        New program — be one of the first referrers
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        {/* Earnings Summary Card */}
-                        <div className="bg-zinc-50 rounded-[32px] border border-zinc-200 p-8 shadow-2xl shrink-0 hidden lg:block border-b-4 border-b-orange-500 min-w-[280px]">
-                            <p className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-3">Your Earnings Share</p>
-                            <div className="flex items-baseline gap-2 mb-1">
-                                <span className="text-5xl font-black text-zinc-900 tracking-tighter">${referrerEarns.toFixed(2)}</span>
-                                <span className="text-lg font-black text-orange-600">80% of fee</span>
+                        {/* Right: Earnings Card */}
+                        <div className="bg-zinc-900 text-white rounded-3xl p-8 shrink-0 w-full lg:w-[280px] border-b-4 border-orange-500">
+                            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-4">Your Earnings Per Lead</p>
+                            <div className="flex items-baseline gap-2 mb-2">
+                                <span className="text-5xl font-black tracking-tighter">{formatEarnings(referrerEarns)}</span>
+                                <span className="text-base font-black text-orange-400">80% of fee</span>
                             </div>
-                            <p className="text-sm text-zinc-500 font-bold">Standard payout per verified connection.</p>
-                            <p className="text-sm text-zinc-500 font-bold">Standard payout per verified connection.</p>
+                            <p className="text-sm text-zinc-400 font-medium leading-relaxed">
+                                Paid directly to you when the business confirms the lead.
+                            </p>
+                            <div className="mt-6 pt-6 border-t border-zinc-700 flex items-center justify-between text-xs font-black text-zinc-500 uppercase tracking-widest">
+                                <span>Platform fee</span>
+                                <span className="text-zinc-300">{formatEarnings(platformFee)}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -189,31 +212,86 @@ export default async function ReferrerBusinessPage({
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
                     {/* ── MAIN COLUMN ── */}
-                    <div className="lg:col-span-2 space-y-12">
+                    <div className="lg:col-span-2 space-y-10">
 
-                        {/* Referral Overview Card */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div className="bg-white rounded-[32px] border border-zinc-200 p-10 shadow-sm group hover:border-orange-200 transition-all">
-                                <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-8 group-hover:scale-110 transition-transform">
-                                    <DollarSign className="w-7 h-7" />
+                        {/* ABOUT THIS BUSINESS — new selling section */}
+                        <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10 shadow-sm">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-10 h-10 bg-orange-50 rounded-2xl flex items-center justify-center">
+                                    <Building2 className="w-5 h-5 text-orange-600" />
                                 </div>
-                                <h3 className="text-lg font-black text-zinc-900 mb-3 font-display">Fast Payouts</h3>
-                                <p className="text-base text-zinc-500 leading-relaxed font-medium">Receive your commission as soon as the business validates the connection.</p>
+                                <h2 className="text-xl font-black text-zinc-900">About {business.business_name}</h2>
                             </div>
-                            <div className="bg-white rounded-[32px] border border-zinc-200 p-10 shadow-sm group hover:border-orange-200 transition-all">
-                                <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-8 group-hover:scale-110 transition-transform">
-                                    <Users className="w-7 h-7" />
+
+                            {business.description && (
+                                <p className="text-base text-zinc-600 leading-relaxed mb-8 font-medium">
+                                    {business.description}
+                                </p>
+                            )}
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                                <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl">
+                                    <MapPin className="w-5 h-5 text-orange-500 shrink-0" />
+                                    <div>
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Service Area</p>
+                                        <p className="text-sm font-bold text-zinc-800">{business.suburb}{business.state ? `, ${business.state}` : ''}</p>
+                                    </div>
                                 </div>
-                                <h3 className="text-lg font-black text-zinc-900 mb-3 font-display">Track Leads</h3>
-                                <p className="text-base text-zinc-500 leading-relaxed font-medium">Real-time tracking of every lead. See which projects are confirmed.</p>
-                            </div>
-                            <div className="bg-white rounded-[32px] border border-zinc-200 p-10 shadow-sm group hover:border-orange-200 transition-all">
-                                <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 mb-8 group-hover:scale-110 transition-transform">
-                                    <Award className="w-7 h-7" />
+                                {business.trade_category && (
+                                    <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl">
+                                        <Briefcase className="w-5 h-5 text-orange-500 shrink-0" />
+                                        <div>
+                                            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Trade</p>
+                                            <p className="text-sm font-bold text-zinc-800">{business.trade_category}</p>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl">
+                                    <ShieldCheck className="w-5 h-5 text-orange-500 shrink-0" />
+                                    <div>
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Verification</p>
+                                        <p className="text-sm font-bold text-zinc-800">{business.is_verified ? "Fully Verified" : "Registered"}</p>
+                                    </div>
                                 </div>
-                                <h3 className="text-lg font-black text-zinc-900 mb-3 font-display">Trusted Pro</h3>
-                                <p className="text-base text-zinc-500 leading-relaxed font-medium">{business.business_name} is a verified {business.trade_category} with high trust levels.</p>
+                                <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl">
+                                    <Star className="w-5 h-5 text-orange-500 shrink-0" />
+                                    <div>
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Trust Score</p>
+                                        <p className="text-sm font-bold text-zinc-800">{trustScore} / 5.0</p>
+                                    </div>
+                                </div>
                             </div>
+
+                            {/* Key highlights/features */}
+                            {allFeatures.length > 0 && (
+                                <div>
+                                    <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-4">Key Highlights</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {allFeatures.map((feature: string, i: number) => (
+                                            <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-xs font-bold border border-orange-100">
+                                                <CheckCircle className="w-3.5 h-3.5" /> {feature}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </section>
+
+                        {/* Referral Benefits — all orange icons */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                                { icon: DollarSign, title: "Fast Payouts", body: `Earn ${formatEarnings(referrerEarns)} as soon as ${business.business_name} validates the lead.` },
+                                { icon: Users, title: "Track Leads", body: "Real-time dashboard tracking for every lead you send. See which jobs are confirmed." },
+                                { icon: Award, title: "Trusted Pro", body: `${business.business_name} is a${business.is_verified ? ' fully verified' : ''} ${business.trade_category || 'trade'} professional.` },
+                            ].map(({ icon: Icon, title, body }) => (
+                                <div key={title} className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm group hover:border-orange-200 transition-all">
+                                    <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-6 group-hover:scale-110 transition-transform">
+                                        <Icon className="w-6 h-6" />
+                                    </div>
+                                    <h3 className="text-base font-black text-zinc-900 mb-2">{title}</h3>
+                                    <p className="text-sm text-zinc-500 leading-relaxed font-medium">{body}</p>
+                                </div>
+                            ))}
                         </div>
 
                         {/* Active Campaigns */}
@@ -251,34 +329,30 @@ export default async function ReferrerBusinessPage({
                         )}
 
                         {/* Earnings Estimator */}
-                        <section className="bg-white rounded-[40px] border border-zinc-200 p-12 md:p-16 shadow-sm relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-orange-50 rounded-bl-full opacity-50 transition-all group-hover:scale-110" />
+                        <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-12 shadow-sm">
+                            <div className="text-center mb-10">
+                                <h2 className="text-3xl font-black text-zinc-900 mb-3">Potential Monthly Earnings</h2>
+                                <p className="text-base text-zinc-500 font-medium">See how much you could earn referring {business.business_name}.</p>
+                            </div>
 
-                            <div className="relative z-10">
-                                <div className="text-center mb-16">
-                                    <h2 className="text-4xl font-black text-zinc-900 mb-4 font-display">Potential Monthly Earnings</h2>
-                                    <p className="text-xl text-zinc-500 font-medium">See how much you could earn by referring local jobs.</p>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                                    {[
-                                        { referrals: 3, label: "Casual", icon: Rocket, color: "orange" },
-                                        { referrals: 10, label: "Active", icon: TrendingUp, color: "blue" },
-                                        { referrals: 25, label: "Power", icon: Zap, color: "green" },
-                                    ].map((tier) => (
-                                        <div key={tier.label} className="relative p-10 bg-zinc-50 rounded-[32px] border border-zinc-100 text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-                                            <div className={`w-16 h-16 mx-auto rounded-3xl bg-white shadow-sm flex items-center justify-center mb-8 text-${tier.color}-500 group-hover:rotate-12 transition-transform`}>
-                                                <tier.icon className="w-8 h-8" />
-                                            </div>
-                                            <p className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-2">{tier.label}</p>
-                                            <p className="text-6xl font-black text-zinc-900 leading-none mb-2 tracking-tighter">${(tier.referrals * referrerEarns).toFixed(0)}</p>
-                                            <p className="text-base text-zinc-400 font-bold uppercase tracking-tight mt-2">{tier.referrals} referrals/mo</p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {[
+                                    { referrals: 3, label: "Casual", icon: Rocket },
+                                    { referrals: 10, label: "Active", icon: TrendingUp },
+                                    { referrals: 25, label: "Power", icon: Zap },
+                                ].map((tier) => (
+                                    <div key={tier.label} className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                                        <div className="w-14 h-14 mx-auto rounded-2xl bg-orange-50 flex items-center justify-center mb-6 text-orange-500">
+                                            <tier.icon className="w-7 h-7" />
                                         </div>
-                                    ))}
-                                </div>
-                                <div className="mt-16 text-center p-8 bg-zinc-50 rounded-3xl border border-dashed border-zinc-200">
-                                    <p className="text-sm text-zinc-500 font-bold italic">Calculation based on regular per-lead commission of ${referrerEarns.toFixed(2)} (excludes bonus campaigns).</p>
-                                </div>
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">{tier.label}</p>
+                                        <p className="text-5xl font-black text-zinc-900 leading-none mb-1 tracking-tighter">${(tier.referrals * referrerEarns).toFixed(0)}</p>
+                                        <p className="text-sm text-zinc-400 font-bold mt-2">{tier.referrals} referrals / mo</p>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="mt-8 p-5 bg-zinc-50 rounded-2xl">
+                                <p className="text-sm text-zinc-400 font-medium text-center">Estimates based on {formatEarnings(referrerEarns)} per verified lead. Excludes bonus campaigns.</p>
                             </div>
                         </section>
 
@@ -309,83 +383,85 @@ export default async function ReferrerBusinessPage({
                             </section>
                         )}
 
-                        <div className="pt-12 text-center pb-8 border-t border-zinc-100 flex flex-col items-center">
-                            <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest mb-6">Want to provide direct review?</p>
-                            <PrivateFeedback businessSlug={business.slug} businessName={business.business_name} />
+                        <div className="p-8 bg-white rounded-3xl border border-zinc-200 shadow-sm">
+                            <div className="flex items-start gap-4">
+                                <div className="w-10 h-10 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0">
+                                    <MessageSquare className="w-5 h-5 text-orange-600" />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-base font-black text-zinc-900 mb-1">Send Private Feedback</h3>
+                                    <p className="text-sm text-zinc-500 font-medium mb-4">Have a direct experience with {business.business_name}? Send confidential feedback to the TradeRefer team — it helps us maintain quality.</p>
+                                    <PrivateFeedback businessSlug={business.slug} businessName={business.business_name} />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     {/* ── SIDEBAR ── */}
-                    <div className="space-y-6 lg:sticky lg:top-24 self-start">
+                    <div className="space-y-6 lg:sticky lg:top-28 self-start">
 
-                        {/* Start Referring Card */}
-                        <div className="bg-white rounded-[32px] border border-zinc-200 p-8 shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-zinc-900/5 rounded-bl-[80px]" />
-                            <h3 className="text-xl font-black text-zinc-900 mb-2 relative z-10">Get Your Link</h3>
-                            <p className="text-sm text-zinc-400 mb-8 relative z-10 italic">Start earning commission today.</p>
+                        {/* Start Referring Card — no overflow-hidden so text never clips */}
+                        <div className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-xl">
+                            <h3 className="text-xl font-black text-zinc-900 mb-1">Get Your Referral Link</h3>
+                            <p className="text-sm text-zinc-400 mb-6 font-medium">Earn {formatEarnings(referrerEarns)} for every verified lead you send.</p>
                             <StartReferringButton slug={slug} businessName={business.business_name} />
-                            <div className="mt-8 pt-8 border-t border-zinc-100 flex items-center justify-between">
-                                <div className="text-center flex-1">
-                                    <p className="text-xl font-black text-zinc-900">{totalConfirmed}</p>
-                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Jobs Closed</p>
+                            {totalConfirmed > 0 && (
+                                <div className="mt-6 pt-6 border-t border-zinc-100 flex items-center justify-between">
+                                    <div className="text-center flex-1">
+                                        <p className="text-2xl font-black text-zinc-900">{totalConfirmed}</p>
+                                        <p className="text-xs font-bold text-zinc-400 uppercase tracking-tight mt-1">Jobs Closed</p>
+                                    </div>
+                                    <div className="w-px h-8 bg-zinc-100" />
+                                    <div className="text-center flex-1">
+                                        <p className="text-2xl font-black text-zinc-900">{connectionRate}%</p>
+                                        <p className="text-xs font-bold text-zinc-400 uppercase tracking-tight mt-1">Connect Rate</p>
+                                    </div>
                                 </div>
-                                <div className="w-px h-8 bg-zinc-100" />
-                                <div className="text-center flex-1">
-                                    <p className="text-xl font-black text-zinc-900">{connectionRate}%</p>
-                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">Connect Rate</p>
-                                </div>
-                            </div>
+                            )}
                         </div>
 
-                        {/* Share Kit — gated to active referrers only */}
-                        <div className="bg-zinc-900 rounded-[32px] p-8 text-white relative overflow-hidden shadow-xl">
-                            <MessageSquare className="absolute -bottom-6 -left-6 w-32 h-32 text-orange-500 opacity-5 rotate-12" />
-                            <div className="relative z-10">
-                                <h3 className="text-sm font-black uppercase tracking-widest mb-2 text-orange-500">Share Assets</h3>
-                                <p className="text-xs text-zinc-400 mb-6 font-medium">Copy pre-verified messages for WhatsApp, Email or SMS.</p>
-                                <ShareKitGate
-                                    slug={slug}
-                                    businessName={business.business_name}
-                                    tradeCategory={business.trade_category}
-                                    suburb={business.suburb}
-                                    commission={referrerEarns}
-                                    deals={deals}
-                                />
-                            </div>
+                        {/* Share Kit */}
+                        <div className="bg-zinc-900 rounded-3xl p-8 text-white shadow-xl">
+                            <h3 className="text-sm font-black uppercase tracking-widest mb-1 text-orange-400">Share Assets</h3>
+                            <p className="text-xs text-zinc-400 mb-5 font-medium leading-relaxed">Once you start referring, unlock pre-written messages for WhatsApp, Email or SMS.</p>
+                            <ShareKitGate
+                                slug={slug}
+                                businessName={business.business_name}
+                                tradeCategory={business.trade_category}
+                                suburb={business.suburb}
+                                commission={referrerEarns}
+                                deals={deals}
+                            />
                         </div>
 
                         {/* Quick business bio */}
-                        <div className="bg-white rounded-[32px] border border-zinc-200 p-10 shadow-sm">
-                            <h3 className="text-lg font-black text-zinc-900 uppercase tracking-widest mb-8 border-b border-zinc-50 pb-6">Business Information</h3>
-                            <div className="space-y-8">
-                                <div className="flex gap-6">
-                                    <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-400 shrink-0">
-                                        <MapPin className="w-6 h-6" />
-                                    </div>
+                        <div className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
+                            <h3 className="text-base font-black text-zinc-900 mb-6">Business Info</h3>
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
                                     <div>
-                                        <p className="text-sm font-black text-zinc-400 uppercase tracking-tight mb-1">Service Area</p>
-                                        <p className="text-lg text-zinc-800 font-bold leading-tight">{business.suburb}, {business.state}</p>
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-tight">Service Area</p>
+                                        <p className="text-sm font-bold text-zinc-800">{business.suburb}{business.state ? `, ${business.state}` : ''}</p>
                                     </div>
                                 </div>
-                                <div className="flex gap-6">
-                                    <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-400 shrink-0">
-                                        <ShieldCheck className="w-6 h-6" />
-                                    </div>
+                                <div className="flex items-center gap-3">
+                                    <ShieldCheck className="w-4 h-4 text-orange-500 shrink-0" />
                                     <div>
-                                        <p className="text-sm font-black text-zinc-400 uppercase tracking-tight mb-1">Verification Status</p>
-                                        <p className="text-lg text-green-600 font-bold leading-tight flex items-center gap-2">
-                                            {business.is_verified ? "Fully Verified Provider" : "Standard Registered Profile"}
+                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-tight">Status</p>
+                                        <p className="text-sm font-bold text-green-600">{business.is_verified ? "Fully Verified" : "Registered"}</p>
+                                    </div>
+                                </div>
+                                {business.description && (
+                                    <div className="pt-4 border-t border-zinc-100">
+                                        <p className="text-sm text-zinc-500 font-medium leading-relaxed line-clamp-4">
+                                            {business.description.slice(0, 200)}{business.description.length > 200 ? '…' : ''}
                                         </p>
                                     </div>
-                                </div>
-                                <div className="pt-8 border-t border-zinc-50">
-                                    <p className="text-base text-zinc-500 font-medium leading-[1.6] italic border-l-4 border-orange-500 pl-6">
-                                        &ldquo;{business.description?.slice(0, 150)}...&rdquo;
-                                    </p>
-                                    <Link href={`/b/${slug}`} className="mt-8 inline-flex items-center text-sm font-black text-orange-600 uppercase tracking-widest hover:translate-x-2 transition-transform">
-                                        View Full Business Profile <ChevronRight className="w-4 h-4" />
-                                    </Link>
-                                </div>
+                                )}
+                                <Link href={`/b/${slug}`} className="mt-2 inline-flex items-center gap-1 text-sm font-black text-orange-600 hover:text-orange-700 transition-colors">
+                                    View Full Profile <ArrowRight className="w-3.5 h-3.5" />
+                                </Link>
                             </div>
                         </div>
                     </div>
