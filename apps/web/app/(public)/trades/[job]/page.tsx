@@ -106,16 +106,17 @@ export default async function TradeHubPage({ params }: PageProps) {
     const jobName = findJobNameForSlug(job) || formatSlug(job);
     const tradeName = findTradeForJob(job);
 
-    if (!tradeName) notFound();
+    // Unknown job types: show generic page rather than 404
 
     const year = new Date().getFullYear();
-    const cost = TRADE_COST_GUIDE[tradeName!];
-    const faqs = TRADE_FAQ_BANK[tradeName!] || [];
-    const relatedJobs = (JOB_TYPES[tradeName!] || []).filter(j => jobToSlug(j) !== job).slice(0, 8);
+    const tradeKey = tradeName ?? jobName;
+    const cost = TRADE_COST_GUIDE[tradeKey] ?? null;
+    const faqs = TRADE_FAQ_BANK[tradeKey] || [];
+    const relatedJobs = tradeName ? (JOB_TYPES[tradeName] || []).filter(j => jobToSlug(j) !== job).slice(0, 8) : [];
 
     const [countsByState, topCities] = await Promise.all([
-        getBusinessCountByState(tradeName!),
-        getTopCitiesForTrade(tradeName!),
+        getBusinessCountByState(tradeName ?? jobName),
+        getTopCitiesForTrade(tradeName ?? jobName),
     ]);
 
     const totalBusinesses = Object.values(countsByState).reduce((a, b) => a + b, 0);
