@@ -124,8 +124,8 @@ export function EarningsDashboard({ hideGoal }: { hideGoal?: boolean } = {}) {
     return (
         <div className="space-y-4 mb-0">
             {/* Tier Badge + Progress */}
-            <div className={`bg-gradient-to-r ${tierCfg.gradient} border ${tierCfg.border} rounded-3xl p-6 md:p-8`}>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+            <div className={`bg-gradient-to-r ${tierCfg.gradient} border ${tierCfg.border} rounded-2xl p-4 md:p-5`}>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
                     <div className="flex items-center gap-3">
                         <div className={`w-12 h-12 ${tierCfg.bg} rounded-2xl flex items-center justify-center`}>
                             <TierIcon className={`w-6 h-6 ${tierCfg.color}`} />
@@ -186,13 +186,13 @@ export function EarningsDashboard({ hideGoal }: { hideGoal?: boolean } = {}) {
             </div>
 
             {/* Earnings Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                    <div className="text-[13px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">This Week</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="bg-white rounded-2xl border border-zinc-200 p-3.5">
+                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">This Week</div>
                     <div className={`text-2xl font-black ${stats.earnings.this_week > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_week)}</div>
                 </div>
-                <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                    <div className="text-[13px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">This Month</div>
+                <div className="bg-white rounded-2xl border border-zinc-200 p-3.5">
+                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">This Month</div>
                     <div className={`text-2xl font-black ${stats.earnings.this_month > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_month)}</div>
                     {stats.earnings.month_trend !== 0 && (
                         <div className={`text-sm font-bold flex items-center gap-1 mt-1 ${stats.earnings.month_trend > 0 ? "text-green-600" : "text-red-500"}`}>
@@ -201,13 +201,13 @@ export function EarningsDashboard({ hideGoal }: { hideGoal?: boolean } = {}) {
                         </div>
                     )}
                 </div>
-                <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                    <div className="text-[13px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Pending</div>
+                <div className="bg-white rounded-2xl border border-zinc-200 p-3.5">
+                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Pending</div>
                     <div className="text-2xl font-black text-orange-500">{cents(stats.earnings.pending)}</div>
                     {stats.earnings.pending > 0 && <div className="text-xs text-zinc-400 mt-0.5">Awaiting confirmation</div>}
                 </div>
-                <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                    <div className="text-[13px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Lifetime</div>
+                <div className="bg-white rounded-2xl border border-zinc-200 p-3.5">
+                    <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Lifetime</div>
                     <div className="text-2xl font-black text-green-600">{cents(stats.earnings.lifetime)}</div>
                     {stats.earnings.lifetime === 0 && <div className="text-xs text-zinc-400 mt-0.5">First lead soon!</div>}
                 </div>

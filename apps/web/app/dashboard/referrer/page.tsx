@@ -88,7 +88,7 @@ export default async function ReferrerDashboardPage() {
                     <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-28">
 
                         {/* Prezzee Rewards — dark authority card */}
-                        <div className="bg-[#1A1A1B] rounded-2xl p-5 text-white relative overflow-hidden shadow-xl">
+                        <div className="bg-[#0F172A] rounded-2xl p-5 text-white relative overflow-hidden shadow-xl">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                                 src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"

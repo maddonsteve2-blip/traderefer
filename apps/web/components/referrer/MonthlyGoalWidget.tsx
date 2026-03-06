@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Target, Flame } from "lucide-react";
+import { Flame } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 
@@ -61,16 +61,15 @@ export function MonthlyGoalWidget() {
     if (!stats) return null;
 
     const pct = Math.min(stats.goal_progress || 0, 100);
+    const radius = 15.9;
+    const circumference = 2 * Math.PI * radius;
+    const dash = (pct / 100) * circumference;
+    const ringColor = pct >= 100 ? "#22c55e" : pct >= 50 ? "#f97316" : "#fdba74";
 
     return (
         <div className="bg-white rounded-2xl border border-zinc-200 p-4">
-            <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center shrink-0">
-                        <Target className="w-4 h-4 text-orange-500" />
-                    </div>
-                    <span className="text-sm font-black text-zinc-900">Monthly Goal</span>
-                </div>
+            <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-black text-zinc-900">Monthly Goal</span>
                 <button
                     onClick={() => setEditingGoal(!editingGoal)}
                     className="text-sm font-bold text-orange-500 hover:text-orange-600 underline underline-offset-2"
@@ -85,7 +84,7 @@ export function MonthlyGoalWidget() {
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 font-bold text-sm">$</span>
                         <input
                             type="number"
-                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-7 pr-3 py-2.5 text-zinc-900 font-bold text-sm focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
+                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl pl-7 pr-3 py-2 text-zinc-900 font-bold text-sm focus:ring-2 focus:ring-orange-500/20 focus:outline-none"
                             placeholder="500"
                             value={goalInput}
                             onChange={e => setGoalInput(e.target.value)}
@@ -93,35 +92,43 @@ export function MonthlyGoalWidget() {
                     </div>
                     <button
                         onClick={saveGoal}
-                        className="bg-orange-500 text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors"
+                        className="bg-orange-500 text-white px-4 py-2 rounded-xl font-bold text-sm hover:bg-orange-600 transition-colors"
                     >
                         Save
                     </button>
                 </div>
             ) : stats.monthly_goal_cents ? (
-                <div>
-                    <div className="flex items-end justify-between mb-2">
-                        <span className="text-2xl font-black text-zinc-900">{pct}%</span>
-                        <span className="text-sm text-zinc-500 font-medium">
-                            {cents(stats.earnings.this_month)} / {cents(stats.monthly_goal_cents)}
-                        </span>
+                <div className="flex items-center gap-4">
+                    {/* Circular progress ring */}
+                    <div className="relative shrink-0 w-16 h-16">
+                        <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                            <circle cx="18" cy="18" r={radius} fill="none" stroke="#e4e4e7" strokeWidth="3" />
+                            <circle
+                                cx="18" cy="18" r={radius} fill="none"
+                                stroke={ringColor} strokeWidth="3"
+                                strokeDasharray={`${dash} ${circumference}`}
+                                strokeLinecap="round"
+                                style={{ transition: "stroke-dasharray 0.5s ease" }}
+                            />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-[13px] font-black text-zinc-900">{pct}%</span>
+                        </div>
                     </div>
-                    <div className="w-full bg-zinc-100 rounded-full h-3.5 overflow-hidden">
-                        <div
-                            className={`h-full rounded-full transition-all duration-500 ${pct >= 100 ? "bg-green-500" : pct >= 50 ? "bg-orange-500" : "bg-orange-300"}`}
-                            style={{ width: `${pct}%` }}
-                        />
+                    <div className="flex-1 min-w-0">
+                        <div className="text-base font-black text-zinc-900">{cents(stats.earnings.this_month)}</div>
+                        <div className="text-xs text-zinc-400 font-semibold">of {cents(stats.monthly_goal_cents)}</div>
+                        {pct >= 100 && (
+                            <p className="text-xs font-bold text-green-600 flex items-center gap-1 mt-1">
+                                <Flame className="w-3 h-3" /> Goal reached!
+                            </p>
+                        )}
                     </div>
-                    {pct >= 100 && (
-                        <p className="text-sm font-bold text-green-600 mt-1.5 flex items-center gap-1">
-                            <Flame className="w-3.5 h-3.5" /> Goal reached!
-                        </p>
-                    )}
                 </div>
             ) : (
                 <div>
-                    <p className="text-sm text-zinc-500 font-medium mb-1">Set a target to track your progress.</p>
-                    <p className="text-xs text-zinc-400">Top referrers aim for $500–$2,000/month.</p>
+                    <p className="text-sm text-zinc-500 font-medium">Set a target to track your progress.</p>
+                    <p className="text-xs text-zinc-400 mt-0.5">Top referrers aim for $500–$2,000/month.</p>
                 </div>
             )}
         </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Users, Plus, DollarSign, MousePointer, Send, ChevronRight, Shield, Share2, Copy } from "lucide-react";
+import { Users, Plus, Shield, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -77,110 +77,72 @@ export function MyTradesTeam() {
 
     if (loading) {
         return (
-            <div className="bg-white rounded-[32px] border border-zinc-200 p-8 mb-8 animate-pulse">
-                <div className="h-6 bg-zinc-100 rounded w-48 mb-4" />
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {[1,2,3,4].map(i => <div key={i} className="h-28 bg-zinc-50 rounded-2xl" />)}
+            <div className="bg-white rounded-2xl border border-zinc-200 p-4 animate-pulse">
+                <div className="h-4 bg-zinc-100 rounded w-32 mb-3" />
+                <div className="flex gap-3">
+                    {[1,2,3,4,5,6].map(i => <div key={i} className="w-[60px] h-[80px] bg-zinc-50 rounded-2xl shrink-0" />)}
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="bg-white rounded-[32px] border border-zinc-200 p-8 md:p-10 shadow-sm mb-8">
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h3 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-orange-500" /> My Trades Team
+        <div className="bg-white rounded-2xl border border-zinc-200 p-4">
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-black text-zinc-900 flex items-center gap-1.5">
+                        <Users className="w-4 h-4 text-orange-500" /> My Trades Team
                     </h3>
-                    <p className="text-sm text-zinc-400 mt-1">Your go-to tradies across every category</p>
-                </div>
-                <div className="flex items-center gap-3">
                     {businesses.length > 0 && (
-                        <div className="flex items-center gap-4 text-sm">
-                            <span className="font-bold text-green-600">${totalEarned.toFixed(0)} earned</span>
-                            <span className="text-zinc-300">·</span>
-                            <span className="font-bold text-zinc-500">{totalLeads} leads</span>
-                        </div>
+                        <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">${totalEarned.toFixed(0)} earned</span>
                     )}
+                </div>
+                <div className="flex items-center gap-2">
                     {referrerId && businesses.length > 0 && (
                         <button
                             onClick={() => {
                                 const url = `${window.location.origin}/team/${referrerId}`;
                                 navigator.clipboard.writeText(url);
-                                toast.success("Team page link copied!");
+                                toast.success("Team link copied!");
                             }}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-600 rounded-full text-xs font-bold hover:bg-orange-100 transition-colors"
+                            className="flex items-center gap-1 px-2.5 py-1 bg-orange-50 text-orange-600 rounded-full text-xs font-bold hover:bg-orange-100 transition-colors"
                         >
-                            <Share2 className="w-3 h-3" /> Share Team
+                            <Share2 className="w-3 h-3" /> Share
                         </button>
                     )}
                 </div>
             </div>
 
-            {/* Complete Your Team nudge */}
-            {emptySlots.length > 0 && businesses.length > 0 && businesses.length < 4 && (
-                <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4 mb-6 flex items-center gap-3">
-                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <Plus className="w-4 h-4 text-orange-600" />
-                    </div>
-                    <p className="text-sm text-orange-800 font-medium">
-                        <span className="font-bold">Complete your team!</span> You're earning from {filledCategories.length} trade{filledCategories.length !== 1 ? 's' : ''}. 
-                        Add a {emptySlots[0]} to unlock more earning potential.
-                    </p>
-                </div>
-            )}
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {/* High-density dock: 60px circles */}
+            <div className="flex flex-wrap gap-3">
                 {/* Filled slots */}
                 {filledCategories.map(cat => {
                     const biz = teamMap.get(cat)!;
-                    const extras = (extraByCategory.get(cat) || []).length;
                     return (
-                        <Link key={cat} href={`/dashboard/referrer/refer/${biz.slug}`} className="block group">
-                            <div className="bg-zinc-50 rounded-2xl border border-zinc-100 p-4 hover:border-orange-200 hover:bg-white hover:shadow-md transition-all h-full">
-                                <div className="flex items-center gap-2.5 mb-3">
-                                    {biz.logo_url ? (
-                                        <img src={biz.logo_url} alt="" className="w-9 h-9 rounded-xl object-cover" />
-                                    ) : (
-                                        <div className="w-9 h-9 rounded-xl bg-zinc-200 flex items-center justify-center text-zinc-500 font-black text-xs">
-                                            {biz.name.charAt(0)}
-                                        </div>
-                                    )}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-bold text-zinc-900 truncate group-hover:text-orange-600 transition-colors">
-                                            {biz.name}
-                                        </div>
-                                        <div className="text-xs text-zinc-400 flex items-center gap-1">
-                                            {cat}
-                                            {biz.is_verified && <Shield className="w-3 h-3 text-blue-500" />}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex items-center justify-between text-xs">
-                                    <span className="font-bold text-green-600">${biz.earned.toFixed(0)}</span>
-                                    <span className="text-zinc-400">{biz.leads} leads</span>
-                                </div>
-                                {extras > 1 && (
-                                    <div className="text-[10px] text-zinc-300 font-bold mt-1.5">+{extras - 1} more {cat}</div>
+                        <Link key={cat} href={`/dashboard/referrer/refer/${biz.slug}`} className="flex flex-col items-center gap-1.5 group w-[60px]">
+                            <div className="w-[60px] h-[60px] rounded-full border-2 border-zinc-100 group-hover:border-orange-300 transition-all overflow-hidden bg-zinc-100 flex items-center justify-center shadow-sm">
+                                {biz.logo_url ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-lg font-black text-zinc-500 group-hover:text-orange-500 transition-colors">{biz.name.charAt(0)}</span>
                                 )}
                             </div>
+                            <div className="text-[10px] font-semibold text-zinc-500 text-center leading-tight truncate w-full group-hover:text-orange-600 transition-colors">{cat}</div>
+                            {biz.earned > 0 && (
+                                <div className="text-[10px] font-black text-green-600">${biz.earned.toFixed(0)}</div>
+                            )}
                         </Link>
                     );
                 })}
 
                 {/* Empty slots */}
                 {emptySlots.map(trade => (
-                    <Link key={trade} href={`/businesses?category=${encodeURIComponent(trade)}`} className="block">
-                        <div className="border-2 border-dashed border-zinc-200 rounded-2xl p-4 hover:border-orange-300 hover:bg-orange-50/50 transition-all h-full flex flex-col items-center justify-center text-center gap-2 min-h-[100px]">
-                            <div className="w-9 h-9 rounded-xl bg-zinc-100 flex items-center justify-center">
-                                <Plus className="w-4 h-4 text-zinc-400" />
-                            </div>
-                            <div>
-                                <div className="text-sm font-bold text-zinc-400">{trade}</div>
-                                <div className="text-[10px] text-zinc-300 font-medium">Find one</div>
-                            </div>
+                    <Link key={trade} href={`/businesses?category=${encodeURIComponent(trade)}`} className="flex flex-col items-center gap-1.5 group w-[60px]">
+                        <div className="w-[60px] h-[60px] rounded-full border-2 border-dashed border-zinc-200 group-hover:border-orange-300 group-hover:bg-orange-50 transition-all flex items-center justify-center bg-zinc-50">
+                            <Plus className="w-5 h-5 text-zinc-300 group-hover:text-orange-400 transition-colors" />
                         </div>
+                        <div className="text-[10px] font-semibold text-zinc-400 text-center leading-tight truncate w-full">{trade}</div>
                     </Link>
                 ))}
             </div>
