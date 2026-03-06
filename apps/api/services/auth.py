@@ -73,9 +73,10 @@ async def get_current_user(token: HTTPAuthorizationCredentials = Depends(securit
             # Generate a stable UUID from the Clerk ID to maintain database compatibility
             stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, clerk_id))
             
-            # Simple admin check via env var
-            admin_emails = (os.getenv("ADMIN_EMAILS") or "").split(",")
-            is_admin = email in admin_emails if email else False
+            # Admin check: support both Clerk user IDs (always in JWT) and emails (optional)
+            admin_clerk_ids = [x.strip() for x in (os.getenv("ADMIN_CLERK_IDS") or "").split(",") if x.strip()]
+            admin_emails = [x.strip() for x in (os.getenv("ADMIN_EMAILS") or "").split(",") if x.strip()]
+            is_admin = (clerk_id in admin_clerk_ids) or (bool(email) and email in admin_emails)
             
             return AuthenticatedUser(
                 id=stable_uuid,
