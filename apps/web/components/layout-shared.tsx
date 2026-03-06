@@ -544,7 +544,7 @@ export function Navbar() {
 
                                         <Link href="/businesses" className="hidden sm:block">
 
-                                            <Button variant="ghost" className="font-bold text-zinc-600 hover:text-orange-600 text-[18px]">
+                                            <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
 
                                                 Find Businesses
 
@@ -554,7 +554,7 @@ export function Navbar() {
 
                                         <Link href="/support" className="hidden lg:block">
 
-                                            <Button variant="ghost" className="font-bold text-zinc-600 hover:text-orange-600 text-[18px]">
+                                            <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
 
                                                 Support
 
@@ -564,7 +564,7 @@ export function Navbar() {
 
                                         <Link href="/contact" className="hidden lg:block">
 
-                                            <Button variant="ghost" className="font-bold text-zinc-600 hover:text-orange-600 text-[18px]">
+                                            <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
 
                                                 Contact
 
@@ -572,9 +572,9 @@ export function Navbar() {
 
                                         </Link>
 
-                                        <Link href="/dashboard" className="hidden sm:block">
+                                        <Link href="/dashboard" className="hidden sm:block ml-1">
 
-                                            <Button className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl px-6 font-bold shadow-lg shadow-orange-500/20" style={{ minHeight: '56px', fontSize: '20px' }}>
+                                            <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-5 font-bold text-sm shadow-sm">
 
                                                 My Dashboard
 
