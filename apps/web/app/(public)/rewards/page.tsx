@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import CardImage from "./CardImage";
 import { ArrowRight, CheckCircle2, Gift, Mail, Smartphone, Clock3, Star, Users, ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -560,14 +561,7 @@ export default function RewardsPage() {
                                     href="/onboarding/referrer"
                                     className="group relative rounded-2xl overflow-hidden aspect-[452/280] cursor-pointer shadow-sm hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 bg-zinc-100"
                                 >
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                        src={card.url}
-                                        alt={card.name}
-                                        className="w-full h-full object-cover"
-                                        loading="lazy"
-                                        onError={(e) => { (e.currentTarget.closest("a") as HTMLElement | null)?.style.setProperty("display", "none"); }}
-                                    />
+                                    <CardImage src={card.url} alt={card.name} />
                                     {/* Hover overlay */}
                                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-1.5 p-3">
                                         <span className="text-white font-black text-sm text-center leading-tight">Start earning</span>
