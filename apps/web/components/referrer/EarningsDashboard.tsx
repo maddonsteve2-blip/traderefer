@@ -288,7 +288,7 @@ export function EarningsDashboard() {
                             {stats.per_business.map(biz => (
                                 <Link
                                     key={biz.slug}
-                                    href={`/b/${biz.slug}/refer`}
+                                    href={`/dashboard/referrer/refer/${biz.slug}`}
                                     className="flex items-center justify-between p-3 bg-zinc-50 rounded-xl hover:bg-orange-50 transition-colors group"
                                 >
                                     <div>

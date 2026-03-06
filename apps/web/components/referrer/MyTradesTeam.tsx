@@ -137,7 +137,7 @@ export function MyTradesTeam() {
                     const biz = teamMap.get(cat)!;
                     const extras = (extraByCategory.get(cat) || []).length;
                     return (
-                        <Link key={cat} href={`/b/${biz.slug}/refer`} className="block group">
+                        <Link key={cat} href={`/dashboard/referrer/refer/${biz.slug}`} className="block group">
                             <div className="bg-zinc-50 rounded-2xl border border-zinc-100 p-4 hover:border-orange-200 hover:bg-white hover:shadow-md transition-all h-full">
                                 <div className="flex items-center gap-2.5 mb-3">
                                     {biz.logo_url ? (

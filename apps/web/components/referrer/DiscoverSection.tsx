@@ -29,7 +29,7 @@ const TIER_COLORS: Record<string, string> = { starter: "text-zinc-400", pro: "te
 
 function BusinessCard({ biz }: { biz: Business }) {
     return (
-        <Link href={`/b/${biz.slug}/refer`} className="block">
+        <Link href={`/dashboard/referrer/refer/${biz.slug}`} className="block">
             <div className="bg-white rounded-2xl border border-zinc-200 p-4 hover:shadow-lg hover:border-orange-200 transition-all group">
                 <div className="flex items-center gap-3 mb-3">
                     {biz.logo_url ? (
