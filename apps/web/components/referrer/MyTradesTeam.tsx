@@ -77,82 +77,82 @@ export function MyTradesTeam() {
 
     if (loading) {
         return (
-            <div className="bg-white rounded-2xl border border-zinc-200 p-4 animate-pulse">
-                <div className="h-4 bg-zinc-100 rounded w-32 mb-3" />
-                <div className="flex gap-3">
-                    {[1,2,3,4,5,6].map(i => <div key={i} className="w-[60px] h-[80px] bg-zinc-50 rounded-2xl shrink-0" />)}
+            <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center gap-3 animate-pulse">
+                <div className="h-4 bg-zinc-100 rounded w-24 shrink-0" />
+                <div className="flex gap-2 overflow-hidden">
+                    {[1,2,3,4,5].map(i => <div key={i} className="w-32 h-10 bg-zinc-50 rounded-full shrink-0" />)}
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="bg-white rounded-2xl border border-zinc-200 p-4">
-            <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-black text-zinc-900 flex items-center gap-1.5">
-                        <Users className="w-4 h-4 text-orange-500" /> My Trades Team
-                    </h3>
-                    {businesses.length > 0 && (
-                        <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">${totalEarned.toFixed(0)} earned</span>
-                    )}
-                </div>
-                <div className="flex items-center gap-2">
-                    {referrerId && businesses.length > 0 && (
-                        <button
-                            onClick={() => {
-                                const url = `${window.location.origin}/team/${referrerId}`;
-                                navigator.clipboard.writeText(url);
-                                toast.success("Team link copied!");
-                            }}
-                            className="flex items-center gap-1 px-2.5 py-1 bg-orange-50 text-orange-600 rounded-full text-xs font-bold hover:bg-orange-100 transition-colors"
-                        >
-                            <Share2 className="w-3 h-3" /> Share
-                        </button>
-                    )}
-                </div>
+        <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center gap-3 min-h-0" style={{ maxHeight: 80 }}>
+            {/* Dock label + share — shrink-0 so it never wraps */}
+            <div className="flex items-center gap-2 shrink-0">
+                <Users className="w-4 h-4 text-orange-500" />
+                <span className="text-base font-black text-zinc-900 whitespace-nowrap">My Team</span>
+                {businesses.length > 0 && (
+                    <span className="text-base font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full whitespace-nowrap">${totalEarned.toFixed(0)}</span>
+                )}
+                {referrerId && businesses.length > 0 && (
+                    <button
+                        onClick={() => {
+                            const url = `${window.location.origin}/team/${referrerId}`;
+                            navigator.clipboard.writeText(url);
+                            toast.success("Team link copied!");
+                        }}
+                        className="flex items-center gap-1 px-2 py-0.5 bg-orange-50 text-orange-600 rounded-full text-base font-bold hover:bg-orange-100 transition-colors"
+                    >
+                        <Share2 className="w-3 h-3" />
+                    </button>
+                )}
             </div>
 
-            {/* Tag-cloud: 32px avatar + 16px name side-by-side */}
-            <div className="flex flex-wrap gap-2">
-                {/* Filled slots */}
-                {filledCategories.map(cat => {
-                    const biz = teamMap.get(cat)!;
-                    return (
-                        <Link
-                            key={cat}
-                            href={`/dashboard/referrer/refer/${biz.slug}`}
-                            className="inline-flex items-center gap-2 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-full pl-1 pr-3 py-1 group transition-all"
-                        >
-                            <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-200 flex items-center justify-center shrink-0">
-                                {biz.logo_url ? (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                    <span className="text-base font-black text-zinc-500 group-hover:text-orange-500">{biz.name.charAt(0)}</span>
-                                )}
-                            </div>
-                            <span className="text-base font-semibold text-zinc-700 group-hover:text-orange-600 transition-colors">{cat}</span>
-                            {biz.earned > 0 && (
-                                <span className="text-base font-black text-green-600">${biz.earned.toFixed(0)}</span>
-                            )}
-                        </Link>
-                    );
-                })}
+            {/* Horizontal scroll dock — single row, 40px avatars */}
+            <div className="overflow-x-auto flex-1 scrollbar-hide">
+                <div className="flex gap-2 flex-nowrap w-max">
+                    {/* Filled slots */}
+                    {filledCategories.map(cat => {
+                        const biz = teamMap.get(cat)!;
+                        return (
+                            <Link
+                                key={cat}
+                                href={`/dashboard/referrer/refer/${biz.slug}`}
+                                className="inline-flex items-center gap-2 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-full pl-1 pr-3 py-1 group transition-all shrink-0"
+                            >
+                                <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-200 flex items-center justify-center shrink-0">
+                                    {biz.logo_url ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-base font-black text-zinc-500 group-hover:text-orange-500">{biz.name.charAt(0)}</span>
+                                    )}
+                                </div>
+                                <div className="flex flex-col leading-tight">
+                                    <span className="text-base font-semibold text-zinc-700 group-hover:text-orange-600 transition-colors whitespace-nowrap">{cat}</span>
+                                    {biz.earned > 0 && (
+                                        <span className="text-base font-black text-green-600">${biz.earned.toFixed(0)}</span>
+                                    )}
+                                </div>
+                            </Link>
+                        );
+                    })}
 
-                {/* Empty slots */}
-                {emptySlots.map(trade => (
-                    <Link
-                        key={trade}
-                        href={`/businesses?category=${encodeURIComponent(trade)}`}
-                        className="inline-flex items-center gap-2 border-2 border-dashed border-zinc-200 hover:border-orange-300 hover:bg-orange-50/50 rounded-full pl-1 pr-3 py-1 group transition-all"
-                    >
-                        <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
-                            <Plus className="w-4 h-4 text-zinc-300 group-hover:text-orange-400" />
-                        </div>
-                        <span className="text-base font-semibold text-zinc-400 group-hover:text-orange-500">+ {trade}</span>
-                    </Link>
-                ))}
+                    {/* Empty slots */}
+                    {emptySlots.map(trade => (
+                        <Link
+                            key={trade}
+                            href={`/businesses?category=${encodeURIComponent(trade)}`}
+                            className="inline-flex items-center gap-2 border-2 border-dashed border-zinc-200 hover:border-orange-300 hover:bg-orange-50/50 rounded-full pl-1 pr-3 py-1 group transition-all shrink-0"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+                                <Plus className="w-4 h-4 text-zinc-300 group-hover:text-orange-400" />
+                            </div>
+                            <span className="text-base font-semibold text-zinc-400 group-hover:text-orange-500 whitespace-nowrap">+ {trade}</span>
+                        </Link>
+                    ))}
+                </div>
             </div>
         </div>
     );

@@ -68,7 +68,7 @@ export default async function ReferrerDashboardPage() {
                                 <p className="text-base text-zinc-500 font-medium">Track referrals · collect Prezzee rewards</p>
                             </div>
                             <Link href="/businesses"
-                                className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-sm transition-colors shadow-sm shadow-orange-200">
+                                className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-lg transition-colors shadow-sm shadow-orange-200">
                                 <Search className="w-4 h-4" /> Find Businesses
                             </Link>
                         </div>
@@ -96,29 +96,29 @@ export default async function ReferrerDashboardPage() {
                             />
                             <div className="relative z-10">
                                 <div className="flex items-center gap-1.5 mb-2">
-                                    <span className="text-zinc-400 text-base font-semibold uppercase tracking-wider">Rewards by</span>
+                                    <span className="text-white font-semibold uppercase tracking-wider text-base">Rewards by</span>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img src="https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg"
                                         alt="Prezzee" className="h-3.5 w-auto brightness-0 invert opacity-60" />
                                 </div>
                                 <h3 className="text-xl font-black text-white mb-1">Earn $25 Gift Cards</h3>
-                                <p className="text-zinc-300 text-base font-semibold mb-1 leading-snug">
+                                <p className="text-white font-semibold text-base mb-1 leading-snug">
                                     Invite 5 friends who join TradeRefer
                                 </p>
-                                <p className="text-zinc-400 text-base mb-3 leading-relaxed">
+                                <p className="text-zinc-300 font-semibold text-base mb-3 leading-relaxed">
                                     → <span className="text-white font-bold">$25 Prezzee Smart Card</span>, automatically issued.
                                 </p>
                                 <div className="flex flex-wrap gap-1 mb-4">
                                     {["Woolworths", "Bunnings", "Uber", "+400"].map((b) => (
-                                        <span key={b} className="text-base font-semibold bg-white/10 text-zinc-200 px-2 py-0.5 rounded-full">{b}</span>
+                                        <span key={b} className="text-base font-semibold bg-white/10 text-white px-2 py-0.5 rounded-full">{b}</span>
                                     ))}
                                 </div>
                                 <Link href="/dashboard/referrer/withdraw"
-                                    className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-base py-2.5 transition-colors mb-2">
+                                    className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-lg py-3 transition-colors mb-2 shadow-lg shadow-orange-500/30">
                                     View My Rewards
                                 </Link>
                                 <Link href="/rewards"
-                                    className="block w-full text-center text-zinc-400 hover:text-white text-base font-semibold py-1 transition-colors underline underline-offset-2">
+                                    className="block w-full text-center text-zinc-300 hover:text-white text-base font-semibold py-1 transition-colors underline underline-offset-2">
                                     See all 335 brands →
                                 </Link>
                             </div>
@@ -136,13 +136,13 @@ export default async function ReferrerDashboardPage() {
                         <div className="bg-orange-500 rounded-2xl p-4 text-white">
                             <div className="flex items-center gap-2 mb-2">
                                 <TrendingUp className="w-4 h-4" />
-                                <h3 className="text-sm font-black">Find Businesses</h3>
+                                <h3 className="text-base font-black text-white">Find Businesses</h3>
                             </div>
-                            <p className="text-orange-100 text-xs mb-3 leading-relaxed">
+                            <p className="text-white font-semibold text-base mb-3 leading-relaxed opacity-90">
                                 Browse verified tradies and grab referral links to start earning.
                             </p>
                             <Link href="/businesses"
-                                className="block w-full text-center bg-white hover:bg-zinc-50 text-orange-600 rounded-xl font-bold text-sm py-2 transition-colors">
+                                className="block w-full text-center bg-white hover:bg-zinc-50 text-orange-600 rounded-xl font-bold text-lg py-2.5 transition-colors">
                                 Explore Catalog
                             </Link>
                         </div>

@@ -35,14 +35,12 @@ interface Stats {
 }
 
 const TIER_CONFIG: Record<string, {
-    label: string; color: string; bg: string; border: string;
-    activeBg: string; activeBorder: string;
-    icon: any; gradient: string; split: number; rangeLabel: string;
+    label: string; icon: any; split: number; rangeLabel: string;
 }> = {
-    bronze:   { label: "Bronze",   color: "text-amber-700",  bg: "bg-amber-50",  border: "border-amber-200",  activeBg: "bg-amber-200",  activeBorder: "border-amber-500",  icon: Star,  gradient: "from-amber-50 to-orange-50",  split: 80,   rangeLabel: "0–4 refs/mo" },
-    silver:   { label: "Silver",   color: "text-zinc-600",   bg: "bg-zinc-100",  border: "border-zinc-300",   activeBg: "bg-zinc-200",   activeBorder: "border-zinc-500",   icon: Zap,   gradient: "from-zinc-100 to-zinc-50",   split: 82.5, rangeLabel: "5–9 refs/mo" },
-    gold:     { label: "Gold",     color: "text-yellow-700", bg: "bg-yellow-50", border: "border-yellow-300",  activeBg: "bg-yellow-200", activeBorder: "border-yellow-500", icon: Award, gradient: "from-yellow-50 to-amber-50", split: 85,   rangeLabel: "10–19 refs/mo" },
-    platinum: { label: "Platinum", color: "text-blue-700",   bg: "bg-blue-50",   border: "border-blue-300",   activeBg: "bg-blue-200",   activeBorder: "border-blue-500",   icon: Crown, gradient: "from-blue-50 to-indigo-50",  split: 90,   rangeLabel: "20+ refs/mo" },
+    bronze:   { label: "Partner",    icon: Star,  split: 80,   rangeLabel: "0–4 refs/mo" },
+    silver:   { label: "Premium",    icon: Zap,   split: 82.5, rangeLabel: "5–9 refs/mo" },
+    gold:     { label: "Elite",      icon: Award, split: 85,   rangeLabel: "10–19 refs/mo" },
+    platinum: { label: "Ambassador", icon: Crown, split: 90,   rangeLabel: "20+ refs/mo" },
 };
 
 const TIER_ORDER = ["bronze", "silver", "gold", "platinum"];
@@ -134,11 +132,11 @@ export function EarningsDashboard() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <div className={`w-11 h-11 ${tierCfg.bg} border ${tierCfg.border} rounded-2xl flex items-center justify-center`}>
-                            <TierIcon className={`w-6 h-6 ${tierCfg.color}`} />
+                        <div className="w-11 h-11 bg-orange-50 border border-orange-200 rounded-2xl flex items-center justify-center">
+                            <TierIcon className="w-6 h-6 text-[#FF7A00]" />
                         </div>
                         <div>
-                            <h2 className={`text-xl font-black ${tierCfg.color} leading-none`}>{tierCfg.label} Tier</h2>
+                            <h2 className="text-xl font-bold text-zinc-900 leading-none">{tierCfg.label} Tier</h2>
                             <p className="text-base text-zinc-500 font-medium mt-0.5">
                                 You keep <span className="font-black text-zinc-800">{tierCfg.split}%</span> · {stats.total_referrals} total referrals
                             </p>
@@ -146,12 +144,12 @@ export function EarningsDashboard() {
                     </div>
                     <div className="text-right">
                         <div className="text-3xl font-black text-zinc-900">{tierCfg.split}%</div>
-                        <div className="text-sm font-semibold text-zinc-400">your cut</div>
+                        <div className="text-base font-semibold text-zinc-400">your cut</div>
                     </div>
                 </div>
 
-                {/* 4-tier breakdown — all tiers with requirements clearly shown */}
-                <div className="grid grid-cols-4 gap-2 mb-4">
+                {/* 4-tier breakdown — condensed, authority style */}
+                <div className="grid grid-cols-4 gap-2 mb-2">
                     {TIER_ORDER.map((t) => {
                         const cfg = TIER_CONFIG[t];
                         const tIdx = TIER_ORDER.indexOf(t);
@@ -159,30 +157,28 @@ export function EarningsDashboard() {
                         const isPast = tIdx < currentIdx;
                         const Icon = cfg.icon;
                         return (
-                            <div key={t} className={`p-3 rounded-xl border-2 text-center transition-all ${
+                            <div key={t} className={`py-2 px-1.5 rounded-xl text-center transition-all ${
                                 isActive
-                                    ? `${cfg.activeBg} ${cfg.activeBorder} shadow-md`
+                                    ? "bg-white border-[3px] border-[#FF7A00] shadow-sm"
                                     : isPast
-                                        ? `${cfg.bg} ${cfg.border} border`
-                                        : "bg-white border-zinc-200"
+                                    ? "bg-zinc-50 border border-zinc-300"
+                                    : "bg-zinc-50 border border-zinc-200 opacity-50"
                             }`}>
-                                <Icon className={`w-4 h-4 mx-auto mb-1 ${
-                                    isActive ? cfg.color : isPast ? cfg.color : "text-zinc-400"
+                                <Icon className={`w-4 h-4 mx-auto mb-0.5 ${
+                                    isActive ? "text-[#FF7A00]" : isPast ? "text-zinc-500" : "text-zinc-300"
                                 }`} />
-                                <div className={`text-sm font-bold ${
-                                    isActive ? cfg.color : "text-zinc-500"
+                                <div className={`text-xl font-bold leading-tight ${
+                                    isActive ? "text-[#FF7A00]" : isPast ? "text-zinc-600" : "text-zinc-400"
                                 }`}>{cfg.label}</div>
                                 <div className={`text-lg font-black leading-tight ${
                                     isActive ? "text-zinc-900" : "text-zinc-500"
                                 }`}>{cfg.split}%</div>
                                 <div className="text-xs font-medium text-zinc-400 mt-0.5">{cfg.rangeLabel}</div>
-                                {isActive && (
-                                    <div className={`text-[10px] font-bold mt-1 ${cfg.color}`}>▲ current</div>
-                                )}
                             </div>
                         );
                     })}
                 </div>
+                <p className="text-base font-medium text-zinc-500 mb-3">Status based on your last 30 days of activity.</p>
 
                 {/* Progress toward next tier */}
                 {stats.next_tier ? (
@@ -203,12 +199,12 @@ export function EarningsDashboard() {
                                 />
                             )}
                         </div>
-                        <div className="text-xs font-medium text-zinc-400 mt-1.5">Rolling 30-day window · upgrades automatically</div>
+                        <div className="text-base font-medium text-zinc-400 mt-1.5">Upgrades automatically</div>
                     </div>
                 ) : (
                     <div className="flex items-center justify-between">
                         <span className="text-base font-bold text-zinc-700">{stats.monthly_referrals} referrals this month</span>
-                        <span className="text-base font-black text-blue-600 flex items-center gap-1"><Crown className="w-4 h-4" /> Max tier · 90% split</span>
+                        <span className="text-base font-black text-[#FF7A00] flex items-center gap-1"><Crown className="w-4 h-4" /> Ambassador · 90% split</span>
                     </div>
                 )}
             </div>
