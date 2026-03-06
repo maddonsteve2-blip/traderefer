@@ -42,10 +42,6 @@ export function ReferralProgress() {
     return (
         <>
             <div className="bg-[#0F172A] rounded-2xl p-5 text-white relative overflow-hidden">
-                {/* Background decoration */}
-                <div className="absolute -right-8 -top-8 w-40 h-40 bg-orange-500/10 rounded-full" />
-                <div className="absolute -right-4 -bottom-10 w-28 h-28 bg-orange-500/5 rounded-full" />
-
                 <div className="relative z-10">
                     <div className="flex items-start justify-between mb-4">
                         <div>

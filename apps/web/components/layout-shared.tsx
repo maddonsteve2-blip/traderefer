@@ -296,7 +296,7 @@ export function Navbar() {
 
             <header className="fixed top-0 w-full border-b bg-white/90 backdrop-blur-md z-50 h-[72px] md:h-[100px]">
 
-                <div className="container mx-auto px-4 h-full flex items-center justify-between gap-4">
+                <div className={`${isDashboard ? 'w-full px-4 lg:px-5' : 'container mx-auto px-4'} h-full flex items-center justify-between gap-4`}>
 
                     <Link href="/" className="flex items-center gap-2 group shrink-0">
 
@@ -412,7 +412,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business/leads" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/leads" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/leads" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Leads
 
@@ -422,7 +422,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business/messages" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Messages
 
@@ -432,7 +432,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business/referrers" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/referrers" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/referrers" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Referrers
 
@@ -442,7 +442,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business/deals" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/deals" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/deals" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Deals
 
@@ -452,7 +452,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business/campaigns" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/business/campaigns" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/campaigns" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Campaigns
 
@@ -462,7 +462,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business" className="hidden sm:block ml-1">
 
-                                                    <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-5 font-bold text-sm shadow-sm">
+                                                    <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-5 font-bold text-base shadow-sm">
 
                                                         Dashboard
 
@@ -480,7 +480,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/referrer" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/referrer" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Dashboard
 
@@ -490,7 +490,7 @@ export function Navbar() {
 
                                                 <Link href="/businesses" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600">
+                                                    <Button variant="ghost" className="text-base font-bold px-3 text-zinc-600 hover:text-orange-600">
 
                                                         Find Businesses
 
@@ -500,7 +500,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/referrer/messages" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Messages
 
@@ -510,7 +510,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/referrer/withdraw" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-sm font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/withdraw" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/withdraw" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Rewards
 
