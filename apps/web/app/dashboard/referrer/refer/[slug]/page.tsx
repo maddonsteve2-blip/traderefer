@@ -1,55 +1,33 @@
 import {
-    Star,
-    MapPin,
-    DollarSign,
-    Clock,
-    Users,
-    TrendingUp,
-    ChevronRight,
-    MessageSquare,
-    Zap,
-    Tag,
-    Gift,
-    Flame,
-    Award,
-    Briefcase,
-    ArrowRight,
-    ShieldCheck,
-    Rocket,
-    CheckCircle,
-    Building2,
-    LayoutDashboard
+    Star, MapPin, ChevronRight, Award, Briefcase,
+    ArrowRight, ShieldCheck, CheckCircle, Clock,
+    LayoutDashboard, Flame, Users, BadgeCheck, Wrench
 } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { ShareKitGate } from "@/components/referrer/ShareKitGate";
 import { StartReferringButton } from "@/components/referrer/StartReferringButton";
-import { PrivateFeedback } from "@/components/referrer/PrivateFeedback";
 import { BusinessLogo } from "@/components/BusinessLogo";
 
+const apiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 async function getBusiness(slug: string) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    const res = await fetch(`${apiUrl}/businesses/${slug}`, { cache: 'no-store' });
+    const res = await fetch(`${apiUrl()}/businesses/${slug}`, { cache: 'no-store' });
     if (!res.ok) return null;
     return res.json();
 }
 
-async function getDeals(slug: string) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+async function getGoogleReviews(slug: string) {
     try {
-        const res = await fetch(`${apiUrl}/businesses/${slug}/deals`, { cache: 'no-store' });
-        if (!res.ok) return [];
-        return res.json();
+        const res = await fetch(`${apiUrl()}/businesses/${slug}/google-reviews`, { next: { revalidate: 86400 } });
+        return res.ok ? res.json() : [];
     } catch { return []; }
 }
 
 async function getCampaigns(slug: string) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     try {
-        const res = await fetch(`${apiUrl}/businesses/${slug}/campaigns`, { cache: 'no-store' });
-        if (!res.ok) return [];
-        return res.json();
+        const res = await fetch(`${apiUrl()}/businesses/${slug}/campaigns`, { cache: 'no-store' });
+        return res.ok ? res.json() : [];
     } catch { return []; }
 }
 
@@ -65,396 +43,380 @@ export default async function DashboardReferPage({
     }
 
     const { slug } = await params;
-    const [business, deals, campaigns] = await Promise.all([
+    const [business, googleReviews, campaigns] = await Promise.all([
         getBusiness(slug),
-        getDeals(slug),
-        getCampaigns(slug)
+        getGoogleReviews(slug),
+        getCampaigns(slug),
     ]);
 
     if (!business) notFound();
 
     const commissionPerLead = (business.referral_fee_cents || 1000) / 100;
-    const platformFee = commissionPerLead * 0.2;
     const referrerEarns = commissionPerLead * 0.8;
-    const connectionRate = business.connection_rate || 0;
-    const totalConfirmed = business.total_confirmed || 0;
+    const platformFee = commissionPerLead * 0.2;
     const trustScore = business.trust_score ? (business.trust_score / 20).toFixed(1) : "5.0";
+    const memberSinceYear = business.created_at ? new Date(business.created_at).getFullYear() : null;
+    const googleRating = business.avg_rating ? parseFloat(business.avg_rating) : null;
+    const reviewCount = business.total_reviews || 0;
+    const totalConfirmed = business.total_confirmed || 0;
+    const connectionRate = business.connection_rate || 0;
 
-    const allFeatures = business.features?.length > 0 ? business.features
-        : business.business_highlights?.length > 0 ? business.business_highlights
-            : ["Licensed & Insured", "Verified Business", "Fast Response Time", "TradeRefer Trusted"];
+    const allFeatures: string[] = business.features?.length > 0 ? business.features
+        : business.business_highlights?.length > 0 ? business.business_highlights : [];
+    const services: string[] = business.services || [];
+    const specialties: string[] = business.specialties || [];
+    const photoUrls: string[] = business.photo_urls?.slice(0, 3) || [];
 
-    const formatEarnings = (amount: number) =>
-        Number.isInteger(amount) ? `$${amount}` : `$${amount.toFixed(2)}`;
+    const fmt = (n: number) => Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`;
+
+    const topReviews = googleReviews
+        .filter((r: any) => r.review_text && r.rating >= 4)
+        .slice(0, 2);
 
     return (
         <main className="min-h-screen bg-zinc-50">
 
-            {/* ── BREADCRUMBS ── */}
-            <div className="bg-white border-b border-zinc-100 pt-20 pb-4">
+            {/* ── BREADCRUMB ── */}
+            <div className="bg-white border-b border-zinc-100 pt-20 pb-3">
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest">
-                        <Link href="/dashboard/referrer" className="hover:text-zinc-600 transition-colors flex items-center gap-1">
-                            <LayoutDashboard className="w-3 h-3" /> Dashboard
+                    <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>
+                        <Link href="/dashboard/referrer" className="hover:text-zinc-700 transition-colors flex items-center gap-1.5">
+                            <LayoutDashboard className="w-4 h-4" /> Dashboard
                         </Link>
-                        <ChevronRight className="w-3 h-3" />
-                        <Link href="/businesses" className="hover:text-zinc-600 transition-colors">Find Businesses</Link>
-                        <ChevronRight className="w-3 h-3" />
-                        <Link href={`/b/${slug}`} className="hover:text-zinc-600 transition-colors truncate max-w-[180px]">{business.business_name}</Link>
-                        <ChevronRight className="w-3 h-3" />
-                        <span className="text-orange-600 font-black">Refer & Earn</span>
+                        <ChevronRight className="w-4 h-4" />
+                        <Link href="/dashboard/referrer/businesses" className="hover:text-zinc-700 transition-colors">Businesses</Link>
+                        <ChevronRight className="w-4 h-4" />
+                        <span className="text-orange-600 font-black truncate max-w-[200px]">{business.business_name}</span>
                     </nav>
                 </div>
             </div>
 
-            {/* ── HERO ── */}
-            <div className="bg-white pb-16 border-b border-zinc-200">
-                <div className="container mx-auto px-4 pt-10">
-                    <div className="flex flex-col lg:flex-row gap-10 items-start">
+            {/* ── PITCH HERO ── */}
+            <div className="bg-white border-b border-zinc-200">
+                <div className="container mx-auto px-4 py-8">
+                    <div className="flex flex-col lg:flex-row gap-6 items-start">
 
-                        {/* Left: Business Identity */}
-                        <div className="flex-1 space-y-6">
-                            <div className="flex flex-wrap items-center gap-3">
-                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-xs font-black uppercase tracking-widest border border-orange-100">
-                                    <Briefcase className="w-3.5 h-3.5" /> Referral Program
+                        {/* Identity */}
+                        <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-4">
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full font-black uppercase tracking-widest border border-orange-100" style={{ fontSize: '16px' }}>
+                                    <Briefcase className="w-4 h-4" /> Referral Opportunity
                                 </span>
                                 {business.is_verified && (
-                                    <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white rounded-full text-xs font-black uppercase tracking-widest">
-                                        <ShieldCheck className="w-3.5 h-3.5" /> Verified Partner
+                                    <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white rounded-full font-black uppercase tracking-widest" style={{ fontSize: '16px' }}>
+                                        <ShieldCheck className="w-4 h-4" /> Verified Partner
                                     </span>
                                 )}
                             </div>
 
-                            {/* Business name + logo side by side — logo fills its own box */}
-                            <div className="flex items-center gap-5">
+                            <div className="flex items-center gap-4 mb-4">
                                 <BusinessLogo logoUrl={business.logo_url} name={business.business_name} size="lg" />
                                 <div>
-                                    <h1 className="text-3xl md:text-4xl font-black text-zinc-900 leading-tight tracking-tight">
+                                    <h1 className="font-black text-zinc-900 leading-tight tracking-tight" style={{ fontSize: '28px' }}>
                                         {business.business_name}
                                     </h1>
-                                    <p className="text-base text-zinc-500 font-bold mt-1 flex items-center gap-2 flex-wrap">
+                                    <p className="font-bold text-zinc-500 flex items-center gap-2 flex-wrap mt-1" style={{ fontSize: '17px' }}>
                                         <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
                                         {business.suburb}{business.state ? `, ${business.state}` : ''}
-                                        {business.trade_category && (
-                                            <>
-                                                <span className="text-zinc-300">·</span>
-                                                <span>{business.trade_category}</span>
-                                            </>
-                                        )}
+                                        {business.trade_category && <><span className="text-zinc-300">·</span><span>{business.trade_category}</span></>}
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Earnings headline */}
-                            <div className="pt-2">
-                                <p className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-1">You earn</p>
-                                <div className="flex items-baseline gap-3">
-                                    <span className="text-6xl md:text-7xl font-black text-zinc-900 tracking-tighter">{formatEarnings(referrerEarns)}</span>
-                                    <span className="text-xl font-black text-zinc-500">per verified lead</span>
+                            {/* Authority badges row */}
+                            <div className="flex flex-wrap gap-3">
+                                <div className="flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl" style={{ fontSize: '16px' }}>
+                                    <Star className="w-4 h-4 text-orange-400 fill-orange-400 shrink-0" />
+                                    <span className="font-black text-zinc-800">{trustScore}</span>
+                                    <span className="font-bold text-zinc-400">TradeRefer Score</span>
                                 </div>
-                            </div>
-
-                            {/* Stats row — hide 0% */}
-                            <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-500 font-bold">
-                                <div className="flex items-center gap-2">
-                                    <Star className="w-4 h-4 text-orange-400 fill-orange-400" />
-                                    Trust Score: {trustScore}/5.0
-                                </div>
-                                {totalConfirmed > 0 && (
-                                    <div className="flex items-center gap-2">
-                                        <CheckCircle className="w-4 h-4 text-orange-500" />
-                                        {totalConfirmed} jobs closed
+                                {googleRating && reviewCount > 0 && (
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl" style={{ fontSize: '16px' }}>
+                                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400 shrink-0" />
+                                        <span className="font-black text-zinc-800">{googleRating.toFixed(1)}</span>
+                                        <span className="font-bold text-zinc-400">Google ({reviewCount})</span>
                                     </div>
                                 )}
-                                {connectionRate > 0 ? (
-                                    <div className="flex items-center gap-2">
-                                        <TrendingUp className="w-4 h-4 text-orange-500" />
-                                        {connectionRate}% connection rate
+                                {business.years_experience && (
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl" style={{ fontSize: '16px' }}>
+                                        <Award className="w-4 h-4 text-orange-500 shrink-0" />
+                                        <span className="font-bold text-zinc-700">{business.years_experience} experience</span>
                                     </div>
-                                ) : (
-                                    <div className="flex items-center gap-2">
-                                        <Zap className="w-4 h-4 text-orange-500" />
-                                        New program — be one of the first referrers
+                                )}
+                                {memberSinceYear && (
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl" style={{ fontSize: '16px' }}>
+                                        <Clock className="w-4 h-4 text-orange-500 shrink-0" />
+                                        <span className="font-bold text-zinc-700">Member since {memberSinceYear}</span>
+                                    </div>
+                                )}
+                                {totalConfirmed > 0 && (
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-xl" style={{ fontSize: '16px' }}>
+                                        <Users className="w-4 h-4 text-orange-500 shrink-0" />
+                                        <span className="font-bold text-zinc-700">{totalConfirmed} jobs confirmed</span>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        {/* Right: Earnings Card */}
-                        <div className="bg-zinc-900 text-white rounded-3xl p-8 shrink-0 w-full lg:w-[280px] border-b-4 border-orange-500">
-                            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-4">Your Earnings Per Lead</p>
-                            <div className="flex items-baseline gap-2 mb-2">
-                                <span className="text-5xl font-black tracking-tighter">{formatEarnings(referrerEarns)}</span>
-                                <span className="text-base font-black text-orange-400">80% of fee</span>
+                        {/* Earnings pill — desktop inline with hero */}
+                        <div className="bg-zinc-900 text-white rounded-2xl px-8 py-6 shrink-0 w-full lg:w-auto border-b-4 border-orange-500 flex flex-col items-center lg:items-start gap-1">
+                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>You earn per verified lead</p>
+                            <div className="flex items-baseline gap-3">
+                                <span className="font-black text-white tracking-tighter" style={{ fontSize: '48px', lineHeight: 1 }}>{fmt(referrerEarns)}</span>
+                                <span className="font-black text-orange-400" style={{ fontSize: '18px' }}>80% split</span>
                             </div>
-                            <p className="text-sm text-zinc-400 font-medium leading-relaxed">
-                                Paid directly to you when the business confirms the lead.
-                            </p>
-                            <div className="mt-6 pt-6 border-t border-zinc-700 flex items-center justify-between text-xs font-black text-zinc-500 uppercase tracking-widest">
-                                <span>Platform fee</span>
-                                <span className="text-zinc-300">{formatEarnings(platformFee)}</span>
-                            </div>
+                            <p className="font-medium text-zinc-500" style={{ fontSize: '16px' }}>Platform fee: {fmt(platformFee)}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* ── BODY ── */}
-            <div className="container mx-auto px-4 py-16">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            {/* ── MAIN BODY ── */}
+            <div className="container mx-auto px-4 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-                    {/* ── MAIN COLUMN ── */}
-                    <div className="lg:col-span-2 space-y-10">
+                    {/* ── LEFT: SOCIAL PROOF + INTELLIGENCE ── */}
+                    <div className="lg:col-span-2 space-y-6">
 
-                        {/* About This Business */}
-                        <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10 shadow-sm">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="w-10 h-10 bg-orange-50 rounded-2xl flex items-center justify-center">
-                                    <Building2 className="w-5 h-5 text-orange-600" />
+                        {/* ROW 1: Expertise tags + Gallery side by side */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            {/* Expertise & Services */}
+                            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Wrench className="w-5 h-5 text-orange-500 shrink-0" />
+                                    <h2 className="font-black text-zinc-900" style={{ fontSize: '20px' }}>Expertise & Services</h2>
                                 </div>
-                                <h2 className="text-xl font-black text-zinc-900">About {business.business_name}</h2>
-                            </div>
-
-                            {business.description && (
-                                <p className="text-base text-zinc-600 leading-relaxed mb-8 font-medium">
-                                    {business.description}
-                                </p>
-                            )}
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                                <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl">
-                                    <MapPin className="w-5 h-5 text-orange-500 shrink-0" />
-                                    <div>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Service Area</p>
-                                        <p className="text-sm font-bold text-zinc-800">{business.suburb}{business.state ? `, ${business.state}` : ''}</p>
-                                    </div>
-                                </div>
-                                {business.trade_category && (
-                                    <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl">
-                                        <Briefcase className="w-5 h-5 text-orange-500 shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Trade</p>
-                                            <p className="text-sm font-bold text-zinc-800">{business.trade_category}</p>
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl">
-                                    <ShieldCheck className="w-5 h-5 text-orange-500 shrink-0" />
-                                    <div>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Verification</p>
-                                        <p className="text-sm font-bold text-zinc-800">{business.is_verified ? "Fully Verified" : "Registered"}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl">
-                                    <Star className="w-5 h-5 text-orange-500 shrink-0" />
-                                    <div>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Trust Score</p>
-                                        <p className="text-sm font-bold text-zinc-800">{trustScore} / 5.0</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {allFeatures.length > 0 && (
-                                <div>
-                                    <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-4">Key Highlights</p>
+                                {services.length > 0 ? (
                                     <div className="flex flex-wrap gap-2">
-                                        {allFeatures.map((feature: string, i: number) => (
-                                            <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-full text-xs font-bold border border-orange-100">
-                                                <CheckCircle className="w-3.5 h-3.5" /> {feature}
+                                        {services.map((s: string, i: number) => (
+                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-bold" style={{ fontSize: '16px' }}>
+                                                <CheckCircle className="w-4 h-4 text-orange-500 shrink-0" />{s}
                                             </span>
                                         ))}
                                     </div>
-                                </div>
-                            )}
-                        </section>
-
-                        {/* Why Refer — all orange */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {[
-                                { icon: DollarSign, title: "Fast Payouts", body: `Earn ${formatEarnings(referrerEarns)} as soon as ${business.business_name} validates the lead.` },
-                                { icon: Users, title: "Track Leads", body: "Real-time dashboard tracking for every lead you send. See which jobs are confirmed." },
-                                { icon: Award, title: "Trusted Pro", body: `${business.business_name} is a${business.is_verified ? ' fully verified' : ''} ${business.trade_category || 'trade'} professional.` },
-                            ].map(({ icon: Icon, title, body }) => (
-                                <div key={title} className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm group hover:border-orange-200 transition-all">
-                                    <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-6 group-hover:scale-110 transition-transform">
-                                        <Icon className="w-6 h-6" />
+                                ) : specialties.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2">
+                                        {specialties.map((s: string, i: number) => (
+                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-bold" style={{ fontSize: '16px' }}>
+                                                <CheckCircle className="w-4 h-4 text-orange-500 shrink-0" />{s}
+                                            </span>
+                                        ))}
                                     </div>
-                                    <h3 className="text-base font-black text-zinc-900 mb-2">{title}</h3>
-                                    <p className="text-sm text-zinc-500 leading-relaxed font-medium">{body}</p>
+                                ) : (
+                                    <div className="flex flex-wrap gap-2">
+                                        {[
+                                            business.trade_category,
+                                            "Licensed & Insured",
+                                            "Verified Business",
+                                            "Fast Response"
+                                        ].filter(Boolean).map((s: string, i: number) => (
+                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-bold" style={{ fontSize: '16px' }}>
+                                                <CheckCircle className="w-4 h-4 text-orange-500 shrink-0" />{s}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                                {allFeatures.length > 0 && (
+                                    <div className="mt-4 pt-4 border-t border-zinc-100 flex flex-wrap gap-2">
+                                        {allFeatures.map((f: string, i: number) => (
+                                            <span key={i} className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 text-zinc-700 rounded-lg font-bold" style={{ fontSize: '16px' }}>{f}</span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Recent Work Gallery */}
+                            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+                                <h2 className="font-black text-zinc-900 mb-4" style={{ fontSize: '20px' }}>Recent Work</h2>
+                                {photoUrls.length > 0 ? (
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {photoUrls.map((url: string, i: number) => (
+                                            <div key={i} className="aspect-square rounded-xl overflow-hidden bg-zinc-100 group relative">
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                <img
+                                                    src={url}
+                                                    alt={`${business.business_name} work ${i + 1}`}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-40 bg-zinc-50 rounded-xl border border-dashed border-zinc-200 gap-3">
+                                        <div className="w-12 h-12 bg-zinc-100 rounded-xl flex items-center justify-center">
+                                            <ShieldCheck className="w-6 h-6 text-zinc-400" />
+                                        </div>
+                                        <p className="font-bold text-zinc-400" style={{ fontSize: '16px' }}>Verified {business.trade_category || 'Trade'} Pro</p>
+                                    </div>
+                                )}
+                                <Link href={`/b/${slug}`} className="mt-4 flex items-center gap-1.5 font-black text-orange-600 hover:text-orange-700 transition-colors" style={{ fontSize: '16px' }}>
+                                    View full profile <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* About + Intelligence */}
+                        <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+                            <div className="flex items-center gap-2 mb-4">
+                                <BadgeCheck className="w-5 h-5 text-orange-500 shrink-0" />
+                                <h2 className="font-black text-zinc-900" style={{ fontSize: '20px' }}>Why Refer {business.business_name}?</h2>
+                            </div>
+                            {business.description ? (
+                                <p className="text-zinc-700 font-medium leading-relaxed mb-5" style={{ fontSize: '17px', lineHeight: 1.7 }}>
+                                    {business.description}
+                                </p>
+                            ) : (
+                                <p className="text-zinc-700 font-medium leading-relaxed mb-5" style={{ fontSize: '17px', lineHeight: 1.7 }}>
+                                    {business.business_name} is a{business.is_verified ? ' fully verified' : ''} {business.trade_category || 'trade'} specialist
+                                    serving {business.suburb}{business.state ? `, ${business.state}` : ''}.
+                                    {trustScore && ` With a ${trustScore}/5.0 TradeRefer Score,`} they are known for reliability and quality workmanship.
+                                </p>
+                            )}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                {[
+                                    { icon: Star, label: "Trust Score", value: `${trustScore}/5.0` },
+                                    { icon: ShieldCheck, label: "Status", value: business.is_verified ? "Verified" : "Registered" },
+                                    { icon: MapPin, label: "Area", value: business.suburb || "Local" },
+                                    { icon: Briefcase, label: "Trade", value: business.trade_category || "General" },
+                                ].map(({ icon: Icon, label, value }) => (
+                                    <div key={label} className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 text-center">
+                                        <Icon className="w-5 h-5 text-orange-500 mx-auto mb-1.5" />
+                                        <p className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '16px' }}>{label}</p>
+                                        <p className="font-black text-zinc-900 leading-tight mt-0.5" style={{ fontSize: '16px' }}>{value}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Google Reviews */}
+                        {topReviews.length > 0 && (
+                            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="font-black text-zinc-900" style={{ fontSize: '20px' }}>What Customers Say</h2>
+                                    {googleRating && (
+                                        <div className="flex items-center gap-1.5">
+                                            <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                                            <span className="font-black text-zinc-900" style={{ fontSize: '18px' }}>{googleRating.toFixed(1)}</span>
+                                            <span className="font-bold text-zinc-400" style={{ fontSize: '16px' }}>({reviewCount})</span>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {topReviews.map((r: any, i: number) => (
+                                        <div key={i} className="p-5 bg-zinc-50 rounded-xl border border-zinc-100">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="flex items-center gap-0.5">
+                                                    {[...Array(5)].map((_, j) => (
+                                                        <Star key={j} className={`w-4 h-4 ${j < r.rating ? 'fill-yellow-400 text-yellow-400' : 'fill-zinc-200 text-zinc-200'}`} />
+                                                    ))}
+                                                </div>
+                                                <span className="font-black text-zinc-700" style={{ fontSize: '16px' }}>{r.profile_name}</span>
+                                            </div>
+                                            <p className="text-zinc-600 font-medium leading-relaxed line-clamp-3" style={{ fontSize: '16px' }}>{r.review_text}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Active Bonus Campaigns */}
+                        {campaigns && campaigns.length > 0 && (
+                            <div className="bg-zinc-900 rounded-2xl p-6 text-white relative overflow-hidden shadow-xl">
+                                <Flame className="absolute -bottom-8 -right-8 w-40 h-40 text-orange-500 opacity-10 rotate-12" />
+                                <div className="relative z-10">
+                                    <div className="flex items-center justify-between mb-5">
+                                        <h2 className="font-black text-white" style={{ fontSize: '20px' }}>Active Bonus Campaigns</h2>
+                                        <span className="px-3 py-1 bg-orange-500 rounded-full font-black uppercase tracking-widest animate-pulse" style={{ fontSize: '16px' }}>Live</span>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {campaigns.map((c: any) => (
+                                            <div key={c.id} className="p-5 bg-white/5 border border-white/10 rounded-xl flex items-start justify-between gap-4 hover:bg-white/10 transition-all">
+                                                <div>
+                                                    <h3 className="font-black text-white" style={{ fontSize: '18px' }}>{c.title}</h3>
+                                                    <p className="font-medium text-zinc-400 mt-1" style={{ fontSize: '16px' }}>{c.description || "Limited time bonus."}</p>
+                                                    {c.ends_at && (
+                                                        <p className="text-orange-400 font-black mt-2 flex items-center gap-1" style={{ fontSize: '16px' }}>
+                                                            <Clock className="w-4 h-4" /> Ends {new Date(c.ends_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="text-right shrink-0">
+                                                    <p className="font-black text-orange-400" style={{ fontSize: '24px' }}>
+                                                        {c.campaign_type === 'flat_bonus' && `+$${(c.bonus_amount_cents / 100).toFixed(0)}`}
+                                                        {c.campaign_type === 'multiplier' && `${c.multiplier}x`}
+                                                    </p>
+                                                    <p className="font-bold text-zinc-500 uppercase tracking-widest" style={{ fontSize: '16px' }}>Bonus</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* ── RIGHT: STICKY JOIN CTA ── */}
+                    <div className="space-y-4 lg:sticky lg:top-24 self-start">
+
+                        {/* Earnings + Join CTA */}
+                        <div className="bg-white rounded-2xl border-2 border-zinc-200 overflow-hidden shadow-xl">
+                            <div className="bg-zinc-900 p-6 text-white text-center">
+                                <p className="font-black text-zinc-400 uppercase tracking-widest mb-1" style={{ fontSize: '16px' }}>Your cut per lead</p>
+                                <p className="font-black text-white tracking-tighter" style={{ fontSize: '56px', lineHeight: 1 }}>{fmt(referrerEarns)}</p>
+                                <p className="font-bold text-orange-400 mt-1" style={{ fontSize: '18px' }}>80% of every verified lead</p>
+                            </div>
+                            <div className="p-6 space-y-4">
+                                <p className="font-bold text-zinc-600 text-center" style={{ fontSize: '17px' }}>
+                                    Join {business.business_name}&apos;s referral team and earn every time you send a confirmed job.
+                                </p>
+                                <StartReferringButton slug={slug} businessName={business.business_name} />
+                                {(totalConfirmed > 0 || connectionRate > 0) && (
+                                    <div className="pt-4 border-t border-zinc-100 grid grid-cols-2 gap-3 text-center">
+                                        {totalConfirmed > 0 && (
+                                            <div>
+                                                <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{totalConfirmed}</p>
+                                                <p className="font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>Jobs Done</p>
+                                            </div>
+                                        )}
+                                        {connectionRate > 0 && (
+                                            <div>
+                                                <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{connectionRate}%</p>
+                                                <p className="font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>Connect Rate</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Quick-view authority card */}
+                        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
+                            <h3 className="font-black text-zinc-900" style={{ fontSize: '18px' }}>Hireability Checklist</h3>
+                            {[
+                                { ok: business.is_verified, text: "Fully Verified by TradeRefer" },
+                                { ok: parseFloat(trustScore) >= 4.5, text: `Trust Score ${trustScore}/5.0` },
+                                { ok: !!business.years_experience, text: business.years_experience ? `${business.years_experience} experience` : "Experienced Pro" },
+                                { ok: !!memberSinceYear, text: memberSinceYear ? `Active since ${memberSinceYear}` : "Active Member" },
+                                { ok: services.length > 0 || allFeatures.length > 0, text: "Detailed service list provided" },
+                                { ok: googleRating !== null && googleRating > 0, text: googleRating ? `${googleRating.toFixed(1)}★ Google Rating` : "Google Reviewed" },
+                            ].filter(item => item.ok).map((item, i) => (
+                                <div key={i} className="flex items-center gap-3">
+                                    <div className="w-6 h-6 bg-green-50 border border-green-200 rounded-full flex items-center justify-center shrink-0">
+                                        <CheckCircle className="w-4 h-4 text-green-600" />
+                                    </div>
+                                    <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>{item.text}</span>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Active Campaigns */}
-                        {campaigns && campaigns.length > 0 && (
-                            <section className="bg-zinc-900 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden shadow-2xl">
-                                <Flame className="absolute -bottom-10 -right-10 w-48 h-48 text-orange-500 opacity-10 rotate-12" />
-                                <div className="relative z-10">
-                                    <div className="flex items-center justify-between mb-8">
-                                        <h2 className="text-2xl font-black">Active Bonus Campaigns</h2>
-                                        <span className="px-3 py-1 bg-orange-500 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">Hot Rewards</span>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {campaigns.map((campaign: any) => (
-                                            <div key={campaign.id} className="p-6 bg-white/5 border border-white/10 rounded-2xl flex items-start justify-between gap-4 hover:bg-white/10 transition-all">
-                                                <div className="space-y-1">
-                                                    <h3 className="font-black text-zinc-100 uppercase tracking-tight">{campaign.title}</h3>
-                                                    <p className="text-xs text-zinc-400 font-medium leading-relaxed">{campaign.description || "Limited time bonus for active referrers."}</p>
-                                                    <div className="flex items-center gap-2 mt-4 text-[10px] text-orange-500 font-black uppercase">
-                                                        <Clock className="w-3 h-3" />
-                                                        Ends {new Date(campaign.ends_at).toLocaleDateString()}
-                                                    </div>
-                                                </div>
-                                                <div className="text-right shrink-0">
-                                                    <p className="text-xl font-black text-orange-500">
-                                                        {campaign.campaign_type === 'flat_bonus' && `+$${(campaign.bonus_amount_cents / 100).toFixed(0)}`}
-                                                        {campaign.campaign_type === 'multiplier' && `${campaign.multiplier}x`}
-                                                    </p>
-                                                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-tighter">Bonus</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </section>
-                        )}
-
-                        {/* Earnings Estimator */}
-                        <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-12 shadow-sm">
-                            <div className="text-center mb-10">
-                                <h2 className="text-3xl font-black text-zinc-900 mb-3">Potential Monthly Earnings</h2>
-                                <p className="text-base text-zinc-500 font-medium">See how much you could earn referring {business.business_name}.</p>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                {[
-                                    { referrals: 3, label: "Casual", icon: Rocket },
-                                    { referrals: 10, label: "Active", icon: TrendingUp },
-                                    { referrals: 25, label: "Power", icon: Zap },
-                                ].map((tier) => (
-                                    <div key={tier.label} className="p-8 bg-zinc-50 rounded-3xl border border-zinc-100 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                                        <div className="w-14 h-14 mx-auto rounded-2xl bg-orange-50 flex items-center justify-center mb-6 text-orange-500">
-                                            <tier.icon className="w-7 h-7" />
-                                        </div>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">{tier.label}</p>
-                                        <p className="text-5xl font-black text-zinc-900 leading-none mb-1 tracking-tighter">${(tier.referrals * referrerEarns).toFixed(0)}</p>
-                                        <p className="text-sm text-zinc-400 font-bold mt-2">{tier.referrals} referrals / mo</p>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="mt-8 p-5 bg-zinc-50 rounded-2xl">
-                                <p className="text-sm text-zinc-400 font-medium text-center">Estimates based on {formatEarnings(referrerEarns)} per verified lead. Excludes bonus campaigns.</p>
-                            </div>
-                        </section>
-
-                        {/* Deals */}
-                        {deals && deals.length > 0 && (
-                            <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-12 shadow-sm">
-                                <h2 className="text-2xl font-black text-zinc-900 mb-8 flex items-center gap-3">
-                                    <Gift className="w-6 h-6 text-orange-500" /> Exclusive Referral Deals
-                                </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {deals.map((deal: any) => (
-                                        <div key={deal.id} className="p-6 bg-orange-50/50 rounded-3xl border border-orange-100 relative overflow-hidden group hover:bg-orange-50 transition-colors">
-                                            <div className="absolute top-4 right-4 text-orange-200 group-hover:text-orange-300 transition-colors">
-                                                <Tag className="w-8 h-8 rotate-12" />
-                                            </div>
-                                            <div className="relative z-10 pr-10">
-                                                <h3 className="text-lg font-black text-zinc-900 mb-2 leading-tight uppercase tracking-tight">{deal.title}</h3>
-                                                <p className="text-sm text-zinc-600 font-medium leading-relaxed mb-4">{deal.description || "Referral-only special offer."}</p>
-                                                {deal.discount_text && (
-                                                    <span className="px-3 py-1 bg-white text-orange-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-orange-100">
-                                                        {deal.discount_text}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
-
-                        {/* Private Feedback */}
-                        <div className="p-8 bg-white rounded-3xl border border-zinc-200 shadow-sm">
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0">
-                                    <MessageSquare className="w-5 h-5 text-orange-600" />
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-base font-black text-zinc-900 mb-1">Send Private Feedback</h3>
-                                    <p className="text-sm text-zinc-500 font-medium mb-4">Have a direct experience with {business.business_name}? Send confidential feedback to the TradeRefer team — it helps us maintain quality.</p>
-                                    <PrivateFeedback businessSlug={business.slug} businessName={business.business_name} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* ── SIDEBAR ── */}
-                    <div className="space-y-6 lg:sticky lg:top-24 self-start">
-
-                        {/* CTA card */}
-                        <div className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-xl">
-                            <h3 className="text-xl font-black text-zinc-900 mb-1">Get Your Referral Link</h3>
-                            <p className="text-sm text-zinc-400 mb-6 font-medium">Earn {formatEarnings(referrerEarns)} for every verified lead you send.</p>
-                            <StartReferringButton slug={slug} businessName={business.business_name} />
-                            {totalConfirmed > 0 && (
-                                <div className="mt-6 pt-6 border-t border-zinc-100 flex items-center justify-between">
-                                    <div className="text-center flex-1">
-                                        <p className="text-2xl font-black text-zinc-900">{totalConfirmed}</p>
-                                        <p className="text-xs font-bold text-zinc-400 uppercase tracking-tight mt-1">Jobs Closed</p>
-                                    </div>
-                                    <div className="w-px h-8 bg-zinc-100" />
-                                    <div className="text-center flex-1">
-                                        <p className="text-2xl font-black text-zinc-900">{connectionRate}%</p>
-                                        <p className="text-xs font-bold text-zinc-400 uppercase tracking-tight mt-1">Connect Rate</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Share Kit */}
-                        <div className="bg-zinc-900 rounded-3xl p-8 text-white shadow-xl">
-                            <h3 className="text-sm font-black uppercase tracking-widest mb-1 text-orange-400">Share Assets</h3>
-                            <p className="text-xs text-zinc-400 mb-5 font-medium leading-relaxed">Once you start referring, unlock pre-written messages for WhatsApp, Email or SMS.</p>
-                            <ShareKitGate
-                                slug={slug}
-                                businessName={business.business_name}
-                                tradeCategory={business.trade_category}
-                                suburb={business.suburb}
-                                commission={referrerEarns}
-                                deals={deals}
-                            />
-                        </div>
-
-                        {/* Business Info */}
-                        <div className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm">
-                            <h3 className="text-base font-black text-zinc-900 mb-6">Business Info</h3>
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                    <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
-                                    <div>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-tight">Service Area</p>
-                                        <p className="text-sm font-bold text-zinc-800">{business.suburb}{business.state ? `, ${business.state}` : ''}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <ShieldCheck className="w-4 h-4 text-orange-500 shrink-0" />
-                                    <div>
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-tight">Status</p>
-                                        <p className="text-sm font-bold text-green-600">{business.is_verified ? "Fully Verified" : "Registered"}</p>
-                                    </div>
-                                </div>
-                                {business.description && (
-                                    <div className="pt-4 border-t border-zinc-100">
-                                        <p className="text-sm text-zinc-500 font-medium leading-relaxed line-clamp-4">
-                                            {business.description.slice(0, 200)}{business.description.length > 200 ? '…' : ''}
-                                        </p>
-                                    </div>
-                                )}
-                                <Link href={`/b/${slug}`} className="mt-2 inline-flex items-center gap-1 text-sm font-black text-orange-600 hover:text-orange-700 transition-colors">
-                                    View Full Profile <ArrowRight className="w-3.5 h-3.5" />
-                                </Link>
-                            </div>
-                        </div>
+                        <Link
+                            href={`/b/${slug}`}
+                            className="flex items-center justify-center gap-2 w-full py-3 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-black text-zinc-600 hover:text-zinc-800 transition-all"
+                            style={{ fontSize: '16px' }}
+                        >
+                            View Public Profile <ArrowRight className="w-4 h-4" />
+                        </Link>
                     </div>
                 </div>
             </div>
