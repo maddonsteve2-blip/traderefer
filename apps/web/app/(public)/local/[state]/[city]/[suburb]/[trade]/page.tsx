@@ -102,6 +102,16 @@ async function getNearbySuburbs(city: string, suburb: string, currentTrade: stri
     return suburbs;
 }
 
+async function logEmptyPage(state: string, city: string, suburb: string, trade: string) {
+    try {
+        await sql`
+            INSERT INTO fill_queue (state, city, suburb, trade)
+            VALUES (${state.toLowerCase()}, ${city.toLowerCase()}, ${suburb.toLowerCase()}, ${trade.toLowerCase()})
+            ON CONFLICT (state, suburb, trade) DO NOTHING
+        `;
+    } catch { /* never block rendering */ }
+}
+
 async function getCityReferralCount(city: string): Promise<number> {
     try {
         const cityName = formatSlug(city);
@@ -130,6 +140,10 @@ export default async function TradeLocationPage({ params }: PageProps) {
         getNearbySuburbs(city, suburb, tradeName),
         getCityReferralCount(city),
     ]);
+
+    if (businesses.length === 0) {
+        logEmptyPage(state, city, suburb, trade); // fire-and-forget, never awaited
+    }
 
     const avgRating = businesses.length > 0
         ? (businesses.reduce((acc: number, biz: any) => acc + (parseFloat(biz.avg_rating) || 0), 0) / businesses.length).toFixed(1)
