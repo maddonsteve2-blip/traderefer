@@ -25,8 +25,8 @@ interface Earner {
     leads_this_month: number;
 }
 
-const TIER_ICONS: Record<string, any> = { starter: Star, pro: Zap, elite: Award, ambassador: Crown };
-const TIER_COLORS: Record<string, string> = { starter: "text-zinc-400", pro: "text-blue-500", elite: "text-purple-500", ambassador: "text-amber-500" };
+const TIER_ICONS: Record<string, any> = { bronze: Star, silver: Zap, gold: Award, platinum: Crown };
+const TIER_COLORS: Record<string, string> = { bronze: "text-amber-600", silver: "text-zinc-400", gold: "text-yellow-500", platinum: "text-blue-500" };
 
 function BusinessCard({ biz }: { biz: Business }) {
     return (
@@ -79,19 +79,32 @@ export function DiscoverSection() {
         );
     }, [isSignedIn]);
 
+    // Phase 1: always fetch immediately with no params — cards always show
     useEffect(() => {
-        const params = new URLSearchParams();
-        if (suburb) params.set('suburb', suburb);
-        if (state) params.set('state', state);
-        const q = params.toString() ? `?${params.toString()}` : '';
         Promise.all([
-            fetch(`${apiUrl}/discover/hot${q}`).then(r => r.ok ? r.json() : []),
-            fetch(`${apiUrl}/discover/new${q}`).then(r => r.ok ? r.json() : []),
+            fetch(`${apiUrl}/discover/hot`).then(r => r.ok ? r.json() : []),
+            fetch(`${apiUrl}/discover/new`).then(r => r.ok ? r.json() : []),
             fetch(`${apiUrl}/discover/top-earners`).then(r => r.ok ? r.json() : []),
         ]).then(([h, n, t]) => {
             setHot(h);
             setNewBiz(n);
             setTopEarners(t);
+        }).catch(() => {});
+    }, [apiUrl]);
+
+    // Phase 2: when suburb is known, re-fetch locale-first (only replace if results non-empty)
+    useEffect(() => {
+        if (!suburb && !state) return;
+        const params = new URLSearchParams();
+        if (suburb) params.set('suburb', suburb);
+        if (state) params.set('state', state);
+        const q = `?${params.toString()}`;
+        Promise.all([
+            fetch(`${apiUrl}/discover/hot${q}`).then(r => r.ok ? r.json() : []),
+            fetch(`${apiUrl}/discover/new${q}`).then(r => r.ok ? r.json() : []),
+        ]).then(([h, n]) => {
+            if (h.length > 0) setHot(h);
+            if (n.length > 0) setNewBiz(n);
         }).catch(() => {});
     }, [apiUrl, suburb, state]);
 
