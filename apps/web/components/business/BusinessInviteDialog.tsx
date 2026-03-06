@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     UserPlus, Send, CheckCircle, Loader2,
-    Building2, Users, X, Plus, Contact
+    Building2, Users, X, Plus
 } from "lucide-react";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -30,8 +30,6 @@ interface BusinessInviteDialogProps {
 
 export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialogProps) {
     const { getToken } = useAuth();
-    const { user } = useUser();
-    const [activeTab, setActiveTab] = useState<"add" | "google">("add");
     const [invitees, setInvitees] = useState<Invitee[]>([]);
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
@@ -39,9 +37,6 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
     const [form, setForm] = useState({ name: "", email: "", phone: "", type: "referrer" as InviteeType });
     const [formError, setFormError] = useState("");
 
-    const [googleContacts, setGoogleContacts] = useState<any[]>([]);
-    const [loadingContacts, setLoadingContacts] = useState(false);
-    const [contactsLoaded, setContactsLoaded] = useState(false);
 
     const addInvitee = () => {
         if (!form.name.trim()) { setFormError("Name is required"); return; }
@@ -53,49 +48,6 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
 
     const removeInvitee = (id: string) => setInvitees(prev => prev.filter(i => i.id !== id));
 
-    const loadGoogleContacts = async () => {
-        setLoadingContacts(true);
-        try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const googleTokens = await (user as any)?.getOauthAccessToken("oauth_google");
-            const googleToken = googleTokens?.[0]?.token;
-
-            if (!googleToken) {
-                toast.error("Please sign in with Google to import contacts.");
-                setContactsLoaded(false);
-                return;
-            }
-
-            const token = await getToken();
-            const res = await fetch(`${API}/business/invitations/google-contacts`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "X-Google-Token": googleToken,
-                }
-            });
-            if (!res.ok) throw new Error("Could not load contacts");
-            const data = await res.json();
-            if (data.error) throw new Error(data.error);
-            setGoogleContacts(data.contacts || []);
-            setContactsLoaded(true);
-        } catch {
-            toast.error("Google Contacts not available. Please add contacts manually.");
-            setContactsLoaded(false);
-        } finally {
-            setLoadingContacts(false);
-        }
-    };
-
-    const addFromGoogle = (contact: any) => {
-        if (invitees.find(i => i.email === contact.email && contact.email)) return;
-        setInvitees(prev => [...prev, {
-            id: crypto.randomUUID(),
-            name: contact.name,
-            email: contact.email || "",
-            phone: contact.phone || "",
-            type: "business",
-        }]);
-    };
 
     const sendInvitations = async () => {
         if (invitees.length === 0) { toast.error("Add at least one person to invite"); return; }
@@ -139,26 +91,10 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
                         </div>
                     </div>
 
-                    {/* Tabs */}
-                    <div className="flex gap-1 p-1 bg-zinc-100 rounded-2xl mt-5">
-                        <button
-                            onClick={() => setActiveTab("add")}
-                            className={`flex-1 py-2 px-4 rounded-xl text-sm font-bold transition-all ${activeTab === "add" ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400 hover:text-zinc-600"}`}
-                        >
-                            <Plus className="w-3.5 h-3.5 inline mr-1.5" />Add Manually
-                        </button>
-                        <button
-                            onClick={() => { setActiveTab("google"); if (!contactsLoaded) loadGoogleContacts(); }}
-                            className={`flex-1 py-2 px-4 rounded-xl text-sm font-bold transition-all ${activeTab === "google" ? "bg-white shadow-sm text-zinc-900" : "text-zinc-400 hover:text-zinc-600"}`}
-                        >
-                            <Contact className="w-3.5 h-3.5 inline mr-1.5" />Google Contacts
-                        </button>
-                    </div>
                 </DialogHeader>
 
                 <div className="flex-1 overflow-y-auto px-8 pb-8 space-y-5">
-                    {activeTab === "add" && (
-                        <div className="space-y-3">
+                    <div className="space-y-3">
                             {/* Type toggle */}
                             <div className="flex gap-2">
                                 <button
@@ -210,50 +146,6 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
                                 <Plus className="w-4 h-4 mr-1.5" /> Add to List
                             </Button>
                         </div>
-                    )}
-
-                    {activeTab === "google" && (
-                        <div className="space-y-3">
-                            {loadingContacts ? (
-                                <div className="flex flex-col items-center py-10 gap-3">
-                                    <Loader2 className="w-8 h-8 animate-spin text-zinc-300" />
-                                    <p className="text-sm text-zinc-400">Loading contacts…</p>
-                                </div>
-                            ) : contactsLoaded ? (
-                                <>
-                                    <p className="text-xs text-zinc-400 font-medium">{googleContacts.length} contacts loaded. Tap to add.</p>
-                                    <div className="space-y-2 max-h-60 overflow-y-auto">
-                                        {googleContacts.map((c, i) => {
-                                            const alreadyAdded = invitees.some(inv => inv.email === c.email && c.email);
-                                            return (
-                                                <div key={i} className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${alreadyAdded ? 'bg-green-50 border-green-200' : 'bg-zinc-50 border-zinc-100 hover:border-orange-200 hover:bg-orange-50'}`}>
-                                                    <div>
-                                                        <p className="text-sm font-bold text-zinc-900">{c.name}</p>
-                                                        <p className="text-xs text-zinc-400">{c.email || c.phone}</p>
-                                                    </div>
-                                                    {alreadyAdded ? (
-                                                        <CheckCircle className="w-5 h-5 text-green-500" />
-                                                    ) : (
-                                                        <button onClick={() => addFromGoogle(c)} className="p-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl transition-colors">
-                                                            <Plus className="w-3.5 h-3.5" />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="text-center py-10">
-                                    <Contact className="w-10 h-10 text-zinc-200 mx-auto mb-3" />
-                                    <p className="text-sm text-zinc-400 font-medium mb-4">Sign in with Google to import your contacts</p>
-                                    <Button onClick={loadGoogleContacts} variant="outline" className="rounded-full border-zinc-200 text-zinc-600">
-                                        Load Google Contacts
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    )}
 
                     {/* Invite list */}
                     {invitees.length > 0 && (
