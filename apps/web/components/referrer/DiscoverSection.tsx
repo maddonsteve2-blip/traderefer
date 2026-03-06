@@ -82,20 +82,20 @@ export function DiscoverSection() {
         );
     }, [isSignedIn]);
 
-    // Phase 1: always fetch immediately with no params — cards always show
+    // Phase 1: always fetch immediately with no params — proxy through /api/discover to avoid CORS
     useEffect(() => {
         Promise.all([
-            fetch(`${apiUrl}/discover/hot`).then(r => r.ok ? r.json() : []),
-            fetch(`${apiUrl}/discover/new`).then(r => r.ok ? r.json() : []),
-            fetch(`${apiUrl}/discover/top-earners`).then(r => r.ok ? r.json() : []),
+            fetch(`/api/discover/hot`).then(r => r.ok ? r.json() : []),
+            fetch(`/api/discover/new`).then(r => r.ok ? r.json() : []),
+            fetch(`/api/discover/top-earners`).then(r => r.ok ? r.json() : []),
         ]).then(([h, n, t]) => {
             setHot(h);
             setNewBiz(n);
             setTopEarners(t);
         }).catch(() => {});
-    }, [apiUrl]);
+    }, []);
 
-    // Phase 2: when suburb is known, re-fetch locale-first (only replace if results non-empty)
+    // Phase 2: when suburb/state is known, re-fetch locale-first (only replace if results non-empty)
     useEffect(() => {
         if (!suburb && !state) return;
         const params = new URLSearchParams();
@@ -103,13 +103,13 @@ export function DiscoverSection() {
         if (state) params.set('state', state);
         const q = `?${params.toString()}`;
         Promise.all([
-            fetch(`${apiUrl}/discover/hot${q}`).then(r => r.ok ? r.json() : []),
-            fetch(`${apiUrl}/discover/new${q}`).then(r => r.ok ? r.json() : []),
+            fetch(`/api/discover/hot${q}`).then(r => r.ok ? r.json() : []),
+            fetch(`/api/discover/new${q}`).then(r => r.ok ? r.json() : []),
         ]).then(([h, n]) => {
             if (h.length > 0) setHot(h);
             if (n.length > 0) setNewBiz(n);
         }).catch(() => {});
-    }, [apiUrl, suburb, state]);
+    }, [suburb, state]);
 
     if (hot.length === 0 && newBiz.length === 0 && topEarners.length === 0) return null;
 
