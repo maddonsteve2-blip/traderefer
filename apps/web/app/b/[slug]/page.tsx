@@ -43,7 +43,7 @@ import { proxyLogoUrl } from "@/lib/logo";
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     const res = await fetch(`${apiUrl}/businesses/${slug}`, {
-        cache: 'no-store'
+        next: { revalidate: 3600 }
     });
     if (!res.ok) return null;
     return res.json();
@@ -52,7 +52,7 @@ async function getBusiness(slug: string) {
 async function getProjects(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     const res = await fetch(`${apiUrl}/business/${slug}/projects/public`, {
-        cache: 'no-store'
+        next: { revalidate: 3600 }
     });
     if (!res.ok) return [];
     return res.json();
@@ -61,7 +61,7 @@ async function getProjects(slug: string) {
 async function getGoogleReviews(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     const res = await fetch(`${apiUrl}/businesses/${slug}/google-reviews`, {
-        cache: 'no-store'
+        next: { revalidate: 86400 }
     });
     if (!res.ok) return [];
     return res.json();
@@ -70,7 +70,7 @@ async function getGoogleReviews(slug: string) {
 async function getDeals(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     const res = await fetch(`${apiUrl}/businesses/${slug}/deals`, {
-        cache: 'no-store'
+        next: { revalidate: 3600 }
     });
     if (!res.ok) return [];
     return res.json();
