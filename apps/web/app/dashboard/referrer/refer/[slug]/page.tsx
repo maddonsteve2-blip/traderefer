@@ -172,8 +172,8 @@ export default async function DashboardReferPage({
             </div>
 
             {/* ── MAIN BODY ── */}
-            <div className="container mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div className="container mx-auto px-4 pt-6 pb-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
                     {/* ── LEFT: SOCIAL PROOF + INTELLIGENCE ── */}
                     <div className="lg:col-span-2 space-y-6">
@@ -190,7 +190,7 @@ export default async function DashboardReferPage({
                                 {services.length > 0 ? (
                                     <div className="flex flex-wrap gap-2">
                                         {services.map((s: string, i: number) => (
-                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-bold" style={{ fontSize: '16px' }}>
+                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-semibold" style={{ fontSize: '16px' }}>
                                                 <CheckCircle className="w-4 h-4 text-orange-500 shrink-0" />{s}
                                             </span>
                                         ))}
@@ -198,7 +198,7 @@ export default async function DashboardReferPage({
                                 ) : specialties.length > 0 ? (
                                     <div className="flex flex-wrap gap-2">
                                         {specialties.map((s: string, i: number) => (
-                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-bold" style={{ fontSize: '16px' }}>
+                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-semibold" style={{ fontSize: '16px' }}>
                                                 <CheckCircle className="w-4 h-4 text-orange-500 shrink-0" />{s}
                                             </span>
                                         ))}
@@ -211,7 +211,7 @@ export default async function DashboardReferPage({
                                             "Verified Business",
                                             "Fast Response"
                                         ].filter(Boolean).map((s: string, i: number) => (
-                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-bold" style={{ fontSize: '16px' }}>
+                                            <span key={i} className="flex items-center gap-1.5 px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-xl font-semibold" style={{ fontSize: '16px' }}>
                                                 <CheckCircle className="w-4 h-4 text-orange-500 shrink-0" />{s}
                                             </span>
                                         ))}
@@ -263,11 +263,11 @@ export default async function DashboardReferPage({
                                 <h2 className="font-black text-zinc-900" style={{ fontSize: '20px' }}>Why Refer {business.business_name}?</h2>
                             </div>
                             {business.description ? (
-                                <p className="text-zinc-700 font-medium leading-relaxed mb-5" style={{ fontSize: '17px', lineHeight: 1.7 }}>
+                                <p className="text-zinc-700 font-medium leading-relaxed mb-5" style={{ fontSize: '18px', lineHeight: 1.7 }}>
                                     {business.description}
                                 </p>
                             ) : (
-                                <p className="text-zinc-700 font-medium leading-relaxed mb-5" style={{ fontSize: '17px', lineHeight: 1.7 }}>
+                                <p className="text-zinc-700 font-medium leading-relaxed mb-5" style={{ fontSize: '18px', lineHeight: 1.7 }}>
                                     {business.business_name} is a{business.is_verified ? ' fully verified' : ''} {business.trade_category || 'trade'} specialist
                                     serving {business.suburb}{business.state ? `, ${business.state}` : ''}.
                                     {trustScore && ` With a ${trustScore}/5.0 TradeRefer Score,`} they are known for reliability and quality workmanship.
@@ -281,9 +281,9 @@ export default async function DashboardReferPage({
                                     { icon: Briefcase, label: "Trade", value: business.trade_category || "General" },
                                 ].map(({ icon: Icon, label, value }) => (
                                     <div key={label} className="p-4 bg-zinc-50 rounded-xl border border-zinc-100 text-center">
-                                        <Icon className="w-5 h-5 text-orange-500 mx-auto mb-1.5" />
+                                        <Icon className="w-6 h-6 text-orange-500 mx-auto mb-1.5" />
                                         <p className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '16px' }}>{label}</p>
-                                        <p className="font-black text-zinc-900 leading-tight mt-0.5" style={{ fontSize: '16px' }}>{value}</p>
+                                        <p className="font-black text-zinc-900 leading-tight mt-0.5" style={{ fontSize: '17px' }}>{value}</p>
                                     </div>
                                 ))}
                             </div>
@@ -291,7 +291,7 @@ export default async function DashboardReferPage({
 
                         {/* Google Reviews */}
                         {topReviews.length > 0 && (
-                            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+                            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm mb-0">
                                 <div className="flex items-center justify-between mb-4">
                                     <h2 className="font-black text-zinc-900" style={{ fontSize: '20px' }}>What Customers Say</h2>
                                     {googleRating && (
@@ -311,9 +311,9 @@ export default async function DashboardReferPage({
                                                         <Star key={j} className={`w-4 h-4 ${j < r.rating ? 'fill-yellow-400 text-yellow-400' : 'fill-zinc-200 text-zinc-200'}`} />
                                                     ))}
                                                 </div>
-                                                <span className="font-black text-zinc-700" style={{ fontSize: '16px' }}>{r.profile_name}</span>
+                                                <span className="font-black text-zinc-700" style={{ fontSize: '17px' }}>{r.profile_name}</span>
                                             </div>
-                                            <p className="text-zinc-600 font-medium leading-relaxed line-clamp-3" style={{ fontSize: '16px' }}>{r.review_text}</p>
+                                            <p className="text-zinc-600 font-medium leading-relaxed line-clamp-3" style={{ fontSize: '18px', lineHeight: 1.65 }}>{r.review_text}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -364,7 +364,7 @@ export default async function DashboardReferPage({
                             <div className="bg-zinc-900 p-6 text-white text-center">
                                 <p className="font-black text-zinc-400 uppercase tracking-widest mb-1" style={{ fontSize: '16px' }}>Your cut per lead</p>
                                 <p className="font-black text-white tracking-tighter" style={{ fontSize: '56px', lineHeight: 1 }}>{fmt(referrerEarns)}</p>
-                                <p className="font-bold text-orange-400 mt-1" style={{ fontSize: '18px' }}>80% of every verified lead</p>
+                                <p className="font-bold text-orange-400 mt-1" style={{ fontSize: '20px' }}>80% of every verified lead</p>
                             </div>
                             <div className="p-6 space-y-4">
                                 <p className="font-bold text-zinc-600 text-center" style={{ fontSize: '17px' }}>
@@ -405,7 +405,7 @@ export default async function DashboardReferPage({
                                     <div className="w-6 h-6 bg-green-50 border border-green-200 rounded-full flex items-center justify-center shrink-0">
                                         <CheckCircle className="w-4 h-4 text-green-600" />
                                     </div>
-                                    <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>{item.text}</span>
+                                    <span className="font-bold text-zinc-700" style={{ fontSize: '18px' }}>{item.text}</span>
                                 </div>
                             ))}
                         </div>
