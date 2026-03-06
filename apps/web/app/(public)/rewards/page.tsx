@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import CardImage from "./CardImage";
+import CardGrid from "./CardGrid";
 import { ArrowRight, CheckCircle2, Gift, Mail, Smartphone, Clock3, Star, Users, ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -553,37 +553,8 @@ export default function RewardsPage() {
                             </Link>
                         </div>
 
-                        {/* Card image grid — matches Prezzee store page layout, 452x280 aspect ratio */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                            {CARDS.map((card) => (
-                                <Link
-                                    key={card.name}
-                                    href="/onboarding/referrer"
-                                    className="group relative rounded-2xl overflow-hidden aspect-[452/280] cursor-pointer shadow-sm hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 bg-zinc-100"
-                                >
-                                    <CardImage src={card.url} alt={card.name} />
-                                    {/* Hover overlay */}
-                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-1.5 p-3">
-                                        <span className="text-white font-black text-sm text-center leading-tight">Start earning</span>
-                                        <span className="text-[#FF6600] font-black text-xs flex items-center gap-1">
-                                            Join free <ArrowRight className="w-3 h-3" />
-                                        </span>
-                                    </div>
-                                </Link>
-                            ))}
-
-                            {/* "+307 more brands" tile */}
-                            <Link
-                                href="/onboarding/referrer"
-                                className="group relative rounded-2xl overflow-hidden aspect-[452/280] flex flex-col items-center justify-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
-                            >
-                                <span className="text-white font-black text-2xl">+307</span>
-                                <span className="text-zinc-400 font-bold text-xs text-center px-3 leading-tight">more brands</span>
-                                <span className="text-[#FF6600] font-black text-xs flex items-center gap-1 mt-1 group-hover:gap-2 transition-all">
-                                    Join free <ArrowRight className="w-3 h-3" />
-                                </span>
-                            </Link>
-                        </div>
+                        {/* Card image grid — 6 rows shown, "Show all" button reveals rest */}
+                        <CardGrid cards={CARDS} />
 
                         <p className="text-center text-zinc-400 font-medium text-sm mt-8">
                             Available brands may vary. Full catalogue at{" "}
