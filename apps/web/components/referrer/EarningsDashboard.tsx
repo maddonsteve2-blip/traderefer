@@ -14,6 +14,7 @@ interface Stats {
     next_tier: string | null;
     referrals_to_next: number;
     total_referrals: number;
+    monthly_referrals: number;
     earnings: {
         this_week: number;
         this_month: number;
@@ -33,15 +34,18 @@ interface Stats {
     }[];
 }
 
-const TIER_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: any; gradient: string }> = {
-    starter: { label: "Starter", color: "text-zinc-600", bg: "bg-zinc-100", border: "border-zinc-200", icon: Star, gradient: "from-zinc-100 to-zinc-50" },
-    pro: { label: "Pro", color: "text-blue-600", bg: "bg-blue-100", border: "border-blue-200", icon: Zap, gradient: "from-blue-100 to-blue-50" },
-    elite: { label: "Elite", color: "text-purple-600", bg: "bg-purple-100", border: "border-purple-200", icon: Award, gradient: "from-purple-100 to-purple-50" },
-    ambassador: { label: "Ambassador", color: "text-amber-600", bg: "bg-amber-100", border: "border-amber-200", icon: Crown, gradient: "from-amber-100 to-amber-50" },
+const TIER_CONFIG: Record<string, {
+    label: string; color: string; bg: string; border: string;
+    icon: any; gradient: string; split: number; rangeLabel: string;
+}> = {
+    bronze:   { label: "Bronze",   color: "text-amber-700",  bg: "bg-amber-50",   border: "border-amber-200",  icon: Star,  gradient: "from-amber-50 to-orange-50",   split: 80,   rangeLabel: "0–4 refs/mo" },
+    silver:   { label: "Silver",   color: "text-zinc-500",   bg: "bg-zinc-100",   border: "border-zinc-300",   icon: Zap,   gradient: "from-zinc-100 to-zinc-50",    split: 82.5, rangeLabel: "5–9 refs/mo" },
+    gold:     { label: "Gold",     color: "text-yellow-600", bg: "bg-yellow-50",  border: "border-yellow-300", icon: Award, gradient: "from-yellow-50 to-amber-50",  split: 85,   rangeLabel: "10–19 refs/mo" },
+    platinum: { label: "Platinum", color: "text-blue-600",   bg: "bg-blue-50",   border: "border-blue-300",   icon: Crown, gradient: "from-blue-50 to-indigo-50",  split: 90,   rangeLabel: "20+ refs/mo" },
 };
 
-const TIER_ORDER = ["starter", "pro", "elite", "ambassador"];
-const TIER_MINS: Record<string, number> = { starter: 0, pro: 6, elite: 21, ambassador: 51 };
+const TIER_ORDER = ["bronze", "silver", "gold", "platinum"];
+const TIER_MINS: Record<string, number> = { bronze: 0, silver: 5, gold: 10, platinum: 20 };
 
 function cents(v: number) {
     return `$${(v / 100).toFixed(2)}`;
@@ -110,74 +114,103 @@ export function EarningsDashboard() {
 
     if (!stats) return null;
 
-    const tierCfg = TIER_CONFIG[stats.tier] || TIER_CONFIG.starter;
+    const tierCfg = TIER_CONFIG[stats.tier] || TIER_CONFIG.bronze;
     const TierIcon = tierCfg.icon;
     const currentIdx = TIER_ORDER.indexOf(stats.tier);
 
-    // Progress within current tier
+    // Progress within current tier — based on rolling 30-day monthly_referrals
     const currentMin = TIER_MINS[stats.tier];
-    const nextMin = stats.next_tier ? TIER_MINS[stats.next_tier] : currentMin + 50;
+    const nextMin = stats.next_tier ? TIER_MINS[stats.next_tier] : currentMin + 20;
     const tierRange = nextMin - currentMin;
-    const tierProgress = tierRange > 0 ? Math.min(100, Math.round(((stats.total_referrals - currentMin) / tierRange) * 100)) : 100;
+    const tierProgress = tierRange > 0 ? Math.min(100, Math.round(((stats.monthly_referrals - currentMin) / tierRange) * 100)) : 100;
 
     return (
         <div className="space-y-4 mb-0">
-            {/* Tier Badge + Progress */}
+            {/* Tier Card */}
             <div className={`bg-gradient-to-r ${tierCfg.gradient} border ${tierCfg.border} rounded-2xl p-4 md:p-5`}>
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <div className={`w-12 h-12 ${tierCfg.bg} rounded-2xl flex items-center justify-center`}>
-                            <TierIcon className={`w-6 h-6 ${tierCfg.color}`} />
+                        <div className={`w-11 h-11 ${tierCfg.bg} border ${tierCfg.border} rounded-2xl flex items-center justify-center`}>
+                            <TierIcon className={`w-5 h-5 ${tierCfg.color}`} />
                         </div>
                         <div>
-                            <div className="flex items-center gap-2">
-                                <h2 className={`text-2xl font-black ${tierCfg.color}`}>{tierCfg.label}</h2>
-                                <span className="text-base font-bold text-zinc-400">Tier</span>
-                            </div>
-                            <p className="text-base text-zinc-500 font-medium">
-                                {stats.tier_split}% commission split · {stats.total_referrals} confirmed referrals
+                            <h2 className={`text-2xl font-black ${tierCfg.color} leading-none`}>{tierCfg.label} Tier</h2>
+                            <p className="text-base text-zinc-500 font-medium mt-0.5">
+                                You keep <span className="font-black text-zinc-800">{tierCfg.split}%</span> of every referral fee · {stats.total_referrals} total referrals
                             </p>
                         </div>
                     </div>
-                    {stats.next_tier && (
-                        <div className="text-right">
-                            <div className="text-lg font-black text-zinc-700 leading-snug">
-                                <span className="text-zinc-500 font-semibold">{stats.referrals_to_next} more to unlock </span>
-                                <span className={TIER_CONFIG[stats.next_tier]?.color}>{TIER_CONFIG[stats.next_tier]?.label}</span>
-                            </div>
-                        </div>
-                    )}
+                    <div className="hidden sm:block text-right">
+                        <div className="text-3xl font-black text-zinc-900">{tierCfg.split}%</div>
+                        <div className="text-base font-semibold text-zinc-400">your cut</div>
+                    </div>
                 </div>
 
-                {/* Tier Progress Bar */}
-                <div className="flex items-center gap-2 mb-2">
-                    {TIER_ORDER.map((t, i) => {
+                {/* 4-tier breakdown — all tiers visible with their requirements */}
+                <div className="grid grid-cols-4 gap-1.5 mb-4">
+                    {TIER_ORDER.map((t) => {
                         const cfg = TIER_CONFIG[t];
-                        const isActive = i <= currentIdx;
-                        const isCurrent = t === stats.tier;
+                        const tIdx = TIER_ORDER.indexOf(t);
+                        const isActive = t === stats.tier;
+                        const isPast = tIdx < currentIdx;
+                        const isFuture = tIdx > currentIdx;
+                        const Icon = cfg.icon;
                         return (
-                            <div key={t} className="flex-1">
-                                <div className={`h-3.5 rounded-full transition-all ${
-                                    isCurrent
-                                        ? `${cfg.bg} overflow-hidden`
-                                        : isActive
-                                            ? cfg.bg
-                                            : "bg-zinc-200"
-                                }`}>
-                                    {isCurrent && (
-                                        <div
-                                            className="h-full rounded-full transition-all duration-500 bg-green-500"
-                                            style={{ width: `${tierProgress}%` }}
-                                        />
-                                    )}
-                                </div>
-                                <div className={`text-base font-bold mt-1.5 text-center ${isActive ? cfg.color : "text-zinc-300"}`}>
-                                    {cfg.label}
-                                </div>
+                            <div key={t} className={`p-2.5 rounded-xl border text-center ${
+                                isActive
+                                    ? `${cfg.bg} ${cfg.border} ring-2 ring-offset-1 ${cfg.border.replace('border-', 'ring-')}`
+                                    : isPast
+                                        ? `${cfg.bg} ${cfg.border} opacity-60`
+                                        : "bg-white/50 border-zinc-100"
+                            }`}>
+                                <Icon className={`w-4 h-4 mx-auto mb-1 ${
+                                    isActive || isPast ? cfg.color : "text-zinc-300"
+                                }`} />
+                                <div className={`text-sm font-black ${
+                                    isActive ? cfg.color : isPast ? cfg.color : "text-zinc-300"
+                                }`}>{cfg.label}</div>
+                                <div className={`text-xl font-black leading-tight ${
+                                    isActive ? "text-zinc-900" : isPast ? "text-zinc-600" : "text-zinc-300"
+                                }`}>{cfg.split}%</div>
+                                <div className={`text-xs font-semibold mt-0.5 ${
+                                    isActive ? "text-zinc-600" : isFuture ? "text-zinc-300" : "text-zinc-400"
+                                }`}>{cfg.rangeLabel}</div>
+                                {isActive && (
+                                    <div className="mt-1">
+                                        <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${cfg.bg} ${cfg.color}`}>✓ Current</span>
+                                    </div>
+                                )}
                             </div>
                         );
                     })}
                 </div>
+
+                {/* Progress toward next tier */}
+                {stats.next_tier ? (
+                    <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-base font-bold text-zinc-700">
+                                {stats.monthly_referrals} referrals this month
+                            </span>
+                            <span className="text-base font-semibold text-zinc-500">
+                                {stats.referrals_to_next} more → {TIER_CONFIG[stats.next_tier]?.label} ({TIER_CONFIG[stats.next_tier]?.split}%)
+                            </span>
+                        </div>
+                        <div className="w-full bg-white/60 rounded-full h-2.5 overflow-hidden">
+                            <div
+                                className="h-full rounded-full bg-green-500 transition-all duration-500"
+                                style={{ width: `${tierProgress}%` }}
+                            />
+                        </div>
+                        <div className="text-xs font-medium text-zinc-400 mt-1.5">Rolling 30-day window · tier updates automatically as you refer</div>
+                    </div>
+                ) : (
+                    <div className="flex items-center justify-between">
+                        <span className="text-base font-bold text-zinc-700">{stats.monthly_referrals} referrals this month</span>
+                        <span className="text-base font-black text-blue-600 flex items-center gap-1"><Crown className="w-4 h-4" /> Max tier · 90% split</span>
+                    </div>
+                )}
             </div>
 
             {/* Earnings Cards + Monthly Goal — side by side */}

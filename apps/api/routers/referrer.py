@@ -380,17 +380,18 @@ async def get_my_referrer(
     return dict(ref)
 
 TIER_THRESHOLDS = {
-    "starter": {"min": 0, "max": 5, "split": 80, "next": "pro"},
-    "pro": {"min": 6, "max": 20, "split": 85, "next": "elite"},
-    "elite": {"min": 21, "max": 50, "split": 90, "next": "ambassador"},
-    "ambassador": {"min": 51, "max": 999999, "split": 90, "next": None},
+    "bronze":   {"min": 0,  "max": 4,      "split": 80,   "next": "silver"},
+    "silver":   {"min": 5,  "max": 9,      "split": 82.5, "next": "gold"},
+    "gold":     {"min": 10, "max": 19,     "split": 85,   "next": "platinum"},
+    "platinum": {"min": 20, "max": 999999, "split": 90,   "next": None},
 }
 
-def calculate_tier(total_referrals: int) -> str:
-    if total_referrals >= 51: return "ambassador"
-    if total_referrals >= 21: return "elite"
-    if total_referrals >= 6: return "pro"
-    return "starter"
+def calculate_tier(monthly_referrals: int) -> str:
+    """Tier based on confirmed referrals in the rolling last 30 days."""
+    if monthly_referrals >= 20: return "platinum"
+    if monthly_referrals >= 10: return "gold"
+    if monthly_referrals >= 5:  return "silver"
+    return "bronze"
 
 
 class MonthlyGoalUpdate(BaseModel):
@@ -415,12 +416,19 @@ async def get_referrer_stats(
 
     ref_id = ref["id"]
 
-    # Count confirmed leads as total referrals
+    # Lifetime confirmed referrals (for display)
     count_result = await db.execute(
         text("SELECT COUNT(*) as cnt FROM leads WHERE referrer_id = :rid AND status IN ('CONFIRMED','CONFIRMED_SUCCESS')"),
         {"rid": ref_id}
     )
     total_referrals = count_result.scalar() or 0
+
+    # Rolling 30-day confirmed referrals (used for tier calculation)
+    monthly_count_result = await db.execute(
+        text("SELECT COUNT(*) as cnt FROM leads WHERE referrer_id = :rid AND status IN ('CONFIRMED','CONFIRMED_SUCCESS') AND created_at >= now() - interval '30 days'"),
+        {"rid": ref_id}
+    )
+    monthly_referrals = monthly_count_result.scalar() or 0
 
     # Earnings: this week, this month, lifetime
     earnings_result = await db.execute(
@@ -472,12 +480,12 @@ async def get_referrer_stats(
         for row in biz_result.mappings().all()
     ]
 
-    # Tier calculation
-    tier = calculate_tier(total_referrals)
+    # Tier calculation based on rolling 30-day referral count
+    tier = calculate_tier(monthly_referrals)
     tier_info = TIER_THRESHOLDS[tier]
     next_tier = tier_info["next"]
     next_threshold = TIER_THRESHOLDS[next_tier]["min"] if next_tier else None
-    referrals_to_next = (next_threshold - total_referrals) if next_threshold else 0
+    referrals_to_next = (next_threshold - monthly_referrals) if next_threshold else 0
 
     # Update tier + total_referrals in DB if changed
     if tier != ref.get("tier") or total_referrals != ref.get("total_referrals"):
@@ -509,6 +517,7 @@ async def get_referrer_stats(
         "next_tier": next_tier,
         "referrals_to_next": max(0, referrals_to_next),
         "total_referrals": total_referrals,
+        "monthly_referrals": monthly_referrals,
         "earnings": {
             "this_week": week_cents,
             "this_month": month_cents,
