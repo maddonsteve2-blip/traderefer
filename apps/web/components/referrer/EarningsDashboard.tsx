@@ -48,7 +48,7 @@ function cents(v: number) {
     return `$${(v / 100).toFixed(2)}`;
 }
 
-export function EarningsDashboard() {
+export function EarningsDashboard({ hideGoal }: { hideGoal?: boolean } = {}) {
     const { getToken } = useAuth();
     const [stats, setStats] = useState<Stats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -122,7 +122,7 @@ export function EarningsDashboard() {
     const tierProgress = tierRange > 0 ? Math.min(100, Math.round(((stats.total_referrals - currentMin) / tierRange) * 100)) : 100;
 
     return (
-        <div className="space-y-6 mb-10">
+        <div className="space-y-4 mb-0">
             {/* Tier Badge + Progress */}
             <div className={`bg-gradient-to-r ${tierCfg.gradient} border ${tierCfg.border} rounded-3xl p-6 md:p-8`}>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
@@ -142,8 +142,8 @@ export function EarningsDashboard() {
                     </div>
                     {stats.next_tier && (
                         <div className="text-right">
-                            <div className="text-[17px] font-black text-zinc-700">
-                                <span className="text-zinc-500 font-medium">{stats.referrals_to_next} more to unlock </span>
+                            <div className="text-lg font-black text-zinc-700 leading-snug">
+                                <span className="text-zinc-500 font-semibold">{stats.referrals_to_next} more to unlock </span>
                                 <span className={TIER_CONFIG[stats.next_tier]?.color}>{TIER_CONFIG[stats.next_tier]?.label}</span>
                             </div>
                         </div>
@@ -214,7 +214,7 @@ export function EarningsDashboard() {
             </div>
 
             {/* Goal Tracker + Per-Business Breakdown side by side */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {!hideGoal && <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Goal Tracker */}
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6">
                     <div className="flex items-center justify-between mb-4">
@@ -315,7 +315,7 @@ export function EarningsDashboard() {
                         </div>
                     )}
                 </div>
-            </div>
+            </div>}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Flame, Sparkles, Trophy, DollarSign, Star, Zap, Award, Crown, ChevronRight } from "lucide-react";
+import { Flame, Trophy, Sparkles, Star, Zap, Award, Crown, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface Business {
@@ -61,6 +61,7 @@ export function DiscoverSection() {
     const [hot, setHot] = useState<Business[]>([]);
     const [newBiz, setNewBiz] = useState<Business[]>([]);
     const [topEarners, setTopEarners] = useState<Earner[]>([]);
+    const [activeTab, setActiveTab] = useState<"hot" | "new">("hot");
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -78,40 +79,44 @@ export function DiscoverSection() {
 
     if (hot.length === 0 && newBiz.length === 0 && topEarners.length === 0) return null;
 
-    return (
-        <div className="space-y-6 mb-6">
-            {/* Hot Right Now */}
-            {hot.length > 0 && (
-                <div>
-                    <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-base font-black text-zinc-900 flex items-center gap-2">
-                            <Flame className="w-4 h-4 text-orange-500" /> Hot Right Now
-                        </h3>
-                        <Link href="/businesses" className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5">
-                            View All <ChevronRight className="w-3.5 h-3.5" />
-                        </Link>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {hot.slice(0, 4).map(biz => (
-                            <BusinessCard key={biz.id} biz={biz} />
-                        ))}
-                    </div>
-                </div>
-            )}
+    const hasHot = hot.length > 0;
+    const hasNew = newBiz.length > 0;
 
-            {/* New on TradeRefer */}
-            {newBiz.length > 0 && (
+    return (
+        <div className="space-y-4">
+            {/* Tabbed Opportunities */}
+            {(hasHot || hasNew) && (
                 <div>
                     <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-base font-black text-zinc-900 flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-purple-500" /> New on TradeRefer
-                        </h3>
-                        <Link href="/businesses" className="text-sm font-bold text-purple-500 hover:text-purple-600 flex items-center gap-0.5">
+                        {/* Tabs */}
+                        <div className="flex items-center gap-1 bg-zinc-100 rounded-xl p-1">
+                            {hasHot && (
+                                <button
+                                    onClick={() => setActiveTab("hot")}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-black transition-all ${
+                                        activeTab === "hot" ? "bg-white text-orange-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+                                    }`}
+                                >
+                                    <Flame className="w-3.5 h-3.5" /> Hot Right Now
+                                </button>
+                            )}
+                            {hasNew && (
+                                <button
+                                    onClick={() => setActiveTab("new")}
+                                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-black transition-all ${
+                                        activeTab === "new" ? "bg-white text-purple-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
+                                    }`}
+                                >
+                                    <Sparkles className="w-3.5 h-3.5" /> New
+                                </button>
+                            )}
+                        </div>
+                        <Link href="/businesses" className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-2">
                             View All <ChevronRight className="w-3.5 h-3.5" />
                         </Link>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {newBiz.slice(0, 4).map(biz => (
+                        {(activeTab === "hot" ? hot : newBiz).slice(0, 4).map(biz => (
                             <BusinessCard key={biz.id} biz={biz} />
                         ))}
                     </div>

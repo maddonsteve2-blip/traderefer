@@ -41,7 +41,7 @@ export function ReferralProgress() {
 
     return (
         <>
-            <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-3xl p-6 text-white relative overflow-hidden">
+            <div className="bg-[#1A1A1B] rounded-2xl p-5 text-white relative overflow-hidden">
                 {/* Background decoration */}
                 <div className="absolute -right-8 -top-8 w-40 h-40 bg-orange-500/10 rounded-full" />
                 <div className="absolute -right-4 -bottom-10 w-28 h-28 bg-orange-500/5 rounded-full" />
@@ -53,32 +53,32 @@ export function ReferralProgress() {
                                 <Gift className="w-4 h-4 text-orange-400" />
                                 <span className="text-orange-400 text-xs font-black uppercase tracking-widest">Friend Rewards</span>
                             </div>
-                            <h3 className="text-xl font-black leading-tight">
+                            <h3 className="text-lg font-black leading-snug text-white">
                                 Invite 5 friends,<br />
                                 <span className="text-orange-400">earn ${reward_amount_dollars}</span>
                             </h3>
                         </div>
                         <div className="text-right">
-                            <p className="text-3xl font-black">{progress_to_next}<span className="text-zinc-500 text-lg">/5</span></p>
-                            <p className="text-zinc-400 text-xs">active</p>
+                            <p className="text-3xl font-black text-white">{progress_to_next}<span className="text-zinc-400 text-lg font-semibold">/5</span></p>
+                            <p className="text-zinc-300 text-xs font-semibold">active</p>
                         </div>
                     </div>
 
                     {/* Progress bar */}
                     <div className="mb-4">
-                        <div className="h-2.5 bg-zinc-700 rounded-full overflow-hidden">
+                        <div className="h-3.5 bg-zinc-700 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full transition-all duration-700"
                                 style={{ width: `${pct}%` }}
                             />
                         </div>
-                        <div className="flex justify-between mt-1.5">
-                            <p className="text-xs text-zinc-400">
+                        <div className="flex justify-between mt-2">
+                            <p className="text-sm font-semibold text-zinc-300">
                                 {active_invitees > 0
-                                    ? `${active_invitees} friend${active_invitees !== 1 ? "s" : ""} active total`
+                                    ? `${active_invitees} friend${active_invitees !== 1 ? "s" : ""} active`
                                     : "Invite your first friend!"}
                             </p>
-                            <p className="text-xs text-zinc-400">
+                            <p className="text-sm font-semibold text-zinc-300">
                                 {remaining > 0 ? `${remaining} more to go` : "🎉 Milestone reached!"}
                             </p>
                         </div>
@@ -99,14 +99,14 @@ export function ReferralProgress() {
                     <div className="flex gap-2">
                         <Button
                             onClick={() => setShowInvite(true)}
-                            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-full h-10 font-black text-sm"
+                            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-10 font-black text-sm"
                         >
                             <Users className="w-4 h-4 mr-1.5" />
                             Invite Friends
                         </Button>
                         <Button
                             variant="outline"
-                            className="border-zinc-600 text-zinc-300 hover:bg-zinc-700 hover:text-white rounded-full h-10 px-4 font-bold text-sm"
+                            className="border-zinc-600 text-white hover:bg-zinc-700 hover:text-white rounded-xl h-10 px-4 font-bold text-sm bg-white/5"
                             onClick={() => setShowInvite(true)}
                         >
                             View <ChevronRight className="w-4 h-4 ml-1" />
