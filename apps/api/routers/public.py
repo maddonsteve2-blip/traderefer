@@ -287,43 +287,64 @@ async def get_hot_campaigns(db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/discover/hot")
-async def hot_right_now(db: AsyncSession = Depends(get_db)):
-    """Businesses with highest referral fees — 'Hot Right Now'."""
+async def hot_right_now(
+    suburb: Optional[str] = None,
+    state: Optional[str] = None,
+    db: AsyncSession = Depends(get_db)
+):
+    """Businesses with highest referral fees — 'Hot Right Now'. Local-first when suburb/state provided."""
     result = await db.execute(
         text("""
             SELECT id, business_name, slug, trade_category, suburb, state,
                    referral_fee_cents, logo_url, trust_score, is_verified,
-                   avg_response_minutes
+                   avg_response_minutes,
+                   CASE
+                       WHEN :suburb IS NOT NULL AND suburb ILIKE :suburb THEN 0
+                       WHEN :state IS NOT NULL AND state ILIKE :state THEN 1
+                       ELSE 2
+                   END AS locality_rank
             FROM businesses
             WHERE status = 'active'
               AND (listing_visibility = 'public' OR listing_visibility IS NULL)
               AND referral_fee_cents > 0
-            ORDER BY referral_fee_cents DESC
+            ORDER BY locality_rank ASC, referral_fee_cents DESC
             LIMIT 8
-        """)
+        """),
+        {"suburb": suburb, "state": state}
     )
     rows = []
     for row in result.mappings().all():
         d = dict(row)
         d["id"] = str(d["id"])
+        d.pop("locality_rank", None)
         rows.append(d)
     return rows
 
 
 @router.get("/discover/new")
-async def new_on_traderefer(db: AsyncSession = Depends(get_db)):
-    """Recently listed businesses — 'New on TradeRefer'."""
+async def new_on_traderefer(
+    suburb: Optional[str] = None,
+    state: Optional[str] = None,
+    db: AsyncSession = Depends(get_db)
+):
+    """Recently listed businesses — 'New on TradeRefer'. Local-first when suburb/state provided."""
     result = await db.execute(
         text("""
             SELECT id, business_name, slug, trade_category, suburb, state,
                    referral_fee_cents, logo_url, trust_score, is_verified,
-                   created_at
+                   created_at,
+                   CASE
+                       WHEN :suburb IS NOT NULL AND suburb ILIKE :suburb THEN 0
+                       WHEN :state IS NOT NULL AND state ILIKE :state THEN 1
+                       ELSE 2
+                   END AS locality_rank
             FROM businesses
             WHERE status = 'active'
               AND (listing_visibility = 'public' OR listing_visibility IS NULL)
-            ORDER BY created_at DESC
+            ORDER BY locality_rank ASC, created_at DESC
             LIMIT 8
-        """)
+        """),
+        {"suburb": suburb, "state": state}
     )
     rows = []
     for row in result.mappings().all():
@@ -331,6 +352,7 @@ async def new_on_traderefer(db: AsyncSession = Depends(get_db)):
         d["id"] = str(d["id"])
         if d.get("created_at"):
             d["created_at"] = str(d["created_at"])
+        d.pop("locality_rank", None)
         rows.append(d)
     return rows
 

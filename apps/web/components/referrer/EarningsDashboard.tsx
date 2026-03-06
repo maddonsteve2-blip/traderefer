@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import {
-    DollarSign, TrendingUp, TrendingDown, Award, Target,
-    ChevronRight, Loader2, Zap, Crown, Star, Flame, ArrowUpRight
+    TrendingUp, TrendingDown, Award, Target,
+    Loader2, Zap, Crown, Star, Flame
 } from "lucide-react";
-import Link from "next/link";
 import { toast } from "sonner";
 
 interface Stats {
@@ -273,38 +272,6 @@ export function EarningsDashboard() {
                         );
                     })()}
                 </div>
-            </div>
-
-            {/* Per-Business Breakdown */}
-            <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                <h3 className="font-bold text-zinc-900 flex items-center gap-2 mb-3">
-                    <DollarSign className="w-5 h-5 text-green-500" /> Earnings by Business
-                </h3>
-                {stats.per_business.length > 0 ? (
-                    <div className="space-y-2">
-                        {stats.per_business.map(biz => (
-                            <Link
-                                key={biz.slug}
-                                href={`/dashboard/referrer/refer/${biz.slug}`}
-                                className="flex items-center justify-between p-3 bg-zinc-50 rounded-xl hover:bg-orange-50 transition-colors group"
-                            >
-                                <div>
-                                    <div className="font-bold text-zinc-900 text-base group-hover:text-orange-600 transition-colors">{biz.business_name}</div>
-                                    <div className="text-base text-zinc-400">{biz.trade_category} · {biz.lead_count} referrals</div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="font-black text-green-600 text-lg">{cents(biz.earned_cents)}</span>
-                                    <ArrowUpRight className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 transition-colors" />
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="py-3 text-center">
-                        <p className="text-base font-bold text-zinc-500 mb-1">No earnings yet</p>
-                        <p className="text-base text-zinc-400">Your first referral will appear here.</p>
-                    </div>
-                )}
             </div>
         </div>
     );
