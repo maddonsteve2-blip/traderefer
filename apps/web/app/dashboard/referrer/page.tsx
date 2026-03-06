@@ -67,7 +67,7 @@ export default async function ReferrerDashboardPage() {
                                 <h1 className="text-2xl font-black text-zinc-900 leading-tight">Your Earnings</h1>
                                 <p className="text-base text-zinc-500 font-medium">Track referrals · collect Prezzee rewards</p>
                             </div>
-                            <Link href="/businesses"
+                            <Link href="/dashboard/referrer/businesses"
                                 className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-lg transition-colors shadow-sm shadow-orange-200">
                                 <Search className="w-4 h-4" /> Find Businesses
                             </Link>
@@ -141,7 +141,7 @@ export default async function ReferrerDashboardPage() {
                             <p className="text-white font-semibold text-base mb-3 leading-relaxed opacity-90">
                                 Browse verified tradies and grab referral links to start earning.
                             </p>
-                            <Link href="/businesses"
+                            <Link href="/dashboard/referrer/businesses"
                                 className="block w-full text-center bg-white hover:bg-zinc-50 text-orange-600 rounded-xl font-bold text-lg py-2.5 transition-colors">
                                 Explore Catalog
                             </Link>

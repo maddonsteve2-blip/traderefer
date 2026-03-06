@@ -152,7 +152,7 @@ export function DiscoverSection() {
                                 </span>
                             )}
                         </div>
-                        <Link href="/businesses" className="text-lg font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-2">
+                        <Link href="/dashboard/referrer/businesses" className="text-lg font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-2">
                             View All <ChevronRight className="w-4 h-4" />
                         </Link>
                     </div>
