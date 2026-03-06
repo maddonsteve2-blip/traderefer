@@ -133,17 +133,18 @@ export function EarningsDashboard() {
                         <div>
                             <div className="flex items-center gap-2">
                                 <h2 className={`text-2xl font-black ${tierCfg.color}`}>{tierCfg.label}</h2>
-                                <span className="text-sm font-bold text-zinc-400">Tier</span>
+                                <span className="text-base font-bold text-zinc-400">Tier</span>
                             </div>
-                            <p className="text-sm text-zinc-500">
+                            <p className="text-base text-zinc-500 font-medium">
                                 {stats.tier_split}% commission split · {stats.total_referrals} confirmed referrals
                             </p>
                         </div>
                     </div>
                     {stats.next_tier && (
                         <div className="text-right">
-                            <div className="text-sm font-bold text-zinc-500">
-                                {stats.referrals_to_next} more to <span className={TIER_CONFIG[stats.next_tier]?.color}>{TIER_CONFIG[stats.next_tier]?.label}</span>
+                            <div className="text-[17px] font-black text-zinc-700">
+                                <span className="text-zinc-500 font-medium">{stats.referrals_to_next} more to unlock </span>
+                                <span className={TIER_CONFIG[stats.next_tier]?.color}>{TIER_CONFIG[stats.next_tier]?.label}</span>
                             </div>
                         </div>
                     )}
@@ -157,7 +158,7 @@ export function EarningsDashboard() {
                         const isCurrent = t === stats.tier;
                         return (
                             <div key={t} className="flex-1">
-                                <div className={`h-2.5 rounded-full transition-all ${
+                                <div className={`h-3.5 rounded-full transition-all ${
                                     isCurrent
                                         ? `${cfg.bg} overflow-hidden`
                                         : isActive
@@ -175,7 +176,7 @@ export function EarningsDashboard() {
                                         />
                                     )}
                                 </div>
-                                <div className={`text-xs font-bold mt-1 text-center ${isActive ? cfg.color : "text-zinc-300"}`}>
+                                <div className={`text-[13px] font-bold mt-1.5 text-center ${isActive ? cfg.color : "text-zinc-300"}`}>
                                     {cfg.label}
                                 </div>
                             </div>
@@ -187,12 +188,12 @@ export function EarningsDashboard() {
             {/* Earnings Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                    <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1">This Week</div>
-                    <div className="text-2xl font-black text-zinc-900">{cents(stats.earnings.this_week)}</div>
+                    <div className="text-[13px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">This Week</div>
+                    <div className={`text-2xl font-black ${stats.earnings.this_week > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_week)}</div>
                 </div>
                 <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                    <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1">This Month</div>
-                    <div className="text-2xl font-black text-zinc-900">{cents(stats.earnings.this_month)}</div>
+                    <div className="text-[13px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">This Month</div>
+                    <div className={`text-2xl font-black ${stats.earnings.this_month > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_month)}</div>
                     {stats.earnings.month_trend !== 0 && (
                         <div className={`text-sm font-bold flex items-center gap-1 mt-1 ${stats.earnings.month_trend > 0 ? "text-green-600" : "text-red-500"}`}>
                             {stats.earnings.month_trend > 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
@@ -201,12 +202,14 @@ export function EarningsDashboard() {
                     )}
                 </div>
                 <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                    <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1">Pending</div>
-                    <div className="text-2xl font-black text-orange-600">{cents(stats.earnings.pending)}</div>
+                    <div className="text-[13px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Pending</div>
+                    <div className="text-2xl font-black text-orange-500">{cents(stats.earnings.pending)}</div>
+                    {stats.earnings.pending > 0 && <div className="text-xs text-zinc-400 mt-0.5">Awaiting confirmation</div>}
                 </div>
                 <div className="bg-white rounded-2xl border border-zinc-200 p-5">
-                    <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-1">Lifetime</div>
+                    <div className="text-[13px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Lifetime</div>
                     <div className="text-2xl font-black text-green-600">{cents(stats.earnings.lifetime)}</div>
+                    {stats.earnings.lifetime === 0 && <div className="text-xs text-zinc-400 mt-0.5">First lead soon!</div>}
                 </div>
             </div>
 
@@ -274,7 +277,10 @@ export function EarningsDashboard() {
                             )}
                         </div>
                     ) : (
-                        <p className="text-sm text-zinc-400">Set a monthly earnings goal to track your progress.</p>
+                        <div className="py-2">
+                            <p className="text-base text-zinc-500 font-medium mb-2">Set a monthly goal to stay motivated.</p>
+                            <p className="text-sm text-zinc-400">Top referrers set a goal of $500–$2,000/month.</p>
+                        </div>
                     )}
                 </div>
 
@@ -303,7 +309,10 @@ export function EarningsDashboard() {
                             ))}
                         </div>
                     ) : (
-                        <p className="text-sm text-zinc-400">No earnings yet. Start referring to see your breakdown!</p>
+                        <div className="py-3 text-center">
+                            <p className="text-base font-bold text-zinc-500 mb-1">No earnings yet</p>
+                            <p className="text-sm text-zinc-400">Once you send your first referral, your breakdown appears here.</p>
+                        </div>
                     )}
                 </div>
             </div>

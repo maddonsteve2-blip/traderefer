@@ -62,48 +62,39 @@ export function HotCampaigns() {
     if (campaigns.length === 0) return null;
 
     return (
-        <div className="mb-10">
-            <div className="flex items-center justify-between mb-5">
-                <h2 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
-                    <Flame className="w-5 h-5 text-orange-500" /> Hot Campaigns
+        <div>
+            <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-black text-zinc-900 flex items-center gap-2">
+                    <Flame className="w-4 h-4 text-orange-500" /> Hot Campaigns
                 </h2>
-                <Link href="/businesses" className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-1">
-                    Browse All <ChevronRight className="w-4 h-4" />
+                <Link href="/businesses" className="text-sm font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5">
+                    All <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {campaigns.slice(0, 6).map(c => {
+            <div className="space-y-2">
+                {campaigns.slice(0, 4).map(c => {
                     const Icon = typeIcon(c.campaign_type);
                     return (
                         <Link
                             key={c.id}
-                            href={`/b/${c.slug}/refer`}
-                            className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-5 hover:shadow-lg hover:shadow-orange-100/50 transition-all group"
+                            href={`/dashboard/referrer/refer/${c.slug}`}
+                            className="flex items-center gap-3 p-3 bg-orange-50 border border-orange-100 rounded-xl hover:border-orange-300 hover:bg-orange-100/60 transition-all group"
                         >
-                            <div className="flex items-start gap-3 mb-3">
-                                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
-                                    {c.logo_url ? (
-                                        /* eslint-disable-next-line @next/next/no-img-element */
-                                        <img src={c.logo_url} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <Icon className="w-5 h-5 text-orange-600" />
-                                    )}
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <h3 className="font-bold text-zinc-900 leading-tight group-hover:text-orange-600 transition-colors">{c.title}</h3>
-                                    <p className="text-sm text-zinc-500">{c.business_name} · {c.suburb}</p>
-                                </div>
+                            <div className="w-9 h-9 bg-white border border-orange-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                                {c.logo_url ? (
+                                    /* eslint-disable-next-line @next/next/no-img-element */
+                                    <img src={c.logo_url} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                    <Icon className="w-4 h-4 text-orange-500" />
+                                )}
                             </div>
-                            <div className="flex items-center justify-between">
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-bold">
-                                    <Icon className="w-3.5 h-3.5" />
-                                    {badgeText(c)}
-                                </span>
-                                <span className="text-xs font-bold text-orange-400">{daysLeft(c.ends_at)}</span>
+                            <div className="flex-1 min-w-0">
+                                <div className="text-sm font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors leading-tight">{c.business_name}</div>
+                                <div className="text-[11px] text-zinc-400 truncate">{c.trade_category} · {daysLeft(c.ends_at)}</div>
                             </div>
-                            {c.promo_text && (
-                                <p className="text-sm text-zinc-500 mt-2 italic line-clamp-1">&ldquo;{c.promo_text}&rdquo;</p>
-                            )}
+                            <div className="text-right shrink-0">
+                                <div className="text-[15px] font-black text-orange-600 leading-tight">{badgeText(c)}</div>
+                            </div>
                         </Link>
                     );
                 })}
