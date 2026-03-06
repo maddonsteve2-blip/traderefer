@@ -21,37 +21,51 @@ export async function GET(
         let rows: any[];
 
         if (type === "hot") {
-            rows = await sql`
-                SELECT id::text, business_name, slug, trade_category, suburb, state,
-                       referral_fee_cents, logo_url, trust_score, is_verified,
-                       CASE
-                           WHEN ${suburbPat} IS NOT NULL AND suburb ILIKE ${suburbPat} THEN 0
-                           WHEN ${statePat} IS NOT NULL AND state ILIKE ${statePat} THEN 1
-                           ELSE 2
-                       END AS locality_rank
-                FROM businesses
-                WHERE status = 'active'
-                  AND (listing_visibility = 'public' OR listing_visibility IS NULL)
-                  AND referral_fee_cents > 0
-                ORDER BY locality_rank ASC, referral_fee_cents DESC, trust_score DESC
-                LIMIT 8
-            `;
+            rows = suburbPat
+                ? await sql`
+                    SELECT id::text, business_name, slug, trade_category, suburb, state,
+                           referral_fee_cents, logo_url, trust_score, is_verified
+                    FROM businesses
+                    WHERE status = 'active'
+                      AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+                      AND referral_fee_cents > 0
+                    ORDER BY
+                        CASE WHEN suburb ILIKE ${suburbPat} THEN 0
+                             WHEN state  ILIKE ${statePat ?? suburbPat} THEN 1
+                             ELSE 2 END,
+                        referral_fee_cents DESC, trust_score DESC
+                    LIMIT 8`
+                : await sql`
+                    SELECT id::text, business_name, slug, trade_category, suburb, state,
+                           referral_fee_cents, logo_url, trust_score, is_verified
+                    FROM businesses
+                    WHERE status = 'active'
+                      AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+                      AND referral_fee_cents > 0
+                    ORDER BY trust_score DESC, referral_fee_cents DESC
+                    LIMIT 8`;
         } else if (type === "new") {
-            rows = await sql`
-                SELECT id::text, business_name, slug, trade_category, suburb, state,
-                       referral_fee_cents, logo_url, trust_score, is_verified, created_at::text
-                FROM businesses
-                WHERE status = 'active'
-                  AND (listing_visibility = 'public' OR listing_visibility IS NULL)
-                ORDER BY
-                    CASE
-                        WHEN ${suburbPat} IS NOT NULL AND suburb ILIKE ${suburbPat} THEN 0
-                        WHEN ${statePat} IS NOT NULL AND state ILIKE ${statePat} THEN 1
-                        ELSE 2
-                    END ASC,
-                    created_at DESC
-                LIMIT 8
-            `;
+            rows = suburbPat
+                ? await sql`
+                    SELECT id::text, business_name, slug, trade_category, suburb, state,
+                           referral_fee_cents, logo_url, trust_score, is_verified, created_at::text
+                    FROM businesses
+                    WHERE status = 'active'
+                      AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+                    ORDER BY
+                        CASE WHEN suburb ILIKE ${suburbPat} THEN 0
+                             WHEN state  ILIKE ${statePat ?? suburbPat} THEN 1
+                             ELSE 2 END,
+                        created_at DESC
+                    LIMIT 8`
+                : await sql`
+                    SELECT id::text, business_name, slug, trade_category, suburb, state,
+                           referral_fee_cents, logo_url, trust_score, is_verified, created_at::text
+                    FROM businesses
+                    WHERE status = 'active'
+                      AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+                    ORDER BY created_at DESC
+                    LIMIT 8`;
         } else {
             rows = await sql`
                 SELECT r.tier,
