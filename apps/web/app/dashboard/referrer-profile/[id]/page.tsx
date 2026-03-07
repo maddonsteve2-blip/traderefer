@@ -67,7 +67,7 @@ export default function ReferrerProfileViewPage() {
     const firstName = profile.full_name.split(" ")[0];
 
     const stats = [
-        { label: "Quality Score", value: profile.quality_score, suffix: "/100", bg: "bg-amber-50", val: "text-amber-600", sub: "text-amber-500", icon: Star, desc: "Verified referrer rating" },
+        { label: "Quality Score", value: profile.quality_score, suffix: "/100", bg: "bg-green-50", val: "text-green-600", sub: "text-green-500", icon: Star, desc: "Verified referrer rating" },
         { label: "Confirmed Leads", value: profile.confirmed_referrals, suffix: "", bg: "bg-emerald-50", val: "text-emerald-600", sub: "text-emerald-500", icon: TrendingUp, desc: "Successfully converted" },
         { label: "Businesses", value: profile.businesses_linked, suffix: "", bg: "bg-blue-50", val: "text-blue-600", sub: "text-blue-500", icon: Briefcase, desc: "Active partnerships" },
     ];
@@ -89,8 +89,8 @@ export default function ReferrerProfileViewPage() {
                     <div className="flex items-start gap-7 flex-wrap">
                         {/* Avatar */}
                         <div
-                            className="w-28 h-28 rounded-3xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-2xl"
-                            style={{ fontSize: '36px' }}
+                            className="w-32 h-32 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-2xl ring-4 ring-white ring-offset-2 ring-offset-zinc-900"
+                            style={{ fontSize: '40px' }}
                         >
                             {profile.profile_photo_url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
@@ -101,7 +101,7 @@ export default function ReferrerProfileViewPage() {
                         {/* Name + meta */}
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 flex-wrap mb-1">
-                                <h1 className="font-black text-white leading-tight" style={{ fontSize: '36px' }}>
+                                <h1 className="font-black text-white leading-tight" style={{ fontSize: '32px' }}>
                                     {profile.full_name}
                                 </h1>
                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-green-500/20 text-green-400 rounded-full font-bold" style={{ fontSize: '13px' }}>
@@ -124,7 +124,7 @@ export default function ReferrerProfileViewPage() {
                             </div>
 
                             {profile.tagline && (
-                                <p className="font-semibold text-orange-300 leading-snug" style={{ fontSize: '20px' }}>
+                                <p className="font-semibold italic text-amber-300 leading-snug" style={{ fontSize: '24px' }}>
                                     &ldquo;{profile.tagline}&rdquo;
                                 </p>
                             )}

@@ -355,31 +355,35 @@ export default function ReferrerProfilePage() {
                         </div>
 
                         <div className="bg-white rounded-2xl shadow-lg shadow-zinc-100 overflow-hidden">
-                            {/* Preview hero header */}
+                            {/* Preview hero — mirrors live page exactly */}
                             <div className="bg-zinc-900 px-8 py-8">
                                 <div className="flex items-start gap-5">
-                                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-lg" style={{ fontSize: '28px' }}>
+                                    {/* Circular avatar with white ring */}
+                                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-lg ring-4 ring-white ring-offset-2 ring-offset-zinc-900" style={{ fontSize: '24px' }}>
                                         {(photoUrl || profile.profile_photo_url) ? (
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img src={photoUrl || profile.profile_photo_url!} alt="" className="w-full h-full object-cover" />
                                         ) : initials}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-black text-white leading-tight" style={{ fontSize: '28px' }}>{profile.full_name}</h3>
-                                        <div className="flex items-center gap-3 mt-2 flex-wrap">
+                                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                                            <h3 className="font-black text-white leading-tight" style={{ fontSize: '22px' }}>{profile.full_name}</h3>
+                                            <span className="flex items-center gap-1 px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full font-bold" style={{ fontSize: '11px' }}>✓ Verified</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 mt-1 flex-wrap">
                                             {(profile.suburb || profile.state) && (
-                                                <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '15px' }}>
-                                                    <MapPin className="w-4 h-4" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}
+                                                <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: '13px' }}>
+                                                    <MapPin className="w-3 h-3" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}
                                                 </span>
                                             )}
                                             {memberYear && (
-                                                <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '15px' }}>
-                                                    <Award className="w-4 h-4" />Member since {memberYear}
+                                                <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: '13px' }}>
+                                                    <Award className="w-3 h-3" />Member since {memberYear}
                                                 </span>
                                             )}
                                         </div>
                                         {(tagline || profile.tagline) && (
-                                            <p className="font-semibold text-orange-300 mt-2 leading-snug" style={{ fontSize: '16px' }}>
+                                            <p className="font-semibold italic text-amber-300 mt-2 leading-snug" style={{ fontSize: '15px' }}>
                                                 &ldquo;{tagline || profile.tagline}&rdquo;
                                             </p>
                                         )}
@@ -387,42 +391,52 @@ export default function ReferrerProfilePage() {
                                 </div>
                             </div>{/* end preview hero */}
 
-                            <div className="p-7 space-y-6">
-                                {/* Stats grid */}
-                                <div className="grid grid-cols-3 gap-4">
+                            <div className="p-6 space-y-5">
+                                {/* Stats grid — Quality Score GREEN to match live page */}
+                                <div className="grid grid-cols-3 gap-3">
                                     {[
-                                        { label: "Quality Score", value: profile.quality_score, suffix: "/100", bg: "bg-amber-50", val: "text-amber-600", sub: "text-amber-400" },
-                                        { label: "Confirmed Leads", value: profile.confirmed_referrals, suffix: "", bg: "bg-emerald-50", val: "text-emerald-600", sub: "text-emerald-400" },
-                                        { label: "Businesses", value: profile.businesses_linked, suffix: "", bg: "bg-blue-50", val: "text-blue-600", sub: "text-blue-400" },
+                                        { label: "Quality Score", value: profile.quality_score, suffix: "/100", bg: "bg-green-50", val: "text-green-600", sub: "text-green-500", desc: "Verified rating" },
+                                        { label: "Confirmed Leads", value: profile.confirmed_referrals, suffix: "", bg: "bg-emerald-50", val: "text-emerald-600", sub: "text-emerald-500", desc: "Converted" },
+                                        { label: "Businesses", value: profile.businesses_linked, suffix: "", bg: "bg-blue-50", val: "text-blue-600", sub: "text-blue-500", desc: "Partnerships" },
                                     ].map(s => (
-                                        <div key={s.label} className={`${s.bg} rounded-2xl px-4 py-5 text-center`}>
-                                            <p className={`font-black ${s.val} leading-none`} style={{ fontSize: '36px' }}>{s.value}<span style={{ fontSize: '18px' }}>{s.suffix}</span></p>
-                                            <p className={`font-black ${s.sub} mt-2 uppercase tracking-wider`} style={{ fontSize: '11px' }}>{s.label}</p>
+                                        <div key={s.label} className={`${s.bg} rounded-2xl px-3 py-4 text-center`}>
+                                            <p className={`font-black ${s.val} leading-none`} style={{ fontSize: '32px' }}>{s.value}<span style={{ fontSize: '14px' }}>{s.suffix}</span></p>
+                                            <p className={`font-black ${s.sub} mt-1.5 uppercase tracking-wider`} style={{ fontSize: '10px' }}>{s.label}</p>
+                                            <p className="font-medium text-zinc-400 mt-0.5" style={{ fontSize: '10px' }}>{s.desc}</p>
                                         </div>
                                     ))}
                                 </div>
 
                                 {/* Bio / Why partner */}
-                                <div>
-                                    <p className="font-black text-zinc-500 uppercase tracking-widest mb-3" style={{ fontSize: '12px' }}>Why Partner With Me</p>
+                                <div className="bg-white rounded-2xl border border-zinc-100 p-5">
+                                    <p className="font-black text-zinc-700 mb-3" style={{ fontSize: '15px' }}>Why Partner With {profile.full_name.split(" ")[0]}</p>
                                     {(bio || profile.profile_bio) ? (
-                                        <div className="bg-zinc-50 rounded-2xl p-5">
-                                            <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: '18px', lineHeight: 1.7 }}>
-                                                {bio || profile.profile_bio}
-                                            </p>
-                                        </div>
+                                        <p className="font-medium text-zinc-600 leading-relaxed" style={{ fontSize: '15px', lineHeight: 1.7 }}>
+                                            {bio || profile.profile_bio}
+                                        </p>
                                     ) : (
-                                        <div className="bg-zinc-50 rounded-2xl p-5 border-2 border-dashed border-zinc-200 text-center">
-                                            <p className="font-medium text-zinc-400" style={{ fontSize: '17px' }}>Add a bio above to tell businesses about your network</p>
-                                        </div>
+                                        <p className="font-medium text-zinc-300 italic" style={{ fontSize: '14px' }}>Add a bio above to tell businesses about your network…</p>
                                     )}
+                                </div>
+
+                                {/* How it works mini strip */}
+                                <div className="bg-zinc-900 rounded-2xl p-4">
+                                    <p className="font-black text-white mb-3" style={{ fontSize: '13px' }}>How Partnering Works</p>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {["01 Apply", "02 Leads In", "03 Pay Per Lead"].map(s => (
+                                            <div key={s} className="bg-zinc-800 rounded-xl p-3 text-center">
+                                                <p className="font-black text-orange-400" style={{ fontSize: '10px' }}>STEP {s.slice(0,2)}</p>
+                                                <p className="font-bold text-white mt-0.5" style={{ fontSize: '11px' }}>{s.slice(3)}</p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
 
                                 {/* CTA preview */}
                                 <div className="rounded-2xl overflow-hidden" style={{ background: '#FF7A00' }}>
-                                    <div className="px-6 py-5 text-center">
-                                        <p className="font-black text-white" style={{ fontSize: '20px' }}>Message {profile.full_name.split(" ")[0]}</p>
-                                        <p className="font-medium text-orange-100 mt-1" style={{ fontSize: '15px' }}>Start a conversation about partnering</p>
+                                    <div className="px-5 py-4 text-center">
+                                        <p className="font-black text-white" style={{ fontSize: '17px' }}>Message {profile.full_name.split(" ")[0]}</p>
+                                        <p className="font-medium text-orange-100 mt-0.5" style={{ fontSize: '13px' }}>Start a conversation about partnering</p>
                                     </div>
                                 </div>
                             </div>
