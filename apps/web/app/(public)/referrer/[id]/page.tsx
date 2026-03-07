@@ -39,7 +39,7 @@ export default function PublicReferrerProfilePage() {
             return;
         }
         if (!id) return;
-        fetch(`${apiUrl}/public/referrer/${id}/profile`)
+        fetch(`${apiUrl}/referrer/${id}/profile`)
             .then(r => { if (!r.ok) throw new Error("not found"); return r.json(); })
             .then(data => { setProfile(data); setLoading(false); })
             .catch(() => { setNotFound(true); setLoading(false); });
