@@ -49,6 +49,14 @@ export function PeekingRoleDrawer() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [drawerVisible, setDrawerVisible] = useState(false);
+    const [navH, setNavH] = useState(72);
+
+    useEffect(() => {
+        const update = () => setNavH(window.innerWidth >= 768 ? 100 : 72);
+        update();
+        window.addEventListener("resize", update);
+        return () => window.removeEventListener("resize", update);
+    }, []);
 
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
     const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
@@ -75,12 +83,20 @@ export function PeekingRoleDrawer() {
         }
     }, [isOpen]);
 
-    // Lock scroll when open
+    // Viewport push: reserve 48px on right for the handle
     useEffect(() => {
-        if (isOpen) document.body.style.overflow = "hidden";
-        else        document.body.style.overflow = "";
-        return () => { document.body.style.overflow = ""; };
-    }, [isOpen]);
+        if (!isLoaded || isDual || !variant) return;
+        if (!isOpen) {
+            document.body.style.paddingRight = "3rem"; // w-12 = 48px
+        } else {
+            document.body.style.paddingRight = "";
+            document.body.style.overflow = "hidden";
+        }
+        return () => {
+            document.body.style.paddingRight = "";
+            document.body.style.overflow = "";
+        };
+    }, [isLoaded, isDual, variant, isOpen]);
 
     const handleClose = () => {
         setDrawerVisible(false);
@@ -94,33 +110,31 @@ export function PeekingRoleDrawer() {
 
     return createPortal(
         <>
-            {/* ── PEEK HANDLE (always visible) ── */}
+            {/* ── FULL-HEIGHT HANDLE (always visible) ── */}
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="fixed right-0 top-1/2 -translate-y-1/2 z-[9990] flex items-center justify-center"
-                    style={{ width: 40, height: 120 }}
                     aria-label={cfg.tabLabel}
+                    className="fixed right-0 bottom-0 z-[9990] w-12 bg-white flex items-center justify-center cursor-pointer hover:bg-orange-50 transition-colors"
+                    style={{
+                        top: navH,
+                        borderLeft: "4px solid #f97316",
+                        boxShadow: "-4px 0 15px rgba(0,0,0,0.06)",
+                    }}
                 >
-                    {/* Tab body */}
-                    <div className="relative w-full h-full bg-white rounded-l-2xl border-l-4 border-orange-500 shadow-xl overflow-hidden flex items-center justify-center"
-                        style={{ boxShadow: "0 0 20px 2px rgba(249,115,22,0.18), -4px 0 16px 0 rgba(0,0,0,0.10)" }}>
-                        {/* Pulse glow on the left border */}
-                        <span className="absolute left-0 top-0 bottom-0 w-1 bg-orange-500 animate-pulse" />
-                        {/* Rotated label */}
-                        <span
-                            className="text-zinc-800 font-black tracking-widest select-none"
-                            style={{
-                                fontSize: 10,
-                                writingMode: "vertical-rl",
-                                textOrientation: "mixed",
-                                transform: "rotate(180deg)",
-                                letterSpacing: "0.12em",
-                            }}
-                        >
-                            {cfg.tabLabel}
-                        </span>
-                    </div>
+                    <span
+                        className="font-black text-zinc-700 uppercase tracking-widest select-none"
+                        style={{
+                            fontSize: 13,
+                            writingMode: "vertical-rl",
+                            textOrientation: "mixed",
+                            transform: "rotate(180deg)",
+                            letterSpacing: "0.14em",
+                            lineHeight: 1,
+                        }}
+                    >
+                        {cfg.tabLabel}
+                    </span>
                 </button>
             )}
 
