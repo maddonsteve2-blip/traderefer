@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -303,8 +304,8 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
         { icon: Users2, title: "Build passive income", desc: "Refer once, earn on every future job — zero ongoing effort." },
         { icon: Rocket, title: "Zero upfront cost", desc: "Free to join. No subscription. No risk." },
     ];
-    return (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/60 backdrop-blur-sm" onClick={onClose}>
             <div className="flex min-h-full items-center justify-center p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="bg-gradient-to-br from-orange-500 to-amber-400 px-8 pt-8 pb-10 relative">
@@ -329,7 +330,8 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
                 </div>
             </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 
@@ -340,8 +342,8 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
         { icon: BarChart3, title: "Run targeted campaigns", desc: "Create campaigns that attract exactly the customers you want." },
         { icon: Building2, title: "Professional storefront", desc: "A public profile that builds trust before the first call." },
     ];
-    return (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/60 backdrop-blur-sm" onClick={onClose}>
             <div className="flex min-h-full items-center justify-center p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="bg-zinc-900 px-8 pt-8 pb-10 relative">
@@ -366,7 +368,8 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
                 </div>
             </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
 
