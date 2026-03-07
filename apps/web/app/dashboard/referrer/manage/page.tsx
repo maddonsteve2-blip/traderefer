@@ -158,20 +158,20 @@ function InlineChat({ businessId, businessName, token }: { businessId: string; b
             </div>
 
             {/* Input */}
-            <div className="flex items-center gap-2 px-3 py-2.5 bg-white rounded-b-2xl border-t border-zinc-100">
+            <div className="flex items-center gap-2 px-3 py-2.5 bg-gray-50 rounded-b-2xl border-t border-zinc-200">
                 <input
                     type="text"
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && !e.shiftKey && handleSend()}
                     placeholder="Type a message…"
-                    className="flex-1 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-400 font-medium text-zinc-900 placeholder-zinc-400"
+                    className="flex-1 bg-white border border-zinc-300 rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 font-medium text-zinc-900 placeholder-zinc-400 shadow-sm"
                     style={{ fontSize: '16px' }}
                 />
                 <button
                     onClick={handleSend}
                     disabled={!input.trim() || sending}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all bg-orange-600 hover:bg-orange-700 disabled:bg-zinc-200 text-white disabled:text-zinc-400"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all bg-orange-700 hover:bg-orange-800 disabled:bg-zinc-200 text-white disabled:text-zinc-400 shadow-md"
                 >
                     {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </button>
@@ -341,9 +341,16 @@ export default function ReferrerManagePage() {
                     <div className="flex-1 min-w-0">
                         <p className="font-black text-zinc-900 truncate leading-tight" style={{ fontSize: '17px' }}>{app.business_name}</p>
                         <p className="font-medium text-zinc-500 truncate" style={{ fontSize: '15px' }}>{app.trade_category}</p>
-                        <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-1 bg-amber-100 text-amber-700 font-black rounded-lg" style={{ fontSize: '12px' }}>
-                            <Clock className="w-3 h-3" /> Awaiting Review
-                        </span>
+                        <div className="flex items-center justify-between mt-1.5">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 font-black rounded-lg" style={{ fontSize: '12px' }}>
+                                <Clock className="w-3 h-3" /> Awaiting Review
+                            </span>
+                            {app.referral_fee_cents > 0 && (
+                                <span className="font-black text-orange-600" style={{ fontSize: '13px' }}>
+                                    ${((app.referral_fee_cents * 0.8) / 100).toFixed(2)}/lead
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </button>
@@ -500,7 +507,8 @@ export default function ReferrerManagePage() {
                     {/* ══ PENDING / WAITING ROOM WORKSTATION ══ */}
                     {selected?.type === "pending" && (() => {
                         const app = selected.app;
-                        const potentialFee = `$${((app.referral_fee_cents * 0.8) / 100).toFixed(2)}`;
+                        const feeCents = app.referral_fee_cents ?? 0;
+                        const potentialFee = feeCents > 0 ? `$${((feeCents * 0.8) / 100).toFixed(2)}` : null;
                         const appliedDate = new Date(app.applied_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
                         return (
                             <>
@@ -530,8 +538,14 @@ export default function ReferrerManagePage() {
                                             </div>
                                             <div className="flex-1 min-w-[140px] bg-orange-50 rounded-2xl px-5 py-4 text-center">
                                                 <p className="font-black text-orange-500" style={{ fontSize: '13px' }}>POTENTIAL REWARD</p>
-                                                <p className="font-black text-orange-600 mt-1" style={{ fontSize: '24px' }}>{potentialFee}</p>
-                                                <p className="font-bold text-orange-400" style={{ fontSize: '13px' }}>per verified lead</p>
+                                                {potentialFee ? (
+                                                    <>
+                                                        <p className="font-black text-orange-600 mt-1" style={{ fontSize: '24px' }}>{potentialFee}</p>
+                                                        <p className="font-bold text-orange-400" style={{ fontSize: '13px' }}>per verified lead</p>
+                                                    </>
+                                                ) : (
+                                                    <p className="font-black text-orange-400 mt-1" style={{ fontSize: '16px' }}>Set by business</p>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -565,9 +579,31 @@ export default function ReferrerManagePage() {
                                     </div>
                                 </div>
 
-                                {/* Communication Anchor */}
+                                {/* Messaging locked until approved */}
                                 <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                    <InlineChat key={app.business_id} businessId={app.business_id} businessName={app.business_name.split(" ")[0]} token={token} />
+                                    <div className="bg-zinc-900 px-5 py-4 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <MessageSquare className="w-4 h-4 text-orange-400" />
+                                            <span className="font-black text-white" style={{ fontSize: '16px' }}>Chat with {app.business_name.split(" ")[0]}</span>
+                                        </div>
+                                    </div>
+                                    <div className="bg-zinc-50 flex flex-col items-center justify-center py-10 text-center px-6">
+                                        <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mb-4">
+                                            <Clock className="w-7 h-7 text-amber-500" />
+                                        </div>
+                                        <p className="font-black text-zinc-800" style={{ fontSize: '18px' }}>Messaging unlocks once approved</p>
+                                        <p className="font-medium text-zinc-500 mt-2 max-w-sm" style={{ fontSize: '16px', lineHeight: 1.6 }}>
+                                            Once {app.business_name} approves your application, you&apos;ll be able to message them directly here.
+                                        </p>
+                                    </div>
+                                    <div className="bg-gray-50 flex items-center gap-2 px-3 py-2.5 border-t border-zinc-200 opacity-40 pointer-events-none">
+                                        <div className="flex-1 bg-white border border-zinc-300 rounded-xl px-4 py-2.5 font-medium text-zinc-400" style={{ fontSize: '16px' }}>
+                                            Available after approval…
+                                        </div>
+                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-zinc-300">
+                                            <Send className="w-4 h-4 text-zinc-400" />
+                                        </div>
+                                    </div>
                                 </div>
                             </>
                         );
