@@ -508,6 +508,16 @@ export function Navbar() {
 
                                                 </Link>
 
+                                                <Link href="/dashboard/referrer/manage" className="hidden sm:block">
+
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname?.startsWith("/dashboard/referrer/manage") ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+
+                                                        My Team
+
+                                                    </Button>
+
+                                                </Link>
+
                                                 <Link href="/dashboard/referrer/messages" className="hidden sm:block">
 
                                                     <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
@@ -684,6 +694,7 @@ export function Navbar() {
                                     {[
                                         { href: "/dashboard/referrer", label: "Dashboard" },
                                         { href: "/dashboard/referrer/businesses", label: "Find Businesses" },
+                                        { href: "/dashboard/referrer/manage", label: "My Team" },
                                         { href: "/dashboard/referrer/messages", label: "Messages" },
                                         { href: "/dashboard/referrer/withdraw", label: "Rewards" },
                                         { href: "/dashboard/referrer/profile", label: "My Profile" },

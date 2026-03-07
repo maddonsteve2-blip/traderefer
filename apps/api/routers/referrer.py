@@ -275,6 +275,7 @@ async def get_referrer_dashboard(
                 rl.clicks, 
                 rl.leads_created, 
                 rl.total_earned_cents,
+                b.id as business_id,
                 b.business_name, 
                 b.trade_category, 
                 b.suburb, 
@@ -303,7 +304,8 @@ async def get_referrer_dashboard(
                 "code": l["link_code"],
                 "logo_url": l.get("logo_url"),
                 "referral_fee_cents": l.get("referral_fee_cents", 0),
-                "is_verified": l.get("is_verified", False)
+                "is_verified": l.get("is_verified", False),
+                "business_id": str(l["business_id"]),
             })
         
         return {
