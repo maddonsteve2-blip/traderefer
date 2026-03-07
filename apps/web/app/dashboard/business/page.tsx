@@ -33,6 +33,7 @@ import { BusinessWelcomeDialog } from "@/components/dashboard/BusinessWelcomeDia
 import { BusinessReferralProgress } from "@/components/business/BusinessReferralProgress";
 import { BusinessInviteButton } from "@/components/business/BusinessInviteButton";
 import { BecomeReferrerCard } from "@/components/dashboard/BecomeReferrerCard";
+import { SidebarRoleSwitcher } from "@/components/dashboard/SidebarRoleSwitcher";
 
 async function getBusinessDashboardData() {
     const { userId, getToken } = await auth();
@@ -199,6 +200,11 @@ export default async function BusinessDashboardPage() {
                         )}
                     </div>
                 </Card>
+
+                {/* Role Switcher */}
+                <div className="mb-8">
+                    <SidebarRoleSwitcher currentRole="business" />
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <StorefrontLinkCard

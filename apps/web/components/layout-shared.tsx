@@ -37,8 +37,16 @@ function ProfileDropdown() {
     const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
 
     const [open, setOpen] = useState(false);
+    const [roleModalOpen, setRoleModalOpen] = useState(false);
 
     const ref = useRef<HTMLDivElement>(null);
+
+    const roles = (user?.publicMetadata?.roles as string[] | undefined) ?? [];
+    const role = user?.publicMetadata?.role as string | undefined;
+    const effectiveRoles = roles.length > 0 ? roles : role ? [role] : [];
+    const isDual = effectiveRoles.includes("referrer") && effectiveRoles.includes("business");
+    const hasBusiness = effectiveRoles.includes("business");
+    const hasReferrer = effectiveRoles.includes("referrer");
 
 
 
@@ -176,6 +184,40 @@ function ProfileDropdown() {
 
 
 
+                    {/* Role switcher section */}
+                    {(isBusinessDashboard || isReferrerDashboard) && (
+                        <div className="border-t border-zinc-100 py-1.5">
+                            {isDual && (
+                                <Link
+                                    href={isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business"}
+                                    onClick={() => setOpen(false)}
+                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-colors"
+                                >
+                                    <ArrowLeftRight className="w-4 h-4 text-zinc-400" />
+                                    Switch to {isBusinessDashboard ? "Referrer" : "Business"} Mode
+                                </Link>
+                            )}
+                            {!isDual && isReferrerDashboard && !hasBusiness && (
+                                <button
+                                    onClick={() => { setRoleModalOpen(true); setOpen(false); }}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-900 hover:bg-zinc-50 transition-colors"
+                                >
+                                    <Building2 className="w-4 h-4 text-orange-500" />
+                                    <span>Business Mode <span className="ml-1 text-[10px] font-black bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Setup</span></span>
+                                </button>
+                            )}
+                            {!isDual && isBusinessDashboard && !hasReferrer && (
+                                <button
+                                    onClick={() => { setRoleModalOpen(true); setOpen(false); }}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-900 hover:bg-zinc-50 transition-colors"
+                                >
+                                    <Rocket className="w-4 h-4 text-orange-500" />
+                                    <span>Referrer Mode <span className="ml-1 text-[10px] font-black bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Setup</span></span>
+                                </button>
+                            )}
+                        </div>
+                    )}
+
                     {/* Sign out */}
 
                     <div className="border-t border-zinc-100 py-1.5">
@@ -198,6 +240,14 @@ function ProfileDropdown() {
 
                 </div>
 
+            )}
+
+            {/* Role setup modals rendered via portal */}
+            {roleModalOpen && isReferrerDashboard && !hasBusiness && (
+                <RegisterBusinessModal onClose={() => setRoleModalOpen(false)} />
+            )}
+            {roleModalOpen && isBusinessDashboard && !hasReferrer && (
+                <BecomeReferrerModal onClose={() => setRoleModalOpen(false)} />
             )}
 
         </div>
@@ -299,10 +349,10 @@ function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { i
 
 function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
     const BENEFITS = [
-        { icon: DollarSign, title: "Earn per lead", desc: "Get paid every time a business you referred converts a job." },
-        { icon: Gift, title: "Prezzee rewards", desc: "Earn $25 Prezzee Smart Cards for every 5 active businesses." },
-        { icon: Users2, title: "Build passive income", desc: "Refer once, earn on every future job — zero ongoing effort." },
-        { icon: Rocket, title: "Zero upfront cost", desc: "Free to join. No subscription. No risk." },
+        { icon: DollarSign, title: "Monetize Your Network", desc: "Don't let out-of-area or over-booked calls go to waste. Refer them to verified peers and earn." },
+        { icon: Gift, title: "Zero-Admin Rewards", desc: "All referral fees are paid via Prezzee Smart Cards. Choose from 300+ brands: Bunnings, Woolworths, Uber." },
+        { icon: Users2, title: "Professional Reciprocity", desc: "Build a circle of trusted trades who send work back to you — automatically." },
+        { icon: Rocket, title: "Free to Activate", desc: "No subscription. No upfront cost. The system issues digital cards instantly once a lead is verified." },
     ];
     return createPortal(
         <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/60 backdrop-blur-sm" onClick={onClose}>
@@ -310,21 +360,21 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="bg-gradient-to-br from-orange-500 to-amber-400 px-8 pt-8 pb-10 relative">
                     <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white"><X className="w-4 h-4" /></button>
-                    <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-4"><Rocket className="w-7 h-7 text-white" /></div>
-                    <h2 className="text-2xl font-black text-white mb-1">Become a Referrer</h2>
-                    <p className="text-orange-100 font-medium">Turn your network into income — no extra work required.</p>
+                    <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center mb-5"><Rocket className="w-9 h-9 text-white" /></div>
+                    <h2 className="text-2xl font-black text-white mb-2 leading-tight">Monetize Your Network.<br />Earn Instant Rewards.</h2>
+                    <p className="text-orange-100 font-medium text-sm">Turn every referral into real money — the system handles everything.</p>
                 </div>
-                <div className="px-8 py-6 space-y-4">
+                <div className="px-8 py-6 space-y-5">
                     {BENEFITS.map(({ icon: Icon, title, desc }) => (
                         <div key={title} className="flex items-start gap-4">
-                            <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center shrink-0"><Icon className="w-5 h-5 text-orange-500" /></div>
-                            <div><p className="font-bold text-zinc-900" style={{ fontSize: '15px' }}>{title}</p><p className="text-zinc-500 font-medium" style={{ fontSize: '14px' }}>{desc}</p></div>
+                            <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0 border border-orange-100"><Icon className="w-6 h-6 text-orange-500" /></div>
+                            <div><p className="font-black text-zinc-900" style={{ fontSize: '15px' }}>{title}</p><p className="text-zinc-500 font-medium leading-relaxed" style={{ fontSize: '13px' }}>{desc}</p></div>
                         </div>
                     ))}
                 </div>
                 <div className="px-8 pb-8">
-                    <Link href="/onboarding/referrer" onClick={onClose} className="flex items-center justify-center gap-2 w-full h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200" style={{ fontSize: '17px' }}>
-                        Join as Referrer <ArrowRight className="w-5 h-5" />
+                    <Link href="/onboarding/referrer" onClick={onClose} className="flex items-center justify-center gap-2 w-full h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200" style={{ fontSize: '16px' }}>
+                        Activate My Partner Profile <ArrowRight className="w-5 h-5" />
                     </Link>
                     <button onClick={onClose} className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors" style={{ fontSize: '14px' }}>Maybe later</button>
                 </div>
@@ -337,10 +387,10 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
 
 function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
     const BENEFITS = [
-        { icon: Target, title: "Receive vetted leads", desc: "Pre-screened leads from trusted referrers who vouch for each job." },
-        { icon: Users2, title: "Build a referrer network", desc: "Approve referrers to represent your business — grow hands-free." },
-        { icon: BarChart3, title: "Run targeted campaigns", desc: "Create campaigns that attract exactly the customers you want." },
-        { icon: Building2, title: "Professional storefront", desc: "A public profile that builds trust before the first call." },
+        { icon: Target, title: "Pre-Vetted Leads, Delivered", desc: "Receive pre-screened leads from trusted referrers who personally vouch for each job." },
+        { icon: Users2, title: "Your Own Referrer Force", desc: "Approve trusted referrers to represent your brand — they grow your pipeline hands-free." },
+        { icon: BarChart3, title: "Command Centre Analytics", desc: "Track lead quality, conversion rates, and referrer performance from one dashboard." },
+        { icon: Gift, title: "Zero-Admin Reward System", desc: "Prezzee Smart Cards handle referrer payouts automatically. No bank transfers, no invoices." },
     ];
     return createPortal(
         <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/60 backdrop-blur-sm" onClick={onClose}>
@@ -348,21 +398,22 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="bg-zinc-900 px-8 pt-8 pb-10 relative">
                     <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"><X className="w-4 h-4" /></button>
-                    <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-4"><Building2 className="w-7 h-7 text-white" /></div>
-                    <h2 className="text-2xl font-black text-white mb-1">Register Your Business</h2>
-                    <p className="text-zinc-400 font-medium">Get pre-vetted leads from referrers who know your customers.</p>
+                    <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-5"><Building2 className="w-9 h-9 text-orange-400" /></div>
+                    <p className="text-orange-400 font-black text-xs uppercase tracking-widest mb-2">Business Command Centre</p>
+                    <h2 className="text-[22px] font-black text-white mb-2 leading-tight">Unlock Your Business<br />Command Centre</h2>
+                    <p className="text-zinc-400 font-medium text-sm">A professional hub where your referrer force delivers verified leads — on autopilot.</p>
                 </div>
-                <div className="px-8 py-6 space-y-4">
+                <div className="px-8 py-6 space-y-5">
                     {BENEFITS.map(({ icon: Icon, title, desc }) => (
                         <div key={title} className="flex items-start gap-4">
-                            <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center shrink-0"><Icon className="w-5 h-5 text-zinc-600" /></div>
-                            <div><p className="font-bold text-zinc-900" style={{ fontSize: '15px' }}>{title}</p><p className="text-zinc-500 font-medium" style={{ fontSize: '14px' }}>{desc}</p></div>
+                            <div className="w-12 h-12 bg-zinc-100 rounded-2xl flex items-center justify-center shrink-0 border border-zinc-200"><Icon className="w-6 h-6 text-orange-500" /></div>
+                            <div><p className="font-black text-zinc-900" style={{ fontSize: '15px' }}>{title}</p><p className="text-zinc-500 font-medium leading-relaxed" style={{ fontSize: '13px' }}>{desc}</p></div>
                         </div>
                     ))}
                 </div>
                 <div className="px-8 pb-8">
-                    <Link href="/onboarding/business" onClick={onClose} className="flex items-center justify-center gap-2 w-full h-14 bg-zinc-900 hover:bg-zinc-800 text-white rounded-2xl font-black transition-all shadow-lg" style={{ fontSize: '17px' }}>
-                        Register Business <ArrowRight className="w-5 h-5" />
+                    <Link href="/onboarding/business" onClick={onClose} className="flex items-center justify-center gap-2 w-full h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200" style={{ fontSize: '16px' }}>
+                        Start Business Onboarding <ArrowRight className="w-5 h-5" />
                     </Link>
                     <button onClick={onClose} className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors" style={{ fontSize: '14px' }}>Maybe later</button>
                 </div>
@@ -464,16 +515,11 @@ export function Navbar() {
 
                     </Link>
 
-                    {/* ── PERSISTENT SEARCH BAR / DASHBOARD CENTER ACTION ── */}
+                    {/* ── PERSISTENT SEARCH BAR ── */}
                     {!isDashboard && (
                         <div className="hidden md:block flex-1 max-w-xl">
                             <SmartSearch variant="navbar" />
                         </div>
-                    )}
-                    {isDashboard && (
-                        <SignedIn>
-                            <DashboardCenterAction isBusinessDashboard={!!isBusinessDashboard} isReferrerDashboard={!!isReferrerDashboard} />
-                        </SignedIn>
                     )}
 
 
@@ -590,6 +636,16 @@ export function Navbar() {
                                                     <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Messages
+
+                                                    </Button>
+
+                                                </Link>
+
+                                                <Link href="/dashboard/business/team" className="hidden sm:block">
+
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname?.startsWith("/dashboard/business/team") ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+
+                                                        Referral Force
 
                                                     </Button>
 

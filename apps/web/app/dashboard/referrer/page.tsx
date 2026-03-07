@@ -11,6 +11,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { DashboardError } from "@/components/dashboard/DashboardError";
 import { RegisterBusinessCard } from "@/components/dashboard/RegisterBusinessCard";
+import { SidebarRoleSwitcher } from "@/components/dashboard/SidebarRoleSwitcher";
 
 async function getDashboardData() {
     const { userId, getToken } = await auth();
@@ -140,6 +141,9 @@ export default async function ReferrerDashboardPage() {
 
                         {/* Hot Campaigns */}
                         <HotCampaigns />
+
+                            {/* Role Switcher */}
+                        <SidebarRoleSwitcher currentRole="referrer" />
 
                         {/* Find Businesses CTA */}
                         <div className="bg-orange-500 rounded-2xl p-4 text-white">
