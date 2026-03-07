@@ -113,7 +113,7 @@ function InlineChat({ businessId, businessName, token }: { businessId: string; b
     };
 
     return (
-        <div className="flex flex-col h-72">
+        <div className="flex flex-col h-full">
             {/* Chat header */}
             <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 rounded-t-2xl">
                 <div className="flex items-center gap-2">
@@ -158,20 +158,21 @@ function InlineChat({ businessId, businessName, token }: { businessId: string; b
             </div>
 
             {/* Input */}
-            <div className="flex items-center gap-2 px-3 py-2.5 bg-gray-50 rounded-b-2xl border-t border-zinc-200">
+            <div className="flex items-center gap-3 px-3 py-3 bg-gray-100 rounded-b-2xl border-t border-gray-300">
                 <input
                     type="text"
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === "Enter" && !e.shiftKey && handleSend()}
                     placeholder="Type a message…"
-                    className="flex-1 bg-white border border-zinc-300 rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 font-medium text-zinc-900 placeholder-zinc-400 shadow-sm"
-                    style={{ fontSize: '16px' }}
+                    className="flex-1 bg-white border border-gray-400 rounded-xl px-4 py-2.5 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 font-semibold text-zinc-900 placeholder-gray-600 shadow-sm"
+                    style={{ fontSize: '18px' }}
                 />
                 <button
                     onClick={handleSend}
                     disabled={!input.trim() || sending}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all bg-orange-700 hover:bg-orange-800 disabled:bg-zinc-200 text-white disabled:text-zinc-400 shadow-md"
+                    className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all disabled:bg-zinc-200 text-white disabled:text-zinc-400 shadow-md"
+                    style={{ background: input.trim() && !sending ? '#FF7A00' : undefined }}
                 >
                     {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </button>
@@ -359,9 +360,9 @@ export default function ReferrerManagePage() {
 
     // ── MAIN LAYOUT ──────────────────────────────────────────────────────────
     return (
-        <div className="min-h-screen bg-white">
+        <div className="h-[calc(100vh-72px)] md:h-[calc(100vh-100px)] flex flex-col overflow-hidden bg-white">
             {/* ── MOBILE: Horizontal chip scroll ── */}
-            <div className="md:hidden w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2 shrink-0">
+            <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
                 {links.map(link => (
                     <button
                         key={link.slug}
@@ -389,10 +390,10 @@ export default function ReferrerManagePage() {
             </div>
 
             {/* ── DESKTOP: Full-width 2-col layout ── */}
-            <div className="flex w-full min-h-screen">
+            <div className="flex-1 flex min-h-0 overflow-hidden">
 
                 {/* ── SIDEBAR ── */}
-                <aside className="hidden md:flex flex-col w-[26%] min-h-screen bg-gray-50 shrink-0" style={{ boxShadow: "4px 0 20px rgba(0,0,0,0.05)" }}>
+                <aside className="hidden md:flex flex-col w-[26%] bg-gray-50 shrink-0 overflow-hidden" style={{ boxShadow: "4px 0 20px rgba(0,0,0,0.05)" }}>
                     <div className="px-5 pt-6 pb-3">
                         <p className="font-black uppercase tracking-widest text-zinc-400" style={{ fontSize: '13px' }}>Command Centre</p>
                         <p className="font-black text-zinc-900 mt-0.5" style={{ fontSize: '22px' }}>{totalCount} Business{totalCount !== 1 ? "es" : ""}</p>
@@ -428,13 +429,14 @@ export default function ReferrerManagePage() {
                 </aside>
 
                 {/* ── MAIN STAGE ── */}
-                <main className="flex-1 bg-white px-6 py-6 overflow-y-auto space-y-6">
+                <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
 
                     {/* ══ APPROVED WORKSTATION ══ */}
                     {selected?.type === "approved" && (() => {
                         const link = selected.link;
                         return (
-                            <>
+                            <div className="flex flex-col flex-1 min-h-0">
+                                <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-5">
                                 <div className="flex items-center justify-between flex-wrap gap-3">
                                     <div>
                                         <div className="flex items-center gap-2">
@@ -496,11 +498,14 @@ export default function ReferrerManagePage() {
                                     </div>
                                 </div>
 
-                                {/* Inline Chat */}
-                                <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                    <InlineChat key={link.business_id} businessId={link.business_id} businessName={link.name.split(" ")[0]} token={token} />
+                                </div>{/* end scrollable upper */}
+                                {/* Inline Chat — pinned to bottom */}
+                                <div className="shrink-0 px-6 pb-5 pt-0 bg-white">
+                                    <div className="rounded-2xl overflow-hidden flex flex-col shadow-lg shadow-zinc-100" style={{ height: '280px' }}>
+                                        <InlineChat key={link.business_id} businessId={link.business_id} businessName={link.name.split(" ")[0]} token={token} />
+                                    </div>
                                 </div>
-                            </>
+                            </div>
                         );
                     })()}
 
@@ -511,7 +516,7 @@ export default function ReferrerManagePage() {
                         const potentialFee = feeCents > 0 ? `$${((feeCents * 0.8) / 100).toFixed(2)}` : null;
                         const appliedDate = new Date(app.applied_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
                         return (
-                            <>
+                            <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6">
                                 {/* Status Hero */}
                                 <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
                                     <div className="bg-amber-500 px-6 py-5">
@@ -605,7 +610,7 @@ export default function ReferrerManagePage() {
                                         </div>
                                     </div>
                                 </div>
-                            </>
+                            </div>
                         );
                     })()}
                 </main>
