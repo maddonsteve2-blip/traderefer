@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { X, ArrowRight, Target, DollarSign, Gift, Network, Zap, ArrowLeftRight } from "lucide-react";
 
@@ -43,11 +43,13 @@ const CASES = {
 
 /** Self-contained peeking drawer — mounts once, no external trigger needed. */
 export function PeekingRoleDrawer() {
-    const { user, isLoaded } = useUser();
+    const { isLoaded } = useUser();
+    const { getToken } = useAuth();
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [navH, setNavH] = useState(72);
+    const [authStatus, setAuthStatus] = useState<{ has_business: boolean; has_referrer: boolean } | null>(null);
 
     useEffect(() => {
         const update = () => setNavH(window.innerWidth >= 768 ? 100 : 72);
@@ -56,15 +58,26 @@ export function PeekingRoleDrawer() {
         return () => window.removeEventListener("resize", update);
     }, []);
 
+    // Fetch real roles from DB (Clerk metadata is NOT updated after onboarding)
+    useEffect(() => {
+        if (!isLoaded) return;
+        getToken().then(token => {
+            if (!token) return;
+            fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/auth/status`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+                .then(r => r.ok ? r.json() : null)
+                .then(data => data && setAuthStatus({ has_business: data.has_business, has_referrer: data.has_referrer }))
+                .catch(() => {});
+        });
+    }, [isLoaded, getToken, pathname]);
+
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
     const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
 
-    const roles = (user?.publicMetadata?.roles as string[] | undefined) ?? [];
-    const role  = user?.publicMetadata?.role as string | undefined;
-    const effectiveRoles = roles.length > 0 ? roles : role ? [role] : [];
-    const isDual       = effectiveRoles.includes("referrer") && effectiveRoles.includes("business");
-    const hasBusiness  = effectiveRoles.includes("business");
-    const hasReferrer  = effectiveRoles.includes("referrer");
+    const hasBusiness = authStatus?.has_business ?? false;
+    const hasReferrer = authStatus?.has_referrer ?? false;
+    const isDual      = hasBusiness && hasReferrer;
 
     // Dual-role: handle is a direct switch link, no drawer
     const dualSwitchHref = isDual
@@ -111,7 +124,7 @@ export function PeekingRoleDrawer() {
         setTimeout(() => setIsOpen(false), 280);
     };
 
-    if (!isLoaded || !showHandle) return null;
+    if (!isLoaded || !authStatus || !showHandle) return null;
 
     const cfg = variant ? CASES[variant] : null;
     const tabLabel = isDual ? dualTabLabel! : cfg!.tabLabel;
