@@ -115,7 +115,7 @@ function InlineChat({ businessId, businessName, token }: { businessId: string; b
     return (
         <div className="flex flex-col h-full">
             {/* Chat header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 rounded-t-2xl">
+            <div className="flex-none flex items-center justify-between px-4 py-3 bg-[#1a1a1a] rounded-t-2xl">
                 <div className="flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-orange-400" />
                     <span className="font-black text-white" style={{ fontSize: '16px' }}>Chat with {businessName}</span>
@@ -158,7 +158,7 @@ function InlineChat({ businessId, businessName, token }: { businessId: string; b
             </div>
 
             {/* Input */}
-            <div className="flex items-center gap-3 px-3 py-3 bg-gray-100 rounded-b-2xl border-t border-gray-300">
+            <div className="flex-none flex items-center gap-3 px-3 py-3 bg-gray-100 rounded-b-2xl border-t border-gray-300">
                 <input
                     type="text"
                     value={input}

@@ -294,7 +294,7 @@ export function Navbar() {
 
         <>
 
-            <header className="fixed top-0 w-full border-b bg-white/90 backdrop-blur-md z-50 h-[72px] md:h-[100px]">
+            <header className="fixed top-0 w-full border-b border-gray-100 bg-white/90 backdrop-blur-md z-50 h-[72px] md:h-[100px]">
 
                 <div className={`${isDashboard ? 'w-full px-4 lg:px-5' : 'container mx-auto px-4'} h-full flex items-center justify-between gap-4`}>
 
