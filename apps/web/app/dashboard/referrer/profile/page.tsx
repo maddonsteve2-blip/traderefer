@@ -189,7 +189,7 @@ export default function ReferrerProfilePage() {
 
     return (
         <div className="min-h-screen bg-zinc-50">
-            <div className="w-full px-6 py-6">
+            <div className="w-full px-12 py-8">
 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
@@ -213,7 +213,7 @@ export default function ReferrerProfilePage() {
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
 
                     {/* ── LEFT: EDIT FORM (40%) ── */}
                     <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg shadow-zinc-100 p-7 space-y-5">
@@ -354,43 +354,43 @@ export default function ReferrerProfilePage() {
                             <span className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '13px' }}>Live Preview — what businesses see on your sales page</span>
                         </div>
 
-                        {/* Document-style preview card */}
-                        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        {/* Full-width preview — mirrors the live resume exactly */}
+                        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
 
-                            {/* Header */}
-                            <div className="bg-white border-b border-gray-100 px-6 py-6">
-                                <div className="flex items-center gap-5">
-                                    {/* Bordered circular avatar */}
+                            {/* Header row */}
+                            <div className="px-8 pt-8 pb-6 border-b border-gray-50">
+                                <div className="flex items-center gap-6 flex-wrap">
+                                    {/* Avatar */}
                                     <div
                                         className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden"
-                                        style={{ fontSize: '18px', boxShadow: '0 0 0 3px #fff, 0 0 0 4px #e5e7eb, 0 2px 10px rgba(0,0,0,0.10)' }}
+                                        style={{ fontSize: '18px', boxShadow: '0 0 0 3px #fff, 0 0 0 4px #e5e7eb, 0 3px 12px rgba(0,0,0,0.10)' }}
                                     >
                                         {(photoUrl || profile.profile_photo_url) ? (
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img src={photoUrl || profile.profile_photo_url!} alt="" className="w-full h-full object-cover" />
                                         ) : initials}
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                                            <h3 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '18px' }}>{profile.full_name}</h3>
+                                    <div>
+                                        <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                                            <h3 className="font-black text-zinc-900 leading-none" style={{ fontSize: '22px' }}>{profile.full_name}</h3>
                                             <span className="inline-flex items-center gap-1 px-2 py-0.5 border border-green-200 bg-green-50 text-green-700 rounded-full font-bold" style={{ fontSize: '10px' }}>
                                                 <CheckCircle className="w-2.5 h-2.5" /> Verified
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-3 flex-wrap mb-1">
+                                        <div className="flex items-center gap-4 flex-wrap mb-1.5">
                                             {(profile.suburb || profile.state) && (
-                                                <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: '11px' }}>
-                                                    <MapPin className="w-2.5 h-2.5" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}
+                                                <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: '12px' }}>
+                                                    <MapPin className="w-3 h-3" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}
                                                 </span>
                                             )}
                                             {memberYear && (
-                                                <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: '11px' }}>
-                                                    <Award className="w-2.5 h-2.5" />Member since {memberYear}
+                                                <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: '12px' }}>
+                                                    <Award className="w-3 h-3" />Since {memberYear}
                                                 </span>
                                             )}
                                         </div>
                                         {(tagline || profile.tagline) && (
-                                            <p className="font-medium text-zinc-500 leading-snug" style={{ fontSize: '12px' }}>
+                                            <p className="font-medium text-zinc-500" style={{ fontSize: '13px' }}>
                                                 {tagline || profile.tagline}
                                             </p>
                                         )}
@@ -398,38 +398,35 @@ export default function ReferrerProfilePage() {
                                 </div>
                             </div>
 
-                            {/* 4 inline tiles — orange only for Quality Score */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-gray-100 border-b border-gray-100">
+                            {/* Full-width 4-tile data row */}
+                            <div className="grid grid-cols-4">
                                 {([
-                                    { label: "QUALITY SCORE",      value: profile.quality_score,       suffix: "/100", numClass: "text-orange-500", desc: "Verified rating",      Icon: CheckCircle },
-                                    { label: "CONFIRMED LEADS",    value: profile.confirmed_referrals,  suffix: "",     numClass: "text-zinc-800",  desc: "Converted",           Icon: TrendingUp },
-                                    { label: "ACTIVE PARTNERSHIPS",value: profile.businesses_linked,   suffix: "",     numClass: "text-zinc-800",  desc: "Businesses linked",   Icon: Briefcase },
-                                    { label: "MEMBER SINCE",       value: memberYear ?? "—",            suffix: "",     numClass: "text-zinc-800",  desc: "Year joined",         Icon: CalendarDays },
-                                ] as const).map(t => (
-                                    <div key={t.label} className="px-4 py-4 bg-white flex flex-col">
-                                        <t.Icon className="w-3.5 h-3.5 text-gray-300 mb-3" />
-                                        <p className={`font-black leading-none ${t.numClass}`} style={{ fontSize: '26px' }}>
+                                    { label: "QUALITY SCORE",       value: profile.quality_score,       suffix: "/100", numClass: "text-orange-500", Icon: CheckCircle },
+                                    { label: "CONFIRMED LEADS",     value: profile.confirmed_referrals,  suffix: "",     numClass: "text-zinc-800",  Icon: TrendingUp },
+                                    { label: "ACTIVE PARTNERSHIPS", value: profile.businesses_linked,   suffix: "",     numClass: "text-zinc-800",  Icon: Briefcase },
+                                    { label: "MEMBER SINCE",        value: memberYear ?? "—",            suffix: "",     numClass: "text-zinc-800",  Icon: CalendarDays },
+                                ] as const).map((t, i) => (
+                                    <div key={t.label} className={`bg-gray-50 px-6 py-6 flex flex-col${i < 3 ? " border-r border-gray-100" : ""}`}>
+                                        <t.Icon className="w-3.5 h-3.5 text-gray-300 mb-4" />
+                                        <p className={`font-black leading-none ${t.numClass}`} style={{ fontSize: '28px' }}>
                                             {t.value}
-                                            {t.suffix && <span className="text-gray-300 font-black" style={{ fontSize: '13px' }}>{t.suffix}</span>}
+                                            {t.suffix && <span className="text-gray-300 font-black" style={{ fontSize: '14px' }}>{t.suffix}</span>}
                                         </p>
-                                        <p className="font-bold text-gray-400 tracking-widest uppercase mt-2" style={{ fontSize: '9px' }}>{t.label}</p>
-                                        <p className="font-medium text-gray-400 mt-0.5" style={{ fontSize: '10px' }}>{t.desc}</p>
+                                        <p className="font-bold text-gray-400 tracking-widest uppercase mt-3" style={{ fontSize: '10px' }}>{t.label}</p>
                                     </div>
                                 ))}
                             </div>
 
                             {/* Professional Summary */}
-                            <div className="px-6 py-5">
-                                <p className="font-black text-zinc-900 mb-3" style={{ fontSize: '13px' }}>Professional Summary</p>
-                                <div className="pl-6">
-                                    {(bio || profile.profile_bio) ? (
-                                        <p className="font-medium text-zinc-500 leading-relaxed" style={{ fontSize: '13px', lineHeight: 1.75 }}>
-                                            {bio || profile.profile_bio}
-                                        </p>
-                                    ) : (
-                                        <p className="font-medium text-gray-300 italic" style={{ fontSize: '12px' }}>Add a bio above — this becomes your professional summary…</p>
-                                    )}
-                                </div>
+                            <div className="px-8 py-6">
+                                <p className="font-black text-zinc-900 mb-3" style={{ fontSize: '14px' }}>Professional Summary</p>
+                                {(bio || profile.profile_bio) ? (
+                                    <p className="font-medium text-zinc-500 leading-relaxed" style={{ fontSize: '14px', lineHeight: 1.75 }}>
+                                        {bio || profile.profile_bio}
+                                    </p>
+                                ) : (
+                                    <p className="font-medium text-gray-300 italic" style={{ fontSize: '13px' }}>Add a bio above — this becomes your professional summary…</p>
+                                )}
                             </div>
 
                         </div>

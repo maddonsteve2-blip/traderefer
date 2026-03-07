@@ -99,111 +99,108 @@ export default function ReferrerProfileViewPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="w-full max-w-7xl mx-auto px-12 pt-20 pb-20">
+        <div className="min-h-screen bg-white">
+            <div className="w-full px-12 pt-24 pb-24">
 
                 {/* ── BACK NAV ── */}
                 <button
                     onClick={() => router.back()}
-                    className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-600 font-semibold transition-colors mb-10"
+                    className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-600 font-semibold transition-colors mb-14"
                     style={{ fontSize: '14px' }}
                 >
                     <ArrowLeft className="w-4 h-4" /> Back
                 </button>
 
-                {/* ── DOCUMENT CARD ── */}
-                <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-
-                    {/* ── HEADER SECTION ── */}
-                    <div className="bg-white border-b border-gray-100 px-14 py-12">
-                        <div className="flex items-center gap-10 flex-wrap">
-
-                            {/* 160px Avatar with professional border */}
-                            <div className="shrink-0 relative">
-                                <div
-                                    className="w-40 h-40 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white overflow-hidden"
-                                    style={{ fontSize: '48px', boxShadow: '0 0 0 4px #fff, 0 0 0 5px #e5e7eb, 0 4px 24px rgba(0,0,0,0.10)' }}
-                                >
-                                    {profile.profile_photo_url ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={profile.profile_photo_url} alt={profile.full_name} className="w-full h-full object-cover" />
-                                    ) : initials}
-                                </div>
-                            </div>
-
-                            {/* Identity block */}
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-3 flex-wrap mb-2">
-                                    <h1 className="font-black text-zinc-900 leading-none" style={{ fontSize: '36px' }}>
-                                        {profile.full_name}
-                                    </h1>
-                                    <span
-                                        className="inline-flex items-center gap-1.5 px-3 py-1 border border-green-200 bg-green-50 text-green-700 rounded-full font-bold"
-                                        style={{ fontSize: '12px' }}
-                                    >
-                                        <CheckCircle className="w-3 h-3" /> Verified Referrer
-                                    </span>
-                                </div>
-
-                                <div className="flex items-center gap-6 flex-wrap mt-3 mb-4">
-                                    {(profile.suburb || profile.state) && (
-                                        <span className="flex items-center gap-1.5 text-zinc-500 font-medium" style={{ fontSize: '15px' }}>
-                                            <MapPin className="w-4 h-4 text-gray-400" />
-                                            {profile.suburb}{profile.state ? `, ${profile.state}` : ""}
-                                        </span>
-                                    )}
-                                    {memberYear && (
-                                        <span className="flex items-center gap-1.5 text-zinc-500 font-medium" style={{ fontSize: '15px' }}>
-                                            <Award className="w-4 h-4 text-gray-400" /> Member since {memberYear}
-                                        </span>
-                                    )}
-                                </div>
-
-                                {profile.tagline && (
-                                    <p className="font-medium text-zinc-600 leading-snug" style={{ fontSize: '22px' }}>
-                                        {profile.tagline}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
+                {/* ── IDENTIFICATION HEADER ── */}
+                <div className="flex items-center gap-10 mb-14 flex-wrap">
+                    {/* 160px Avatar */}
+                    <div
+                        className="w-40 h-40 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden"
+                        style={{ fontSize: '48px', boxShadow: '0 0 0 4px #fff, 0 0 0 6px #e5e7eb, 0 4px 24px rgba(0,0,0,0.12)' }}
+                    >
+                        {profile.profile_photo_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={profile.profile_photo_url} alt={profile.full_name} className="w-full h-full object-cover" />
+                        ) : initials}
                     </div>
 
-                    {/* ── DATA TILES ── */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-gray-100 border-b border-gray-100">
-                        {tiles.map(t => (
-                            <div key={t.label} className="px-10 py-9 bg-white flex flex-col">
-                                <t.icon className="w-5 h-5 text-gray-300 mb-5" />
-                                <p className={`font-black leading-none ${t.numClass}`} style={{ fontSize: '48px' }}>
-                                    {t.value}
-                                    {t.suffix && (
-                                        <span className="text-gray-300 font-black" style={{ fontSize: '24px' }}>{t.suffix}</span>
-                                    )}
-                                </p>
-                                <p className="font-bold text-gray-400 tracking-widest uppercase mt-4" style={{ fontSize: '12px' }}>
-                                    {t.label}
-                                </p>
-                                <p className="font-medium text-gray-400 mt-1" style={{ fontSize: '13px' }}>
-                                    {t.desc}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* ── PROFESSIONAL SUMMARY ── */}
-                    {profile.profile_bio && (
-                        <div className="px-14 py-12">
-                            <h2 className="font-black text-zinc-900 mb-6" style={{ fontSize: '24px' }}>
-                                Professional Summary
-                            </h2>
-                            <div className="px-24">
-                                <p className="font-medium text-zinc-600 leading-relaxed" style={{ fontSize: '20px', lineHeight: 1.85 }}>
-                                    {profile.profile_bio}
-                                </p>
-                            </div>
+                    {/* Name + meta */}
+                    <div>
+                        <div className="flex items-center gap-4 mb-3 flex-wrap">
+                            <h1 className="font-black text-zinc-900 leading-none" style={{ fontSize: '42px' }}>
+                                {profile.full_name}
+                            </h1>
+                            <span
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-green-200 bg-green-50 text-green-700 rounded-full font-bold"
+                                style={{ fontSize: '13px' }}
+                            >
+                                <CheckCircle className="w-3.5 h-3.5" /> Verified Referrer
+                            </span>
                         </div>
-                    )}
 
+                        <div className="flex items-center gap-6 flex-wrap mb-3">
+                            {(profile.suburb || profile.state) && (
+                                <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '16px' }}>
+                                    <MapPin className="w-4 h-4" />
+                                    {profile.suburb}{profile.state ? `, ${profile.state}` : ""}
+                                </span>
+                            )}
+                            {memberYear && (
+                                <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '16px' }}>
+                                    <Award className="w-4 h-4" /> Member since {memberYear}
+                                </span>
+                            )}
+                        </div>
+
+                        {profile.tagline && (
+                            <p className="font-medium text-zinc-500" style={{ fontSize: '24px' }}>
+                                {profile.tagline}
+                            </p>
+                        )}
+                    </div>
                 </div>
+
+                {/* ── FULL-WIDTH DATA ROW ── */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 rounded-2xl overflow-hidden border border-gray-100 mb-16">
+                    {tiles.map((t, i) => (
+                        <div
+                            key={t.label}
+                            className={`bg-gray-50 px-10 py-10 flex flex-col${
+                                i < tiles.length - 1 ? " border-r border-gray-100" : ""
+                            }`}
+                        >
+                            <t.icon className="w-5 h-5 text-gray-300 mb-6" />
+                            <p className={`font-black leading-none ${t.numClass}`} style={{ fontSize: '48px' }}>
+                                {t.value}
+                                {t.suffix && (
+                                    <span className="text-gray-300 font-black" style={{ fontSize: '24px' }}>{t.suffix}</span>
+                                )}
+                            </p>
+                            <p className="font-bold text-gray-400 tracking-widest uppercase mt-5" style={{ fontSize: '14px' }}>
+                                {t.label}
+                            </p>
+                            <p className="font-medium text-gray-400 mt-1.5" style={{ fontSize: '14px' }}>
+                                {t.desc}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+
+                {/* ── PROFESSIONAL SUMMARY ── */}
+                {profile.profile_bio && (
+                    <div>
+                        <h2 className="font-black text-zinc-900 mb-6" style={{ fontSize: '28px' }}>
+                            Professional Summary
+                        </h2>
+                        <p
+                            className="font-medium text-zinc-600 leading-relaxed"
+                            style={{ fontSize: '22px', lineHeight: 1.85, maxWidth: '1200px' }}
+                        >
+                            {profile.profile_bio}
+                        </p>
+                    </div>
+                )}
+
             </div>
         </div>
     );
