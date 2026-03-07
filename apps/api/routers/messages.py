@@ -305,7 +305,7 @@ async def send_message(
             if row and body_text:
                 # Email notification
                 if row["email"]:
-                    send_new_message_notification(
+                    await send_new_message_notification(
                         email=row["email"],
                         recipient_name=row["full_name"] or row["email"],
                         sender_name=row["business_name"],
@@ -329,7 +329,7 @@ async def send_message(
             if row and body_text:
                 # Email notification
                 if row["business_email"]:
-                    send_new_message_notification(
+                    await send_new_message_notification(
                         email=row["business_email"],
                         recipient_name=row["business_name"],
                         sender_name=row["ref_name"] or "A referrer",
