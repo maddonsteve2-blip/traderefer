@@ -185,7 +185,7 @@ export default function ReferrerProfilePage() {
     const initials = profile.full_name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
     const memberYear = profile.member_since ? new Date(profile.member_since).getFullYear() : null;
 
-    const publicUrl = profileSlug ? `${siteUrl}/referrer/${profileSlug}` : null;
+    const publicUrl = profileSlug ? `${siteUrl}/dashboard/referrer-profile/${profileSlug}` : null;
 
     return (
         <div className="min-h-screen bg-zinc-50">
