@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import {
     MapPin, Award, Star, TrendingUp, Briefcase,
@@ -24,18 +25,25 @@ interface ReferrerProfile {
 
 export default function PublicReferrerProfilePage() {
     const { id } = useParams<{ id: string }>();
+    const router = useRouter();
+    const { isSignedIn, isLoaded } = useAuth();
     const [profile, setProfile] = useState<ReferrerProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
     useEffect(() => {
+        if (!isLoaded) return;
+        if (!isSignedIn) {
+            router.push(`/sign-in?redirect_url=/referrer/${id}`);
+            return;
+        }
         if (!id) return;
         fetch(`${apiUrl}/public/referrer/${id}/profile`)
             .then(r => { if (!r.ok) throw new Error("not found"); return r.json(); })
             .then(data => { setProfile(data); setLoading(false); })
             .catch(() => { setNotFound(true); setLoading(false); });
-    }, [id, apiUrl]);
+    }, [id, apiUrl, isLoaded, isSignedIn, router]);
 
     if (loading) {
         return (

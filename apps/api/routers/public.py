@@ -427,28 +427,34 @@ async def get_referrer_team(referrer_id: str, db: AsyncSession = Depends(get_db)
     }
 
 
-@router.get("/referrer/{referrer_id}/profile")
-async def get_public_referrer_profile(referrer_id: str, db: AsyncSession = Depends(get_db)):
-    """Public endpoint: get a referrer's profile for their public sales page."""
+@router.get("/referrer/{referrer_slug}/profile")
+async def get_public_referrer_profile(referrer_slug: str, db: AsyncSession = Depends(get_db)):
+    """Public endpoint: get a referrer's profile. Accepts UUID or 8-char invite code slug."""
     import uuid as _uuid
+
+    # Try UUID first, fall back to onboarding_invite_code lookup
     try:
-        rid = _uuid.UUID(referrer_id)
+        rid = _uuid.UUID(referrer_slug)
+        where_clause = "WHERE r.id = :identifier"
+        params: dict = {"identifier": rid}
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid referrer ID")
+        where_clause = "WHERE UPPER(r.onboarding_invite_code) = UPPER(:identifier)"
+        params = {"identifier": referrer_slug}
 
     result = await db.execute(
-        text("""
+        text(f"""
             SELECT r.id, r.full_name, r.suburb, r.state, r.profile_bio, r.tagline,
                    r.profile_photo_url, r.quality_score, r.created_at,
+                   r.onboarding_invite_code,
                    COUNT(DISTINCT rl.business_id) as businesses_linked,
                    COUNT(DISTINCT CASE WHEN l.status IN ('CONFIRMED','CONFIRMED_SUCCESS') THEN l.id END) as confirmed_referrals
             FROM referrers r
             LEFT JOIN referral_links rl ON rl.referrer_id = r.id
             LEFT JOIN leads l ON l.referrer_id = r.id
-            WHERE r.id = :rid
+            {where_clause}
             GROUP BY r.id
         """),
-        {"rid": rid}
+        params
     )
     ref = result.mappings().first()
     if not ref:

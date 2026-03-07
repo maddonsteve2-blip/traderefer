@@ -33,6 +33,7 @@ export default function ReferrerProfilePage() {
     const [tagline, setTagline] = useState("");
     const [photoUrl, setPhotoUrl] = useState("");
     const [referrerId, setReferrerId] = useState<string | null>(null);
+    const [profileSlug, setProfileSlug] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -154,6 +155,7 @@ export default function ReferrerProfilePage() {
             setTagline(me.tagline || "");
             setPhotoUrl(me.profile_photo_url || "");
             setReferrerId(me.id || null);
+            setProfileSlug(me.onboarding_invite_code || me.id || null);
             setLoading(false);
         })();
     }, [isLoaded, getToken, apiUrl, router]);
@@ -183,7 +185,7 @@ export default function ReferrerProfilePage() {
     const initials = profile.full_name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
     const memberYear = profile.member_since ? new Date(profile.member_since).getFullYear() : null;
 
-    const publicUrl = referrerId ? `${siteUrl}/referrer/${referrerId}` : null;
+    const publicUrl = profileSlug ? `${siteUrl}/referrer/${profileSlug}` : null;
 
     return (
         <div className="min-h-screen bg-zinc-50">
