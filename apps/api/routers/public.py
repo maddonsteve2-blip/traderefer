@@ -427,6 +427,48 @@ async def get_referrer_team(referrer_id: str, db: AsyncSession = Depends(get_db)
     }
 
 
+@router.get("/referrer/{referrer_id}/profile")
+async def get_public_referrer_profile(referrer_id: str, db: AsyncSession = Depends(get_db)):
+    """Public endpoint: get a referrer's profile for their public sales page."""
+    import uuid as _uuid
+    try:
+        rid = _uuid.UUID(referrer_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid referrer ID")
+
+    result = await db.execute(
+        text("""
+            SELECT r.id, r.full_name, r.suburb, r.state, r.profile_bio, r.tagline,
+                   r.profile_photo_url, r.quality_score, r.created_at,
+                   COUNT(DISTINCT rl.business_id) as businesses_linked,
+                   COUNT(DISTINCT CASE WHEN l.status IN ('CONFIRMED','CONFIRMED_SUCCESS') THEN l.id END) as confirmed_referrals
+            FROM referrers r
+            LEFT JOIN referral_links rl ON rl.referrer_id = r.id
+            LEFT JOIN leads l ON l.referrer_id = r.id
+            WHERE r.id = :rid
+            GROUP BY r.id
+        """),
+        {"rid": rid}
+    )
+    ref = result.mappings().first()
+    if not ref:
+        raise HTTPException(status_code=404, detail="Referrer not found")
+
+    return {
+        "id": str(ref["id"]),
+        "full_name": ref["full_name"],
+        "suburb": ref["suburb"],
+        "state": ref["state"],
+        "profile_bio": ref["profile_bio"],
+        "tagline": ref["tagline"],
+        "profile_photo_url": ref["profile_photo_url"],
+        "quality_score": ref["quality_score"] or 0,
+        "member_since": str(ref["created_at"])[:10] if ref["created_at"] else None,
+        "businesses_linked": int(ref["businesses_linked"] or 0),
+        "confirmed_referrals": int(ref["confirmed_referrals"] or 0),
+    }
+
+
 @router.get("/logo-proxy")
 async def logo_proxy(url: str = Query(...)):
     """Proxy Google profile photo URLs to avoid browser hotlink blocking."""
