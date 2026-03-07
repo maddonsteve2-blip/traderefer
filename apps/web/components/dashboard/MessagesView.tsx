@@ -565,10 +565,10 @@ export function MessagesView() {
                 )}
 
                 {/* ── Input bar — ALWAYS VISIBLE ── */}
-                <div className="px-4 py-3 bg-white border-t border-gray-200 flex-shrink-0">
+                <div className="px-4 py-4 bg-gray-50 border-t border-gray-300 shadow-md flex-shrink-0">
                     {activeContactId ? (
                         <>
-                            <div className="flex items-end gap-2 bg-white border border-gray-300 rounded-2xl px-3 py-2 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all shadow-sm">
+                            <div className="flex items-end gap-2 bg-white border-2 border-gray-400 rounded-2xl px-3 py-2 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all shadow-sm">
                                 <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleImageSelect} />
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
@@ -591,13 +591,13 @@ export function MessagesView() {
                                     onKeyDown={handleKeyDown}
                                     placeholder={`Message ${partnerName.split(' ')[0]}…`}
                                     rows={1}
-                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-gray-500 focus:outline-none resize-none leading-relaxed py-2 max-h-[120px]"
-                                    style={{ fontSize: '16px' }}
+                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-gray-600 focus:outline-none resize-none leading-relaxed py-2 max-h-[120px]"
+                                    style={{ fontSize: '18px' }}
                                 />
                                 <button
                                     onClick={handleSend}
                                     disabled={(!newMessage.trim() && !imageUrl) || sending || uploading}
-                                    className="flex-shrink-0 self-end mb-0.5 h-12 px-5 bg-orange-500 hover:bg-orange-600 disabled:bg-zinc-200 text-white disabled:text-zinc-400 rounded-xl flex items-center gap-2 font-bold transition-all duration-150 active:scale-95"
+                                    className="flex-shrink-0 self-end mb-0.5 h-12 px-5 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white disabled:text-gray-500 rounded-xl flex items-center gap-2 font-bold transition-all duration-150 active:scale-95"
                                     style={{ fontSize: '16px' }}
                                 >
                                     {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /><span className="hidden sm:inline">Send</span></>}
@@ -606,7 +606,7 @@ export function MessagesView() {
                             <p className="text-xs text-zinc-300 mt-1.5 text-center font-medium">Enter to send · Shift+Enter for new line</p>
                         </>
                     ) : (
-                        <div className="flex items-center gap-3 bg-zinc-50 border border-gray-200 rounded-2xl px-4 py-3 opacity-60 cursor-not-allowed">
+                        <div className="flex items-center gap-3 bg-white border-2 border-gray-300 rounded-2xl px-4 py-3 opacity-50 cursor-not-allowed">
                             <div className="flex-1 text-gray-400 font-medium select-none" style={{ fontSize: '16px' }}>
                                 Select a business to start messaging…
                             </div>
