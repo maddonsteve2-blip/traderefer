@@ -143,7 +143,7 @@ export function MyTradesTeam() {
                     {emptySlots.map(trade => (
                         <Link
                             key={trade}
-                            href={`/businesses?category=${encodeURIComponent(trade)}`}
+                            href={`/dashboard/referrer/businesses?trade=${encodeURIComponent(trade)}`}
                             className="inline-flex items-center gap-2 border-2 border-dashed border-zinc-200 hover:border-orange-300 hover:bg-orange-50/50 rounded-full pl-1 pr-3 py-1 group transition-all shrink-0"
                         >
                             <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">

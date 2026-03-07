@@ -488,7 +488,7 @@ export function Navbar() {
 
                                                 </Link>
 
-                                                <Link href="/businesses" className="hidden sm:block">
+                                                <Link href="/dashboard/referrer/businesses" className="hidden sm:block">
 
                                                     <Button variant="ghost" className="text-base font-bold px-3 text-zinc-600 hover:text-orange-600">
 
@@ -662,7 +662,7 @@ export function Navbar() {
                                 <nav className="space-y-1">
                                     {[
                                         { href: "/dashboard/referrer", label: "Dashboard" },
-                                        { href: "/businesses", label: "Find Businesses" },
+                                        { href: "/dashboard/referrer/businesses", label: "Find Businesses" },
                                         { href: "/dashboard/referrer/messages", label: "Messages" },
                                         { href: "/dashboard/referrer/withdraw", label: "Rewards" },
                                     ].map(({ href, label }) => (

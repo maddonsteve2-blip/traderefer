@@ -67,7 +67,7 @@ export function HotCampaigns() {
                 <h2 className="text-lg font-black text-zinc-900 flex items-center gap-2">
                     <Flame className="w-4 h-4 text-orange-500" /> Hot Campaigns
                 </h2>
-                <Link href="/businesses" className="text-lg font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-2">
+                <Link href="/dashboard/referrer/businesses" className="text-lg font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-2">
                     All <ChevronRight className="w-4 h-4" />
                 </Link>
             </div>
