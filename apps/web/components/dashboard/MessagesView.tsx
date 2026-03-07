@@ -416,7 +416,7 @@ export function MessagesView() {
                 ) : null}
 
                 {/* ── Scrollable content area ── */}
-                <div className="flex-1 overflow-y-auto min-h-0">
+                <div className="flex-1 overflow-y-auto min-h-0 bg-gray-50">
                     {activeContactId && activeContact ? (
                         <div className="px-4 py-4">
                             {messages.length === 0 ? (
@@ -597,7 +597,7 @@ export function MessagesView() {
                                 <button
                                     onClick={handleSend}
                                     disabled={(!newMessage.trim() && !imageUrl) || sending || uploading}
-                                    className="flex-shrink-0 self-end mb-0.5 h-12 px-5 bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white rounded-xl flex items-center gap-2 font-bold transition-all duration-150 active:scale-95 shadow-md"
+                                    className="flex-shrink-0 self-end mb-0.5 h-12 px-5 bg-orange-600 hover:bg-orange-700 disabled:bg-zinc-800 text-white rounded-xl flex items-center gap-2 font-bold transition-all duration-150 active:scale-95 shadow-md"
                                     style={{ fontSize: '18px' }}
                                 >
                                     {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /><span className="hidden sm:inline">Send</span></>}
