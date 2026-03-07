@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search, Menu, X, Gift, MessageSquare, ArrowLeftRight } from "lucide-react";
+import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search, Menu, X, Gift, MessageSquare, ArrowLeftRight, Rocket, Building2, DollarSign, Users as Users2, Target, ArrowRight } from "lucide-react";
 
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
@@ -230,6 +230,142 @@ function DualRoleSwitcher({ isBusinessDashboard, isReferrerDashboard }: { isBusi
     );
 }
 
+function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { isBusinessDashboard: boolean; isReferrerDashboard: boolean }) {
+    const { user } = useUser();
+    const [open, setOpen] = useState(false);
+    const roles = (user?.publicMetadata?.roles as string[] | undefined) ?? [];
+    const role = user?.publicMetadata?.role as string | undefined;
+    const effectiveRoles = roles.length > 0 ? roles : role ? [role] : [];
+    const isDual = effectiveRoles.includes("referrer") && effectiveRoles.includes("business");
+
+    if (!isBusinessDashboard && !isReferrerDashboard) return null;
+
+    if (isDual) {
+        const href = isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business";
+        const label = isBusinessDashboard ? "Referrer" : "Business";
+        return (
+            <div className="hidden md:flex flex-1 justify-center">
+                <Link
+                    href={href}
+                    className="flex items-center gap-2 px-5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-bold transition-all"
+                    style={{ fontSize: '14px' }}
+                >
+                    <ArrowLeftRight className="w-4 h-4" />
+                    Switch to {label} Dashboard
+                </Link>
+            </div>
+        );
+    }
+
+    if (isBusinessDashboard) {
+        return (
+            <div className="hidden md:flex flex-1 justify-center">
+                <>
+                    <button
+                        onClick={() => setOpen(true)}
+                        className="flex items-center gap-2 px-5 py-2 bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 rounded-full font-bold transition-all"
+                        style={{ fontSize: '14px' }}
+                    >
+                        <Rocket className="w-4 h-4" />
+                        Become a Referrer
+                    </button>
+                    {open && <BecomeReferrerModal onClose={() => setOpen(false)} />}
+                </>
+            </div>
+        );
+    }
+
+    if (isReferrerDashboard) {
+        return (
+            <div className="hidden md:flex flex-1 justify-center">
+                <>
+                    <button
+                        onClick={() => setOpen(true)}
+                        className="flex items-center gap-2 px-5 py-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-300 text-zinc-700 rounded-full font-bold transition-all"
+                        style={{ fontSize: '14px' }}
+                    >
+                        <Building2 className="w-4 h-4" />
+                        Register Your Business
+                    </button>
+                    {open && <RegisterBusinessModal onClose={() => setOpen(false)} />}
+                </>
+            </div>
+        );
+    }
+
+    return null;
+}
+
+function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
+    const BENEFITS = [
+        { icon: DollarSign, title: "Earn per lead", desc: "Get paid every time a business you referred converts a job." },
+        { icon: Gift, title: "Prezzee rewards", desc: "Earn $25 Prezzee Smart Cards for every 5 active businesses." },
+        { icon: Users2, title: "Build passive income", desc: "Refer once, earn on every future job — zero ongoing effort." },
+        { icon: Rocket, title: "Zero upfront cost", desc: "Free to join. No subscription. No risk." },
+    ];
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
+                <div className="bg-gradient-to-br from-orange-500 to-amber-400 px-8 pt-8 pb-10 relative">
+                    <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white"><X className="w-4 h-4" /></button>
+                    <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-4"><Rocket className="w-7 h-7 text-white" /></div>
+                    <h2 className="text-2xl font-black text-white mb-1">Become a Referrer</h2>
+                    <p className="text-orange-100 font-medium">Turn your network into income — no extra work required.</p>
+                </div>
+                <div className="px-8 py-6 space-y-4">
+                    {BENEFITS.map(({ icon: Icon, title, desc }) => (
+                        <div key={title} className="flex items-start gap-4">
+                            <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center shrink-0"><Icon className="w-5 h-5 text-orange-500" /></div>
+                            <div><p className="font-bold text-zinc-900" style={{ fontSize: '15px' }}>{title}</p><p className="text-zinc-500 font-medium" style={{ fontSize: '14px' }}>{desc}</p></div>
+                        </div>
+                    ))}
+                </div>
+                <div className="px-8 pb-8">
+                    <Link href="/onboarding/referrer" onClick={onClose} className="flex items-center justify-center gap-2 w-full h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200" style={{ fontSize: '17px' }}>
+                        Join as Referrer <ArrowRight className="w-5 h-5" />
+                    </Link>
+                    <button onClick={onClose} className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors" style={{ fontSize: '14px' }}>Maybe later</button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
+    const BENEFITS = [
+        { icon: Target, title: "Receive vetted leads", desc: "Pre-screened leads from trusted referrers who vouch for each job." },
+        { icon: Users2, title: "Build a referrer network", desc: "Approve referrers to represent your business — grow hands-free." },
+        { icon: BarChart3, title: "Run targeted campaigns", desc: "Create campaigns that attract exactly the customers you want." },
+        { icon: Building2, title: "Professional storefront", desc: "A public profile that builds trust before the first call." },
+    ];
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
+                <div className="bg-zinc-900 px-8 pt-8 pb-10 relative">
+                    <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"><X className="w-4 h-4" /></button>
+                    <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-4"><Building2 className="w-7 h-7 text-white" /></div>
+                    <h2 className="text-2xl font-black text-white mb-1">Register Your Business</h2>
+                    <p className="text-zinc-400 font-medium">Get pre-vetted leads from referrers who know your customers.</p>
+                </div>
+                <div className="px-8 py-6 space-y-4">
+                    {BENEFITS.map(({ icon: Icon, title, desc }) => (
+                        <div key={title} className="flex items-start gap-4">
+                            <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center shrink-0"><Icon className="w-5 h-5 text-zinc-600" /></div>
+                            <div><p className="font-bold text-zinc-900" style={{ fontSize: '15px' }}>{title}</p><p className="text-zinc-500 font-medium" style={{ fontSize: '14px' }}>{desc}</p></div>
+                        </div>
+                    ))}
+                </div>
+                <div className="px-8 pb-8">
+                    <Link href="/onboarding/business" onClick={onClose} className="flex items-center justify-center gap-2 w-full h-14 bg-zinc-900 hover:bg-zinc-800 text-white rounded-2xl font-black transition-all shadow-lg" style={{ fontSize: '17px' }}>
+                        Register Business <ArrowRight className="w-5 h-5" />
+                    </Link>
+                    <button onClick={onClose} className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors" style={{ fontSize: '14px' }}>Maybe later</button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export function Navbar() {
 
     const pathname = usePathname();
@@ -321,11 +457,16 @@ export function Navbar() {
 
                     </Link>
 
-                    {/* ── PERSISTENT SEARCH BAR ── */}
+                    {/* ── PERSISTENT SEARCH BAR / DASHBOARD CENTER ACTION ── */}
                     {!isDashboard && (
                         <div className="hidden md:block flex-1 max-w-xl">
                             <SmartSearch variant="navbar" />
                         </div>
+                    )}
+                    {isDashboard && (
+                        <SignedIn>
+                            <DashboardCenterAction isBusinessDashboard={!!isBusinessDashboard} isReferrerDashboard={!!isReferrerDashboard} />
+                        </SignedIn>
                     )}
 
 
