@@ -7,38 +7,39 @@ import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { X, Building2, Rocket, ArrowRight, Target, DollarSign, Gift, Network, Zap } from "lucide-react";
 
+const PREZZEE_CARD = "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif";
+const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";
+
 const CASES = {
     /** On referrer dash → pitch Business */
     business: {
-        tabLabel: "SWITCH TO BUSINESS",
+        tabLabel: "BUSINESS MODE",
         eyebrow: "Business Command Centre",
         headline: "Do you own a Business?",
-        sub: "Unlock your Business Command Centre to receive verified leads and build your partner network.",
+        sub: "Unlock your Business Command Centre.",
         icon: Building2,
         features: [
-            { icon: Target,   title: "Verified Leads",      desc: "Only pay for results from partners you trust." },
-            { icon: Network,  title: "Recruitment",          desc: "Approve and manage your own custom referral force." },
-            { icon: Zap,      title: "Automated Rewards",    desc: "Zero-hassle payments via the Prezzee system. Access 335+ brands like Bunnings and Woolworths." },
+            { icon: Target,  title: "Verified Leads",       desc: "Receive pre-screened leads from partners who vouch for every job." },
+            { icon: Network, title: "Referral Force",        desc: "Approve and manage your own custom network of local referrers." },
+            { icon: Zap,     title: "Zero-Admin Rewards",   desc: "Referral fees are automatically fulfilled via Prezzee Smart Cards — no manual payments or invoicing required." },
         ],
         cta: "Start Business Onboarding",
         href: "/onboarding/business",
-        prezzee: false,
     },
     /** On business dash → pitch Referrer */
     referrer: {
-        tabLabel: "SWITCH TO REFERRER",
+        tabLabel: "REFERRER MODE",
         eyebrow: "Partner Referrer Network",
-        headline: "Monetize Your Network",
-        sub: "Turn your missed calls into profit with the Partner Network.",
+        headline: "Want to Monetize Your Network?",
+        sub: "Turn your 'No' calls into instant profit.",
         icon: Rocket,
         features: [
-            { icon: DollarSign, title: "Earn $8+ per lead",  desc: "Turn 'No' calls into instant profit." },
-            { icon: Gift,       title: "Prezzee Rewards",    desc: "Get paid in 335+ brands like Bunnings & Uber." },
-            { icon: Network,    title: "Zero Admin",         desc: "The system issues digital cards the moment a lead confirms." },
+            { icon: DollarSign, title: "Earn Per Lead",     desc: "Collect $8+ per verified lead sent to your trusted trade peers." },
+            { icon: Gift,       title: "Prezzee Rewards",   desc: "Get paid instantly in Prezzee Smart Cards." },
+            { icon: Network,    title: "335+ Brands",       desc: "Spend your earnings at Bunnings, Woolworths, Uber, and hundreds more." },
         ],
         cta: "Activate Referrer Mode",
         href: "/onboarding/referrer",
-        prezzee: true,
     },
 };
 
@@ -176,19 +177,28 @@ export function PeekingRoleDrawer() {
                             </div>
                         ))}
 
-                        {cfg.prezzee && (
-                            <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-5 py-4">
+                        {/* Prezzee Smart Card visual */}
+                        <div className="rounded-2xl bg-[#0F172A] border border-white/10 overflow-hidden">
+                            <div className="relative flex items-center justify-center py-5 px-4">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                    src="https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg"
-                                    alt="Prezzee"
-                                    className="h-4 w-auto brightness-0 invert opacity-60"
+                                    src={PREZZEE_CARD}
+                                    alt="Prezzee Smart Card"
+                                    className="w-44 rounded-xl shadow-2xl"
                                 />
-                                <p className="text-zinc-400 font-semibold" style={{ fontSize: 13 }}>
-                                    Powered by Prezzee · Digital gift cards issued instantly
-                                </p>
                             </div>
-                        )}
+                            <div className="px-5 pb-5 flex items-center justify-between">
+                                <div>
+                                    <p className="text-white font-black" style={{ fontSize: 16 }}>Powered by</p>
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={PREZZEE_LOGO} alt="Prezzee" className="h-4 w-auto brightness-0 invert mt-1" />
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-orange-400 font-black" style={{ fontSize: 16 }}>335+ brands</p>
+                                    <p className="text-zinc-400 font-medium" style={{ fontSize: 13 }}>Bunnings · Woolworths · Uber</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* CTA footer */}
