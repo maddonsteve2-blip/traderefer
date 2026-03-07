@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { X, ArrowRight, Target, DollarSign, Gift, Network, Zap } from "lucide-react";
+import { X, ArrowRight, Target, DollarSign, Gift, Network, Zap, ArrowLeftRight } from "lucide-react";
 
 const PREZZEE_CARD = "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif";
 const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";
@@ -66,10 +66,20 @@ export function PeekingRoleDrawer() {
     const hasBusiness  = effectiveRoles.includes("business");
     const hasReferrer  = effectiveRoles.includes("referrer");
 
-    // Determine which pitch to show
+    // Dual-role: handle is a direct switch link, no drawer
+    const dualSwitchHref = isDual
+        ? isReferrerDashboard ? "/dashboard/business" : isBusinessDashboard ? "/dashboard/referrer" : null
+        : null;
+    const dualTabLabel = isDual
+        ? isReferrerDashboard ? "BUSINESS MODE" : isBusinessDashboard ? "REFERRER MODE" : null
+        : null;
+
+    // Single-role: determine which pitch drawer to show
     let variant: "business" | "referrer" | null = null;
-    if (isReferrerDashboard && !hasBusiness) variant = "business";
-    if (isBusinessDashboard && !hasReferrer) variant = "referrer";
+    if (!isDual && isReferrerDashboard && !hasBusiness) variant = "business";
+    if (!isDual && isBusinessDashboard && !hasReferrer) variant = "referrer";
+
+    const showHandle = isDual ? !!dualSwitchHref : !!variant;
 
     // Animate drawer in after open state flips
     useEffect(() => {
@@ -83,9 +93,9 @@ export function PeekingRoleDrawer() {
 
     // Viewport push: reserve 48px on right for the handle
     useEffect(() => {
-        if (!isLoaded || isDual || !variant) return;
+        if (!isLoaded || !showHandle) return;
         if (!isOpen) {
-            document.body.style.paddingRight = "3rem"; // w-12 = 48px
+            document.body.style.paddingRight = "3rem";
         } else {
             document.body.style.paddingRight = "";
             document.body.style.overflow = "hidden";
@@ -94,45 +104,76 @@ export function PeekingRoleDrawer() {
             document.body.style.paddingRight = "";
             document.body.style.overflow = "";
         };
-    }, [isLoaded, isDual, variant, isOpen]);
+    }, [isLoaded, showHandle, isOpen]);
 
     const handleClose = () => {
         setDrawerVisible(false);
         setTimeout(() => setIsOpen(false), 280);
     };
 
-    if (!isLoaded || isDual || !variant) return null;
+    if (!isLoaded || !showHandle) return null;
 
-    const cfg = CASES[variant];
+    const cfg = variant ? CASES[variant] : null;
+    const tabLabel = isDual ? dualTabLabel! : cfg!.tabLabel;
 
     return createPortal(
         <>
             {/* ── FULL-HEIGHT HANDLE (always visible) ── */}
             {!isOpen && (
-                <button
-                    onClick={() => setIsOpen(true)}
-                    aria-label={cfg.tabLabel}
-                    className="fixed right-0 bottom-0 z-[9990] w-12 bg-white flex items-center justify-center cursor-pointer hover:bg-orange-50 transition-colors"
-                    style={{
-                        top: navH,
-                        borderLeft: "4px solid #f97316",
-                        boxShadow: "-4px 0 15px rgba(0,0,0,0.06)",
-                    }}
-                >
-                    <span
-                        className="font-black text-zinc-700 uppercase tracking-widest select-none"
+                isDual ? (
+                    /* Dual-role: direct switch link */
+                    <Link
+                        href={dualSwitchHref!}
+                        aria-label={tabLabel}
+                        className="fixed right-0 bottom-0 z-[9990] w-12 bg-white flex flex-col items-center justify-center gap-3 hover:bg-orange-50 transition-colors"
                         style={{
-                            fontSize: 16,
-                            writingMode: "vertical-rl",
-                            textOrientation: "mixed",
-                            transform: "rotate(180deg)",
-                            letterSpacing: "0.14em",
-                            lineHeight: 1,
+                            top: navH,
+                            borderLeft: "4px solid #f97316",
+                            boxShadow: "-4px 0 15px rgba(0,0,0,0.06)",
                         }}
                     >
-                        {cfg.tabLabel}
-                    </span>
-                </button>
+                        <ArrowLeftRight className="w-4 h-4 text-orange-500 shrink-0" />
+                        <span
+                            className="font-black text-zinc-700 uppercase tracking-widest select-none"
+                            style={{
+                                fontSize: 12,
+                                writingMode: "vertical-rl",
+                                textOrientation: "mixed",
+                                transform: "rotate(180deg)",
+                                letterSpacing: "0.14em",
+                                lineHeight: 1,
+                            }}
+                        >
+                            {tabLabel}
+                        </span>
+                    </Link>
+                ) : (
+                    /* Single-role: opens the pitch drawer */
+                    <button
+                        onClick={() => setIsOpen(true)}
+                        aria-label={tabLabel}
+                        className="fixed right-0 bottom-0 z-[9990] w-12 bg-white flex items-center justify-center cursor-pointer hover:bg-orange-50 transition-colors"
+                        style={{
+                            top: navH,
+                            borderLeft: "4px solid #f97316",
+                            boxShadow: "-4px 0 15px rgba(0,0,0,0.06)",
+                        }}
+                    >
+                        <span
+                            className="font-black text-zinc-700 uppercase tracking-widest select-none"
+                            style={{
+                                fontSize: 16,
+                                writingMode: "vertical-rl",
+                                textOrientation: "mixed",
+                                transform: "rotate(180deg)",
+                                letterSpacing: "0.14em",
+                                lineHeight: 1,
+                            }}
+                        >
+                            {tabLabel}
+                        </span>
+                    </button>
+                )
             )}
 
             {/* ── BACKDROP (only when open) ── */}
