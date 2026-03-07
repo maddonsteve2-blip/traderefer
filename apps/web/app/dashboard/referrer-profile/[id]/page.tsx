@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
-import { MapPin, Award, Star, TrendingUp, Briefcase, ArrowLeft, CheckCircle, ShieldCheck } from "lucide-react";
+import { MapPin, Award, TrendingUp, Briefcase, ArrowLeft, CheckCircle, CalendarDays } from "lucide-react";
 
 interface ReferrerProfile {
     id: string;
@@ -65,145 +65,145 @@ export default function ReferrerProfileViewPage() {
 
     const tiles = [
         {
-            label: "Quality Score",
+            label: "QUALITY SCORE",
             value: profile.quality_score,
             suffix: "/100",
-            desc: "Verified referrer rating",
-            bg: "bg-green-50",
-            border: "border-green-100",
-            val: "text-green-600",
-            sub: "text-green-500",
-            icon: ShieldCheck,
+            desc: "Verified platform rating",
+            numClass: "text-orange-500",
+            icon: CheckCircle,
         },
         {
-            label: "Confirmed Leads",
+            label: "CONFIRMED LEADS",
             value: profile.confirmed_referrals,
             suffix: "",
             desc: "Successfully converted",
-            bg: "bg-orange-50",
-            border: "border-orange-100",
-            val: "text-orange-600",
-            sub: "text-orange-500",
+            numClass: "text-zinc-800",
             icon: TrendingUp,
         },
         {
-            label: "Active Partnerships",
+            label: "ACTIVE PARTNERSHIPS",
             value: profile.businesses_linked,
             suffix: "",
             desc: "Businesses currently linked",
-            bg: "bg-blue-50",
-            border: "border-blue-100",
-            val: "text-blue-600",
-            sub: "text-blue-500",
+            numClass: "text-zinc-800",
             icon: Briefcase,
         },
         {
-            label: "Member Since",
+            label: "MEMBER SINCE",
             value: memberYear ?? "—",
             suffix: "",
             desc: "Year joined TradeRefer",
-            bg: "bg-violet-50",
-            border: "border-violet-100",
-            val: "text-violet-600",
-            sub: "text-violet-500",
-            icon: Award,
+            numClass: "text-zinc-800",
+            icon: CalendarDays,
         },
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-16">
+        <div className="min-h-screen bg-gray-50">
+            <div className="w-full max-w-7xl mx-auto px-12 pt-20 pb-20">
 
-            {/* ── WHITE HEADER ── */}
-            <div className="bg-white border-b border-gray-200 shadow-sm w-full">
-                <div className="w-full px-12 py-10">
-                    {/* Back nav */}
-                    <button
-                        onClick={() => router.back()}
-                        className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 font-bold transition-colors mb-8"
-                        style={{ fontSize: '15px' }}
-                    >
-                        <ArrowLeft className="w-4 h-4" /> Back
-                    </button>
+                {/* ── BACK NAV ── */}
+                <button
+                    onClick={() => router.back()}
+                    className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-600 font-semibold transition-colors mb-10"
+                    style={{ fontSize: '14px' }}
+                >
+                    <ArrowLeft className="w-4 h-4" /> Back
+                </button>
 
-                    {/* Identity row */}
-                    <div className="flex items-center gap-8 flex-wrap">
-                        {/* Avatar */}
-                        <div
-                            className="w-28 h-28 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-xl ring-4 ring-white"
-                            style={{ fontSize: '36px' }}
-                        >
-                            {profile.profile_photo_url ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={profile.profile_photo_url} alt={profile.full_name} className="w-full h-full object-cover" />
-                            ) : initials}
+                {/* ── DOCUMENT CARD ── */}
+                <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+
+                    {/* ── HEADER SECTION ── */}
+                    <div className="bg-white border-b border-gray-100 px-14 py-12">
+                        <div className="flex items-center gap-10 flex-wrap">
+
+                            {/* 160px Avatar with professional border */}
+                            <div className="shrink-0 relative">
+                                <div
+                                    className="w-40 h-40 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white overflow-hidden"
+                                    style={{ fontSize: '48px', boxShadow: '0 0 0 4px #fff, 0 0 0 5px #e5e7eb, 0 4px 24px rgba(0,0,0,0.10)' }}
+                                >
+                                    {profile.profile_photo_url ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={profile.profile_photo_url} alt={profile.full_name} className="w-full h-full object-cover" />
+                                    ) : initials}
+                                </div>
+                            </div>
+
+                            {/* Identity block */}
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 flex-wrap mb-2">
+                                    <h1 className="font-black text-zinc-900 leading-none" style={{ fontSize: '36px' }}>
+                                        {profile.full_name}
+                                    </h1>
+                                    <span
+                                        className="inline-flex items-center gap-1.5 px-3 py-1 border border-green-200 bg-green-50 text-green-700 rounded-full font-bold"
+                                        style={{ fontSize: '12px' }}
+                                    >
+                                        <CheckCircle className="w-3 h-3" /> Verified Referrer
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center gap-6 flex-wrap mt-3 mb-4">
+                                    {(profile.suburb || profile.state) && (
+                                        <span className="flex items-center gap-1.5 text-zinc-500 font-medium" style={{ fontSize: '15px' }}>
+                                            <MapPin className="w-4 h-4 text-gray-400" />
+                                            {profile.suburb}{profile.state ? `, ${profile.state}` : ""}
+                                        </span>
+                                    )}
+                                    {memberYear && (
+                                        <span className="flex items-center gap-1.5 text-zinc-500 font-medium" style={{ fontSize: '15px' }}>
+                                            <Award className="w-4 h-4 text-gray-400" /> Member since {memberYear}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {profile.tagline && (
+                                    <p className="font-medium text-zinc-600 leading-snug" style={{ fontSize: '22px' }}>
+                                        {profile.tagline}
+                                    </p>
+                                )}
+                            </div>
                         </div>
+                    </div>
 
-                        {/* Name block */}
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 flex-wrap mb-2">
-                                <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '36px' }}>
-                                    {profile.full_name}
-                                </h1>
-                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-full font-black" style={{ fontSize: '13px' }}>
-                                    <CheckCircle className="w-3.5 h-3.5" /> Verified Referrer
-                                </span>
-                            </div>
-
-                            <div className="flex items-center gap-5 flex-wrap mb-3">
-                                {(profile.suburb || profile.state) && (
-                                    <span className="flex items-center gap-1.5 text-zinc-500 font-medium" style={{ fontSize: '16px' }}>
-                                        <MapPin className="w-4 h-4 text-zinc-400" />
-                                        {profile.suburb}{profile.state ? `, ${profile.state}` : ""}
-                                    </span>
-                                )}
-                                {memberYear && (
-                                    <span className="flex items-center gap-1.5 text-zinc-500 font-medium" style={{ fontSize: '16px' }}>
-                                        <Star className="w-4 h-4 text-zinc-400" /> Member since {memberYear}
-                                    </span>
-                                )}
-                            </div>
-
-                            {profile.tagline && (
-                                <p className="font-semibold italic text-zinc-500 leading-snug" style={{ fontSize: '18px' }}>
-                                    &ldquo;{profile.tagline}&rdquo;
+                    {/* ── DATA TILES ── */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-gray-100 border-b border-gray-100">
+                        {tiles.map(t => (
+                            <div key={t.label} className="px-10 py-9 bg-white flex flex-col">
+                                <t.icon className="w-5 h-5 text-gray-300 mb-5" />
+                                <p className={`font-black leading-none ${t.numClass}`} style={{ fontSize: '48px' }}>
+                                    {t.value}
+                                    {t.suffix && (
+                                        <span className="text-gray-300 font-black" style={{ fontSize: '24px' }}>{t.suffix}</span>
+                                    )}
                                 </p>
-                            )}
-                        </div>
+                                <p className="font-bold text-gray-400 tracking-widest uppercase mt-4" style={{ fontSize: '12px' }}>
+                                    {t.label}
+                                </p>
+                                <p className="font-medium text-gray-400 mt-1" style={{ fontSize: '13px' }}>
+                                    {t.desc}
+                                </p>
+                            </div>
+                        ))}
                     </div>
-                </div>
-            </div>
 
-            {/* ── BODY ── */}
-            <div className="w-full px-12 py-10 space-y-10">
-
-                {/* ── 4 OVERSIZED AUTHORITY TILES ── */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-                    {tiles.map(t => (
-                        <div
-                            key={t.label}
-                            className={`${t.bg} border ${t.border} rounded-3xl px-8 py-9 flex flex-col items-start`}
-                        >
-                            <t.icon className={`w-6 h-6 ${t.sub} mb-4 opacity-80`} />
-                            <p className={`font-black ${t.val} leading-none`} style={{ fontSize: '42px' }}>
-                                {t.value}<span className={`${t.val} opacity-60`} style={{ fontSize: '22px' }}>{t.suffix}</span>
-                            </p>
-                            <p className="font-black text-zinc-700 mt-3" style={{ fontSize: '16px' }}>{t.label}</p>
-                            <p className={`font-medium ${t.sub} mt-1`} style={{ fontSize: '14px' }}>{t.desc}</p>
+                    {/* ── PROFESSIONAL SUMMARY ── */}
+                    {profile.profile_bio && (
+                        <div className="px-14 py-12">
+                            <h2 className="font-black text-zinc-900 mb-6" style={{ fontSize: '24px' }}>
+                                Professional Summary
+                            </h2>
+                            <div className="px-24">
+                                <p className="font-medium text-zinc-600 leading-relaxed" style={{ fontSize: '20px', lineHeight: 1.85 }}>
+                                    {profile.profile_bio}
+                                </p>
+                            </div>
                         </div>
-                    ))}
-                </div>
+                    )}
 
-                {/* ── EXECUTIVE SUMMARY ── */}
-                {profile.profile_bio && (
-                    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm px-10 py-10">
-                        <h2 className="font-black text-zinc-900 mb-5" style={{ fontSize: '26px' }}>
-                            About {firstName}
-                        </h2>
-                        <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: '20px', lineHeight: 1.8 }}>
-                            {profile.profile_bio}
-                        </p>
-                    </div>
-                )}
+                </div>
             </div>
         </div>
     );
