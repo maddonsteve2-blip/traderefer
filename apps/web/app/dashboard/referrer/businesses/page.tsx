@@ -31,7 +31,7 @@ export default async function DashboardBusinessesPage() {
     const { suburb, state } = await getReferrerLocation(token);
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-16">
+        <div className="min-h-screen bg-zinc-50">
             <div className="w-full px-6 py-6">
 
                 {/* Header */}

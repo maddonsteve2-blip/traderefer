@@ -52,7 +52,7 @@ export default async function ReferrerRewardsPage() {
     const qualityBarColor = qualityScore >= 70 ? "bg-green-500" : qualityScore >= 50 ? "bg-amber-400" : "bg-red-500";
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-20">
+        <div className="min-h-screen bg-zinc-50">
             <div className="w-full px-6 py-6">
 
                 {/* Breadcrumb */}

@@ -77,7 +77,7 @@ export default async function DashboardReferPage({
         <main className="min-h-screen bg-zinc-50">
 
             {/* ── BREADCRUMB ── */}
-            <div className="bg-white border-b border-zinc-100 pt-20 pb-3">
+            <div className="bg-white border-b border-zinc-100 pt-4 pb-3">
                 <div className="container mx-auto px-4">
                     <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>
                         <Link href="/dashboard/referrer" className="hover:text-zinc-700 transition-colors flex items-center gap-1.5">

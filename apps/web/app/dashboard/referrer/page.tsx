@@ -51,7 +51,7 @@ export default async function ReferrerDashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-[72px] md:pt-[100px] pb-8">
+        <div className="min-h-screen bg-zinc-50 pb-8">
             <WelcomeDialog />
 
             {/* ── 2-COLUMN GRID: 75% main / 25% right ── */}
