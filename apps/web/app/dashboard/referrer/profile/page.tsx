@@ -35,7 +35,9 @@ export default function ReferrerProfilePage() {
     const [referrerId, setReferrerId] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const cameraInputRef = useRef<HTMLInputElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const streamRef = useRef<MediaStream | null>(null);
+    const [webcamOpen, setWebcamOpen] = useState(false);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://traderefer.au";
 
@@ -52,6 +54,47 @@ export default function ReferrerProfilePage() {
             console.error("Upload failed", e);
         }
         setUploading(false);
+    };
+
+    const openWebcam = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } } });
+            streamRef.current = stream;
+            setWebcamOpen(true);
+            setTimeout(() => {
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                    videoRef.current.play();
+                }
+            }, 50);
+        } catch {
+            alert("Could not access webcam. Please allow camera permissions and try again.");
+        }
+    };
+
+    const closeWebcam = () => {
+        streamRef.current?.getTracks().forEach(t => t.stop());
+        streamRef.current = null;
+        setWebcamOpen(false);
+    };
+
+    const snapWebcam = async () => {
+        const video = videoRef.current;
+        if (!video) return;
+        const canvas = document.createElement("canvas");
+        const side = Math.min(video.videoWidth, video.videoHeight);
+        canvas.width = side;
+        canvas.height = side;
+        const ctx = canvas.getContext("2d")!;
+        const sx = (video.videoWidth - side) / 2;
+        const sy = (video.videoHeight - side) / 2;
+        ctx.drawImage(video, sx, sy, side, side, 0, 0, side, side);
+        canvas.toBlob(async blob => {
+            if (!blob) return;
+            closeWebcam();
+            const file = new File([blob], "webcam.jpg", { type: "image/jpeg" });
+            await handleImageUpload(file);
+        }, "image/jpeg", 0.92);
     };
 
     const cropAndResizeImage = (file: File, size: number): Promise<File> => {
@@ -241,19 +284,6 @@ export default function ReferrerProfilePage() {
                                             e.target.value = "";
                                         }}
                                     />
-                                    {/* Camera / webcam input */}
-                                    <input
-                                        ref={cameraInputRef}
-                                        type="file"
-                                        accept="image/*"
-                                        capture="user"
-                                        className="hidden"
-                                        onChange={e => {
-                                            const f = e.target.files?.[0];
-                                            if (f) handleImageUpload(f);
-                                            e.target.value = "";
-                                        }}
-                                    />
                                     <div className="flex gap-2">
                                         <button
                                             type="button"
@@ -270,7 +300,7 @@ export default function ReferrerProfilePage() {
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => cameraInputRef.current?.click()}
+                                            onClick={openWebcam}
                                             disabled={uploading}
                                             className="flex items-center justify-center gap-2 flex-1 h-11 px-4 bg-zinc-900 hover:bg-zinc-700 text-white rounded-xl font-bold transition-all disabled:opacity-60"
                                             style={{ fontSize: '14px' }}
@@ -398,6 +428,58 @@ export default function ReferrerProfilePage() {
                     </div>
                 </div>
             </div>
+
+            {/* ── WEBCAM MODAL ── */}
+            {webcamOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+                    <div className="bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl w-full max-w-lg">
+                        {/* Modal header */}
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+                            <div className="flex items-center gap-2">
+                                <Video className="w-5 h-5 text-orange-400" />
+                                <span className="font-black text-white" style={{ fontSize: '18px' }}>Take Your Photo</span>
+                            </div>
+                            <button
+                                onClick={closeWebcam}
+                                className="text-zinc-500 hover:text-white font-bold transition-colors"
+                                style={{ fontSize: '14px' }}
+                            >
+                                ✕ Cancel
+                            </button>
+                        </div>
+
+                        {/* Video stream */}
+                        <div className="relative bg-black">
+                            {/* Square crop overlay guide */}
+                            <video
+                                ref={videoRef}
+                                autoPlay
+                                playsInline
+                                muted
+                                className="w-full aspect-video object-cover"
+                            />
+                            {/* Crop circle guide */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="w-56 h-56 rounded-full border-4 border-white/40 border-dashed" />
+                            </div>
+                        </div>
+
+                        {/* Snap button */}
+                        <div className="px-6 py-5 text-center space-y-3">
+                            <p className="font-medium text-zinc-400" style={{ fontSize: '14px' }}>
+                                Centre your face in the circle, then tap Snap
+                            </p>
+                            <button
+                                onClick={snapWebcam}
+                                className="flex items-center justify-center gap-2 mx-auto px-10 h-14 rounded-2xl font-black text-white transition-all shadow-lg"
+                                style={{ background: '#FF7A00', fontSize: '18px' }}
+                            >
+                                <Camera className="w-5 h-5" /> Snap Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
