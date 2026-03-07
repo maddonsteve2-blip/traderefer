@@ -155,7 +155,7 @@ export default function ReferrerProfilePage() {
             setTagline(me.tagline || "");
             setPhotoUrl(me.profile_photo_url || "");
             setReferrerId(me.id || null);
-            setProfileSlug(me.onboarding_invite_code || me.id || null);
+            setProfileSlug(me.id || null);
             setLoading(false);
         })();
     }, [isLoaded, getToken, apiUrl, router]);
