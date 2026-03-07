@@ -184,7 +184,8 @@ async def list_my_applications(
     result = await db.execute(
         text("""
             SELECT ra.id, ra.status, ra.message, ra.applied_at, ra.reviewed_at,
-                   b.business_name, b.slug, b.logo_url, b.trade_category, b.suburb
+                   b.id as business_id, b.business_name, b.slug, b.logo_url,
+                   b.trade_category, b.suburb, b.referral_fee_cents
             FROM referrer_applications ra
             JOIN businesses b ON b.id = ra.business_id
             WHERE ra.referrer_id = :rid
@@ -200,11 +201,13 @@ async def list_my_applications(
             "message": row["message"],
             "applied_at": str(row["applied_at"]),
             "reviewed_at": str(row["reviewed_at"]) if row["reviewed_at"] else None,
+            "business_id": str(row["business_id"]),
             "business_name": row["business_name"],
             "business_slug": row["slug"],
             "business_logo": row["logo_url"],
             "trade_category": row["trade_category"],
             "suburb": row["suburb"],
+            "referral_fee_cents": row["referral_fee_cents"] or 0,
         })
     return {"applications": apps}
 
