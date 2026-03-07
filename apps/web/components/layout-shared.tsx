@@ -263,7 +263,7 @@ function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { i
                 <>
                     <button
                         onClick={() => setOpen(true)}
-                        className="flex items-center gap-2 px-5 py-2 bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 rounded-full font-bold transition-all"
+                        className="flex items-center gap-2 px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black transition-all shadow-md shadow-orange-200"
                         style={{ fontSize: '14px' }}
                     >
                         <Rocket className="w-4 h-4" />
@@ -281,7 +281,7 @@ function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { i
                 <>
                     <button
                         onClick={() => setOpen(true)}
-                        className="flex items-center gap-2 px-5 py-2 bg-zinc-100 hover:bg-zinc-200 border border-zinc-300 text-zinc-700 rounded-full font-bold transition-all"
+                        className="flex items-center gap-2 px-5 py-2 bg-zinc-900 hover:bg-black text-white rounded-full font-black transition-all shadow-md"
                         style={{ fontSize: '14px' }}
                     >
                         <Building2 className="w-4 h-4" />
@@ -304,7 +304,8 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
         { icon: Rocket, title: "Zero upfront cost", desc: "Free to join. No subscription. No risk." },
     ];
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm" onClick={onClose}>
+            <div className="flex min-h-full items-center justify-center p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="bg-gradient-to-br from-orange-500 to-amber-400 px-8 pt-8 pb-10 relative">
                     <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white"><X className="w-4 h-4" /></button>
@@ -327,6 +328,7 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
                     <button onClick={onClose} className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors" style={{ fontSize: '14px' }}>Maybe later</button>
                 </div>
             </div>
+            </div>
         </div>
     );
 }
@@ -339,7 +341,8 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
         { icon: Building2, title: "Professional storefront", desc: "A public profile that builds trust before the first call." },
     ];
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm" onClick={onClose}>
+            <div className="flex min-h-full items-center justify-center p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="bg-zinc-900 px-8 pt-8 pb-10 relative">
                     <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"><X className="w-4 h-4" /></button>
@@ -361,6 +364,7 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
                     </Link>
                     <button onClick={onClose} className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors" style={{ fontSize: '14px' }}>Maybe later</button>
                 </div>
+            </div>
             </div>
         </div>
     );
