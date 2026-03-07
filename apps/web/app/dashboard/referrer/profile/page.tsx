@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
     User, Star, MapPin, Briefcase, CheckCircle, Edit3,
-    ArrowLeft, Save, Eye, TrendingUp, ExternalLink, Award, Upload, Camera
+    ArrowLeft, Save, Eye, TrendingUp, ExternalLink, Award, Camera, Video
 } from "lucide-react";
 import Link from "next/link";
 
@@ -35,6 +35,7 @@ export default function ReferrerProfilePage() {
     const [referrerId, setReferrerId] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const cameraInputRef = useRef<HTMLInputElement>(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://traderefer.au";
 
@@ -228,6 +229,7 @@ export default function ReferrerProfilePage() {
                                 </div>
                                 {/* Upload button */}
                                 <div className="flex-1 space-y-2">
+                                    {/* File picker (gallery / file system) */}
                                     <input
                                         ref={fileInputRef}
                                         type="file"
@@ -236,21 +238,46 @@ export default function ReferrerProfilePage() {
                                         onChange={e => {
                                             const f = e.target.files?.[0];
                                             if (f) handleImageUpload(f);
+                                            e.target.value = "";
                                         }}
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => fileInputRef.current?.click()}
-                                        disabled={uploading}
-                                        className="flex items-center gap-2 w-full h-11 px-4 bg-white border-2 border-dashed border-gray-300 hover:border-orange-400 hover:bg-orange-50 text-zinc-600 hover:text-orange-600 rounded-xl font-bold transition-all disabled:opacity-60"
-                                        style={{ fontSize: '15px' }}
-                                    >
-                                        {uploading ? (
-                                            <><div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" /> Uploading & resizing…</>
-                                        ) : (
-                                            <><Camera className="w-4 h-4" /> {photoUrl ? "Change Photo" : "Upload Photo"}</>
-                                        )}
-                                    </button>
+                                    {/* Camera / webcam input */}
+                                    <input
+                                        ref={cameraInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        capture="user"
+                                        className="hidden"
+                                        onChange={e => {
+                                            const f = e.target.files?.[0];
+                                            if (f) handleImageUpload(f);
+                                            e.target.value = "";
+                                        }}
+                                    />
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            disabled={uploading}
+                                            className="flex items-center justify-center gap-2 flex-1 h-11 px-4 bg-white border-2 border-dashed border-gray-300 hover:border-orange-400 hover:bg-orange-50 text-zinc-600 hover:text-orange-600 rounded-xl font-bold transition-all disabled:opacity-60"
+                                            style={{ fontSize: '14px' }}
+                                        >
+                                            {uploading ? (
+                                                <><div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" /> Uploading…</>
+                                            ) : (
+                                                <><Camera className="w-4 h-4" /> {photoUrl ? "Change" : "Upload"}</>
+                                            )}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => cameraInputRef.current?.click()}
+                                            disabled={uploading}
+                                            className="flex items-center justify-center gap-2 flex-1 h-11 px-4 bg-zinc-900 hover:bg-zinc-700 text-white rounded-xl font-bold transition-all disabled:opacity-60"
+                                            style={{ fontSize: '14px' }}
+                                        >
+                                            <Video className="w-4 h-4" /> Take Photo
+                                        </button>
+                                    </div>
                                     {photoUrl && (
                                         <button
                                             type="button"
