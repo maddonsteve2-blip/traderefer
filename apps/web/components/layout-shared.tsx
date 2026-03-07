@@ -17,7 +17,7 @@ import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, Chevro
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
 import { TopUpDialog } from "@/components/dashboard/TopUpDialog";
-import { RoleDrawer } from "@/components/dashboard/RoleDrawer";
+import { PeekingRoleDrawer } from "@/components/dashboard/RoleDrawer";
 
 import { NotificationBell } from "@/components/NotificationBell";
 
@@ -38,7 +38,6 @@ function ProfileDropdown() {
     const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
 
     const [open, setOpen] = useState(false);
-    const [drawerVariant, setDrawerVariant] = useState<"business" | "referrer" | null>(null);
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -185,37 +184,17 @@ function ProfileDropdown() {
 
 
 
-                    {/* Role switcher section */}
-                    {(isBusinessDashboard || isReferrerDashboard) && (
+                    {/* Dual-role switch (only if already both) */}
+                    {isDual && (isBusinessDashboard || isReferrerDashboard) && (
                         <div className="border-t border-zinc-100 py-1.5">
-                            {isDual && (
-                                <Link
-                                    href={isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business"}
-                                    onClick={() => setOpen(false)}
-                                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-colors"
-                                >
-                                    <ArrowLeftRight className="w-4 h-4 text-zinc-400" />
-                                    Switch to {isBusinessDashboard ? "Referrer" : "Business"} Mode
-                                </Link>
-                            )}
-                            {!isDual && isReferrerDashboard && !hasBusiness && (
-                                <button
-                                    onClick={() => { setDrawerVariant("business"); setOpen(false); }}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-900 hover:bg-zinc-50 transition-colors"
-                                >
-                                    <Building2 className="w-4 h-4 text-orange-500" />
-                                    <span>Business Mode <span className="ml-1 text-[10px] font-black bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Setup</span></span>
-                                </button>
-                            )}
-                            {!isDual && isBusinessDashboard && !hasReferrer && (
-                                <button
-                                    onClick={() => { setDrawerVariant("referrer"); setOpen(false); }}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-900 hover:bg-zinc-50 transition-colors"
-                                >
-                                    <Rocket className="w-4 h-4 text-orange-500" />
-                                    <span>Referrer Mode <span className="ml-1 text-[10px] font-black bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Setup</span></span>
-                                </button>
-                            )}
+                            <Link
+                                href={isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business"}
+                                onClick={() => setOpen(false)}
+                                className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-colors"
+                            >
+                                <ArrowLeftRight className="w-4 h-4 text-zinc-400" />
+                                Switch to {isBusinessDashboard ? "Referrer" : "Business"} Mode
+                            </Link>
                         </div>
                     )}
 
@@ -243,10 +222,6 @@ function ProfileDropdown() {
 
             )}
 
-            {/* Role Drawer — slide-over pitch */}
-            {drawerVariant && (
-                <RoleDrawer variant={drawerVariant} onClose={() => setDrawerVariant(null)} />
-            )}
 
         </div>
 
@@ -520,6 +495,9 @@ export function Navbar() {
                         </div>
                     )}
 
+                    {/* ── PEEKING ROLE DRAWER (self-contained, portal-rendered) ── */}
+                    {isDashboard && <SignedIn><PeekingRoleDrawer /></SignedIn>}
+
 
 
                     <nav className="flex items-center gap-1">
@@ -786,7 +764,7 @@ export function Navbar() {
                                         )}
 
                                         {/* Dual-role switcher pill */}
-                                        <DualRoleSwitcher isBusinessDashboard={isBusinessDashboard} isReferrerDashboard={isReferrerDashboard} />
+                                        {/* <DualRoleSwitcher isBusinessDashboard={isBusinessDashboard} isReferrerDashboard={isReferrerDashboard} /> */}
 
                                     </>
 

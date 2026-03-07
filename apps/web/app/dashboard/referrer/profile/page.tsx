@@ -203,17 +203,6 @@ export default function ReferrerProfilePage() {
                     <span className="text-zinc-300">/</span>
                     <span className="text-zinc-700 font-bold" style={{ fontSize: '14px' }}>My Referrer Profile</span>
                 </div>
-                {publicUrl && (
-                    <a
-                        href={publicUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all"
-                        style={{ fontSize: '14px' }}
-                    >
-                        <ExternalLink className="w-3.5 h-3.5" /> View Live Resume
-                    </a>
-                )}
             </div>
 
             {/* ── SPLIT PANE BODY ── */}
