@@ -8,10 +8,15 @@ export async function completeOnboarding(role: "business" | "referrer", business
 
     try {
         const client = await clerkClient()
+        const user = await client.users.getUser(userId)
+        const existing = (user.publicMetadata.roles as string[] | undefined) ?? []
+        const roles = Array.from(new Set([...existing, role]))
+
         await client.users.updateUserMetadata(userId, {
             publicMetadata: {
                 onboardingComplete: true,
                 role,
+                roles,
                 ...(businessSlug ? { businessSlug } : {}),
             },
         })

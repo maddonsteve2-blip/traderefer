@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search, Menu, X, Gift, MessageSquare } from "lucide-react";
+import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search, Menu, X, Gift, MessageSquare, ArrowLeftRight } from "lucide-react";
 
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
@@ -209,9 +209,26 @@ function ProfileDropdown() {
 
 import { SmartSearch } from "@/components/SmartSearch";
 
+function DualRoleSwitcher({ isBusinessDashboard, isReferrerDashboard }: { isBusinessDashboard: boolean; isReferrerDashboard: boolean }) {
+    const { user } = useUser();
+    const roles = (user?.publicMetadata?.roles as string[] | undefined) ?? [];
+    const isDual = roles.includes("referrer") && roles.includes("business");
+    if (!isDual || (!isBusinessDashboard && !isReferrerDashboard)) return null;
 
+    const href = isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business";
+    const label = isBusinessDashboard ? "Referrer" : "Business";
 
-
+    return (
+        <Link
+            href={href}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-bold transition-all ml-1"
+            style={{ fontSize: '13px' }}
+        >
+            <ArrowLeftRight className="w-3.5 h-3.5" />
+            Switch to {label}
+        </Link>
+    );
+}
 
 export function Navbar() {
 
@@ -565,6 +582,9 @@ export function Navbar() {
                                             </Link>
 
                                         )}
+
+                                        {/* Dual-role switcher pill */}
+                                        <DualRoleSwitcher isBusinessDashboard={isBusinessDashboard} isReferrerDashboard={isReferrerDashboard} />
 
                                     </>
 

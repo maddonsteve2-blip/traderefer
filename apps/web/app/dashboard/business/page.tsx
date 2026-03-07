@@ -32,6 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { BusinessWelcomeDialog } from "@/components/dashboard/BusinessWelcomeDialog";
 import { BusinessReferralProgress } from "@/components/business/BusinessReferralProgress";
 import { BusinessInviteButton } from "@/components/business/BusinessInviteButton";
+import { BecomeReferrerCard } from "@/components/dashboard/BecomeReferrerCard";
 
 async function getBusinessDashboardData() {
     const { userId, getToken } = await auth();
@@ -59,6 +60,11 @@ async function getBusinessDashboardData() {
 }
 
 export default async function BusinessDashboardPage() {
+    const { sessionClaims } = await auth();
+    const meta = sessionClaims?.metadata as { role?: string; roles?: string[] } | undefined;
+    const roles = meta?.roles ?? (meta?.role ? [meta.role] : []);
+    const hasReferrer = roles.includes("referrer");
+
     let data;
     let fetchError = null;
     
@@ -145,6 +151,13 @@ export default async function BusinessDashboardPage() {
                 <div className="mb-10">
                     <BusinessReferralProgress />
                 </div>
+
+                {/* Become a Referrer — only shown if not already a referrer */}
+                {!hasReferrer && (
+                    <div className="mb-10">
+                        <BecomeReferrerCard />
+                    </div>
+                )}
 
                 <Card className="p-8 mb-10 shadow-xl shadow-zinc-200/50">
                     <div className="flex items-center justify-between mb-8">

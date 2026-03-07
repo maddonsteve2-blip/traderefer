@@ -10,6 +10,7 @@ import { ReferralProgress } from "@/components/referrer/ReferralProgress";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { DashboardError } from "@/components/dashboard/DashboardError";
+import { RegisterBusinessCard } from "@/components/dashboard/RegisterBusinessCard";
 
 async function getDashboardData() {
     const { userId, getToken } = await auth();
@@ -37,6 +38,11 @@ async function getDashboardData() {
 }
 
 export default async function ReferrerDashboardPage() {
+    const { sessionClaims } = await auth();
+    const meta = sessionClaims?.metadata as { role?: string; roles?: string[] } | undefined;
+    const roles = meta?.roles ?? (meta?.role ? [meta.role] : []);
+    const hasBusiness = roles.includes("business");
+
     let data;
     try {
         data = await getDashboardData();
@@ -128,6 +134,9 @@ export default async function ReferrerDashboardPage() {
                         <div id="invite">
                             <ReferralProgress />
                         </div>
+
+                        {/* Register Business — only shown if not already a business */}
+                        {!hasBusiness && <RegisterBusinessCard />}
 
                         {/* Hot Campaigns */}
                         <HotCampaigns />
