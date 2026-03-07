@@ -432,17 +432,26 @@ async def get_public_referrer_profile(referrer_slug: str, db: AsyncSession = Dep
     """Public endpoint: get a referrer's profile. Accepts UUID or 8-char invite code slug."""
     import uuid as _uuid
 
-    # Try UUID first, fall back to onboarding_invite_code lookup
+    # Step 1: resolve slug → referrer UUID
     try:
         rid = _uuid.UUID(referrer_slug)
-        where_clause = "WHERE r.id = :identifier"
-        params: dict = {"identifier": rid}
+        id_row = await db.execute(
+            text("SELECT id FROM referrers WHERE id = :rid"),
+            {"rid": rid}
+        )
     except ValueError:
-        where_clause = "WHERE UPPER(r.onboarding_invite_code) = UPPER(:identifier)"
-        params = {"identifier": referrer_slug}
+        id_row = await db.execute(
+            text("SELECT id FROM referrers WHERE onboarding_invite_code ILIKE :slug"),
+            {"slug": referrer_slug}
+        )
+    id_result = id_row.mappings().first()
+    if not id_result:
+        raise HTTPException(status_code=404, detail="Referrer not found")
+    actual_rid = id_result["id"]
 
+    # Step 2: fetch full profile + stats by UUID
     result = await db.execute(
-        text(f"""
+        text("""
             SELECT r.id, r.full_name, r.suburb, r.state, r.profile_bio, r.tagline,
                    r.profile_photo_url, r.quality_score, r.created_at,
                    r.onboarding_invite_code,
@@ -451,10 +460,10 @@ async def get_public_referrer_profile(referrer_slug: str, db: AsyncSession = Dep
             FROM referrers r
             LEFT JOIN referral_links rl ON rl.referrer_id = r.id
             LEFT JOIN leads l ON l.referrer_id = r.id
-            {where_clause}
+            WHERE r.id = :rid
             GROUP BY r.id
         """),
-        params
+        {"rid": actual_rid}
     )
     ref = result.mappings().first()
     if not ref:
