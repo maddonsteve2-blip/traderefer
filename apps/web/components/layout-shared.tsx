@@ -17,6 +17,7 @@ import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, Chevro
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
 import { TopUpDialog } from "@/components/dashboard/TopUpDialog";
+import { RoleDrawer } from "@/components/dashboard/RoleDrawer";
 
 import { NotificationBell } from "@/components/NotificationBell";
 
@@ -37,7 +38,7 @@ function ProfileDropdown() {
     const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
 
     const [open, setOpen] = useState(false);
-    const [roleModalOpen, setRoleModalOpen] = useState(false);
+    const [drawerVariant, setDrawerVariant] = useState<"business" | "referrer" | null>(null);
 
     const ref = useRef<HTMLDivElement>(null);
 
@@ -199,7 +200,7 @@ function ProfileDropdown() {
                             )}
                             {!isDual && isReferrerDashboard && !hasBusiness && (
                                 <button
-                                    onClick={() => { setRoleModalOpen(true); setOpen(false); }}
+                                    onClick={() => { setDrawerVariant("business"); setOpen(false); }}
                                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-900 hover:bg-zinc-50 transition-colors"
                                 >
                                     <Building2 className="w-4 h-4 text-orange-500" />
@@ -208,7 +209,7 @@ function ProfileDropdown() {
                             )}
                             {!isDual && isBusinessDashboard && !hasReferrer && (
                                 <button
-                                    onClick={() => { setRoleModalOpen(true); setOpen(false); }}
+                                    onClick={() => { setDrawerVariant("referrer"); setOpen(false); }}
                                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-zinc-900 hover:bg-zinc-50 transition-colors"
                                 >
                                     <Rocket className="w-4 h-4 text-orange-500" />
@@ -242,12 +243,9 @@ function ProfileDropdown() {
 
             )}
 
-            {/* Role setup modals rendered via portal */}
-            {roleModalOpen && isReferrerDashboard && !hasBusiness && (
-                <RegisterBusinessModal onClose={() => setRoleModalOpen(false)} />
-            )}
-            {roleModalOpen && isBusinessDashboard && !hasReferrer && (
-                <BecomeReferrerModal onClose={() => setRoleModalOpen(false)} />
+            {/* Role Drawer — slide-over pitch */}
+            {drawerVariant && (
+                <RoleDrawer variant={drawerVariant} onClose={() => setDrawerVariant(null)} />
             )}
 
         </div>
