@@ -375,49 +375,52 @@ export function MessagesView() {
             </div>
 
             {/* ── RIGHT PANEL ── */}
-            <div className={`${activeContactId ? 'flex' : 'hidden md:flex'} flex-col flex-1 bg-zinc-50`}>
-                {activeContactId && activeContact ? (
-                    <>
-                        {/* Thread header */}
-                        <div className="flex items-center gap-3 px-5 py-3 bg-white border-b border-zinc-100 shadow-sm">
-                            <button
-                                onClick={() => { setActiveContactId(null); setActiveConvId(null); setMessages([]); }}
-                                className="md:hidden p-2 hover:bg-zinc-100 rounded-xl transition-colors mr-1"
-                            >
-                                <ArrowLeft className="w-5 h-5 text-zinc-600" />
-                            </button>
-                            <Avatar name={partnerName} logo={partnerLogo || activeContact.contact_logo} size={11} />
-                            <div className="flex-1 min-w-0">
-                                <p className="font-black text-zinc-900 truncate" style={{ fontSize: '20px' }}>{partnerName}</p>
-                                <div className="flex items-center gap-2 mt-0.5">
-                                    <span className="flex items-center gap-1 text-green-600 font-bold" style={{ fontSize: '13px' }}>
-                                        <ShieldCheck className="w-3.5 h-3.5" /> Verified Partner
-                                    </span>
-                                    {activeContact.linked_since && (
-                                        <>
-                                            <span className="text-zinc-200">·</span>
-                                            <span className="text-zinc-400 font-medium" style={{ fontSize: '13px' }}>
-                                                Linked {new Date(activeContact.linked_since).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
-                                            </span>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                            {myType !== 'business' && (
-                                <Link
-                                    href={`/dashboard/referrer/businesses`}
-                                    className="hidden sm:flex items-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-xl font-bold text-zinc-600 hover:text-orange-600 transition-all"
-                                    style={{ fontSize: '14px' }}
-                                >
-                                    <ExternalLink className="w-3.5 h-3.5" /> View Profile
-                                </Link>
-                            )}
-                        </div>
+            <div className={`${activeContactId ? 'flex' : 'hidden md:flex'} flex-col flex-1 bg-zinc-50 min-h-0`}>
 
-                        {/* Messages area */}
-                        <div className="flex-1 overflow-y-auto px-4 py-4">
+                {/* ── Thread header (conditional) ── */}
+                {activeContactId && activeContact ? (
+                    <div className="flex items-center gap-3 px-5 py-3 bg-white border-b border-zinc-100 shadow-sm flex-shrink-0">
+                        <button
+                            onClick={() => { setActiveContactId(null); setActiveConvId(null); setMessages([]); }}
+                            className="md:hidden p-2 hover:bg-zinc-100 rounded-xl transition-colors mr-1"
+                        >
+                            <ArrowLeft className="w-5 h-5 text-zinc-600" />
+                        </button>
+                        <Avatar name={partnerName} logo={partnerLogo || activeContact.contact_logo} size={11} />
+                        <div className="flex-1 min-w-0">
+                            <p className="font-black text-zinc-900 truncate" style={{ fontSize: '20px' }}>{partnerName}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                <span className="flex items-center gap-1 text-green-600 font-bold" style={{ fontSize: '13px' }}>
+                                    <ShieldCheck className="w-3.5 h-3.5" /> Verified Partner
+                                </span>
+                                {activeContact.linked_since && (
+                                    <>
+                                        <span className="text-zinc-200">·</span>
+                                        <span className="text-zinc-400 font-medium" style={{ fontSize: '13px' }}>
+                                            Linked {new Date(activeContact.linked_since).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                        {myType !== 'business' && (
+                            <Link
+                                href="/dashboard/referrer/businesses"
+                                className="hidden sm:flex items-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-xl font-bold text-zinc-600 hover:text-orange-600 transition-all"
+                                style={{ fontSize: '14px' }}
+                            >
+                                <ExternalLink className="w-3.5 h-3.5" /> View Profile
+                            </Link>
+                        )}
+                    </div>
+                ) : null}
+
+                {/* ── Scrollable content area ── */}
+                <div className="flex-1 overflow-y-auto min-h-0">
+                    {activeContactId && activeContact ? (
+                        <div className="px-4 py-4">
                             {messages.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-full text-center gap-4">
+                                <div className="flex flex-col items-center justify-center h-full text-center gap-4 py-16">
                                     <div className="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center">
                                         <MessageSquare className="w-10 h-10 text-orange-300" />
                                     </div>
@@ -504,32 +507,73 @@ export function MessagesView() {
                             })()}
                             <div ref={messagesEndRef} className="h-2" />
                         </div>
-
-                        {/* Image preview */}
-                        {imagePreview && (
-                            <div className="px-4 pt-3 bg-white border-t border-zinc-100">
-                                <div className="relative inline-block">
-                                    <img src={imagePreview} alt="Preview" className="h-20 rounded-xl object-cover border border-zinc-200" />
-                                    {uploading && (
-                                        <div className="absolute inset-0 bg-white/80 rounded-xl flex items-center justify-center">
-                                            <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
-                                        </div>
-                                    )}
-                                    <button onClick={clearImage} className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-zinc-800 text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-colors shadow">
-                                        <X className="w-3 h-3" />
-                                    </button>
-                                </div>
+                    ) : (
+                        /* Empty state — no conversation selected */
+                        <div className="flex flex-col items-center justify-center h-full text-center p-8 gap-5">
+                            <div className="w-24 h-24 bg-orange-50 rounded-3xl flex items-center justify-center shadow-sm">
+                                <MessageSquare className="w-12 h-12 text-orange-300" />
                             </div>
-                        )}
+                            <div className="max-w-sm">
+                                <h3 className="font-black text-zinc-800" style={{ fontSize: '24px' }}>Business Communications Hub</h3>
+                                <p className="text-zinc-400 font-medium mt-2 leading-snug" style={{ fontSize: '18px' }}>
+                                    {contacts.length > 0
+                                        ? 'Select a conversation from your Trades Team to get started.'
+                                        : 'Start messaging your trade partners — quote requests, job updates, and more.'}
+                                </p>
+                            </div>
+                            {contacts.length > 0 ? (
+                                <div className="flex items-center gap-2 text-zinc-400 font-bold" style={{ fontSize: '16px' }}>
+                                    <ArrowLeft className="w-4 h-4" /> Pick a conversation from the sidebar
+                                </div>
+                            ) : (
+                                <div className="flex flex-col sm:flex-row gap-3">
+                                    <Link
+                                        href="/dashboard/referrer/businesses"
+                                        className="flex items-center gap-2 px-6 py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold transition-colors"
+                                        style={{ fontSize: '18px' }}
+                                    >
+                                        <Building2 className="w-5 h-5" /> Explore Businesses
+                                    </Link>
+                                    <Link
+                                        href="/dashboard/referrer"
+                                        className="flex items-center gap-2 px-6 py-3.5 bg-white border-2 border-zinc-200 hover:border-orange-300 text-zinc-700 hover:text-orange-600 rounded-2xl font-bold transition-colors"
+                                        style={{ fontSize: '18px' }}
+                                    >
+                                        <ChevronRight className="w-5 h-5" /> Back to Dashboard
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
 
-                        {/* Input bar */}
-                        <div className="px-4 py-3 bg-white border-t border-zinc-100">
-                            <div className="flex items-end gap-2 bg-zinc-50 border border-zinc-200 rounded-2xl px-3 py-2.5 focus-within:border-orange-300 focus-within:ring-2 focus-within:ring-orange-500/10 transition-all">
+                {/* ── Image preview (active conversation only) ── */}
+                {activeContactId && imagePreview && (
+                    <div className="px-4 pt-3 bg-white border-t border-gray-200 flex-shrink-0">
+                        <div className="relative inline-block">
+                            <img src={imagePreview} alt="Preview" className="h-20 rounded-xl object-cover border border-zinc-200" />
+                            {uploading && (
+                                <div className="absolute inset-0 bg-white/80 rounded-xl flex items-center justify-center">
+                                    <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                                </div>
+                            )}
+                            <button onClick={clearImage} className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-zinc-800 text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-colors shadow">
+                                <X className="w-3 h-3" />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* ── Input bar — ALWAYS VISIBLE ── */}
+                <div className="px-4 py-3 bg-white border-t border-gray-200 flex-shrink-0">
+                    {activeContactId ? (
+                        <>
+                            <div className="flex items-end gap-2 bg-white border border-gray-300 rounded-2xl px-3 py-2 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all shadow-sm">
                                 <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleImageSelect} />
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     disabled={uploading}
-                                    className="flex items-center gap-1.5 px-3 py-2 text-zinc-500 hover:text-orange-500 hover:bg-orange-50 border border-zinc-200 hover:border-orange-200 rounded-xl transition-all flex-shrink-0 self-end mb-0.5 font-bold"
+                                    className="flex items-center gap-1.5 px-3 py-2 text-zinc-500 hover:text-orange-500 hover:bg-orange-50 border border-gray-200 hover:border-orange-200 rounded-xl transition-all flex-shrink-0 self-end mb-0.5 font-bold"
                                     style={{ fontSize: '14px' }}
                                     title="Attach quote or photo"
                                 >
@@ -547,57 +591,31 @@ export function MessagesView() {
                                     onKeyDown={handleKeyDown}
                                     placeholder={`Message ${partnerName.split(' ')[0]}…`}
                                     rows={1}
-                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed py-1.5 max-h-[120px]"
+                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-gray-500 focus:outline-none resize-none leading-relaxed py-2 max-h-[120px]"
                                     style={{ fontSize: '16px' }}
                                 />
                                 <button
                                     onClick={handleSend}
                                     disabled={(!newMessage.trim() && !imageUrl) || sending || uploading}
-                                    className="flex-shrink-0 self-end mb-0.5 w-10 h-10 bg-orange-500 hover:bg-orange-600 disabled:bg-zinc-200 text-white disabled:text-zinc-400 rounded-xl flex items-center justify-center transition-all duration-150 active:scale-95"
+                                    className="flex-shrink-0 self-end mb-0.5 h-12 px-5 bg-orange-500 hover:bg-orange-600 disabled:bg-zinc-200 text-white disabled:text-zinc-400 rounded-xl flex items-center gap-2 font-bold transition-all duration-150 active:scale-95"
+                                    style={{ fontSize: '16px' }}
                                 >
-                                    {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                                    {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /><span className="hidden sm:inline">Send</span></>}
                                 </button>
                             </div>
                             <p className="text-xs text-zinc-300 mt-1.5 text-center font-medium">Enter to send · Shift+Enter for new line</p>
-                        </div>
-                    </>
-                ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-center p-8 gap-5">
-                        <div className="w-24 h-24 bg-orange-50 rounded-3xl flex items-center justify-center shadow-sm">
-                            <MessageSquare className="w-12 h-12 text-orange-300" />
-                        </div>
-                        <div className="max-w-sm">
-                            <h3 className="font-black text-zinc-800" style={{ fontSize: '24px' }}>Business Communications Hub</h3>
-                            <p className="text-zinc-400 font-medium mt-2 leading-snug" style={{ fontSize: '18px' }}>
-                                {contacts.length > 0
-                                    ? 'Select a conversation from your Trades Team to get started.'
-                                    : 'Start messaging your trade partners — quote requests, job updates, and more.'}
-                            </p>
-                        </div>
-                        {contacts.length > 0 ? (
-                            <div className="flex items-center gap-2 text-zinc-400 font-bold" style={{ fontSize: '16px' }}>
-                                <ArrowLeft className="w-4 h-4" /> Pick a conversation from the sidebar
+                        </>
+                    ) : (
+                        <div className="flex items-center gap-3 bg-zinc-50 border border-gray-200 rounded-2xl px-4 py-3 opacity-60 cursor-not-allowed">
+                            <div className="flex-1 text-gray-400 font-medium select-none" style={{ fontSize: '16px' }}>
+                                Select a business to start messaging…
                             </div>
-                        ) : (
-                            <div className="flex flex-col sm:flex-row gap-3">
-                                <Link
-                                    href="/dashboard/referrer/businesses"
-                                    className="flex items-center gap-2 px-6 py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold transition-colors"
-                                    style={{ fontSize: '18px' }}
-                                >
-                                    <Building2 className="w-5 h-5" /> Explore Businesses
-                                </Link>
-                                <Link
-                                    href="/dashboard/referrer"
-                                    className="flex items-center gap-2 px-6 py-3.5 bg-white border-2 border-zinc-200 hover:border-orange-300 text-zinc-700 hover:text-orange-600 rounded-2xl font-bold transition-colors"
-                                    style={{ fontSize: '18px' }}
-                                >
-                                    <ChevronRight className="w-5 h-5" /> Back to Dashboard
-                                </Link>
+                            <div className="h-12 px-5 bg-zinc-200 text-zinc-400 rounded-xl flex items-center gap-2 font-bold flex-shrink-0" style={{ fontSize: '16px' }}>
+                                <Send className="w-4 h-4" /><span className="hidden sm:inline">Send</span>
                             </div>
-                        )}
-                    </div>
-                )}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
