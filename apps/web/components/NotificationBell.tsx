@@ -35,6 +35,12 @@ const TYPE_COLORS: Record<string, string> = {
     new_business: "bg-emerald-500",
     nudge: "bg-amber-500",
     general: "bg-zinc-500",
+    new_application: "bg-blue-500",
+    application_approved: "bg-green-500",
+    application_rejected: "bg-red-500",
+    application_expired: "bg-zinc-500",
+    application_reminder: "bg-amber-500",
+    new_message: "bg-orange-500",
 };
 
 export function NotificationBell() {

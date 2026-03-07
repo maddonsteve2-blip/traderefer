@@ -440,6 +440,16 @@ export function Navbar() {
 
                                                 </Link>
 
+                                                <Link href="/dashboard/business/applications" className="hidden sm:block">
+
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname?.startsWith("/dashboard/business/applications") ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+
+                                                        Applications
+
+                                                    </Button>
+
+                                                </Link>
+
                                                 <Link href="/dashboard/business/deals" className="hidden sm:block">
 
                                                     <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/deals" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
@@ -513,6 +523,16 @@ export function Navbar() {
                                                     <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/referrer/withdraw" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Rewards
+
+                                                    </Button>
+
+                                                </Link>
+
+                                                <Link href="/dashboard/referrer/profile" className="hidden sm:block">
+
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname?.startsWith("/dashboard/referrer/profile") || pathname?.startsWith("/dashboard/referrer/applications") ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+
+                                                        My Profile
 
                                                     </Button>
 
@@ -646,6 +666,7 @@ export function Navbar() {
                                         { href: "/dashboard/business/leads", label: "Leads" },
                                         { href: "/dashboard/business/messages", label: "Messages" },
                                         { href: "/dashboard/business/referrers", label: "Referrers" },
+                                        { href: "/dashboard/business/applications", label: "Applications" },
                                         { href: "/dashboard/business/deals", label: "Deals" },
                                         { href: "/dashboard/business/campaigns", label: "Campaigns" },
                                         { href: "/dashboard/business/analytics", label: "Analytics" },
@@ -665,6 +686,8 @@ export function Navbar() {
                                         { href: "/dashboard/referrer/businesses", label: "Find Businesses" },
                                         { href: "/dashboard/referrer/messages", label: "Messages" },
                                         { href: "/dashboard/referrer/withdraw", label: "Rewards" },
+                                        { href: "/dashboard/referrer/profile", label: "My Profile" },
+                                        { href: "/dashboard/referrer/applications", label: "Applications" },
                                     ].map(({ href, label }) => (
                                         <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
                                             className={`flex items-center px-4 py-4 rounded-xl font-bold transition-colors ${pathname === href ? 'bg-orange-50 text-[#FF6600]' : 'text-zinc-700 hover:bg-orange-50 hover:text-[#FF6600]'}`}

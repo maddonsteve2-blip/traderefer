@@ -380,6 +380,84 @@ async def send_referral_reward_email(email: str, full_name: str, friends_count: 
     await _send(email, f"🎉 Your ${amount_dollars:.0f} Prezzee gift card is on its way!", _wrap(body))
 
 
+async def send_referrer_application_received(business_email: str, business_name: str, referrer_name: str, referrer_suburb: str, application_id: str, intro_message: str = None):
+    intro_html = f'<div style="background:#f9f9f9;border-left:4px solid #ea580c;padding:12px 16px;border-radius:4px;margin:16px 0"><p style="margin:0;font-style:italic;color:#333">"{intro_message}"</p></div>' if intro_message else ""
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">New referrer application from {referrer_name}</h1>
+      <p><strong>{referrer_name}</strong> ({referrer_suburb}) has applied to join your referral network on TradeRefer.</p>
+      {intro_html}
+      <p>Review their profile and approve or decline — you have 72 hours before the application auto-expires.</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/business/applications/{application_id}"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          Review Application →
+        </a>
+      </div>
+    """
+    await _send(business_email, f"New referrer application from {referrer_name} — review now", _wrap(body))
+
+
+async def send_application_approved(referrer_email: str, referrer_name: str, business_name: str, business_slug: str):
+    body = f"""
+      <h1 style="color:#16a34a;margin-top:0">🎉 You've been approved by {business_name}!</h1>
+      <p>Hi {referrer_name}, great news — <strong>{business_name}</strong> has approved your referrer application.</p>
+      <p>You can now generate your referral link and start earning for every verified lead you send their way.</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer/refer/{business_slug}"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          Get Your Referral Link →
+        </a>
+      </div>
+    """
+    await _send(referrer_email, f"You're approved — start referring {business_name}!", _wrap(body))
+
+
+async def send_application_rejected(referrer_email: str, referrer_name: str, business_name: str):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Update on your application to {business_name}</h1>
+      <p>Hi {referrer_name}, unfortunately <strong>{business_name}</strong> has decided not to approve your referrer application at this time.</p>
+      <p>There are thousands of other businesses on TradeRefer looking for great referrers — keep exploring!</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer/businesses"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          Find Other Businesses →
+        </a>
+      </div>
+    """
+    await _send(referrer_email, f"Update on your application to {business_name}", _wrap(body))
+
+
+async def send_application_expired(referrer_email: str, referrer_name: str, business_name: str):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Your application to {business_name} has expired</h1>
+      <p>Hi {referrer_name}, your referrer application to <strong>{business_name}</strong> expired after 72 hours with no response.</p>
+      <p>This can happen when businesses are busy. You're welcome to apply again, or explore other businesses on our platform.</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer/businesses"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          Find Other Businesses →
+        </a>
+      </div>
+    """
+    await _send(referrer_email, f"Your application to {business_name} has expired", _wrap(body))
+
+
+async def send_application_reminder(business_email: str, business_name: str, referrer_name: str, application_id: str, reminder_number: int):
+    hours_left = (3 - reminder_number) * 24
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Reminder {reminder_number}/3: Referrer application awaiting your review</h1>
+      <p>Hi {business_name}, <strong>{referrer_name}</strong> is still waiting for your response on their referrer application.</p>
+      <p style="color:#dc2626;font-weight:bold">⏰ Only ~{hours_left} hours left before this application auto-expires.</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/business/applications/{application_id}"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          Review Now →
+        </a>
+      </div>
+    """
+    await _send(business_email, f"Reminder {reminder_number}/3: Action needed on referrer application", _wrap(body))
+
+
 async def send_consumer_lead_confirmation(email: str, consumer_name: str, business_name: str, trade_category: str, job_description: str):
     body = f"""
       <h1 style="color:#ea580c;margin-top:0">Your request has been received</h1>

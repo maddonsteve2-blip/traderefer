@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from routers import public, leads, business, referrer, admin, webhooks, media, messages, deals, campaigns, notifications as notif_router, twilio_inbound, invitations, business_invitations
+from routers import public, leads, business, referrer, admin, webhooks, media, messages, deals, campaigns, notifications as notif_router, twilio_inbound, invitations, business_invitations, applications
 import os
 from dotenv import load_dotenv
 from utils.sentry_config import init_sentry
@@ -54,6 +54,7 @@ app.include_router(notif_router.router, prefix="/api", tags=["Notifications"])
 app.include_router(twilio_inbound.router, prefix="/twilio", tags=["Twilio"])
 app.include_router(invitations.router, prefix="/invitations", tags=["Invitations"])
 app.include_router(business_invitations.router, prefix="/business/invitations", tags=["Business Invitations"])
+app.include_router(applications.router, prefix="/applications", tags=["Applications"])
 
 @app.get("/")
 async def root():

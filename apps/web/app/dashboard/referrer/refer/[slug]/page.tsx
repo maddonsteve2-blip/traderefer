@@ -6,7 +6,7 @@ import {
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import { StartReferringButton } from "@/components/referrer/StartReferringButton";
+import { ApplyToReferButton } from "@/components/referrer/ApplyToReferButton";
 import { BusinessLogo } from "@/components/BusinessLogo";
 
 const apiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -370,7 +370,7 @@ export default async function DashboardReferPage({
                                 <p className="font-bold text-zinc-600 text-center" style={{ fontSize: '17px' }}>
                                     Join {business.business_name}&apos;s referral team and earn every time you send a confirmed job.
                                 </p>
-                                <StartReferringButton slug={slug} businessName={business.business_name} />
+                                <ApplyToReferButton slug={slug} businessName={business.business_name} />
                                 {(totalConfirmed > 0 || connectionRate > 0) && (
                                     <div className="pt-4 border-t border-zinc-100 grid grid-cols-2 gap-3 text-center">
                                         {totalConfirmed > 0 && (

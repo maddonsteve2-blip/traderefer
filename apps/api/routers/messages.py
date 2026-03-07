@@ -291,18 +291,33 @@ async def send_message(
     )
     await db.commit()
 
-    # Notify the recipient via email AND SMS
+    # Notify the recipient via in-app, email and SMS
     try:
         from services.sms import _send_sms
-        
+
         if sender_type == "business":
             # Notify the referrer
             ref_info = await db.execute(
-                text("SELECT r.email, r.phone, r.full_name, b.business_name FROM referrers r, businesses b WHERE r.id = :rid AND b.id = :bid"),
+                text("SELECT r.email, r.phone, r.full_name, r.user_id, b.business_name FROM referrers r, businesses b WHERE r.id = :rid AND b.id = :bid"),
                 {"rid": conv["referrer_id"], "bid": conv["business_id"]}
             )
             row = ref_info.mappings().first()
             if row and body_text:
+                # In-app notification
+                if row["user_id"]:
+                    await db.execute(
+                        text("""
+                            INSERT INTO in_app_notifications (user_id, type, title, body, link)
+                            VALUES (:uid, 'new_message', :title, :body, :link)
+                        """),
+                        {
+                            "uid": row["user_id"],
+                            "title": f"New message from {row['business_name']}",
+                            "body": body_text[:100] + "..." if len(body_text) > 100 else body_text,
+                            "link": "/dashboard/referrer/messages",
+                        }
+                    )
+                    await db.commit()
                 # Email notification
                 if row["email"]:
                     await send_new_message_notification(
@@ -322,11 +337,26 @@ async def send_message(
         else:
             # Notify the business
             biz_info = await db.execute(
-                text("SELECT b.business_email, b.business_phone, b.business_name, r.full_name as ref_name FROM businesses b, referrers r WHERE b.id = :bid AND r.id = :rid"),
+                text("SELECT b.business_email, b.business_phone, b.business_name, b.user_id, r.full_name as ref_name FROM businesses b, referrers r WHERE b.id = :bid AND r.id = :rid"),
                 {"bid": conv["business_id"], "rid": conv["referrer_id"]}
             )
             row = biz_info.mappings().first()
             if row and body_text:
+                # In-app notification
+                if row["user_id"]:
+                    await db.execute(
+                        text("""
+                            INSERT INTO in_app_notifications (user_id, type, title, body, link)
+                            VALUES (:uid, 'new_message', :title, :body, :link)
+                        """),
+                        {
+                            "uid": row["user_id"],
+                            "title": f"New message from {row['ref_name'] or 'a referrer'}",
+                            "body": body_text[:100] + "..." if len(body_text) > 100 else body_text,
+                            "link": "/dashboard/business/messages",
+                        }
+                    )
+                    await db.commit()
                 # Email notification
                 if row["business_email"]:
                     await send_new_message_notification(
