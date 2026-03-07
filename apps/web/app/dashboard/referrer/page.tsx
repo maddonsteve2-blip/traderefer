@@ -10,7 +10,6 @@ import { ReferralProgress } from "@/components/referrer/ReferralProgress";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { DashboardError } from "@/components/dashboard/DashboardError";
-import { RegisterBusinessCard } from "@/components/dashboard/RegisterBusinessCard";
 import { SidebarRoleSwitcher } from "@/components/dashboard/SidebarRoleSwitcher";
 
 async function getDashboardData() {
@@ -135,9 +134,6 @@ export default async function ReferrerDashboardPage() {
                         <div id="invite">
                             <ReferralProgress />
                         </div>
-
-                        {/* Register Business — only shown if not already a business */}
-                        {!hasBusiness && <RegisterBusinessCard />}
 
                         {/* Hot Campaigns */}
                         <HotCampaigns />

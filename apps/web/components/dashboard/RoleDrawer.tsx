@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import { X, Building2, Rocket, ArrowRight, Target, DollarSign, Gift, Network, Zap } from "lucide-react";
+import { X, ArrowRight, Target, DollarSign, Gift, Network, Zap } from "lucide-react";
 
 const PREZZEE_CARD = "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif";
 const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";
@@ -17,11 +17,10 @@ const CASES = {
         eyebrow: "Business Command Centre",
         headline: "Do you own a Business?",
         sub: "Unlock your Business Command Centre.",
-        icon: Building2,
         features: [
-            { icon: Target,  title: "Verified Leads",       desc: "Receive pre-screened leads from partners who vouch for every job." },
-            { icon: Network, title: "Referral Force",        desc: "Approve and manage your own custom network of local referrers." },
-            { icon: Zap,     title: "Zero-Admin Rewards",   desc: "Referral fees are automatically fulfilled via Prezzee Smart Cards — no manual payments or invoicing required." },
+            { icon: Target,  title: "Verified Leads",       desc: "Pre-screened leads from partners who vouch for every job." },
+            { icon: Network, title: "Referral Force",        desc: "Approve and manage your own network of local referrers." },
+            { icon: Zap,     title: "Zero-Admin Rewards",   desc: "Automatic rewards via Prezzee Smart Cards. No invoicing needed." },
         ],
         cta: "Start Business Onboarding",
         href: "/onboarding/business",
@@ -32,11 +31,10 @@ const CASES = {
         eyebrow: "Partner Referrer Network",
         headline: "Want to Monetize Your Network?",
         sub: "Turn your 'No' calls into instant profit.",
-        icon: Rocket,
         features: [
-            { icon: DollarSign, title: "Earn Per Lead",     desc: "Collect $8+ per verified lead sent to your trusted trade peers." },
+            { icon: DollarSign, title: "Earn Per Lead",     desc: "Collect $8+ per verified lead sent to trusted trade peers." },
             { icon: Gift,       title: "Prezzee Rewards",   desc: "Get paid instantly in Prezzee Smart Cards." },
-            { icon: Network,    title: "335+ Brands",       desc: "Spend your earnings at Bunnings, Woolworths, Uber, and hundreds more." },
+            { icon: Network,    title: "335+ Brands",       desc: "Spend at Bunnings, Woolworths, Uber, and hundreds more." },
         ],
         cta: "Activate Referrer Mode",
         href: "/onboarding/referrer",
@@ -106,7 +104,6 @@ export function PeekingRoleDrawer() {
     if (!isLoaded || isDual || !variant) return null;
 
     const cfg = CASES[variant];
-    const Icon = cfg.icon;
 
     return createPortal(
         <>
@@ -162,23 +159,20 @@ export function PeekingRoleDrawer() {
                     </button>
 
                     {/* Header */}
-                    <div className="px-8 pt-12 pb-8 border-b border-white/10">
-                        <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-6">
-                            <Icon className="w-8 h-8 text-orange-400" />
-                        </div>
-                        <p className="text-orange-400 font-black uppercase tracking-widest mb-3" style={{ fontSize: 11 }}>
+                    <div className="px-8 pt-8 pb-5">
+                        <p className="text-orange-400 font-black uppercase tracking-widest mb-1" style={{ fontSize: 12 }}>
                             {cfg.eyebrow}
                         </p>
-                        <h2 className="font-black text-white leading-tight mb-3" style={{ fontSize: 24 }}>
+                        <h2 className="font-black text-white leading-tight mb-1" style={{ fontSize: 22 }}>
                             {cfg.headline}
                         </h2>
-                        <p className="text-zinc-400 font-medium leading-snug" style={{ fontSize: 18 }}>
+                        <p className="text-zinc-400 font-medium leading-snug" style={{ fontSize: 16 }}>
                             {cfg.sub}
                         </p>
                     </div>
 
                     {/* Features */}
-                    <div className="flex-1 overflow-y-auto px-8 py-8 space-y-7">
+                    <div className="flex-1 px-8 pb-4 space-y-4">
                         {cfg.features.map(({ icon: FIcon, title, desc }) => (
                             <div key={title} className="flex items-start gap-5">
                                 <div className="w-12 h-12 bg-white/8 border border-white/10 rounded-2xl flex items-center justify-center shrink-0">
@@ -193,30 +187,27 @@ export function PeekingRoleDrawer() {
 
                         {/* Prezzee Smart Card visual */}
                         <div className="rounded-2xl bg-[#0F172A] border border-white/10 overflow-hidden">
-                            <div className="relative flex items-center justify-center py-5 px-4">
+                            <div className="flex items-center justify-center py-3 px-4">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                     src={PREZZEE_CARD}
                                     alt="Prezzee Smart Card"
-                                    className="w-44 rounded-xl shadow-2xl"
+                                    className="w-36 rounded-xl shadow-2xl"
                                 />
                             </div>
-                            <div className="px-5 pb-5 flex items-center justify-between">
-                                <div>
-                                    <p className="text-white font-black" style={{ fontSize: 16 }}>Powered by</p>
+                            <div className="px-4 pb-3 flex items-center justify-between">
+                                <div className="flex items-center gap-1.5">
+                                    <p className="text-white font-semibold" style={{ fontSize: 13 }}>Powered by</p>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={PREZZEE_LOGO} alt="Prezzee" className="h-4 w-auto brightness-0 invert mt-1" />
+                                    <img src={PREZZEE_LOGO} alt="Prezzee" className="h-3 w-auto brightness-0 invert" />
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-orange-400 font-black" style={{ fontSize: 16 }}>335+ brands</p>
-                                    <p className="text-zinc-400 font-medium" style={{ fontSize: 13 }}>Bunnings · Woolworths · Uber</p>
-                                </div>
+                                <p className="text-orange-400 font-black" style={{ fontSize: 13 }}>335+ brands</p>
                             </div>
                         </div>
                     </div>
 
                     {/* CTA footer */}
-                    <div className="px-8 py-8 border-t border-white/10">
+                    <div className="px-8 py-5 border-t border-white/10">
                         <Link
                             href={cfg.href}
                             onClick={handleClose}
