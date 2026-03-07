@@ -145,14 +145,14 @@ export default function ReferrerProfilePage() {
                             </label>
                             <input
                                 type="text"
-                                maxLength={80}
+                                maxLength={120}
                                 placeholder="e.g. Property investor with a network of 200+ homeowners"
                                 value={tagline}
                                 onChange={e => setTagline(e.target.value)}
                                 className="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 text-zinc-900 font-semibold"
                                 style={{ fontSize: '18px' }}
                             />
-                            <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: '13px' }}>{tagline.length}/80 characters</p>
+                            <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: '13px' }}>{tagline.length}/120 characters</p>
                         </div>
 
                         {/* Bio */}
