@@ -104,65 +104,59 @@ export default function ReferrerProfileViewPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="w-full px-12 pt-24 pb-24">
 
-                {/* ── BACK NAV ── */}
-                <Link
-                    href="/dashboard/referrer/manage"
-                    className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-800 font-semibold transition-colors mb-14 group"
-                    style={{ fontSize: '14px' }}
-                >
-                    <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Manage
-                </Link>
-
-                {/* ── IDENTIFICATION HEADER ── */}
-                <div className="flex items-center gap-10 mb-14 flex-wrap">
-                    {/* 160px Avatar */}
-                    <div
-                        className="w-40 h-40 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden"
-                        style={{ fontSize: '48px', boxShadow: '0 0 0 4px #fff, 0 0 0 6px #e5e7eb, 0 4px 24px rgba(0,0,0,0.12)' }}
+                {/* ── DARK HEADER ── */}
+                <div className="w-full px-12 pt-8 pb-10 bg-zinc-900">
+                    {/* Back nav */}
+                    <Link
+                        href="/dashboard/referrer/manage"
+                        className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-200 font-semibold transition-colors mb-8 group"
+                        style={{ fontSize: '14px' }}
                     >
-                        {profile.profile_photo_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={profile.profile_photo_url} alt={profile.full_name} className="w-full h-full object-cover" />
-                        ) : initials}
-                    </div>
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Manage
+                    </Link>
 
-                    {/* Name + meta */}
-                    <div>
-                        <div className="flex items-center gap-4 mb-3 flex-wrap">
-                            <h1 className="font-black text-zinc-900 leading-none" style={{ fontSize: '42px' }}>
+                    <div className="flex items-center gap-8 flex-wrap">
+                        {/* Avatar */}
+                        <div
+                            className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden"
+                            style={{ fontSize: '32px', boxShadow: '0 0 0 4px rgba(255,255,255,0.15), 0 4px 20px rgba(0,0,0,0.4)' }}
+                        >
+                            {profile.profile_photo_url ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={profile.profile_photo_url} alt={profile.full_name} className="w-full h-full object-cover" />
+                            ) : initials}
+                        </div>
+
+                        {/* Name + meta */}
+                        <div>
+                            <h1 className="font-black text-white leading-none mb-2" style={{ fontSize: '36px' }}>
                                 {profile.full_name}
                             </h1>
-                            <span
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-green-200 bg-green-50 text-green-700 rounded-full font-bold"
-                                style={{ fontSize: '13px' }}
-                            >
-                                <CheckCircle className="w-3.5 h-3.5" /> Verified Referrer
-                            </span>
-                        </div>
-
-                        <div className="flex items-center gap-6 flex-wrap mb-3">
-                            {(profile.suburb || profile.state) && (
-                                <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '16px' }}>
-                                    <MapPin className="w-4 h-4" />
-                                    {profile.suburb}{profile.state ? `, ${profile.state}` : ""}
-                                </span>
-                            )}
-                            {memberYear && (
-                                <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '16px' }}>
-                                    <Award className="w-4 h-4" /> Member since {memberYear}
-                                </span>
+                            <div className="flex items-center gap-5 flex-wrap mb-3">
+                                {(profile.suburb || profile.state) && (
+                                    <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '15px' }}>
+                                        <MapPin className="w-3.5 h-3.5" />
+                                        {profile.suburb}{profile.state ? `, ${profile.state}` : ""}
+                                    </span>
+                                )}
+                                {memberYear && (
+                                    <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '15px' }}>
+                                        <Award className="w-3.5 h-3.5" /> Member since {memberYear}
+                                    </span>
+                                )}
+                            </div>
+                            {profile.tagline && (
+                                <p className="font-semibold italic text-amber-400 leading-snug" style={{ fontSize: '20px' }}>
+                                    &ldquo;{profile.tagline}&rdquo;
+                                </p>
                             )}
                         </div>
-
-                        {profile.tagline && (
-                            <p className="font-medium text-zinc-500" style={{ fontSize: '24px' }}>
-                                {profile.tagline}
-                            </p>
-                        )}
                     </div>
                 </div>
+
+                {/* ── CONTENT BODY ── */}
+                <div className="px-12 py-12">
 
                 {/* ── FULL-WIDTH DATA ROW ── */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 rounded-2xl overflow-hidden border border-gray-100 mb-16">
@@ -206,7 +200,7 @@ export default function ReferrerProfileViewPage() {
                     </div>
                 )}
 
-            </div>
+                </div>{/* end content body */}
         </div>
     );
 }
