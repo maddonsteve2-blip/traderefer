@@ -360,7 +360,7 @@ export default function ReferrerManagePage() {
 
     // ── MAIN LAYOUT ──────────────────────────────────────────────────────────
     return (
-        <div className="h-[calc(100vh-72px)] md:h-[calc(100vh-100px)] flex flex-col overflow-hidden bg-white">
+        <div className="fixed inset-0 top-[72px] md:top-[100px] flex flex-col overflow-hidden bg-white">
             {/* ── MOBILE: Horizontal chip scroll ── */}
             <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
                 {links.map(link => (
@@ -516,100 +516,105 @@ export default function ReferrerManagePage() {
                         const potentialFee = feeCents > 0 ? `$${((feeCents * 0.8) / 100).toFixed(2)}` : null;
                         const appliedDate = new Date(app.applied_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
                         return (
-                            <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6">
-                                {/* Status Hero */}
-                                <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                    <div className="bg-amber-500 px-6 py-5">
-                                        <div className="flex items-center gap-3 mb-1">
-                                            <Clock className="w-6 h-6 text-white" />
-                                            <p className="font-black text-white uppercase tracking-widest" style={{ fontSize: '13px' }}>Application Status</p>
+                            <div className="flex flex-col flex-1 min-h-0">
+
+                                {/* TOP: Status Hero — always visible, flex-none */}
+                                <div className="shrink-0 px-6 pt-6 pb-3">
+                                    <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
+                                        <div className="bg-amber-500 px-6 py-5">
+                                            <div className="flex items-center gap-3 mb-1">
+                                                <Clock className="w-6 h-6 text-white" />
+                                                <p className="font-black text-white uppercase tracking-widest" style={{ fontSize: '13px' }}>Application Status</p>
+                                            </div>
+                                            <h1 className="font-black text-white leading-tight" style={{ fontSize: '26px' }}>
+                                                Your application to join {app.business_name} is being reviewed
+                                            </h1>
+                                            <p className="font-medium text-amber-100 mt-1" style={{ fontSize: '16px' }}>
+                                                Applied {appliedDate} · Businesses respond within 72 hours
+                                            </p>
                                         </div>
-                                        <h1 className="font-black text-white leading-tight" style={{ fontSize: '26px' }}>
-                                            Your application to join {app.business_name} is being reviewed
-                                        </h1>
-                                        <p className="font-medium text-amber-100 mt-1" style={{ fontSize: '16px' }}>
-                                            Applied {appliedDate} · Businesses respond within 72 hours
-                                        </p>
-                                    </div>
-                                    <div className="bg-white px-6 py-5">
-                                        <div className="flex flex-wrap gap-4">
-                                            <div className="flex-1 min-w-[140px] bg-zinc-50 rounded-2xl px-5 py-4 text-center">
-                                                <p className="font-black text-zinc-900" style={{ fontSize: '13px' }}>TRADE</p>
-                                                <p className="font-black text-zinc-800 mt-1" style={{ fontSize: '18px' }}>{app.trade_category}</p>
-                                            </div>
-                                            <div className="flex-1 min-w-[140px] bg-zinc-50 rounded-2xl px-5 py-4 text-center">
-                                                <p className="font-black text-zinc-900" style={{ fontSize: '13px' }}>LOCATION</p>
-                                                <p className="font-black text-zinc-800 mt-1" style={{ fontSize: '18px' }}>{app.suburb}</p>
-                                            </div>
-                                            <div className="flex-1 min-w-[140px] bg-orange-50 rounded-2xl px-5 py-4 text-center">
-                                                <p className="font-black text-orange-500" style={{ fontSize: '13px' }}>POTENTIAL REWARD</p>
-                                                {potentialFee ? (
-                                                    <>
+                                        <div className="bg-white px-6 py-4">
+                                            <div className="flex flex-wrap gap-3">
+                                                <div className="flex-1 min-w-[120px] bg-zinc-50 rounded-2xl px-4 py-3 text-center">
+                                                    <p className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '11px' }}>TRADE</p>
+                                                    <p className="font-black text-zinc-800 mt-1" style={{ fontSize: '18px' }}>{app.trade_category}</p>
+                                                </div>
+                                                <div className="flex-1 min-w-[120px] bg-zinc-50 rounded-2xl px-4 py-3 text-center">
+                                                    <p className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '11px' }}>LOCATION</p>
+                                                    <p className="font-black text-zinc-800 mt-1" style={{ fontSize: '18px' }}>{app.suburb}</p>
+                                                </div>
+                                                <div className="flex-1 min-w-[120px] bg-orange-50 rounded-2xl px-4 py-3 text-center">
+                                                    <p className="font-black text-orange-500 uppercase tracking-widest" style={{ fontSize: '11px' }}>POTENTIAL REWARD</p>
+                                                    {potentialFee ? (
                                                         <p className="font-black text-orange-600 mt-1" style={{ fontSize: '24px' }}>{potentialFee}</p>
-                                                        <p className="font-bold text-orange-400" style={{ fontSize: '13px' }}>per verified lead</p>
-                                                    </>
-                                                ) : (
-                                                    <p className="font-black text-orange-400 mt-1" style={{ fontSize: '16px' }}>Set by business</p>
-                                                )}
+                                                    ) : (
+                                                        <p className="font-black text-orange-400 mt-1" style={{ fontSize: '16px' }}>Set by business</p>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Tips while waiting */}
-                                <div className="rounded-2xl bg-zinc-50 px-6 py-5 shadow-lg shadow-zinc-100">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <AlertCircle className="w-5 h-5 text-zinc-400" />
-                                        <p className="font-black text-zinc-700" style={{ fontSize: '17px' }}>While you wait…</p>
-                                    </div>
-                                    <ul className="space-y-2">
-                                        {[
-                                            "Complete your referrer profile to boost your approval chance",
-                                            "Message the business owner below to introduce yourself",
-                                            "Explore other businesses in the meantime",
-                                        ].map((tip, i) => (
-                                            <li key={i} className="flex items-start gap-2 font-medium text-zinc-600" style={{ fontSize: '16px' }}>
-                                                <span className="w-5 h-5 rounded-full bg-zinc-200 text-zinc-500 font-black flex items-center justify-center shrink-0 mt-0.5" style={{ fontSize: '12px' }}>{i + 1}</span>
-                                                {tip}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <div className="flex flex-wrap gap-3 mt-4">
-                                        <Link href="/dashboard/referrer/profile" className="flex items-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all" style={{ fontSize: '16px' }}>
-                                            Edit My Profile <ChevronRight className="w-4 h-4" />
-                                        </Link>
-                                        <Link href="/dashboard/referrer/businesses" className="flex items-center gap-2 px-5 py-3 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-bold rounded-xl transition-all" style={{ fontSize: '16px' }}>
-                                            Find More Businesses
-                                        </Link>
+                                {/* MIDDLE: Tips — flex-1, only area that scrolls */}
+                                <div className="flex-1 min-h-0 overflow-y-auto px-6 py-3">
+                                    <div className="rounded-2xl bg-zinc-50 px-6 py-5 shadow-lg shadow-zinc-100">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <AlertCircle className="w-5 h-5 text-zinc-400" />
+                                            <p className="font-black text-zinc-700" style={{ fontSize: '17px' }}>While you wait…</p>
+                                        </div>
+                                        <ul className="space-y-2">
+                                            {[
+                                                "Complete your referrer profile to boost your approval chance",
+                                                "Messaging will unlock as soon as the business approves you",
+                                                "Apply to other businesses in the meantime",
+                                            ].map((tip, i) => (
+                                                <li key={i} className="flex items-start gap-2 font-medium text-zinc-600" style={{ fontSize: '16px' }}>
+                                                    <span className="w-5 h-5 rounded-full bg-zinc-200 text-zinc-500 font-black flex items-center justify-center shrink-0 mt-0.5" style={{ fontSize: '12px' }}>{i + 1}</span>
+                                                    {tip}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <div className="flex flex-wrap gap-3 mt-4">
+                                            <Link href="/dashboard/referrer/profile" className="flex items-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all" style={{ fontSize: '16px' }}>
+                                                Edit My Profile <ChevronRight className="w-4 h-4" />
+                                            </Link>
+                                            <Link href="/dashboard/referrer/businesses" className="flex items-center gap-2 px-5 py-3 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-bold rounded-xl transition-all" style={{ fontSize: '16px' }}>
+                                                Find More Businesses
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Messaging locked until approved */}
-                                <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                    <div className="bg-zinc-900 px-5 py-4 flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <MessageSquare className="w-4 h-4 text-orange-400" />
-                                            <span className="font-black text-white" style={{ fontSize: '16px' }}>Chat with {app.business_name.split(" ")[0]}</span>
+                                {/* BOTTOM: Locked chat input — always pinned, flex-none */}
+                                <div className="shrink-0 px-6 pb-5 pt-3">
+                                    <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
+                                        <div className="bg-zinc-900 px-5 py-4 flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <MessageSquare className="w-4 h-4 text-orange-400" />
+                                                <span className="font-black text-white" style={{ fontSize: '16px' }}>Chat with {app.business_name.split(" ")[0]}</span>
+                                            </div>
+                                            <span className="px-3 py-1 bg-amber-500 text-white font-black rounded-lg" style={{ fontSize: '12px' }}>Awaiting Approval</span>
                                         </div>
-                                    </div>
-                                    <div className="bg-zinc-50 flex flex-col items-center justify-center py-10 text-center px-6">
-                                        <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mb-4">
-                                            <Clock className="w-7 h-7 text-amber-500" />
+                                        <div className="bg-zinc-50 flex items-center gap-4 px-5 py-4 border-b border-zinc-100">
+                                            <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                                                <Clock className="w-5 h-5 text-amber-500" />
+                                            </div>
+                                            <p className="font-medium text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.5 }}>
+                                                Messaging unlocks once <strong className="text-zinc-800">{app.business_name}</strong> approves your application.
+                                            </p>
                                         </div>
-                                        <p className="font-black text-zinc-800" style={{ fontSize: '18px' }}>Messaging unlocks once approved</p>
-                                        <p className="font-medium text-zinc-500 mt-2 max-w-sm" style={{ fontSize: '16px', lineHeight: 1.6 }}>
-                                            Once {app.business_name} approves your application, you&apos;ll be able to message them directly here.
-                                        </p>
-                                    </div>
-                                    <div className="bg-gray-50 flex items-center gap-2 px-3 py-2.5 border-t border-zinc-200 opacity-40 pointer-events-none">
-                                        <div className="flex-1 bg-white border border-zinc-300 rounded-xl px-4 py-2.5 font-medium text-zinc-400" style={{ fontSize: '16px' }}>
-                                            Available after approval…
-                                        </div>
-                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-zinc-300">
-                                            <Send className="w-4 h-4 text-zinc-400" />
+                                        <div className="bg-gray-100 flex items-center gap-3 px-3 py-3 border-t border-gray-300 opacity-50 pointer-events-none">
+                                            <div className="flex-1 bg-white border border-gray-400 rounded-xl px-4 py-2.5 font-semibold text-gray-400" style={{ fontSize: '18px' }}>
+                                                Available after approval…
+                                            </div>
+                                            <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-zinc-300">
+                                                <Send className="w-4 h-4 text-zinc-400" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         );
                     })()}
