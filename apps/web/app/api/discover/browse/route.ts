@@ -7,7 +7,8 @@ export async function GET(req: NextRequest) {
     const trade  = req.nextUrl.searchParams.get("trade")  || null;
     const q      = req.nextUrl.searchParams.get("q")      || null;
     const page   = Math.max(0, parseInt(req.nextUrl.searchParams.get("page") || "0"));
-    const limit  = 12;
+    const sort   = req.nextUrl.searchParams.get("sort") || null;
+    const limit  = sort === "top_paying" ? 8 : 12;
     const offset = page * limit;
 
     const suburbPat = suburb ? `%${suburb}%` : null;
@@ -18,7 +19,21 @@ export async function GET(req: NextRequest) {
     try {
         let rows: any[];
 
-        if (suburbPat) {
+        if (sort === "top_paying") {
+            rows = await sql`
+                SELECT id::text, business_name, slug, trade_category,
+                       suburb, state, referral_fee_cents, logo_url,
+                       trust_score, is_verified, avg_rating, total_reviews,
+                       services, specialties, features, business_highlights
+                FROM businesses
+                WHERE status = 'active'
+                  AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+                  AND referral_fee_cents IS NOT NULL
+                  AND referral_fee_cents > 0
+                ORDER BY referral_fee_cents DESC, trust_score DESC
+                LIMIT ${limit}
+            `;
+        } else if (suburbPat) {
             rows = await sql`
                 WITH user_centroid AS (
                     SELECT AVG(lat) AS clat, AVG(lng) AS clng
@@ -28,6 +43,7 @@ export async function GET(req: NextRequest) {
                 SELECT b.id::text, b.business_name, b.slug, b.trade_category,
                        b.suburb, b.state, b.referral_fee_cents, b.logo_url,
                        b.trust_score, b.is_verified, b.avg_rating, b.total_reviews,
+                       b.services, b.specialties, b.features, b.business_highlights,
                        CASE
                            WHEN b.suburb ILIKE ${suburbPat} THEN 0
                            WHEN b.lat IS NOT NULL AND uc.clat IS NOT NULL
@@ -47,7 +63,8 @@ export async function GET(req: NextRequest) {
             rows = await sql`
                 SELECT id::text, business_name, slug, trade_category,
                        suburb, state, referral_fee_cents, logo_url,
-                       trust_score, is_verified, avg_rating, total_reviews
+                       trust_score, is_verified, avg_rating, total_reviews,
+                       services, specialties, features, business_highlights
                 FROM businesses
                 WHERE status = 'active'
                   AND (listing_visibility = 'public' OR listing_visibility IS NULL)

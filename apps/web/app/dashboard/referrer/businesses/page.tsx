@@ -32,25 +32,26 @@ export default async function DashboardBusinessesPage() {
 
     return (
         <div className="min-h-screen bg-zinc-50 pt-16">
-            <div className="container mx-auto px-4 py-6 max-w-6xl">
+            <div className="w-full px-6 py-6">
 
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-5">
                     <Link
                         href="/dashboard/referrer"
-                        className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors"
+                        className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold"
+                        style={{ fontSize: '16px' }}
                     >
                         <ArrowLeft className="w-4 h-4" /> Dashboard
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-semibold">Find Businesses</span>
+                    <span className="text-zinc-700 font-bold" style={{ fontSize: '16px' }}>Find Businesses</span>
                 </div>
 
-                <div className="mb-6">
-                    <h1 className="text-2xl font-black text-zinc-900 flex items-center gap-2">
-                        <Search className="w-6 h-6 text-orange-500" /> Find Businesses to Refer
+                <div className="mb-5">
+                    <h1 className="font-black text-zinc-900 flex items-center gap-3" style={{ fontSize: '28px' }}>
+                        <Search className="w-7 h-7 text-orange-500" /> Find Businesses to Refer
                     </h1>
-                    <p className="text-zinc-500 text-base mt-1">
+                    <p className="text-zinc-500 font-medium mt-1" style={{ fontSize: '17px' }}>
                         {suburb
                             ? `Showing businesses near ${suburb} first — grab a referral link and start earning.`
                             : "Browse verified businesses and grab referral links to start earning."}
