@@ -277,7 +277,7 @@ export function MessagesView() {
     return (
         <div className="flex h-full bg-white overflow-hidden">
             {/* ── LEFT SIDEBAR ── */}
-            <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-[300px] lg:w-[340px] border-r border-gray-200 bg-gray-50`}>
+            <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-[300px] lg:w-[340px] bg-gray-100`}>
 
                 {/* Sidebar header */}
                 <div className="px-5 pt-5 pb-4 border-b border-zinc-100">
@@ -375,7 +375,7 @@ export function MessagesView() {
             </div>
 
             {/* ── RIGHT PANEL ── */}
-            <div className={`${activeContactId ? 'flex' : 'hidden md:flex'} flex-col flex-1 bg-zinc-50 min-h-0`}>
+            <div className={`${activeContactId ? 'flex' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}>
 
                 {/* ── Thread header (conditional) ── */}
                 {activeContactId && activeContact ? (
@@ -565,10 +565,10 @@ export function MessagesView() {
                 )}
 
                 {/* ── Input bar — ALWAYS VISIBLE ── */}
-                <div className="px-4 py-4 bg-gray-50 border-t border-gray-300 shadow-md flex-shrink-0">
+                <div className="px-4 py-4 bg-white flex-shrink-0" style={{ boxShadow: '0 -4px 16px rgba(0,0,0,0.06)' }}>
                     {activeContactId ? (
                         <>
-                            <div className="flex items-end gap-2 bg-white border-2 border-gray-400 rounded-2xl px-3 py-2 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20 transition-all shadow-sm">
+                            <div className="flex items-end gap-2 bg-gray-100 rounded-2xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-orange-500 transition-all">
                                 <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleImageSelect} />
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
@@ -597,8 +597,8 @@ export function MessagesView() {
                                 <button
                                     onClick={handleSend}
                                     disabled={(!newMessage.trim() && !imageUrl) || sending || uploading}
-                                    className="flex-shrink-0 self-end mb-0.5 h-12 px-5 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 text-white disabled:text-gray-500 rounded-xl flex items-center gap-2 font-bold transition-all duration-150 active:scale-95"
-                                    style={{ fontSize: '16px' }}
+                                    className="flex-shrink-0 self-end mb-0.5 h-12 px-5 bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white rounded-xl flex items-center gap-2 font-bold transition-all duration-150 active:scale-95 shadow-md"
+                                    style={{ fontSize: '18px' }}
                                 >
                                     {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /><span className="hidden sm:inline">Send</span></>}
                                 </button>
