@@ -52,7 +52,7 @@ export default async function ReferrerRewardsPage() {
     const qualityBarColor = qualityScore >= 70 ? "bg-green-500" : qualityScore >= 50 ? "bg-amber-400" : "bg-red-500";
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-16">
+        <div className="min-h-screen bg-zinc-50 pt-20">
             <div className="w-full px-6 py-6">
 
                 {/* Breadcrumb */}
@@ -140,7 +140,7 @@ export default async function ReferrerRewardsPage() {
                         <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
                             <div className="flex items-center justify-between mb-4">
                                 <p className="font-black text-zinc-900" style={{ fontSize: '20px' }}>One Card. 400+ Places to Spend It.</p>
-                                <Link href="/rewards" className="font-bold text-orange-500 hover:text-orange-600 underline underline-offset-2" style={{ fontSize: '16px' }}>
+                                <Link href="/rewards" className="font-bold text-orange-500 hover:text-orange-600 underline underline-offset-2" style={{ fontSize: '18px' }}>
                                     See all →
                                 </Link>
                             </div>
