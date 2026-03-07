@@ -188,46 +188,51 @@ export default function ReferrerProfilePage() {
     const publicUrl = profileSlug ? `${siteUrl}/dashboard/referrer-profile/${profileSlug}` : null;
 
     return (
-        <div className="min-h-screen bg-zinc-50">
-            <div className="w-full px-12 py-8">
+        <div className="flex flex-col bg-zinc-100" style={{ height: 'calc(100vh - 64px)' }}>
 
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                    <div className="flex items-center gap-3">
-                        <Link href="/dashboard/referrer" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '16px' }}>
-                            <ArrowLeft className="w-4 h-4" /> Dashboard
-                        </Link>
-                        <span className="text-zinc-300">/</span>
-                        <span className="text-zinc-700 font-bold" style={{ fontSize: '16px' }}>My Referrer Profile</span>
-                    </div>
-                    {publicUrl && (
-                        <a
-                            href={publicUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all shadow-sm"
-                            style={{ fontSize: '16px' }}
-                        >
-                            <ExternalLink className="w-4 h-4" /> View My Live Sales Page
-                        </a>
-                    )}
+            {/* ── FIXED TOP BAR ── */}
+            <div className="flex items-center justify-between px-8 py-3 bg-white border-b border-gray-200 shrink-0">
+                <div className="flex items-center gap-3">
+                    <Link
+                        href="/dashboard/referrer/manage"
+                        className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-800 font-semibold transition-colors group"
+                        style={{ fontSize: '14px' }}
+                    >
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Manage
+                    </Link>
+                    <span className="text-zinc-300">/</span>
+                    <span className="text-zinc-700 font-bold" style={{ fontSize: '14px' }}>My Referrer Profile</span>
                 </div>
+                {publicUrl && (
+                    <a
+                        href={publicUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all"
+                        style={{ fontSize: '14px' }}
+                    >
+                        <ExternalLink className="w-3.5 h-3.5" /> View Live Resume
+                    </a>
+                )}
+            </div>
 
-                <div className="grid grid-cols-1 xl:grid-cols-5 gap-10 items-start">
+            {/* ── SPLIT PANE BODY ── */}
+            <div className="flex flex-row flex-1 overflow-hidden">
 
-                    {/* ── LEFT: EDIT FORM (40%) ── */}
-                    <div className="xl:col-span-2 bg-white rounded-2xl shadow-lg shadow-zinc-100 p-8 space-y-6">
-                        <div className="flex items-center gap-2 mb-2">
+                {/* ── LEFT: EDITOR PANE (40%) ── */}
+                <div className="w-2/5 h-full overflow-y-auto bg-white border-r border-gray-200 flex flex-col">
+                    <div className="flex-1 p-8 space-y-6">
+                        <div className="flex items-center gap-2">
                             <Edit3 className="w-5 h-5 text-orange-500" />
                             <h2 className="font-black text-zinc-900" style={{ fontSize: '20px' }}>Edit Your Profile</h2>
                         </div>
-                        <p className="text-zinc-500 font-medium" style={{ fontSize: '16px' }}>
-                            This is your public sales page — businesses see this when you apply to join their network.
+                        <p className="text-zinc-500 font-medium" style={{ fontSize: '15px' }}>
+                            Businesses see this resume when you apply to their network.
                         </p>
 
                         {/* Tagline */}
                         <div>
-                            <label className="block font-black text-zinc-700 mb-2" style={{ fontSize: '15px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                            <label className="block font-black text-zinc-700 mb-2" style={{ fontSize: '16px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                                 Professional Tagline
                             </label>
                             <textarea
@@ -244,7 +249,7 @@ export default function ReferrerProfilePage() {
 
                         {/* Bio */}
                         <div>
-                            <label className="block font-black text-zinc-700 mb-2" style={{ fontSize: '15px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                            <label className="block font-black text-zinc-700 mb-2" style={{ fontSize: '16px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                                 Referrer Bio
                             </label>
                             <textarea
@@ -261,7 +266,7 @@ export default function ReferrerProfilePage() {
 
                         {/* Profile Photo Upload */}
                         <div>
-                            <label className="block font-black text-zinc-700 mb-2" style={{ fontSize: '15px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                            <label className="block font-black text-zinc-700 mb-2" style={{ fontSize: '16px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                                 Profile Photo
                             </label>
                             <div className="flex items-center gap-4">
@@ -325,36 +330,29 @@ export default function ReferrerProfilePage() {
                             </div>
                         </div>
 
+                    </div>
+
+                    {/* ── PINNED SAVE BUTTON ── */}
+                    <div className="shrink-0 px-8 pb-6 pt-4 bg-white border-t border-gray-100">
                         <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="flex items-center justify-center gap-2 w-full h-14 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-xl font-black transition-all shadow-lg shadow-orange-200"
-                            style={{ fontSize: '18px' }}
+                            className="flex items-center justify-center gap-2 w-full h-13 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-xl font-black transition-all shadow-lg shadow-orange-200"
+                            style={{ fontSize: '17px', height: '52px' }}
                         >
-                            {saved ? <><CheckCircle className="w-5 h-5" /> Profile Saved!</> : saving ? "Saving…" : <><Save className="w-5 h-5" /> Save Profile</>}
+                            {saved ? <><CheckCircle className="w-5 h-5" /> Saved!</> : saving ? "Saving…" : <><Save className="w-5 h-5" /> Save Profile</>}
                         </button>
-
-                        {publicUrl && (
-                            <a
-                                href={publicUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 w-full h-12 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-700 rounded-xl font-bold transition-all"
-                                style={{ fontSize: '16px' }}
-                            >
-                                <ExternalLink className="w-4 h-4" /> View My Live Sales Page
-                            </a>
-                        )}
                     </div>
+                </div>
 
-                    {/* ── RIGHT: LIVE PREVIEW (60%) ── */}
-                    <div className="xl:col-span-3 space-y-4">
-                        <div className="flex items-center gap-2 px-1 mb-1">
+                {/* ── RIGHT: PREVIEW PANE (60%) ── */}
+                <div className="flex-1 h-full bg-gray-50 overflow-y-auto flex items-start justify-center p-10">
+                    <div className="w-full space-y-2">
+                        <div className="flex items-center gap-2 mb-3">
                             <Eye className="w-4 h-4 text-zinc-400" />
-                            <span className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '13px' }}>Live Preview — what businesses see on your sales page</span>
+                            <span className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '12px' }}>Live Preview</span>
                         </div>
 
-                        {/* Full-width preview — mirrors the live resume exactly */}
                         <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
 
                             {/* Header row */}
