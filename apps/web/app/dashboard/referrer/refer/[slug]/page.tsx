@@ -8,6 +8,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { ApplyToReferButton } from "@/components/referrer/ApplyToReferButton";
 import { BusinessLogo } from "@/components/BusinessLogo";
+import { ReviewsSection } from "@/components/referrer/ReviewsSection";
 
 const apiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -70,8 +71,7 @@ export default async function DashboardReferPage({
     const fmt = (n: number) => Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`;
 
     const topReviews = googleReviews
-        .filter((r: any) => r.review_text && r.rating >= 4)
-        .slice(0, 2);
+        .filter((r: any) => r.review_text && r.rating >= 4);
 
     return (
         <main className="min-h-screen bg-zinc-50">
@@ -290,35 +290,11 @@ export default async function DashboardReferPage({
                         </div>
 
                         {/* Google Reviews */}
-                        {topReviews.length > 0 && (
-                            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm mb-0">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h2 className="font-black text-zinc-900" style={{ fontSize: '20px' }}>What Customers Say</h2>
-                                    {googleRating && (
-                                        <div className="flex items-center gap-1.5">
-                                            <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                                            <span className="font-black text-zinc-900" style={{ fontSize: '18px' }}>{googleRating.toFixed(1)}</span>
-                                            <span className="font-bold text-zinc-400" style={{ fontSize: '16px' }}>({reviewCount})</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {topReviews.map((r: any, i: number) => (
-                                        <div key={i} className="p-5 bg-zinc-50 rounded-xl border border-zinc-100">
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <div className="flex items-center gap-0.5">
-                                                    {[...Array(5)].map((_, j) => (
-                                                        <Star key={j} className={`w-4 h-4 ${j < r.rating ? 'fill-yellow-400 text-yellow-400' : 'fill-zinc-200 text-zinc-200'}`} />
-                                                    ))}
-                                                </div>
-                                                <span className="font-black text-zinc-700" style={{ fontSize: '17px' }}>{r.profile_name}</span>
-                                            </div>
-                                            <p className="text-zinc-600 font-medium leading-relaxed line-clamp-3" style={{ fontSize: '18px', lineHeight: 1.65 }}>{r.review_text}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        <ReviewsSection
+                            reviews={topReviews}
+                            googleRating={googleRating}
+                            reviewCount={reviewCount}
+                        />
 
                         {/* Active Bonus Campaigns */}
                         {campaigns && campaigns.length > 0 && (
