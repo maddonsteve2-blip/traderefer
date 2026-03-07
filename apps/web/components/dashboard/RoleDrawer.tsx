@@ -125,7 +125,7 @@ export function PeekingRoleDrawer() {
                     <span
                         className="font-black text-zinc-700 uppercase tracking-widest select-none"
                         style={{
-                            fontSize: 13,
+                            fontSize: 16,
                             writingMode: "vertical-rl",
                             textOrientation: "mixed",
                             transform: "rotate(180deg)",
