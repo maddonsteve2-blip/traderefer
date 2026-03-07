@@ -4,10 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
-import {
-    MapPin, Award, Star, TrendingUp, Briefcase,
-    MessageSquare, ArrowLeft, CheckCircle
-} from "lucide-react";
+import { MapPin, Award, Star, TrendingUp, Briefcase, ArrowLeft, CheckCircle, ShieldCheck } from "lucide-react";
 
 interface ReferrerProfile {
     id: string;
@@ -56,8 +53,8 @@ export default function ReferrerProfileViewPage() {
     if (notFound || !profile) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <p className="font-black text-zinc-700" style={{ fontSize: '24px' }}>Referrer not found</p>
-                <Link href="/dashboard/referrer" className="text-orange-600 font-bold hover:underline" style={{ fontSize: '16px' }}>← Back to Dashboard</Link>
+                <p className="font-black text-zinc-800" style={{ fontSize: '24px' }}>Referrer not found</p>
+                <Link href="/dashboard" className="text-orange-600 font-bold hover:underline" style={{ fontSize: '16px' }}>← Back to Dashboard</Link>
             </div>
         );
     }
@@ -66,31 +63,74 @@ export default function ReferrerProfileViewPage() {
     const memberYear = profile.member_since ? new Date(profile.member_since).getFullYear() : null;
     const firstName = profile.full_name.split(" ")[0];
 
-    const stats = [
-        { label: "Quality Score", value: profile.quality_score, suffix: "/100", bg: "bg-green-50", val: "text-green-600", sub: "text-green-500", icon: Star, desc: "Verified referrer rating" },
-        { label: "Confirmed Leads", value: profile.confirmed_referrals, suffix: "", bg: "bg-emerald-50", val: "text-emerald-600", sub: "text-emerald-500", icon: TrendingUp, desc: "Successfully converted" },
-        { label: "Businesses", value: profile.businesses_linked, suffix: "", bg: "bg-blue-50", val: "text-blue-600", sub: "text-blue-500", icon: Briefcase, desc: "Active partnerships" },
+    const tiles = [
+        {
+            label: "Quality Score",
+            value: profile.quality_score,
+            suffix: "/100",
+            desc: "Verified referrer rating",
+            bg: "bg-green-50",
+            border: "border-green-100",
+            val: "text-green-600",
+            sub: "text-green-500",
+            icon: ShieldCheck,
+        },
+        {
+            label: "Confirmed Leads",
+            value: profile.confirmed_referrals,
+            suffix: "",
+            desc: "Successfully converted",
+            bg: "bg-orange-50",
+            border: "border-orange-100",
+            val: "text-orange-600",
+            sub: "text-orange-500",
+            icon: TrendingUp,
+        },
+        {
+            label: "Active Partnerships",
+            value: profile.businesses_linked,
+            suffix: "",
+            desc: "Businesses currently linked",
+            bg: "bg-blue-50",
+            border: "border-blue-100",
+            val: "text-blue-600",
+            sub: "text-blue-500",
+            icon: Briefcase,
+        },
+        {
+            label: "Member Since",
+            value: memberYear ?? "—",
+            suffix: "",
+            desc: "Year joined TradeRefer",
+            bg: "bg-violet-50",
+            border: "border-violet-100",
+            val: "text-violet-600",
+            sub: "text-violet-500",
+            icon: Award,
+        },
     ];
 
     return (
-        <div className="min-h-screen bg-zinc-50 pb-28">
+        <div className="min-h-screen bg-gray-50 pt-16">
 
-            {/* ── HERO HEADER ── */}
-            <div className="bg-zinc-900 w-full">
-                <div className="max-w-5xl mx-auto px-6 py-10">
+            {/* ── WHITE HEADER ── */}
+            <div className="bg-white border-b border-gray-200 shadow-sm w-full">
+                <div className="w-full px-12 py-10">
+                    {/* Back nav */}
                     <button
                         onClick={() => router.back()}
-                        className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-300 font-bold transition-colors mb-8"
+                        className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 font-bold transition-colors mb-8"
                         style={{ fontSize: '15px' }}
                     >
                         <ArrowLeft className="w-4 h-4" /> Back
                     </button>
 
-                    <div className="flex items-start gap-7 flex-wrap">
+                    {/* Identity row */}
+                    <div className="flex items-center gap-8 flex-wrap">
                         {/* Avatar */}
                         <div
-                            className="w-32 h-32 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-2xl ring-4 ring-white ring-offset-2 ring-offset-zinc-900"
-                            style={{ fontSize: '40px' }}
+                            className="w-28 h-28 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-xl ring-4 ring-white"
+                            style={{ fontSize: '36px' }}
                         >
                             {profile.profile_photo_url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
@@ -98,33 +138,33 @@ export default function ReferrerProfileViewPage() {
                             ) : initials}
                         </div>
 
-                        {/* Name + meta */}
+                        {/* Name block */}
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 flex-wrap mb-1">
-                                <h1 className="font-black text-white leading-tight" style={{ fontSize: '32px' }}>
+                            <div className="flex items-center gap-3 flex-wrap mb-2">
+                                <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '36px' }}>
                                     {profile.full_name}
                                 </h1>
-                                <span className="flex items-center gap-1.5 px-3 py-1 bg-green-500/20 text-green-400 rounded-full font-bold" style={{ fontSize: '13px' }}>
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-full font-black" style={{ fontSize: '13px' }}>
                                     <CheckCircle className="w-3.5 h-3.5" /> Verified Referrer
                                 </span>
                             </div>
 
-                            <div className="flex items-center gap-4 flex-wrap mt-2 mb-4">
+                            <div className="flex items-center gap-5 flex-wrap mb-3">
                                 {(profile.suburb || profile.state) && (
-                                    <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '16px' }}>
-                                        <MapPin className="w-4 h-4" />
+                                    <span className="flex items-center gap-1.5 text-zinc-500 font-medium" style={{ fontSize: '16px' }}>
+                                        <MapPin className="w-4 h-4 text-zinc-400" />
                                         {profile.suburb}{profile.state ? `, ${profile.state}` : ""}
                                     </span>
                                 )}
                                 {memberYear && (
-                                    <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '16px' }}>
-                                        <Award className="w-4 h-4" /> Member since {memberYear}
+                                    <span className="flex items-center gap-1.5 text-zinc-500 font-medium" style={{ fontSize: '16px' }}>
+                                        <Star className="w-4 h-4 text-zinc-400" /> Member since {memberYear}
                                     </span>
                                 )}
                             </div>
 
                             {profile.tagline && (
-                                <p className="font-semibold italic text-amber-300 leading-snug" style={{ fontSize: '24px' }}>
+                                <p className="font-semibold italic text-zinc-500 leading-snug" style={{ fontSize: '18px' }}>
                                     &ldquo;{profile.tagline}&rdquo;
                                 </p>
                             )}
@@ -134,71 +174,36 @@ export default function ReferrerProfileViewPage() {
             </div>
 
             {/* ── BODY ── */}
-            <div className="max-w-5xl mx-auto px-6 py-10 space-y-10">
+            <div className="w-full px-12 py-10 space-y-10">
 
-                {/* Authority stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    {stats.map(s => (
-                        <div key={s.label} className={`${s.bg} rounded-3xl px-6 py-8 flex flex-col items-center text-center`}>
-                            <p className={`font-black ${s.val} leading-none`} style={{ fontSize: '52px' }}>
-                                {s.value}<span style={{ fontSize: '24px' }}>{s.suffix}</span>
+                {/* ── 4 OVERSIZED AUTHORITY TILES ── */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+                    {tiles.map(t => (
+                        <div
+                            key={t.label}
+                            className={`${t.bg} border ${t.border} rounded-3xl px-8 py-9 flex flex-col items-start`}
+                        >
+                            <t.icon className={`w-6 h-6 ${t.sub} mb-4 opacity-80`} />
+                            <p className={`font-black ${t.val} leading-none`} style={{ fontSize: '42px' }}>
+                                {t.value}<span className={`${t.val} opacity-60`} style={{ fontSize: '22px' }}>{t.suffix}</span>
                             </p>
-                            <p className={`font-black ${s.val} uppercase tracking-widest mt-3`} style={{ fontSize: '13px' }}>{s.label}</p>
-                            <p className="font-medium text-zinc-500 mt-1" style={{ fontSize: '14px' }}>{s.desc}</p>
+                            <p className="font-black text-zinc-700 mt-3" style={{ fontSize: '16px' }}>{t.label}</p>
+                            <p className={`font-medium ${t.sub} mt-1`} style={{ fontSize: '14px' }}>{t.desc}</p>
                         </div>
                     ))}
                 </div>
 
-                {/* Why partner */}
+                {/* ── EXECUTIVE SUMMARY ── */}
                 {profile.profile_bio && (
-                    <div className="bg-white rounded-3xl shadow-sm p-8">
-                        <h2 className="font-black text-zinc-900 mb-5" style={{ fontSize: '24px' }}>
-                            Why Partner With {firstName}
+                    <div className="bg-white rounded-3xl border border-gray-100 shadow-sm px-10 py-10">
+                        <h2 className="font-black text-zinc-900 mb-5" style={{ fontSize: '26px' }}>
+                            About {firstName}
                         </h2>
-                        <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: '18px', lineHeight: 1.75 }}>
+                        <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: '20px', lineHeight: 1.8 }}>
                             {profile.profile_bio}
                         </p>
                     </div>
                 )}
-
-                {/* How it works */}
-                <div className="bg-zinc-900 rounded-3xl p-8">
-                    <h2 className="font-black text-white mb-3" style={{ fontSize: '22px' }}>How Partnering Works</h2>
-                    <p className="font-medium text-zinc-400 leading-relaxed mb-6" style={{ fontSize: '17px' }}>
-                        {firstName} refers qualified homeowners and property owners from their personal network directly to your business — no ads, no cold leads.
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {[
-                            { step: "01", title: "You Apply", desc: `Message ${firstName} to join their partner network` },
-                            { step: "02", title: "Leads Come In", desc: `${firstName} refers warm, personal leads to your business` },
-                            { step: "03", title: "Pay Per Lead", desc: "Only pay $8 when a lead is confirmed — zero risk" },
-                        ].map(s => (
-                            <div key={s.step} className="bg-zinc-800 rounded-2xl p-5">
-                                <p className="font-black text-orange-500 mb-2" style={{ fontSize: '13px' }}>STEP {s.step}</p>
-                                <p className="font-black text-white mb-1" style={{ fontSize: '18px' }}>{s.title}</p>
-                                <p className="font-medium text-zinc-400" style={{ fontSize: '15px' }}>{s.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* ── STICKY FOOTER CTA ── */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 shadow-2xl px-6 py-4">
-                <div className="max-w-5xl mx-auto flex items-center justify-between gap-4 flex-wrap">
-                    <div>
-                        <p className="font-black text-zinc-900" style={{ fontSize: '18px' }}>Ready to partner with {firstName}?</p>
-                        <p className="font-medium text-zinc-500" style={{ fontSize: '15px' }}>Join their trade partner network and start receiving referrals.</p>
-                    </div>
-                    <Link
-                        href={`/dashboard/business/messages?referrer=${profile.id}`}
-                        className="flex items-center gap-2.5 px-8 py-4 text-white font-black rounded-2xl transition-all shadow-lg shadow-orange-300 shrink-0"
-                        style={{ background: '#FF7A00', fontSize: '18px' }}
-                    >
-                        <MessageSquare className="w-5 h-5" />
-                        Message {firstName}
-                    </Link>
-                </div>
             </div>
         </div>
     );
