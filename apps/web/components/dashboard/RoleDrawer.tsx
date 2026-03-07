@@ -185,8 +185,8 @@ export function PeekingRoleDrawer() {
                 />
             )}
 
-            {/* ── FULL DRAWER ── */}
-            {isOpen && (
+            {/* ── FULL DRAWER (single-role only) ── */}
+            {cfg && isOpen && (
                 <div
                     className="fixed inset-y-0 right-0 z-[9999] w-[450px] max-w-full bg-zinc-950 flex flex-col shadow-2xl transition-transform duration-300 ease-out"
                     style={{ transform: drawerVisible ? "translateX(0)" : "translateX(100%)" }}
