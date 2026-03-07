@@ -296,7 +296,7 @@ export function MessagesView() {
                             placeholder="Search businesses…"
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-300 placeholder:text-zinc-300 transition-all font-medium"
+                            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 placeholder:text-gray-500 text-zinc-900 transition-all font-medium"
                             style={{ fontSize: '16px' }}
                         />
                     </div>
@@ -311,7 +311,7 @@ export function MessagesView() {
                             </div>
                             <div>
                                 <p className="font-black text-zinc-700" style={{ fontSize: '18px' }}>No conversations yet</p>
-                                <p className="text-zinc-400 font-medium mt-1 leading-snug" style={{ fontSize: '16px' }}>
+                                <p className="text-zinc-400 font-medium mt-1 leading-snug" style={{ fontSize: '18px' }}>
                                     {myType === 'business' ? 'Referrers will appear here once linked.' : 'Find businesses to start messaging.'}
                                 </p>
                             </div>
@@ -347,7 +347,7 @@ export function MessagesView() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-1 mb-0.5">
-                                                <span className={`truncate font-black ${isActive ? 'text-orange-600' : hasUnread ? 'text-zinc-900' : 'text-zinc-800'}`} style={{ fontSize: '17px' }}>
+                                                <span className={`truncate font-black ${isActive ? 'text-orange-600' : hasUnread ? 'text-zinc-900' : 'text-zinc-800'}`} style={{ fontSize: '18px' }}>
                                                     {contact.contact_name}
                                                 </span>
                                                 <span className="text-zinc-400 flex-shrink-0 whitespace-nowrap font-medium" style={{ fontSize: '13px' }}>
@@ -356,7 +356,7 @@ export function MessagesView() {
                                             </div>
                                             <div className="flex items-center gap-1.5">
                                                 <ShieldCheck className="w-3 h-3 text-green-500 flex-shrink-0" />
-                                                <p className={`truncate font-medium ${hasUnread ? 'text-zinc-700 font-semibold' : 'text-zinc-400'}`} style={{ fontSize: '14px' }}>
+                                                <p className={`truncate font-medium ${hasUnread ? 'text-zinc-700 font-semibold' : 'text-zinc-400'}`} style={{ fontSize: '16px' }}>
                                                     {contact.last_message || 'Verified Trade Partner'}
                                                 </p>
                                             </div>
@@ -568,7 +568,7 @@ export function MessagesView() {
                         </div>
                         <div className="max-w-sm">
                             <h3 className="font-black text-zinc-800" style={{ fontSize: '24px' }}>Business Communications Hub</h3>
-                            <p className="text-zinc-400 font-medium mt-2 leading-snug" style={{ fontSize: '17px' }}>
+                            <p className="text-zinc-400 font-medium mt-2 leading-snug" style={{ fontSize: '18px' }}>
                                 {contacts.length > 0
                                     ? 'Select a conversation from your Trades Team to get started.'
                                     : 'Start messaging your trade partners — quote requests, job updates, and more.'}
