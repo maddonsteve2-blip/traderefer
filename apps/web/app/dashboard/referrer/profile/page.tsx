@@ -1,11 +1,11 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
     User, Star, MapPin, Briefcase, CheckCircle, Edit3,
-    ArrowLeft, Save, Eye, TrendingUp, ExternalLink, Award
+    ArrowLeft, Save, Eye, TrendingUp, ExternalLink, Award, Upload, Camera
 } from "lucide-react";
 import Link from "next/link";
 
@@ -33,8 +33,49 @@ export default function ReferrerProfilePage() {
     const [tagline, setTagline] = useState("");
     const [photoUrl, setPhotoUrl] = useState("");
     const [referrerId, setReferrerId] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://traderefer.au";
+
+    const handleImageUpload = async (file: File) => {
+        setUploading(true);
+        try {
+            const resized = await cropAndResizeImage(file, 400);
+            const formData = new FormData();
+            formData.append("file", resized, "avatar.jpg");
+            const res = await fetch("/api/upload-avatar", { method: "POST", body: formData });
+            const data = await res.json();
+            if (data.url) setPhotoUrl(data.url);
+        } catch (e) {
+            console.error("Upload failed", e);
+        }
+        setUploading(false);
+    };
+
+    const cropAndResizeImage = (file: File, size: number): Promise<File> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                const canvas = document.createElement("canvas");
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext("2d")!;
+                const side = Math.min(img.width, img.height);
+                const sx = (img.width - side) / 2;
+                const sy = (img.height - side) / 2;
+                ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+                canvas.toBlob(blob => {
+                    if (!blob) return reject(new Error("Canvas toBlob failed"));
+                    resolve(new File([blob], "avatar.jpg", { type: "image/jpeg" }));
+                }, "image/jpeg", 0.92);
+            };
+            img.onerror = reject;
+            img.src = url;
+        });
+    };
 
     useEffect(() => {
         if (!isLoaded) return;
@@ -143,14 +184,14 @@ export default function ReferrerProfilePage() {
                             <label className="block font-black text-zinc-700 mb-2" style={{ fontSize: '15px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                                 Professional Tagline
                             </label>
-                            <input
-                                type="text"
+                            <textarea
+                                rows={2}
                                 maxLength={120}
-                                placeholder="e.g. Property investor with a network of 200+ homeowners"
+                                placeholder="e.g. Property investor with a network of 200+ homeowners, landlords & renovators in Brisbane's south side"
                                 value={tagline}
                                 onChange={e => setTagline(e.target.value)}
-                                className="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 text-zinc-900 font-semibold"
-                                style={{ fontSize: '18px' }}
+                                className="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 text-zinc-900 font-semibold resize-none"
+                                style={{ fontSize: '18px', lineHeight: 1.5 }}
                             />
                             <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: '13px' }}>{tagline.length}/120 characters</p>
                         </div>
@@ -172,19 +213,57 @@ export default function ReferrerProfilePage() {
                             <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: '13px' }}>{bio.length}/500 characters</p>
                         </div>
 
-                        {/* Photo URL */}
+                        {/* Profile Photo Upload */}
                         <div>
                             <label className="block font-black text-zinc-700 mb-2" style={{ fontSize: '15px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                                Profile Photo URL
+                                Profile Photo
                             </label>
-                            <input
-                                type="url"
-                                placeholder="https://..."
-                                value={photoUrl}
-                                onChange={e => setPhotoUrl(e.target.value)}
-                                className="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 text-zinc-900 font-medium"
-                                style={{ fontSize: '18px' }}
-                            />
+                            <div className="flex items-center gap-4">
+                                {/* Avatar preview */}
+                                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-md" style={{ fontSize: '24px' }}>
+                                    {photoUrl ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={photoUrl} alt="" className="w-full h-full object-cover" />
+                                    ) : initials}
+                                </div>
+                                {/* Upload button */}
+                                <div className="flex-1 space-y-2">
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={e => {
+                                            const f = e.target.files?.[0];
+                                            if (f) handleImageUpload(f);
+                                        }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        disabled={uploading}
+                                        className="flex items-center gap-2 w-full h-11 px-4 bg-white border-2 border-dashed border-gray-300 hover:border-orange-400 hover:bg-orange-50 text-zinc-600 hover:text-orange-600 rounded-xl font-bold transition-all disabled:opacity-60"
+                                        style={{ fontSize: '15px' }}
+                                    >
+                                        {uploading ? (
+                                            <><div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" /> Uploading & resizing…</>
+                                        ) : (
+                                            <><Camera className="w-4 h-4" /> {photoUrl ? "Change Photo" : "Upload Photo"}</>
+                                        )}
+                                    </button>
+                                    {photoUrl && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setPhotoUrl("")}
+                                            className="text-zinc-400 hover:text-red-500 font-medium transition-colors"
+                                            style={{ fontSize: '13px' }}
+                                        >
+                                            Remove photo
+                                        </button>
+                                    )}
+                                    <p className="text-zinc-400 font-medium" style={{ fontSize: '12px' }}>JPG, PNG or WEBP · auto-cropped to square · max 5MB</p>
+                                </div>
+                            </div>
                         </div>
 
                         <button
