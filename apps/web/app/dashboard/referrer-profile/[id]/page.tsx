@@ -69,8 +69,9 @@ export default function ReferrerProfileViewPage() {
             value: profile.quality_score,
             suffix: "/100",
             desc: "Verified platform rating",
-            numClass: "text-orange-500",
+            numClass: "text-green-600",
             icon: CheckCircle,
+            highlight: true,
         },
         {
             label: "CONFIRMED LEADS",
@@ -79,6 +80,7 @@ export default function ReferrerProfileViewPage() {
             desc: "Successfully converted",
             numClass: "text-zinc-800",
             icon: TrendingUp,
+            highlight: false,
         },
         {
             label: "ACTIVE PARTNERSHIPS",
@@ -87,6 +89,7 @@ export default function ReferrerProfileViewPage() {
             desc: "Businesses currently linked",
             numClass: "text-zinc-800",
             icon: Briefcase,
+            highlight: false,
         },
         {
             label: "MEMBER SINCE",
@@ -95,6 +98,7 @@ export default function ReferrerProfileViewPage() {
             desc: "Year joined TradeRefer",
             numClass: "text-zinc-800",
             icon: CalendarDays,
+            highlight: false,
         },
     ];
 
@@ -103,13 +107,13 @@ export default function ReferrerProfileViewPage() {
             <div className="w-full px-12 pt-24 pb-24">
 
                 {/* ── BACK NAV ── */}
-                <button
-                    onClick={() => router.back()}
-                    className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-600 font-semibold transition-colors mb-14"
+                <Link
+                    href="/dashboard/referrer/manage"
+                    className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-800 font-semibold transition-colors mb-14 group"
                     style={{ fontSize: '14px' }}
                 >
-                    <ArrowLeft className="w-4 h-4" /> Back
-                </button>
+                    <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Manage
+                </Link>
 
                 {/* ── IDENTIFICATION HEADER ── */}
                 <div className="flex items-center gap-10 mb-14 flex-wrap">
@@ -165,15 +169,19 @@ export default function ReferrerProfileViewPage() {
                     {tiles.map((t, i) => (
                         <div
                             key={t.label}
-                            className={`bg-gray-50 px-10 py-10 flex flex-col${
+                            className={`px-10 py-10 flex flex-col${
                                 i < tiles.length - 1 ? " border-r border-gray-100" : ""
+                            } ${
+                                t.highlight
+                                    ? "bg-green-50"
+                                    : "bg-gray-50"
                             }`}
                         >
-                            <t.icon className="w-5 h-5 text-gray-300 mb-6" />
+                            <t.icon className={`w-5 h-5 mb-6 ${ t.highlight ? "text-green-400" : "text-gray-300" }`} />
                             <p className={`font-black leading-none ${t.numClass}`} style={{ fontSize: '48px' }}>
                                 {t.value}
                                 {t.suffix && (
-                                    <span className="text-gray-300 font-black" style={{ fontSize: '24px' }}>{t.suffix}</span>
+                                    <span className={`font-black ${ t.highlight ? "text-green-300" : "text-gray-300" }`} style={{ fontSize: '24px' }}>{t.suffix}</span>
                                 )}
                             </p>
                             <p className="font-bold text-gray-400 tracking-widest uppercase mt-5" style={{ fontSize: '14px' }}>
@@ -192,10 +200,7 @@ export default function ReferrerProfileViewPage() {
                         <h2 className="font-black text-zinc-900 mb-6" style={{ fontSize: '28px' }}>
                             Professional Summary
                         </h2>
-                        <p
-                            className="font-medium text-zinc-600 leading-relaxed"
-                            style={{ fontSize: '22px', lineHeight: 1.85, maxWidth: '1200px' }}
-                        >
+                        <p className="font-medium text-zinc-600 leading-relaxed max-w-4xl" style={{ fontSize: '22px', lineHeight: 1.85 }}>
                             {profile.profile_bio}
                         </p>
                     </div>

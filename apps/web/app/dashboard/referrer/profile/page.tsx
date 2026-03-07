@@ -213,10 +213,10 @@ export default function ReferrerProfilePage() {
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+                <div className="grid grid-cols-1 xl:grid-cols-5 gap-10 items-start">
 
                     {/* ── LEFT: EDIT FORM (40%) ── */}
-                    <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg shadow-zinc-100 p-7 space-y-5">
+                    <div className="xl:col-span-2 bg-white rounded-2xl shadow-lg shadow-zinc-100 p-8 space-y-6">
                         <div className="flex items-center gap-2 mb-2">
                             <Edit3 className="w-5 h-5 text-orange-500" />
                             <h2 className="font-black text-zinc-900" style={{ fontSize: '20px' }}>Edit Your Profile</h2>
@@ -348,7 +348,7 @@ export default function ReferrerProfilePage() {
                     </div>
 
                     {/* ── RIGHT: LIVE PREVIEW (60%) ── */}
-                    <div className="lg:col-span-3 space-y-4">
+                    <div className="xl:col-span-3 space-y-4">
                         <div className="flex items-center gap-2 px-1 mb-1">
                             <Eye className="w-4 h-4 text-zinc-400" />
                             <span className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '13px' }}>Live Preview — what businesses see on your sales page</span>
@@ -401,16 +401,16 @@ export default function ReferrerProfilePage() {
                             {/* Full-width 4-tile data row */}
                             <div className="grid grid-cols-4">
                                 {([
-                                    { label: "QUALITY SCORE",       value: profile.quality_score,       suffix: "/100", numClass: "text-orange-500", Icon: CheckCircle },
-                                    { label: "CONFIRMED LEADS",     value: profile.confirmed_referrals,  suffix: "",     numClass: "text-zinc-800",  Icon: TrendingUp },
-                                    { label: "ACTIVE PARTNERSHIPS", value: profile.businesses_linked,   suffix: "",     numClass: "text-zinc-800",  Icon: Briefcase },
-                                    { label: "MEMBER SINCE",        value: memberYear ?? "—",            suffix: "",     numClass: "text-zinc-800",  Icon: CalendarDays },
+                                    { label: "QUALITY SCORE",       value: profile.quality_score,       suffix: "/100", numClass: "text-green-600",  highlight: true,  Icon: CheckCircle },
+                                    { label: "CONFIRMED LEADS",     value: profile.confirmed_referrals,  suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: TrendingUp },
+                                    { label: "ACTIVE PARTNERSHIPS", value: profile.businesses_linked,   suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: Briefcase },
+                                    { label: "MEMBER SINCE",        value: memberYear ?? "—",            suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: CalendarDays },
                                 ] as const).map((t, i) => (
-                                    <div key={t.label} className={`bg-gray-50 px-6 py-6 flex flex-col${i < 3 ? " border-r border-gray-100" : ""}`}>
-                                        <t.Icon className="w-3.5 h-3.5 text-gray-300 mb-4" />
+                                    <div key={t.label} className={`px-6 py-6 flex flex-col${i < 3 ? " border-r border-gray-100" : ""} ${t.highlight ? "bg-green-50" : "bg-gray-50"}`}>
+                                        <t.Icon className={`w-3.5 h-3.5 mb-4 ${t.highlight ? "text-green-400" : "text-gray-300"}`} />
                                         <p className={`font-black leading-none ${t.numClass}`} style={{ fontSize: '28px' }}>
                                             {t.value}
-                                            {t.suffix && <span className="text-gray-300 font-black" style={{ fontSize: '14px' }}>{t.suffix}</span>}
+                                            {t.suffix && <span className={`font-black ${t.highlight ? "text-green-300" : "text-gray-300"}`} style={{ fontSize: '14px' }}>{t.suffix}</span>}
                                         </p>
                                         <p className="font-bold text-gray-400 tracking-widest uppercase mt-3" style={{ fontSize: '10px' }}>{t.label}</p>
                                     </div>
