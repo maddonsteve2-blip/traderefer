@@ -24,6 +24,80 @@ import { Logo } from "@/components/Logo";
 
 
 
+function useDbRoleStatus() {
+
+    const { getToken, isLoaded, userId } = useAuth();
+
+    const [roleStatus, setRoleStatus] = useState<{ hasBusiness: boolean; hasReferrer: boolean } | null>(null);
+
+    useEffect(() => {
+
+        if (!isLoaded || !userId) {
+
+            setRoleStatus(null);
+
+            return;
+
+        }
+
+
+
+        let cancelled = false;
+
+
+
+        getToken().then(async (token) => {
+
+            if (!token) return;
+
+            try {
+
+                const res = await fetch("/api/backend/auth/status", {
+
+                    headers: { Authorization: `Bearer ${token}` },
+
+                });
+
+                if (!res.ok) return;
+
+                const data = await res.json();
+
+                if (!cancelled) {
+
+                    setRoleStatus({
+
+                        hasBusiness: !!data.has_business,
+
+                        hasReferrer: !!data.has_referrer,
+
+                    });
+
+                }
+
+            } catch {
+
+            }
+
+        });
+
+
+
+        return () => {
+
+            cancelled = true;
+
+        };
+
+    }, [getToken, isLoaded, userId]);
+
+
+
+    return roleStatus;
+
+}
+
+
+
 function ProfileDropdown() {
 
     const { user } = useUser();
@@ -40,12 +114,14 @@ function ProfileDropdown() {
 
     const ref = useRef<HTMLDivElement>(null);
 
+    const dbRoleStatus = useDbRoleStatus();
+
     const roles = (user?.publicMetadata?.roles as string[] | undefined) ?? [];
     const role = user?.publicMetadata?.role as string | undefined;
     const effectiveRoles = roles.length > 0 ? roles : role ? [role] : [];
-    const isDual = effectiveRoles.includes("referrer") && effectiveRoles.includes("business");
-    const hasBusiness = effectiveRoles.includes("business");
-    const hasReferrer = effectiveRoles.includes("referrer");
+    const hasBusiness = dbRoleStatus?.hasBusiness ?? effectiveRoles.includes("business");
+    const hasReferrer = dbRoleStatus?.hasReferrer ?? effectiveRoles.includes("referrer");
+    const isDual = hasBusiness && hasReferrer;
 
 
 
@@ -257,10 +333,13 @@ function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { i
     const { user } = useUser();
     const [open, setOpen] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
+    const dbRoleStatus = useDbRoleStatus();
     const roles = (user?.publicMetadata?.roles as string[] | undefined) ?? [];
     const role = user?.publicMetadata?.role as string | undefined;
     const effectiveRoles = roles.length > 0 ? roles : role ? [role] : [];
-    const isDual = effectiveRoles.includes("referrer") && effectiveRoles.includes("business");
+    const hasBusiness = dbRoleStatus?.hasBusiness ?? effectiveRoles.includes("business");
+    const hasReferrer = dbRoleStatus?.hasReferrer ?? effectiveRoles.includes("referrer");
+    const isDual = hasBusiness && hasReferrer;
     const currentMode = isBusinessDashboard ? "business" : isReferrerDashboard ? "referrer" : null;
 
     useEffect(() => {
@@ -438,6 +517,46 @@ export function Navbar() {
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
 
     const isReferrerDashboard = pathname?.startsWith("/dashboard/referrer");
+
+    const [currentSearch, setCurrentSearch] = useState("");
+
+    useEffect(() => {
+
+        if (typeof window === "undefined") return;
+
+        setCurrentSearch(window.location.search);
+
+    }, [pathname]);
+
+    const currentParams = new URLSearchParams(currentSearch);
+
+    const businessForceTab = isBusinessDashboard && pathname?.startsWith("/dashboard/business/force")
+        ? (currentParams.get("tab") ?? "partners")
+        : null;
+
+    const businessSalesTab = isBusinessDashboard && pathname?.startsWith("/dashboard/business/sales")
+        ? (currentParams.get("tab") ?? "leads")
+        : null;
+
+    const isBusinessOverview = pathname === "/dashboard/business";
+
+    const isBusinessLeads = pathname === "/dashboard/business/leads"
+        || (pathname?.startsWith("/dashboard/business/sales") && businessSalesTab === "leads");
+
+    const isBusinessMessages = pathname === "/dashboard/business/messages";
+
+    const isBusinessReferralForce = pathname?.startsWith("/dashboard/business/referrers")
+        || pathname?.startsWith("/dashboard/business/team")
+        || pathname?.startsWith("/dashboard/business/force") && businessForceTab === "partners";
+
+    const isBusinessApplications = pathname?.startsWith("/dashboard/business/applications")
+        || pathname?.startsWith("/dashboard/business/force") && businessForceTab === "applications";
+
+    const isBusinessDeals = pathname === "/dashboard/business/deals"
+        || (pathname?.startsWith("/dashboard/business/sales") && businessSalesTab === "offers");
+
+    const isBusinessCampaigns = pathname === "/dashboard/business/campaigns"
+        || (pathname?.startsWith("/dashboard/business/sales") && businessSalesTab === "promotions");
 
     const { getToken, isSignedIn, isLoaded } = useAuth();
 
@@ -632,9 +751,9 @@ export function Navbar() {
 
                                                 {/* Core nav â€” 5 items max */}
 
-                                                <Link href="/dashboard/business/leads" className="hidden sm:block">
+                                                <Link href="/dashboard/business/sales?tab=leads" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/leads" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${isBusinessLeads ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Leads
 
@@ -644,7 +763,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business/messages" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/messages" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${isBusinessMessages ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Messages
 
@@ -652,9 +771,9 @@ export function Navbar() {
 
                                                 </Link>
 
-                                                <Link href="/dashboard/business/team" className="hidden sm:block">
+                                                <Link href="/dashboard/business/force?tab=partners" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname?.startsWith("/dashboard/business/team") ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${isBusinessReferralForce ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Referral Force
 
@@ -662,19 +781,9 @@ export function Navbar() {
 
                                                 </Link>
 
-                                                <Link href="/dashboard/business/referrers" className="hidden sm:block">
+                                                <Link href="/dashboard/business/force?tab=applications" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/referrers" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
-
-                                                        Referrers
-
-                                                    </Button>
-
-                                                </Link>
-
-                                                <Link href="/dashboard/business/applications" className="hidden sm:block">
-
-                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname?.startsWith("/dashboard/business/applications") ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${isBusinessApplications ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Applications
 
@@ -682,9 +791,9 @@ export function Navbar() {
 
                                                 </Link>
 
-                                                <Link href="/dashboard/business/deals" className="hidden sm:block">
+                                                <Link href="/dashboard/business/sales?tab=offers" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/deals" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${isBusinessDeals ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Deals
 
@@ -692,9 +801,9 @@ export function Navbar() {
 
                                                 </Link>
 
-                                                <Link href="/dashboard/business/campaigns" className="hidden sm:block">
+                                                <Link href="/dashboard/business/sales?tab=promotions" className="hidden sm:block">
 
-                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${pathname === "/dashboard/business/campaigns" ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
+                                                    <Button variant="ghost" className={`text-base font-bold px-3 transition-colors ${isBusinessCampaigns ? "text-orange-600 bg-orange-50" : "text-zinc-600 hover:text-orange-600"}`}>
 
                                                         Campaigns
 
@@ -704,7 +813,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business" className="hidden sm:block ml-1">
 
-                                                    <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-5 font-bold text-base shadow-sm">
+                                                    <Button variant={isBusinessOverview ? "default" : "ghost"} className={isBusinessOverview ? "bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-5 font-bold text-base shadow-sm" : "text-base font-bold px-3 transition-colors text-zinc-600 hover:text-orange-600"}>
 
                                                         Dashboard
 
@@ -908,16 +1017,16 @@ export function Navbar() {
                                 <nav className="space-y-1">
                                     {[
                                         { href: "/dashboard/business", label: "Overview" },
-                                        { href: "/dashboard/business/leads", label: "Leads" },
-                                        { href: "/dashboard/business/messages", label: "Messages" },
-                                        { href: "/dashboard/business/referrers", label: "Referrers" },
-                                        { href: "/dashboard/business/applications", label: "Applications" },
-                                        { href: "/dashboard/business/deals", label: "Deals" },
-                                        { href: "/dashboard/business/campaigns", label: "Campaigns" },
-                                        { href: "/dashboard/business/analytics", label: "Analytics" },
-                                    ].map(({ href, label }) => (
+                                        { href: "/dashboard/business/sales?tab=leads", label: "Leads", active: isBusinessLeads },
+                                        { href: "/dashboard/business/messages", label: "Messages", active: isBusinessMessages },
+                                        { href: "/dashboard/business/force?tab=partners", label: "Referral Force", active: isBusinessReferralForce },
+                                        { href: "/dashboard/business/force?tab=applications", label: "Applications", active: isBusinessApplications },
+                                        { href: "/dashboard/business/sales?tab=offers", label: "Deals", active: isBusinessDeals },
+                                        { href: "/dashboard/business/sales?tab=promotions", label: "Campaigns", active: isBusinessCampaigns },
+                                        { href: "/dashboard/business/analytics", label: "Analytics", active: pathname === "/dashboard/business/analytics" },
+                                    ].map(({ href, label, active }) => (
                                         <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
-                                            className={`flex items-center px-4 py-4 rounded-xl font-bold transition-colors ${pathname === href ? 'bg-orange-50 text-[#FF6600]' : 'text-zinc-700 hover:bg-orange-50 hover:text-[#FF6600]'}`}
+                                            className={`flex items-center px-4 py-4 rounded-xl font-bold transition-colors ${active ?? pathname === href ? 'bg-orange-50 text-[#FF6600]' : 'text-zinc-700 hover:bg-orange-50 hover:text-[#FF6600]'}`}
                                             style={{ fontSize: '18px' }}>
                                             {label}
                                         </Link>

@@ -1,9 +1,9 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { ArrowLeftRight, Building2, Rocket } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
     currentRole: "business" | "referrer";
@@ -11,13 +11,50 @@ interface Props {
 
 export function SidebarRoleSwitcher({ currentRole }: Props) {
     const { user } = useUser();
+    const { getToken, isLoaded, userId } = useAuth();
     const router = useRouter();
     const [fading, setFading] = useState(false);
+    const [dbRoleStatus, setDbRoleStatus] = useState<{ hasBusiness: boolean; hasReferrer: boolean } | null>(null);
+
+    useEffect(() => {
+        if (!isLoaded || !userId) {
+            setDbRoleStatus(null);
+            return;
+        }
+
+        let cancelled = false;
+
+        getToken().then(async (token) => {
+            if (!token) return;
+
+            try {
+                const res = await fetch("/api/backend/auth/status", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                if (!res.ok) return;
+
+                const data = await res.json();
+                if (!cancelled) {
+                    setDbRoleStatus({
+                        hasBusiness: !!data.has_business,
+                        hasReferrer: !!data.has_referrer,
+                    });
+                }
+            } catch {
+            }
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [getToken, isLoaded, userId]);
 
     const roles = (user?.publicMetadata?.roles as string[] | undefined) ?? [];
     const role = user?.publicMetadata?.role as string | undefined;
     const effectiveRoles = roles.length > 0 ? roles : role ? [role] : [];
-    const isDual = effectiveRoles.includes("referrer") && effectiveRoles.includes("business");
+    const hasBusiness = dbRoleStatus?.hasBusiness ?? effectiveRoles.includes("business");
+    const hasReferrer = dbRoleStatus?.hasReferrer ?? effectiveRoles.includes("referrer");
+    const isDual = hasBusiness && hasReferrer;
 
     const targetHref = currentRole === "business" ? "/dashboard/referrer" : "/dashboard/business";
     const targetLabel = currentRole === "business" ? "Referrer" : "Business";

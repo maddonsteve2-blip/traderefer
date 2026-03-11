@@ -8,9 +8,9 @@ import { ForceApplicationsPane } from "@/components/business/ForceApplicationsPa
 import { ForceConfigPane } from "@/components/business/ForceConfigPane";
 
 const TABS = [
-    { key: "partners", label: "Active Force" },
-    { key: "applications", label: "Review Queue" },
-    { key: "config", label: "Config" },
+    { key: "partners", label: "Active Referrers" },
+    { key: "applications", label: "Applications" },
+    { key: "config", label: "Program Settings" },
 ];
 
 function ForceHubInner() {

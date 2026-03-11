@@ -65,9 +65,9 @@ export function ForceConfigPane() {
             <div className="max-w-lg mx-auto space-y-6">
 
                 <div>
-                    <h2 className="font-black text-zinc-900 mb-1" style={{ fontSize: 24 }}>Force Config</h2>
+                    <h2 className="font-black text-zinc-900 mb-1" style={{ fontSize: 24 }}>Referral Program Settings</h2>
                     <p className="text-zinc-500 font-medium" style={{ fontSize: 16 }}>
-                        Set your default lead fee and reward triggers for your Referral Force.
+                        Set the default lead fee, rewards, and invite link for your referrer program.
                     </p>
                 </div>
 
@@ -96,7 +96,7 @@ export function ForceConfigPane() {
                         />
                     </div>
                     <p className="text-zinc-400 font-medium mt-3" style={{ fontSize: 14 }}>
-                        Individual partners can have a custom fee set in the Active Force tab.
+                        Each approved referrer can have a custom fee set in the Active Referrers tab.
                     </p>
                 </div>
 
@@ -143,7 +143,7 @@ export function ForceConfigPane() {
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6">
                     <h3 className="font-black text-zinc-900 mb-1" style={{ fontSize: 18 }}>Your Referrer Invite Link</h3>
                     <p className="text-zinc-400 font-medium mb-3" style={{ fontSize: 14 }}>
-                        Share this with anyone you want to recruit as a referrer partner.
+                        Share this with anyone you want to invite to apply as a referrer.
                     </p>
                     <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all" style={{ fontSize: 14 }}>
                         traderefer.au/register?ref={slug}&amp;type=referrer
