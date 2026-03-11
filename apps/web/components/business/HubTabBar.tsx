@@ -14,7 +14,7 @@ interface HubTabBarProps {
 
 export function HubTabBar({ tabs, active, onChange }: HubTabBarProps) {
     return (
-        <div className="sticky top-[72px] z-20 shrink-0 border-b border-zinc-200 bg-white">
+        <div className="sticky top-[72px] md:static z-20 shrink-0 border-b border-zinc-200 bg-white">
             <div className="flex overflow-x-auto px-3 md:px-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {tabs.map(tab => (
                     <button
