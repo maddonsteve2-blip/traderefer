@@ -54,18 +54,25 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
     const router = useRouter();
     const [apps, setApps] = useState<PendingApp[]>([]);
     const [loading, setLoading] = useState(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchApps = useCallback(async () => {
-        const token = await getToken();
-        const res = await fetch(`${apiUrl}/applications/business/pending`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-            const d = await res.json();
-            setApps((d.applications ?? []).slice(0, 3));
+        try {
+            const token = await getToken();
+            const res = await fetch(`${apiUrl}/applications/business/pending`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                const d = await res.json();
+                setApps((d.applications ?? []).slice(0, 3));
+            } else {
+                setApps([]);
+            }
+        } catch {
+            setApps([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }, [getToken, apiUrl]);
 
     useEffect(() => { if (isLoaded) fetchApps(); }, [isLoaded, fetchApps]);
@@ -202,18 +209,25 @@ export function PartnerLeaderboard() {
     const router = useRouter();
     const [referrers, setReferrers] = useState<TopReferrer[]>([]);
     const [loading, setLoading] = useState(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchReferrers = useCallback(async () => {
-        const token = await getToken();
-        const res = await fetch(`${apiUrl}/business/me/referrers?sort_by=leads_created&sort_dir=desc`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-            const d = await res.json();
-            setReferrers((d.referrers ?? []).slice(0, 5));
+        try {
+            const token = await getToken();
+            const res = await fetch(`${apiUrl}/business/me/referrers?sort_by=leads_created&sort_dir=desc`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                const d = await res.json();
+                setReferrers((d.referrers ?? []).slice(0, 5));
+            } else {
+                setReferrers([]);
+            }
+        } catch {
+            setReferrers([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }, [getToken, apiUrl]);
 
     useEffect(() => { if (isLoaded) fetchReferrers(); }, [isLoaded, fetchReferrers]);

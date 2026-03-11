@@ -56,12 +56,12 @@ export function EarningsDashboard() {
     const [loading, setLoading] = useState(true);
     const [editingGoal, setEditingGoal] = useState(false);
     const [goalInput, setGoalInput] = useState("");
+    const apiUrl = "/api/backend";
 
     useEffect(() => {
         (async () => {
             try {
                 const token = await getToken();
-                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
                 const res = await fetch(`${apiUrl}/referrer/stats`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -85,7 +85,6 @@ export function EarningsDashboard() {
         if (isNaN(val) || val < 0) { toast.error("Enter a valid amount"); return; }
         try {
             const token = await getToken();
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
             await fetch(`${apiUrl}/referrer/goal`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

@@ -431,6 +431,8 @@ export function Navbar() {
 
     const pathname = usePathname();
 
+    const apiUrl = "/api/backend";
+
     const isDashboard = pathname?.startsWith("/dashboard") || pathname?.startsWith("/b/");
 
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
@@ -453,7 +455,7 @@ export function Navbar() {
 
             const token = await getToken();
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/me`, {
+            const res = await fetch(`${apiUrl}/business/me`, {
 
                 headers: { Authorization: `Bearer ${token}` },
 

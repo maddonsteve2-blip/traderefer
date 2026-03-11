@@ -5,7 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { BusinessInviteDialog } from "@/components/business/BusinessInviteDialog";
 import { ReferralRewardsCard } from "@/components/shared/ReferralRewardsCard";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API = "/api/backend";
 
 interface Progress {
     active_invitees: number;

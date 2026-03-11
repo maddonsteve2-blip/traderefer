@@ -31,7 +31,7 @@ export function MyTradesTeam() {
     const [loading, setLoading] = useState(true);
     const [referrerId, setReferrerId] = useState<string | null>(null);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchTeam = useCallback(async () => {
         try {

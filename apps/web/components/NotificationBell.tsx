@@ -50,7 +50,7 @@ export function NotificationBell() {
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     useEffect(() => {
         if (!isSignedIn) return;

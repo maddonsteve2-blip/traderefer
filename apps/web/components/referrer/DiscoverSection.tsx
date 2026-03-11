@@ -67,7 +67,7 @@ export function DiscoverSection() {
     const [state, setRefState] = useState<string | null>(null);
 
     const { getToken, isSignedIn } = useAuth();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     useEffect(() => {
         if (!isSignedIn) return;
