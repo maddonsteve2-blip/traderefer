@@ -65,25 +65,25 @@ export default async function BusinessDashboardPage() {
     const greeting = new Date().getHours() < 12 ? "Good morning" : new Date().getHours() < 17 ? "Good afternoon" : "Good evening";
 
     return (
-        <div className="h-screen pt-[72px] md:pt-[100px] flex flex-col overflow-hidden bg-zinc-50">
+        <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] flex flex-col bg-zinc-50 lg:h-screen lg:overflow-hidden">
             <BusinessWelcomeDialog />
 
-            <div className="w-full flex-1 overflow-hidden px-3 lg:px-5 py-5">
+            <div className="w-full flex-1 px-3 lg:px-5 py-4 md:py-5">
 
-                <div className="grid h-full grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start lg:h-full">
 
                     {/* ── LEFT MAIN (9/12, independent scroll) ── */}
-                    <div className="lg:col-span-9 min-w-0 overflow-y-auto pb-8 space-y-4 pr-4 lg:pr-5">
+                    <div className="lg:col-span-9 min-w-0 space-y-4 pb-4 lg:pb-8 lg:min-h-0 lg:overflow-y-auto lg:pr-5">
 
                         {/* Header */}
-                        <div className="flex items-center justify-between gap-4 mb-6">
-                            <div className="flex items-center gap-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 md:mb-6">
+                            <div className="flex items-start gap-3 min-w-0">
                                 <div className="w-10 h-10 bg-orange-100 rounded-2xl flex items-center justify-center shrink-0">
                                     <User className="w-5 h-5 text-orange-600" />
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <h1 className="font-black text-zinc-900 leading-none" style={{ fontSize: 24 }}>
+                                <div className="min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <h1 className="font-black text-zinc-900 leading-tight break-words" style={{ fontSize: 24 }}>
                                             {greeting}, {business.name}
                                         </h1>
                                         <span className="text-[10px] font-bold bg-slate-800 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">
@@ -98,14 +98,14 @@ export default async function BusinessDashboardPage() {
                                     </p>
                                 </div>
                             </div>
-                            <Button asChild variant="outline" className="rounded-full px-5 border-zinc-200 h-9 font-bold text-zinc-600 hover:text-orange-600 transition-all hidden sm:flex" style={{ fontSize: 14 }}>
+                            <Button asChild variant="outline" className="rounded-full px-5 border-zinc-200 h-10 font-bold text-zinc-600 hover:text-orange-600 transition-all w-full sm:w-auto justify-center" style={{ fontSize: 14 }}>
                                 <Link href={`/b/${business.slug}`} target="_blank">View Live Profile</Link>
                             </Button>
                         </div>
 
                         {/* Wallet warning */}
                         {walletCents < 2500 && (
-                            <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-4">
+                            <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex flex-col sm:flex-row sm:items-center gap-4">
                                 <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
                                 <div className="flex-1">
                                     <p className="font-bold text-red-700" style={{ fontSize: 14 }}>Wallet below minimum — top up to unlock leads</p>
@@ -148,7 +148,7 @@ export default async function BusinessDashboardPage() {
                     </div>
 
                     {/* ── RIGHT SIDEBAR (3/12, independent scroll) ── */}
-                    <aside className="lg:col-span-3 overflow-y-auto pb-8 bg-slate-50 rounded-l-2xl">
+                    <aside className="lg:col-span-3 bg-slate-50 rounded-2xl lg:rounded-l-2xl pb-4 lg:pb-8 lg:min-h-0 lg:overflow-y-auto">
                         <BusinessSidebar
                             slug={business.slug}
                             businessName={business.name}

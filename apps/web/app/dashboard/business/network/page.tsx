@@ -127,25 +127,27 @@ export default function BusinessNetworkPage() {
 
     if (loading) {
         return (
-            <div className="max-w-4xl mx-auto py-16 px-4">
+            <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+                <div className="max-w-4xl mx-auto py-10 md:py-16 px-4">
                 <div className="animate-pulse space-y-6">
                     <div className="h-8 bg-zinc-100 rounded w-64" />
                     <div className="h-40 bg-zinc-50 rounded-2xl" />
+                </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-16">
-        <div className="max-w-4xl mx-auto py-10 px-4 space-y-8">
+        <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+        <div className="max-w-4xl mx-auto py-6 md:py-10 px-4 space-y-8">
             <div>
-                <h1 className="text-3xl font-black text-zinc-900 tracking-tight">My Network</h1>
+                <h1 className="text-2xl md:text-3xl font-black text-zinc-900 tracking-tight">My Network</h1>
                 <p className="text-zinc-500 mt-1">Recommend other tradies and grow together. When you recommend a business, it shows on their profile as social proof.</p>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
                 <button onClick={() => setTab("network")} className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${tab === "network" ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}>
                     <Users className="w-4 h-4 inline mr-1.5" /> My Network ({given.length + received.length})
                 </button>
@@ -243,10 +245,10 @@ export default function BusinessNetworkPage() {
                         </div>
 
                         {lastInviteUrl && (
-                            <div className="mt-4 flex items-center gap-2 bg-white/10 rounded-xl p-3">
+                            <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-2 bg-white/10 rounded-xl p-3">
                                 <LinkIcon className="w-4 h-4 text-orange-200 flex-shrink-0" />
                                 <span className="text-sm font-medium text-orange-100 truncate flex-1">{lastInviteUrl}</span>
-                                <button onClick={copyInviteUrl} className="text-white hover:text-orange-200 transition-colors">
+                                <button onClick={copyInviteUrl} className="self-end sm:self-auto text-white hover:text-orange-200 transition-colors">
                                     <Copy className="w-4 h-4" />
                                 </button>
                             </div>
@@ -258,12 +260,12 @@ export default function BusinessNetworkPage() {
                             <h3 className="font-bold text-zinc-900 mb-3">Sent Invites</h3>
                             <div className="space-y-2">
                                 {invites.map(inv => (
-                                    <div key={inv.invite_code} className="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-100">
-                                        <div>
+                                    <div key={inv.invite_code} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-100">
+                                        <div className="min-w-0">
                                             <div className="font-bold text-zinc-900 text-sm">{inv.invite_name}</div>
-                                            <div className="text-xs text-zinc-400">{inv.invite_email} · {inv.invite_trade || "Any trade"}</div>
+                                            <div className="text-xs text-zinc-400 break-words">{inv.invite_email} · {inv.invite_trade || "Any trade"}</div>
                                         </div>
-                                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                                        <span className={`text-xs font-bold px-3 py-1 rounded-full self-start sm:self-auto ${
                                             inv.status === "accepted" ? "bg-green-50 text-green-700" : "bg-yellow-50 text-yellow-700"
                                         }`}>
                                             {inv.status}

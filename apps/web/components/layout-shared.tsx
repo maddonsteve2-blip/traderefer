@@ -17,7 +17,6 @@ import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, Chevro
 import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
 import { TopUpDialog } from "@/components/dashboard/TopUpDialog";
-import { PeekingRoleDrawer } from "@/components/dashboard/RoleDrawer";
 
 import { NotificationBell } from "@/components/NotificationBell";
 
@@ -257,88 +256,98 @@ function DualRoleSwitcher({ isBusinessDashboard, isReferrerDashboard }: { isBusi
 function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { isBusinessDashboard: boolean; isReferrerDashboard: boolean }) {
     const { user } = useUser();
     const [open, setOpen] = useState(false);
+    const panelRef = useRef<HTMLDivElement>(null);
     const roles = (user?.publicMetadata?.roles as string[] | undefined) ?? [];
     const role = user?.publicMetadata?.role as string | undefined;
     const effectiveRoles = roles.length > 0 ? roles : role ? [role] : [];
     const isDual = effectiveRoles.includes("referrer") && effectiveRoles.includes("business");
+    const currentMode = isBusinessDashboard ? "business" : isReferrerDashboard ? "referrer" : null;
 
-    if (!isBusinessDashboard && !isReferrerDashboard) return null;
+    useEffect(() => {
+        if (!open) return;
 
-    if (isDual) {
-        const href = isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business";
-        const label = isBusinessDashboard ? "Referrer" : "Business";
-        return (
-            <div className="flex flex-1 min-w-0 justify-center">
-                <Link
-                    href={href}
-                    className="inline-flex md:hidden items-center gap-1.5 px-3 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-black transition-all text-xs max-w-full whitespace-nowrap"
-                >
-                    <ArrowLeftRight className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">Switch to {label}</span>
-                </Link>
-                <Link
-                    href={href}
-                    className="hidden md:inline-flex items-center gap-2 px-5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-bold transition-all"
-                    style={{ fontSize: '14px' }}
-                >
-                    <ArrowLeftRight className="w-4 h-4" />
-                    Switch to {label} Dashboard
-                </Link>
-            </div>
-        );
-    }
+        const handlePointerDown = (event: MouseEvent) => {
+            if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+                setOpen(false);
+            }
+        };
 
-    if (isBusinessDashboard) {
-        return (
-            <div className="flex flex-1 min-w-0 justify-center">
-                <>
-                    <button
-                        onClick={() => setOpen(true)}
-                        className="inline-flex md:hidden items-center gap-1.5 px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black transition-all text-xs max-w-full whitespace-nowrap shadow-md shadow-orange-200"
-                    >
-                        <Rocket className="w-3.5 h-3.5 shrink-0" />
-                        <span className="truncate">Referrer Mode</span>
-                    </button>
-                    <button
-                        onClick={() => setOpen(true)}
-                        className="hidden md:inline-flex items-center gap-2 px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black transition-all shadow-md shadow-orange-200"
-                        style={{ fontSize: '14px' }}
-                    >
-                        <Rocket className="w-4 h-4" />
-                        Become a Referrer
-                    </button>
-                    {open && <BecomeReferrerModal onClose={() => setOpen(false)} />}
-                </>
-            </div>
-        );
-    }
+        document.addEventListener("mousedown", handlePointerDown);
+        return () => document.removeEventListener("mousedown", handlePointerDown);
+    }, [open]);
 
-    if (isReferrerDashboard) {
-        return (
-            <div className="flex flex-1 min-w-0 justify-center">
-                <>
-                    <button
-                        onClick={() => setOpen(true)}
-                        className="inline-flex md:hidden items-center gap-1.5 px-3 py-2 bg-zinc-900 hover:bg-black text-white rounded-full font-black transition-all text-xs max-w-full whitespace-nowrap shadow-md"
-                    >
-                        <Building2 className="w-3.5 h-3.5 shrink-0" />
-                        <span className="truncate">Business Mode</span>
-                    </button>
-                    <button
-                        onClick={() => setOpen(true)}
-                        className="hidden md:inline-flex items-center gap-2 px-5 py-2 bg-zinc-900 hover:bg-black text-white rounded-full font-black transition-all shadow-md"
-                        style={{ fontSize: '14px' }}
-                    >
-                        <Building2 className="w-4 h-4" />
-                        Register Your Business
-                    </button>
-                    {open && <RegisterBusinessModal onClose={() => setOpen(false)} />}
-                </>
-            </div>
-        );
-    }
+    if (!currentMode) return null;
 
-    return null;
+    const CurrentIcon = currentMode === "business" ? Building2 : Rocket;
+    const currentLabel = currentMode === "business" ? "Business" : "Referrer";
+    const switchHref = currentMode === "business" ? "/dashboard/referrer" : "/dashboard/business";
+    const switchLabel = currentMode === "business" ? "Referrer" : "Business";
+    const SwitchIcon = currentMode === "business" ? Rocket : Building2;
+    const activateHref = currentMode === "business" ? "/onboarding/referrer" : "/onboarding/business";
+    const activateLabel = currentMode === "business" ? "Add Referrer Dashboard" : "Add Business Dashboard";
+    const activateDescription = currentMode === "business"
+        ? "Create a referrer profile so you can flip between both dashboards."
+        : "Create a business profile so you can flip between both dashboards.";
+    const buttonClasses = currentMode === "business"
+        ? "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100"
+        : "border-zinc-200 bg-zinc-100 text-zinc-800 hover:bg-zinc-200";
+
+    return (
+        <div ref={panelRef} className="relative flex flex-1 min-w-0 justify-center">
+            <button
+                onClick={() => setOpen(value => !value)}
+                className={`inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-2 md:px-4 md:py-2.5 font-black transition-all shadow-sm ${buttonClasses}`}
+            >
+                <CurrentIcon className="w-4 h-4 shrink-0" />
+                <span className="truncate text-xs md:text-sm">{currentLabel} Dashboard</span>
+                <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+            </button>
+
+            {open && (
+                <div className="absolute top-full mt-2 w-[min(22rem,calc(100vw-2rem))] max-w-[22rem] overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl shadow-zinc-200/60 z-50">
+                    <div className="border-b border-zinc-100 px-4 py-3">
+                        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400">Dashboard Mode</p>
+                        <div className="mt-2 flex items-center gap-2 text-zinc-900">
+                            <CurrentIcon className="w-4 h-4" />
+                            <span className="font-black text-sm">{currentLabel} Dashboard</span>
+                        </div>
+                    </div>
+
+                    <div className="p-2">
+                        {isDual ? (
+                            <Link
+                                href={switchHref}
+                                onClick={() => setOpen(false)}
+                                className="flex items-start gap-3 rounded-xl px-3 py-3 text-left text-zinc-700 hover:bg-zinc-50 transition-colors"
+                            >
+                                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-100">
+                                    <ArrowLeftRight className="w-4 h-4 text-zinc-600" />
+                                </div>
+                                <div>
+                                    <p className="font-black text-sm text-zinc-900">Switch to {switchLabel} Dashboard</p>
+                                    <p className="text-xs font-medium text-zinc-500">Move between your two workspaces from the same menu.</p>
+                                </div>
+                            </Link>
+                        ) : (
+                            <Link
+                                href={activateHref}
+                                onClick={() => setOpen(false)}
+                                className="flex items-start gap-3 rounded-xl px-3 py-3 text-left text-zinc-700 hover:bg-zinc-50 transition-colors"
+                            >
+                                <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-50">
+                                    <SwitchIcon className="w-4 h-4 text-orange-600" />
+                                </div>
+                                <div>
+                                    <p className="font-black text-sm text-zinc-900">{activateLabel}</p>
+                                    <p className="text-xs font-medium text-zinc-500">{activateDescription}</p>
+                                </div>
+                            </Link>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }
 
 function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
@@ -515,9 +524,6 @@ export function Navbar() {
                             <SmartSearch variant="navbar" />
                         </div>
                     )}
-
-                    {/* â”€â”€ PEEKING ROLE DRAWER (self-contained, portal-rendered) â”€â”€ */}
-                    {isDashboard && <SignedIn><PeekingRoleDrawer /></SignedIn>}
 
                     {isDashboard && (
                         <SignedIn>

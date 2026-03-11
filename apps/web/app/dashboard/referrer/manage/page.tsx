@@ -413,7 +413,7 @@ export default function ReferrerManagePage() {
 
     // ── MAIN LAYOUT ──────────────────────────────────────────────────────────
     return (
-        <div className="fixed inset-0 top-[72px] md:top-[100px] lg:right-12 flex flex-col overflow-hidden bg-white">
+        <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] flex flex-col bg-white lg:h-screen lg:overflow-hidden">
             {/* ── MOBILE: Horizontal chip scroll ── */}
             <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
                 {links.map(link => (
@@ -443,7 +443,7 @@ export default function ReferrerManagePage() {
             </div>
 
             {/* ── DESKTOP: Full-width 2-col layout ── */}
-            <div className="flex-1 flex min-h-0 overflow-hidden flex-col md:flex-row">
+            <div className="flex-1 flex min-h-0 flex-col md:flex-row lg:overflow-hidden">
 
                 {/* ── SIDEBAR ── */}
                 <aside className="hidden md:flex flex-col w-[26%] bg-gray-50 shrink-0 overflow-hidden" style={{ boxShadow: "4px 0 20px rgba(0,0,0,0.05)", scrollbarGutter: "stable" }}>
@@ -482,7 +482,7 @@ export default function ReferrerManagePage() {
                 </aside>
 
                 {/* ── MAIN STAGE ── */}
-                <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
+                <main className="flex-1 flex flex-col min-h-0 bg-white md:overflow-hidden">
 
                     {/* ══ APPROVED WORKSTATION ══ */}
                     {approvedSelected && (() => {

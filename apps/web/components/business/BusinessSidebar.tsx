@@ -45,7 +45,7 @@ export function BusinessSidebar({ slug, businessName, hasReferrer }: BusinessSid
                         traderefer.au/b/{slug}
                     </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                     <button
                         onClick={() => copy("storefront", storefrontUrl)}
                         className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white rounded-xl py-2.5 font-bold transition-all border border-white/10"
@@ -60,7 +60,7 @@ export function BusinessSidebar({ slug, businessName, hasReferrer }: BusinessSid
                         href={storefrontUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white rounded-xl px-4 py-2.5 font-bold transition-all border border-white/10"
+                        className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white rounded-xl px-4 py-2.5 font-bold transition-all border border-white/10 min-h-[42px]"
                         style={{ fontSize: 14 }}
                     >
                         <ExternalLink className="w-4 h-4" />

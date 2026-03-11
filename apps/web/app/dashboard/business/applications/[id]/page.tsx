@@ -110,8 +110,10 @@ export default function BusinessApplicationDetailPage() {
 
     if (loading || !app) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] bg-zinc-50">
+                <div className="min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-100px)] flex items-center justify-center">
+                    <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+                </div>
             </div>
         );
     }
@@ -122,16 +124,16 @@ export default function BusinessApplicationDetailPage() {
     const memberYear = ref.member_since ? new Date(ref.member_since).getFullYear() : null;
 
     return (
-        <div className="min-h-screen bg-zinc-50">
-            <div className="w-full px-6 py-6 max-w-4xl mx-auto">
+        <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+            <div className="w-full px-4 md:px-6 py-4 md:py-6 max-w-4xl mx-auto">
 
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-6">
                     <Link href="/dashboard/business/applications" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '16px' }}>
                         <ArrowLeft className="w-4 h-4" /> Applications
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-bold truncate max-w-[200px]" style={{ fontSize: '16px' }}>{ref.full_name}</span>
+                    <span className="text-zinc-700 font-bold truncate max-w-full sm:max-w-[200px]" style={{ fontSize: '16px' }}>{ref.full_name}</span>
                 </div>
 
                 {/* Reminder banner */}
@@ -170,7 +172,7 @@ export default function BusinessApplicationDetailPage() {
 
                         {/* Hero card */}
                         <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-                            <div className="flex items-start gap-4 mb-5">
+                            <div className="flex flex-col sm:flex-row items-start gap-4 mb-5">
                                 <div className="w-20 h-20 rounded-2xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden" style={{ fontSize: '26px' }}>
                                     {ref.profile_photo_url ? (
                                         // eslint-disable-next-line @next/next/no-img-element

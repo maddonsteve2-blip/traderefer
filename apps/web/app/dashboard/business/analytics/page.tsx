@@ -112,10 +112,10 @@ export default function AnalyticsPage() {
     if (!data) return null;
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-16">
-            <div className="max-w-[1024px] mx-auto px-6 lg:px-0 py-12">
-                <div className="mb-10">
-                    <h1 className="text-4xl font-extrabold text-zinc-900 tracking-tight">Referrer Analytics</h1>
+        <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+            <div className="max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
+                <div className="mb-8 md:mb-10">
+                    <h1 className="text-3xl md:text-4xl font-extrabold text-zinc-900 tracking-tight">Referrer Analytics</h1>
                     <p className="text-zinc-500 text-lg mt-1">Track referrer performance, campaign ROI, and cost per customer</p>
                 </div>
 

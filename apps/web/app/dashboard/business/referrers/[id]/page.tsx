@@ -177,8 +177,8 @@ export default function ReferrerDetailPage() {
 
     if (loading || !referrer) {
         return (
-            <div className="min-h-screen bg-zinc-50 pt-16 flex items-center justify-center">
-                <div className="animate-pulse text-zinc-400 font-medium">Loading referrer details…</div>
+            <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px] flex items-center justify-center px-4">
+                <div className="animate-pulse text-zinc-400 font-medium text-center">Loading referrer details…</div>
             </div>
         );
     }
@@ -186,24 +186,26 @@ export default function ReferrerDetailPage() {
     const statusColor = referrer.is_active ? "bg-emerald-100 text-emerald-700" : "bg-zinc-100 text-zinc-500";
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-16">
-            <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+            <div className="container mx-auto px-4 py-4 md:py-8 max-w-5xl">
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-8">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
                     <Link href="/dashboard/business/referrers" className="p-2 text-zinc-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div className="w-14 h-14 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-600 font-bold text-lg">
                         {referrer.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                     </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-2xl font-bold text-zinc-900 font-display">{referrer.full_name}</h1>
+                    <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h1 className="text-2xl font-bold text-zinc-900 font-display break-words">{referrer.full_name}</h1>
                             <Badge className={statusColor}>{referrer.is_active ? "Active" : "Inactive"}</Badge>
                         </div>
-                        <p className="text-sm text-zinc-400">{referrer.email} · {referrer.phone} · Member since {fmtDate(referrer.referrer_since)}</p>
+                        <p className="text-sm text-zinc-400 break-words">{referrer.email} · {referrer.phone} · Member since {fmtDate(referrer.referrer_since)}</p>
                     </div>
-                    <div className="ml-auto flex items-center gap-3">
+                    </div>
+                    <div className="flex w-full sm:w-auto items-center justify-between sm:justify-end gap-3">
                         <Button
                             onClick={async () => {
                                 try {
@@ -262,7 +264,7 @@ export default function ReferrerDetailPage() {
                             Default fee: {fmt(referrer.default_fee_cents)}
                             {referrer.custom_fee_cents !== null && ` · Custom: ${fmt(referrer.custom_fee_cents)}`}
                         </p>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                             <div className="relative flex-1">
                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
                                 <Input
@@ -324,7 +326,7 @@ export default function ReferrerDetailPage() {
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex gap-2">
+                                    <div className="flex flex-col sm:flex-row gap-2">
                                         <Button variant="outline" size="sm" onClick={() => setShowChargeWarning(false)} className="rounded-lg">
                                             Cancel
                                         </Button>

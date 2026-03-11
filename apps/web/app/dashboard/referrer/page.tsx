@@ -10,7 +10,6 @@ import { ReferralProgress } from "@/components/referrer/ReferralProgress";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { DashboardError } from "@/components/dashboard/DashboardError";
-import { SidebarRoleSwitcher } from "@/components/dashboard/SidebarRoleSwitcher";
 import { PrezzeeRewardsCard } from "@/components/shared/PrezzeeRewardsCard";
 
 async function getDashboardData() {
@@ -39,11 +38,6 @@ async function getDashboardData() {
 }
 
 export default async function ReferrerDashboardPage() {
-    const { sessionClaims } = await auth();
-    const meta = sessionClaims?.metadata as { role?: string; roles?: string[] } | undefined;
-    const roles = meta?.roles ?? (meta?.role ? [meta.role] : []);
-    const hasBusiness = roles.includes("business");
-
     let data;
     try {
         data = await getDashboardData();
@@ -103,10 +97,6 @@ export default async function ReferrerDashboardPage() {
 
                         {/* Hot Campaigns */}
                         <HotCampaigns />
-
-                        <div className="hidden md:block">
-                            <SidebarRoleSwitcher currentRole="referrer" />
-                        </div>
 
                         {/* Find Businesses CTA */}
                         <div className="bg-orange-500 rounded-2xl p-4 text-white">

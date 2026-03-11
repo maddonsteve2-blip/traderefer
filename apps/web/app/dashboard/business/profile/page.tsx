@@ -267,29 +267,31 @@ export default function BusinessProfileManagementPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-                <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+            <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+                <div className="min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-100px)] flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+                </div>
             </div>
         );
     }
 
     return (
         <>
-            <div className="min-h-screen bg-[#fafafa] pt-16">
-                <div className="max-w-[1024px] mx-auto px-6 lg:px-0 py-12">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div className="min-h-[100dvh] bg-[#fafafa] pt-[72px] md:pt-[100px]">
+                <div className="max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12">
                         <div className="space-y-2">
                             <Link href="/dashboard/business" className="flex items-center gap-1 text-base font-medium text-zinc-500 hover:text-orange-500 transition-colors mb-2">
                                 <ChevronLeft className="w-4 h-4" /> Back to Dashboard
                             </Link>
-                            <h1 className="text-zinc-900 text-4xl font-black font-display tracking-tight">Public Profile</h1>
-                            <p className="text-zinc-500 text-lg font-medium">Manage how your business appears to customers and referrers.</p>
+                            <h1 className="text-zinc-900 text-3xl md:text-4xl font-black font-display tracking-tight">Public Profile</h1>
+                            <p className="text-zinc-500 text-base md:text-lg font-medium">Manage how your business appears to customers and referrers.</p>
                         </div>
-                        <div className="flex gap-3">
+                        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                             <Button
                                 asChild
                                 variant="outline"
-                                className="rounded-full h-12 px-6 border-zinc-200 text-zinc-600 font-bold hover:bg-zinc-50"
+                                className="rounded-full h-12 px-6 border-zinc-200 text-zinc-600 font-bold hover:bg-zinc-50 w-full md:w-auto"
                             >
                                 <Link href={`/b/${biz?.slug}`} target="_blank" className="flex items-center gap-2">
                                     <ExternalLink className="w-4 h-4" /> View Live
@@ -298,7 +300,7 @@ export default function BusinessProfileManagementPage() {
                             <Button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex min-w-[160px] items-center justify-center rounded-full h-12 px-8 bg-orange-500 text-white text-base font-bold shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all"
+                                className="flex min-w-[160px] items-center justify-center rounded-full h-12 px-8 bg-orange-500 text-white text-base font-bold shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all w-full md:w-auto"
                             >
                                 {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
                                 {saving ? "Saving..." : "Save Changes"}

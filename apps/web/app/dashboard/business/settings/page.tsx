@@ -198,8 +198,8 @@ export default function BusinessSettingsPage() {
 
     if (loading) {
         return (
-            <div className="h-screen pt-[72px] md:pt-[100px] bg-zinc-50">
-                <div className="h-full flex items-center justify-center">
+            <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] bg-zinc-50">
+                <div className="min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-100px)] flex items-center justify-center">
                     <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                 </div>
             </div>
