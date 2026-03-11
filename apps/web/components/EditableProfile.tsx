@@ -1,19 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { createContext, useCallback, useContext, useEffect, useId, useMemo, useState } from "react";
+import type { CSSProperties, JSX, ReactNode } from "react";
 import { useAuth } from "@clerk/nextjs";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Pencil, Save, Loader2, X, Plus, Phone, Camera } from "lucide-react";
-import { TRADE_CATEGORIES } from "@/lib/constants";
-import { ImageUpload } from "@/components/ImageUpload";
-import { AddressAutocomplete } from "@/components/AddressAutocomplete";
+import { Camera, ExternalLink, Loader2, Pencil, Save, Trash2, X } from "lucide-react";
 
 interface EditableProfileProps {
     businessSlug: string;
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
-interface EditableFields {
+export interface EditableFields {
     business_name: string;
     trade_category: string;
     description: string;
@@ -33,40 +33,737 @@ interface EditableFields {
     services: string[];
     slug: string;
     abn: string;
+    referral_fee_cents: number;
 }
 
-const AVAILABLE_FEATURES = [
-    "Locally Owned",
-    "Verified Reviews",
-    "Flexible Hours",
-    "TradeRefer Trusted",
-    "24/7 Emergency",
-    "Licensed & Insured",
-    "Free Quotes",
-    "Senior Discounts"
-];
+type EditableTextField = "business_name" | "trade_category" | "description" | "why_refer_us" | "suburb" | "state" | "address" | "years_experience" | "business_phone" | "business_email" | "website" | "abn";
+type EditableImageField = "logo_url" | "cover_photo_url";
+type FocusEditorState =
+    | {
+        kind: "text";
+        areaKey: string;
+        field: EditableTextField;
+        title: string;
+        label: string;
+        multiline: boolean;
+        placeholder?: string;
+        fallback?: string;
+        minHeight?: number;
+    }
+    | {
+        kind: "services";
+        areaKey: "services";
+        title: string;
+        label: string;
+    }
+    | {
+        kind: "image";
+        areaKey: EditableImageField;
+        field: EditableImageField;
+        title: string;
+        label: string;
+        alt: string;
+    }
+    | {
+        kind: "gallery";
+        areaKey: "gallery";
+        title: string;
+        label: string;
+        businessName: string;
+    }
+    | {
+        kind: "fee";
+        areaKey: "referral_fee_cents";
+        title: string;
+        label: string;
+        minDollars: number;
+    };
+
+const DEFAULT_TEXT_EDITOR_META: Record<EditableTextField, { title: string; label: string; minHeight?: number }> = {
+    business_name: { title: "Edit Business Name", label: "Business Name" },
+    trade_category: { title: "Edit Trade Category", label: "Trade Category" },
+    description: { title: "Edit Business Pitch", label: "Business Pitch", minHeight: 300 },
+    why_refer_us: { title: "Edit Why Refer Us", label: "Why Refer Us", minHeight: 300 },
+    suburb: { title: "Edit Suburb", label: "Suburb" },
+    state: { title: "Edit State", label: "State" },
+    address: { title: "Edit Address", label: "Address", minHeight: 300 },
+    years_experience: { title: "Edit Years Experience", label: "Years Experience" },
+    business_phone: { title: "Edit Business Phone", label: "Business Phone" },
+    business_email: { title: "Edit Business Email", label: "Business Email" },
+    website: { title: "Edit Website", label: "Website" },
+    abn: { title: "Edit ABN", label: "ABN" },
+};
+
+interface EditableProfileContextValue {
+    editMode: boolean;
+    isOwner: boolean;
+    saving: boolean;
+    hasChanges: boolean;
+    activeArea: string | null;
+    focusEditor: FocusEditorState | null;
+    fields: EditableFields | null;
+    setEditMode: (value: boolean) => void;
+    setActiveArea: (value: string | null) => void;
+    openFocusEditor: (editor: FocusEditorState) => void;
+    closeFocusEditor: () => void;
+    updateField: <K extends keyof EditableFields>(field: K, value: EditableFields[K]) => void;
+    addService: (value: string) => void;
+    removeService: (index: number) => void;
+    addPhotos: (files: FileList | File[]) => Promise<void>;
+    replacePhoto: (index: number, file: File) => Promise<void>;
+    removePhoto: (index: number) => void;
+    replaceImageField: (field: EditableImageField, file: File) => Promise<void>;
+    clearImageField: (field: EditableImageField) => void;
+    handleSave: () => Promise<void>;
+    handleCancel: () => void;
+}
+
+const EditableProfileContext = createContext<EditableProfileContextValue | null>(null);
+
+function useEditableProfileOptional() {
+    return useContext(EditableProfileContext);
+}
+
+export function EditableConditionalSection({ showWhenPublic, children }: { showWhenPublic: boolean; children: ReactNode }) {
+    const context = useEditableProfileOptional();
+
+    if (!showWhenPublic && !(context?.isOwner && context.editMode)) {
+        return null;
+    }
+
+    return <>{children}</>;
+}
+
+function InlineEditFrame({
+    active,
+    areaKey,
+    children,
+    className = "",
+    badgeLabel = "Edit",
+    onActivate,
+}: {
+    active: boolean;
+    areaKey: string;
+    children: ReactNode;
+    className?: string;
+    badgeLabel?: string;
+    onActivate?: () => void;
+}) {
+    const context = useEditableProfileOptional();
+    const isActiveArea = context?.activeArea === areaKey;
+
+    if (!active) {
+        return <>{children}</>;
+    }
+
+    return (
+        <div
+            className={`group relative rounded-2xl border-2 border-dashed ${isActiveArea ? "border-orange-500 bg-orange-50/40" : "border-transparent hover:border-orange-500 hover:bg-orange-50/10"} transition-all duration-200 cursor-pointer ${className}`}
+            data-inline-editable="true"
+            onClick={() => {
+                context?.setActiveArea(areaKey);
+                onActivate?.();
+            }}
+            onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    context?.setActiveArea(areaKey);
+                    onActivate?.();
+                }
+            }}
+            tabIndex={0}
+            role="button"
+        >
+            <div className={`pointer-events-none absolute -top-3 right-4 z-20 inline-flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg shadow-orange-500/25 transition-all ${isActiveArea ? "opacity-100 scale-100" : "opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 group-focus-visible:opacity-100 group-focus-visible:scale-100"}`}>
+                <Pencil className="h-4 w-4" />
+            </div>
+            <span className="sr-only">{badgeLabel}</span>
+            {!isActiveArea && false && (
+                <div className="pointer-events-none absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border border-zinc-300 bg-zinc-100 px-2 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-zinc-600 opacity-95 shadow-sm">
+                    <Pencil className="h-3 w-3" /> {badgeLabel}
+                </div>
+            )}
+            {children}
+        </div>
+    );
+}
+
+export function EditableText({
+    field,
+    initialValue,
+    fallback,
+    placeholder,
+    as = "div",
+    multiline = false,
+    rows = 4,
+    className = "",
+    inputClassName = "",
+    frameClassName = "p-4",
+    editorTitle,
+    editorLabel,
+    editorMinHeight,
+    style,
+}: {
+    field: EditableTextField;
+    initialValue?: string;
+    fallback?: string;
+    placeholder?: string;
+    as?: keyof JSX.IntrinsicElements;
+    multiline?: boolean;
+    rows?: number;
+    className?: string;
+    inputClassName?: string;
+    frameClassName?: string;
+    editorTitle?: string;
+    editorLabel?: string;
+    editorMinHeight?: number;
+    style?: CSSProperties;
+}) {
+    const context = useEditableProfileOptional();
+    const value = context?.isOwner ? String(context.fields?.[field] ?? "") : (initialValue ?? "");
+    const displayValue = value || fallback || "";
+    const Component = as as keyof JSX.IntrinsicElements;
+    const meta = DEFAULT_TEXT_EDITOR_META[field];
+
+    if (!context?.isOwner || !context.editMode) {
+        return <Component className={className} style={style}>{displayValue}</Component>;
+    }
+
+    return (
+        <InlineEditFrame
+            active
+            areaKey={field}
+            className={frameClassName}
+            onActivate={() => context.openFocusEditor({
+                kind: "text",
+                areaKey: field,
+                field,
+                title: editorTitle || meta.title,
+                label: editorLabel || meta.label,
+                multiline,
+                placeholder,
+                fallback,
+                minHeight: editorMinHeight || meta.minHeight || (multiline ? 300 : undefined),
+            })}
+        >
+            <Component className={`${className} ${multiline ? "whitespace-pre-wrap" : ""} ${displayValue ? "" : "text-zinc-300"}`} style={style}>
+                {displayValue || placeholder || fallback || "Click to add content"}
+            </Component>
+        </InlineEditFrame>
+    );
+}
+
+export function EditableImage({
+    field,
+    initialValue,
+    alt,
+    className,
+    empty,
+    editorTitle,
+    editorLabel,
+}: {
+    field: EditableImageField;
+    initialValue?: string;
+    alt: string;
+    className: string;
+    empty: ReactNode;
+    editorTitle?: string;
+    editorLabel?: string;
+}) {
+    const context = useEditableProfileOptional();
+    const value = context?.isOwner ? context.fields?.[field] || "" : (initialValue || "");
+
+    if (!context?.isOwner || !context.editMode) {
+        if (value) {
+            return <img src={value} alt={alt} className={className} />;
+        }
+        return <>{empty}</>;
+    }
+
+    return (
+        <InlineEditFrame
+            active
+            areaKey={field}
+            className="h-full min-h-full overflow-hidden"
+            badgeLabel="Image"
+            onActivate={() => context.openFocusEditor({
+                kind: "image",
+                areaKey: field,
+                field,
+                title: editorTitle || (field === "logo_url" ? "Edit Business Logo" : "Edit Cover Photo"),
+                label: editorLabel || (field === "logo_url" ? "Business Logo" : "Cover Photo"),
+                alt,
+            })}
+        >
+            {value ? <img src={value} alt={alt} className={className} /> : empty}
+        </InlineEditFrame>
+    );
+}
+
+export function EditableServices({ initialServices, initialSpecialties = [] }: { initialServices: string[]; initialSpecialties?: string[] }) {
+    const context = useEditableProfileOptional();
+    const services = context?.isOwner ? (context.fields?.services || []) : initialServices;
+
+    if (!context?.isOwner || !context.editMode) {
+        return (
+            <>
+                {services.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                        {services.map((service) => (
+                            <div key={service} className="flex items-center gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-orange-200 hover:bg-white transition-all">
+                                <div className="h-5 w-5 shrink-0 rounded-full bg-orange-100 text-[#FF6600] flex items-center justify-center text-xs font-black">✓</div>
+                                <span className="text-zinc-800 font-bold" style={{ fontSize: "16px" }}>{service}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {initialSpecialties.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                        {initialSpecialties.map((spec) => (
+                            <div key={spec} className="px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-lg font-black hover:bg-orange-100 transition-all" style={{ fontSize: "16px" }}>
+                                {spec}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </>
+        );
+    }
+
+    return (
+        <InlineEditFrame
+            active
+            areaKey="services"
+            className="p-5 space-y-4"
+            badgeLabel="Services"
+            onActivate={() => context.openFocusEditor({
+                kind: "services",
+                areaKey: "services",
+                title: "Edit Services & Expertise",
+                label: "Services (one per line)",
+            })}
+        >
+            {services.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {services.map((service, index) => (
+                        <div key={`${service}-${index}`} className="flex items-center gap-3 p-4 bg-zinc-50 rounded-xl border border-zinc-100">
+                            <div className="h-5 w-5 shrink-0 rounded-full bg-orange-100 text-[#FF6600] flex items-center justify-center text-xs font-black">✓</div>
+                            <span className="flex-1 text-zinc-800 font-bold" style={{ fontSize: "16px" }}>{service}</span>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 px-5 py-8 text-center font-bold text-zinc-400" style={{ fontSize: "16px" }}>
+                    Click to add your services and specialties
+                </div>
+            )}
+            {initialSpecialties.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                    {initialSpecialties.map((spec) => (
+                        <div key={spec} className="px-3 py-2 bg-orange-50 border border-orange-100 text-orange-800 rounded-lg font-black hover:bg-orange-100 transition-all" style={{ fontSize: "16px" }}>
+                            {spec}
+                        </div>
+                    ))}
+                </div>
+            )}
+        </InlineEditFrame>
+    );
+}
+
+export function EditableGallery({ initialImages, businessName }: { initialImages: string[]; businessName: string }) {
+    const context = useEditableProfileOptional();
+    const images = context?.isOwner ? (context.fields?.photo_urls || []) : initialImages;
+
+    if ((!images || images.length === 0) && (!context?.isOwner || !context.editMode)) {
+        return null;
+    }
+
+    if (context?.isOwner && context.editMode) {
+        return (
+            <InlineEditFrame
+                active
+                areaKey="gallery"
+                className="p-4"
+                badgeLabel="Gallery"
+                onActivate={() => context.openFocusEditor({
+                    kind: "gallery",
+                    areaKey: "gallery",
+                    title: "Edit Project Gallery",
+                    label: "Project Gallery",
+                    businessName,
+                })}
+            >
+                {images.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {images.map((url, index) => (
+                            <div key={`${url}-${index}`} className="aspect-square rounded-xl overflow-hidden bg-zinc-100 group relative">
+                                <img src={url} alt={`${businessName} work`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="aspect-[3/1] rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 flex items-center justify-center font-bold text-zinc-400" style={{ fontSize: "16px" }}>
+                        Click to add project photos
+                    </div>
+                )}
+            </InlineEditFrame>
+        );
+    }
+
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {images.map((url, index) => (
+                <div key={`${url}-${index}`} className="aspect-square rounded-xl overflow-hidden bg-zinc-100 group relative">
+                    <img src={url} alt={`${businessName} work`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <div className="absolute inset-0 transition-opacity bg-black/20 opacity-0 group-hover:opacity-100" />
+                </div>
+            ))}
+        </div>
+    );
+}
+
+export function EditableFee({
+    initialValue,
+    title = "Referrer Reward",
+    helperText = "Set the high-authority reward your referrers will see on the storefront.",
+}: {
+    initialValue?: number;
+    title?: string;
+    helperText?: string;
+}) {
+    const context = useEditableProfileOptional();
+    const value = context?.isOwner ? (context.fields?.referral_fee_cents ?? initialValue ?? 1000) : (initialValue ?? 1000);
+    const dollars = (value / 100).toFixed(2);
+
+    if (!context?.isOwner || !context.editMode) {
+        return (
+            <div>
+                <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">{title}</p>
+                <p className="font-bold text-zinc-900" style={{ fontSize: 32 }}>${dollars}</p>
+                <p className="text-sm text-zinc-500 font-medium mt-2">{helperText}</p>
+            </div>
+        );
+    }
+
+    return (
+        <InlineEditFrame
+            active
+            areaKey="referral_fee_cents"
+            className="p-4"
+            badgeLabel="Fee"
+            onActivate={() => context.openFocusEditor({
+                kind: "fee",
+                areaKey: "referral_fee_cents",
+                title: "Edit Referral Fee",
+                label: title,
+                minDollars: 3,
+            })}
+        >
+            <div>
+                <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">{title}</p>
+                <p className="font-bold text-zinc-900" style={{ fontSize: 32 }}>${dollars}</p>
+                <p className="text-sm text-zinc-500 font-medium mt-2">{helperText}</p>
+            </div>
+        </InlineEditFrame>
+    );
+}
+
+export function EditableContactField({
+    field,
+    initialValue,
+    label,
+    icon,
+    type = "text",
+}: {
+    field: Extract<EditableTextField, "business_phone" | "business_email" | "website" | "abn">;
+    initialValue?: string;
+    label: string;
+    icon: ReactNode;
+    type?: "text" | "phone" | "email" | "website";
+}) {
+    const context = useEditableProfileOptional();
+    const value = context?.isOwner ? String(context.fields?.[field] ?? "") : (initialValue ?? "");
+
+    if (!value && !(context?.isOwner && context.editMode)) {
+        return null;
+    }
+
+    const href = type === "phone"
+        ? `tel:${value}`
+        : type === "email"
+            ? `mailto:${value}`
+            : type === "website"
+                ? (value.startsWith("http") ? value : `https://${value}`)
+                : undefined;
+
+    const content = (
+        <>
+            <div className="w-9 h-9 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-400 shrink-0">
+                {icon}
+            </div>
+            <div className="min-w-0 flex-1">
+                <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>{label}</p>
+                <EditableText
+                    field={field}
+                    initialValue={initialValue}
+                    as="p"
+                    className={`font-bold ${type === "phone" || type === "website" ? "text-[#FF6600]" : "text-zinc-700 break-all"}`}
+                    style={{ fontSize: '16px' }}
+                    frameClassName="p-3"
+                    editorTitle={`Edit ${label}`}
+                    editorLabel={label}
+                    editorMinHeight={type === "website" ? undefined : 300}
+                />
+            </div>
+        </>
+    );
+
+    if (href && !(context?.isOwner && context.editMode)) {
+        return (
+            <a href={href} target={type === "website" ? "_blank" : undefined} rel={type === "website" ? "noopener noreferrer" : undefined} className="flex items-center gap-3 group">
+                {content}
+            </a>
+        );
+    }
+
+    return <div className="flex items-start gap-3">{content}</div>;
+}
+
+function FocusEditorOverlay() {
+    const context = useEditableProfileOptional();
+    const imageInputId = useId();
+    const galleryInputId = useId();
+
+    if (!context?.focusEditor || !context.fields || !context.editMode) {
+        return null;
+    }
+
+    const editor = context.focusEditor;
+    const servicesValue = context.fields.services.join("\n");
+    const imageValue = editor.kind === "image" ? (context.fields[editor.field] || "") : "";
+    const feeValue = (context.fields.referral_fee_cents / 100).toFixed(2);
+
+    return (
+        <div className="fixed inset-0 z-40">
+            <button type="button" className="absolute inset-0 bg-zinc-950/45 backdrop-blur-sm" onClick={context.closeFocusEditor} />
+            <div className="absolute inset-0 overflow-y-auto px-4 py-24 pb-36 sm:px-8">
+                <div className="mx-auto w-full max-w-4xl">
+                    <div className="relative overflow-hidden rounded-[32px] border border-zinc-200 bg-white shadow-2xl shadow-zinc-900/20">
+                        <div className="flex items-start justify-between gap-4 border-b border-zinc-100 px-6 py-5 sm:px-8">
+                            <div>
+                                <h3 className="font-bold text-zinc-900" style={{ fontSize: 24 }}>{editor.title}</h3>
+                                <p className="font-bold text-zinc-500 mt-2" style={{ fontSize: 18 }}>{editor.label}</p>
+                            </div>
+                            <button type="button" onClick={context.closeFocusEditor} className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-zinc-200 text-zinc-500 hover:border-orange-200 hover:text-orange-600 transition-colors">
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <div className="max-h-[calc(100vh-14rem)] overflow-y-auto px-6 py-6 sm:px-8 sm:py-8">
+                            {editor.kind === "text" && (
+                                <div className="space-y-4">
+                                    {editor.multiline ? (
+                                        <textarea
+                                            rows={12}
+                                            value={String(context.fields[editor.field] ?? "")}
+                                            onChange={(e) => context.updateField(editor.field, e.target.value)}
+                                            placeholder={editor.placeholder || editor.fallback || "Start typing..."}
+                                            className="w-full rounded-[28px] border-2 border-zinc-200 bg-zinc-50 px-6 py-5 text-zinc-900 outline-none transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 resize-y"
+                                            style={{ minHeight: editor.minHeight || 300, fontSize: 18, lineHeight: 1.7 }}
+                                        />
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            value={String(context.fields[editor.field] ?? "")}
+                                            onChange={(e) => context.updateField(editor.field, e.target.value)}
+                                            placeholder={editor.placeholder || editor.fallback || "Start typing..."}
+                                            className="h-16 w-full rounded-[28px] border-2 border-zinc-200 bg-zinc-50 px-6 text-zinc-900 outline-none transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10"
+                                            style={{ fontSize: 18, fontWeight: 700 }}
+                                        />
+                                    )}
+                                </div>
+                            )}
+                            {editor.kind === "services" && (
+                                <div className="space-y-5">
+                                    <textarea
+                                        rows={12}
+                                        value={servicesValue}
+                                        onChange={(e) => context.updateField("services", e.target.value.split(/\n+/).map((item) => item.trim()).filter(Boolean))}
+                                        placeholder="Bathroom renovations&#10;Emergency plumbing&#10;Roof leak repairs"
+                                        className="w-full rounded-[28px] border-2 border-zinc-200 bg-zinc-50 px-6 py-5 text-zinc-900 outline-none transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 resize-y"
+                                        style={{ minHeight: 300, fontSize: 18, lineHeight: 1.7 }}
+                                    />
+                                    <div className="flex flex-wrap gap-2">
+                                        {context.fields.services.map((service, index) => (
+                                            <div key={`${service}-${index}`} className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-zinc-800" style={{ fontSize: 16, fontWeight: 700 }}>
+                                                {service}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {editor.kind === "image" && (
+                                <div className="space-y-5">
+                                    <div className="overflow-hidden rounded-[28px] border border-zinc-200 bg-zinc-50">
+                                        {imageValue ? (
+                                            <img src={imageValue} alt={editor.alt} className="h-[320px] w-full object-cover" />
+                                        ) : (
+                                            <div className="flex h-[320px] items-center justify-center text-zinc-400 font-bold" style={{ fontSize: 18 }}>
+                                                No image uploaded yet
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        <label htmlFor={imageInputId} className="inline-flex h-14 cursor-pointer items-center gap-2 rounded-2xl bg-orange-600 px-6 text-base font-bold uppercase tracking-wide text-white hover:bg-orange-700 transition-colors">
+                                            <Camera className="h-4 w-4" /> Upload Image
+                                        </label>
+                                        {imageValue && (
+                                            <button type="button" onClick={() => context.clearImageField(editor.field)} className="inline-flex h-14 items-center gap-2 rounded-2xl border border-zinc-300 px-6 text-base font-bold uppercase tracking-wide text-zinc-600 hover:bg-zinc-50 transition-colors">
+                                                <Trash2 className="h-4 w-4" /> Remove
+                                            </button>
+                                        )}
+                                        <input
+                                            id={imageInputId}
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={async (e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    await context.replaceImageField(editor.field, file);
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                            {editor.kind === "gallery" && (
+                                <div className="space-y-5">
+                                    {context.fields.photo_urls.length > 0 ? (
+                                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                            {context.fields.photo_urls.map((url, index) => {
+                                                const inputId = `${galleryInputId}-${index}`;
+                                                return (
+                                                    <div key={`${url}-${index}`} className="overflow-hidden rounded-[28px] border border-zinc-200 bg-zinc-50">
+                                                        <img src={url} alt={`${editor.businessName} work`} className="h-56 w-full object-cover" />
+                                                        <div className="flex items-center justify-between gap-3 p-4">
+                                                            <label htmlFor={inputId} className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-2xl border border-zinc-300 bg-white px-4 text-sm font-bold uppercase tracking-wide text-zinc-700 hover:border-orange-200 hover:text-orange-600 transition-colors">
+                                                                <Camera className="h-4 w-4" /> Replace
+                                                            </label>
+                                                            <button type="button" onClick={() => context.removePhoto(index)} className="inline-flex h-12 items-center gap-2 rounded-2xl border border-zinc-300 bg-white px-4 text-sm font-bold uppercase tracking-wide text-zinc-600 hover:border-red-200 hover:text-red-500 transition-colors">
+                                                                <Trash2 className="h-4 w-4" /> Remove
+                                                            </button>
+                                                            <input
+                                                                id={inputId}
+                                                                type="file"
+                                                                accept="image/*"
+                                                                className="hidden"
+                                                                onChange={async (e) => {
+                                                                    const file = e.target.files?.[0];
+                                                                    if (file) {
+                                                                        await context.replacePhoto(index, file);
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : (
+                                        <div className="rounded-[28px] border border-dashed border-zinc-200 bg-zinc-50 px-6 py-16 text-center font-bold text-zinc-400" style={{ fontSize: 18 }}>
+                                            Add project images to help referrers trust your work quality
+                                        </div>
+                                    )}
+                                    <label htmlFor={galleryInputId} className="inline-flex h-14 cursor-pointer items-center gap-2 rounded-2xl bg-orange-600 px-6 text-base font-bold uppercase tracking-wide text-white hover:bg-orange-700 transition-colors">
+                                        <Camera className="h-4 w-4" /> Add Photos
+                                    </label>
+                                    <input
+                                        id={galleryInputId}
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        className="hidden"
+                                        onChange={async (e) => {
+                                            if (e.target.files?.length) {
+                                                await context.addPhotos(e.target.files);
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            {editor.kind === "fee" && (
+                                <div className="space-y-6">
+                                    <div className="rounded-[32px] bg-zinc-950 px-6 py-8 text-white shadow-2xl shadow-zinc-900/20">
+                                        <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-white/60 mb-4">{editor.label}</p>
+                                        <div className="relative max-w-sm">
+                                            <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-white/70" style={{ fontSize: 24 }}>$</span>
+                                            <input
+                                                type="number"
+                                                min={editor.minDollars}
+                                                step="1"
+                                                value={feeValue}
+                                                onChange={(e) => {
+                                                    const next = parseFloat(e.target.value) || 0;
+                                                    context.updateField("referral_fee_cents", Math.round(next * 100));
+                                                }}
+                                                className="h-20 w-full rounded-[28px] border border-white/15 bg-white/10 pl-14 pr-6 text-white outline-none transition-all focus:border-orange-400 focus:ring-4 focus:ring-orange-500/20"
+                                                style={{ fontSize: 32, fontWeight: 700 }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                                        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+                                            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Referrer Reward</p>
+                                            <p className="font-bold text-zinc-900" style={{ fontSize: 32 }}>${feeValue}</p>
+                                        </div>
+                                        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+                                            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Platform Fee</p>
+                                            <p className="font-bold text-zinc-900" style={{ fontSize: 32 }}>${(context.fields.referral_fee_cents * 0.2 / 100).toFixed(2)}</p>
+                                        </div>
+                                        <div className="rounded-2xl bg-orange-50 border border-orange-200 p-5">
+                                            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-orange-500 mb-2">Total Unlock Price</p>
+                                            <p className="font-bold text-zinc-900" style={{ fontSize: 32 }}>${(context.fields.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export function EditableProfile({ businessSlug, children }: EditableProfileProps) {
     const { getToken, isSignedIn, isLoaded } = useAuth();
+    const searchParams = useSearchParams();
     const [isOwner, setIsOwner] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [activeArea, setActiveArea] = useState<string | null>(null);
+    const [focusEditor, setFocusEditor] = useState<FocusEditorState | null>(null);
     const [fields, setFields] = useState<EditableFields | null>(null);
     const [originalFields, setOriginalFields] = useState<EditableFields | null>(null);
-    const [newService, setNewService] = useState("");
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const shouldOpenEditMode = searchParams?.get("edit") === "1";
+
+    const updateField = useCallback(<K extends keyof EditableFields>(field: K, value: EditableFields[K]) => {
+        setFields((current) => current ? { ...current, [field]: value } : current);
+    }, []);
 
     const checkOwnership = useCallback(async () => {
         if (!isSignedIn) return;
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/business/me`, {
+            const res = await fetch(`${apiUrl}/business/me`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {
                 const data = await res.json();
                 if (data.slug === businessSlug) {
                     setIsOwner(true);
-                    const f: EditableFields = {
+                    const nextFields: EditableFields = {
                         business_name: data.business_name || "",
                         trade_category: data.trade_category || "",
                         description: data.description || "",
@@ -86,26 +783,148 @@ export function EditableProfile({ businessSlug, children }: EditableProfileProps
                         services: data.services || [],
                         slug: data.slug || "",
                         abn: data.abn || "",
+                        referral_fee_cents: data.referral_fee_cents || 1000,
                     };
-                    setFields(f);
-                    setOriginalFields(f);
+                    setFields(nextFields);
+                    setOriginalFields(nextFields);
                 }
             }
         } catch {
-            // Not owner or error
         }
-    }, [isSignedIn, getToken, businessSlug]);
+    }, [apiUrl, businessSlug, getToken, isSignedIn]);
 
     useEffect(() => {
-        if (isLoaded) checkOwnership();
-    }, [isLoaded, checkOwnership]);
+        if (isLoaded) {
+            checkOwnership();
+        }
+    }, [checkOwnership, isLoaded]);
 
-    const handleSave = async () => {
+    useEffect(() => {
+        if (isOwner && shouldOpenEditMode) {
+            setEditMode(true);
+        }
+    }, [isOwner, shouldOpenEditMode]);
+
+    useEffect(() => {
+        if (!editMode) {
+            setActiveArea(null);
+            setFocusEditor(null);
+        }
+    }, [editMode]);
+
+    useEffect(() => {
+        if (!focusEditor) {
+            document.body.style.overflow = "";
+            return;
+        }
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [focusEditor]);
+
+    const openFocusEditor = useCallback((editor: FocusEditorState) => {
+        setActiveArea(editor.areaKey);
+        setFocusEditor(editor);
+    }, []);
+
+    const closeFocusEditor = useCallback(() => {
+        setFocusEditor(null);
+        setActiveArea(null);
+    }, []);
+
+    const uploadMedia = useCallback(async (file: File, folder: string) => {
+        const token = await getToken();
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", folder);
+
+        const response = await fetch(`${apiUrl}/media/upload`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => null);
+            throw new Error(error?.detail || "Upload failed");
+        }
+
+        const data = await response.json();
+        return data.url as string;
+    }, [apiUrl, getToken]);
+
+    const addPhotos = useCallback(async (files: FileList | File[]) => {
+        const items = Array.from(files);
+        if (!items.length) return;
+        try {
+            const urls = await Promise.all(items.map((file) => uploadMedia(file, "gallery")));
+            setFields((current) => current ? { ...current, photo_urls: [...current.photo_urls, ...urls] } : current);
+            toast.success(`${urls.length} photo${urls.length > 1 ? "s" : ""} added`);
+        } catch (error) {
+            toast.error((error as Error).message || "Failed to add photos");
+        }
+    }, [uploadMedia]);
+
+    const replacePhoto = useCallback(async (index: number, file: File) => {
+        try {
+            const url = await uploadMedia(file, "gallery");
+            setFields((current) => current ? {
+                ...current,
+                photo_urls: current.photo_urls.map((photo, photoIndex) => photoIndex === index ? url : photo),
+            } : current);
+            toast.success("Photo replaced");
+        } catch (error) {
+            toast.error((error as Error).message || "Failed to replace photo");
+        }
+    }, [uploadMedia]);
+
+    const removePhoto = useCallback((index: number) => {
+        setFields((current) => current ? {
+            ...current,
+            photo_urls: current.photo_urls.filter((_, photoIndex) => photoIndex !== index),
+        } : current);
+    }, []);
+
+    const replaceImageField = useCallback(async (field: EditableImageField, file: File) => {
+        try {
+            const folder = field === "logo_url" ? "logos" : "covers";
+            const url = await uploadMedia(file, folder);
+            updateField(field, url);
+            toast.success(field === "logo_url" ? "Logo updated" : "Cover photo updated");
+        } catch (error) {
+            toast.error((error as Error).message || "Failed to update image");
+        }
+    }, [updateField, uploadMedia]);
+
+    const clearImageField = useCallback((field: EditableImageField) => {
+        updateField(field, "");
+    }, [updateField]);
+
+    const addService = useCallback((value: string) => {
+        const nextService = value.trim();
+        if (!nextService) return;
+        setFields((current) => current ? { ...current, services: [...current.services, nextService] } : current);
+    }, []);
+
+    const removeService = useCallback((index: number) => {
+        setFields((current) => current ? {
+            ...current,
+            services: current.services.filter((_, serviceIndex) => serviceIndex !== index),
+        } : current);
+    }, []);
+
+    const handleSave = useCallback(async () => {
         if (!fields) return;
         setSaving(true);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/business/update`, {
+            const response = await fetch(`${apiUrl}/business/update`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -113,319 +932,138 @@ export function EditableProfile({ businessSlug, children }: EditableProfileProps
                 },
                 body: JSON.stringify(fields),
             });
-            if (res.ok) {
+
+            if (response.ok) {
                 toast.success("Profile updated! Changes are live.");
                 setOriginalFields({ ...fields });
                 setEditMode(false);
-                // Soft reload to reflect changes in SSR content
-                window.location.reload();
-            } else {
-                const err = await res.json();
-                toast.error(err.detail || "Failed to save changes.");
+                window.location.href = `/b/${fields.slug}`;
+                return;
             }
+
+            const error = await response.json().catch(() => null);
+            toast.error(error?.detail || "Failed to save changes.");
         } catch {
             toast.error("Connection issue. Please try again.");
         } finally {
             setSaving(false);
         }
-    };
+    }, [apiUrl, fields, getToken]);
 
-    const handleCancel = () => {
-        if (originalFields) setFields({ ...originalFields });
+    const handleCancel = useCallback(() => {
+        if (originalFields) {
+            setFields({ ...originalFields });
+        }
+        setFocusEditor(null);
         setEditMode(false);
+    }, [originalFields]);
+
+    const hasChanges = useMemo(() => {
+        return !!(fields && originalFields && JSON.stringify(fields) !== JSON.stringify(originalFields));
+    }, [fields, originalFields]);
+
+    if (!isOwner) {
+        return <>{children}</>;
+    }
+
+    const contextValue: EditableProfileContextValue = {
+        editMode,
+        isOwner,
+        saving,
+        hasChanges,
+        activeArea,
+        focusEditor,
+        fields,
+        setEditMode,
+        setActiveArea,
+        openFocusEditor,
+        closeFocusEditor,
+        updateField,
+        addService,
+        removeService,
+        addPhotos,
+        replacePhoto,
+        removePhoto,
+        replaceImageField,
+        clearImageField,
+        handleSave,
+        handleCancel,
     };
-
-    const hasChanges =
-        fields && originalFields && JSON.stringify(fields) !== JSON.stringify(originalFields);
-
-    const addService = () => {
-        if (!newService.trim() || !fields) return;
-        setFields({ ...fields, services: [...fields.services, newService.trim()] });
-        setNewService("");
-    };
-
-    const inp = "w-full bg-white border border-zinc-200 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all";
-    const lbl = "block text-xs font-black text-zinc-400 uppercase tracking-widest mb-1.5";
-    const secEdit = "bg-white rounded-2xl border-2 border-dashed border-orange-200 p-5 space-y-4";
-
-    // Not the owner — just render the normal page
-    if (!isOwner) return <>{children}</>;
 
     return (
-        <>
-            {/* Secondary owner bar — sits below the main site navbar (top-16) */}
-            <div className="fixed top-16 left-0 right-0 z-40 bg-zinc-50 border-b border-zinc-200">
-                <div className="container mx-auto px-4 h-10 flex items-center justify-between gap-4">
-                    <span className="text-xs font-black text-zinc-400 uppercase tracking-widest">
-                        {editMode ? "Editing your profile" : "Viewing as owner"}
-                    </span>
-                    <div className="flex items-center gap-2">
-                        {!editMode ? (
+        <EditableProfileContext.Provider value={contextValue}>
+            <>
+                <div className={`fixed top-[72px] md:top-[100px] left-0 right-0 z-40 border-b ${editMode ? "bg-slate-50 border-slate-200" : "bg-zinc-50 border-zinc-200"}`}>
+                    <div className="w-full px-12 pr-12 h-12 flex items-center justify-between gap-4">
+                        <span className="text-xs font-black text-zinc-400 uppercase tracking-widest">
+                            {editMode ? "Editing your profile" : "Viewing as owner"}
+                        </span>
+                        <div className="flex items-center gap-2">
+                            {hasChanges && editMode && (
+                                <span className="text-xs font-bold text-orange-500 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full hidden sm:block">
+                                    Unsaved changes
+                                </span>
+                            )}
                             <button
-                                onClick={() => setEditMode(true)}
-                                className="flex items-center gap-1.5 h-7 px-4 text-xs font-black text-white bg-orange-500 hover:bg-orange-600 rounded-full shadow transition-all"
+                                type="button"
+                                onClick={() => {
+                                    if (editMode) {
+                                        handleCancel();
+                                    } else {
+                                        setEditMode(true);
+                                    }
+                                }}
+                                className={`relative inline-flex h-8 w-[110px] items-center rounded-full border transition-colors ${editMode ? "border-orange-500 bg-orange-500" : "border-zinc-300 bg-zinc-200"}`}
+                                aria-pressed={editMode}
                             >
-                                <Pencil className="w-3 h-3" /> Edit Profile
+                                <span className={`absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white shadow-sm transition-transform ${editMode ? "translate-x-[78px]" : "translate-x-0"}`}>
+                                    <Pencil className={`w-3.5 h-3.5 ${editMode ? "text-orange-500" : "text-zinc-400"}`} />
+                                </span>
+                                <span className={`w-full px-3 text-[11px] font-black uppercase tracking-widest transition-opacity ${editMode ? "pr-8 text-white text-left opacity-100" : "pl-8 text-zinc-600 text-right opacity-100"}`}>
+                                    Edit Mode
+                                </span>
                             </button>
-                        ) : (
-                            <>
-                                {hasChanges && (
-                                    <span className="text-xs font-bold text-orange-500 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full hidden sm:block">
-                                        Unsaved changes
-                                    </span>
-                                )}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="h-[48px]" />
+
+                <div className={`${editMode ? "bg-slate-50/70" : ""} [&_[data-claim-banner]]:hidden ${editMode ? "pb-28" : ""}`}>
+                    {children}
+                </div>
+
+                {editMode && fields && <FocusEditorOverlay />}
+
+                {editMode && fields && (
+                    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 bg-white/95 backdrop-blur">
+                        <div className="w-full px-12 pr-12 py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-center gap-3 text-sm font-bold text-zinc-500">
+                                <span>{hasChanges ? "Unsaved changes" : "No unpublished changes"}</span>
+                                <Link href={`/b/${fields.slug}`} target="_blank" className="inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 transition-colors">
+                                    Live Preview <ExternalLink className="h-4 w-4" />
+                                </Link>
+                            </div>
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={handleCancel}
-                                    className="h-7 px-3 text-xs font-bold text-zinc-500 hover:text-zinc-900 rounded-full border border-zinc-200 hover:bg-zinc-100 transition-all flex items-center gap-1"
+                                    className="h-14 px-6 rounded-2xl border border-zinc-300 text-zinc-600 font-bold uppercase tracking-wide text-base hover:bg-zinc-50 transition-colors"
                                 >
-                                    <X className="w-3 h-3" /> Discard
+                                    Discard
                                 </button>
                                 <button
                                     onClick={handleSave}
                                     disabled={saving || !hasChanges}
-                                    className="h-7 px-4 text-xs font-black text-white bg-orange-500 hover:bg-orange-600 rounded-full shadow disabled:opacity-40 transition-all flex items-center gap-1"
+                                    className="h-14 px-8 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-bold uppercase tracking-wide text-base shadow-lg shadow-orange-200 disabled:opacity-50 flex items-center gap-2 transition-colors"
                                 >
-                                    {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
-                                    {saving ? "Saving..." : "Save Changes"}
+                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                    {saving ? "Saving..." : "Save & Publish"}
                                 </button>
-                            </>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* Spacer: owner bar only (h-10) — page children already have pt-20 covering the navbar */}
-            <div className="h-[40px]" />
-
-            {/* Normal view — [data-claim-banner] hidden for owners */}
-            {!editMode && (
-                <div className="[&_[data-claim-banner]]:hidden">
-                    {children}
-                </div>
-            )}
-
-            {/* Edit mode — same 2-column layout as the real profile page */}
-            {editMode && fields && (
-                <div className="bg-zinc-50 min-h-screen">
-                    <div className="bg-white border-b border-zinc-100 py-3">
-                        <div className="container mx-auto px-4">
-                            <p className="text-xs font-black text-orange-500 uppercase tracking-widest flex items-center gap-2">
-                                <Pencil className="w-3 h-3" /> Editing: {fields.business_name}
-                                <span className="text-zinc-300 font-medium normal-case tracking-normal">— click any field to change it</span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="container mx-auto px-4 py-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8 items-start">
-
-                            {/* ── LEFT SIDEBAR (editable) ── */}
-                            <div className="space-y-4 lg:sticky lg:top-[104px] self-start">
-
-                                {/* Cover photo card */}
-                                <div className={secEdit}>
-                                    <p className="text-xs font-black text-orange-400 uppercase tracking-widest flex items-center gap-1.5">
-                                        <Camera className="w-3 h-3" /> Cover Photo
-                                    </p>
-                                    <div className="rounded-xl overflow-hidden h-28 bg-zinc-100">
-                                        <ImageUpload
-                                            defaultValue={fields.cover_photo_url ? [fields.cover_photo_url] : []}
-                                            maxFiles={1}
-                                            onUpload={(urls) => setFields({ ...fields, cover_photo_url: urls[0] || "" })}
-                                        />
-                                    </div>
-                                    <p className="text-xs font-black text-orange-400 uppercase tracking-widest flex items-center gap-1.5 pt-1">
-                                        <Camera className="w-3 h-3" /> Logo
-                                    </p>
-                                    <div className="w-20 h-20 rounded-xl overflow-hidden bg-zinc-100">
-                                        <ImageUpload
-                                            defaultValue={fields.logo_url ? [fields.logo_url] : []}
-                                            maxFiles={1}
-                                            onUpload={(urls) => setFields({ ...fields, logo_url: urls[0] || "" })}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Business identity */}
-                                <div className={secEdit}>
-                                    <div>
-                                        <label className={lbl}>Business Name</label>
-                                        <input type="text" value={fields.business_name} onChange={(e) => setFields({ ...fields, business_name: e.target.value })} className={inp} />
-                                    </div>
-                                    <div>
-                                        <label className={lbl}>Trade Category</label>
-                                        <select value={fields.trade_category} onChange={(e) => setFields({ ...fields, trade_category: e.target.value })} className={inp}>
-                                            {TRADE_CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className={lbl}>Years Experience</label>
-                                        <input type="text" value={fields.years_experience} onChange={(e) => setFields({ ...fields, years_experience: e.target.value })} placeholder="e.g. 10+ years" className={inp} />
-                                    </div>
-                                </div>
-
-                                {/* Contact & location */}
-                                <div className={secEdit}>
-                                    <p className="text-xs font-black text-orange-400 uppercase tracking-widest flex items-center gap-1.5">
-                                        <Phone className="w-3 h-3" /> Contact &amp; Location
-                                    </p>
-                                    <div>
-                                        <label className={lbl}>Phone</label>
-                                        <input type="tel" value={fields.business_phone} onChange={(e) => setFields({ ...fields, business_phone: e.target.value })} className={inp} />
-                                    </div>
-                                    <div>
-                                        <label className={lbl}>Email</label>
-                                        <input type="email" value={fields.business_email} onChange={(e) => setFields({ ...fields, business_email: e.target.value })} className={inp} />
-                                    </div>
-                                    <div>
-                                        <label className={lbl}>Website</label>
-                                        <input type="url" value={fields.website} onChange={(e) => setFields({ ...fields, website: e.target.value })} placeholder="https://..." className={inp} />
-                                    </div>
-                                    <div>
-                                        <label className={lbl}>Address</label>
-                                        <AddressAutocomplete
-                                            addressValue={fields.address}
-                                            suburbValue={fields.suburb}
-                                            stateValue={fields.state}
-                                            onAddressSelect={(address, suburb, state, postcode) =>
-                                                setFields({ ...fields, address, suburb, state: state || fields.state })
-                                            }
-                                            placeholder="Search for your address..."
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label className={lbl}>Suburb</label>
-                                            <input type="text" value={fields.suburb} onChange={(e) => setFields({ ...fields, suburb: e.target.value })} className={inp} />
-                                        </div>
-                                        <div>
-                                            <label className={lbl}>State</label>
-                                            <select value={fields.state} onChange={(e) => setFields({ ...fields, state: e.target.value })} className={inp}>
-                                                {["VIC","NSW","QLD","WA","SA","TAS","ACT","NT"].map(s => <option key={s} value={s}>{s}</option>)}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className={lbl}>ABN / ACN</label>
-                                        <input type="text" value={fields.abn} onChange={(e) => setFields({ ...fields, abn: e.target.value })} placeholder="11-digit ABN" className={inp} />
-                                    </div>
-                                    <div>
-                                        <label className={lbl}>Service Radius (km)</label>
-                                        <input type="number" value={fields.service_radius_km} onChange={(e) => setFields({ ...fields, service_radius_km: parseInt(e.target.value) || 0 })} className={inp} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* ── MAIN CONTENT (editable) ── */}
-                            <div className="space-y-6 min-w-0">
-
-                                {/* About */}
-                                <div className={secEdit}>
-                                    <h2 className="text-xs font-black text-orange-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                        <Pencil className="w-3 h-3" /> About the Business
-                                    </h2>
-                                    <textarea
-                                        value={fields.description}
-                                        onChange={(e) => setFields({ ...fields, description: e.target.value })}
-                                        rows={5}
-                                        placeholder="Describe your business, services, and what makes you stand out..."
-                                        className={`${inp} resize-y leading-relaxed`}
-                                    />
-                                </div>
-
-                                {/* Why Choose Us */}
-                                <div className={secEdit}>
-                                    <h2 className="text-xs font-black text-orange-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                        <Pencil className="w-3 h-3" /> Why Choose Us
-                                    </h2>
-                                    <textarea
-                                        value={fields.why_refer_us}
-                                        onChange={(e) => setFields({ ...fields, why_refer_us: e.target.value })}
-                                        rows={4}
-                                        placeholder="Tell customers why they should choose you..."
-                                        className={`${inp} resize-y leading-relaxed`}
-                                    />
-                                </div>
-
-                                {/* Services */}
-                                <div className={secEdit}>
-                                    <h2 className="text-xs font-black text-orange-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                        <Pencil className="w-3 h-3" /> Services Offered
-                                    </h2>
-                                    <div className="flex flex-wrap gap-2 min-h-[32px]">
-                                        {fields.services.map((s, i) => (
-                                            <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-700">
-                                                {s}
-                                                <button onClick={() => setFields({ ...fields, services: fields.services.filter((_, idx) => idx !== i) })} className="text-zinc-300 hover:text-red-500 transition-colors ml-1">
-                                                    <X className="w-3 h-3" />
-                                                </button>
-                                            </span>
-                                        ))}
-                                        {fields.services.length === 0 && <span className="text-sm text-zinc-300 italic">No services added yet</span>}
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            value={newService}
-                                            onChange={(e) => setNewService(e.target.value)}
-                                            onKeyDown={(e) => e.key === "Enter" && addService()}
-                                            placeholder="Type a service and press Enter or Add"
-                                            className={`${inp} flex-1`}
-                                        />
-                                        <button onClick={addService} className="h-9 px-3 bg-orange-500 text-white rounded-xl text-xs font-black flex items-center gap-1 hover:bg-orange-600 transition-all shrink-0">
-                                            <Plus className="w-3.5 h-3.5" /> Add
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Service Highlights */}
-                                <div className={secEdit}>
-                                    <h2 className="text-xs font-black text-orange-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                        <Pencil className="w-3 h-3" /> Service Highlights
-                                    </h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                        {AVAILABLE_FEATURES.map((feature) => (
-                                            <label key={feature} className={`flex items-center gap-2 p-2.5 rounded-xl border-2 cursor-pointer transition-all text-xs font-bold ${fields.features.includes(feature) ? "bg-orange-50 border-orange-400 text-orange-900" : "bg-white border-zinc-100 text-zinc-500 hover:border-zinc-200"}`}>
-                                                <input type="checkbox" className="hidden" checked={fields.features.includes(feature)}
-                                                    onChange={(e) => setFields({ ...fields, features: e.target.checked ? [...fields.features, feature] : fields.features.filter((f) => f !== feature) })}
-                                                />
-                                                <div className={`w-3.5 h-3.5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${fields.features.includes(feature) ? "bg-orange-500 border-orange-500" : "bg-white border-zinc-300"}`}>
-                                                    {fields.features.includes(feature) && (
-                                                        <svg className="w-2 h-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    )}
-                                                </div>
-                                                {feature}
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Project Gallery */}
-                                <div className={secEdit}>
-                                    <h2 className="text-xs font-black text-orange-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                                        <Camera className="w-3 h-3" /> Project Gallery
-                                    </h2>
-                                    <ImageUpload defaultValue={fields.photo_urls} maxFiles={20} onUpload={(urls) => setFields({ ...fields, photo_urls: urls })} />
-                                </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Floating save bar */}
-                    {hasChanges && (
-                        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-zinc-900 text-white rounded-full px-6 py-3 shadow-2xl flex items-center gap-4 animate-in slide-in-from-bottom-4 duration-300">
-                            <span className="text-sm font-bold text-zinc-300 hidden sm:block">Unsaved changes</span>
-                            <button onClick={handleCancel} className="text-sm font-bold text-zinc-400 hover:text-white transition-colors">Discard</button>
-                            <button onClick={handleSave} disabled={saving} className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold px-5 py-2 rounded-full shadow-lg disabled:opacity-50 flex items-center gap-1.5 transition-all">
-                                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                                {saving ? "Saving..." : "Save"}
-                            </button>
-                        </div>
-                    )}
-                </div>
-            )}
-        </>
+                )}
+            </>
+        </EditableProfileContext.Provider>
     );
 }

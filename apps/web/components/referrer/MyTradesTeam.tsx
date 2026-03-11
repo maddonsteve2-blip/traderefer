@@ -50,17 +50,14 @@ export function MyTradesTeam() {
 
     useEffect(() => { fetchTeam(); }, [fetchTeam]);
 
-    // Group businesses by trade category
     const teamMap = new Map<string, TeamBusiness>();
     businesses.forEach(b => {
         const cat = b.trade_category || "Other";
-        // Keep the best earner per category
-        if (!teamMap.has(cat) || (teamMap.get(cat)!.earned < b.earned)) {
+        if (!teamMap.has(cat)) {
             teamMap.set(cat, b);
         }
     });
 
-    // Also track extra businesses per category
     const extraByCategory = new Map<string, TeamBusiness[]>();
     businesses.forEach(b => {
         const cat = b.trade_category || "Other";

@@ -192,6 +192,13 @@ export default function ReferrerManagePage() {
     const [copied, setCopied] = useState(false);
     const [tab, setTab] = useState<"sms" | "email" | "social">("sms");
     const [token, setToken] = useState<string>("");
+    const [targetBusinessSlug, setTargetBusinessSlug] = useState("");
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const params = new URLSearchParams(window.location.search);
+        setTargetBusinessSlug(params.get("business") || "");
+    }, []);
 
     useEffect(() => {
         if (!isLoaded) return;
@@ -202,7 +209,8 @@ export default function ReferrerManagePage() {
                 fetch(`${API}/referrer/dashboard`, { headers: { Authorization: `Bearer ${t}` } }),
                 fetch(`${API}/applications/my-applications`, { headers: { Authorization: `Bearer ${t}` } }),
             ]);
-            const l: TeamLink[] = dashRes.ok ? (await dashRes.json()).active_links || [] : [];
+            const dashData = dashRes.ok ? await dashRes.json() : null;
+            const l: TeamLink[] = dashData?.links || dashData?.active_links || [];
             const allApps = appsRes.ok ? (await appsRes.json()).applications || [] : [];
             const pending: PendingApp[] = allApps
                 .filter((a: { status: string }) => a.status === "pending")
@@ -219,21 +227,66 @@ export default function ReferrerManagePage() {
                 }));
             setLinks(l);
             setPendingApps(pending);
-            if (l.length > 0) setSelected({ type: "approved", link: l[0] });
-            else if (pending.length > 0) setSelected({ type: "pending", app: pending[0] });
             setLoading(false);
         })();
     }, [isLoaded, getToken]);
 
+    useEffect(() => {
+        if (loading) return;
+
+        const approvedMatch = targetBusinessSlug
+            ? links.find((link) => link.slug === targetBusinessSlug)
+            : null;
+        if (approvedMatch) {
+            setSelected({ type: "approved", link: approvedMatch });
+            return;
+        }
+
+        const pendingMatch = targetBusinessSlug
+            ? pendingApps.find((app) => app.business_slug === targetBusinessSlug)
+            : null;
+        if (pendingMatch) {
+            setSelected({ type: "pending", app: pendingMatch });
+            return;
+        }
+
+        if (links.length > 0) {
+            setSelected((current) => {
+                if (current?.type === "approved" && links.some((link) => link.slug === current.link.slug)) {
+                    return current;
+                }
+                return { type: "approved", link: links[0] };
+            });
+            return;
+        }
+
+        if (pendingApps.length > 0) {
+            setSelected((current) => {
+                if (current?.type === "pending" && pendingApps.some((app) => app.id === current.app.id)) {
+                    return current;
+                }
+                return { type: "pending", app: pendingApps[0] };
+            });
+        }
+    }, [loading, targetBusinessSlug, links, pendingApps]);
+
+    useEffect(() => {
+        setCopied(false);
+    }, [selected]);
+
+    const approvedSelected = selected?.type === "approved" ? selected.link : null;
+    const pendingSelected = selected?.type === "pending" ? selected.app : null;
     const activeLink = selected?.type === "approved" ? selected.link : null;
     const referralLink = activeLink ? `${BASE_URL}/b/${activeLink.slug}?ref=${activeLink.code}` : "";
     const feeDisplay = activeLink ? `$${((activeLink.referral_fee_cents * 0.8) / 100).toFixed(2)} per lead` : "";
+    const leadFormLink = activeLink ? `${referralLink}#enquiry-form` : "";
+    const referrerBusinessPageLink = activeLink ? `/dashboard/referrer/refer/${activeLink.slug}` : "";
 
     const handleCopy = () => {
         if (!referralLink) return;
         navigator.clipboard.writeText(referralLink);
         setCopied(true);
-        toast.success("Referral link copied! 🚀");
+        toast.success("Referral link copied! ");
         setTimeout(() => setCopied(false), 2500);
     };
 
@@ -246,7 +299,7 @@ export default function ReferrerManagePage() {
             ? `Subject: "You need to check out ${activeLink.name}"\n\nHey,\n\nI wanted to share a local ${activeLink.trade_category} business I've been working with — ${activeLink.name}. They have a 5.0 trust score, are fully verified on TradeRefer, and do incredible work in ${activeLink.sub.split("•")[1]?.trim() || "the area"}.\n\nThey handle all things ${activeLink.trade_category.toLowerCase()} and their team is reliable, transparent, and professional. You can book directly through my personal referral link and they'll take great care of you:\n\n${referralLink}`
             : "",
         social: activeLink
-            ? `⭐ Found the best ${activeLink.trade_category} crew around! ${activeLink.name} are verified, reliable, and seriously professional. Book through my personal link: ${referralLink} #${activeLink.trade_category.replace(/\s/g, "")} #TradeRefer`
+            ? `Found the best ${activeLink.trade_category} crew around! ${activeLink.name} are verified, reliable, and seriously professional. Book through my personal link: ${referralLink} #${activeLink.trade_category.replace(/\s/g, "")} #TradeRefer`
             : "",
     };
 
@@ -274,7 +327,7 @@ export default function ReferrerManagePage() {
                 </div>
                 <h1 className="font-black text-zinc-900 mb-3" style={{ fontSize: '32px' }}>Build Your Team</h1>
                 <p className="font-medium text-zinc-500 max-w-md mb-8" style={{ fontSize: '18px', lineHeight: 1.65 }}>
-                    You don&apos;t have any referral partnerships yet. Apply to join a business&apos;s network to unlock your Command Centre.
+                    You don't have any referral partnerships yet. Apply to join a business's network to unlock your Command Centre.
                 </p>
                 <Link
                     href="/dashboard/referrer/businesses"
@@ -360,7 +413,7 @@ export default function ReferrerManagePage() {
 
     // ── MAIN LAYOUT ──────────────────────────────────────────────────────────
     return (
-        <div className="fixed inset-0 top-[72px] md:top-[100px] flex flex-col overflow-hidden bg-white">
+        <div className="fixed inset-0 top-[72px] md:top-[100px] lg:right-12 flex flex-col overflow-hidden bg-white">
             {/* ── MOBILE: Horizontal chip scroll ── */}
             <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
                 {links.map(link => (
@@ -390,21 +443,21 @@ export default function ReferrerManagePage() {
             </div>
 
             {/* ── DESKTOP: Full-width 2-col layout ── */}
-            <div className="flex-1 flex min-h-0 overflow-hidden">
+            <div className="flex-1 flex min-h-0 overflow-hidden flex-col md:flex-row">
 
                 {/* ── SIDEBAR ── */}
-                <aside className="hidden md:flex flex-col w-[26%] bg-gray-50 shrink-0 overflow-hidden" style={{ boxShadow: "4px 0 20px rgba(0,0,0,0.05)" }}>
+                <aside className="hidden md:flex flex-col w-[26%] bg-gray-50 shrink-0 overflow-hidden" style={{ boxShadow: "4px 0 20px rgba(0,0,0,0.05)", scrollbarGutter: "stable" }}>
                     <div className="px-5 pt-6 pb-3">
                         <p className="font-black uppercase tracking-widest text-zinc-400" style={{ fontSize: '13px' }}>Command Centre</p>
                         <p className="font-black text-zinc-900 mt-0.5" style={{ fontSize: '22px' }}>{totalCount} Business{totalCount !== 1 ? "es" : ""}</p>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-1">
+                    <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-1" style={{ scrollbarGutter: "stable" }}>
                         {/* ── Active Team section ── */}
                         {links.length > 0 && (
                             <>
                                 <p className="font-black uppercase tracking-widest text-zinc-400 px-2 pt-2 pb-1" style={{ fontSize: '11px' }}>
-                                    ✅ My Active Team ({links.length})
+                                    My Active Team ({links.length})
                                 </p>
                                 {links.map(link => <ApprovedCard key={link.slug} link={link} />)}
                             </>
@@ -414,7 +467,7 @@ export default function ReferrerManagePage() {
                         {pendingApps.length > 0 && (
                             <>
                                 <p className="font-black uppercase tracking-widest text-amber-500 px-2 pt-4 pb-1" style={{ fontSize: '11px' }}>
-                                    ⏳ Pending Review ({pendingApps.length})
+                                    Pending Review ({pendingApps.length})
                                 </p>
                                 {pendingApps.map(app => <PendingCard key={app.id} app={app} />)}
                             </>
@@ -432,76 +485,85 @@ export default function ReferrerManagePage() {
                 <main className="flex-1 flex flex-col min-h-0 overflow-hidden bg-white">
 
                     {/* ══ APPROVED WORKSTATION ══ */}
-                    {selected?.type === "approved" && (() => {
-                        const link = selected.link;
+                    {approvedSelected && (() => {
+                        const link = approvedSelected;
                         return (
                             <div className="flex flex-col flex-1 min-h-0">
-                                <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-5">
-                                <div className="flex items-center justify-between flex-wrap gap-3">
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '28px' }}>{link.name}</h1>
-                                            {link.is_verified && <BadgeCheck className="w-6 h-6 text-orange-500" />}
-                                        </div>
-                                        <p className="font-medium text-zinc-500 mt-0.5" style={{ fontSize: '17px' }}>{link.sub}</p>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2">
-                                            <TrendingUp className="w-4 h-4 text-emerald-500" />
-                                            <span className="font-black text-zinc-900" style={{ fontSize: '15px' }}>{link.leads} leads</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2">
-                                            <Zap className="w-4 h-4 text-orange-500" />
-                                            <span className="font-black text-zinc-900" style={{ fontSize: '15px' }}>${link.earned.toFixed(0)} earned</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Link Vault */}
-                                <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                    <div className="bg-zinc-900 px-5 py-4">
-                                        <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '13px' }}>Your Referral Link</p>
-                                        <p className="font-bold text-zinc-200 mt-0.5" style={{ fontSize: '15px' }}>Share this link — you earn {feeDisplay}</p>
-                                    </div>
-                                    <div className="bg-white px-5 py-5">
-                                        <div className="flex-1 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 font-mono text-zinc-600 truncate mb-4" style={{ fontSize: '16px' }}>
-                                            {referralLink}
-                                        </div>
-                                        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl font-black text-white transition-all active:scale-[0.99]" style={{ fontSize: '19px', background: copied ? "#16a34a" : "#FF7A00", boxShadow: copied ? "0 8px 24px rgba(22,163,74,0.25)" : "0 8px 24px rgba(255,122,0,0.35)" }}>
-                                            {copied ? <><Check className="w-5 h-5" /> Link Copied!</> : <><Copy className="w-5 h-5" /> Copy Referral Link</>}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Marketing Swipe File */}
-                                <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                    <div className="bg-zinc-900 px-5 py-4">
-                                        <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '13px' }}>Marketing Swipe File</p>
-                                        <p className="font-bold text-zinc-200 mt-0.5" style={{ fontSize: '15px' }}>Ready-to-send copy — tap, copy, share</p>
-                                    </div>
-                                    <div className="bg-white">
-                                        <div className="flex px-5 pt-4 gap-1">
-                                            {([{ key: "sms", icon: MessageSquare, label: "SMS" }, { key: "email", icon: Mail, label: "Email" }, { key: "social", icon: Share2, label: "Social" }] as const).map(({ key, icon: Icon, label }) => (
-                                                <button key={key} onClick={() => setTab(key)} className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${tab === key ? "bg-zinc-900 text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"}`} style={{ fontSize: '17px' }}>
-                                                    <Icon className="w-4 h-4" />{label}
-                                                </button>
-                                            ))}
-                                        </div>
-                                        <div className="px-5 pt-3 pb-5">
-                                            <div className="bg-zinc-50 rounded-2xl p-4 font-medium text-zinc-700 leading-relaxed whitespace-pre-wrap cursor-text select-all" style={{ fontSize: '17px', lineHeight: 1.65 }}>
-                                                {swipeContent[tab]}
+                                <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-4 md:py-6 space-y-5" style={{ scrollbarGutter: "stable" }}>
+                                    <div className="flex items-center justify-between flex-wrap gap-3">
+                                        <div className="min-w-0">
+                                            <div className="flex items-center gap-2 min-w-0">
+                                                <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '28px' }}>{link.name}</h1>
+                                                {link.is_verified && <BadgeCheck className="w-6 h-6 text-orange-500" />}
                                             </div>
-                                            <button onClick={handleCopySwipe} className="mt-3 flex items-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all" style={{ fontSize: '16px' }}>
-                                                <Copy className="w-4 h-4" /> Copy {tab.toUpperCase()} Copy
+                                            <p className="font-medium text-zinc-500 mt-0.5" style={{ fontSize: '17px' }}>{link.sub}</p>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-3">
+                                            <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2">
+                                                <TrendingUp className="w-4 h-4 text-emerald-500" />
+                                                <span className="font-black text-zinc-900" style={{ fontSize: '15px' }}>{link.leads} leads</span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2">
+                                                <Zap className="w-4 h-4 text-orange-500" />
+                                                <span className="font-black text-zinc-900" style={{ fontSize: '15px' }}>${link.earned.toFixed(0)} earned</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
+                                        <div className="bg-zinc-900 px-5 py-4">
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '13px' }}>Your Referral Link</p>
+                                            <p className="font-bold text-zinc-200 mt-0.5" style={{ fontSize: '15px' }}>Share this link — you earn {feeDisplay}</p>
+                                        </div>
+                                        <div className="bg-white px-5 py-5">
+                                            <div className="w-full overflow-x-auto bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 font-mono text-zinc-600 whitespace-nowrap mb-4" style={{ fontSize: '16px' }}>
+                                                {referralLink}
+                                            </div>
+                                            <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl font-black text-white transition-all active:scale-[0.99]" style={{ fontSize: '19px', background: copied ? "#16a34a" : "#FF7A00", boxShadow: copied ? "0 8px 24px rgba(22,163,74,0.25)" : "0 8px 24px rgba(255,122,0,0.35)" }}>
+                                                {copied ? <><Check className="w-5 h-5" /> Link Copied!</> : <><Copy className="w-5 h-5" /> Copy Referral Link</>}
                                             </button>
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                                                <Link href={referralLink} target="_blank" className="flex items-center justify-center gap-2 px-5 py-3 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-bold text-zinc-700 transition-all" style={{ fontSize: '15px' }}>
+                                                    <Share2 className="w-4 h-4" /> Open Public Link
+                                                </Link>
+                                                <Link href={leadFormLink} target="_blank" className="flex items-center justify-center gap-2 px-5 py-3 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl font-bold text-orange-700 transition-all" style={{ fontSize: '15px' }}>
+                                                    <Send className="w-4 h-4" /> Submit Lead / Job
+                                                </Link>
+                                                <Link href={referrerBusinessPageLink} className="flex items-center justify-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 rounded-xl font-bold text-white transition-all" style={{ fontSize: '15px' }}>
+                                                    <Building2 className="w-4 h-4" /> Referral Page
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
+                                        <div className="bg-zinc-900 px-5 py-4">
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '13px' }}>Marketing Swipe File</p>
+                                            <p className="font-bold text-zinc-200 mt-0.5" style={{ fontSize: '15px' }}>Ready-to-send copy — tap, copy, share</p>
+                                        </div>
+                                        <div className="bg-white">
+                                            <div className="flex overflow-x-auto px-5 pt-4 gap-1">
+                                                {([{ key: "sms", icon: MessageSquare, label: "SMS" }, { key: "email", icon: Mail, label: "Email" }, { key: "social", icon: Share2, label: "Social" }] as const).map(({ key, icon: Icon, label }) => (
+                                                    <button key={key} onClick={() => setTab(key)} className={`flex shrink-0 items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${tab === key ? "bg-zinc-900 text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"}`} style={{ fontSize: '17px' }}>
+                                                        <Icon className="w-4 h-4" />{label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <div className="px-5 pt-3 pb-5">
+                                                <div className="bg-zinc-50 rounded-2xl p-4 font-medium text-zinc-700 leading-relaxed whitespace-pre-wrap cursor-text select-all" style={{ fontSize: '17px', lineHeight: 1.65 }}>
+                                                    {swipeContent[tab]}
+                                                </div>
+                                                <button onClick={handleCopySwipe} className="mt-3 flex items-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all" style={{ fontSize: '16px' }}>
+                                                    <Copy className="w-4 h-4" /> Copy {tab.toUpperCase()} Copy
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                </div>{/* end scrollable upper */}
                                 {/* Inline Chat — pinned to bottom */}
-                                <div className="shrink-0 px-6 pb-5 pt-0 bg-white">
-                                    <div className="rounded-2xl overflow-hidden flex flex-col shadow-lg shadow-zinc-100" style={{ height: '280px' }}>
+                                <div className="shrink-0 px-4 md:px-6 pb-4 md:pb-5 pt-0 bg-white">
+                                    <div className="rounded-2xl overflow-hidden flex flex-col shadow-lg shadow-zinc-100" style={{ height: '220px' }}>
                                         <InlineChat key={link.business_id} businessId={link.business_id} businessName={link.name.split(" ")[0]} token={token} />
                                     </div>
                                 </div>
@@ -510,8 +572,8 @@ export default function ReferrerManagePage() {
                     })()}
 
                     {/* ══ PENDING / WAITING ROOM WORKSTATION ══ */}
-                    {selected?.type === "pending" && (() => {
-                        const app = selected.app;
+                    {pendingSelected && (() => {
+                        const app = pendingSelected;
                         const feeCents = app.referral_fee_cents ?? 0;
                         const potentialFee = feeCents > 0 ? `$${((feeCents * 0.8) / 100).toFixed(2)}` : null;
                         const appliedDate = new Date(app.applied_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
@@ -519,7 +581,7 @@ export default function ReferrerManagePage() {
                             <div className="flex flex-col flex-1 min-h-0">
 
                                 {/* TOP: Status Hero — always visible, flex-none */}
-                                <div className="shrink-0 px-6 pt-6 pb-3">
+                                <div className="shrink-0 px-4 md:px-6 pt-4 md:pt-6 pb-3">
                                     <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
                                         <div className="bg-amber-500 px-6 py-5">
                                             <div className="flex items-center gap-3 mb-1">
@@ -557,7 +619,7 @@ export default function ReferrerManagePage() {
                                 </div>
 
                                 {/* MIDDLE: Tips — flex-1, only area that scrolls */}
-                                <div className="flex-1 min-h-0 overflow-y-auto px-6 py-3">
+                                <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-3" style={{ scrollbarGutter: "stable" }}>
                                     <div className="rounded-2xl bg-zinc-50 px-6 py-5 shadow-lg shadow-zinc-100">
                                         <div className="flex items-center gap-2 mb-3">
                                             <AlertCircle className="w-5 h-5 text-zinc-400" />
@@ -587,7 +649,7 @@ export default function ReferrerManagePage() {
                                 </div>
 
                                 {/* BOTTOM: Locked chat input — always pinned, flex-none */}
-                                <div className="shrink-0 px-6 pb-5 pt-3">
+                                <div className="shrink-0 px-4 md:px-6 pb-4 md:pb-5 pt-3">
                                     <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
                                         <div className="bg-zinc-900 px-5 py-4 flex items-center justify-between">
                                             <div className="flex items-center gap-2">

@@ -254,7 +254,7 @@ export default async function BusinessDirectory({
                 </div>
 
                 {nearbyFallback && suburb && (
-                    <div className="mb-6 flex items-center gap-3 bg-orange-50 border border-orange-100 rounded-2xl px-5 py-3.5">
+                    <div className="mb-6 flex items-start gap-3 bg-orange-50 border border-orange-100 rounded-2xl px-5 py-3.5">
                         <MapPin className="w-4 h-4 text-orange-500 shrink-0" />
                         <p className="font-bold text-orange-700" style={{ fontSize: '16px' }}>
                             {nearbyFallback.startsWith('within')
@@ -280,7 +280,7 @@ export default async function BusinessDirectory({
                                                     {biz.business_name}
                                                 </h3>
                                             </Link>
-                                            <div className="flex items-center gap-1.5 font-bold text-zinc-500" style={{ fontSize: '16px' }}>
+                                            <div className="flex flex-wrap items-center gap-1.5 font-bold text-zinc-500" style={{ fontSize: '16px' }}>
                                                 <span className="text-orange-600">{biz.trade_category}</span>
                                                 <span>•</span>
                                                 <span className="flex items-center gap-1">
@@ -310,7 +310,7 @@ export default async function BusinessDirectory({
                                     </p>
                                 </div>
 
-                                <div className="flex items-center justify-between pt-4 border-t border-zinc-50">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-zinc-50">
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full font-bold border border-green-100" style={{ fontSize: '16px' }}>
                                             <DollarSign className="w-3.5 h-3.5" />
@@ -335,7 +335,7 @@ export default async function BusinessDirectory({
                                             </div>
                                         )}
                                     </div>
-                                    <Link href={`/b/${biz.slug}/refer`} className="bg-[#1A1A1A] hover:bg-black text-white font-black rounded-full px-6 inline-flex items-center justify-center gap-1.5 transition-colors" style={{ minHeight: '48px', fontSize: '16px' }}>
+                                    <Link href={`/b/${biz.slug}/refer`} className="w-full sm:w-auto bg-[#1A1A1A] hover:bg-black text-white font-black rounded-full px-6 inline-flex items-center justify-center gap-1.5 transition-colors" style={{ minHeight: '48px', fontSize: '16px' }}>
                                         Start Referring <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                                     </Link>
                                 </div>
@@ -361,7 +361,7 @@ export default async function BusinessDirectory({
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="mt-12 flex items-center justify-center gap-2">
+                    <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
                         {/* Prev */}
                         {page > 1 ? (
                             <Link href={buildPageUrl(params, page - 1)}
@@ -375,7 +375,7 @@ export default async function BusinessDirectory({
                         )}
 
                         {/* Page numbers */}
-                        <div className="flex items-center gap-1">
+                        <div className="flex flex-wrap items-center justify-center gap-1">
                             {Array.from({ length: totalPages }, (_, i) => i + 1)
                                 .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 2)
                                 .reduce<(number | "...")[]>((acc, p, idx, arr) => {

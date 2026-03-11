@@ -53,10 +53,10 @@ export default async function ReferrerRewardsPage() {
 
     return (
         <div className="min-h-screen bg-zinc-50">
-            <div className="w-full px-6 py-6">
+            <div className="w-full px-4 md:px-6 py-5 md:py-6">
 
                 {/* Breadcrumb */}
-                <div className="flex items-center gap-3 mb-5">
+                <div className="flex flex-wrap items-center gap-3 mb-5">
                     <Link href="/dashboard/referrer" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '16px' }}>
                         <ArrowLeft className="w-4 h-4" /> Dashboard
                     </Link>
@@ -80,9 +80,9 @@ export default async function ReferrerRewardsPage() {
                     <div className="lg:col-span-8 space-y-5">
 
                         {/* HERO: Balance Card */}
-                        <div className="bg-zinc-900 rounded-[32px] p-8 text-white relative overflow-hidden shadow-2xl">
+                        <div className="bg-zinc-900 rounded-[32px] p-5 md:p-8 text-white relative overflow-hidden shadow-2xl">
                             {/* Powered by Prezzee badge */}
-                            <div className="absolute top-6 right-7 flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl px-3 py-1.5">
+                            <div className="static md:absolute md:top-6 md:right-7 inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl px-3 py-1.5 mb-5 md:mb-0">
                                 <span className="font-black text-white" style={{ fontSize: '16px' }}>Powered by</span>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
@@ -119,7 +119,7 @@ export default async function ReferrerRewardsPage() {
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
                                         <p className="font-black text-zinc-400 uppercase tracking-widest mb-1" style={{ fontSize: '16px' }}>Total Earned</p>
                                         <p className="font-black text-zinc-100" style={{ fontSize: '20px' }}>${totalEarned.toFixed(2)}</p>
@@ -138,13 +138,13 @@ export default async function ReferrerRewardsPage() {
 
                         {/* CATALOG STRIP */}
                         <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-                            <div className="flex items-center justify-between mb-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                                 <p className="font-black text-zinc-900" style={{ fontSize: '20px' }}>One Card. 400+ Places to Spend It.</p>
                                 <Link href="/rewards" className="font-bold text-orange-500 hover:text-orange-600 underline underline-offset-2" style={{ fontSize: '18px' }}>
                                     See all →
                                 </Link>
                             </div>
-                            <div className="grid grid-cols-6 gap-2">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                                 {CATALOG_BRANDS.map((brand) => (
                                     <div
                                         key={brand.name}
@@ -193,10 +193,10 @@ export default async function ReferrerRewardsPage() {
                                 </h3>
                                 <div className="space-y-3">
                                     {prezzeePayouts.slice(0, 5).map((p: { id: string; amount_cents: number; created_at: string; destination_email?: string }) => (
-                                        <div key={p.id} className="flex items-center justify-between py-3 border-b border-zinc-50 last:border-0">
-                                            <div>
+                                        <div key={p.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-3 border-b border-zinc-50 last:border-0">
+                                            <div className="min-w-0">
                                                 <p className="font-black text-zinc-900" style={{ fontSize: '17px' }}>${(p.amount_cents / 100).toFixed(2)} Prezzee Swap</p>
-                                                <p className="text-zinc-400 font-medium" style={{ fontSize: '16px' }}>
+                                                <p className="text-zinc-400 font-medium break-all" style={{ fontSize: '16px' }}>
                                                     {new Date(p.created_at).toLocaleDateString('en-AU')} · {p.destination_email || "gift card"}
                                                 </p>
                                             </div>

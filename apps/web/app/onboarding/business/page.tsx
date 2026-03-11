@@ -70,6 +70,7 @@ function BusinessOnboardingContent() {
     // Claim mode: existing business being claimed
     const claimBusinessId = searchParams.get('claim');
     const claimSlug = searchParams.get('slug');
+    const claimVerificationToken = searchParams.get('claim_token') || '';
     const isClaiming = !!claimBusinessId;
     const inviteCode = searchParams.get('invite') || '';
 
@@ -471,7 +472,8 @@ Respond with ONLY a JSON object (no markdown, no code fences):
             if (!formData.address.trim() || !formData.suburb.trim() || !formData.postcode.trim()) { toast.error("Please select a full address including postcode"); return; }
             if (!formData.business_phone.trim()) { toast.error("Business phone is required"); return; }
             if (!formData.business_email.trim()) { toast.error("Business email is required"); return; }
-            if (!ownerOtpVerified) { toast.error("Please verify your mobile number to continue"); return; }
+            if (!isClaiming && !ownerOtpVerified) { toast.error("Please verify your mobile number to continue"); return; }
+            if (isClaiming && !claimVerificationToken) { toast.error("Please return to the claim verification screen and verify this business first"); return; }
         }
 
         // Step 2 → Step 3: trigger AI generation from chat
@@ -519,6 +521,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                         abn: formData.abn || undefined,
                         owner_phone: ownerPhone || undefined,
                         owner_phone_verified: ownerOtpVerified,
+                        claim_verification_token: claimVerificationToken || undefined,
                         invite_code: inviteCode || undefined,
                     })
                 });
@@ -801,7 +804,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                             {ownerOtpVerified ? <span className="text-green-600">Mobile Verified ✓</span> : "Verify Your Mobile"}
                                         </label>
                                         <p className="text-xs text-zinc-400 font-medium mb-4">Your personal mobile — for account security and lead alerts. Not shown publicly.</p>
-                                        {!ownerOtpVerified ? (
+                                        {!isClaiming && !ownerOtpVerified ? (
                                             <>
                                                 <div className="flex gap-3">
                                                     <input
@@ -844,6 +847,14 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                                     </div>
                                                 )}
                                             </>
+                                        ) : isClaiming ? (
+                                            <div className="flex items-start gap-3 text-orange-700 font-bold">
+                                                <ShieldCheck className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                                                <div>
+                                                    <p>Business ownership already verified.</p>
+                                                    <p className="text-sm font-medium text-orange-600 mt-1">You can add or update your owner mobile later from your business settings.</p>
+                                                </div>
+                                            </div>
                                         ) : (
                                             <div className="flex items-center gap-3 text-green-700 font-bold">
                                                 <CheckCircle2 className="w-5 h-5 text-green-500" />

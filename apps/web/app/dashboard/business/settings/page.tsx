@@ -4,18 +4,22 @@ import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
-    Settings,
-    User,
-    Save,
-    ExternalLink,
+    Building2,
     Shield,
-    CreditCard,
-    Check,
     Loader2,
     CheckCircle2,
     ChevronLeft,
     TrendingUp,
-    Clock
+    Clock,
+    Eye,
+    MapPin,
+    Globe,
+    Phone,
+    Mail,
+    Save,
+    BadgeCheck,
+    Copy,
+    ExternalLink
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -26,7 +30,6 @@ export default function BusinessSettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
-    // Form state
     const [formData, setFormData] = useState<{
         business_name: string;
         trade_category: string;
@@ -56,18 +59,28 @@ export default function BusinessSettingsPage() {
         abn: "",
         referral_fee_cents: 1000,
         why_refer_us: "",
-        response_sla_minutes: null
+        response_sla_minutes: null,
     });
     const [verifying, setVerifying] = useState(false);
 
-    const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+    const [slugStatus, setSlugStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+    const labelClass = "text-zinc-900 font-bold";
+    const inputClass = "w-full h-14 bg-white border border-zinc-200 rounded-2xl px-5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none placeholder-zinc-300";
+    const textareaClass = "w-full min-h-[160px] bg-white border border-zinc-200 rounded-2xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none placeholder-zinc-300 resize-none";
+    const responseTimeOptions: Array<{ label: string; value: number }> = [
+        { label: "30 min", value: 30 },
+        { label: "1 hour", value: 60 },
+        { label: "2 hours", value: 120 },
+        { label: "4 hours", value: 240 },
+    ];
 
     const fetchBusiness = useCallback(async () => {
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/me`, {
-                headers: { 'Authorization': `Bearer ${token}` }
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/business/me`, {
+                headers: { Authorization: `Bearer ${token}` },
             });
+
             if (res.ok) {
                 const data = await res.json();
                 setBiz(data);
@@ -85,7 +98,7 @@ export default function BusinessSettingsPage() {
                     abn: data.abn || "",
                     referral_fee_cents: data.referral_fee_cents || 1000,
                     why_refer_us: data.why_refer_us || "",
-                    response_sla_minutes: data.response_sla_minutes || null
+                    response_sla_minutes: data.response_sla_minutes || null,
                 });
             }
         } catch (err) {
@@ -102,16 +115,16 @@ export default function BusinessSettingsPage() {
 
     const checkSlug = async (val: string) => {
         if (!val || val === biz?.slug) {
-            setSlugStatus('idle');
+            setSlugStatus("idle");
             return;
         }
-        setSlugStatus('checking');
+        setSlugStatus("checking");
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/check-slug/${val}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/business/check-slug/${val}`);
             const data = await res.json();
-            setSlugStatus(data.available ? 'available' : 'taken');
+            setSlugStatus(data.available ? "available" : "taken");
         } catch {
-            setSlugStatus('idle');
+            setSlugStatus("idle");
         }
     };
 
@@ -119,13 +132,13 @@ export default function BusinessSettingsPage() {
         setSaving(true);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/update`, {
-                method: 'PATCH',
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/business/update`, {
+                method: "PATCH",
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(formData),
             });
 
             if (res.ok) {
@@ -151,19 +164,19 @@ export default function BusinessSettingsPage() {
         setVerifying(true);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/verify-abn`, {
-                method: 'POST',
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/business/verify-abn`, {
+                method: "POST",
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ abn: formData.abn })
+                body: JSON.stringify({ abn: formData.abn }),
             });
 
             const data = await res.json();
             if (res.ok && data.verified) {
                 toast.success(data.message);
-                fetchBusiness(); // Refresh to show verified badge
+                fetchBusiness();
             } else {
                 toast.error(data.message || "ABN verification failed.");
             }
@@ -174,264 +187,405 @@ export default function BusinessSettingsPage() {
         }
     };
 
+    const handleCopyStorefrontUrl = async () => {
+        try {
+            await navigator.clipboard.writeText(storefrontHref);
+            toast.success("Storefront URL copied");
+        } catch {
+            toast.error("Could not copy storefront URL");
+        }
+    };
+
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-                <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+            <div className="h-screen pt-[72px] md:pt-[100px] bg-zinc-50">
+                <div className="h-full flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+                </div>
             </div>
         );
     }
 
+    const responseTimeLabel = formData.response_sla_minutes
+        ? formData.response_sla_minutes < 60
+            ? `${formData.response_sla_minutes} min`
+            : `${formData.response_sla_minutes / 60} hour${formData.response_sla_minutes > 60 ? "s" : ""}`
+        : "Fast replies";
+
+    const storefrontDisplayUrl = formData.slug ? `traderefer.com.au/b/${formData.slug}` : "traderefer.com.au/b/your-business";
+    const storefrontHref = formData.slug ? `https://traderefer.com.au/b/${formData.slug}` : "https://traderefer.com.au/b/your-business";
+
     return (
-        <div className="min-h-screen bg-zinc-50 pt-16">
-            <div className="max-w-[1024px] mx-auto px-6 lg:px-0 py-12">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                    <div className="space-y-2">
-                        <Link href="/dashboard/business" className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-orange-500 transition-colors mb-2">
-                            <ChevronLeft className="w-4 h-4" /> Back to Dashboard
-                        </Link>
-                        <h1 className="text-zinc-900 text-4xl font-extrabold tracking-tight">Business Settings</h1>
-                        <p className="text-zinc-500 text-lg">Manage your business profile, referral fees, and verification status.</p>
+        <div className="bg-zinc-100 overflow-hidden">
+            <div className="mt-[72px] md:mt-[100px] min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-100px)] w-full max-w-none px-4 md:px-6 xl:px-10 pb-4 md:pb-6 overflow-visible xl:overflow-hidden flex flex-col xl:flex-row gap-4 xl:gap-0">
+                <div className="w-full xl:w-[40%] min-h-0 overflow-hidden bg-white border border-gray-200 xl:border-r xl:border-l-0 xl:border-t-0 xl:border-b-0 rounded-[28px] xl:rounded-none flex flex-col">
+                    <div className="flex-1 overflow-y-auto px-4 md:px-6 xl:pr-8 xl:pl-0 pt-6 md:pt-8 pb-20">
+                        <div className="space-y-6">
+                            <div className="space-y-3">
+                                <Link href="/dashboard/business" className="flex items-center gap-1.5 text-sm font-semibold text-zinc-400 hover:text-zinc-800 transition-colors group w-fit">
+                                    <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Dashboard
+                                </Link>
+                                <div className="flex items-center gap-3">
+                                    <Building2 className="w-5 h-5 text-orange-500" />
+                                    <h1 className="font-bold text-zinc-900" style={{ fontSize: 24 }}>Edit Your Business Profile</h1>
+                                </div>
+                                <p className="text-zinc-500 font-medium text-base">This profile is what referrers see in the catalog before they decide to promote your business.</p>
+                            </div>
+
+                            <section className="space-y-6">
+                                <div className="space-y-3">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>Business Name</label>
+                                    <input
+                                        type="text"
+                                        className={inputClass}
+                                        value={formData.business_name}
+                                        onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
+                                        placeholder="TradeRefer Plumbing Co"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                                    <div className="space-y-3">
+                                        <label className={labelClass} style={{ fontSize: 18 }}>Trade Category</label>
+                                        <input
+                                            type="text"
+                                            className={inputClass}
+                                            value={formData.trade_category}
+                                            onChange={(e) => setFormData({ ...formData, trade_category: e.target.value })}
+                                            placeholder="Plumbing"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className={labelClass} style={{ fontSize: 18 }}>Suburb</label>
+                                        <input
+                                            type="text"
+                                            className={inputClass}
+                                            value={formData.suburb}
+                                            onChange={(e) => setFormData({ ...formData, suburb: e.target.value })}
+                                            placeholder="Brisbane"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                                    <div className="space-y-3">
+                                        <label className={labelClass} style={{ fontSize: 18 }}>Business Phone</label>
+                                        <input
+                                            type="tel"
+                                            className={inputClass}
+                                            value={formData.business_phone}
+                                            onChange={(e) => setFormData({ ...formData, business_phone: e.target.value })}
+                                            placeholder="0400 000 000"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className={labelClass} style={{ fontSize: 18 }}>Business Email</label>
+                                        <input
+                                            type="email"
+                                            className={inputClass}
+                                            value={formData.business_email}
+                                            onChange={(e) => setFormData({ ...formData, business_email: e.target.value })}
+                                            placeholder="hello@business.com.au"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>Website</label>
+                                    <input
+                                        type="url"
+                                        className={inputClass}
+                                        value={formData.website}
+                                        onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                                        placeholder="https://yourbusiness.com.au"
+                                    />
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>Storefront Slug</label>
+                                    <input
+                                        type="text"
+                                        className={`${inputClass} ${slugStatus === "taken" ? "border-red-300 focus:border-red-400 focus:ring-red-500/20" : ""}`}
+                                        value={formData.slug}
+                                        onChange={(e) => {
+                                            const value = e.target.value.trim().toLowerCase().replace(/\s+/g, "-");
+                                            setFormData({ ...formData, slug: value });
+                                            checkSlug(value);
+                                        }}
+                                        placeholder="trade-refer-plumbing"
+                                    />
+                                    <p className={`text-sm font-medium ${slugStatus === "taken" ? "text-red-500" : slugStatus === "available" ? "text-emerald-600" : "text-zinc-400"}`}>
+                                        {slugStatus === "taken"
+                                            ? "This storefront URL is already taken."
+                                            : slugStatus === "available"
+                                                ? "This storefront URL is available."
+                                                : "Your storefront updates live as you type."}
+                                    </p>
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-bold text-zinc-900">Live URL</p>
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-2xl border border-orange-200 bg-orange-50/70 px-4 py-3">
+                                            <a
+                                                href={storefrontHref}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="min-w-0 flex items-center gap-2 text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
+                                            >
+                                                <span className="truncate">{storefrontDisplayUrl}</span>
+                                                <ExternalLink className="w-4 h-4 shrink-0" />
+                                            </a>
+                                            <button
+                                                type="button"
+                                                onClick={handleCopyStorefrontUrl}
+                                                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-orange-200 bg-white text-orange-600 hover:bg-orange-100 transition-colors shrink-0"
+                                                aria-label="Copy storefront URL"
+                                            >
+                                                <Copy className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section className="space-y-6">
+                                <div>
+                                    <h2 className="font-bold text-zinc-900" style={{ fontSize: 24 }}>Why Referrers Should Choose You</h2>
+                                    <p className="text-zinc-500 font-medium text-sm mt-2">Shape the story referrers see when comparing businesses in the catalog.</p>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>Business Description</label>
+                                    <textarea
+                                        rows={4}
+                                        className={textareaClass}
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        placeholder="Tell referrers what makes your business credible, trusted, and easy to recommend."
+                                    />
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>Referrer Pitch</label>
+                                    <textarea
+                                        rows={5}
+                                        className={textareaClass}
+                                        value={formData.why_refer_us}
+                                        onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
+                                        placeholder="e.g. We answer fast, turn up on time, and give referrers confidence every step of the way."
+                                    />
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>Address</label>
+                                    <textarea
+                                        rows={3}
+                                        className={textareaClass}
+                                        value={formData.address}
+                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                        placeholder="Street address or service HQ"
+                                    />
+                                </div>
+                            </section>
+
+                            <section className="space-y-6">
+                                <div>
+                                    <h2 className="font-bold text-zinc-900" style={{ fontSize: 24 }}>Referral Fee Settings</h2>
+                                    <p className="text-zinc-500 font-medium text-sm mt-2">Set the commercial signal that makes your storefront feel premium to referrers.</p>
+                                </div>
+
+                                <div className="rounded-[28px] border border-orange-200 bg-orange-50/60 p-6 space-y-4">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>Base Referral Fee</label>
+                                    <div className="relative w-full max-w-[280px]">
+                                        <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-zinc-900" style={{ fontSize: 24 }}>$</span>
+                                        <input
+                                            type="number"
+                                            min="3"
+                                            step="1"
+                                            className="w-full h-14 rounded-2xl border-2 border-orange-300 bg-white pl-14 pr-5 font-black text-zinc-900 outline-none transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20"
+                                            style={{ fontSize: 32 }}
+                                            value={formData.referral_fee_cents / 100}
+                                            onChange={(e) => {
+                                                const val = parseFloat(e.target.value) || 0;
+                                                setFormData({ ...formData, referral_fee_cents: Math.round(val * 100) });
+                                            }}
+                                        />
+                                    </div>
+                                    <p className="text-sm text-zinc-600 font-semibold">Referrers notice stronger offers quickly. $10+ usually feels like a serious, high-intent partnership.</p>
+                                </div>
+
+                                <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+                                    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+                                        <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Referrer Reward</p>
+                                        <p className="font-bold text-zinc-900" style={{ fontSize: 32 }}>${(formData.referral_fee_cents / 100).toFixed(2)}</p>
+                                    </div>
+                                    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+                                        <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Platform Fee</p>
+                                        <p className="font-bold text-zinc-900" style={{ fontSize: 32 }}>${(formData.referral_fee_cents * 0.2 / 100).toFixed(2)}</p>
+                                    </div>
+                                    <div className="rounded-2xl bg-zinc-900 text-white p-5 shadow-lg shadow-zinc-900/10">
+                                        <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-white/60 mb-3">Total Unlock Price</p>
+                                        <p className="font-bold text-white" style={{ fontSize: 32 }}>${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section className="space-y-6">
+                                <div>
+                                    <h2 className="font-bold text-zinc-900" style={{ fontSize: 24 }}>Operational Trust Signals</h2>
+                                    <p className="text-zinc-500 font-medium text-sm mt-2">These cues tell referrers how quickly and confidently you operate.</p>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>Response Time Target</label>
+                                    <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+                                        {responseTimeOptions.map((opt) => (
+                                            <button
+                                                key={opt.value}
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, response_sla_minutes: opt.value })}
+                                                className={`h-14 rounded-2xl border-2 text-center font-bold transition-all ${formData.response_sla_minutes === opt.value
+                                                    ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                                                    : "border-zinc-200 bg-white text-zinc-600 hover:border-emerald-300"
+                                                }`}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className={labelClass} style={{ fontSize: 18 }}>ABN Verification</label>
+                                    <div className="flex flex-col xl:flex-row items-stretch gap-3">
+                                        <input
+                                            type="text"
+                                            placeholder="11 222 333 444"
+                                            className={`${inputClass} font-mono tracking-widest`}
+                                            value={formData.abn}
+                                            onChange={(e) => setFormData({ ...formData, abn: e.target.value.replace(/\s/g, "") })}
+                                        />
+                                        <Button
+                                            onClick={handleVerifyABN}
+                                            disabled={verifying || !formData.abn || formData.abn.length < 11}
+                                            className="h-14 min-w-[220px] rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase tracking-wide text-base"
+                                        >
+                                            {verifying ? <Loader2 className="w-5 h-5 animate-spin" /> : <Shield className="w-5 h-5" />}
+                                            {verifying ? "Verifying..." : "Verify ABN"}
+                                        </Button>
+                                    </div>
+                                    {biz?.is_verified && (
+                                        <div className="flex items-center gap-2 text-blue-600 font-semibold text-sm">
+                                            <BadgeCheck className="w-4 h-4" /> Verified business identity on file
+                                        </div>
+                                    )}
+                                </div>
+                            </section>
+                        </div>
                     </div>
-                    <div className="flex gap-3">
+
+                    <div className="shrink-0 border-t border-gray-200 bg-white pt-4 pb-6 px-4 md:px-6 xl:pr-8 xl:pl-0">
                         <Button
                             onClick={handleSave}
-                            disabled={saving || slugStatus === 'taken'}
-                            className="flex min-w-[160px] items-center justify-center rounded-full h-12 px-8 bg-orange-500 text-white text-sm font-bold shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all"
+                            disabled={saving || slugStatus === "taken"}
+                            className="w-full h-14 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-bold uppercase tracking-wide text-base shadow-lg shadow-orange-200"
                         >
-                            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                            {saving ? "Saving..." : "Save Changes"}
+                            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                            {saving ? "Saving Changes..." : "Save Changes"}
                         </Button>
                     </div>
                 </div>
 
-                <div className="space-y-8">
-                    {/* Card 1: Business Profile */}
-                    <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="size-12 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500">
-                                <User className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-zinc-900">Business Profile</h2>
-                                <p className="text-sm text-zinc-500 font-medium">Public information about your company</p>
-                            </div>
+                <div className="w-full xl:w-[60%] min-h-[460px] xl:h-full bg-gray-50 flex items-center justify-center border border-gray-200 xl:border-l xl:border-r-0 xl:border-t-0 xl:border-b-0 rounded-[28px] xl:rounded-none overflow-hidden">
+                    <div className="w-full h-full flex flex-col px-4 md:px-6 xl:px-8 py-4 md:py-6">
+                        <div className="flex items-center gap-2 mb-4 shrink-0">
+                            <Eye className="w-4 h-4 text-zinc-400" />
+                            <span className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: 12 }}>Live Preview</span>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1">Business Name</label>
-                                <input
-                                    type="text"
-                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300"
-                                    value={formData.business_name}
-                                    onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1">Account Phone</label>
-                                <input
-                                    type="tel"
-                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"
-                                    value={formData.business_phone}
-                                    onChange={(e) => setFormData({ ...formData, business_phone: e.target.value })}
-                                    placeholder="0400 000 000"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1">Account Email</label>
-                                <input
-                                    type="email"
-                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"
-                                    value={formData.business_email}
-                                    onChange={(e) => setFormData({ ...formData, business_email: e.target.value })}
-                                    placeholder="info@business.com"
-                                />
-                            </div>
-                        </div>
-                    </section>
 
-                    {/* Card: Why Refer Us (Referrer Pitch) */}
-                    <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="size-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-500">
-                                <User className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-zinc-900">Why Refer Us</h2>
-                                <p className="text-sm text-zinc-500 font-medium">Your pitch to referrers — tell them why they should recommend you</p>
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1">Referrer Pitch</label>
-                            <textarea
-                                rows={4}
-                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-purple-500/20 placeholder-zinc-300 resize-none"
-                                value={formData.why_refer_us}
-                                onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
-                                placeholder="e.g. We respond to every lead within 2 hours, always show up on time, and our customers love us. Referrers earn $15 per qualified lead — the easiest money you'll make!"
-                            />
-                            <p className="text-sm text-zinc-400 ml-1">This appears on your referrer partner page to convince referrers to promote you.</p>
-                        </div>
-                    </section>
+                        <div className="flex-1 min-h-0 flex items-center justify-center overflow-hidden">
+                            <div className="w-full max-w-[820px] origin-top xl:origin-center scale-100 md:scale-[0.92] xl:scale-[0.9] 2xl:scale-[0.96] rounded-[28px] border border-gray-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)] overflow-hidden">
+                                <div className="border-b border-gray-100 px-7 py-6 bg-gradient-to-br from-white via-white to-orange-50">
+                                    <div className="flex flex-col lg:flex-row items-start justify-between gap-6">
+                                        <div className="space-y-3">
+                                            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700 font-bold text-xs uppercase tracking-[0.14em]">
+                                                <CheckCircle2 className="w-3.5 h-3.5" /> Trusted by Referrers
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h2 className="font-black text-zinc-900 leading-none" style={{ fontSize: 32 }}>
+                                                    {formData.business_name || biz?.business_name || "Your Business Name"}
+                                                </h2>
+                                                <div className="flex items-center gap-3 flex-wrap text-sm text-zinc-500 font-medium">
+                                                    {(formData.trade_category || formData.suburb) && (
+                                                        <span className="inline-flex items-center gap-1.5">
+                                                            <MapPin className="w-4 h-4" />
+                                                            {[formData.trade_category, formData.suburb].filter(Boolean).join(" · ")}
+                                                        </span>
+                                                    )}
+                                                    {formData.website && (
+                                                        <span className="inline-flex items-center gap-1.5">
+                                                            <Globe className="w-4 h-4" /> {formData.website.replace(/^https?:\/\//, "")}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <p className="max-w-2xl text-zinc-600 font-medium leading-7 text-base">
+                                                {formData.why_refer_us || formData.description || "Add your business pitch on the left and it will render here as your live storefront summary."}
+                                            </p>
+                                        </div>
 
-                    {/* Card 2: Referral Fee Settings */}
-                    <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm overflow-hidden relative">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="size-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-500">
-                                <TrendingUp className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-zinc-900">Referral Fee Settings</h2>
-                                <p className="text-sm text-zinc-500 font-medium">Control the cost of new leads</p>
-                            </div>
-                        </div>
-                        <div className="space-y-8">
-                            <div className="space-y-3">
-                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1">Base Referral Fee (Click to Edit)</label>
-                                <div className="relative flex items-center max-w-xs">
-                                    <span className="absolute left-4 text-2xl font-black text-zinc-900 pointer-events-none">$</span>
-                                    <input
-                                        type="number"
-                                        min="3"
-                                        step="1"
-                                        className="w-full bg-white border-2 border-orange-200 rounded-2xl pl-10 pr-4 py-6 text-4xl font-black text-zinc-900 focus:ring-4 focus:ring-orange-500/30 focus:border-orange-500 hover:border-orange-300 transition-all cursor-text"
-                                        value={formData.referral_fee_cents / 100}
-                                        onChange={(e) => {
-                                            const val = parseFloat(e.target.value) || 0;
-                                            setFormData({ ...formData, referral_fee_cents: Math.round(val * 100) });
-                                        }}
-                                        placeholder="10.00"
-                                    />
-                                </div>
-                                <p className="text-base text-zinc-600 ml-1 font-semibold">&#128161; Click the amount above to change your referral fee</p>
-
-                                <div className="p-4 bg-orange-50 border-2 border-orange-200 rounded-xl mt-3">
-                                    <p className="text-base text-orange-900 font-bold leading-relaxed">
-                                        &#128176; <span className="font-black">For Quality Leads:</span> We recommend setting your referral fee at <span className="font-black">$10 or higher</span> to encourage referrers to actively promote your business and send you high-quality leads.
-                                    </p>
-                                </div>
-
-                                {formData.referral_fee_cents < 300 && (
-                                    <p className="text-base text-red-500 mt-1 font-bold ml-1">&#9888;&#65039; Minimum reward is $3.00</p>
-                                )}
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="bg-zinc-50 p-6 rounded-2xl border border-zinc-100">
-                                    <p className="text-base font-extrabold uppercase tracking-[0.1em] text-zinc-400 mb-2">Referrer Reward</p>
-                                    <p className="text-2xl font-bold text-zinc-900">${(formData.referral_fee_cents / 100).toFixed(2)}</p>
-                                    <p className="text-base text-zinc-500 mt-1">80% of total fee</p>
-                                </div>
-                                <div className="bg-zinc-50 p-6 rounded-2xl border border-zinc-100">
-                                    <p className="text-base font-extrabold uppercase tracking-[0.1em] text-zinc-400 mb-2">Platform Fee (20%)</p>
-                                    <p className="text-2xl font-bold text-zinc-900">${(formData.referral_fee_cents * 0.2 / 100).toFixed(2)}</p>
-                                    <p className="text-base text-zinc-500 mt-1">Processing & insurance</p>
-                                </div>
-                                <div className="bg-orange-500 p-6 rounded-2xl shadow-xl shadow-orange-500/20 text-white relative overflow-hidden">
-                                    <div className="relative z-10">
-                                        <p className="text-base font-extrabold uppercase tracking-[0.1em] text-white/80 mb-2">Total Unlock Price</p>
-                                        <p className="text-2xl font-black text-white">${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
-                                        <p className="text-base text-white/80 mt-1">Tax included</p>
+                                        <div className="w-full lg:w-[210px] shrink-0 rounded-[24px] bg-zinc-900 text-white p-5">
+                                            <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-white/60 mb-3">Referral Fee</p>
+                                            <p className="font-black text-white leading-none" style={{ fontSize: 32 }}>${(formData.referral_fee_cents / 100).toFixed(0)}</p>
+                                            <p className="text-sm text-white/70 font-medium mt-3">What referrers see before they unlock and promote your business.</p>
+                                        </div>
                                     </div>
-                                    <div className="absolute -right-4 -bottom-4 size-20 bg-white/10 rounded-full blur-2xl"></div>
                                 </div>
-                            </div>
-                        </div>
-                    </section>
 
-                    {/* Card: Response SLA */}
-                    <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="size-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-500">
-                                <Clock className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-zinc-900">Response Time Target</h2>
-                                <p className="text-sm text-zinc-500 font-medium">Set your target response time for new leads — displayed on your referrer partner page</p>
-                            </div>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                {[
-                                    { label: "30 min", value: 30 },
-                                    { label: "1 hour", value: 60 },
-                                    { label: "2 hours", value: 120 },
-                                    { label: "4 hours", value: 240 },
-                                ].map(opt => (
-                                    <button
-                                        key={opt.value}
-                                        onClick={() => setFormData({ ...formData, response_sla_minutes: opt.value })}
-                                        className={`p-4 rounded-xl border-2 text-center font-bold transition-all ${formData.response_sla_minutes === opt.value
-                                                ? "border-emerald-500 bg-emerald-50 text-emerald-700"
-                                                : "border-zinc-200 text-zinc-600 hover:border-emerald-300"
-                                            }`}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
-                            </div>
-                            {formData.response_sla_minutes && (
-                                <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-xl border border-emerald-200">
-                                    <p className="text-sm font-bold text-emerald-800">
-                                        Referrers will see: "Responds in &lt; {formData.response_sla_minutes < 60 ? `${formData.response_sla_minutes} min` : `${formData.response_sla_minutes / 60} hour${formData.response_sla_minutes > 60 ? 's' : ''}`}"
-                                    </p>
-                                    <button
-                                        onClick={() => setFormData({ ...formData, response_sla_minutes: null })}
-                                        className="text-xs font-bold text-emerald-600 hover:text-emerald-800 underline"
-                                    >
-                                        Remove
-                                    </button>
+                                <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-100">
+                                    <div className="px-7 py-5 bg-white border-b md:border-b-0 md:border-r border-gray-100">
+                                        <Clock className="w-4 h-4 text-emerald-400 mb-4" />
+                                        <p className="font-black text-zinc-900 leading-none" style={{ fontSize: 32 }}>{responseTimeLabel}</p>
+                                        <p className="mt-3 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">Response Promise</p>
+                                    </div>
+                                    <div className="px-7 py-5 bg-gray-50 border-b md:border-b-0 md:border-r border-gray-100">
+                                        <TrendingUp className="w-4 h-4 text-orange-400 mb-4" />
+                                        <p className="font-black text-zinc-900 leading-none" style={{ fontSize: 32 }}>${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
+                                        <p className="mt-3 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">Lead Unlock Price</p>
+                                    </div>
+                                    <div className="px-7 py-5 bg-white">
+                                        <Shield className="w-4 h-4 text-blue-400 mb-4" />
+                                        <p className="font-black text-zinc-900 leading-none" style={{ fontSize: 32 }}>{biz?.is_verified ? "Verified" : "Pending"}</p>
+                                        <p className="mt-3 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">ABN Status</p>
+                                    </div>
                                 </div>
-                            )}
-                            <p className="text-sm text-zinc-400 ml-1">Setting a response time target builds trust with referrers and earns you a speed badge on your directory listing.</p>
-                        </div>
-                    </section>
 
-                    {/* Card 3: ABN Verification */}
-                    <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-                            <div className="flex items-center gap-4">
-                                <div className="size-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                    <Shield className="w-6 h-6" />
+                                <div className="px-7 py-6 space-y-5">
+                                    <div>
+                                        <p className="font-black text-zinc-900 mb-3" style={{ fontSize: 14 }}>Why This Business Converts</p>
+                                        <p className="text-zinc-600 leading-7 font-medium text-base">
+                                            {formData.description || "Describe your service quality, reliability, and why referrers can trust you with their reputation."}
+                                        </p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+                                            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-3">Contact</p>
+                                            <div className="space-y-3 text-sm text-zinc-600 font-medium">
+                                                <div className="inline-flex items-center gap-2 w-full"><Phone className="w-4 h-4 text-zinc-400" /> {formData.business_phone || "Add phone number"}</div>
+                                                <div className="inline-flex items-center gap-2 w-full"><Mail className="w-4 h-4 text-zinc-400" /> {formData.business_email || "Add email address"}</div>
+                                            </div>
+                                        </div>
+                                        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
+                                            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-3">Coverage</p>
+                                            <div className="space-y-3 text-sm text-zinc-600 font-medium">
+                                                <div className="inline-flex items-center gap-2 w-full"><MapPin className="w-4 h-4 text-zinc-400" /> {formData.suburb || "Add service suburb"}</div>
+                                                <div className="inline-flex items-center gap-2 w-full"><Building2 className="w-4 h-4 text-zinc-400" /> {formData.address || "Add business address"}</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h2 className="text-2xl font-bold text-zinc-900">ABN Verification</h2>
-                                    <p className="text-sm text-zinc-500 font-medium">Verify your Australian Business Number</p>
-                                </div>
-                            </div>
-                            <div className="flex flex-col sm:flex-row items-stretch gap-3 md:min-w-[480px]">
-                                <div className="flex-1 relative">
-                                    <input
-                                        type="text"
-                                        placeholder="11 222 333 444"
-                                        className="w-full bg-zinc-50 border-none rounded-xl px-4 py-4 text-zinc-900 font-mono tracking-widest focus:ring-2 focus:ring-blue-600/20 placeholder-zinc-300"
-                                        value={formData.abn}
-                                        onChange={(e) => setFormData({ ...formData, abn: e.target.value.replace(/\s/g, '') })}
-                                    />
-                                </div>
-                                <button
-                                    onClick={handleVerifyABN}
-                                    disabled={verifying || !formData.abn || formData.abn.length < 11}
-                                    className="bg-blue-600 text-white font-bold px-8 py-4 rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 disabled:opacity-50"
-                                >
-                                    {verifying ? <Loader2 className="w-5 h-5 animate-spin" /> : <Shield className="w-5 h-5" />}
-                                    {verifying ? "Verifying..." : "Verify ABN"}
-                                </button>
                             </div>
                         </div>
-                        {biz?.is_verified && (
-                            <div className="mt-8 pt-8 border-t border-zinc-100 flex items-center gap-3">
-                                <CheckCircle2 className="w-5 h-5 text-blue-500" />
-                                <div>
-                                    <p className="text-base font-bold text-zinc-900">Verified</p>
-                                    <p className="text-base text-zinc-500 font-mono">{biz.abn}</p>
-                                </div>
-                            </div>
-                        )}
-                        <div className="mt-8 pt-8 border-t border-zinc-100 flex items-start gap-3">
-                            <CheckCircle2 className="w-4 h-4 text-blue-500 mt-0.5" />
-                            <p className="text-base text-zinc-500 leading-relaxed">Verification ensures your business is compliant with Australian trade regulations. Verified businesses receive a badge and higher priority in referral rankings.</p>
-                        </div>
-                    </section>
+                    </div>
                 </div>
             </div>
         </div>

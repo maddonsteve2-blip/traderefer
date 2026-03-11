@@ -268,10 +268,17 @@ function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { i
         const href = isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business";
         const label = isBusinessDashboard ? "Referrer" : "Business";
         return (
-            <div className="hidden md:flex flex-1 justify-center">
+            <div className="flex flex-1 min-w-0 justify-center">
                 <Link
                     href={href}
-                    className="flex items-center gap-2 px-5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-bold transition-all"
+                    className="inline-flex md:hidden items-center gap-1.5 px-3 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-black transition-all text-xs max-w-full whitespace-nowrap"
+                >
+                    <ArrowLeftRight className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">Switch to {label}</span>
+                </Link>
+                <Link
+                    href={href}
+                    className="hidden md:inline-flex items-center gap-2 px-5 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-bold transition-all"
                     style={{ fontSize: '14px' }}
                 >
                     <ArrowLeftRight className="w-4 h-4" />
@@ -283,11 +290,18 @@ function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { i
 
     if (isBusinessDashboard) {
         return (
-            <div className="hidden md:flex flex-1 justify-center">
+            <div className="flex flex-1 min-w-0 justify-center">
                 <>
                     <button
                         onClick={() => setOpen(true)}
-                        className="flex items-center gap-2 px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black transition-all shadow-md shadow-orange-200"
+                        className="inline-flex md:hidden items-center gap-1.5 px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black transition-all text-xs max-w-full whitespace-nowrap shadow-md shadow-orange-200"
+                    >
+                        <Rocket className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">Referrer Mode</span>
+                    </button>
+                    <button
+                        onClick={() => setOpen(true)}
+                        className="hidden md:inline-flex items-center gap-2 px-5 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black transition-all shadow-md shadow-orange-200"
                         style={{ fontSize: '14px' }}
                     >
                         <Rocket className="w-4 h-4" />
@@ -301,11 +315,18 @@ function DashboardCenterAction({ isBusinessDashboard, isReferrerDashboard }: { i
 
     if (isReferrerDashboard) {
         return (
-            <div className="hidden md:flex flex-1 justify-center">
+            <div className="flex flex-1 min-w-0 justify-center">
                 <>
                     <button
                         onClick={() => setOpen(true)}
-                        className="flex items-center gap-2 px-5 py-2 bg-zinc-900 hover:bg-black text-white rounded-full font-black transition-all shadow-md"
+                        className="inline-flex md:hidden items-center gap-1.5 px-3 py-2 bg-zinc-900 hover:bg-black text-white rounded-full font-black transition-all text-xs max-w-full whitespace-nowrap shadow-md"
+                    >
+                        <Building2 className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">Business Mode</span>
+                    </button>
+                    <button
+                        onClick={() => setOpen(true)}
+                        className="hidden md:inline-flex items-center gap-2 px-5 py-2 bg-zinc-900 hover:bg-black text-white rounded-full font-black transition-all shadow-md"
                         style={{ fontSize: '14px' }}
                     >
                         <Building2 className="w-4 h-4" />
@@ -324,7 +345,7 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
     const BENEFITS = [
         { icon: DollarSign, title: "Monetize Your Network", desc: "Don't let out-of-area or over-booked calls go to waste. Refer them to verified peers and earn." },
         { icon: Gift, title: "Zero-Admin Rewards", desc: "All referral fees are paid via Prezzee Smart Cards. Choose from 300+ brands: Bunnings, Woolworths, Uber." },
-        { icon: Users2, title: "Professional Reciprocity", desc: "Build a circle of trusted trades who send work back to you — automatically." },
+        { icon: Users2, title: "Professional Reciprocity", desc: "Build a circle of trusted trades who send work back to you â€” automatically." },
         { icon: Rocket, title: "Free to Activate", desc: "No subscription. No upfront cost. The system issues digital cards instantly once a lead is verified." },
     ];
     return createPortal(
@@ -335,7 +356,7 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
                     <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white"><X className="w-4 h-4" /></button>
                     <div className="w-16 h-16 bg-white/15 rounded-2xl flex items-center justify-center mb-5"><Rocket className="w-9 h-9 text-white" /></div>
                     <h2 className="text-2xl font-black text-white mb-2 leading-tight">Monetize Your Network.<br />Earn Instant Rewards.</h2>
-                    <p className="text-orange-100 font-medium text-sm">Turn every referral into real money — the system handles everything.</p>
+                    <p className="text-orange-100 font-medium text-sm">Turn every referral into real money â€” the system handles everything.</p>
                 </div>
                 <div className="px-8 py-6 space-y-5">
                     {BENEFITS.map(({ icon: Icon, title, desc }) => (
@@ -361,7 +382,7 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
 function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
     const BENEFITS = [
         { icon: Target, title: "Pre-Vetted Leads, Delivered", desc: "Receive pre-screened leads from trusted referrers who personally vouch for each job." },
-        { icon: Users2, title: "Your Own Referrer Force", desc: "Approve trusted referrers to represent your brand — they grow your pipeline hands-free." },
+        { icon: Users2, title: "Your Own Referrer Force", desc: "Approve trusted referrers to represent your brand â€” they grow your pipeline hands-free." },
         { icon: BarChart3, title: "Command Centre Analytics", desc: "Track lead quality, conversion rates, and referrer performance from one dashboard." },
         { icon: Gift, title: "Zero-Admin Reward System", desc: "Prezzee Smart Cards handle referrer payouts automatically. No bank transfers, no invoices." },
     ];
@@ -374,7 +395,7 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
                     <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-5"><Building2 className="w-9 h-9 text-orange-400" /></div>
                     <p className="text-orange-400 font-black text-xs uppercase tracking-widest mb-2">Business Command Centre</p>
                     <h2 className="text-[22px] font-black text-white mb-2 leading-tight">Unlock Your Business<br />Command Centre</h2>
-                    <p className="text-zinc-400 font-medium text-sm">A professional hub where your referrer force delivers verified leads — on autopilot.</p>
+                    <p className="text-zinc-400 font-medium text-sm">A professional hub where your referrer force delivers verified leads â€” on autopilot.</p>
                 </div>
                 <div className="px-8 py-6 space-y-5">
                     {BENEFITS.map(({ icon: Icon, title, desc }) => (
@@ -488,21 +509,27 @@ export function Navbar() {
 
                     </Link>
 
-                    {/* ── PERSISTENT SEARCH BAR ── */}
+                    {/* â”€â”€ PERSISTENT SEARCH BAR â”€â”€ */}
                     {!isDashboard && (
                         <div className="hidden md:block flex-1 max-w-xl">
                             <SmartSearch variant="navbar" />
                         </div>
                     )}
 
-                    {/* ── PEEKING ROLE DRAWER (self-contained, portal-rendered) ── */}
+                    {/* â”€â”€ PEEKING ROLE DRAWER (self-contained, portal-rendered) â”€â”€ */}
                     {isDashboard && <SignedIn><PeekingRoleDrawer /></SignedIn>}
+
+                    {isDashboard && (
+                        <SignedIn>
+                            <DashboardCenterAction isBusinessDashboard={isBusinessDashboard} isReferrerDashboard={isReferrerDashboard} />
+                        </SignedIn>
+                    )}
 
 
 
                     <nav className="flex items-center gap-1">
 
-                        {/* Stable placeholder while Clerk resolves — prevents sign-in flash */}
+                        {/* Stable placeholder while Clerk resolves â€” prevents sign-in flash */}
                         {!isLoaded && (
                             <div className="flex items-center gap-2" aria-hidden>
                                 <div className="w-16 h-8 rounded-full bg-zinc-100 animate-pulse" />
@@ -595,7 +622,7 @@ export function Navbar() {
 
                                                 )}
 
-                                                {/* Core nav — 5 items max */}
+                                                {/* Core nav â€” 5 items max */}
 
                                                 <Link href="/dashboard/business/leads" className="hidden sm:block">
 
@@ -838,7 +865,7 @@ export function Navbar() {
 
             </header>
 
-            {/* ── MOBILE DRAWER ── */}
+            {/* â”€â”€ MOBILE DRAWER â”€â”€ */}
             {mobileMenuOpen && (
                 <div className="fixed inset-0 z-[45] md:hidden">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />

@@ -152,11 +152,11 @@ export default function ReferrerApplicationsPage() {
                                                 </p>
                                                 {app.status === "approved" && (
                                                     <Link
-                                                        href={`/dashboard/referrer/refer/${app.business_slug}`}
+                                                        href={`/dashboard/referrer/manage?business=${app.business_slug}`}
                                                         className="flex items-center gap-1.5 text-orange-600 hover:text-orange-700 font-bold transition-colors"
                                                         style={{ fontSize: '15px' }}
                                                     >
-                                                        Get Referral Link <ChevronRight className="w-4 h-4" />
+                                                        Open Command Centre <ChevronRight className="w-4 h-4" />
                                                     </Link>
                                                 )}
                                                 {(app.status === "rejected" || app.status === "expired") && (

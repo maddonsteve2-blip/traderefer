@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/layout-shared";
 
-const STANDALONE_ROUTES = ["/login", "/register", "/signup", "/onboarding", "/leads/verify", "/leads/success", "/admin", "/join"];
+const STANDALONE_ROUTES = ["/login", "/register", "/signup", "/onboarding", "/claim", "/leads/verify", "/leads/success", "/admin", "/join"];
 const NO_FOOTER_ROUTES = ["/dashboard", "/b/"];
 
 export function ConditionalLayout({ children, footer }: { children: React.ReactNode; footer: React.ReactNode }) {

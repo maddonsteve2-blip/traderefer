@@ -474,8 +474,8 @@ async def approve_application(
             {
                 "uid": app["referrer_user_id"],
                 "title": f"🎉 Approved by {app['business_name']}!",
-                "body": f"You can now generate your referral link and start earning.",
-                "link": f"/dashboard/referrer/refer/{app['slug']}",
+                "body": f"Open your command centre to copy your referral link and start sending leads.",
+                "link": f"/dashboard/referrer/manage?business={app['slug']}",
             }
         )
         await db.commit()
@@ -492,7 +492,7 @@ async def approve_application(
         if app["phone"]:
             await _send_sms(
                 app["phone"],
-                f"🎉 {app['business_name']} approved your application! Get your referral link at traderefer.au/dashboard/referrer/refer/{app['slug']}"
+                f"🎉 {app['business_name']} approved your application! Open your command centre: traderefer.au/dashboard/referrer/manage?business={app['slug']}"
             )
     except Exception as e:
         error_logger.warning(f"Approval notification error (non-fatal): {e}")

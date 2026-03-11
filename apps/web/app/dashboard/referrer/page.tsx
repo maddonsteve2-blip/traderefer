@@ -11,6 +11,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { DashboardError } from "@/components/dashboard/DashboardError";
 import { SidebarRoleSwitcher } from "@/components/dashboard/SidebarRoleSwitcher";
+import { PrezzeeRewardsCard } from "@/components/shared/PrezzeeRewardsCard";
 
 async function getDashboardData() {
     const { userId, getToken } = await auth();
@@ -61,14 +62,14 @@ export default async function ReferrerDashboardPage() {
             <WelcomeDialog />
 
             {/* ── 2-COLUMN GRID: 75% main / 25% right ── */}
-            <div className="w-full px-3 lg:px-5 py-5">
+            <div className="w-full px-3 lg:px-5 py-4 md:py-5">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
                     {/* ══ MAIN (9/12 = 75%) — Tier · Earnings · Opportunities ══ */}
                     <div className="lg:col-span-9 space-y-4">
 
                         {/* Page header */}
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div>
                                 <h1 className="text-2xl font-black text-zinc-900 leading-tight">Your Earnings</h1>
                                 <p className="text-base text-zinc-500 font-medium">Track referrals · collect Prezzee rewards</p>
@@ -92,43 +93,8 @@ export default async function ReferrerDashboardPage() {
                     {/* ══ RIGHT SIDEBAR (3/12 = 25%) — Rewards · Goal · Invite · Tips ══ */}
                     <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-28">
 
-                        {/* Prezzee Rewards — dark authority card */}
-                        <div className="bg-[#0F172A] rounded-2xl p-5 text-white relative overflow-hidden shadow-xl">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
-                                alt="Prezzee Smart Card"
-                                className="absolute -right-3 -top-3 w-28 rounded-xl pointer-events-none"
-                            />
-                            <div className="relative z-10">
-                                <div className="flex items-center gap-1.5 mb-2">
-                                    <span className="text-white font-semibold uppercase tracking-wider text-base">Rewards by</span>
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src="https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg"
-                                        alt="Prezzee" className="h-3.5 w-auto brightness-0 invert opacity-60" />
-                                </div>
-                                <h3 className="text-xl font-black text-white mb-1">Earn $25 Gift Cards</h3>
-                                <p className="text-white font-semibold text-base mb-1 leading-snug">
-                                    Invite 5 friends who join TradeRefer
-                                </p>
-                                <p className="text-zinc-300 font-semibold text-base mb-3 leading-relaxed">
-                                    → <span className="text-white font-bold">$25 Prezzee Smart Card</span>, automatically issued.
-                                </p>
-                                <div className="flex flex-wrap gap-1 mb-4">
-                                    {["Woolworths", "Bunnings", "Uber", "+400"].map((b) => (
-                                        <span key={b} className="text-base font-semibold bg-white/10 text-white px-2 py-0.5 rounded-full">{b}</span>
-                                    ))}
-                                </div>
-                                <Link href="/dashboard/referrer/withdraw"
-                                    className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-lg py-3 transition-colors mb-2 shadow-lg shadow-orange-500/30">
-                                    View My Rewards
-                                </Link>
-                                <Link href="/rewards"
-                                    className="block w-full text-center text-zinc-300 hover:text-white text-base font-semibold py-1 transition-colors underline underline-offset-2">
-                                    See all 335 brands →
-                                </Link>
-                            </div>
-                        </div>
+                        {/* Prezzee Rewards — shared card */}
+                        <PrezzeeRewardsCard rewardsHref="/dashboard/referrer/withdraw" />
 
                         {/* Friend Rewards / Invite */}
                         <div id="invite">
@@ -138,8 +104,9 @@ export default async function ReferrerDashboardPage() {
                         {/* Hot Campaigns */}
                         <HotCampaigns />
 
-                            {/* Role Switcher */}
-                        <SidebarRoleSwitcher currentRole="referrer" />
+                        <div className="hidden md:block">
+                            <SidebarRoleSwitcher currentRole="referrer" />
+                        </div>
 
                         {/* Find Businesses CTA */}
                         <div className="bg-orange-500 rounded-2xl p-4 text-white">

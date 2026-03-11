@@ -7,6 +7,8 @@ from utils.logging_config import email_logger, error_logger
 resend.api_key = os.getenv("RESEND_API_KEY", "")
 FROM_ADDRESS = os.getenv("RESEND_FROM", "traderefer.au <no-reply@traderefer.au>")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://traderefer.au")
+BUSINESS_VERIFICATION_EMAIL = os.getenv("BUSINESS_VERIFICATION_EMAIL", "support@traderefer.au")
+BUSINESS_VERIFICATION_OWNER_EMAIL = "stevejford007@gmail.com"
 
 
 async def _send(to: str, subject: str, html: str):
@@ -18,7 +20,6 @@ async def _send(to: str, subject: str, html: str):
     # Validate from address
     if not FROM_ADDRESS or "@" not in FROM_ADDRESS:
         email_logger.error(f"Invalid RESEND_FROM address: {FROM_ADDRESS}")
-        return
     
     try:
         # Run sync Resend SDK in thread pool to avoid blocking async event loop
@@ -38,6 +39,11 @@ async def _send(to: str, subject: str, html: str):
         error_msg = f"Failed to send email | to={to} | subject={subject} | error={e}"
         email_logger.error(error_msg)
         error_logger.error(error_msg, exc_info=True)
+
+
+async def _send_many(recipients: list[str], subject: str, html: str):
+    for recipient in recipients:
+        await _send(recipient, subject, html)
 
 
 # ─────────────────────────────────────────────
@@ -99,6 +105,57 @@ async def send_business_welcome(email: str, business_name: str, slug: str):
     await _send(email, f"Welcome to traderefer.au — {business_name} is live!", _wrap(body))
 
 
+async def send_business_claim_verification_code(email: str, business_name: str, code: str):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Verify your claim for {business_name}</h1>
+      <p>Use the verification code below to confirm you manage this business on traderefer.au.</p>
+      <div style="background:#fff7ed;border:2px solid #ea580c;border-radius:12px;padding:24px;text-align:center;margin:24px 0">
+        <p style="color:#666;margin:0 0 8px 0;font-size:14px">Your business verification code</p>
+        <p style="font-size:42px;font-weight:900;color:#ea580c;margin:0;letter-spacing:8px">{code}</p>
+        <p style="color:#666;margin:8px 0 0 0;font-size:13px">Expires in 10 minutes</p>
+      </div>
+      <p style="color:#666">If you did not request this code, you can ignore this email.</p>
+    """
+    await _send(email, f"Your TradeRefer claim code for {business_name}", _wrap(body))
+
+
+async def send_business_claim_manual_review_notification(
+    claimant_name: str,
+    claimant_email: str,
+    claimant_phone: Optional[str],
+    business_name: str,
+    business_slug: Optional[str],
+    business_address: str,
+    reason: str,
+    government_id_url: str,
+    business_proof_url: str,
+    supporting_document_url: Optional[str] = None,
+):
+    recipients = [BUSINESS_VERIFICATION_OWNER_EMAIL]
+    if BUSINESS_VERIFICATION_EMAIL and BUSINESS_VERIFICATION_EMAIL not in recipients:
+        recipients.insert(0, BUSINESS_VERIFICATION_EMAIL)
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Manual business verification submitted</h1>
+      <p>A claimant submitted paperwork for manual review on traderefer.au.</p>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0">
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Claimant</td><td style="padding:8px">{claimant_name}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Email</td><td style="padding:8px">{claimant_email}</td></tr>
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Phone</td><td style="padding:8px">{claimant_phone or 'Not provided'}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Business</td><td style="padding:8px">{business_name}</td></tr>
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Slug</td><td style="padding:8px">{business_slug or 'Not provided'}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Address</td><td style="padding:8px">{business_address}</td></tr>
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Reason</td><td style="padding:8px">{reason}</td></tr>
+      </table>
+      <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:16px 0">
+        <p style="margin:0 0 8px 0"><a href="{government_id_url}" style="color:#ea580c;font-weight:bold">View government ID</a></p>
+        <p style="margin:0 0 8px 0"><a href="{business_proof_url}" style="color:#ea580c;font-weight:bold">View business proof</a></p>
+        {f'<p style="margin:0"><a href="{supporting_document_url}" style="color:#ea580c;font-weight:bold">View supporting document</a></p>' if supporting_document_url else ''}
+      </div>
+      <p style="color:#666">Review the paperwork and update the claim status in admin.</p>
+    """
+    await _send_many(recipients, f"Manual verification submitted — {business_name}", _wrap(body))
+
+
 async def send_business_new_lead(email: str, business_name: str, consumer_name: str, suburb: str, job_description: str, lead_id: str, unlock_fee_dollars: float, is_first_lead: bool = False):
     fee_line = (
         '<p style="color:#16a34a;font-weight:bold">&#127881; Your first enquiry is free to unlock!</p>'
@@ -120,7 +177,7 @@ async def send_business_new_lead(email: str, business_name: str, consumer_name: 
         <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:900;font-size:16px">Log In to View Enquiry &rarr;</a>
       </div>
     """
-    await _send(email, f"New enquiry in {suburb} — log in to view", _wrap(body, "You\'re receiving this as a registered business on traderefer.au."))
+    await _send(email, f"New enquiry in {suburb} — log in to view", _wrap(body, "You're receiving this as a registered business on traderefer.au."))
 
 
 async def send_business_lead_unlocked(email: str, business_name: str, consumer_name: str, consumer_phone: str, consumer_email: str, suburb: str, job_description: str):
@@ -139,177 +196,8 @@ async def send_business_lead_unlocked(email: str, business_name: str, consumer_n
     await _send(email, f"Lead unlocked — {consumer_name} in {suburb}", _wrap(body))
 
 
-# ─────────────────────────────────────────────
-# REFERRER EMAILS
-# ─────────────────────────────────────────────
-
-async def send_referrer_welcome(email: str, full_name: str):
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">Welcome to traderefer.au, {full_name}!</h1>
-      <p>You're now set up as a referrer. Start referring customers to tradies and earn money for every successful lead.</p>
-      <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Go to Your Dashboard</a>
-      <p style="margin-top:24px;color:#666;font-size:14px">Browse businesses and generate your unique referral links to get started.</p>
-    """
-    await _send(email, f"Welcome to traderefer.au — start earning today!", _wrap(body))
-
-
-async def send_referrer_lead_unlocked(email: str, full_name: str, business_name: str, suburb: str, payout_dollars: float, available_date: str):
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">Your referral earned you money!</h1>
-      <p>Hi {full_name}, a lead you referred to <strong>{business_name}</strong> has been unlocked.</p>
-      <table style="width:100%;border-collapse:collapse;margin:16px 0">
-        <tr><td style="padding:8px;color:#666;font-weight:bold">Business</td><td style="padding:8px">{business_name}</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Suburb</td><td style="padding:8px">{suburb}</td></tr>
-        <tr><td style="padding:8px;color:#666;font-weight:bold">Your Earning</td><td style="padding:8px;font-weight:bold;color:#ea580c">${payout_dollars:.2f}</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Available</td><td style="padding:8px">{available_date} (7-day hold)</td></tr>
-      </table>
-      <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Earnings</a>
-    """
-    await _send(email, f"You earned ${payout_dollars:.2f} from a referral!", _wrap(body))
-
-
-async def send_referrer_payout_processed(email: str, full_name: str, amount_dollars: float, method: str):
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">Payout Processed</h1>
-      <p>Hi {full_name}, your withdrawal has been processed successfully.</p>
-      <table style="width:100%;border-collapse:collapse;margin:16px 0">
-        <tr><td style="padding:8px;color:#666;font-weight:bold">Amount</td><td style="padding:8px;font-weight:bold;color:#ea580c">${amount_dollars:.2f}</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Method</td><td style="padding:8px">{method.capitalize()}</td></tr>
-      </table>
-      <p style="color:#666;font-size:14px">Funds may take 1–3 business days to appear in your account depending on your bank.</p>
-      <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
-    """
-    await _send(email, f"Your ${amount_dollars:.2f} payout is on its way!", _wrap(body))
-
-
-# ─────────────────────────────────────────────
-# CONSUMER EMAILS
-# ─────────────────────────────────────────────
-
-async def send_referrer_earning_available(email: str, full_name: str, amount_dollars: float, business_name: str):
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">Your earnings are now available!</h1>
-      <p>Hi {full_name}, the 7-day hold period has passed and your referral earnings are ready to withdraw.</p>
-      <table style="width:100%;border-collapse:collapse;margin:16px 0">
-        <tr><td style="padding:8px;color:#666;font-weight:bold">Business</td><td style="padding:8px">{business_name}</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Available Now</td><td style="padding:8px;font-weight:bold;color:#ea580c">${amount_dollars:.2f}</td></tr>
-      </table>
-      <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Withdraw Earnings</a>
-    """
-    await _send(email, f"${amount_dollars:.2f} is ready to withdraw!", _wrap(body))
-
-
-async def send_consumer_on_the_way(email: str, consumer_name: str, business_name: str, pin: str):
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">{business_name} is on the way!</h1>
-      <p>Hi {consumer_name}, your tradie is heading to you. When they arrive, give them this PIN to confirm the job:</p>
-      <div style="background:#fff7ed;border:2px solid #ea580c;border-radius:12px;padding:24px;text-align:center;margin:24px 0">
-        <p style="color:#666;margin:0 0 8px 0;font-size:14px">Your confirmation PIN</p>
-        <p style="font-size:48px;font-weight:900;color:#ea580c;margin:0;letter-spacing:8px">{pin}</p>
-        <p style="color:#666;margin:8px 0 0 0;font-size:13px">Valid for 4 hours</p>
-      </div>
-      <p style="color:#666;font-size:14px">Show this PIN to {business_name} when they arrive to confirm your job is complete.</p>
-    """
-    await _send(email, f"Your PIN for {business_name} — they're on the way!", _wrap(body))
-
-
-async def send_business_dispute_raised(email: str, business_name: str, lead_id: str, reason: str):
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">Dispute Received</h1>
-      <p>Hi {business_name}, your dispute has been received and is under review by our team.</p>
-      <table style="width:100%;border-collapse:collapse;margin:16px 0">
-        <tr><td style="padding:8px;color:#666;font-weight:bold">Lead ID</td><td style="padding:8px;font-family:monospace">{lead_id[:8]}...</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Reason</td><td style="padding:8px">{reason}</td></tr>
-      </table>
-      <p style="color:#666">Our team will review your dispute within 2 business days and contact you with an outcome.</p>
-      <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Leads</a>
-    """
-    await _send(email, "Your dispute has been received — under review", _wrap(body))
-
-
-async def send_dispute_resolved_business(email: str, business_name: str, outcome: str, admin_notes: Optional[str] = None):
-    outcome_text = "confirmed in your favour" if outcome == "confirm" else "not upheld"
-    colour = "#16a34a" if outcome == "confirm" else "#dc2626"
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">Dispute Resolved</h1>
-      <p>Hi {business_name}, your dispute has been reviewed and resolved.</p>
-      <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:16px 0">
-        <p style="margin:0;font-weight:bold;color:{colour}">Outcome: {outcome_text.capitalize()}</p>
-        {f'<p style="margin:8px 0 0 0;color:#666">{admin_notes}</p>' if admin_notes else ''}
-      </div>
-      <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
-    """
-    await _send(email, f"Dispute resolved — {outcome_text}", _wrap(body))
-
-
-async def send_dispute_resolved_referrer(email: str, full_name: str, outcome: str, business_name: str, amount_dollars: float):
-    if outcome == "confirm":
-        msg = f"The dispute was resolved in the business's favour. Your ${amount_dollars:.2f} earning for a referral to {business_name} has been released to your wallet."
-    else:
-        msg = f"The dispute raised by {business_name} was not upheld. Your ${amount_dollars:.2f} earning has been cancelled. Contact support if you have questions."
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">Dispute Outcome</h1>
-      <p>Hi {full_name},</p>
-      <p>{msg}</p>
-      <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
-    """
-    await _send(email, "Update on your referral dispute", _wrap(body))
-
-
-async def send_new_message_notification(email: str, recipient_name: str, sender_name: str, message_preview: str, conversation_url: str):
-    preview = message_preview[:120] + "..." if len(message_preview) > 120 else message_preview
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">New message from {sender_name}</h1>
-      <p>Hi {recipient_name},</p>
-      <div style="background:#f9f9f9;border-left:4px solid #ea580c;padding:16px;border-radius:4px;margin:16px 0">
-        <p style="margin:0;color:#333;font-style:italic">"{preview}"</p>
-      </div>
-      <a href="{FRONTEND_URL}{conversation_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Reply</a>
-    """
-    await _send(email, f"New message from {sender_name}", _wrap(body))
-
-
-async def send_referrer_campaign_notification(email: str, full_name: str, business_name: str, campaign_title: str, promo_text: Optional[str], business_slug: str):
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">🔥 New campaign from {business_name}</h1>
-      <p>Hi {full_name}, one of your linked businesses has launched a new campaign you can share with customers.</p>
-      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:20px;margin:16px 0">
-        <h2 style="margin:0 0 8px 0;color:#9a3412">{campaign_title}</h2>
-        {f'<p style="margin:0;color:#666">{promo_text}</p>' if promo_text else ''}
-      </div>
-      <a href="{FRONTEND_URL}/b/{business_slug}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Share This Business</a>
-    """
-    await _send(email, f"New campaign from {business_name} — share it now!", _wrap(body))
-
-
-async def send_business_new_review(email: str, business_name: str, referrer_name: str, rating: int, comment: Optional[str], slug: str):
-    stars = "★" * rating + "☆" * (5 - rating)
-    comment_html = f'<p style="margin:8px 0 0 0;color:#555;font-style:italic">"{comment}"</p>' if comment else ""
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">New Review for {business_name}</h1>
-      <p>{referrer_name} has left a review on your referral profile.</p>
-      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:20px;margin:16px 0">
-        <p style="margin:0;font-size:24px;color:#ea580c;letter-spacing:4px">{stars}</p>
-        <p style="margin:4px 0 0 0;font-weight:bold;color:#333">{rating}/5 — by {referrer_name}</p>
-        {comment_html}
-      </div>
-      <a href="{FRONTEND_URL}/b/{slug}" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Your Profile</a>
-    """
-    await _send(email, f"New {rating}-star review from {referrer_name}", _wrap(body))
-
-
-async def send_referrer_review_request(email: str, full_name: str, business_name: str, slug: str):
-    body = f"""
-      <h1 style="color:#ea580c;margin-top:0">How was referring {business_name}?</h1>
-      <p>Hi {full_name}, your referral to <strong>{business_name}</strong> was confirmed. We'd love to hear how the experience went — your review helps other referrers!</p>
-      <a href="{FRONTEND_URL}/b/{slug}/refer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Leave a Review</a>
-      <p style="margin-top:16px;color:#666;font-size:14px">It only takes 30 seconds.</p>
-    """
-    await _send(email, f"How was referring {business_name}? Leave a quick review", _wrap(body))
-
-
 async def send_business_enquiry_teaser(email: str, business_name: str, business_id: str, slug: str, suburb: str, job_description: str):
-    claim_url = f"{FRONTEND_URL}/onboarding/business?claim={business_id}&slug={slug}"
+    claim_url = f"{FRONTEND_URL}/claim/{slug}"
     body = f"""
       <div style="background:#ea580c;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
         <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">You have a new enquiry!</h1>
@@ -401,15 +289,15 @@ async def send_application_approved(referrer_email: str, referrer_name: str, bus
     body = f"""
       <h1 style="color:#16a34a;margin-top:0">🎉 You've been approved by {business_name}!</h1>
       <p>Hi {referrer_name}, great news — <strong>{business_name}</strong> has approved your referrer application.</p>
-      <p>You can now generate your referral link and start earning for every verified lead you send their way.</p>
+      <p>You can now open your command centre, copy your public referral link, and submit leads for AI follow-up and SMS verification.</p>
       <div style="text-align:center;margin:28px 0">
-        <a href="{FRONTEND_URL}/dashboard/referrer/refer/{business_slug}"
+        <a href="{FRONTEND_URL}/dashboard/referrer/manage?business={business_slug}"
            style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
-          Get Your Referral Link →
+           Open Your Command Centre →
         </a>
       </div>
     """
-    await _send(referrer_email, f"You're approved — start referring {business_name}!", _wrap(body))
+    await _send(referrer_email, f"You're approved — manage {business_name} now!", _wrap(body))
 
 
 async def send_application_rejected(referrer_email: str, referrer_name: str, business_name: str):

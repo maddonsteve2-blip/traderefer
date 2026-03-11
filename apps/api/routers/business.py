@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,20 +6,27 @@ from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
 from services.stripe_service import StripeService
-from services.email import send_business_welcome
+from services.email import send_business_welcome, send_business_claim_verification_code, send_business_claim_manual_review_notification
+from services.sms import _send_sms
+from routers.media import s3_client, S3_BUCKET, S3_PUBLIC_URL, S3_REGION
 import re
 import uuid
 import os
 import random
+import secrets
 import string
 import httpx
 import json
+from datetime import datetime, timedelta
 
 class BusinessClaimRequest(BaseModel):
     claimer_name: str
     claimer_email: str
     claimer_phone: Optional[str] = None
     proof_url: Optional[str] = None
+
+class BusinessClaimCodeVerifyRequest(BaseModel):
+    code: str
 
 class DelistingRequestRequest(BaseModel):
     requester_name: str
@@ -28,6 +35,13 @@ class DelistingRequestRequest(BaseModel):
 
 
 router = APIRouter()
+
+_business_claim_phone_store: dict = {}
+_business_claim_email_store: dict = {}
+_business_claim_token_store: dict = {}
+CLAIM_UPLOAD_EXTENSIONS = {"png", "jpg", "jpeg", "webp", "pdf"}
+CLAIM_UPLOAD_MAX_BYTES = 10 * 1024 * 1024
+API_BASE_URL = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
 
 class ABNVerificationRequest(BaseModel):
     abn: str
@@ -59,57 +73,101 @@ class BusinessOnboarding(BaseModel):
     owner_phone: Optional[str] = None
     owner_phone_verified: Optional[bool] = False
     invite_code: Optional[str] = None
-
-class BusinessUpdate(BaseModel):
-    business_name: Optional[str] = None
-    trade_category: Optional[str] = None
-    description: Optional[str] = None
-    suburb: Optional[str] = None
-    address: Optional[str] = None
-    state: Optional[str] = None
-    service_radius_km: Optional[int] = None
-    slug: Optional[str] = None
-    business_phone: Optional[str] = None
-    business_email: Optional[str] = None
-    website: Optional[str] = None
-    referral_fee_cents: Optional[int] = None
-    logo_url: Optional[str] = None
-    cover_photo_url: Optional[str] = None
-    photo_urls: Optional[list[str]] = None
-    features: Optional[list[str]] = None
-    listing_visibility: Optional[str] = None
-    why_refer_us: Optional[str] = None
-    response_sla_minutes: Optional[int] = None
-    abn: Optional[str] = None
-
-class ProjectCreate(BaseModel):
-    title: str
-    description: Optional[str] = None
-    cover_photo_url: Optional[str] = None
-    is_featured: bool = False
-    photo_urls: Optional[list[str]] = []
-
-class ProjectUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    cover_photo_url: Optional[str] = None
-    is_featured: Optional[bool] = None
-    photo_urls: Optional[list[str]] = None
-
-class ReferrerFeeUpdate(BaseModel):
-    custom_fee_cents: Optional[int] = None  # None = revert to business default
-
-class ReferrerBonusCreate(BaseModel):
-    amount_cents: int
-    reason: Optional[str] = None
-    charge_card: bool = False  # If True and wallet insufficient, charge card
-    payment_intent_id: Optional[str] = None  # Set when confirming after card payment
+    claim_verification_token: Optional[str] = None
 
 class ReferrerNotesUpdate(BaseModel):
     business_notes: Optional[str] = None
 
 def generate_slug(name: str):
     return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+
+def _normalize_phone_number(phone: str) -> str:
+    value = phone.strip().replace(" ", "")
+    if value.startswith("04"):
+        return "+61" + value[1:]
+    if value.startswith("4") and len(value) == 9:
+        return "+61" + value
+    return value
+
+def _build_claim_store_key(business_id: uuid.UUID, channel: str) -> str:
+    return f"{business_id}:{channel}"
+
+def _issue_claim_verification_token(business_id: uuid.UUID, channel: str) -> str:
+    token = secrets.token_urlsafe(24)
+    _business_claim_token_store[token] = {
+        "business_id": str(business_id),
+        "channel": channel,
+        "expires_at": datetime.utcnow() + timedelta(minutes=60),
+    }
+    return token
+
+def _consume_claim_verification_token(business_id: uuid.UUID, token: Optional[str]):
+    if not token:
+        raise HTTPException(status_code=403, detail="Complete business verification before claiming this profile")
+    entry = _business_claim_token_store.get(token)
+    if not entry or entry.get("business_id") != str(business_id):
+        raise HTTPException(status_code=403, detail="Invalid claim verification token")
+    if datetime.utcnow() > entry["expires_at"]:
+        _business_claim_token_store.pop(token, None)
+        raise HTTPException(status_code=403, detail="Your verification session has expired. Please verify again.")
+    _business_claim_token_store.pop(token, None)
+    return entry
+
+async def _get_claimable_business(db: AsyncSession, business_id: uuid.UUID):
+    result = await db.execute(
+        text("""
+            SELECT id, slug, business_name, business_phone, business_email, address, is_claimed
+            FROM businesses
+            WHERE id = :bid
+        """),
+        {"bid": business_id}
+    )
+    business = result.mappings().first()
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found")
+    if business["is_claimed"]:
+        raise HTTPException(status_code=400, detail="This business has already been claimed")
+    return business
+
+async def _store_claim_document(file: UploadFile, folder: str, db: AsyncSession) -> str:
+    filename = file.filename or "document"
+    ext = filename.split(".")[-1].lower() if "." in filename else ""
+    if ext not in CLAIM_UPLOAD_EXTENSIONS:
+        raise HTTPException(status_code=400, detail="Unsupported file type. Please upload PDF, PNG, JPG, JPEG, or WEBP files.")
+    data = await file.read()
+    if not data:
+        raise HTTPException(status_code=400, detail="One of the uploaded files was empty")
+    if len(data) > CLAIM_UPLOAD_MAX_BYTES:
+        raise HTTPException(status_code=400, detail="Files must be 10MB or smaller")
+    object_name = f"{folder}/{uuid.uuid4().hex}.{ext}"
+    content_type = file.content_type or ("application/pdf" if ext == "pdf" else f"image/{'jpeg' if ext == 'jpg' else ext}")
+    if s3_client and S3_BUCKET:
+        s3_client.put_object(
+            Bucket=S3_BUCKET,
+            Key=object_name,
+            Body=data,
+            ContentType=content_type,
+            ACL="public-read",
+        )
+        if S3_PUBLIC_URL:
+            return f"{S3_PUBLIC_URL}/{object_name}"
+        return f"https://{S3_BUCKET}.s3.{S3_REGION}.amazonaws.com/{object_name}"
+    file_id = str(uuid.uuid4())
+    await db.execute(
+        text("""
+            INSERT INTO media_files (id, folder, filename, content_type, data, uploaded_by)
+            VALUES (:id, :folder, :filename, :content_type, :data, :uploaded_by)
+        """),
+        {
+            "id": file_id,
+            "folder": folder,
+            "filename": object_name,
+            "content_type": content_type,
+            "data": data,
+            "uploaded_by": "anonymous-business-claim",
+        }
+    )
+    return f"{API_BASE_URL}/media/serve/{file_id}"
 
 async def get_lat_lng(suburb: str, state: str) -> tuple[Optional[float], Optional[float]]:
     """Placeholder for geocoding service."""
@@ -1324,8 +1382,7 @@ async def wallet_topup_intent(
 
     user_uuid = uuid.UUID(user.id)
     biz_q = await db.execute(
-        text("SELECT id FROM businesses WHERE user_id = :uid"),
-        {"uid": user_uuid},
+        text("SELECT id FROM businesses WHERE user_id = :uid"), {"uid": user_uuid}
     )
     biz = biz_q.mappings().first()
     if not biz:
@@ -1353,7 +1410,7 @@ async def wallet_topup_confirm(
     user_uuid = uuid.UUID(user.id)
     biz_q = await db.execute(
         text("SELECT id, wallet_balance_cents FROM businesses WHERE user_id = :uid"),
-        {"uid": user_uuid},
+        {"uid": user_uuid}
     )
     biz = biz_q.mappings().first()
     if not biz:
@@ -1673,6 +1730,7 @@ async def get_my_invites(
         invites.append(d)
     return invites
 
+
 @router.post("/{business_id}/claim-and-onboard")
 async def claim_and_onboard_business(
     business_id: uuid.UUID,
@@ -1680,112 +1738,276 @@ async def claim_and_onboard_business(
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user)
 ):
-    user_uuid = uuid.UUID(user.id)
+     user_uuid = uuid.UUID(user.id)
 
-    # Check user doesn't already own a different business
-    existing = await db.execute(
-        text("SELECT id FROM businesses WHERE user_id = :uid AND id != :bid LIMIT 1"),
-        {"uid": user_uuid, "bid": business_id}
-    )
-    if existing.fetchone():
-        raise HTTPException(status_code=400, detail="You already have a business registered")
+     existing = await db.execute(
+         text("SELECT id FROM businesses WHERE user_id = :uid AND id != :bid LIMIT 1"),
+         {"uid": user_uuid, "bid": business_id}
+     )
+     if existing.fetchone():
+         raise HTTPException(status_code=400, detail="You already have a business registered")
 
-    # Get the business to claim
-    biz_result = await db.execute(
-        text("SELECT id, slug FROM businesses WHERE id = :bid"),
-        {"bid": business_id}
-    )
-    biz_row = biz_result.fetchone()
-    if not biz_row:
-        raise HTTPException(status_code=404, detail="Business not found")
+     biz_result = await db.execute(
+         text("SELECT id, slug FROM businesses WHERE id = :bid"),
+         {"bid": business_id}
+     )
+     biz_row = biz_result.fetchone()
+     if not biz_row:
+         raise HTTPException(status_code=404, detail="Business not found")
 
-    biz_id = biz_row[0]
-    existing_slug = biz_row[1]
+     biz_id = biz_row[0]
+     existing_slug = biz_row[1]
+     _consume_claim_verification_token(business_id, data.claim_verification_token)
 
-    # Determine slug — keep existing if none provided or unchanged
-    slug = data.slug or existing_slug
-    if data.slug and data.slug != existing_slug:
-        slug_check = await db.execute(
-            text("SELECT id FROM businesses WHERE slug = :slug AND id != :id"),
-            {"slug": data.slug, "id": biz_id}
-        )
-        if slug_check.fetchone():
-            raise HTTPException(status_code=400, detail="That handle is already taken")
+     slug = data.slug or existing_slug
+     if data.slug and data.slug != existing_slug:
+         slug_check = await db.execute(
+             text("SELECT id FROM businesses WHERE slug = :slug AND id != :id"),
+             {"slug": data.slug, "id": biz_id}
+         )
+         if slug_check.fetchone():
+             raise HTTPException(status_code=400, detail="That handle is already taken")
 
-    # Geocode
-    lat, lng = await get_lat_lng(data.suburb, data.state)
+     lat, lng = await get_lat_lng(data.suburb, data.state)
 
-    # Full update: claim ownership + update all fields
-    await db.execute(
-        text("""
-            UPDATE businesses SET
-                user_id = :user_id,
-                is_claimed = true,
-                claim_status = 'claimed',
-                business_name = :business_name,
-                slug = :slug,
-                trade_category = :trade_category,
-                description = :description,
-                suburb = :suburb,
-                address = :address,
-                state = :state,
-                business_phone = :business_phone,
-                business_email = :business_email,
-                website = :website,
-                service_radius_km = :service_radius_km,
-                referral_fee_cents = :referral_fee_cents,
-                logo_url = COALESCE(:logo_url, logo_url),
-                cover_photo_url = COALESCE(:cover_photo_url, cover_photo_url),
-                photo_urls = COALESCE(:photo_urls, photo_urls),
-                listing_visibility = :listing_visibility,
-                years_experience = :years_experience,
-                services = :services,
-                specialties = :specialties,
-                business_highlights = :business_highlights,
-                why_refer_us = :why_refer_us,
-                features = :features,
-                abn = :abn,
-                lat = COALESCE(:lat, lat),
-                lng = COALESCE(:lng, lng),
-                updated_at = now()
-            WHERE id = :id
-        """),
-        {
-            "id": biz_id,
-            "user_id": user_uuid,
-            "business_name": data.business_name,
-            "slug": slug,
-            "trade_category": data.trade_category,
-            "description": data.description,
-            "suburb": data.suburb,
-            "address": data.address,
-            "state": data.state,
-            "business_phone": data.business_phone,
-            "business_email": data.business_email,
-            "website": data.website,
-            "service_radius_km": data.service_radius_km,
-            "referral_fee_cents": data.referral_fee_cents,
-            "logo_url": data.logo_url,
-            "cover_photo_url": data.cover_photo_url,
-            "photo_urls": data.photo_urls or None,
-            "listing_visibility": data.listing_visibility or "public",
-            "years_experience": data.years_experience,
-            "services": data.services or [],
-            "specialties": data.specialties or [],
-            "business_highlights": data.business_highlights or [],
-            "why_refer_us": data.why_refer_us,
-            "features": data.features or [],
-            "abn": data.abn,
-            "lat": lat,
-            "lng": lng,
-        }
-    )
-    await db.commit()
+     await db.execute(
+         text("""
+             UPDATE businesses SET
+                 user_id = :user_id,
+                 is_claimed = true,
+                 claim_status = 'claimed',
+                 is_verified = true,
+                 business_name = :business_name,
+                 slug = :slug,
+                 trade_category = :trade_category,
+                 description = :description,
+                 suburb = :suburb,
+                 address = :address,
+                 state = :state,
+                 business_phone = :business_phone,
+                 business_email = :business_email,
+                 website = :website,
+                 service_radius_km = :service_radius_km,
+                 referral_fee_cents = :referral_fee_cents,
+                 logo_url = COALESCE(:logo_url, logo_url),
+                 cover_photo_url = COALESCE(:cover_photo_url, cover_photo_url),
+                 photo_urls = COALESCE(:photo_urls, photo_urls),
+                 listing_visibility = :listing_visibility,
+                 years_experience = :years_experience,
+                 services = :services,
+                 specialties = :specialties,
+                 business_highlights = :business_highlights,
+                 why_refer_us = :why_refer_us,
+                 features = :features,
+                 abn = :abn,
+                 owner_phone = :owner_phone,
+                 owner_phone_verified = :owner_phone_verified,
+                 lat = COALESCE(:lat, lat),
+                 lng = COALESCE(:lng, lng),
+                 updated_at = now()
+             WHERE id = :id
+         """),
+         {
+             "id": biz_id,
+             "user_id": user_uuid,
+             "business_name": data.business_name,
+             "slug": slug,
+             "trade_category": data.trade_category,
+             "description": data.description,
+             "suburb": data.suburb,
+             "address": data.address,
+             "state": data.state,
+             "business_phone": data.business_phone,
+             "business_email": data.business_email,
+             "website": data.website,
+             "service_radius_km": data.service_radius_km,
+             "referral_fee_cents": data.referral_fee_cents,
+             "logo_url": data.logo_url,
+             "cover_photo_url": data.cover_photo_url,
+             "photo_urls": data.photo_urls or None,
+             "listing_visibility": data.listing_visibility or "public",
+             "years_experience": data.years_experience,
+             "services": data.services or [],
+             "specialties": data.specialties or [],
+             "business_highlights": data.business_highlights or [],
+             "why_refer_us": data.why_refer_us,
+             "features": data.features or [],
+             "abn": data.abn,
+             "owner_phone": data.owner_phone,
+             "owner_phone_verified": data.owner_phone_verified or False,
+             "lat": lat,
+             "lng": lng,
+         }
+     )
+     await db.commit()
 
-    if data.business_email:
-        await send_business_welcome(data.business_email, data.business_name, slug)
+     if data.business_email:
+         await send_business_welcome(data.business_email, data.business_name, slug)
 
-    return {"id": str(biz_id), "slug": slug}
+     return {"id": str(biz_id), "slug": slug}
+
+
+@router.post("/{business_id}/claim/send-phone-otp")
+async def send_business_claim_phone_otp(
+    business_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db)
+):
+     business = await _get_claimable_business(db, business_id)
+     phone = business.get("business_phone")
+     if not phone:
+         raise HTTPException(status_code=400, detail="This business does not have a phone number available for verification")
+     normalized_phone = _normalize_phone_number(phone)
+     code = str(random.randint(100000, 999999))
+     _business_claim_phone_store[_build_claim_store_key(business_id, "phone")] = {
+         "phone": normalized_phone,
+         "code": code,
+         "expires_at": datetime.utcnow() + timedelta(minutes=10),
+     }
+     await _send_sms(normalized_phone, f"Your TradeRefer code for {business['business_name']} is {code}. It expires in 10 minutes.")
+     return {"sent": True}
+
+
+@router.post("/{business_id}/claim/verify-phone-otp")
+async def verify_business_claim_phone_otp(
+    business_id: uuid.UUID,
+    request: BusinessClaimCodeVerifyRequest,
+    db: AsyncSession = Depends(get_db)
+):
+     await _get_claimable_business(db, business_id)
+     key = _build_claim_store_key(business_id, "phone")
+     entry = _business_claim_phone_store.get(key)
+     if not entry:
+         raise HTTPException(status_code=400, detail="No phone verification was started. Please request a code first.")
+     if datetime.utcnow() > entry["expires_at"]:
+         _business_claim_phone_store.pop(key, None)
+         raise HTTPException(status_code=400, detail="Your code has expired. Please request a new one.")
+     if entry["code"] != request.code.strip():
+         raise HTTPException(status_code=400, detail="Incorrect code. Please try again.")
+     _business_claim_phone_store.pop(key, None)
+     token = _issue_claim_verification_token(business_id, "phone")
+     return {"verified": True, "claim_verification_token": token}
+
+
+@router.post("/{business_id}/claim/send-email-code")
+async def send_business_claim_email_code(
+    business_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db)
+):
+     business = await _get_claimable_business(db, business_id)
+     email = (business.get("business_email") or "").strip()
+     if not email:
+         raise HTTPException(status_code=400, detail="This business does not have an email address available for verification")
+     code = str(random.randint(100000, 999999))
+     _business_claim_email_store[_build_claim_store_key(business_id, "email")] = {
+         "email": email,
+         "code": code,
+         "expires_at": datetime.utcnow() + timedelta(minutes=10),
+     }
+     await send_business_claim_verification_code(email, business["business_name"], code)
+     return {"sent": True}
+
+
+@router.post("/{business_id}/claim/verify-email-code")
+async def verify_business_claim_email_code(
+    business_id: uuid.UUID,
+    request: BusinessClaimCodeVerifyRequest,
+    db: AsyncSession = Depends(get_db)
+):
+     await _get_claimable_business(db, business_id)
+     key = _build_claim_store_key(business_id, "email")
+     entry = _business_claim_email_store.get(key)
+     if not entry:
+         raise HTTPException(status_code=400, detail="No email verification was started. Please request a code first.")
+     if datetime.utcnow() > entry["expires_at"]:
+         _business_claim_email_store.pop(key, None)
+         raise HTTPException(status_code=400, detail="Your code has expired. Please request a new one.")
+     if entry["code"] != request.code.strip():
+         raise HTTPException(status_code=400, detail="Incorrect code. Please try again.")
+     _business_claim_email_store.pop(key, None)
+     token = _issue_claim_verification_token(business_id, "email")
+     return {"verified": True, "claim_verification_token": token}
+
+
+@router.post("/{business_id}/claim/manual-review")
+async def submit_business_claim_manual_review(
+    business_id: uuid.UUID,
+    claimer_name: str = Form(...),
+    claimer_email: str = Form(...),
+    claimer_phone: Optional[str] = Form(None),
+    business_address: str = Form(...),
+    verification_reason: str = Form(...),
+    government_id: UploadFile = File(...),
+    business_document: UploadFile = File(...),
+    supporting_document: Optional[UploadFile] = File(None),
+    db: AsyncSession = Depends(get_db)
+):
+     business = await _get_claimable_business(db, business_id)
+     government_id_url = await _store_claim_document(government_id, "business-verification", db)
+     business_document_url = await _store_claim_document(business_document, "business-verification", db)
+     supporting_document_url = None
+     if supporting_document and supporting_document.filename:
+         supporting_document_url = await _store_claim_document(supporting_document, "business-verification", db)
+
+     await db.execute(
+         text("""
+             INSERT INTO business_claims (
+                 business_id,
+                 claimer_name,
+                 claimer_email,
+                 claimer_phone,
+                 proof_url,
+                 claim_method,
+                 business_address,
+                 verification_reason,
+                 government_id_url,
+                 business_proof_url,
+                 supporting_document_url
+             ) VALUES (
+                 :business_id,
+                 :claimer_name,
+                 :claimer_email,
+                 :claimer_phone,
+                 :proof_url,
+                 'manual',
+                 :business_address,
+                 :verification_reason,
+                 :government_id_url,
+                 :business_proof_url,
+                 :supporting_document_url
+             )
+         """),
+         {
+             "business_id": business_id,
+             "claimer_name": claimer_name,
+             "claimer_email": claimer_email,
+             "claimer_phone": claimer_phone,
+             "proof_url": business_document_url,
+             "business_address": business_address,
+             "verification_reason": verification_reason,
+             "government_id_url": government_id_url,
+             "business_proof_url": business_document_url,
+             "supporting_document_url": supporting_document_url,
+         }
+     )
+     await db.execute(
+         text("UPDATE businesses SET claim_status = 'pending' WHERE id = :bid AND (claim_status = 'unclaimed' OR claim_status IS NULL)"),
+         {"bid": business_id}
+     )
+     await db.commit()
+
+     await send_business_claim_manual_review_notification(
+         claimant_name=claimer_name,
+         claimant_email=claimer_email,
+         claimant_phone=claimer_phone,
+         business_name=business["business_name"],
+         business_slug=business["slug"],
+         business_address=business_address,
+         reason=verification_reason,
+         government_id_url=government_id_url,
+         business_proof_url=business_document_url,
+         supporting_document_url=supporting_document_url,
+     )
+     return {"submitted": True}
 
 
 @router.post("/{business_id}/claim")
@@ -1794,36 +2016,33 @@ async def request_business_claim(
     request: BusinessClaimRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    # Verify business exists
-    biz = await db.execute(
-        text("SELECT id FROM businesses WHERE id = :bid"),
-        {"bid": business_id}
-    )
-    if not biz.fetchone():
-        raise HTTPException(status_code=404, detail="Business not found")
+     biz = await db.execute(
+         text("SELECT id FROM businesses WHERE id = :bid"),
+         {"bid": business_id}
+     )
+     if not biz.fetchone():
+         raise HTTPException(status_code=404, detail="Business not found")
 
-    await db.execute(
-        text("""
-            INSERT INTO business_claims (business_id, claimer_name, claimer_email, claimer_phone, proof_url)
-            VALUES (:bid, :name, :email, :phone, :proof)
-        """),
-        {
-            "bid": business_id,
-            "name": request.claimer_name,
-            "email": request.claimer_email,
-            "phone": request.claimer_phone,
-            "proof": request.proof_url
-        }
-    )
-    
-    # Update business status to pending claim if desired
-    await db.execute(
-        text("UPDATE businesses SET claim_status = 'pending' WHERE id = :bid AND (claim_status = 'unclaimed' OR claim_status IS NULL)"),
-        {"bid": business_id}
-    )
-    
-    await db.commit()
-    return {"status": "success", "message": "Claim request submitted for verification"}
+     await db.execute(
+         text("""
+             INSERT INTO business_claims (business_id, claimer_name, claimer_email, claimer_phone, proof_url, claim_method)
+             VALUES (:bid, :name, :email, :phone, :proof, 'manual')
+         """),
+         {
+             "bid": business_id,
+             "name": request.claimer_name,
+             "email": request.claimer_email,
+             "phone": request.claimer_phone,
+             "proof": request.proof_url,
+         }
+     )
+     await db.execute(
+         text("UPDATE businesses SET claim_status = 'pending' WHERE id = :bid AND (claim_status = 'unclaimed' OR claim_status IS NULL)"),
+         {"bid": business_id}
+     )
+     await db.commit()
+     return {"status": "success", "message": "Claim request submitted for verification"}
+
 
 @router.post("/{business_id}/delist")
 async def request_delisting(
@@ -1831,25 +2050,24 @@ async def request_delisting(
     request: DelistingRequestRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    # Verify business exists
-    biz = await db.execute(
-        text("SELECT id FROM businesses WHERE id = :bid"),
-        {"bid": business_id}
-    )
-    if not biz.fetchone():
-        raise HTTPException(status_code=404, detail="Business not found")
+     biz = await db.execute(
+         text("SELECT id FROM businesses WHERE id = :bid"),
+         {"bid": business_id}
+     )
+     if not biz.fetchone():
+         raise HTTPException(status_code=404, detail="Business not found")
 
-    await db.execute(
-        text("""
-            INSERT INTO delisting_requests (business_id, requester_name, requester_email, reason)
-            VALUES (:bid, :name, :email, :reason)
-        """),
-        {
-            "bid": business_id,
-            "name": request.requester_name,
-            "email": request.requester_email,
-            "reason": request.reason
-        }
-    )
-    await db.commit()
-    return {"status": "success", "message": "Delisting request received and will be processed manually"}
+     await db.execute(
+         text("""
+             INSERT INTO delisting_requests (business_id, requester_name, requester_email, reason)
+             VALUES (:bid, :name, :email, :reason)
+         """),
+         {
+             "bid": business_id,
+             "name": request.requester_name,
+             "email": request.requester_email,
+             "reason": request.reason,
+         }
+     )
+     await db.commit()
+     return {"status": "success", "message": "Delisting request received and will be processed manually"}

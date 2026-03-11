@@ -286,6 +286,9 @@ async def get_referrer_dashboard(
             FROM referral_links rl
             JOIN businesses b ON rl.business_id = b.id
             WHERE rl.referrer_id = :referrer_id
+              AND rl.is_active = true
+              AND b.status = 'active'
+            ORDER BY rl.created_at DESC
         """)
         links_result = await db.execute(links_query, {"referrer_id": referrer_id})
         links_data = links_result.mappings().all()

@@ -49,10 +49,17 @@ export function PeekingRoleDrawer() {
     const [isOpen, setIsOpen] = useState(false);
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [navH, setNavH] = useState(72);
+    const [isMobile, setIsMobile] = useState(false);
+    const [viewportReady, setViewportReady] = useState(false);
     const [authStatus, setAuthStatus] = useState<{ has_business: boolean; has_referrer: boolean } | null>(null);
 
     useEffect(() => {
-        const update = () => setNavH(window.innerWidth >= 768 ? 100 : 72);
+        const update = () => {
+            const mobile = window.innerWidth < 768;
+            setIsMobile(mobile);
+            setNavH(mobile ? 72 : 100);
+            setViewportReady(true);
+        };
         update();
         window.addEventListener("resize", update);
         return () => window.removeEventListener("resize", update);
@@ -92,7 +99,7 @@ export function PeekingRoleDrawer() {
     if (!isDual && isReferrerDashboard && !hasBusiness) variant = "business";
     if (!isDual && isBusinessDashboard && !hasReferrer) variant = "referrer";
 
-    const showHandle = isDual ? !!dualSwitchHref : !!variant;
+    const showHandle = viewportReady && !isMobile && (isDual ? !!dualSwitchHref : !!variant);
 
     // Animate drawer in after open state flips
     useEffect(() => {
@@ -106,7 +113,7 @@ export function PeekingRoleDrawer() {
 
     // Viewport push: reserve 48px on right for the handle
     useEffect(() => {
-        if (!isLoaded || !showHandle) return;
+        if (!isLoaded || !showHandle || isMobile) return;
         if (!isOpen) {
             document.body.style.paddingRight = "3rem";
         } else {
@@ -117,17 +124,19 @@ export function PeekingRoleDrawer() {
             document.body.style.paddingRight = "";
             document.body.style.overflow = "";
         };
-    }, [isLoaded, showHandle, isOpen]);
+    }, [isLoaded, showHandle, isOpen, isMobile]);
 
     const handleClose = () => {
         setDrawerVisible(false);
         setTimeout(() => setIsOpen(false), 280);
     };
 
-    if (!isLoaded || !authStatus || !showHandle) return null;
+    if (!isLoaded || !authStatus || !viewportReady || !showHandle) return null;
 
     const cfg = variant ? CASES[variant] : null;
     const tabLabel = isDual ? dualTabLabel! : cfg!.tabLabel;
+    const handleTextClass = isBusinessDashboard ? "text-orange-500" : "text-slate-700";
+    const handleHoverClass = isBusinessDashboard ? "hover:bg-orange-50" : "hover:bg-slate-50";
 
     return createPortal(
         <>
@@ -138,7 +147,7 @@ export function PeekingRoleDrawer() {
                     <Link
                         href={dualSwitchHref!}
                         aria-label={tabLabel}
-                        className="fixed right-0 bottom-0 z-[9990] w-12 bg-white flex flex-col items-center justify-center gap-3 hover:bg-orange-50 transition-colors"
+                        className={`hidden md:flex fixed right-0 bottom-0 z-[9990] w-12 bg-white flex-col items-center justify-center gap-3 transition-colors ${handleHoverClass}`}
                         style={{
                             top: navH,
                             borderLeft: "4px solid #f97316",
@@ -147,7 +156,7 @@ export function PeekingRoleDrawer() {
                     >
                         <ArrowLeftRight className="w-4 h-4 text-orange-500 shrink-0" />
                         <span
-                            className="font-black text-zinc-700 uppercase tracking-widest select-none"
+                            className={`font-black uppercase tracking-widest select-none ${handleTextClass}`}
                             style={{
                                 fontSize: 12,
                                 writingMode: "vertical-rl",
@@ -165,7 +174,7 @@ export function PeekingRoleDrawer() {
                     <button
                         onClick={() => setIsOpen(true)}
                         aria-label={tabLabel}
-                        className="fixed right-0 bottom-0 z-[9990] w-12 bg-white flex items-center justify-center cursor-pointer hover:bg-orange-50 transition-colors"
+                        className={`hidden md:flex fixed right-0 bottom-0 z-[9990] w-12 bg-white items-center justify-center cursor-pointer transition-colors ${handleHoverClass}`}
                         style={{
                             top: navH,
                             borderLeft: "4px solid #f97316",
@@ -173,7 +182,7 @@ export function PeekingRoleDrawer() {
                         }}
                     >
                         <span
-                            className="font-black text-zinc-700 uppercase tracking-widest select-none"
+                            className={`font-black uppercase tracking-widest select-none ${handleTextClass}`}
                             style={{
                                 fontSize: 16,
                                 writingMode: "vertical-rl",
@@ -201,7 +210,7 @@ export function PeekingRoleDrawer() {
             {/* ── FULL DRAWER (single-role only) ── */}
             {cfg && isOpen && (
                 <div
-                    className="fixed inset-y-0 right-0 z-[9999] w-[450px] max-w-full bg-zinc-950 flex flex-col shadow-2xl transition-transform duration-300 ease-out"
+                    className="fixed inset-y-0 right-0 z-[9999] w-full sm:w-[420px] lg:w-[450px] max-w-full bg-zinc-950 flex flex-col shadow-2xl transition-transform duration-300 ease-out"
                     style={{ transform: drawerVisible ? "translateX(0)" : "translateX(100%)" }}
                 >
                     {/* Close */}
