@@ -142,7 +142,7 @@ export function SalesPromotionsPane() {
 
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="font-black text-zinc-900" style={{ fontSize: 22 }}>Promotions</h2>
+                        <h2 className="font-black text-zinc-900" style={{ fontSize: 22 }}>Campaigns</h2>
                         <p className="text-zinc-500 font-medium" style={{ fontSize: 15 }}>Time-limited bonuses to motivate your referral force</p>
                     </div>
                     <Button onClick={() => setShowCreate(true)} className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-5 h-11 font-bold">

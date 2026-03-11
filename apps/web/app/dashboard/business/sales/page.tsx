@@ -9,8 +9,8 @@ import { SalesPromotionsPane } from "@/components/business/SalesPromotionsPane";
 
 const TABS = [
     { key: "leads", label: "Leads" },
-    { key: "offers", label: "Offers" },
-    { key: "promotions", label: "Promotions" },
+    { key: "offers", label: "Deals" },
+    { key: "promotions", label: "Campaigns" },
 ];
 
 function SalesHubInner() {
@@ -23,7 +23,7 @@ function SalesHubInner() {
     };
 
     return (
-        <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden md:pr-12">
+        <div className="min-h-[100dvh] pt-[72px] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden md:pr-12">
             <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
             {tab === "leads" && <SalesLeadsPane />}
             {tab === "offers" && <SalesOffersPane />}
