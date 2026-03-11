@@ -70,7 +70,7 @@ export function PeekingRoleDrawer() {
         if (!isLoaded) return;
         getToken().then(token => {
             if (!token) return;
-            fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/auth/status`, {
+            fetch(`/api/backend/auth/status`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then(r => r.ok ? r.json() : null)

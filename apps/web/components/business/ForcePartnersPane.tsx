@@ -49,7 +49,7 @@ export function ForcePartnersPane() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [customFee, setCustomFee] = useState<string>("");
     const [savingFee, setSavingFee] = useState(false);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchReferrers = useCallback(async () => {
         const token = await getToken();

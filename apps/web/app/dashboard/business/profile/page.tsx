@@ -41,6 +41,7 @@ export default function BusinessProfileManagementPage() {
     const [uploadingLogo, setUploadingLogo] = useState(false);
     const [uploadingGallery, setUploadingGallery] = useState(false);
     const [saving, setSaving] = useState(false);
+    const apiBase = "/api/backend";
 
     // Form state
     const [formData, setFormData] = useState({
@@ -74,7 +75,7 @@ export default function BusinessProfileManagementPage() {
         }
         setSlugStatus('checking');
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/check-slug/${val}`);
+            const res = await fetch(`${apiBase}/business/check-slug/${val}`);
             const data = await res.json();
             setSlugStatus(data.available ? 'available' : 'taken');
         } catch {
@@ -96,7 +97,7 @@ export default function BusinessProfileManagementPage() {
     const fetchBusiness = useCallback(async () => {
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/me`, {
+            const res = await fetch(`${apiBase}/business/me`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -124,13 +125,12 @@ export default function BusinessProfileManagementPage() {
         } finally {
             setLoading(false);
         }
-    }, [getToken]);
+    }, [getToken, apiBase]);
 
     const fetchProjects = useCallback(async () => {
         try {
             const token = await getToken();
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-            const res = await fetch(`${apiUrl}/business/me/projects`, {
+            const res = await fetch(`${apiBase}/business/me/projects`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -140,7 +140,7 @@ export default function BusinessProfileManagementPage() {
         } catch (err) {
             console.error("Failed to fetch projects:", err);
         }
-    }, [getToken]);
+    }, [getToken, apiBase]);
 
     useEffect(() => {
         if (isLoaded) {
@@ -153,7 +153,7 @@ export default function BusinessProfileManagementPage() {
         setSaving(true);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/update`, {
+            const res = await fetch(`${apiBase}/business/update`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -182,7 +182,7 @@ export default function BusinessProfileManagementPage() {
         formData.append("file", file);
         formData.append("folder", folder);
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/media/upload`, {
+        const res = await fetch(`${apiBase}/media/upload`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -251,8 +251,7 @@ export default function BusinessProfileManagementPage() {
         if (!confirm("Are you sure you want to delete this project?")) return;
         try {
             const token = await getToken();
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-            const res = await fetch(`${apiUrl}/business/me/projects/${projectId}`, {
+            const res = await fetch(`${apiBase}/business/me/projects/${projectId}`, {
                 method: "DELETE",
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -677,10 +676,9 @@ export default function BusinessProfileManagementPage() {
 
                         try {
                             const token = await getToken();
-                            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
                             const url = editingProject?.id
-                                ? `${apiUrl}/business/me/projects/${editingProject.id}`
-                                : `${apiUrl}/business/me/projects`;
+                                ? `${apiBase}/business/me/projects/${editingProject.id}`
+                                : `${apiBase}/business/me/projects`;
 
                             const res = await fetch(url, {
                                 method: editingProject?.id ? "PATCH" : "POST",

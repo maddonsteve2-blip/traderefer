@@ -46,7 +46,7 @@ export default function BusinessApplicationDetailPage() {
     const [app, setApp] = useState<ApplicationDetail | null>(null);
     const [loading, setLoading] = useState(true);
     const [acting, setActing] = useState<"approving" | "rejecting" | null>(null);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchApp = useCallback(async () => {
         const token = await getToken();

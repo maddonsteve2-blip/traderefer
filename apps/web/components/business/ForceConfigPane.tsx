@@ -13,7 +13,7 @@ export function ForceConfigPane() {
     const [saving, setSaving] = useState(false);
     const [defaultFeeDollars, setDefaultFeeDollars] = useState("");
     const [slug, setSlug] = useState("");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     useEffect(() => {
         if (!isLoaded) return;

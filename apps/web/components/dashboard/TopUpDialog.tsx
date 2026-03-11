@@ -113,7 +113,7 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
     const [isCreatingIntent, setIsCreatingIntent] = useState(false);
     const { getToken } = useAuth();
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
     const amountCents = selectedAmount ?? (customAmount ? Math.round(parseFloat(customAmount) * 100) : 0);
 
     const handleProceedToPayment = async () => {

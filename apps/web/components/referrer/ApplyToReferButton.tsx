@@ -23,7 +23,7 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
     const [showIntro, setShowIntro] = useState(false);
     const [applying, setApplying] = useState(false);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://traderefer.au";
 
     useEffect(() => {

@@ -51,7 +51,7 @@ interface Message {
     created_at: string;
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API = "/api/backend";
 const BASE_URL = typeof window !== "undefined" ? window.location.origin : "https://traderefer.au";
 
 // ─── Inline Mini Chat ─────────────────────────────────────────────────────────

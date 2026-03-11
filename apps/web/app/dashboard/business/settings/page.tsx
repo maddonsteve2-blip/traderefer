@@ -29,6 +29,7 @@ export default function BusinessSettingsPage() {
     const [biz, setBiz] = useState<{ is_verified: boolean; abn: string; slug: string; business_name: string; stripe_account_id: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const apiBase = "/api/backend";
 
     const [formData, setFormData] = useState<{
         business_name: string;
@@ -77,7 +78,7 @@ export default function BusinessSettingsPage() {
     const fetchBusiness = useCallback(async () => {
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/business/me`, {
+            const res = await fetch(`${apiBase}/business/me`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -107,7 +108,7 @@ export default function BusinessSettingsPage() {
         } finally {
             setLoading(false);
         }
-    }, [getToken]);
+    }, [getToken, apiBase]);
 
     useEffect(() => {
         if (isLoaded) fetchBusiness();
@@ -120,7 +121,7 @@ export default function BusinessSettingsPage() {
         }
         setSlugStatus("checking");
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/business/check-slug/${val}`);
+            const res = await fetch(`${apiBase}/business/check-slug/${val}`);
             const data = await res.json();
             setSlugStatus(data.available ? "available" : "taken");
         } catch {
@@ -132,7 +133,7 @@ export default function BusinessSettingsPage() {
         setSaving(true);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/business/update`, {
+            const res = await fetch(`${apiBase}/business/update`, {
                 method: "PATCH",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -164,7 +165,7 @@ export default function BusinessSettingsPage() {
         setVerifying(true);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/business/verify-abn`, {
+            const res = await fetch(`${apiBase}/business/verify-abn`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

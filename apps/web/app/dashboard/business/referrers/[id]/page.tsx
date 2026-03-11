@@ -82,7 +82,7 @@ export default function ReferrerDetailPage() {
     const [notes, setNotes] = useState("");
     const [notesLoading, setNotesLoading] = useState(false);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+    const apiUrl = "/api/backend";
     const fmt = (cents: number) => `$${(cents / 100).toFixed(2)}`;
     const fmtDate = (d: string | null) => {
         if (!d) return "—";

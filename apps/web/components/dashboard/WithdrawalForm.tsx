@@ -21,7 +21,7 @@ export function WithdrawalForm() {
         
         try {
             const token = await getToken();
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+            const apiUrl = "/api/backend";
             const res = await fetch(`${apiUrl}/referrer/withdraw`, {
                 method: "POST",
                 headers: {

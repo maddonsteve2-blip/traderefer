@@ -745,7 +745,7 @@ export function EditableProfile({ businessSlug, children }: EditableProfileProps
     const [focusEditor, setFocusEditor] = useState<FocusEditorState | null>(null);
     const [fields, setFields] = useState<EditableFields | null>(null);
     const [originalFields, setOriginalFields] = useState<EditableFields | null>(null);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
     const shouldOpenEditMode = searchParams?.get("edit") === "1";
 
     const updateField = useCallback(<K extends keyof EditableFields>(field: K, value: EditableFields[K]) => {

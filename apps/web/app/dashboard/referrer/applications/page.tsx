@@ -36,7 +36,7 @@ export default function ReferrerApplicationsPage() {
     const { getToken, isLoaded } = useAuth();
     const [apps, setApps] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     useEffect(() => {
         if (!isLoaded) return;

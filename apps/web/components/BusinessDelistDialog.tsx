@@ -38,7 +38,7 @@ export function BusinessDelistDialog({
         setLoading(true);
 
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+            const apiUrl = "/api/backend";
             const res = await fetch(`${apiUrl}/business/${businessId}/delist`, {
                 method: "POST",
                 headers: {

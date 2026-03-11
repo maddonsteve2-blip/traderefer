@@ -60,7 +60,7 @@ export default function AnalyticsPage() {
     const [broadcastMsg, setBroadcastMsg] = useState("");
     const [sending, setSending] = useState(false);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchData = useCallback(async () => {
         try {

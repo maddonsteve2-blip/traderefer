@@ -53,7 +53,7 @@ export function ReviewSection({ slug, initialReviews }: ReviewSectionProps) {
         setSubmitting(true);
         try {
             const token = await getToken();
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+            const apiUrl = "/api/backend";
             const res = await fetch(`${apiUrl}/referrer/reviews`, {
                 method: "POST",
                 headers: {

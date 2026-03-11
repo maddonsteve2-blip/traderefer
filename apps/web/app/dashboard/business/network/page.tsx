@@ -32,7 +32,7 @@ interface Invite {
 
 export default function BusinessNetworkPage() {
     const { getToken } = useAuth();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const [given, setGiven] = useState<Recommendation[]>([]);
     const [received, setReceived] = useState<Recommendation[]>([]);

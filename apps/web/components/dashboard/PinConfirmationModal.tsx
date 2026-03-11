@@ -39,7 +39,7 @@ export function PinConfirmationModal({ leadId, onConfirmed, onClose }: PinConfir
 
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/leads/${leadId}/confirm-pin`, {
+            const res = await fetch(`/api/backend/leads/${leadId}/confirm-pin`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

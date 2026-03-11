@@ -48,7 +48,7 @@ export function SalesLeadsPane() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [unlocking, setUnlocking] = useState<string | null>(null);
     const [showPinModal, setShowPinModal] = useState<string | null>(null);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchLeads = useCallback(async () => {
         const token = await getToken();

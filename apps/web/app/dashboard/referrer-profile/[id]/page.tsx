@@ -27,7 +27,7 @@ export default function ReferrerProfileViewPage() {
     const [profile, setProfile] = useState<ReferrerProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     useEffect(() => {
         if (!isLoaded) return;

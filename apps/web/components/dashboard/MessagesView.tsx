@@ -29,7 +29,7 @@ interface Message {
     is_mine: boolean;
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API = '/api/backend';
 
 function Avatar({ name, logo, size = 9 }: { name: string; logo: string | null; size?: number }) {
     const initials = name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '?';

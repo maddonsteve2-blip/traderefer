@@ -68,7 +68,7 @@ export function ForceApplicationsPane() {
     const [detail, setDetail] = useState<ApplicationDetail | null>(null);
     const [detailLoading, setDetailLoading] = useState(false);
     const [acting, setActing] = useState<"approving" | "rejecting" | null>(null);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchApps = useCallback(async () => {
         const token = await getToken();

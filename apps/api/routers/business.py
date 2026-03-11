@@ -75,6 +75,56 @@ class BusinessOnboarding(BaseModel):
     invite_code: Optional[str] = None
     claim_verification_token: Optional[str] = None
 
+class BusinessUpdate(BaseModel):
+    business_name: Optional[str] = None
+    trade_category: Optional[str] = None
+    description: Optional[str] = None
+    suburb: Optional[str] = None
+    address: Optional[str] = None
+    state: Optional[str] = None
+    business_phone: Optional[str] = None
+    business_email: Optional[str] = None
+    website: Optional[str] = None
+    slug: Optional[str] = None
+    service_radius_km: Optional[int] = None
+    referral_fee_cents: Optional[int] = None
+    logo_url: Optional[str] = None
+    cover_photo_url: Optional[str] = None
+    photo_urls: Optional[list[str]] = None
+    listing_visibility: Optional[str] = None
+    years_experience: Optional[str] = None
+    services: Optional[list[str]] = None
+    specialties: Optional[list[str]] = None
+    business_highlights: Optional[list[str]] = None
+    why_refer_us: Optional[str] = None
+    features: Optional[list[str]] = None
+    abn: Optional[str] = None
+    owner_phone: Optional[str] = None
+    owner_phone_verified: Optional[bool] = None
+
+class ProjectCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    cover_photo_url: Optional[str] = None
+    is_featured: bool = False
+    photo_urls: Optional[list[str]] = None
+
+class ProjectUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    cover_photo_url: Optional[str] = None
+    is_featured: Optional[bool] = None
+    photo_urls: Optional[list[str]] = None
+
+class ReferrerFeeUpdate(BaseModel):
+    custom_fee_cents: Optional[int] = None
+
+class ReferrerBonusCreate(BaseModel):
+    amount_cents: int
+    reason: Optional[str] = None
+    charge_card: bool = False
+    payment_intent_id: Optional[str] = None
+
 class ReferrerNotesUpdate(BaseModel):
     business_notes: Optional[str] = None
 
@@ -1132,14 +1182,14 @@ async def review_referrer(
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user),
 ):
-    """Business sends an internal review of a referrer — delivered as a private notification."""
+    """Business sends an internal review of a referrer Ã¢â‚¬â€ delivered as a private notification."""
     if data.rating < 1 or data.rating > 5:
         raise HTTPException(status_code=400, detail="Rating must be 1-5")
 
     biz = await _get_business_id(db, user)
     biz_id = biz["id"]
     ref_uuid = uuid.UUID(referrer_id)
-    stars = "★" * data.rating + "☆" * (5 - data.rating)
+    stars = "Ã¢Ëœâ€¦" * data.rating + "Ã¢Ëœâ€ " * (5 - data.rating)
 
     # Verify referral link exists (referrer must be linked to this business)
     link_check = await db.execute(
@@ -1165,7 +1215,7 @@ async def review_referrer(
         raise HTTPException(status_code=404, detail="Referrer not found")
 
     business_name = biz_row["business_name"] if biz_row else "A business"
-    comment_part = f" — \"{data.comment}\"" if data.comment else ""
+    comment_part = f" Ã¢â‚¬â€ \"{data.comment}\"" if data.comment else ""
 
     from routers.notifications import create_notification
     await create_notification(
@@ -1186,7 +1236,7 @@ async def review_referrer(
           <h1 style="color:#ea580c">You received a review from {business_name}</h1>
           <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:20px;margin:16px 0">
             <p style="margin:0;font-size:24px;color:#ea580c;letter-spacing:4px">{stars}</p>
-            <p style="margin:4px 0 0 0;font-weight:bold;color:#333">{data.rating}/5 — from {business_name}</p>
+            <p style="margin:4px 0 0 0;font-weight:bold;color:#333">{data.rating}/5 Ã¢â‚¬â€ from {business_name}</p>
             {f'<p style="margin:8px 0 0 0;color:#555;font-style:italic">"{data.comment}"</p>' if data.comment else ''}
           </div>
           <a href="https://traderefer.au/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">View Dashboard</a>
@@ -1234,7 +1284,7 @@ async def award_referrer_bonus(
     if shortfall <= 0:
         return await _process_bonus(db, biz_id, ref_uuid, link["id"], data.amount_cents, data.reason, "wallet", None, wallet_balance)
 
-    # --- CASE 2: Insufficient funds, not charging card → return shortfall info ---
+    # --- CASE 2: Insufficient funds, not charging card Ã¢â€ â€™ return shortfall info ---
     if not data.charge_card and not data.payment_intent_id:
         return {
             "status": "insufficient_funds",
@@ -1244,7 +1294,7 @@ async def award_referrer_bonus(
             "message": f"Wallet has ${wallet_balance/100:.2f} but bonus requires ${data.amount_cents/100:.2f}. Shortfall: ${shortfall/100:.2f}",
         }
 
-    # --- CASE 3: charge_card=True, no payment yet → create PaymentIntent for shortfall ---
+    # --- CASE 3: charge_card=True, no payment yet Ã¢â€ â€™ create PaymentIntent for shortfall ---
     if data.charge_card and not data.payment_intent_id:
         try:
             intent = await StripeService.create_payment_intent(
@@ -1268,7 +1318,7 @@ async def award_referrer_bonus(
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to create payment: {str(e)}")
 
-    # --- CASE 4: Payment confirmed (payment_intent_id provided) → verify and process ---
+    # --- CASE 4: Payment confirmed (payment_intent_id provided) Ã¢â€ â€™ verify and process ---
     if data.payment_intent_id:
         # Verify the payment intent succeeded
         try:
@@ -1569,7 +1619,7 @@ async def broadcast_to_referrers(
     return {"message": "Broadcast sent to all connected referrers"}
 
 
-# ── Network Effects: Business→Business Recommendations ──
+# Ã¢â€â‚¬Ã¢â€â‚¬ Network Effects: BusinessÃ¢â€ â€™Business Recommendations Ã¢â€â‚¬Ã¢â€â‚¬
 
 class BusinessRecommendation(BaseModel):
     to_business_slug: str

@@ -47,7 +47,7 @@ export function SalesOffersPane() {
     const [newDeal, setNewDeal] = useState({ title: "", description: "", discount_text: "", terms: "" });
     const [saving, setSaving] = useState(false);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchAll = async () => {
         const token = await getToken();

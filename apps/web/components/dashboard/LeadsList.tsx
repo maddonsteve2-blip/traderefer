@@ -66,7 +66,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
         setWalletError(null);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/leads/${leadId}/unlock`, {
+            const res = await fetch(`/api/backend/leads/${leadId}/unlock`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
         setIsUpdatingStatus(leadId);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/leads/${leadId}/on-the-way`, {
+            const res = await fetch(`/api/backend/leads/${leadId}/on-the-way`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -134,7 +134,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
 
     const refreshLead = async (leadId: string) => {
         const token = await getToken();
-        const leadRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/leads/${leadId}`, {
+        const leadRes = await fetch(`/api/backend/leads/${leadId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

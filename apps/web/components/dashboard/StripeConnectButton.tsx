@@ -26,7 +26,7 @@ export function StripeConnectButton({ type }: StripeConnectButtonProps) {
                 : '/referrer/stripe/connect';
 
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
+            const res = await fetch(`/api/backend${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`

@@ -26,9 +26,8 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
         setLinking(true);
         try {
             const token = await getToken();
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+            const apiUrl = "/api/backend";
 
-            // Try to create a referral link for this business
             const res = await fetch(`${apiUrl}/referrer/links`, {
                 method: 'POST',
                 headers: {
@@ -44,7 +43,6 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
                 setReferralLink(link);
                 toast.success(`You're now referring ${businessName}!`);
             } else {
-                // If link already exists, try to fetch existing
                 const existingRes = await fetch(`${apiUrl}/referrer/links`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });

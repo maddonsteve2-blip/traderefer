@@ -36,7 +36,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                     setIsOwner(false);
                     return;
                 }
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/business/me`, {
+                const res = await fetch(`/api/backend/business/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -88,7 +88,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
         setError(null);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/leads/`, {
+            const response = await fetch(`/api/backend/leads/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

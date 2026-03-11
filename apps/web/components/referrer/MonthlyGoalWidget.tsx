@@ -5,7 +5,7 @@ import { Flame } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API = "/api/backend";
 
 function cents(c: number) {
     return `$${(c / 100).toFixed(0)}`;

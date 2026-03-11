@@ -49,7 +49,7 @@ export function BusinessClaimDialog({
         setLoading(true);
 
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+            const apiUrl = "/api/backend";
             const res = await fetch(`${apiUrl}/business/${businessId}/claim`, {
                 method: "POST",
                 headers: {

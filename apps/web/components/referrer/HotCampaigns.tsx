@@ -52,7 +52,7 @@ export function HotCampaigns() {
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
     useEffect(() => {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+        const apiUrl = "/api/backend";
         fetch(`${apiUrl}/campaigns/hot`)
             .then(r => r.ok ? r.json() : [])
             .then(setCampaigns)

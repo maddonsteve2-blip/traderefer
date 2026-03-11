@@ -25,7 +25,7 @@ export function PrivateFeedback({ businessSlug, businessName }: PrivateFeedbackP
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const handleSubmit = async () => {
         if (!message.trim()) { toast.error("Enter feedback"); return; }

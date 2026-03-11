@@ -39,7 +39,7 @@ export default function ReferrerProfilePage() {
     const videoRef = useRef<HTMLVideoElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
     const [webcamOpen, setWebcamOpen] = useState(false);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
     const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://traderefer.au";
 
     const handleImageUpload = async (file: File) => {

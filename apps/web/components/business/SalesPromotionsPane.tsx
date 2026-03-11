@@ -65,7 +65,7 @@ export function SalesPromotionsPane() {
         promo_text: "",
         ends_at: "",
     });
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = "/api/backend";
 
     const fetchCampaigns = useCallback(async () => {
         const token = await getToken();
