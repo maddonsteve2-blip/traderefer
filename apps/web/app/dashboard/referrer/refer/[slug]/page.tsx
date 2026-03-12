@@ -347,22 +347,34 @@ export default async function DashboardReferPage({
                                     Join {business.business_name}&apos;s referral team and earn every time you send a confirmed job.
                                 </p>
                                 <ApplyToReferButton slug={slug} businessName={business.business_name} />
-                                {(totalConfirmed > 0 || connectionRate > 0) && (
+                                <div className="space-y-4">
+                                    {(totalConfirmed > 0 || connectionRate > 0) && (
+                                        <div className="pt-6 border-t-2 border-zinc-100 grid grid-cols-2 gap-4 text-center">
+                                            {totalConfirmed > 0 && (
+                                                <div>
+                                                    <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{totalConfirmed}</p>
+                                                    <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '11px' }}>Active Leads</p>
+                                                </div>
+                                            )}
+                                            {connectionRate > 0 && (
+                                                <div>
+                                                    <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{connectionRate}%</p>
+                                                    <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '11px' }}>Connection Rate</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                     <div className="pt-6 border-t-2 border-zinc-100 grid grid-cols-2 gap-4 text-center">
-                                        {totalConfirmed > 0 && (
-                                            <div>
-                                                <p className="font-black text-zinc-900" style={{ fontSize: '28px' }}>{totalConfirmed}</p>
-                                                <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '12px' }}>Jobs Done</p>
-                                            </div>
-                                        )}
-                                        {connectionRate > 0 && (
-                                            <div>
-                                                <p className="font-black text-zinc-900" style={{ fontSize: '28px' }}>{connectionRate}%</p>
-                                                <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '12px' }}>Connect Rate</p>
-                                            </div>
-                                        )}
+                                        <div>
+                                            <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{trustScore}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '11px' }}>Trust Score</p>
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{fmt(commissionPerLead)}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '11px' }}>Referral Fee</p>
+                                        </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
 
