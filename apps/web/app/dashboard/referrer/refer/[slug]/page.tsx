@@ -352,26 +352,26 @@ export default async function DashboardReferPage({
                                         <div className="pt-6 border-t-2 border-zinc-100 grid grid-cols-2 gap-4 text-center">
                                             {totalConfirmed > 0 && (
                                                 <div>
-                                                    <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{totalConfirmed}</p>
-                                                    <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '11px' }}>Active Leads</p>
+                                                    <p className="font-black text-zinc-900" style={{ fontSize: '18px' }}>{totalConfirmed}</p>
+                                                    <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '10px' }}>Active Leads</p>
                                                 </div>
                                             )}
                                             {connectionRate > 0 && (
                                                 <div>
-                                                    <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{connectionRate}%</p>
-                                                    <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '11px' }}>Connection Rate</p>
+                                                    <p className="font-black text-zinc-900" style={{ fontSize: '18px' }}>{connectionRate}%</p>
+                                                    <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '10px' }}>Connection Rate</p>
                                                 </div>
                                             )}
                                         </div>
                                     )}
                                     <div className="pt-6 border-t-2 border-zinc-100 grid grid-cols-2 gap-4 text-center">
                                         <div>
-                                            <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{trustScore}</p>
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '11px' }}>Trust Score</p>
+                                            <p className="font-black text-zinc-900" style={{ fontSize: '18px' }}>{trustScore}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '10px' }}>Trust Score</p>
                                         </div>
                                         <div>
-                                            <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{fmt(commissionPerLead)}</p>
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '11px' }}>Referral Fee</p>
+                                            <p className="font-black text-zinc-900" style={{ fontSize: '18px' }}>{fmt(commissionPerLead)}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '10px' }}>Referral Fee</p>
                                         </div>
                                     </div>
                                 </div>

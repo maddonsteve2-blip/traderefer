@@ -1,0 +1,25 @@
+node_modules
+.next
+.turbo
+.vercel
+.git
+.env*
+! .env.example
+*.log
+dist
+build
+tmp
+temp
+out
+public/logos-cache
+# Monorepo optimization
+../../node_modules
+../../apps/api
+../../apps/mobile
+../../scripts
+../../neon
+../../docs
+../../logos-cache
+../../prototype-comparison
+../../scraped_businesses.json
+../../combined.sql
