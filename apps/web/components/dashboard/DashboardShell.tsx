@@ -32,7 +32,6 @@ const BUSINESS_NAV = [
     { label: "Leads",           href: "/dashboard/business/sales?tab=leads",        matchPath: "/dashboard/business/sales",           icon: Target },
     { label: "Messages",        href: "/dashboard/business/messages",               matchPath: "/dashboard/business/messages",        icon: MessageSquare },
     { label: "Referral Force",  href: "/dashboard/business/force?tab=partners",     matchPath: "/dashboard/business/force",           icon: Users },
-    { label: "Applications",    href: "/dashboard/business/force?tab=applications", matchPath: "/dashboard/business/applications",    icon: ClipboardList },
     { label: "Deals",           href: "/dashboard/business/sales?tab=offers",       matchPath: "/dashboard/business/deals",           icon: Tag },
     { label: "Campaigns",       href: "/dashboard/business/sales?tab=promotions",   matchPath: "/dashboard/business/campaigns",       icon: Megaphone },
     { label: "Analytics",       href: "/dashboard/business/analytics",              matchPath: "/dashboard/business/analytics",       icon: BarChart3 },
