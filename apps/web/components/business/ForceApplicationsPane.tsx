@@ -181,10 +181,10 @@ export function ForceApplicationsPane() {
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-3 py-1.5 rounded-xl font-bold transition-all ${filter === f ? "bg-orange-500 text-white" : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"}`}
-                            style={{ fontSize: 14 }}
+                            className={`px-4 py-2 rounded-xl font-black uppercase tracking-widest transition-all ${filter === f ? "bg-orange-500 text-white shadow-lg" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}
+                            style={{ fontSize: 13 }}
                         >
-                            {f === "pending" ? `Pending (${pendingCount})` : "All"}
+                            {f === "pending" ? `${f} (${pendingCount})` : f}
                         </button>
                     ))}
                 </div>
@@ -220,12 +220,12 @@ export function ForceApplicationsPane() {
                                             ) : initials}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-black text-zinc-900 truncate" style={{ fontSize: 16 }}>{app.referrer_name}</p>
-                                            <p className="text-zinc-400 font-medium truncate" style={{ fontSize: 13 }}>
+                                            <p className="font-black text-zinc-900 truncate uppercase tracking-tight" style={{ fontSize: 17 }}>{app.referrer_name}</p>
+                                            <p className="text-zinc-400 font-black uppercase tracking-widest mt-1" style={{ fontSize: 11 }}>
                                                 {app.referrer_suburb}{app.referrer_state ? `, ${app.referrer_state}` : ""} · ⭐ {app.quality_score}
                                             </p>
                                         </div>
-                                        <span className={`shrink-0 px-2 py-1 rounded-lg font-bold ${cfg.bg} ${cfg.text}`} style={{ fontSize: 12 }}>
+                                        <span className={`shrink-0 px-2 py-1 rounded-xl font-black uppercase tracking-widest ${cfg.bg} ${cfg.text}`} style={{ fontSize: 10 }}>
                                             {cfg.label}
                                         </span>
                                     </div>
@@ -261,9 +261,9 @@ export function ForceApplicationsPane() {
                                 <div className="sticky top-0 z-10 bg-zinc-900 rounded-2xl px-5 py-3 mb-5 flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                         <Clock className="w-4 h-4 text-amber-400" />
-                                        <span className="font-bold text-white" style={{ fontSize: 16 }}>Applied {fmtDate(detail.applied_at)}</span>
+                                        <span className="font-black text-white uppercase tracking-widest" style={{ fontSize: 15 }}>Applied {fmtDate(detail.applied_at)}</span>
                                         {detail.reminder_count > 0 && (
-                                            <span className="text-amber-400 font-bold" style={{ fontSize: 13 }}>· Reminder {detail.reminder_count}/3</span>
+                                            <span className="text-amber-400 font-black uppercase" style={{ fontSize: 12 }}>· Reminder {detail.reminder_count}/3</span>
                                         )}
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -315,16 +315,16 @@ export function ForceApplicationsPane() {
                                         ) : initials}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h2 className="font-black text-zinc-900 leading-tight" style={{ fontSize: 24 }}>{ref.full_name}</h2>
-                                        {ref.tagline && <p className="font-medium text-zinc-500 mt-1" style={{ fontSize: 16 }}>{ref.tagline}</p>}
-                                        <div className="flex items-center gap-4 mt-2 flex-wrap">
+                                        <h2 className="font-black text-zinc-900 leading-tight uppercase tracking-tighter" style={{ fontSize: 28 }}>{ref.full_name}</h2>
+                                        {ref.tagline && <p className="font-black text-zinc-500 mt-1 uppercase tracking-tight" style={{ fontSize: 16 }}>{ref.tagline}</p>}
+                                        <div className="flex items-center gap-4 mt-3 flex-wrap">
                                             {(ref.suburb || ref.state) && (
-                                                <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: 14 }}>
+                                                <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 11 }}>
                                                     <MapPin className="w-4 h-4" />{ref.suburb}{ref.state ? `, ${ref.state}` : ""}
                                                 </span>
                                             )}
                                             {memberYear && (
-                                                <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: 14 }}>
+                                                <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 11 }}>
                                                     <Briefcase className="w-4 h-4" />Member since {memberYear}
                                                 </span>
                                             )}
@@ -338,10 +338,10 @@ export function ForceApplicationsPane() {
                                         { label: "Confirmed Leads", value: ref.confirmed_referrals, icon: TrendingUp, bg: "bg-emerald-50", text: "text-emerald-600" },
                                         { label: "Businesses", value: ref.businesses_linked, icon: Briefcase, bg: "bg-blue-50", text: "text-blue-600" },
                                     ].map(s => (
-                                        <div key={s.label} className={`${s.bg} rounded-xl p-4 text-center`}>
-                                            <s.icon className={`w-5 h-5 ${s.text} mx-auto mb-1`} />
-                                            <p className="font-black text-zinc-900" style={{ fontSize: 22 }}>{s.value}</p>
-                                            <p className="font-bold text-zinc-500" style={{ fontSize: 12 }}>{s.label}</p>
+                                        <div key={s.label} className={`${s.bg} rounded-2xl p-4 text-center border border-black/5 shadow-sm`}>
+                                            <s.icon className={`w-5 h-5 ${s.text} mx-auto mb-1.5`} />
+                                            <p className="font-black text-zinc-900 tracking-tighter" style={{ fontSize: 32 }}>{s.value}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: 10 }}>{s.label}</p>
                                         </div>
                                     ))}
                                 </div>

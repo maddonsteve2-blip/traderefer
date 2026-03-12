@@ -64,9 +64,9 @@ export function ForceConfigPane() {
         <div className="flex-1 overflow-y-auto bg-zinc-50 py-8 px-6">
             {/* Header */}
             <div className="mb-6">
-                <h2 className="font-black text-zinc-900 mb-1" style={{ fontSize: 24 }}>Referral Program Settings</h2>
-                <p className="text-zinc-500 font-medium" style={{ fontSize: 16 }}>
-                    Set the default lead fee, rewards, and invite link for your referrer program.
+                <h2 className="font-black text-zinc-900 mb-1 uppercase tracking-tighter" style={{ fontSize: 32 }}>Referral Program</h2>
+                <p className="text-zinc-500 font-black uppercase tracking-widest" style={{ fontSize: 12 }}>
+                    DEFAULTS • REWARDS • INVITE LINK
                 </p>
             </div>
 
@@ -80,8 +80,8 @@ export function ForceConfigPane() {
                             <DollarSign className="w-5 h-5 text-orange-600" />
                         </div>
                         <div>
-                            <h3 className="font-black text-zinc-900" style={{ fontSize: 18 }}>Default Lead Fee</h3>
-                            <p className="text-zinc-400 font-medium" style={{ fontSize: 14 }}>Paid to referrers per unlocked lead. Minimum $3.00.</p>
+                            <h3 className="font-black text-zinc-900 uppercase tracking-tight" style={{ fontSize: 20 }}>Default Lead Fee</h3>
+                            <p className="text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 10 }}>Paid per unlocked lead. Min $3.00.</p>
                         </div>
                     </div>
                     <div className="relative max-w-[220px]">

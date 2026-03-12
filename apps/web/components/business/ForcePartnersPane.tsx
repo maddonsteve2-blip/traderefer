@@ -188,15 +188,15 @@ export function ForcePartnersPane() {
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                             placeholder="Search partners…"
-                            className="w-full pl-9 pr-3 h-9 bg-zinc-100 rounded-xl text-zinc-900 placeholder:text-zinc-400 font-medium outline-none focus:ring-2 focus:ring-orange-400"
-                            style={{ fontSize: 15 }}
+                            className="w-full pl-10 pr-4 h-12 bg-zinc-100 rounded-2xl text-zinc-900 placeholder:text-zinc-400 font-bold outline-none focus:ring-2 focus:ring-orange-400 transition-all"
+                            style={{ fontSize: 16 }}
                         />
                     </div>
                 </div>
 
                 {/* Summary strip — 4 stats */}
                 {summary && (
-                    <div className="px-4 py-3 border-b border-zinc-100 grid grid-cols-4 gap-1">
+                    <div className="px-4 py-4 border-b border-zinc-100 grid grid-cols-4 gap-2 bg-zinc-50/50">
                         {[
                             { label: "Partners", value: summary.total_referrers, color: "text-orange-600" },
                             { label: "Leads", value: summary.total_leads, color: "text-blue-600" },
@@ -204,8 +204,8 @@ export function ForcePartnersPane() {
                             { label: "Paid Out", value: fmt(summary.total_paid_cents), color: "text-violet-600" },
                         ].map(s => (
                             <div key={s.label} className="text-center">
-                                <p className={`font-black ${s.color} leading-none`} style={{ fontSize: 15 }}>{s.value}</p>
-                                <p className="font-bold text-zinc-400 mt-0.5" style={{ fontSize: 10 }}>{s.label}</p>
+                                <p className={`font-black ${s.color} leading-none tracking-tighter`} style={{ fontSize: 18 }}>{s.value}</p>
+                                <p className="font-black text-zinc-400 mt-1 uppercase tracking-widest" style={{ fontSize: 9 }}>{s.label}</p>
                             </div>
                         ))}
                     </div>
@@ -239,17 +239,17 @@ export function ForcePartnersPane() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-1">
-                                                <p className="font-black text-zinc-900 truncate" style={{ fontSize: 15 }}>{r.full_name}</p>
-                                                <span className="text-zinc-400 shrink-0" style={{ fontSize: 11 }}>{timeAgo(r.last_lead_at)}</span>
+                                                <p className="font-black text-zinc-900 truncate uppercase tracking-tight" style={{ fontSize: 17 }}>{r.full_name}</p>
+                                                <span className="text-zinc-400 font-black uppercase shrink-0" style={{ fontSize: 10 }}>{timeAgo(r.last_lead_at)}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                                                <span className="text-zinc-500 font-medium" style={{ fontSize: 12 }}>{r.leads_created} leads</span>
+                                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                                <span className="text-zinc-500 font-bold uppercase tracking-wide" style={{ fontSize: 11 }}>{r.leads_created} leads</span>
                                                 <span className="text-zinc-300">·</span>
-                                                <span className="text-zinc-500 font-medium" style={{ fontSize: 12 }}>{r.confirmed_jobs} confirmed</span>
+                                                <span className="text-zinc-500 font-bold uppercase tracking-wide" style={{ fontSize: 11 }}>{r.confirmed_jobs} jobs</span>
                                                 <span className="text-zinc-300">·</span>
-                                                <span className="text-amber-500 font-bold" style={{ fontSize: 12 }}>⭐ {r.quality_score}</span>
+                                                <span className="text-amber-600 font-black uppercase tracking-wide" style={{ fontSize: 11 }}>⭐ {r.quality_score}</span>
                                                 <span className="text-zinc-300">·</span>
-                                                <span className="text-violet-600 font-bold" style={{ fontSize: 12 }}>{fmt(r.total_earned_cents)}</span>
+                                                <span className="text-violet-600 font-black uppercase tracking-wide" style={{ fontSize: 11 }}>{fmt(r.total_earned_cents)}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -283,13 +283,13 @@ export function ForcePartnersPane() {
                                     <span className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${detail.is_active ? "bg-emerald-500" : "bg-zinc-300"}`} />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h2 className="font-black text-zinc-900 leading-tight" style={{ fontSize: 22 }}>{detail.full_name}</h2>
-                                    <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: 14 }}>
+                                    <h2 className="font-black text-zinc-900 leading-tight uppercase tracking-tighter" style={{ fontSize: 28 }}>{detail.full_name}</h2>
+                                    <p className="text-zinc-400 font-black uppercase tracking-widest mt-1" style={{ fontSize: 11 }}>
                                         Partner since {fmtDate(detail.linked_since)}
                                         {detail.referrer_since ? ` · Member since ${new Date(detail.referrer_since).getFullYear()}` : ""}
                                     </p>
-                                    <span className={`mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${detail.is_active ? "bg-emerald-50 text-emerald-700" : "bg-zinc-100 text-zinc-500"}`}>
-                                        {detail.is_active ? <><CheckCircle className="w-3 h-3" /> Active</> : <><Clock className="w-3 h-3" /> Inactive</>}
+                                    <span className={`mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-widest ${detail.is_active ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-zinc-100 text-zinc-500 border border-zinc-200"}`}>
+                                        {detail.is_active ? <><CheckCircle className="w-3.5 h-3.5" /> Active</> : <><Clock className="w-3.5 h-3.5" /> Inactive</>}
                                     </span>
                                 </div>
                                 <Link
@@ -343,12 +343,12 @@ export function ForcePartnersPane() {
                                 { label: "Leads Unlocked", value: detail.leads_unlocked, icon: CheckCircle, bg: "bg-amber-50", text: "text-amber-600" },
                                 { label: "Quality Score", value: `${detail.quality_score}/100`, icon: Star, bg: "bg-yellow-50", text: "text-yellow-500" },
                             ].map(s => (
-                                <div key={s.label} className={`${s.bg} rounded-2xl p-4`}>
-                                    <div className="flex items-center gap-1.5 mb-1.5">
+                                <div key={s.label} className={`${s.bg} rounded-[24px] p-5 shadow-sm border border-black/5`}>
+                                    <div className="flex items-center gap-1.5 mb-2">
                                         <s.icon className={`w-4 h-4 ${s.text}`} />
-                                        <span className="font-bold text-zinc-500 uppercase tracking-wider" style={{ fontSize: 10 }}>{s.label}</span>
+                                        <span className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: 10 }}>{s.label}</span>
                                     </div>
-                                    <p className="font-black text-zinc-900" style={{ fontSize: 24 }}>{s.value}</p>
+                                    <p className="font-black text-zinc-900 tracking-tighter" style={{ fontSize: 32 }}>{s.value}</p>
                                 </div>
                             ))}
                         </div>
