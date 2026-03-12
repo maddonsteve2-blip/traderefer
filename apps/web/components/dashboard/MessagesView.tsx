@@ -265,7 +265,7 @@ export function MessagesView() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-full bg-white">
+            <div className="flex items-center justify-center h-full w-full bg-white">
                 <div className="flex flex-col items-center gap-3">
                     <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
                     <p className="text-zinc-400 font-bold" style={{ fontSize: '16px' }}>Loading messages…</p>
