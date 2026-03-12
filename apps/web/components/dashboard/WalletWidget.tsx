@@ -18,9 +18,9 @@ export function WalletWidget({ currentBalance }: WalletWidgetProps) {
             <Button
                 onClick={() => setOpen(true)}
                 size="sm"
-                className="bg-orange-600 hover:bg-orange-700 text-white rounded-full font-bold shrink-0"
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-full font-bold shrink-0 text-lg h-11 px-5"
             >
-                <Wallet className="w-4 h-4 mr-1" /> Top Up
+                <Wallet className="w-5 h-5 mr-1.5" /> Top Up
             </Button>
             <TopUpDialog
                 open={open}

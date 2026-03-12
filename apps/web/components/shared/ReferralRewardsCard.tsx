@@ -24,71 +24,58 @@ export function ReferralRewardsCard({
     const remaining = milestoneSize - progressToNext;
 
     return (
-        <div className="bg-[#0F172A] rounded-2xl p-5 text-white relative overflow-hidden">
+        <div className="bg-[#0F172A] rounded-2xl p-6 text-white relative overflow-hidden shadow-2xl">
             <div className="absolute -right-6 -top-6 w-36 h-36 bg-orange-500/30 rounded-full" />
             <div className="absolute -right-2 -bottom-8 w-24 h-24 bg-orange-400/20 rounded-full" />
             <div className="relative z-10">
-                <div className="flex items-start justify-between mb-4">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <Gift className="w-4 h-4 text-orange-400" />
-                            <span className="text-orange-400 text-base font-black uppercase tracking-widest">Friend Rewards</span>
-                        </div>
-                        <h3 className="text-xl font-black leading-snug text-white">
-                            Invite 5 friends,<br />
-                            <span className="text-orange-400">earn ${rewardAmountDollars}</span>
-                        </h3>
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
+                        <Gift className="w-6 h-6 text-orange-400" />
                     </div>
-                    <div className="text-right">
-                        <p className="text-3xl font-black text-white">{progressToNext}<span className="text-zinc-300 text-xl font-bold">/{milestoneSize}</span></p>
-                        <p className="text-base text-zinc-300 font-bold">active</p>
+                    <div>
+                        <h3 className="text-2xl font-black text-white">Prezzee Rewards</h3>
+                        <p className="text-zinc-400 font-medium text-lg">Earn $25 for every 5 active friends you invite.</p>
                     </div>
                 </div>
 
-                <div className="mb-4">
-                    <div className="h-3.5 bg-zinc-700 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-gradient-to-r from-orange-500 to-orange-400 rounded-full transition-all duration-700"
+                <div className="bg-white/5 rounded-2xl p-5 mb-5 border border-white/5">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-zinc-400 font-bold uppercase tracking-widest" style={{ fontSize: 15 }}>Progress</span>
+                        <span className="text-orange-400 font-black" style={{ fontSize: 18 }}>{progressToNext}/{milestoneSize}</span>
+                    </div>
+                    <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
+                        <div 
+                            className="h-full bg-gradient-to-r from-orange-500 to-amber-400 transition-all duration-1000"
                             style={{ width: `${pct}%` }}
                         />
                     </div>
-                    <div className="flex justify-between mt-2">
-                        <p className="text-base font-bold text-zinc-300">
-                            {activeInvitees > 0
-                                ? `${activeInvitees} friend${activeInvitees !== 1 ? "s" : ""} active`
-                                : "Invite your first friend!"}
-                        </p>
-                        <p className="text-base font-bold text-zinc-300">
-                            {remaining > 0 ? `${remaining} more to go` : "🎉 Milestone reached!"}
-                        </p>
-                    </div>
                 </div>
 
-                {milestonesCompleted > 0 && (
-                    <div className="flex items-center gap-2 mb-4">
-                        {Array.from({ length: milestonesCompleted }).map((_, i) => (
-                            <div key={i} className="flex items-center gap-1 bg-orange-500/20 text-orange-300 text-xs font-bold px-2.5 py-1 rounded-full">
-                                <Star className="w-3 h-3 fill-orange-400 text-orange-400" />
-                                ${rewardAmountDollars} earned
-                            </div>
-                        ))}
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                        <p className="text-zinc-500 font-bold uppercase tracking-widest mb-1" style={{ fontSize: 13 }}>Invited</p>
+                        <p className="text-2xl font-black text-white">{activeInvitees}</p>
                     </div>
-                )}
+                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                        <p className="text-zinc-500 font-bold uppercase tracking-widest mb-1" style={{ fontSize: 13 }}>Earned</p>
+                        <p className="text-2xl font-black text-orange-400">${milestonesCompleted * rewardAmountDollars}</p>
+                    </div>
+                </div>
 
                 <div className="flex gap-2">
                     <Button
                         onClick={onInvite}
-                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-11 font-black text-lg"
+                        className="flex-1 bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-14 font-black text-xl active:scale-95 transition-all shadow-lg"
                     >
-                        <Users className="w-4 h-4 mr-1.5" />
+                        <Users className="w-5 h-5 mr-1.5" />
                         Invite Friends
                     </Button>
                     <Button
                         variant="outline"
-                        className="border-zinc-600 text-white hover:bg-zinc-700 hover:text-white rounded-xl h-11 px-4 font-bold text-lg bg-white/5"
+                        className="border-zinc-600 text-white hover:bg-zinc-700 hover:text-white rounded-xl h-14 px-4 font-bold text-xl bg-white/5 active:scale-95 transition-all"
                         onClick={onView}
                     >
-                        View <ChevronRight className="w-4 h-4 ml-1" />
+                        View <ChevronRight className="w-5 h-5 ml-1" />
                     </Button>
                 </div>
             </div>

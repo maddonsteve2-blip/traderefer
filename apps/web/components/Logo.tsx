@@ -8,11 +8,11 @@ interface LogoProps {
 }
 
 const sizeMap = {
-    xs: { icon: 36, text: "text-sm", gap: "gap-1" },
-    sm: { icon: 50, text: "text-xl", gap: "gap-1.5" },
-    md: { icon: 64, text: "text-2xl", gap: "gap-2" },
-    lg: { icon: 82, text: "text-3xl", gap: "gap-2.5" },
-    xl: { icon: 108, text: "text-5xl", gap: "gap-3" },
+    xs: { icon: 36, text: "text-base", gap: "gap-1" },
+    sm: { icon: 50, text: "text-2xl", gap: "gap-1.5" },
+    md: { icon: 64, text: "text-3xl", gap: "gap-2" },
+    lg: { icon: 82, text: "text-4xl", gap: "gap-2.5" },
+    xl: { icon: 108, text: "text-6xl", gap: "gap-3" },
 };
 
 function LogoIcon({ size = 28, alt = "traderefer", dark = false }: { size?: number; alt?: string; dark?: boolean }) {

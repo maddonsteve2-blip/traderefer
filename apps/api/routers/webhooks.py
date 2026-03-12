@@ -133,7 +133,7 @@ async def stripe_webhook(
             # Email: notify business of unlocked lead with full contact details
             full_lead = await db.execute(text("""
                 SELECT l.consumer_name, l.consumer_phone, l.consumer_email, l.consumer_suburb, l.job_description,
-                       b.business_name, b.business_email
+                       b.business_name, b.business_email, b.business_phone
                 FROM leads l JOIN businesses b ON b.id = l.business_id
                 WHERE l.id = :id
             """), {"id": lead_id})
@@ -149,15 +149,9 @@ async def stripe_webhook(
                         suburb=full["consumer_suburb"],
                         job_description=full["job_description"],
                     )
-                # Also fetch business phone for SMS
-                biz_phone_res = await db.execute(
-                    text("SELECT business_phone FROM businesses WHERE id = :id"),
-                    {"id": business_id}
-                )
-                biz_phone_row = biz_phone_res.mappings().first()
-                if biz_phone_row and biz_phone_row["business_phone"]:
+                if full["business_phone"]:
                     await send_sms_business_lead_unlocked(
-                        phone=biz_phone_row["business_phone"],
+                        phone=full["business_phone"],
                         business_name=full["business_name"],
                         consumer_name=full["consumer_name"],
                         consumer_phone=full["consumer_phone"],

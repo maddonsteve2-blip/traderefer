@@ -4,6 +4,7 @@ import {
     ShieldCheck, TrendingUp, Star,
 } from "lucide-react";
 import Link from "next/link";
+import { WithdrawalForm } from "@/components/dashboard/WithdrawalForm";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -47,7 +48,7 @@ export default async function ReferrerRewardsPage() {
     const prezzeePayouts = payouts.filter((p: { method?: string }) => p.method === 'PREZZEE_SWAP');
     const lastGiftCard = prezzeePayouts.length > 0 ? prezzeePayouts[0] : null;
     const qualityScore = referrer.quality_score ?? 100;
-    const isReady = pendingBalance >= 5;
+    const isReady = pendingBalance >= 25;
     const qualityColor = qualityScore >= 70 ? "text-green-600" : qualityScore >= 50 ? "text-amber-500" : "text-red-500";
     const qualityBarColor = qualityScore >= 70 ? "bg-green-500" : qualityScore >= 50 ? "bg-amber-400" : "bg-red-500";
 
@@ -56,19 +57,19 @@ export default async function ReferrerRewardsPage() {
             <div className="w-full px-4 md:px-6 py-5 md:py-6">
 
                 {/* Breadcrumb */}
-                <div className="flex flex-wrap items-center gap-3 mb-5">
-                    <Link href="/dashboard/referrer" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '16px' }}>
+                <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <Link href="/dashboard/referrer" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '18px' }}>
                         <ArrowLeft className="w-4 h-4" /> Dashboard
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-bold" style={{ fontSize: '16px' }}>Gift Card Rewards</span>
+                    <span className="text-zinc-700 font-bold" style={{ fontSize: '18px' }}>Gift Card Rewards</span>
                 </div>
 
-                <div className="mb-5">
-                    <h1 className="font-black text-zinc-900 flex items-center gap-3" style={{ fontSize: '28px' }}>
-                        <Gift className="w-7 h-7 text-orange-500" /> Gift Card Rewards
+                <div className="mb-8">
+                    <h1 className="font-black text-zinc-900 flex items-center gap-3" style={{ fontSize: '32px' }}>
+                        <Gift className="w-8 h-8 text-orange-500" /> Gift Card Rewards
                     </h1>
-                    <p className="text-zinc-500 font-medium mt-1" style={{ fontSize: '17px' }}>
+                    <p className="text-zinc-500 font-medium mt-1" style={{ fontSize: '19px' }}>
                         Your referral earnings are automatically paid as Prezzee gift cards — accepted at 400+ stores.
                     </p>
                 </div>
@@ -97,36 +98,36 @@ export default async function ReferrerRewardsPage() {
                                 <p className="font-black text-zinc-400 uppercase tracking-widest mb-2" style={{ fontSize: '16px' }}>
                                     Pending Reward Balance
                                 </p>
-                                <p className="font-black text-white tracking-tighter leading-none mb-3" style={{ fontSize: '40px' }}>
+                                <p className="font-black text-white tracking-tighter leading-none mb-3" style={{ fontSize: '48px' }}>
                                     ${pendingBalance.toFixed(2)}
                                 </p>
-                                <p className={`font-bold mb-6 ${isReady ? 'text-green-400' : 'text-zinc-400'}`} style={{ fontSize: '17px' }}>
+                                <p className={`font-black mb-6 ${isReady ? 'text-green-400' : 'text-zinc-400'}`} style={{ fontSize: '19px' }}>
                                     {isReady
-                                        ? "✅ Ready — issued automatically on your next confirmed job"
-                                        : `Accumulating — gift card issued once balance reaches $5.00`}
+                                        ? "✅ Ready to claim — you can claim up to $300 per transaction."
+                                        : `Accumulating — gift cards can be claimed once balance reaches $25.00`}
                                 </p>
 
-                                {/* Progress bar to $5 */}
+                                {/* Progress bar to $25 */}
                                 {!isReady && (
                                     <div className="mb-6">
                                         <div className="flex justify-between mb-1.5">
-                                            <span className="font-bold text-zinc-400" style={{ fontSize: '16px' }}>Progress to next card</span>
-                                            <span className="font-bold text-orange-400" style={{ fontSize: '16px' }}>${pendingBalance.toFixed(2)} / $5.00</span>
+                                            <span className="font-bold text-zinc-400" style={{ fontSize: '16px' }}>Progress to minimum claim</span>
+                                            <span className="font-bold text-orange-400" style={{ fontSize: '16px' }}>${pendingBalance.toFixed(2)} / $25.00</span>
                                         </div>
                                         <div className="w-full bg-white/10 rounded-full h-2.5">
-                                            <div className="h-2.5 rounded-full bg-orange-500 transition-all" style={{ width: `${Math.min((pendingBalance / 5) * 100, 100)}%` }} />
+                                            <div className="h-2.5 rounded-full bg-orange-500 transition-all" style={{ width: `${Math.min((pendingBalance / 25) * 100, 100)}%` }} />
                                         </div>
                                     </div>
                                 )}
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                                        <p className="font-black text-zinc-400 uppercase tracking-widest mb-1" style={{ fontSize: '16px' }}>Total Earned</p>
-                                        <p className="font-black text-zinc-100" style={{ fontSize: '20px' }}>${totalEarned.toFixed(2)}</p>
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+                                        <p className="font-black text-zinc-400 uppercase tracking-widest mb-1" style={{ fontSize: '17px' }}>Total Earned</p>
+                                        <p className="font-black text-zinc-100" style={{ fontSize: '24px' }}>${totalEarned.toFixed(2)}</p>
                                     </div>
-                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                                        <p className="font-black text-zinc-400 uppercase tracking-widest mb-1" style={{ fontSize: '16px' }}>Last Gift Card</p>
-                                        <p className="font-black text-zinc-100" style={{ fontSize: '20px' }}>
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+                                        <p className="font-black text-zinc-400 uppercase tracking-widest mb-1" style={{ fontSize: '17px' }}>Last Gift Card</p>
+                                        <p className="font-black text-zinc-100" style={{ fontSize: '24px' }}>
                                             {lastGiftCard ? `$${(lastGiftCard.amount_cents / 100).toFixed(2)}` : "None yet"}
                                         </p>
                                     </div>
@@ -135,6 +136,12 @@ export default async function ReferrerRewardsPage() {
 
                             <Gift className="absolute -right-10 -bottom-10 w-44 h-44 text-white/5 rotate-12" />
                         </div>
+
+                        {/* CLAIM BUTTON FORM */}
+                        <WithdrawalForm 
+                            totalPendingCents={referrer.wallet_balance_cents || 0} 
+                            maxClaimCents={30000} 
+                        />
 
                         {/* CATALOG STRIP */}
                         <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
@@ -167,10 +174,10 @@ export default async function ReferrerRewardsPage() {
                             <h3 className="font-black text-zinc-900 mb-4" style={{ fontSize: '20px' }}>How Rewards Work</h3>
                             <div className="space-y-4">
                                 {[
-                                    { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-50", title: "Job confirmed", desc: "Business and customer both confirm the job was won and completed." },
-                                    { icon: Gift, color: "text-orange-500", bg: "bg-orange-50", title: "Prezzee gift card issued", desc: "You receive 80% of the unlock fee as a Prezzee Swap gift card — spend it at 400+ stores." },
-                                    { icon: Mail, color: "text-blue-500", bg: "bg-blue-50", title: "Delivered to your email", desc: "Gift card link arrives in your inbox automatically. No action needed from you." },
-                                    { icon: Clock, color: "text-zinc-500", bg: "bg-zinc-50", title: "Minimum $5 per card", desc: "Rewards under $5 accumulate until they hit the minimum to avoid card issuance fees." },
+                                    { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-50", title: "Job confirmed", desc: "Business confirms the job was won and completed." },
+                                    { icon: Gift, color: "text-orange-500", bg: "bg-orange-50", title: "Claim Prezzee gift card", desc: "You receive 80% of the unlock fee as credit. Claim from $25 up to $300 at a time." },
+                                    { icon: Mail, color: "text-blue-500", bg: "bg-blue-50", title: "Delivered to your email", desc: "Your Prezzee Swap gift card link arrives in your inbox instantly." },
+                                    { icon: ShieldCheck, color: "text-zinc-500", bg: "bg-zinc-50", title: "Platform limits", desc: "Maximum claim is $300 per transaction per platform rules." },
                                 ].map(({ icon: Icon, color, bg, title, desc }) => (
                                     <div key={title} className="flex items-start gap-4">
                                         <div className={`w-9 h-9 ${bg} rounded-xl flex items-center justify-center shrink-0 mt-0.5`}>
@@ -248,7 +255,7 @@ export default async function ReferrerRewardsPage() {
                                 <div className={`h-3 rounded-full transition-all ${qualityBarColor}`} style={{ width: `${qualityScore}%` }} />
                             </div>
 
-                            <p className={`font-bold text-center leading-snug ${qualityColor}`} style={{ fontSize: '18px' }}>
+                            <p className={`font-black text-center leading-snug ${qualityColor}`} style={{ fontSize: '20px' }}>
                                 {qualityScore >= 70
                                     ? "Excellent — your leads are top quality. Keep it up!"
                                     : qualityScore >= 50
@@ -307,8 +314,8 @@ export default async function ReferrerRewardsPage() {
                         {/* TRUST BADGES */}
                         <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
                             {[
-                                { icon: ShieldCheck, text: "Rewards issued automatically", color: "text-green-500" },
-                                { icon: Star, text: "No action needed from you", color: "text-orange-500" },
+                                { icon: ShieldCheck, text: "Platform standard $300 limit per claim", color: "text-green-500" },
+                                { icon: Star, text: "Instant email delivery", color: "text-orange-500" },
                                 { icon: Gift, text: "Accepted at 400+ stores nationwide", color: "text-blue-500" },
                             ].map(({ icon: Icon, text, color }) => (
                                 <div key={text} className="flex items-center gap-3 py-3 border-b border-zinc-50 last:border-0">
@@ -322,7 +329,7 @@ export default async function ReferrerRewardsPage() {
                 </div>
 
                 <p className="text-center mt-10 text-zinc-400 font-bold uppercase tracking-widest" style={{ fontSize: '16px' }}>
-                    Rewards issued automatically after job confirmation · © 2026 TradeRefer Pty Ltd
+                    Claims processed instantly via Prezzee API · © 2026 TradeRefer Pty Ltd
                 </p>
 
             </div>

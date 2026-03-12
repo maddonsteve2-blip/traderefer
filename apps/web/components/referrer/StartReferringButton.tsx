@@ -77,12 +77,12 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
     if (!isSignedIn) {
         return (
             <div className="space-y-6">
-                <Button asChild className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-16 text-lg font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95">
-                    <Link href="/login" className="flex items-center justify-center gap-3">
+                <Button asChild className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-[64px] font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95">
+                    <Link href="/login" className="flex items-center justify-center gap-3" style={{ fontSize: '20px' }}>
                         <LogIn className="w-6 h-6" /> Sign In to Start Referring
                     </Link>
                 </Button>
-                <p className="text-base text-zinc-500 text-center font-medium px-4 leading-[1.6]">
+                <p className="text-zinc-500 text-center font-bold px-4 leading-relaxed" style={{ fontSize: '18px' }}>
                     Join our network of referrers to unlock exclusive rewards and track your earnings.
                 </p>
             </div>
@@ -93,12 +93,12 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
         return (
             <div className="space-y-6">
                 <div className="group relative">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl blur opacity-10 group-hover:opacity-25 transition duration-1000"></div>
-                    <div className="relative flex items-center gap-4 p-5 bg-white rounded-2xl border border-zinc-200 shadow-sm">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-orange-500 to-amber-500 rounded-3xl blur opacity-10 group-hover:opacity-25 transition duration-1000"></div>
+                    <div className="relative flex items-center gap-4 p-5 bg-white rounded-2xl border-2 border-zinc-100 shadow-sm">
                         <div className="w-12 h-12 bg-zinc-50 rounded-xl flex items-center justify-center text-zinc-400 group-hover:text-orange-500 transition-colors shrink-0">
                             <ExternalLink className="w-6 h-6" />
                         </div>
-                        <div className="text-base text-zinc-600 truncate flex-1 font-bold tracking-tight">{referralLink}</div>
+                        <div className="text-zinc-600 truncate flex-1 font-bold tracking-tight" style={{ fontSize: '18px' }}>{referralLink}</div>
                         <button
                             onClick={handleCopy}
                             className={`p-3 rounded-xl transition-all shrink-0 ${copied ? 'bg-green-50 text-green-600' : 'bg-zinc-50 text-zinc-400 hover:text-orange-500 hover:bg-orange-50'}`}
@@ -109,10 +109,10 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                    <Button onClick={handleCopy} className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-16 text-lg font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group">
+                    <Button onClick={handleCopy} className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-[64px] font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group" style={{ fontSize: '20px' }}>
                         {copied ? (
                             <div className="flex items-center gap-3 text-green-400">
-                                <Check className="w-6 h-6" /> Copied to Clipboard
+                                <Check className="w-6 h-6" /> Link Copied!
                             </div>
                         ) : (
                             <div className="flex items-center gap-3">
@@ -121,7 +121,7 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
                         )}
                     </Button>
                     <Link href="/dashboard/referrer" className="w-full">
-                        <Button variant="outline" className="w-full rounded-full h-14 text-base font-bold border-zinc-200 hover:bg-zinc-50 text-zinc-600 transition-all">
+                        <Button variant="outline" className="w-full rounded-full h-[56px] font-black border-2 border-zinc-200 hover:bg-zinc-50 text-zinc-600 transition-all" style={{ fontSize: '17px' }}>
                             Manage in Referrer Dashboard <ExternalLink className="w-5 h-5 ml-2 opacity-50" />
                         </Button>
                     </Link>
@@ -134,17 +134,18 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
         <Button
             onClick={handleStartReferring}
             disabled={linking}
-            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[56px] h-auto py-4 px-6 text-base font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group"
+            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] h-auto py-4 px-6 font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group"
+            style={{ fontSize: '20px' }}
         >
             {linking ? (
                 <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin shrink-0"></div>
+                    <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin shrink-0"></div>
                     Setting up...
                 </div>
             ) : (
-                <div className="flex items-center justify-center gap-2 w-full">
+                <div className="flex items-center justify-center gap-3 w-full">
                     <span className="text-center leading-tight">Start Referring {businessName}</span>
-                    <Plus className="w-5 h-5 shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+                    <Plus className="w-6 h-6 shrink-0 group-hover:rotate-90 transition-transform duration-300" />
                 </div>
             )}
         </Button>

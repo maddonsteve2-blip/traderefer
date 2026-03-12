@@ -84,13 +84,13 @@ export function MyTradesTeam() {
     }
 
     return (
-        <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center gap-3 min-h-0" style={{ maxHeight: 80 }}>
+        <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center gap-4 min-h-0" style={{ maxHeight: 100 }}>
             {/* Dock label + share — shrink-0 so it never wraps */}
-            <div className="flex items-center gap-2 shrink-0">
-                <Users className="w-4 h-4 text-orange-500" />
-                <span className="text-base font-black text-zinc-900 whitespace-nowrap">My Team</span>
+            <div className="flex items-center gap-2.5 shrink-0">
+                <Users className="w-5 h-5 text-orange-500" />
+                <span className="text-lg font-black text-zinc-900 whitespace-nowrap">My Team</span>
                 {businesses.length > 0 && (
-                    <span className="text-base font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full whitespace-nowrap">${totalEarned.toFixed(0)}</span>
+                    <span className="text-base font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full whitespace-nowrap">${totalEarned.toFixed(0)}</span>
                 )}
                 {referrerId && businesses.length > 0 && (
                     <button
@@ -99,16 +99,16 @@ export function MyTradesTeam() {
                             navigator.clipboard.writeText(url);
                             toast.success("Team link copied!");
                         }}
-                        className="flex items-center gap-1 px-2 py-0.5 bg-orange-50 text-orange-600 rounded-full text-base font-bold hover:bg-orange-100 transition-colors"
+                        className="flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 text-orange-600 rounded-full text-base font-bold hover:bg-orange-100 transition-colors"
                     >
-                        <Share2 className="w-3 h-3" />
+                        <Share2 className="w-4 h-4" />
                     </button>
                 )}
             </div>
 
-            {/* Horizontal scroll dock — single row, 40px avatars */}
+            {/* Horizontal scroll dock — single row, 48px avatars */}
             <div className="overflow-x-auto flex-1 scrollbar-hide">
-                <div className="flex gap-2 flex-nowrap w-max">
+                <div className="flex gap-3 flex-nowrap w-max">
                     {/* Filled slots */}
                     {filledCategories.map(cat => {
                         const biz = teamMap.get(cat)!;
@@ -116,18 +116,18 @@ export function MyTradesTeam() {
                             <Link
                                 key={cat}
                                 href={`/dashboard/referrer/refer/${biz.slug}`}
-                                className="inline-flex items-center gap-2 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-full pl-1 pr-3 py-1 group transition-all shrink-0"
+                                className="inline-flex items-center gap-3 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-full pl-1.5 pr-4 py-1.5 group transition-all shrink-0"
                             >
-                                <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-200 flex items-center justify-center shrink-0">
+                                <div className="w-12 h-12 rounded-full overflow-hidden bg-zinc-200 flex items-center justify-center shrink-0">
                                     {biz.logo_url ? (
                                         // eslint-disable-next-line @next/next/no-img-element
                                         <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
                                     ) : (
-                                        <span className="text-base font-black text-zinc-500 group-hover:text-orange-500">{biz.name.charAt(0)}</span>
+                                        <span className="text-lg font-black text-zinc-500 group-hover:text-orange-500">{biz.name.charAt(0)}</span>
                                     )}
                                 </div>
                                 <div className="flex flex-col leading-tight">
-                                    <span className="text-base font-semibold text-zinc-700 group-hover:text-orange-600 transition-colors whitespace-nowrap">{cat}</span>
+                                    <span className="text-lg font-bold text-zinc-700 group-hover:text-orange-600 transition-colors whitespace-nowrap">{cat}</span>
                                     {biz.earned > 0 && (
                                         <span className="text-base font-black text-green-600">${biz.earned.toFixed(0)}</span>
                                     )}
@@ -141,12 +141,12 @@ export function MyTradesTeam() {
                         <Link
                             key={trade}
                             href={`/dashboard/referrer/businesses?trade=${encodeURIComponent(trade)}`}
-                            className="inline-flex items-center gap-2 border-2 border-dashed border-zinc-200 hover:border-orange-300 hover:bg-orange-50/50 rounded-full pl-1 pr-3 py-1 group transition-all shrink-0"
+                            className="inline-flex items-center gap-3 border-2 border-dashed border-zinc-200 hover:border-orange-300 hover:bg-orange-50/50 rounded-full pl-1.5 pr-4 py-1.5 group transition-all shrink-0"
                         >
-                            <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
-                                <Plus className="w-4 h-4 text-zinc-300 group-hover:text-orange-400" />
+                            <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+                                <Plus className="w-5 h-5 text-zinc-300 group-hover:text-orange-400" />
                             </div>
-                            <span className="text-base font-semibold text-zinc-400 group-hover:text-orange-500 whitespace-nowrap">+ {trade}</span>
+                            <span className="text-lg font-bold text-zinc-400 group-hover:text-orange-500 whitespace-nowrap">+ {trade}</span>
                         </Link>
                     ))}
                 </div>

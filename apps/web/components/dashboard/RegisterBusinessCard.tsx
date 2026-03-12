@@ -12,8 +12,8 @@ export function RegisterBusinessCard() {
                         <Building2 className="w-6 h-6 text-zinc-600" />
                     </div>
                     <div>
-                        <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Register Your Business</p>
-                        <p className="text-zinc-500 font-medium" style={{ fontSize: '14px' }}>
+                        <p className="font-black text-zinc-900" style={{ fontSize: '22px' }}>Register Your Business</p>
+                        <p className="text-zinc-500 font-medium" style={{ fontSize: '19px' }}>
                             Receive pre-vetted leads from your own referrer network.
                         </p>
                     </div>

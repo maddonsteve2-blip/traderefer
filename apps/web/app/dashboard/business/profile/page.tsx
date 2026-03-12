@@ -279,29 +279,29 @@ export default function BusinessProfileManagementPage() {
             <div className="min-h-[100dvh] bg-[#fafafa]">
                 <div className="max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12">
-                        <div className="space-y-2">
-                            <Link href="/dashboard/business" className="flex items-center gap-1 text-base font-medium text-zinc-500 hover:text-orange-500 transition-colors mb-2">
-                                <ChevronLeft className="w-4 h-4" /> Back to Dashboard
+                        <div className="space-y-3">
+                            <Link href="/dashboard/business" className="flex items-center gap-1.5 text-lg font-semibold text-zinc-400 hover:text-zinc-800 transition-colors group w-fit mb-2">
+                                <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" /> Back to Dashboard
                             </Link>
-                            <h1 className="text-zinc-900 text-3xl md:text-4xl font-black font-display tracking-tight">Public Profile</h1>
-                            <p className="text-zinc-500 text-base md:text-lg font-medium">Manage how your business appears to customers and referrers.</p>
+                            <h1 className="text-zinc-900 text-5xl md:text-6xl font-black font-display tracking-tight">Public Profile</h1>
+                            <p className="text-zinc-500 text-xl md:text-2xl font-medium">Manage how your business appears to customers and referrers.</p>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                             <Button
                                 asChild
                                 variant="outline"
-                                className="rounded-full h-12 px-6 border-zinc-200 text-zinc-600 font-bold hover:bg-zinc-50 w-full md:w-auto"
+                                className="rounded-full h-14 px-8 border-zinc-200 text-zinc-600 font-bold hover:bg-zinc-50 w-full md:w-auto text-xl"
                             >
                                 <Link href={`/b/${biz?.slug}`} target="_blank" className="flex items-center gap-2">
-                                    <ExternalLink className="w-4 h-4" /> View Live
+                                    <ExternalLink className="w-5 h-5" /> View Live
                                 </Link>
                             </Button>
                             <Button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex min-w-[160px] items-center justify-center rounded-full h-12 px-8 bg-orange-500 text-white text-base font-bold shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all w-full md:w-auto"
+                                className="flex min-w-[180px] items-center justify-center rounded-full h-14 px-10 bg-orange-500 text-white text-xl font-bold shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all w-full md:w-auto"
                             >
-                                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                                {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
                                 {saving ? "Saving..." : "Save Changes"}
                             </Button>
                         </div>
@@ -315,8 +315,8 @@ export default function BusinessProfileManagementPage() {
                                     <User className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-zinc-900">Identity</h2>
-                                    <p className="text-base text-zinc-500 font-medium">Your business name and brand logo</p>
+                                    <h2 className="text-4xl font-bold text-zinc-900">Identity</h2>
+                                    <p className="text-xl text-zinc-500 font-medium">Your business name and brand logo</p>
                                 </div>
                             </div>
 
@@ -333,28 +333,28 @@ export default function BusinessProfileManagementPage() {
                                             <ImageIcon className="w-12 h-12 text-zinc-300 group-hover:text-orange-400" />
                                         )}
                                     </div>
-                                    <div className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-[40px] font-bold text-sm pointer-events-none">
+                                    <div className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-[40px] font-bold text-base pointer-events-none">
                                         {uploadingLogo ? "Uploading..." : "Change Logo"}
                                     </div>
                                 </div>
                                 <div className="flex-1 space-y-4 w-full text-center md:text-left">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Business Name</label>
+                                            <label className="text-xl font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Business Name</label>
                                             <input
                                                 type="text"
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300"
+                                                className="w-full bg-zinc-50 border-none rounded-xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-xl"
                                                 value={formData.business_name}
                                                 onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Public Handle (Slug)</label>
-                                            <div className="flex items-center bg-zinc-50 rounded-xl px-4 py-3.5">
-                                                <span className="text-zinc-400 mr-1 text-sm">/b/</span>
+                                            <label className="text-xl font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Public Handle (Slug)</label>
+                                            <div className="flex items-center bg-zinc-50 rounded-xl px-5 py-4">
+                                                <span className="text-zinc-400 mr-1 text-lg">/b/</span>
                                                 <input
                                                     type="text"
-                                                    className="bg-transparent border-none p-0 text-zinc-900 font-medium focus:ring-0 w-full"
+                                                    className="bg-transparent border-none p-0 text-zinc-900 font-medium focus:ring-0 w-full text-xl"
                                                     value={formData.slug}
                                                     onChange={(e) => {
                                                         const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-');
@@ -362,15 +362,15 @@ export default function BusinessProfileManagementPage() {
                                                         checkSlug(val);
                                                     }}
                                                 />
-                                                {slugStatus === 'checking' && <Loader2 className="w-4 h-4 animate-spin text-zinc-400" />}
-                                                {slugStatus === 'available' && <CheckCircle2 className="w-4 h-4 text-green-500" />}
-                                                {slugStatus === 'taken' && <X className="w-4 h-4 text-red-500" />}
+                                                {slugStatus === 'checking' && <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />}
+                                                {slugStatus === 'available' && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                                                {slugStatus === 'taken' && <X className="w-5 h-5 text-red-500" />}
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Trade Category</label>
+                                            <label className="text-xl font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Trade Category</label>
                                             <select
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"
+                                                className="w-full bg-zinc-50 border-none rounded-xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 text-xl"
                                                 value={formData.trade_category}
                                                 onChange={(e) => setFormData({ ...formData, trade_category: e.target.value })}
                                             >
@@ -380,10 +380,10 @@ export default function BusinessProfileManagementPage() {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Website URL</label>
+                                            <label className="text-xl font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Website URL</label>
                                             <input
                                                 type="url"
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300"
+                                                className="w-full bg-zinc-50 border-none rounded-xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-xl"
                                                 value={formData.website}
                                                 onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                                                 placeholder="https://yourbusiness.com"
@@ -401,13 +401,13 @@ export default function BusinessProfileManagementPage() {
                                     <MapPin className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-zinc-900">Service Area</h2>
-                                    <p className="text-base text-zinc-500 font-medium">Where do you provide your services?</p>
+                                    <h2 className="text-4xl font-bold text-zinc-900">Service Area</h2>
+                                    <p className="text-xl text-zinc-500 font-medium">Where do you provide your services?</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2">
-                                    <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Address & Location</label>
+                                    <label className="text-xl font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Address & Location</label>
                                     <AddressAutocomplete
                                         addressValue={formData.address}
                                         suburbValue={formData.suburb}
@@ -416,24 +416,24 @@ export default function BusinessProfileManagementPage() {
                                             setFormData(prev => ({ ...prev, address, suburb, state, postcode: postcode || prev.postcode }));
                                         }}
                                         placeholder="Search for your address in Australia..."
-                                        className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"
+                                        className="w-full bg-zinc-50 border-none rounded-xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 text-xl"
                                     />
                                     {formData.address && formData.suburb && (
-                                        <p className="mt-2 text-sm font-medium text-zinc-500 ml-1">
+                                        <p className="mt-2 text-base font-medium text-zinc-500 ml-1">
                                             Selected: <span className="text-zinc-900">{formData.address}, {formData.suburb} {formData.state} {formData.postcode}</span>
                                         </p>
                                     )}
                                 </div>
                                 <div className="md:col-span-2">
-                                    <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block">Service Radius (km)</label>
+                                    <label className="text-xl font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Service Radius (km)</label>
                                     <div className="relative flex items-center">
                                         <input
                                             type="number"
-                                            className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"
+                                            className="w-full bg-zinc-50 border-none rounded-xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 text-xl"
                                             value={formData.service_radius_km}
                                             onChange={(e) => setFormData({ ...formData, service_radius_km: parseInt(e.target.value) || 0 })}
                                         />
-                                        <span className="absolute right-4 text-zinc-400 font-bold">km</span>
+                                        <span className="absolute right-5 text-zinc-400 font-bold text-lg">km</span>
                                     </div>
                                 </div>
                             </div>
@@ -446,14 +446,14 @@ export default function BusinessProfileManagementPage() {
                                     <Shield className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-zinc-900">About the Business</h2>
-                                    <p className="text-base text-zinc-500 font-medium">Describe your services and expertise</p>
+                                    <h2 className="text-4xl font-bold text-zinc-900">About the Business</h2>
+                                    <p className="text-xl text-zinc-500 font-medium">Describe your services and expertise</p>
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block">Description</label>
+                                <label className="text-xl font-bold uppercase tracking-wider text-zinc-400 ml-1 block">Description</label>
                                 <textarea
-                                    className="w-full bg-zinc-50 border-none rounded-2xl p-6 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 min-h-[200px] text-lg leading-relaxed"
+                                    className="w-full bg-zinc-50 border-none rounded-2xl p-8 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 min-h-[220px] text-2xl leading-relaxed"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder="Describe what makes your business great, the specific services you offer, and your commitment to quality..."
@@ -465,12 +465,12 @@ export default function BusinessProfileManagementPage() {
                         <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
                             <div className="flex items-center justify-between mb-8 border-b border-zinc-100 pb-6">
                                 <div className="flex items-center gap-4">
-                                    <div className="size-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
-                                        <ImageIcon className="w-6 h-6" />
+                                    <div className="size-14 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
+                                        <ImageIcon className="w-7 h-7" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-zinc-900">Work Gallery</h2>
-                                        <p className="text-base text-zinc-500 font-medium">Photos showcasing your best work</p>
+                                        <h2 className="text-4xl font-bold text-zinc-900">Work Gallery</h2>
+                                        <p className="text-xl text-zinc-500 font-medium">Photos showcasing your best work</p>
                                     </div>
                                 </div>
                             </div>
@@ -485,8 +485,8 @@ export default function BusinessProfileManagementPage() {
                                 ) : (
                                     <div className="flex flex-col items-center gap-2">
                                         <FileUp className="w-8 h-8 text-zinc-300" />
-                                        <span className="text-sm font-bold text-zinc-500">Drop photos here or click to upload</span>
-                                        <span className="text-xs text-zinc-400">PNG, JPG, WEBP up to 10MB each</span>
+                                        <span className="text-base font-bold text-zinc-500">Drop photos here or click to upload</span>
+                                        <span className="text-sm text-zinc-400">PNG, JPG, WEBP up to 10MB each</span>
                                     </div>
                                 )}
                             </div>
@@ -519,12 +519,12 @@ export default function BusinessProfileManagementPage() {
                         <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
                             <div className="flex items-center justify-between mb-8 border-b border-zinc-100 pb-6">
                                 <div className="flex items-center gap-4">
-                                    <div className="size-12 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600">
-                                        <ImageIcon className="w-6 h-6" />
+                                    <div className="size-14 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600">
+                                        <ImageIcon className="w-7 h-7" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-zinc-900">Finished Projects</h2>
-                                        <p className="text-base text-zinc-500 font-medium">Showcase complete jobs with titles and descriptions</p>
+                                        <h2 className="text-4xl font-bold text-zinc-900">Finished Projects</h2>
+                                        <p className="text-xl text-zinc-500 font-medium">Showcase complete jobs with titles and descriptions</p>
                                     </div>
                                 </div>
                                 <Button
@@ -532,9 +532,9 @@ export default function BusinessProfileManagementPage() {
                                         setEditingProject(null);
                                         setIsProjectDialogOpen(true);
                                     }}
-                                    className="rounded-full bg-zinc-900 text-white hover:bg-black font-bold h-10 px-6 flex items-center gap-2"
+                                    className="rounded-full bg-zinc-900 text-white hover:bg-black font-bold h-14 px-8 flex items-center gap-2 text-xl"
                                 >
-                                    <Plus className="w-4 h-4" /> Add Project
+                                    <Plus className="w-5 h-5" /> Add Project
                                 </Button>
                             </div>
 
@@ -580,9 +580,9 @@ export default function BusinessProfileManagementPage() {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div className="p-5 space-y-2">
-                                                <h4 className="font-bold text-zinc-900 line-clamp-1">{project.title}</h4>
-                                                <p className="text-sm text-zinc-500 line-clamp-2">{project.description || "No description provided."}</p>
+                                            <div className="p-6 space-y-2">
+                                                <h4 className="font-bold text-zinc-900 line-clamp-1 text-xl">{project.title}</h4>
+                                                <p className="text-base text-zinc-500 line-clamp-2">{project.description || "No description provided."}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -593,12 +593,12 @@ export default function BusinessProfileManagementPage() {
                         {/* Service Features Section */}
                         <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
                             <div className="flex items-center gap-4 mb-8 border-b border-zinc-100 pb-6">
-                                <div className="size-12 rounded-2xl bg-green-100 flex items-center justify-center text-green-600">
-                                    <CheckCircle2 className="w-6 h-6" />
+                                <div className="size-14 rounded-2xl bg-green-100 flex items-center justify-center text-green-600">
+                                    <CheckCircle2 className="w-7 h-7" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-zinc-900">Service Highlights</h2>
-                                    <p className="text-base text-zinc-500 font-medium">Select features that help you stand out</p>
+                                    <h2 className="text-4xl font-bold text-zinc-900">Service Highlights</h2>
+                                    <p className="text-xl text-zinc-500 font-medium">Select features that help you stand out</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -624,13 +624,13 @@ export default function BusinessProfileManagementPage() {
                                                 }));
                                             }}
                                         />
-                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 transition-all ${formData.features.includes(feature)
+                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center border-2 transition-all ${formData.features.includes(feature)
                                             ? 'bg-orange-500 border-orange-500 text-white'
                                             : 'bg-white border-zinc-200'
                                             }`}>
-                                            {formData.features.includes(feature) && <CheckCircle2 className="w-3.5 h-3.5" />}
+                                            {formData.features.includes(feature) && <CheckCircle2 className="w-4 h-4" />}
                                         </div>
-                                        <span className="font-bold text-sm">{feature}</span>
+                                        <span className="font-bold text-lg">{feature}</span>
                                     </label>
                                 ))}
                             </div>
@@ -640,8 +640,8 @@ export default function BusinessProfileManagementPage() {
                         <div className="p-8 bg-zinc-900 rounded-[40px] text-white relative overflow-hidden group">
                             <div className="absolute -right-10 -bottom-10 size-40 bg-orange-500/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
                             <div className="relative z-10">
-                                <h3 className="text-xl font-bold mb-4 font-display">Pro Tip: Complete Profiles Convert Better</h3>
-                                <p className="text-zinc-400 text-lg leading-relaxed max-w-2xl">
+                                <h3 className="text-3xl font-bold mb-4 font-display">Pro Tip: Complete Profiles Convert Better</h3>
+                                <p className="text-zinc-400 text-2xl leading-relaxed max-w-2xl">
                                     Businesses with a high-quality logo, at least 5 job photos, and a detailed description receive <span className="text-orange-400 font-bold">250% more enquiries</span> through TradeRefer.
                                 </p>
                             </div>
@@ -654,10 +654,10 @@ export default function BusinessProfileManagementPage() {
             <Dialog open={isProjectDialogOpen} onOpenChange={setIsProjectDialogOpen}>
                 <DialogContent className="max-w-2xl bg-white rounded-[32px] p-0 overflow-hidden border-none shadow-2xl">
                     <DialogHeader className="p-8 pb-0">
-                        <DialogTitle className="text-3xl font-black font-display tracking-tight text-zinc-900">
+                        <DialogTitle className="text-4xl font-black font-display tracking-tight text-zinc-900">
                             {editingProject?.id ? "Edit Project" : "New Project"}
                         </DialogTitle>
-                        <DialogDescription className="text-zinc-500 font-medium">
+                        <DialogDescription className="text-zinc-500 font-medium text-lg">
                             {editingProject?.id ? "Update your project details and gallery." : "Add a new completed job to your public gallery."}
                         </DialogDescription>
                     </DialogHeader>
@@ -704,27 +704,27 @@ export default function BusinessProfileManagementPage() {
                     }} className="p-8 space-y-6">
                         <div className="space-y-4">
                             <div>
-                                <label className="text-sm font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Project Title</label>
+                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Project Title</label>
                                 <input
                                     name="title"
                                     defaultValue={editingProject?.title}
                                     required
-                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20"
+                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 text-xl"
                                     placeholder="e.g. Victorian House Rewire"
                                 />
                             </div>
                             <div>
-                                <label className="text-sm font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Description</label>
+                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Description</label>
                                 <textarea
                                     name="description"
                                     defaultValue={editingProject?.description}
-                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 min-h-[100px]"
+                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 min-h-[100px] text-xl"
                                     placeholder="Briefly describe the scope of work..."
                                 />
                             </div>
 
                             <div className="space-y-4">
-                                <label className="text-sm font-bold uppercase tracking-wider text-zinc-400 ml-1 block">Project Photos</label>
+                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block">Project Photos</label>
                                 <ImageUpload
                                     defaultValue={editingProject?.photo_urls || []}
                                     maxFiles={10}
@@ -741,7 +741,7 @@ export default function BusinessProfileManagementPage() {
                                     defaultChecked={editingProject?.is_featured}
                                     className="w-5 h-5 rounded-md border-zinc-300 text-orange-500 focus:ring-orange-500"
                                 />
-                                <span className="font-bold text-zinc-700">Feature this project at the top</span>
+                                <span className="font-bold text-zinc-700 text-lg">Feature this project at the top</span>
                             </label>
                         </div>
 
@@ -750,14 +750,14 @@ export default function BusinessProfileManagementPage() {
                                 type="button"
                                 variant="outline"
                                 onClick={() => setIsProjectDialogOpen(false)}
-                                className="flex-1 rounded-full h-12 font-bold border-zinc-200"
+                                className="flex-1 rounded-full h-12 font-bold border-zinc-200 text-lg"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={projectSaving}
-                                className="flex-[2] rounded-full h-12 bg-orange-500 text-white font-bold shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all"
+                                className="flex-[2] rounded-full h-12 bg-orange-500 text-white font-bold shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all text-lg"
                             >
                                 {projectSaving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                                 {editingProject?.id ? "Update Project" : "Create Project"}

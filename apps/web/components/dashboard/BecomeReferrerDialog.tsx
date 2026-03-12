@@ -32,8 +32,8 @@ export function BecomeReferrerDialog({ children }: { children: React.ReactNode }
                             <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-4">
                                 <Rocket className="w-7 h-7 text-white" />
                             </div>
-                            <h2 className="text-2xl font-black text-white mb-1">Become a Referrer</h2>
-                            <p className="text-orange-100 font-medium">Turn your network into income — no extra work required.</p>
+                            <h2 className="text-4xl font-black text-white mb-1">Become a Referrer</h2>
+                            <p className="text-orange-100 font-medium text-xl">Turn your network into income — no extra work required.</p>
                         </div>
 
                         {/* Benefits */}
@@ -44,8 +44,8 @@ export function BecomeReferrerDialog({ children }: { children: React.ReactNode }
                                         <Icon className="w-5 h-5 text-orange-500" />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-zinc-900" style={{ fontSize: '15px' }}>{title}</p>
-                                        <p className="text-zinc-500 font-medium" style={{ fontSize: '14px' }}>{desc}</p>
+                                        <p className="font-bold text-zinc-900" style={{ fontSize: '20px' }}>{title}</p>
+                                        <p className="text-zinc-500 font-medium" style={{ fontSize: '18px' }}>{desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -55,16 +55,16 @@ export function BecomeReferrerDialog({ children }: { children: React.ReactNode }
                         <div className="px-8 pb-8">
                             <Link
                                 href="/onboarding/referrer"
-                                className="flex items-center justify-center gap-2 w-full h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200"
-                                style={{ fontSize: '17px' }}
+                                className="flex items-center justify-center gap-2 w-full h-16 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200"
+                                style={{ fontSize: '22px' }}
                                 onClick={() => setOpen(false)}
                             >
-                                Join as Referrer <ArrowRight className="w-5 h-5" />
+                                Join as Referrer <ArrowRight className="w-6 h-6" />
                             </Link>
                             <button
                                 onClick={() => setOpen(false)}
-                                className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors"
-                                style={{ fontSize: '14px' }}
+                                className="w-full mt-4 text-zinc-400 hover:text-zinc-600 font-medium transition-colors"
+                                style={{ fontSize: '18px' }}
                             >
                                 Maybe later
                             </button>

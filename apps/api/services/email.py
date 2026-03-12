@@ -530,3 +530,174 @@ async def send_referrer_campaign_notification(email: str, full_name: str, busine
 
 async def send_email(to_email: str, subject: str, html_body: str):
     await _send(to_email, subject, html_body)
+
+
+async def send_referrer_welcome(email: str, full_name: str):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Welcome to TradeRefer, {full_name}!</h1>
+      <p>Your referrer profile is ready. You can now join businesses, submit leads, and track rewards from your dashboard.</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">Open Referrer Dashboard </a>
+      </div>
+    """
+    await _send(email, "Welcome to TradeRefer", _wrap(body))
+
+
+async def send_referrer_payout_processed(email: str, full_name: str, amount_dollars: float, method: str):
+    body = f"""
+      <h1 style="color:#16a34a;margin-top:0">Your withdrawal has been processed</h1>
+      <p>Hi {full_name}, your withdrawal of <strong>${amount_dollars:.2f}</strong> has been processed.</p>
+      <p>Method: <strong>{method}</strong></p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer/withdraw" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">View Withdrawals </a>
+      </div>
+    """
+    await _send(email, f"Withdrawal processed  ${amount_dollars:.2f}", _wrap(body))
+
+
+async def send_business_new_review(email: str, business_name: str, referrer_name: str, rating: int, comment: Optional[str], slug: str):
+    stars = "" * rating + "" * (5 - rating)
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">You received a new review</h1>
+      <p><strong>{referrer_name}</strong> left a review for <strong>{business_name}</strong>.</p>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:16px 20px;margin:20px 0">
+        <p style="margin:0;font-size:24px;color:#ea580c;letter-spacing:4px">{stars}</p>
+        <p style="margin:8px 0 0 0;color:#555">{comment or 'No written comment provided.'}</p>
+      </div>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/b/{slug}" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">View Business Profile </a>
+      </div>
+    """
+    await _send(email, f"New {rating}-star review for {business_name}", _wrap(body))
+
+
+async def send_referrer_review_request(email: str, full_name: str, business_name: str, rating: Optional[int] = None, comment: Optional[str] = None):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">You received feedback from {business_name}</h1>
+      <p>Hi {full_name}, <strong>{business_name}</strong> sent you new feedback in TradeRefer.</p>
+      {f'<p><strong>Rating:</strong> {rating}/5</p>' if rating is not None else ''}
+      {f'<p><strong>Comment:</strong> {comment}</p>' if comment else ''}
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">View Dashboard </a>
+      </div>
+    """
+    await _send(email, f"Feedback from {business_name}", _wrap(body))
+
+
+async def send_referrer_earning_available(email: str, full_name: str, amount_dollars: float, business_name: str):
+    body = f"""
+      <h1 style="color:#16a34a;margin-top:0">Your earning is now available</h1>
+      <p>Hi {full_name}, your earning from <strong>{business_name}</strong> is now available in your wallet.</p>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:16px 20px;margin:20px 0;text-align:center">
+        <p style="font-size:32px;font-weight:900;color:#16a34a;margin:0">${amount_dollars:.2f}</p>
+      </div>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer/withdraw" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">Withdraw Earnings </a>
+      </div>
+    """
+    await _send(email, f"${amount_dollars:.2f} is now available", _wrap(body))
+
+
+async def send_dispute_resolved_business(email: str, business_name: str, outcome: str, admin_notes: Optional[str] = None):
+    outcome_label = 'confirmed' if outcome == 'confirm' else 'rejected'
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Your dispute has been resolved</h1>
+      <p>Hi {business_name}, your dispute has been <strong>{outcome_label}</strong>.</p>
+      <p>{admin_notes or 'No additional admin notes were provided.'}</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">View Leads </a>
+      </div>
+    """
+    await _send(email, f"Dispute resolved for {business_name}", _wrap(body))
+
+
+async def send_dispute_resolved_referrer(email: str, full_name: str, outcome: str, business_name: str, amount_dollars: float):
+    outcome_label = 'confirmed' if outcome == 'confirm' else 'rejected'
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">A disputed referral has been resolved</h1>
+      <p>Hi {full_name}, the dispute for your referral with <strong>{business_name}</strong> has been <strong>{outcome_label}</strong>.</p>
+      <p>Amount affected: <strong>${amount_dollars:.2f}</strong></p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">View Dashboard </a>
+      </div>
+    """
+    await _send(email, f"Dispute resolved for {business_name}", _wrap(body))
+
+
+async def send_new_message_notification(email: str, recipient_name: str, sender_name: str, message_preview: str, conversation_url: str):
+    preview = message_preview[:180] + ('...' if len(message_preview) > 180 else '')
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">You have a new message</h1>
+      <p>Hi {recipient_name}, <strong>{sender_name}</strong> sent you a new message.</p>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:16px 20px;margin:20px 0">
+        <p style="margin:0;color:#555">{preview}</p>
+      </div>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}{conversation_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">Reply in Dashboard </a>
+      </div>
+    """
+    await _send(email, f"New message from {sender_name}", _wrap(body))
+
+
+async def send_referrer_campaign_notification(email: str, full_name: str, business_name: str, campaign_title: str, promo_text: Optional[str], business_slug: str):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">New campaign from {business_name}</h1>
+      <p>Hi {full_name}, <strong>{business_name}</strong> launched a new campaign for referrers.</p>
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:16px 20px;margin:20px 0">
+        <p style="margin:0;font-weight:700;color:#9a3412">{campaign_title}</p>
+        <p style="margin:8px 0 0 0;color:#555">{promo_text or 'Open the campaign to see the latest bonus details.'}</p>
+      </div>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/b/{business_slug}/refer" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 32px;border-radius:999px;text-decoration:none;font-weight:900">View Campaign </a>
+      </div>
+    """
+    await _send(email, f"New campaign from {business_name}", _wrap(body))
+
+async def send_referrer_reward_claimable_email(email: str, full_name: str, balance_dollars: float):
+    """Notify referrer that their balance is claimable ($25–$249). Drive them to claim manually."""
+    body = f"""
+      <div style="background:#ea580c;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
+        <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">🎁 You have claimable Prezzee credit!</h1>
+        <p style="color:#fed7aa;margin:8px 0 0;font-size:15px">Log in to claim your gift card now</p>
+      </div>
+      <p style="font-size:16px;color:#333">Hi {full_name},</p>
+      <p style="font-size:16px;color:#333">Your TradeRefer reward balance has reached <strong>${balance_dollars:.2f}</strong> — enough to claim a Prezzee gift card!</p>
+      <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:24px;text-align:center;margin:24px 0">
+        <p style="font-size:40px;font-weight:900;color:#16a34a;margin:0">${balance_dollars:.2f}</p>
+        <p style="color:#15803d;font-weight:700;margin:8px 0 0;font-size:16px">Ready to claim as a Prezzee gift card</p>
+      </div>
+      <p style="color:#555;font-size:15px">You can claim anywhere from <strong>$25 up to $300</strong> at a time. Spend it at 400+ stores including Woolworths, Bunnings, JB Hi-Fi and more.</p>
+      <p style="color:#555;font-size:15px">Your balance will <strong>auto-pay at $250</strong>, or you can claim it manually anytime.</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer/withdraw"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          Claim My Gift Card →
+        </a>
+      </div>
+    """
+    await _send(email, f"🎁 ${balance_dollars:.2f} in Prezzee credit is ready to claim!", _wrap(body, "You're receiving this as a referrer on traderefer.au."))
+
+
+async def send_referrer_prezzee_issued_email(email: str, full_name: str, amount_dollars: float):
+    """Notify referrer that their Prezzee gift card was automatically issued at $250."""
+    body = f"""
+      <div style="background:#16a34a;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
+        <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">🎉 Your Prezzee gift card is on its way!</h1>
+        <p style="color:#bbf7d0;margin:8px 0 0;font-size:15px">Automatically issued — check your inbox</p>
+      </div>
+      <p style="font-size:16px;color:#333">Hi {full_name},</p>
+      <p style="font-size:16px;color:#333">Your TradeRefer balance reached <strong>${amount_dollars:.0f}</strong>, so we've automatically issued your Prezzee Swap gift card!</p>
+      <div style="background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:24px;text-align:center;margin:24px 0">
+        <p style="font-size:40px;font-weight:900;color:#16a34a;margin:0">${amount_dollars:.2f}</p>
+        <p style="color:#15803d;font-weight:700;margin:8px 0 0;font-size:16px">Prezzee Swap Gift Card — delivered to this email 🎁</p>
+      </div>
+      <p style="color:#555;font-size:15px">Check your inbox for a separate email from <strong>Prezzee</strong> with your gift card link. You can spend it at 400+ retailers across Australia.</p>
+      <p style="color:#555;font-size:15px">Keep referring — every confirmed job earns you more credit!</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          View My Dashboard →
+        </a>
+      </div>
+    """
+    await _send(email, f"🎉 Your ${amount_dollars:.2f} Prezzee gift card has been issued!", _wrap(body, "You're receiving this as a referrer on traderefer.au."))

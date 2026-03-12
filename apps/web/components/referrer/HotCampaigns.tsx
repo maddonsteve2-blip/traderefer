@@ -62,38 +62,38 @@ export function HotCampaigns() {
     if (campaigns.length === 0) return null;
 
     return (
-        <div>
-            <div className="flex items-center justify-between mb-2">
-                <h2 className="text-lg font-black text-zinc-900 flex items-center gap-2">
-                    <Flame className="w-4 h-4 text-orange-500" /> Hot Campaigns
+        <div className="space-y-3">
+            <div className="flex items-center justify-between mb-3">
+                <h2 className="text-xl font-black text-zinc-900 flex items-center gap-2.5">
+                    <Flame className="w-5 h-5 text-orange-500" /> Hot Campaigns
                 </h2>
-                <Link href="/dashboard/referrer/businesses" className="text-lg font-bold text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-2">
-                    All <ChevronRight className="w-4 h-4" />
+                <Link href="/dashboard/referrer/businesses" className="text-lg font-black text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-4">
+                    All <ChevronRight className="w-5 h-5" />
                 </Link>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
                 {campaigns.slice(0, 4).map(c => {
                     const Icon = typeIcon(c.campaign_type);
                     return (
                         <Link
                             key={c.id}
                             href={`/dashboard/referrer/refer/${c.slug}`}
-                            className="flex items-center gap-3 p-3 bg-orange-50 border border-orange-100 rounded-xl hover:border-orange-300 hover:bg-orange-100/60 transition-all group"
+                            className="flex items-center gap-4 p-4 bg-orange-50 border border-orange-100 rounded-2xl hover:border-orange-300 hover:bg-orange-100/60 transition-all group shadow-sm"
                         >
-                            <div className="w-9 h-9 bg-white border border-orange-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                            <div className="w-11 h-11 bg-white border border-orange-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
                                 {c.logo_url ? (
                                     /* eslint-disable-next-line @next/next/no-img-element */
                                     <img src={c.logo_url} alt="" className="w-full h-full object-cover" />
                                 ) : (
-                                    <Icon className="w-4 h-4 text-orange-500" />
+                                    <Icon className="w-5 h-5 text-orange-500" />
                                 )}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="text-base font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors leading-tight">{c.business_name}</div>
-                                <div className="text-base text-zinc-400 truncate">{c.trade_category} · {daysLeft(c.ends_at)}</div>
+                                <div className="text-lg font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors leading-tight">{c.business_name}</div>
+                                <div className="text-base text-zinc-500 font-bold truncate mt-0.5">{c.trade_category} · {daysLeft(c.ends_at)}</div>
                             </div>
                             <div className="text-right shrink-0">
-                                <div className="text-lg font-black text-orange-600 leading-tight">{badgeText(c)}</div>
+                                <div className="text-xl font-black text-orange-600 leading-tight">{badgeText(c)}</div>
                             </div>
                         </Link>
                     );

@@ -230,29 +230,6 @@ async def create_lead(lead: LeadCreate, request: Request, db: AsyncSession = Dep
         error_logger.error(f"Calculated values: referral_fee={referral_fee}, total_unlock_fee={total_unlock_fee}, platform_fee={platform_fee}")
         raise HTTPException(status_code=500, detail="Failed to create lead")
 
-class OTPVerify(BaseModel):
-    otp: str
-
-@router.post("/{lead_id}/verify-otp")
-async def verify_otp(lead_id: str, code: Optional[str] = None, data: Optional[OTPVerify] = None, db: AsyncSession = Depends(get_db)):
-    # Accept OTP from either query param (?code=) or POST body ({"otp": "..."})
-    otp_value = code or (data.otp if data else None)
-    
-    if not otp_value:
-        raise HTTPException(status_code=400, detail="OTP is required")
-    
-    # Mock OTP verification (6-digit)
-    if otp_value != "123456":
-         raise HTTPException(status_code=400, detail="Invalid OTP")
-         
-    verify_query = text("""
-        UPDATE leads 
-        SET status = 'VERIFIED', otp_verified_at = now() 
-        WHERE id = :lead_id
-    """)
-    await db.execute(verify_query, {"lead_id": lead_id})
-    await db.commit()
-    return {"message": "OTP Verified"}
 
 @router.get("/{lead_id}")
 async def get_lead(lead_id: str, db: AsyncSession = Depends(get_db)):
@@ -367,7 +344,7 @@ async def unlock_lead(
             payout_cents = payout_res.scalar() or int(unlock_fee * 0.8)
             await db.execute(text("""
                 INSERT INTO referrer_earnings (referrer_id, lead_id, gross_cents, platform_cut_cents, status, available_at)
-                VALUES (:rid, :lid, :gross, :cut, 'PENDING', now() + interval '30 days')
+                VALUES (:rid, :lid, :gross, :cut, 'PENDING', now() + interval '7 days')
                 ON CONFLICT DO NOTHING
             """), {
                 "rid": lead["referrer_id"], "lid": lead_id,

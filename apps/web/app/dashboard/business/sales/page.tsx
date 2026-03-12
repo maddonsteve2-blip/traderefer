@@ -35,8 +35,8 @@ function SalesHubInner() {
 export default function SalesHubPage() {
     return (
         <Suspense fallback={
-            <div className="flex items-center justify-center h-screen">
-                <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+            <div className="flex items-center justify-center h-screen bg-zinc-50">
+                <div className="w-12 h-12 border-[4px] border-orange-500 border-t-transparent rounded-full animate-spin" />
             </div>
         }>
             <SalesHubInner />

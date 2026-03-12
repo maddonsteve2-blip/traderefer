@@ -86,8 +86,8 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
                             <UserPlus className="w-5 h-5 text-orange-600" />
                         </div>
                         <div>
-                            <DialogTitle className="text-xl font-black text-zinc-900 font-display">Invite &amp; Earn</DialogTitle>
-                            <p className="text-sm text-zinc-400 font-medium">5 active invitees = $25 Prezzee gift card</p>
+                            <DialogTitle className="text-3xl font-black text-zinc-900 font-display">Invite &amp; Earn</DialogTitle>
+                            <p className="text-lg text-zinc-400 font-medium">5 active invitees = $25 Prezzee gift card</p>
                         </div>
                     </div>
 
@@ -99,18 +99,18 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => setForm(f => ({ ...f, type: "referrer" }))}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold border transition-all ${form.type === "referrer" ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:border-zinc-300"}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-lg font-bold border transition-all ${form.type === "referrer" ? "bg-orange-50 border-orange-300 text-orange-700" : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:border-zinc-300"}`}
                                 >
-                                    <Users className="w-3.5 h-3.5" /> Referrer
+                                    <Users className="w-4 h-4" /> Referrer
                                 </button>
                                 <button
                                     onClick={() => setForm(f => ({ ...f, type: "business" }))}
-                                    className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold border transition-all ${form.type === "business" ? "bg-blue-50 border-blue-300 text-blue-700" : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:border-zinc-300"}`}
+                                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-lg font-bold border transition-all ${form.type === "business" ? "bg-blue-50 border-blue-300 text-blue-700" : "bg-zinc-50 border-zinc-200 text-zinc-500 hover:border-zinc-300"}`}
                                 >
-                                    <Building2 className="w-3.5 h-3.5" /> Business
+                                    <Building2 className="w-4 h-4" /> Business
                                 </button>
                             </div>
-                            <p className="text-xs text-zinc-400 font-medium">
+                            <p className="text-base text-zinc-400 font-medium">
                                 {form.type === "referrer"
                                     ? "Invite someone to earn gift cards by referring customers to tradies."
                                     : "Invite a tradie or business to join TradeRefer and get leads."}
@@ -121,48 +121,48 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
                                 placeholder="Name"
                                 value={form.name}
                                 onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
-                                className="w-full px-5 py-3.5 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-sm font-medium placeholder:text-zinc-300"
+                                className="w-full px-5 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-xl font-medium placeholder:text-zinc-300"
                             />
                             <input
                                 type="email"
                                 placeholder="Email"
                                 value={form.email}
                                 onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))}
-                                className="w-full px-5 py-3.5 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-sm font-medium placeholder:text-zinc-300"
+                                className="w-full px-5 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-xl font-medium placeholder:text-zinc-300"
                             />
                             <input
                                 type="tel"
                                 placeholder="Mobile (for SMS invite)"
                                 value={form.phone}
                                 onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))}
-                                className="w-full px-5 py-3.5 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-sm font-medium placeholder:text-zinc-300"
+                                className="w-full px-5 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-xl font-medium placeholder:text-zinc-300"
                             />
-                            {formError && <p className="text-xs text-red-500 font-bold">{formError}</p>}
+                            {formError && <p className="text-base text-red-500 font-bold">{formError}</p>}
                             <Button
                                 onClick={addInvitee}
                                 variant="outline"
-                                className="w-full rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 h-11 font-bold"
+                                className="w-full rounded-full border-orange-200 text-orange-600 hover:bg-orange-50 h-14 font-bold text-xl"
                             >
-                                <Plus className="w-4 h-4 mr-1.5" /> Add to List
+                                <Plus className="w-5 h-5 mr-1.5" /> Add to List
                             </Button>
                         </div>
 
                     {/* Invite list */}
                     {invitees.length > 0 && (
                         <div className="space-y-2">
-                            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Ready to send ({invitees.length})</p>
+                            <p className="text-base font-black text-zinc-400 uppercase tracking-widest">Ready to send ({invitees.length})</p>
                             {invitees.map((inv) => (
-                                <div key={inv.id} className="flex items-center gap-3 p-3 bg-zinc-50 rounded-2xl border border-zinc-100">
-                                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${inv.type === "referrer" ? "bg-orange-100" : "bg-blue-100"}`}>
-                                        {inv.type === "referrer" ? <Users className="w-3.5 h-3.5 text-orange-600" /> : <Building2 className="w-3.5 h-3.5 text-blue-600" />}
+                                <div key={inv.id} className="flex items-center gap-3 p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${inv.type === "referrer" ? "bg-orange-100" : "bg-blue-100"}`}>
+                                        {inv.type === "referrer" ? <Users className="w-4 h-4 text-orange-600" /> : <Building2 className="w-4 h-4 text-blue-600" />}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-bold text-zinc-900 truncate">{inv.name}</p>
-                                        <p className="text-xs text-zinc-400 truncate">{inv.email || inv.phone}</p>
+                                        <p className="text-lg font-bold text-zinc-900 truncate">{inv.name}</p>
+                                        <p className="text-base text-zinc-400 truncate">{inv.email || inv.phone}</p>
                                     </div>
-                                    <Badge variant="secondary" className="text-xs shrink-0 capitalize">{inv.type}</Badge>
-                                    <button onClick={() => removeInvitee(inv.id)} className="p-1 hover:bg-zinc-200 rounded-lg transition-colors">
-                                        <X className="w-3.5 h-3.5 text-zinc-400" />
+                                    <Badge variant="secondary" className="text-base shrink-0 capitalize">{inv.type}</Badge>
+                                    <button onClick={() => removeInvitee(inv.id)} className="p-1.5 hover:bg-zinc-200 rounded-lg transition-colors">
+                                        <X className="w-4 h-4 text-zinc-400" />
                                     </button>
                                 </div>
                             ))}
@@ -173,14 +173,14 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
                     <Button
                         onClick={sendInvitations}
                         disabled={sending || sent || invitees.length === 0}
-                        className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-12 font-bold shadow-lg shadow-zinc-200 flex items-center justify-center gap-2"
+                        className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 font-bold shadow-lg shadow-zinc-200 flex items-center justify-center gap-2 text-2xl"
                     >
                         {sent ? (
-                            <><CheckCircle className="w-4 h-4" /> Sent!</>
+                            <><CheckCircle className="w-5 h-5" /> Sent!</>
                         ) : sending ? (
-                            <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
+                            <><Loader2 className="w-5 h-5 animate-spin" /> Sending…</>
                         ) : (
-                            <><Send className="w-4 h-4" /> Send {invitees.length > 0 ? `${invitees.length} ` : ""}Invitation{invitees.length !== 1 ? "s" : ""}</>
+                            <><Send className="w-5 h-5" /> Send {invitees.length > 0 ? `${invitees.length} ` : ""}Invitation{invitees.length !== 1 ? "s" : ""}</>
                         )}
                     </Button>
                 </div>

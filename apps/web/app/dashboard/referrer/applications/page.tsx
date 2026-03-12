@@ -70,22 +70,22 @@ export default function ReferrerApplicationsPage() {
 
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-6">
-                    <Link href="/dashboard/referrer" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '16px' }}>
+                    <Link href="/dashboard/referrer" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '18px' }}>
                         <ArrowLeft className="w-4 h-4" /> Dashboard
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-bold" style={{ fontSize: '16px' }}>My Applications</span>
+                    <span className="text-zinc-700 font-bold" style={{ fontSize: '18px' }}>My Applications</span>
                 </div>
 
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="font-black text-zinc-900" style={{ fontSize: '28px' }}>Referrer Applications</h1>
-                        <p className="text-zinc-500 font-medium mt-1" style={{ fontSize: '16px' }}>
+                        <h1 className="font-black text-zinc-900" style={{ fontSize: '32px' }}>Referrer Applications</h1>
+                        <p className="text-zinc-500 font-medium mt-1" style={{ fontSize: '19px' }}>
                             Track which businesses have approved you as a referrer.
                         </p>
                     </div>
                     {pending.length > 0 && (
-                        <span className="bg-amber-500 text-white font-black rounded-full px-3 py-1" style={{ fontSize: '14px' }}>
+                        <span className="bg-amber-500 text-white font-black rounded-full px-4 py-1.5" style={{ fontSize: '16px' }}>
                             {pending.length} pending
                         </span>
                     )}
@@ -96,14 +96,14 @@ export default function ReferrerApplicationsPage() {
                         <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <Search className="w-8 h-8 text-orange-300" />
                         </div>
-                        <h3 className="font-black text-zinc-900 mb-2" style={{ fontSize: '20px' }}>No applications yet</h3>
-                        <p className="text-zinc-500 font-medium mb-6" style={{ fontSize: '17px' }}>
+                        <h3 className="font-black text-zinc-900 mb-2" style={{ fontSize: '24px' }}>No applications yet</h3>
+                        <p className="text-zinc-500 font-medium mb-8" style={{ fontSize: '19px' }}>
                             Browse businesses and apply to join their referral network.
                         </p>
                         <Link
                             href="/dashboard/referrer/businesses"
-                            className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-3 rounded-xl transition-all"
-                            style={{ fontSize: '17px' }}
+                            className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black px-8 py-4 rounded-xl transition-all shadow-lg shadow-orange-200 active:scale-95"
+                            style={{ fontSize: '20px' }}
                         >
                             Find Businesses <ChevronRight className="w-5 h-5" />
                         </Link>
@@ -120,7 +120,7 @@ export default function ReferrerApplicationsPage() {
                                 >
                                     <div className="flex items-start gap-4">
                                         {/* Logo */}
-                                        <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0 font-black text-zinc-400 overflow-hidden" style={{ fontSize: '18px' }}>
+                                        <div className="w-14 h-14 rounded-xl bg-zinc-100 flex items-center justify-center shrink-0 font-black text-zinc-400 overflow-hidden" style={{ fontSize: '20px' }}>
                                             {app.business_logo ? (
                                                 // eslint-disable-next-line @next/next/no-img-element
                                                 <img src={app.business_logo} alt="" className="w-full h-full object-cover" />
@@ -130,31 +130,31 @@ export default function ReferrerApplicationsPage() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start justify-between gap-3 flex-wrap">
                                                 <div>
-                                                    <h3 className="font-black text-zinc-900" style={{ fontSize: '18px' }}>{app.business_name}</h3>
-                                                    <p className="text-zinc-400 font-medium" style={{ fontSize: '16px' }}>{app.trade_category} · {app.suburb}</p>
+                                                    <h3 className="font-black text-zinc-900" style={{ fontSize: '22px' }}>{app.business_name}</h3>
+                                                    <p className="text-zinc-400 font-bold mt-0.5" style={{ fontSize: '18px' }}>{app.trade_category} · {app.suburb}</p>
                                                 </div>
-                                                <span className={`flex items-center gap-1.5 px-3 py-1.5 ${cfg.bg} ${cfg.text} ${cfg.border} border rounded-xl font-bold shrink-0`} style={{ fontSize: '14px' }}>
+                                                <span className={`flex items-center gap-1.5 px-4 py-2 ${cfg.bg} ${cfg.text} ${cfg.border} border-2 rounded-xl font-black shrink-0`} style={{ fontSize: '16px' }}>
                                                     <StatusIcon className="w-4 h-4" />
                                                     {cfg.label}
                                                 </span>
                                             </div>
 
                                             {app.message && (
-                                                <p className="mt-2 text-zinc-500 font-medium italic" style={{ fontSize: '15px' }}>
+                                                <p className="mt-3 text-zinc-500 font-medium italic leading-relaxed" style={{ fontSize: '17px' }}>
                                                     &ldquo;{app.message}&rdquo;
                                                 </p>
                                             )}
 
-                                            <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
-                                                <p className="text-zinc-400 font-medium" style={{ fontSize: '14px' }}>
+                                            <div className="flex items-center justify-between mt-4 flex-wrap gap-2 pt-2 border-t border-zinc-50">
+                                                <p className="text-zinc-400 font-bold" style={{ fontSize: '16px' }}>
                                                     Applied {fmtDate(app.applied_at)}
                                                     {app.reviewed_at && ` · Reviewed ${fmtDate(app.reviewed_at)}`}
                                                 </p>
                                                 {app.status === "approved" && (
                                                     <Link
                                                         href={`/dashboard/referrer/manage?business=${app.business_slug}`}
-                                                        className="flex items-center gap-1.5 text-orange-600 hover:text-orange-700 font-bold transition-colors"
-                                                        style={{ fontSize: '15px' }}
+                                                        className="flex items-center gap-1.5 text-orange-600 hover:text-orange-700 font-black transition-colors underline underline-offset-4"
+                                                        style={{ fontSize: '17px' }}
                                                     >
                                                         Open Command Centre <ChevronRight className="w-4 h-4" />
                                                     </Link>
@@ -162,8 +162,8 @@ export default function ReferrerApplicationsPage() {
                                                 {(app.status === "rejected" || app.status === "expired") && (
                                                     <Link
                                                         href="/dashboard/referrer/businesses"
-                                                        className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-700 font-bold transition-colors"
-                                                        style={{ fontSize: '15px' }}
+                                                        className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-700 font-black transition-colors"
+                                                        style={{ fontSize: '17px' }}
                                                     >
                                                         Find other businesses <ChevronRight className="w-4 h-4" />
                                                     </Link>

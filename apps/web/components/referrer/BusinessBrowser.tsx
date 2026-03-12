@@ -58,26 +58,26 @@ function BizCard({ biz }: { biz: Business }) {
 
     return (
         <div className="bg-white rounded-2xl border border-zinc-200 hover:border-orange-300 hover:shadow-lg transition-all group flex flex-col">
-            <div className="p-4 flex-1 flex flex-col gap-3">
+            <div className="p-5 flex-1 flex flex-col gap-4">
 
                 {/* Logo + name + trust score */}
-                <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-100 flex items-center justify-center shrink-0">
+                <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-zinc-100 flex items-center justify-center shrink-0">
                         {biz.logo_url ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
                         ) : (
-                            <span className="text-xl font-black text-zinc-400">{biz.business_name.charAt(0)}</span>
+                            <span className="text-2xl font-black text-zinc-400">{biz.business_name.charAt(0)}</span>
                         )}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <div className="font-bold text-zinc-900 leading-tight truncate group-hover:text-orange-600 transition-colors" style={{ fontSize: '20px' }}>
+                        <div className="font-black text-zinc-900 leading-tight truncate group-hover:text-orange-600 transition-colors" style={{ fontSize: '22px' }}>
                             {biz.business_name}
                         </div>
-                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                            <span className="text-zinc-500 font-medium truncate" style={{ fontSize: '16px' }}>{biz.trade_category}</span>
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className="text-zinc-500 font-bold truncate uppercase tracking-wide" style={{ fontSize: '17px' }}>{biz.trade_category}</span>
                             {rating > 0 && (
-                                <span className="flex items-center gap-1 text-amber-500 font-bold shrink-0" style={{ fontSize: '16px' }}>
+                                <span className="flex items-center gap-1 text-amber-500 font-bold shrink-0" style={{ fontSize: '17px' }}>
                                     <Star className="w-4 h-4 fill-amber-400 shrink-0" />
                                     {rating.toFixed(1)}
                                     {biz.total_reviews > 0 && <span className="text-zinc-400 font-normal">({biz.total_reviews})</span>}
@@ -89,16 +89,16 @@ function BizCard({ biz }: { biz: Business }) {
                 </div>
 
                 {/* Location */}
-                <div className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '16px' }}>
+                <div className="flex items-center gap-1.5 text-zinc-400 font-bold uppercase tracking-wider" style={{ fontSize: '17px' }}>
                     <MapPin className="w-4 h-4 shrink-0" />
                     {biz.suburb}, {biz.state}
                 </div>
 
                 {/* Service pills */}
                 {pills.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-2">
                         {pills.map((p, i) => (
-                            <span key={i} className="px-2.5 py-1 bg-zinc-50 border border-zinc-200 text-zinc-600 rounded-lg font-semibold" style={{ fontSize: '16px' }}>
+                            <span key={i} className="px-3 py-1 bg-zinc-50 border border-zinc-200 text-zinc-600 rounded-lg font-bold" style={{ fontSize: '17px' }}>
                                 {p}
                             </span>
                         ))}
@@ -107,19 +107,19 @@ function BizCard({ biz }: { biz: Business }) {
 
                 {/* Referral fee */}
                 {feeDisplay && (
-                    <div className="flex items-baseline gap-2">
-                        <span className="font-black text-zinc-900 tracking-tight" style={{ fontSize: '24px' }}>{feeDisplay}</span>
-                        <span className="font-bold text-zinc-400" style={{ fontSize: '16px' }}>per verified lead</span>
+                    <div className="flex items-baseline gap-2 mt-auto">
+                        <span className="font-black text-zinc-900 tracking-tight" style={{ fontSize: '28px' }}>{feeDisplay}</span>
+                        <span className="font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '15px' }}>per verified lead</span>
                     </div>
                 )}
             </div>
 
             {/* CTA */}
-            <div className="px-4 pb-4">
+            <div className="px-5 pb-5">
                 <Link
                     href={`/dashboard/referrer/refer/${biz.slug}`}
-                    className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold transition-colors py-3"
-                    style={{ fontSize: '18px' }}
+                    className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all py-4 active:scale-95 shadow-md shadow-orange-500/20"
+                    style={{ fontSize: '20px' }}
                 >
                     Get Referral Link <ChevronRight className="w-5 h-5" />
                 </Link>
@@ -139,29 +139,29 @@ function SidebarCard({ biz, rank }: { biz: Business; rank: number }) {
     return (
         <Link
             href={`/dashboard/referrer/refer/${biz.slug}`}
-            className="flex items-center gap-3 p-3 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-200 rounded-xl transition-all group"
+            className="flex items-center gap-4 p-4 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-200 rounded-2xl transition-all group"
         >
-            <div className="w-8 h-8 rounded-lg bg-zinc-200 flex items-center justify-center shrink-0 font-black text-zinc-500 group-hover:bg-orange-100 group-hover:text-orange-600 transition-colors" style={{ fontSize: '16px' }}>
+            <div className="w-10 h-10 rounded-xl bg-zinc-200 flex items-center justify-center shrink-0 font-black text-zinc-500 group-hover:bg-orange-100 group-hover:text-orange-600 transition-colors" style={{ fontSize: '18px' }}>
                 {rank}
             </div>
             <div className="flex-1 min-w-0">
-                <div className="font-bold text-zinc-900 truncate group-hover:text-orange-600 transition-colors" style={{ fontSize: '17px' }}>
+                <div className="font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors" style={{ fontSize: '19px' }}>
                     {biz.business_name}
                 </div>
-                <div className="text-zinc-400 font-medium truncate" style={{ fontSize: '16px' }}>
+                <div className="text-zinc-400 font-bold uppercase tracking-tight truncate" style={{ fontSize: '15px' }}>
                     {biz.trade_category} · {biz.suburb}
                 </div>
                 {rating > 0 && (
-                    <div className="flex items-center gap-1 mt-0.5" style={{ fontSize: '16px' }}>
-                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 shrink-0" />
-                        <span className="font-semibold text-amber-600">{rating.toFixed(1)}</span>
+                    <div className="flex items-center gap-1 mt-1" style={{ fontSize: '17px' }}>
+                        <Star className="w-4 h-4 fill-amber-400 text-amber-400 shrink-0" />
+                        <span className="font-bold text-amber-600">{rating.toFixed(1)}</span>
                     </div>
                 )}
             </div>
             {feeDisplay && (
                 <div className="text-right shrink-0">
-                    <div className="font-black text-orange-600" style={{ fontSize: '20px' }}>{feeDisplay}</div>
-                    <div className="text-zinc-400 font-medium" style={{ fontSize: '16px' }}>/ lead</div>
+                    <div className="font-black text-orange-600" style={{ fontSize: '22px' }}>{feeDisplay}</div>
+                    <div className="text-zinc-400 font-bold uppercase tracking-widest" style={{ fontSize: '13px' }}>/ lead</div>
                 </div>
             )}
         </Link>
@@ -254,31 +254,31 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                             value={q}
                             onChange={e => setQ(e.target.value)}
                             placeholder="Search businesses, trades, suburbs…"
-                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:border-orange-400 bg-white font-medium"
-                            style={{ fontSize: '16px' }}
+                            className="w-full pl-12 pr-4 h-14 rounded-2xl border-2 border-zinc-200 focus:outline-none focus:border-orange-400 bg-white font-bold text-zinc-900 transition-all shadow-sm"
+                            style={{ fontSize: '20px' }}
                         />
                     </div>
                     {locationLabel && (
-                        <div className="flex items-center gap-1.5 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 font-bold text-orange-700 shrink-0" style={{ fontSize: '16px' }}>
-                            <MapPin className="w-4 h-4" /> Near {locationLabel}
-                            <button onClick={() => { setSuburb(null); setLocationLabel(null); }} className="ml-1 text-orange-400 hover:text-orange-600 font-black">×</button>
+                        <div className="flex items-center gap-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-5 py-3 font-black text-orange-700 shrink-0 uppercase tracking-tight" style={{ fontSize: '18px' }}>
+                            <MapPin className="w-5 h-5" /> Near {locationLabel}
+                            <button onClick={() => { setSuburb(null); setLocationLabel(null); }} className="ml-2 text-orange-400 hover:text-orange-600 font-black text-2xl leading-none">×</button>
                         </div>
                     )}
                 </div>
 
                 {/* Trade tabs */}
-                <div className="overflow-x-auto scrollbar-hide mb-4">
-                    <div className="flex gap-2 flex-nowrap w-max pb-1">
+                <div className="overflow-x-auto scrollbar-hide mb-6">
+                    <div className="flex gap-2.5 flex-nowrap w-max pb-1">
                         {TRADE_TABS.map(t => (
                             <button
                                 key={t}
                                 onClick={() => setTrade(t)}
-                                className={`px-4 py-2 rounded-full font-bold whitespace-nowrap transition-colors ${
+                                className={`px-5 py-3 rounded-full font-black whitespace-nowrap transition-all uppercase tracking-tight ${
                                     trade === t
-                                        ? "bg-orange-500 text-white"
-                                        : "bg-white border border-zinc-200 text-zinc-600 hover:border-orange-300 hover:text-orange-600"
+                                        ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
+                                        : "bg-white border-2 border-zinc-200 text-zinc-500 hover:border-orange-300 hover:text-orange-600"
                                 }`}
-                                style={{ fontSize: '16px' }}
+                                style={{ fontSize: '18px' }}
                             >
                                 {t}
                             </button>
@@ -287,14 +287,14 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                 </div>
 
                 {/* Results meta */}
-                <div className="flex items-center justify-between mb-4">
-                    <p className="font-semibold text-zinc-500" style={{ fontSize: '16px' }}>
+                <div className="flex items-center justify-between mb-5 px-1">
+                    <p className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '17px' }}>
                         {loading && businesses.length === 0
                             ? "Loading…"
                             : `${businesses.length} business${businesses.length !== 1 ? "es" : ""}${locationLabel ? ` near ${locationLabel}` : ""}`}
                     </p>
                     {locationLabel && (
-                        <span className="text-zinc-400 font-medium flex items-center gap-1.5" style={{ fontSize: '16px' }}>
+                        <span className="text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-2" style={{ fontSize: '15px' }}>
                             <SlidersHorizontal className="w-4 h-4" /> Sorted by distance
                         </span>
                     )}
@@ -302,13 +302,13 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
 
                 {/* Cards grid */}
                 {businesses.length === 0 && !loading ? (
-                    <div className="text-center py-16 text-zinc-400">
-                        <Search className="w-10 h-10 mx-auto mb-3 opacity-30" />
-                        <p className="font-bold" style={{ fontSize: '18px' }}>No businesses found</p>
-                        <p className="font-medium mt-1" style={{ fontSize: '16px' }}>Try a different trade or clear your search</p>
+                    <div className="text-center py-20 bg-white rounded-[32px] border-2 border-dashed border-zinc-100">
+                        <Search className="w-16 h-16 mx-auto mb-4 text-zinc-200" />
+                        <p className="font-black text-zinc-900 uppercase tracking-tight" style={{ fontSize: '24px' }}>No businesses found</p>
+                        <p className="font-bold text-zinc-400 mt-2" style={{ fontSize: '19px' }}>Try a different trade or clear your search</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
                         {businesses.map(biz => <BizCard key={biz.id} biz={biz} />)}
                         {loading && businesses.length === 0 && Array.from({ length: 8 }).map((_, i) => (
                             <div key={i} className="bg-white rounded-2xl border border-zinc-100 p-4 animate-pulse">
@@ -332,14 +332,14 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
 
                 {/* Load more */}
                 {hasMore && businesses.length > 0 && (
-                    <div className="text-center mt-8">
+                    <div className="text-center mt-12">
                         <button
                             onClick={loadMore}
                             disabled={loading}
-                            className="px-8 py-3 bg-white border-2 border-zinc-200 hover:border-orange-400 text-zinc-700 hover:text-orange-600 rounded-xl font-bold transition-colors disabled:opacity-50"
-                            style={{ fontSize: '16px' }}
+                            className="px-10 py-4 bg-white border-2 border-zinc-200 hover:border-orange-400 text-zinc-700 hover:text-orange-600 rounded-2xl font-black transition-all disabled:opacity-50 shadow-sm active:scale-95"
+                            style={{ fontSize: '20px' }}
                         >
-                            {loading ? <Loader2 className="w-5 h-5 animate-spin inline mr-2" /> : null}
+                            {loading ? <Loader2 className="w-6 h-6 animate-spin inline mr-3" /> : null}
                             Load more businesses
                         </button>
                     </div>
@@ -347,45 +347,45 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
             </div>
 
             {/* ── HIGH-VALUE SIDEBAR ── */}
-            <div className="hidden lg:block w-72 xl:w-80 shrink-0 sticky top-24 self-start space-y-4">
+            <div className="hidden lg:block w-80 xl:w-96 shrink-0 sticky top-24 self-start space-y-5">
 
                 {/* Top Paying header */}
-                <div className="bg-zinc-900 rounded-2xl p-5 text-white">
-                    <div className="flex items-center gap-2 mb-1">
-                        <TrendingUp className="w-5 h-5 text-orange-400" />
-                        <h2 className="font-black text-white" style={{ fontSize: '18px' }}>High-Value Opportunities</h2>
+                <div className="bg-zinc-900 rounded-[32px] p-7 text-white shadow-xl">
+                    <div className="flex items-center gap-3 mb-2">
+                        <TrendingUp className="w-6 h-6 text-orange-400" />
+                        <h2 className="font-black text-white uppercase tracking-tighter" style={{ fontSize: '22px' }}>High-Value Opportunities</h2>
                     </div>
-                    <p className="text-zinc-400 font-medium" style={{ fontSize: '16px' }}>Highest earning per referral right now</p>
+                    <p className="text-zinc-400 font-bold text-lg">Highest earning per referral right now</p>
                 </div>
 
                 {topPaying.length > 0 ? (
-                    <div className="bg-white rounded-2xl border border-zinc-200 p-4 shadow-sm space-y-2">
+                    <div className="bg-white rounded-[32px] border border-zinc-200 p-5 shadow-sm space-y-3">
                         {topPaying.slice(0, 6).map((biz, i) => (
                             <SidebarCard key={biz.id} biz={biz} rank={i + 1} />
                         ))}
                     </div>
                 ) : (
-                    <div className="bg-white rounded-2xl border border-zinc-200 p-5 text-center">
-                        <Loader2 className="w-5 h-5 animate-spin text-zinc-300 mx-auto" />
+                    <div className="bg-white rounded-[32px] border border-zinc-200 p-8 text-center">
+                        <Loader2 className="w-6 h-6 animate-spin text-orange-500 mx-auto" />
                     </div>
                 )}
 
                 {/* Quick-tip */}
-                <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                        <Zap className="w-4 h-4 text-orange-500 shrink-0" />
-                        <span className="font-black text-orange-800" style={{ fontSize: '16px' }}>Pro Tip</span>
+                <div className="bg-orange-50 border-2 border-orange-100 rounded-[32px] p-7 shadow-sm">
+                    <div className="flex items-center gap-3 mb-3">
+                        <Zap className="w-6 h-6 text-orange-500 shrink-0" />
+                        <span className="font-black text-orange-900 uppercase tracking-widest" style={{ fontSize: '18px' }}>Pro Tip</span>
                     </div>
-                    <p className="text-orange-700 font-medium leading-snug" style={{ fontSize: '16px' }}>
+                    <p className="text-orange-800 font-bold text-lg leading-relaxed">
                         Businesses with higher fees often have fewer referrers — less competition means more earnings for you.
                     </p>
                 </div>
 
                 {/* Earnings reminder */}
-                <div className="bg-white rounded-2xl border border-zinc-200 p-4 shadow-sm text-center">
-                    <DollarSign className="w-6 h-6 text-orange-500 mx-auto mb-1" />
-                    <p className="font-black text-zinc-900" style={{ fontSize: '18px' }}>You keep 80%</p>
-                    <p className="text-zinc-400 font-medium" style={{ fontSize: '16px' }}>of every verified referral fee</p>
+                <div className="bg-white rounded-[32px] border border-zinc-200 p-6 shadow-sm text-center">
+                    <DollarSign className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+                    <p className="font-black text-zinc-900 uppercase tracking-tighter" style={{ fontSize: '24px' }}>You keep 80%</p>
+                    <p className="text-zinc-400 font-bold text-lg uppercase tracking-widest mt-1">of every verified referral fee</p>
                 </div>
             </div>
 

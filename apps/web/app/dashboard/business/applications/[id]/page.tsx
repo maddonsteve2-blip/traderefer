@@ -129,22 +129,22 @@ export default function BusinessApplicationDetailPage() {
 
                 {/* Header */}
                 <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-6">
-                    <Link href="/dashboard/business/applications" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '16px' }}>
-                        <ArrowLeft className="w-4 h-4" /> Applications
+                    <Link href="/dashboard/business/applications" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '20px' }}>
+                        <ArrowLeft className="w-5 h-5" /> Applications
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-bold truncate max-w-full sm:max-w-[200px]" style={{ fontSize: '16px' }}>{ref.full_name}</span>
+                    <span className="text-zinc-700 font-bold truncate max-w-full sm:max-w-[200px]" style={{ fontSize: '20px' }}>{ref.full_name}</span>
                 </div>
 
                 {/* Reminder banner */}
                 {isPending && app.reminder_count > 0 && (
-                    <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-5">
-                        <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-6">
+                        <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
                         <div>
-                            <p className="font-black text-amber-800" style={{ fontSize: '16px' }}>
+                            <p className="font-black text-amber-800" style={{ fontSize: '20px' }}>
                                 Reminder {app.reminder_count}/3 — please action this application
                             </p>
-                            <p className="font-medium text-amber-600" style={{ fontSize: '15px' }}>
+                            <p className="font-medium text-amber-600" style={{ fontSize: '19px' }}>
                                 If no action is taken, this application will auto-expire after 72 hours from submission.
                             </p>
                         </div>
@@ -153,14 +153,14 @@ export default function BusinessApplicationDetailPage() {
 
                 {/* Status badge (for non-pending) */}
                 {!isPending && (
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold mb-5 ${
+                    <div className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold mb-6 ${
                         app.status === "approved" ? "bg-green-50 text-green-700 border border-green-200" :
                         app.status === "rejected" ? "bg-red-50 text-red-700 border border-red-200" :
                         "bg-zinc-50 text-zinc-500 border border-zinc-200"
-                    }`} style={{ fontSize: '16px' }}>
-                        {app.status === "approved" ? <CheckCircle className="w-4 h-4" /> :
-                         app.status === "rejected" ? <XCircle className="w-4 h-4" /> :
-                         <AlertTriangle className="w-4 h-4" />}
+                    }`} style={{ fontSize: '20px' }}>
+                        {app.status === "approved" ? <CheckCircle className="w-5 h-5" /> :
+                         app.status === "rejected" ? <XCircle className="w-5 h-5" /> :
+                         <AlertTriangle className="w-5 h-5" />}
                         {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                     </div>
                 )}
@@ -173,27 +173,27 @@ export default function BusinessApplicationDetailPage() {
                         {/* Hero card */}
                         <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
                             <div className="flex flex-col sm:flex-row items-start gap-4 mb-5">
-                                <div className="w-20 h-20 rounded-2xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden" style={{ fontSize: '26px' }}>
+                                <div className="w-20 h-20 rounded-2xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden" style={{ fontSize: '30px' }}>
                                     {ref.profile_photo_url ? (
                                         // eslint-disable-next-line @next/next/no-img-element
                                         <img src={ref.profile_photo_url} alt="" className="w-full h-full object-cover" />
                                     ) : initials}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '26px' }}>{ref.full_name}</h1>
+                                    <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '38px' }}>{ref.full_name}</h1>
                                     {ref.tagline && (
-                                        <p className="font-medium text-zinc-500 mt-1 leading-snug" style={{ fontSize: '17px' }}>
+                                        <p className="font-medium text-zinc-500 mt-1 leading-snug" style={{ fontSize: '22px' }}>
                                             {ref.tagline}
                                         </p>
                                     )}
                                     <div className="flex items-center gap-4 mt-2 flex-wrap">
                                         {(ref.suburb || ref.state) && (
-                                            <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: '15px' }}>
+                                            <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '19px' }}>
                                                 <MapPin className="w-4 h-4" />{ref.suburb}{ref.state ? `, ${ref.state}` : ""}
                                             </span>
                                         )}
                                         {memberYear && (
-                                            <span className="flex items-center gap-1 text-zinc-400 font-medium" style={{ fontSize: '15px' }}>
+                                            <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '19px' }}>
                                                 <Briefcase className="w-4 h-4" />Member since {memberYear}
                                             </span>
                                         )}
@@ -209,9 +209,9 @@ export default function BusinessApplicationDetailPage() {
                                     { label: "Businesses", value: ref.businesses_linked, icon: Briefcase, bg: "bg-blue-50", text: "text-blue-600" },
                                 ].map(s => (
                                     <div key={s.label} className={`${s.bg} rounded-xl p-4 text-center`}>
-                                        <s.icon className={`w-5 h-5 ${s.text} mx-auto mb-1`} />
-                                        <p className="font-black text-zinc-900" style={{ fontSize: '24px' }}>{s.value}</p>
-                                        <p className="font-bold text-zinc-500 leading-tight" style={{ fontSize: '13px' }}>{s.label}</p>
+                                        <s.icon className={`w-6 h-6 ${s.text} mx-auto mb-1`} />
+                                        <p className="font-black text-zinc-900" style={{ fontSize: '42px' }}>{s.value}</p>
+                                        <p className="font-bold text-zinc-500 leading-tight" style={{ fontSize: '17px' }}>{s.label}</p>
                                     </div>
                                 ))}
                             </div>
@@ -220,25 +220,25 @@ export default function BusinessApplicationDetailPage() {
                             {ref.profile_bio ? (
                                 <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <User className="w-4 h-4 text-orange-500" />
-                                        <span className="font-black text-zinc-700" style={{ fontSize: '16px' }}>About this referrer</span>
+                                        <User className="w-5 h-5 text-orange-500" />
+                                        <span className="font-black text-zinc-700" style={{ fontSize: '22px' }}>About this referrer</span>
                                     </div>
-                                    <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: '17px', lineHeight: 1.65 }}>
+                                    <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: '22px', lineHeight: 1.65 }}>
                                         {ref.profile_bio}
                                     </p>
                                 </div>
                             ) : (
                                 <div className="bg-zinc-50 rounded-xl p-4 border border-dashed border-zinc-200 text-center">
-                                    <p className="font-medium text-zinc-400" style={{ fontSize: '16px' }}>This referrer hasn&apos;t added a bio yet.</p>
+                                    <p className="font-medium text-zinc-400" style={{ fontSize: '22px' }}>This referrer hasn&apos;t added a bio yet.</p>
                                 </div>
                             )}
                         </div>
 
                         {/* Intro message */}
                         {app.message && (
-                            <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
-                                <p className="font-black text-zinc-700 mb-2" style={{ fontSize: '16px' }}>Their intro message</p>
-                                <p className="font-medium text-zinc-600 leading-relaxed italic" style={{ fontSize: '17px', lineHeight: 1.65 }}>
+                            <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+                                <p className="font-black text-zinc-700 mb-2" style={{ fontSize: '22px' }}>Their intro message</p>
+                                <p className="font-medium text-zinc-600 leading-relaxed italic" style={{ fontSize: '22px', lineHeight: 1.65 }}>
                                     &ldquo;{app.message}&rdquo;
                                 </p>
                             </div>
@@ -248,13 +248,13 @@ export default function BusinessApplicationDetailPage() {
                     {/* ── STICKY ACTION PANEL ── */}
                     <div className="lg:sticky lg:top-24 self-start space-y-4">
                         <div className="bg-white rounded-2xl border-2 border-zinc-200 overflow-hidden shadow-xl">
-                            <div className="bg-zinc-900 px-5 py-4">
-                                <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '13px' }}>Application</p>
-                                <p className="font-bold text-white mt-0.5" style={{ fontSize: '16px' }}>Applied {fmtDate(app.applied_at)}</p>
+                            <div className="bg-zinc-900 px-6 py-5">
+                                <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '17px' }}>Application</p>
+                                <p className="font-bold text-white mt-0.5" style={{ fontSize: '20px' }}>Applied {fmtDate(app.applied_at)}</p>
                                 {isPending && (
                                     <div className="flex items-center gap-1.5 mt-2">
-                                        <Clock className="w-4 h-4 text-amber-400" />
-                                        <span className="font-bold text-amber-400" style={{ fontSize: '14px' }}>Awaiting your decision</span>
+                                        <Clock className="w-5 h-5 text-amber-400" />
+                                        <span className="font-bold text-amber-400" style={{ fontSize: '18px' }}>Awaiting your decision</span>
                                     </div>
                                 )}
                             </div>
@@ -265,34 +265,34 @@ export default function BusinessApplicationDetailPage() {
                                         <button
                                             onClick={handleApprove}
                                             disabled={acting !== null}
-                                            className="w-full flex items-center justify-center gap-2 h-12 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-xl font-black transition-all"
-                                            style={{ fontSize: '17px' }}
+                                            className="w-full flex items-center justify-center gap-2 h-14 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-xl font-black transition-all"
+                                            style={{ fontSize: '22px' }}
                                         >
                                             {acting === "approving" ? (
-                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                             ) : (
-                                                <><CheckCircle className="w-5 h-5" /> Approve</>
+                                                <><CheckCircle className="w-6 h-6" /> Approve</>
                                             )}
                                         </button>
 
                                         <button
                                             onClick={handleMessage}
-                                            className="w-full flex items-center justify-center gap-2 h-11 bg-zinc-50 hover:bg-blue-50 border border-zinc-200 hover:border-blue-200 text-zinc-700 hover:text-blue-700 rounded-xl font-bold transition-all"
-                                            style={{ fontSize: '16px' }}
+                                            className="w-full flex items-center justify-center gap-2 h-12 bg-zinc-50 hover:bg-blue-50 border border-zinc-200 hover:border-blue-200 text-zinc-700 hover:text-blue-700 rounded-xl font-bold transition-all"
+                                            style={{ fontSize: '20px' }}
                                         >
-                                            <MessageSquare className="w-4 h-4" /> Open Discussion
+                                            <MessageSquare className="w-5 h-5" /> Open Discussion
                                         </button>
 
                                         <button
                                             onClick={handleReject}
                                             disabled={acting !== null}
-                                            className="w-full flex items-center justify-center gap-2 h-11 bg-zinc-50 hover:bg-red-50 border border-zinc-200 hover:border-red-200 text-zinc-500 hover:text-red-600 rounded-xl font-bold transition-all disabled:opacity-60"
-                                            style={{ fontSize: '16px' }}
+                                            className="w-full flex items-center justify-center gap-2 h-12 bg-zinc-50 hover:bg-red-50 border border-zinc-200 hover:border-red-200 text-zinc-500 hover:text-red-600 rounded-xl font-bold transition-all disabled:opacity-60"
+                                            style={{ fontSize: '20px' }}
                                         >
                                             {acting === "rejecting" ? (
-                                                <div className="w-4 h-4 border-2 border-zinc-300 border-t-red-500 rounded-full animate-spin" />
+                                                <div className="w-5 h-5 border-2 border-zinc-300 border-t-red-500 rounded-full animate-spin" />
                                             ) : (
-                                                <><XCircle className="w-4 h-4" /> Decline</>
+                                                <><XCircle className="w-5 h-5" /> Decline</>
                                             )}
                                         </button>
                                     </>
@@ -301,16 +301,16 @@ export default function BusinessApplicationDetailPage() {
                                         {app.status === "approved" && (
                                             <button
                                                 onClick={handleMessage}
-                                                className="w-full flex items-center justify-center gap-2 h-11 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold transition-all"
-                                                style={{ fontSize: '16px' }}
+                                                className="w-full flex items-center justify-center gap-2 h-12 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold transition-all"
+                                                style={{ fontSize: '20px' }}
                                             >
-                                                <MessageSquare className="w-4 h-4" /> Message {ref.full_name.split(" ")[0]}
+                                                <MessageSquare className="w-5 h-5" /> Message {ref.full_name.split(" ")[0]}
                                             </button>
                                         )}
                                         <Link
                                             href="/dashboard/business/applications"
-                                            className="flex items-center justify-center gap-2 w-full py-3 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-bold text-zinc-600 transition-all"
-                                            style={{ fontSize: '16px' }}
+                                            className="flex items-center justify-center gap-2 w-full py-4 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-bold text-zinc-600 transition-all"
+                                            style={{ fontSize: '20px' }}
                                         >
                                             ← Back to Applications
                                         </Link>
@@ -319,7 +319,7 @@ export default function BusinessApplicationDetailPage() {
                             </div>
                         </div>
 
-                        <p className="text-center text-zinc-400 font-medium" style={{ fontSize: '13px' }}>
+                        <p className="text-center text-zinc-400 font-medium" style={{ fontSize: '17px' }}>
                             Only you can see this referrer&apos;s application.
                         </p>
                     </div>

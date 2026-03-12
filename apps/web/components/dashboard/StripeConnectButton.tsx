@@ -49,9 +49,9 @@ export function StripeConnectButton({ type }: StripeConnectButtonProps) {
         <Button
             onClick={handleConnect}
             disabled={loading}
-            className="w-full bg-[#635bff] hover:bg-[#5851d8] text-white rounded-full font-bold h-12 flex items-center gap-2"
+            className="w-full bg-[#635bff] hover:bg-[#5851d8] text-white rounded-full font-black h-16 flex items-center justify-center gap-3 text-2xl shadow-xl shadow-indigo-200 active:scale-95 transition-all"
         >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <CreditCard className="w-5 h-5" />}
+            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <CreditCard className="w-6 h-6" />}
             Connect Stripe for Payouts
         </Button>
     );

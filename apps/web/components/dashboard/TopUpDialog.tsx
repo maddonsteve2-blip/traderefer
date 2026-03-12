@@ -88,18 +88,18 @@ function PaymentForm({
         <div className="space-y-6 pt-2">
             <PaymentElement />
             <div className="flex gap-3">
-                <Button variant="outline" onClick={onBack} className="flex-1 rounded-full h-12 font-bold">
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                <Button variant="outline" onClick={onBack} className="flex-1 rounded-full h-14 font-black text-xl border-zinc-200">
+                    <ArrowLeft className="w-5 h-5 mr-2" /> Back
                 </Button>
                 <Button
                     onClick={handlePay}
                     disabled={isProcessing || !stripe || !elements}
-                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full h-12 font-bold shadow-lg shadow-orange-500/20"
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full h-14 font-black shadow-lg shadow-orange-500/20 text-xl active:scale-95 transition-all"
                 >
-                    {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : `Pay $${(amountCents / 100).toFixed(2)}`}
+                    {isProcessing ? <Loader2 className="w-6 h-6 animate-spin" /> : `Pay $${(amountCents / 100).toFixed(2)}`}
                 </Button>
             </div>
-            <p className="text-xs text-zinc-400 text-center">
+            <p className="text-sm text-zinc-400 text-center font-medium">
                 Payments processed securely via Stripe.
             </p>
         </div>
@@ -153,10 +153,10 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2 text-xl font-bold">
-                        <Wallet className="w-5 h-5 text-orange-500" /> Top Up Wallet
+                    <DialogTitle className="flex items-center gap-2 text-3xl font-black font-display">
+                        <Wallet className="w-6 h-6 text-orange-500" /> Top Up Wallet
                     </DialogTitle>
-                    <DialogDescription>
+                    <DialogDescription className="text-xl font-medium text-zinc-500">
                         {clientSecret
                             ? `Pay $${(amountCents / 100).toFixed(2)} — enter your card details below.`
                             : "Add funds to unlock leads instantly."}
@@ -178,34 +178,34 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                     </Elements>
                 ) : (
                     <div className="space-y-6 pt-2">
-                        <div className={`text-center p-4 rounded-2xl border ${
+                        <div className={`text-center p-6 rounded-2xl border ${
                             currentBalance < MIN_WALLET_FLOOR_CENTS
                                 ? "bg-red-50 border-red-200"
                                 : currentBalance < 3000
                                 ? "bg-amber-50 border-amber-200"
                                 : "bg-zinc-50 border-zinc-100"
                         }`}>
-                            <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Current Balance</div>
-                            <div className={`text-3xl font-black font-display ${
+                            <div className="text-lg font-bold text-zinc-400 uppercase tracking-widest mb-1">Current Balance</div>
+                            <div className={`text-5xl font-black font-display ${
                                 currentBalance < MIN_WALLET_FLOOR_CENTS ? "text-red-600" : "text-zinc-900"
                             }`}>
                                 ${(currentBalance / 100).toFixed(2)}
                             </div>
                             {currentBalance < MIN_WALLET_FLOOR_CENTS && (
-                                <p className="text-xs text-red-600 font-semibold mt-1">
+                                <p className="text-lg text-red-600 font-bold mt-2">
                                     ⚠️ Minimum $25.00 balance required to unlock leads
                                 </p>
                             )}
                         </div>
 
                         <div>
-                            <div className="text-sm font-bold text-zinc-500 mb-3">Select amount</div>
+                            <div className="text-xl font-bold text-zinc-500 mb-3">Select amount</div>
                             <div className="grid grid-cols-4 gap-2">
                                 {TOPUP_AMOUNTS.map((amt) => (
                                     <button
                                         key={amt.cents}
                                         onClick={() => { setSelectedAmount(amt.cents); setCustomAmount(""); }}
-                                        className={`py-3 rounded-xl text-sm font-bold border transition-all ${
+                                        className={`py-4 rounded-xl text-xl font-black border transition-all ${
                                             selectedAmount === amt.cents
                                                 ? "bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/20"
                                                 : "bg-white text-zinc-700 border-zinc-200 hover:border-orange-300"
@@ -218,9 +218,9 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                         </div>
 
                         <div>
-                            <div className="text-sm font-bold text-zinc-500 mb-2">Or enter custom amount</div>
+                            <div className="text-xl font-bold text-zinc-500 mb-2">Or enter custom amount</div>
                             <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-bold">$</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-black text-2xl">$</span>
                                 <input
                                     type="number"
                                     min="5"
@@ -228,7 +228,7 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                                     placeholder="0.00"
                                     value={customAmount}
                                     onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
-                                    className="w-full pl-8 pr-4 py-3 rounded-xl border border-zinc-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none text-lg font-bold"
+                                    className="w-full pl-10 pr-4 py-4 rounded-2xl border border-zinc-200 focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10 outline-none text-2xl font-black text-zinc-900"
                                 />
                             </div>
                         </div>
@@ -236,19 +236,19 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                         <Button
                             onClick={handleProceedToPayment}
                             disabled={isCreatingIntent || amountCents < 500}
-                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full py-6 h-auto text-base font-bold shadow-lg shadow-orange-500/20"
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full py-8 h-auto text-2xl font-black shadow-lg shadow-orange-500/30 active:scale-95 transition-all"
                         >
                             {isCreatingIntent ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="w-6 h-6 animate-spin" />
                             ) : (
                                 <>
-                                    <Plus className="w-4 h-4 mr-2" />
+                                    <Plus className="w-6 h-6 mr-2" />
                                     Continue {amountCents >= 500 ? `— $${(amountCents / 100).toFixed(2)}` : ""}
                                 </>
                             )}
                         </Button>
 
-                        <p className="text-xs text-zinc-400 text-center">
+                        <p className="text-lg text-zinc-400 text-center font-medium leading-relaxed">
                             Payments processed securely via Stripe. A minimum wallet balance of $25.00 is required to unlock leads.
                         </p>
                     </div>

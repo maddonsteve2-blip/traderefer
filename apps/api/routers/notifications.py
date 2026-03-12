@@ -26,7 +26,7 @@ async def notify_all_referrers_for_business(db: AsyncSession, business_id, type:
     result = await db.execute(
         text("""
             SELECT DISTINCT r.user_id
-            FROM referrer_links rl
+            FROM referral_links rl
             JOIN referrers r ON r.id = rl.referrer_id
             WHERE rl.business_id = :bid
         """),

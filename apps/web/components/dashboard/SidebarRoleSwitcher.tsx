@@ -83,10 +83,10 @@ export function SidebarRoleSwitcher({ currentRole }: Props) {
                     <TargetIcon className="w-5 h-5 text-orange-400" />
                 </div>
                 <div className="text-left">
-                    <p className="text-sm font-black text-white leading-tight">Switch to {targetLabel} Mode</p>
-                    <p className="text-xs text-zinc-400 font-medium">Open {targetLabel} Dashboard</p>
+                    <p className="text-lg font-black text-white leading-tight">Switch to {targetLabel} Mode</p>
+                    <p className="text-base text-zinc-400 font-medium">Open {targetLabel} Dashboard</p>
                 </div>
-                <ArrowLeftRight className="w-4 h-4 text-zinc-500 ml-auto group-hover:text-orange-400 transition-colors" />
+                <ArrowLeftRight className="w-5 h-5 text-zinc-500 ml-auto group-hover:text-orange-400 transition-colors" />
             </button>
         </>
     );

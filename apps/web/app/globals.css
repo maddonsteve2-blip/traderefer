@@ -68,12 +68,12 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.5;
   }
 
   input, textarea, select {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.5;
   }
 

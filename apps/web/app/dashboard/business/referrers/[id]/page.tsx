@@ -10,7 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
     Users, Star, DollarSign, Target, TrendingUp, ArrowLeft,
-    Gift, FileText, ChevronRight, AlertTriangle, CreditCard, Wallet, MessageSquare
+    Gift, FileText, ChevronRight, AlertTriangle, CreditCard, Wallet, MessageSquare,
+    Loader2
 } from "lucide-react";
 import Link from "next/link";
 
@@ -194,15 +195,15 @@ export default function ReferrerDetailPage() {
                     <Link href="/dashboard/business/referrers" className="p-2 text-zinc-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
-                    <div className="w-14 h-14 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-600 font-bold text-lg">
+                    <div className="w-14 h-14 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-600 font-bold text-xl">
                         {referrer.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                     </div>
                     <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                            <h1 className="text-2xl font-bold text-zinc-900 font-display break-words">{referrer.full_name}</h1>
-                            <Badge className={statusColor}>{referrer.is_active ? "Active" : "Inactive"}</Badge>
+                            <h1 className="text-4xl font-bold text-zinc-900 font-display break-words">{referrer.full_name}</h1>
+                            <Badge className={`${statusColor} text-sm px-3 py-1`}>{referrer.is_active ? "Active" : "Inactive"}</Badge>
                         </div>
-                        <p className="text-sm text-zinc-400 break-words">{referrer.email} · {referrer.phone} · Member since {fmtDate(referrer.referrer_since)}</p>
+                        <p className="text-lg text-zinc-400 break-words">{referrer.email} · {referrer.phone} · Member since {fmtDate(referrer.referrer_since)}</p>
                     </div>
                     </div>
                     <div className="flex w-full sm:w-auto items-center justify-between sm:justify-end gap-3">
@@ -221,14 +222,14 @@ export default function ReferrerDetailPage() {
                                 } catch {}
                             }}
                             variant="outline"
-                            className="rounded-full px-5 h-10 font-bold border-zinc-200 hover:border-orange-300 hover:bg-orange-50"
+                            className="rounded-full px-6 h-14 font-bold border-zinc-200 hover:border-orange-300 hover:bg-orange-50 text-xl"
                         >
-                            <MessageSquare className="w-4 h-4 mr-2 text-orange-500" />
+                            <MessageSquare className="w-5 h-5 mr-2 text-orange-500" />
                             Message
                         </Button>
-                        <div className="flex items-center gap-1.5">
-                            <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
-                            <span className="text-xl font-black text-zinc-900">{referrer.quality_score}</span>
+                        <div className="flex items-center gap-2">
+                            <Star className="w-6 h-6 text-amber-400 fill-amber-400" />
+                            <span className="text-3xl font-black text-zinc-900">{referrer.quality_score}</span>
                         </div>
                     </div>
                 </div>
@@ -242,31 +243,31 @@ export default function ReferrerDetailPage() {
                         { label: "Total Earned", value: fmt(referrer.total_earned_cents), icon: DollarSign, bg: "bg-violet-50", color: "text-violet-600" },
                         { label: "Current Fee", value: fmt(referrer.effective_fee_cents), icon: DollarSign, bg: "bg-amber-50", color: "text-amber-600" },
                     ].map((s) => (
-                        <Card key={s.label} className="p-4">
-                            <div className="flex items-center gap-2 mb-1">
-                                <div className={`w-7 h-7 ${s.bg} ${s.color} rounded-lg flex items-center justify-center`}>
-                                    <s.icon className="w-3.5 h-3.5" />
+                        <Card key={s.label} className="p-5">
+                            <div className="flex items-center gap-2 mb-2">
+                                <div className={`w-8 h-8 ${s.bg} ${s.color} rounded-lg flex items-center justify-center`}>
+                                    <s.icon className="w-4 h-4" />
                                 </div>
-                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{s.label}</span>
+                                <span className="text-sm font-bold text-zinc-400 uppercase tracking-wider">{s.label}</span>
                             </div>
-                            <div className="text-xl font-black text-zinc-900 font-display">{s.value}</div>
+                            <div className="text-3xl font-black text-zinc-900 font-display">{s.value}</div>
                         </Card>
                     ))}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     {/* Fee Management */}
-                    <Card className="p-6">
-                        <h3 className="text-lg font-bold text-zinc-900 mb-1 flex items-center gap-2">
-                            <DollarSign className="w-4 h-4 text-orange-500" /> Fee Management
+                    <Card className="p-8">
+                        <h3 className="text-2xl font-bold text-zinc-900 mb-1 flex items-center gap-2">
+                            <DollarSign className="w-5 h-5 text-orange-500" /> Fee Management
                         </h3>
-                        <p className="text-xs text-zinc-400 mb-4">
+                        <p className="text-base text-zinc-400 mb-5">
                             Default fee: {fmt(referrer.default_fee_cents)}
                             {referrer.custom_fee_cents !== null && ` · Custom: ${fmt(referrer.custom_fee_cents)}`}
                         </p>
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             <div className="relative flex-1">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 text-lg">$</span>
                                 <Input
                                     type="number"
                                     step="0.01"
@@ -274,24 +275,24 @@ export default function ReferrerDetailPage() {
                                     placeholder="Custom fee"
                                     value={customFee}
                                     onChange={(e) => setCustomFee(e.target.value)}
-                                    className="pl-7 h-10 rounded-xl"
+                                    className="pl-8 h-14 rounded-xl text-xl font-bold"
                                 />
                             </div>
-                            <Button onClick={handleFeeUpdate} disabled={feeLoading} className="bg-zinc-900 hover:bg-black text-white rounded-xl h-10 px-4">
+                            <Button onClick={handleFeeUpdate} disabled={feeLoading} className="bg-zinc-900 hover:bg-black text-white rounded-xl h-14 px-8 text-xl font-bold">
                                 {feeLoading ? "…" : customFee ? "Set Custom" : "Reset Default"}
                             </Button>
                         </div>
                     </Card>
 
                     {/* Award Bonus */}
-                    <Card className="p-6">
-                        <h3 className="text-lg font-bold text-zinc-900 mb-1 flex items-center gap-2">
-                            <Gift className="w-4 h-4 text-orange-500" /> Award Bonus
+                    <Card className="p-8">
+                        <h3 className="text-2xl font-bold text-zinc-900 mb-1 flex items-center gap-2">
+                            <Gift className="w-5 h-5 text-orange-500" /> Award Bonus
                         </h3>
-                        <p className="text-xs text-zinc-400 mb-4">Wallet balance: {fmt(walletBalance)}</p>
-                        <div className="space-y-3">
+                        <p className="text-base text-zinc-400 mb-5">Wallet balance: {fmt(walletBalance)}</p>
+                        <div className="space-y-4">
                             <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 text-lg">$</span>
                                 <Input
                                     type="number"
                                     step="0.01"
@@ -299,60 +300,60 @@ export default function ReferrerDetailPage() {
                                     placeholder="Bonus amount"
                                     value={bonusAmount}
                                     onChange={(e) => setBonusAmount(e.target.value)}
-                                    className="pl-7 h-10 rounded-xl"
+                                    className="pl-8 h-14 rounded-xl text-xl font-bold"
                                 />
                             </div>
                             <Input
                                 placeholder="Reason (optional)"
                                 value={bonusReason}
                                 onChange={(e) => setBonusReason(e.target.value)}
-                                className="h-10 rounded-xl"
+                                className="h-14 rounded-xl text-xl"
                             />
                             {bonusError && (
-                                <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg">
-                                    <AlertTriangle className="w-3.5 h-3.5" />
+                                <div className="flex items-center gap-2 text-base text-red-600 bg-red-50 px-4 py-3 rounded-xl">
+                                    <AlertTriangle className="w-4 h-4" />
                                     {bonusError}
                                 </div>
                             )}
                             {showChargeWarning && (
-                                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                                    <div className="flex items-start gap-2 mb-3">
-                                        <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5" />
+                                <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                                    <div className="flex items-start gap-3 mb-4">
+                                        <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
                                         <div>
-                                            <p className="text-sm font-bold text-amber-900">Insufficient wallet balance</p>
-                                            <p className="text-xs text-amber-700 mt-1">
+                                            <p className="text-lg font-bold text-amber-900">Insufficient wallet balance</p>
+                                            <p className="text-base text-amber-700 mt-1">
                                                 Your wallet has {fmt(walletBalance)} but this bonus requires {fmt(Math.round(parseFloat(bonusAmount) * 100))}.
                                                 The remaining {fmt(shortfall)} will be charged to your card on file.
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col sm:flex-row gap-2">
-                                        <Button variant="outline" size="sm" onClick={() => setShowChargeWarning(false)} className="rounded-lg">
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        <Button variant="outline" size="lg" onClick={() => setShowChargeWarning(false)} className="rounded-xl font-bold text-lg h-12 flex-1">
                                             Cancel
                                         </Button>
-                                        <Button size="sm" onClick={() => handleBonus(true)} disabled={bonusLoading} className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg">
-                                            <CreditCard className="w-3.5 h-3.5 mr-1.5" />
+                                        <Button size="lg" onClick={() => handleBonus(true)} disabled={bonusLoading} className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-lg h-12 flex-[2]">
+                                            <CreditCard className="w-4 h-4 mr-2" />
                                             Charge Card &amp; Send Bonus
                                         </Button>
                                     </div>
                                 </div>
                             )}
-                            <Button onClick={() => handleBonus(false)} disabled={bonusLoading || showChargeWarning} className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-10">
-                                {bonusLoading ? "Processing…" : "Send Bonus"}
+                            <Button onClick={() => handleBonus(false)} disabled={bonusLoading || showChargeWarning} className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl h-14 text-xl font-black shadow-lg shadow-orange-500/20 active:scale-95 transition-all">
+                                {bonusLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Send Bonus"}
                             </Button>
                         </div>
                         {/* Bonus history */}
                         {bonuses.length > 0 && (
-                            <div className="mt-6 pt-6 border-t border-zinc-100">
-                                <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Bonus History</h4>
-                                <div className="space-y-2">
+                            <div className="mt-8 pt-8 border-t border-zinc-100">
+                                <h4 className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-4">Bonus History</h4>
+                                <div className="space-y-3">
                                     {bonuses.map((b) => (
-                                        <div key={b.id} className="flex items-center justify-between text-sm">
+                                        <div key={b.id} className="flex items-center justify-between text-base">
                                             <div>
-                                                <div className="font-bold text-zinc-900">{fmt(b.amount_cents)}</div>
-                                                <div className="text-xs text-zinc-400">{b.reason || "No reason"} · {fmtDate(b.created_at)}</div>
+                                                <div className="font-bold text-zinc-900 text-lg">{fmt(b.amount_cents)}</div>
+                                                <div className="text-base text-zinc-400">{b.reason || "No reason"} · {fmtDate(b.created_at)}</div>
                                             </div>
-                                            <Badge variant="secondary" className="text-[10px]">{b.funded_from}</Badge>
+                                            <Badge variant="secondary" className="text-sm px-3 py-0.5">{b.funded_from}</Badge>
                                         </div>
                                     ))}
                                 </div>
@@ -362,58 +363,58 @@ export default function ReferrerDetailPage() {
                 </div>
 
                 {/* Notes */}
-                <Card className="p-6 mb-8">
-                    <h3 className="text-lg font-bold text-zinc-900 mb-1 flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-orange-500" /> Private Notes
+                <Card className="p-8 mb-8">
+                    <h3 className="text-2xl font-bold text-zinc-900 mb-1 flex items-center gap-2">
+                        <FileText className="w-5 h-5 text-orange-500" /> Private Notes
                     </h3>
-                    <p className="text-xs text-zinc-400 mb-4">Only you can see these notes about this referrer.</p>
+                    <p className="text-base text-zinc-400 mb-5">Only you can see these notes about this referrer.</p>
                     <Textarea
                         placeholder="Add notes about this referrer…"
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
-                        className="min-h-[100px] rounded-xl mb-3"
+                        className="min-h-[140px] rounded-xl mb-4 text-xl leading-relaxed"
                     />
-                    <Button onClick={handleNotesUpdate} disabled={notesLoading} variant="outline" className="rounded-xl h-9 px-4 text-sm">
+                    <Button onClick={handleNotesUpdate} disabled={notesLoading} variant="outline" className="rounded-xl h-12 px-8 text-lg font-bold border-zinc-200">
                         {notesLoading ? "Saving…" : "Save Notes"}
                     </Button>
                 </Card>
 
                 {/* Lead History */}
-                <Card className="p-6">
-                    <h3 className="text-lg font-bold text-zinc-900 mb-4 flex items-center gap-2">
-                        <Target className="w-4 h-4 text-orange-500" /> Lead History ({leads.length})
+                <Card className="p-8">
+                    <h3 className="text-2xl font-bold text-zinc-900 mb-5 flex items-center gap-2">
+                        <Target className="w-5 h-5 text-orange-500" /> Lead History ({leads.length})
                     </h3>
                     {leads.length === 0 ? (
-                        <p className="text-sm text-zinc-400 text-center py-8">No leads yet from this referrer.</p>
+                        <p className="text-lg text-zinc-400 text-center py-12">No leads yet from this referrer.</p>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
+                            <table className="w-full text-base">
                                 <thead>
                                     <tr className="border-b border-zinc-100">
-                                        <th className="px-3 py-2 text-left text-xs font-bold text-zinc-400 uppercase">Consumer</th>
-                                        <th className="px-3 py-2 text-left text-xs font-bold text-zinc-400 uppercase">Job</th>
-                                        <th className="px-3 py-2 text-left text-xs font-bold text-zinc-400 uppercase">Status</th>
-                                        <th className="px-3 py-2 text-left text-xs font-bold text-zinc-400 uppercase">Payout</th>
-                                        <th className="px-3 py-2 text-left text-xs font-bold text-zinc-400 uppercase">Date</th>
+                                        <th className="px-4 py-3 text-left text-base font-black text-zinc-400 uppercase tracking-widest">Consumer</th>
+                                        <th className="px-4 py-3 text-left text-base font-black text-zinc-400 uppercase tracking-widest">Job</th>
+                                        <th className="px-4 py-3 text-left text-base font-black text-zinc-400 uppercase tracking-widest">Status</th>
+                                        <th className="px-4 py-3 text-left text-base font-black text-zinc-400 uppercase tracking-widest">Payout</th>
+                                        <th className="px-4 py-3 text-left text-base font-black text-zinc-400 uppercase tracking-widest">Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {leads.map((lead) => (
-                                        <tr key={lead.id} className="border-b border-zinc-50 hover:bg-zinc-50">
-                                            <td className="px-3 py-3">
-                                                <div className="font-bold text-zinc-900">{lead.consumer_name}</div>
-                                                <div className="text-xs text-zinc-400">{lead.consumer_suburb}</div>
+                                        <tr key={lead.id} className="border-b border-zinc-50 hover:bg-zinc-50 transition-colors">
+                                            <td className="px-4 py-4">
+                                                <div className="font-black text-zinc-900 text-lg">{lead.consumer_name}</div>
+                                                <div className="text-base text-zinc-400">{lead.consumer_suburb}</div>
                                             </td>
-                                            <td className="px-3 py-3 text-zinc-600 max-w-xs truncate">{lead.job_description || "—"}</td>
-                                            <td className="px-3 py-3">
-                                                <Badge variant={lead.status === "CONFIRMED" ? "default" : "secondary"} className="text-[10px]">
+                                            <td className="px-4 py-4 text-zinc-600 max-w-xs truncate text-lg font-medium">{lead.job_description || "—"}</td>
+                                            <td className="px-4 py-4">
+                                                <Badge variant={lead.status === "CONFIRMED" ? "default" : "secondary"} className="text-sm font-bold px-3 py-1">
                                                     {lead.status}
                                                 </Badge>
                                             </td>
-                                            <td className="px-3 py-3 font-bold text-zinc-700">
+                                            <td className="px-4 py-4 font-black text-zinc-700 text-lg">
                                                 {lead.referrer_payout_cents ? fmt(lead.referrer_payout_cents) : "—"}
                                             </td>
-                                            <td className="px-3 py-3 text-zinc-400">{fmtDate(lead.created_at)}</td>
+                                            <td className="px-4 py-4 text-zinc-400 text-base font-medium">{fmtDate(lead.created_at)}</td>
                                         </tr>
                                     ))}
                                 </tbody>

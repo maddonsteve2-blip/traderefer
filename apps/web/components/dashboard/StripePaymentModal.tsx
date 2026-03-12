@@ -59,21 +59,21 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
                 <PaymentElement />
             </div>
             {error && <div className="p-4 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100 font-bold">{error}</div>}
-            <div className="flex gap-3">
+            <div className="flex gap-4">
                 <Button
                     type="button"
                     variant="ghost"
                     onClick={onCancel}
-                    className="flex-1 rounded-full text-zinc-400 hover:text-zinc-600 h-12"
+                    className="flex-1 rounded-full text-zinc-400 hover:text-zinc-600 h-16 text-xl font-black"
                 >
                     Cancel
                 </Button>
                 <Button
                     type="submit"
                     disabled={!stripe || loading}
-                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full font-bold h-12 shadow-lg shadow-orange-500/20"
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full font-black h-16 shadow-xl shadow-orange-500/20 text-xl active:scale-95 transition-all"
                 >
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Unlock Lead'}
+                    {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : 'Unlock Lead'}
                 </Button>
             </div>
         </form>
@@ -83,12 +83,12 @@ function CheckoutForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel
 export function StripePaymentModal({ clientSecret, onSuccess, onCancel }: StripePaymentModalProps) {
     return (
         <Dialog open={true} onOpenChange={onCancel}>
-            <DialogContent className="sm:max-w-lg rounded-[32px] border-none shadow-2xl p-8">
-                <DialogHeader className="mb-6">
-                    <DialogTitle className="text-2xl font-black text-zinc-900 font-display">
+            <DialogContent className="sm:max-w-lg rounded-[32px] border-none shadow-2xl p-10">
+                <DialogHeader className="mb-8">
+                    <DialogTitle className="text-4xl font-black text-zinc-900 font-display">
                         Unlock Lead Details
                     </DialogTitle>
-                    <DialogDescription className="text-zinc-500 font-medium">
+                    <DialogDescription className="text-zinc-500 font-medium text-xl leading-relaxed">
                         Your payment is secured and processed by Stripe. Details will be revealed immediately after.
                     </DialogDescription>
                 </DialogHeader>

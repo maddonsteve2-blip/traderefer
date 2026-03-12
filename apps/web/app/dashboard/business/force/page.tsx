@@ -10,7 +10,7 @@ import { ForceConfigPane } from "@/components/business/ForceConfigPane";
 const TABS = [
     { key: "partners", label: "Active Referrers" },
     { key: "applications", label: "Applications" },
-    { key: "config", label: "Program Settings" },
+    { key: "config", label: "Reward Structure" },
 ];
 
 function ForceHubInner() {
@@ -35,8 +35,8 @@ function ForceHubInner() {
 export default function ForceHubPage() {
     return (
         <Suspense fallback={
-            <div className="flex items-center justify-center h-screen">
-                <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+            <div className="flex items-center justify-center h-screen bg-zinc-50">
+                <div className="w-12 h-12 border-[4px] border-orange-500 border-t-transparent rounded-full animate-spin" />
             </div>
         }>
             <ForceHubInner />

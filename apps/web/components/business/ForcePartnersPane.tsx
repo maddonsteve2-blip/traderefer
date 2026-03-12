@@ -189,7 +189,7 @@ export function ForcePartnersPane() {
                             onChange={e => setSearch(e.target.value)}
                             placeholder="Search partners…"
                             className="w-full pl-10 pr-4 h-12 bg-zinc-100 rounded-2xl text-zinc-900 placeholder:text-zinc-400 font-bold outline-none focus:ring-2 focus:ring-orange-400 transition-all"
-                            style={{ fontSize: 16 }}
+                            style={{ fontSize: 22 }}
                         />
                     </div>
                 </div>
@@ -204,8 +204,8 @@ export function ForcePartnersPane() {
                             { label: "Paid Out", value: fmt(summary.total_paid_cents), color: "text-violet-600" },
                         ].map(s => (
                             <div key={s.label} className="text-center">
-                                <p className={`font-black ${s.color} leading-none tracking-tighter`} style={{ fontSize: 18 }}>{s.value}</p>
-                                <p className="font-black text-zinc-400 mt-1 uppercase tracking-widest" style={{ fontSize: 11 }}>{s.label}</p>
+                                <p className={`font-black ${s.color} leading-none tracking-tighter`} style={{ fontSize: 26 }}>{s.value}</p>
+                                <p className="font-black text-zinc-400 mt-1 uppercase tracking-widest" style={{ fontSize: 19 }}>{s.label}</p>
                             </div>
                         ))}
                     </div>
@@ -218,8 +218,8 @@ export function ForcePartnersPane() {
                 ) : referrers.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 px-4 text-center flex-1">
                         <Users className="w-10 h-10 text-zinc-200 mb-3" />
-                        <p className="font-bold text-zinc-400" style={{ fontSize: 16 }}>No active partners yet</p>
-                        <p className="text-zinc-300 font-medium mt-1" style={{ fontSize: 14 }}>Approved applications appear here</p>
+                        <p className="font-bold text-zinc-400" style={{ fontSize: 20 }}>No active partners yet</p>
+                        <p className="text-zinc-300 font-medium mt-1" style={{ fontSize: 18 }}>Approved applications appear here</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-zinc-100 flex-1">
@@ -233,24 +233,13 @@ export function ForcePartnersPane() {
                                     className={`w-full text-left px-4 py-3.5 transition-colors ${isSelected ? "bg-orange-50 border-l-4 border-orange-500" : "hover:bg-zinc-50 border-l-4 border-transparent"}`}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className="relative w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0" style={{ fontSize: 14 }}>
+                                        <div className="relative w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0" style={{ fontSize: 22 }}>
                                             {initials}
                                             <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${r.is_active ? "bg-emerald-500" : "bg-zinc-300"}`} />
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between gap-1">
-                                                <p className="font-black text-zinc-900 truncate uppercase tracking-tight" style={{ fontSize: 17 }}>{r.full_name}</p>
-                                                <span className="text-zinc-400 font-black uppercase shrink-0" style={{ fontSize: 11 }}>{timeAgo(r.last_lead_at)}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                                <span className="text-zinc-500 font-bold uppercase tracking-wide" style={{ fontSize: 11 }}>{r.leads_created} leads</span>
-                                                <span className="text-zinc-300">·</span>
-                                                <span className="text-zinc-500 font-bold uppercase tracking-wide" style={{ fontSize: 11 }}>{r.confirmed_jobs} jobs</span>
-                                                <span className="text-zinc-300">·</span>
-                                                <span className="text-amber-600 font-black uppercase tracking-wide" style={{ fontSize: 11 }}>⭐ {r.quality_score}</span>
-                                                <span className="text-zinc-300">·</span>
-                                                <span className="text-violet-600 font-black uppercase tracking-wide" style={{ fontSize: 11 }}>{fmt(r.total_earned_cents)}</span>
-                                            </div>
+                                        <div>
+                                            <p className="font-bold text-zinc-400" style={{ fontSize: 18 }}>Sent by</p>
+                                            <p className="font-black text-zinc-900" style={{ fontSize: 22 }}>{r.full_name}</p>
                                         </div>
                                     </div>
                                 </button>
@@ -265,8 +254,8 @@ export function ForcePartnersPane() {
                 {!selectedId ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
                         <UserCheck className="w-16 h-16 text-zinc-200 mb-4" />
-                        <p className="font-black text-zinc-400" style={{ fontSize: 20 }}>Select a partner</p>
-                        <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: 16 }}>Click a partner on the left to view their profile</p>
+                        <p className="font-black text-zinc-400" style={{ fontSize: 24 }}>Select a partner</p>
+                        <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: 20 }}>Click a partner on the left to view their profile</p>
                     </div>
                 ) : detailLoading || !detail ? (
                     <div className="flex items-center justify-center w-full h-full">
@@ -278,24 +267,24 @@ export function ForcePartnersPane() {
                         {/* ── Hero card ── */}
                         <div className="bg-white rounded-2xl border border-zinc-100 p-6">
                             <div className="flex items-start gap-4 mb-5">
-                                <div className="relative w-16 h-16 rounded-2xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0" style={{ fontSize: 22 }}>
+                                <div className="relative w-16 h-16 rounded-2xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0" style={{ fontSize: 30 }}>
                                     {detail.full_name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()}
                                     <span className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${detail.is_active ? "bg-emerald-500" : "bg-zinc-300"}`} />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h2 className="font-black text-zinc-900 leading-tight uppercase tracking-tighter" style={{ fontSize: 28 }}>{detail.full_name}</h2>
-                                    <p className="text-zinc-400 font-black uppercase tracking-widest mt-1" style={{ fontSize: 11 }}>
+                                    <h2 className="font-black text-zinc-900 leading-tight uppercase tracking-tighter" style={{ fontSize: 38 }}>{detail.full_name}</h2>
+                                    <p className="text-zinc-400 font-black uppercase tracking-widest mt-1" style={{ fontSize: 22 }}>
                                         Partner since {fmtDate(detail.linked_since)}
                                         {detail.referrer_since ? ` · Member since ${new Date(detail.referrer_since).getFullYear()}` : ""}
                                     </p>
-                                    <span className={`mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-widest ${detail.is_active ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-zinc-100 text-zinc-500 border border-zinc-200"}`}>
-                                        {detail.is_active ? <><CheckCircle className="w-3.5 h-3.5" /> Active</> : <><Clock className="w-3.5 h-3.5" /> Inactive</>}
+                                    <span className={`mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-widest ${detail.is_active ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-zinc-100 text-zinc-500 border border-zinc-200"}`} style={{ fontSize: 16 }}>
+                                        {detail.is_active ? <><CheckCircle className="w-4 h-4" /> Active</> : <><Clock className="w-4 h-4" /> Inactive</>}
                                     </span>
                                 </div>
                                 <Link
                                     href={`/dashboard/business/referrers/${detail.referrer_id}`}
                                     className="flex items-center gap-1.5 h-9 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-900 rounded-xl font-bold transition-all shrink-0"
-                                    style={{ fontSize: 14 }}
+                                    style={{ fontSize: 18 }}
                                 >
                                     <ExternalLink className="w-4 h-4" /> Full Profile
                                 </Link>
@@ -306,28 +295,28 @@ export function ForcePartnersPane() {
                                 <button
                                     onClick={() => handleMessage(detail.referrer_id)}
                                     disabled={messaging}
-                                    className="flex items-center gap-2 h-10 px-4 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold transition-all disabled:opacity-60"
-                                    style={{ fontSize: 14 }}
+                                    className="flex items-center gap-2 h-12 px-6 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold transition-all disabled:opacity-60"
+                                    style={{ fontSize: 20 }}
                                 >
-                                    <MessageSquare className="w-4 h-4" />
+                                    <MessageSquare className="w-5 h-5" />
                                     {messaging ? "Opening…" : "Message"}
                                 </button>
                                 {detail.email && (
                                     <a
                                         href={`mailto:${detail.email}`}
-                                        className="flex items-center gap-2 h-10 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold transition-all border border-blue-100"
-                                        style={{ fontSize: 14 }}
+                                        className="flex items-center gap-2 h-12 px-6 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold transition-all border border-blue-100"
+                                        style={{ fontSize: 20 }}
                                     >
-                                        <Mail className="w-4 h-4" /> {detail.email}
+                                        <Mail className="w-5 h-5" /> {detail.email}
                                     </a>
                                 )}
                                 {detail.phone && (
                                     <a
                                         href={`tel:${detail.phone}`}
-                                        className="flex items-center gap-2 h-10 px-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold transition-all border border-emerald-100"
-                                        style={{ fontSize: 14 }}
+                                        className="flex items-center gap-2 h-12 px-6 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold transition-all border border-emerald-100"
+                                        style={{ fontSize: 20 }}
                                     >
-                                        <Phone className="w-4 h-4" /> {detail.phone}
+                                        <Phone className="w-5 h-5" /> {detail.phone}
                                     </a>
                                 )}
                             </div>
@@ -345,10 +334,10 @@ export function ForcePartnersPane() {
                             ].map(s => (
                                 <div key={s.label} className={`${s.bg} rounded-[24px] p-5 shadow-sm border border-black/5`}>
                                     <div className="flex items-center gap-1.5 mb-2">
-                                        <s.icon className={`w-4 h-4 ${s.text}`} />
-                                        <span className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: 11 }}>{s.label}</span>
+                                        <s.icon className={`w-5 h-5 ${s.text}`} />
+                                        <span className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: 22 }}>{s.label}</span>
                                     </div>
-                                    <p className="font-black text-zinc-900 tracking-tighter" style={{ fontSize: 32 }}>{s.value}</p>
+                                    <p className="font-black text-zinc-900 tracking-tighter" style={{ fontSize: 42 }}>{s.value}</p>
                                 </div>
                             ))}
                         </div>
@@ -358,22 +347,22 @@ export function ForcePartnersPane() {
                             <div className="bg-white rounded-2xl border border-zinc-100 p-5">
                                 <div className="flex items-center gap-2 mb-1">
                                     <Calendar className="w-4 h-4 text-zinc-400" />
-                                    <span className="font-bold text-zinc-700" style={{ fontSize: 15 }}>Last Lead Sent</span>
+                                    <span className="font-bold text-zinc-700" style={{ fontSize: 22 }}>Last Lead Sent</span>
                                 </div>
-                                <p className="font-black text-zinc-900 mt-1" style={{ fontSize: 20 }}>
+                                <p className="font-black text-zinc-900 mt-1" style={{ fontSize: 26 }}>
                                     {fmtDate(selectedListItem?.last_lead_at ?? null)}
                                 </p>
-                                <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: 12 }}>
+                                <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: 18 }}>
                                     {timeAgo(selectedListItem?.last_lead_at ?? null)}
                                 </p>
                             </div>
                             <div className="bg-white rounded-2xl border border-zinc-100 p-5">
                                 <div className="flex items-center gap-2 mb-1">
                                     <DollarSign className="w-4 h-4 text-zinc-400" />
-                                    <span className="font-bold text-zinc-700" style={{ fontSize: 15 }}>Current Lead Fee</span>
+                                    <span className="font-bold text-zinc-700" style={{ fontSize: 22 }}>Current Lead Fee</span>
                                 </div>
-                                <p className="font-black text-zinc-900 mt-1" style={{ fontSize: 20 }}>{fmt(detail.effective_fee_cents)}</p>
-                                <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: 12 }}>
+                                <p className="font-black text-zinc-900 mt-1" style={{ fontSize: 26 }}>{fmt(detail.effective_fee_cents)}</p>
+                                <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: 18 }}>
                                     {detail.custom_fee_cents != null ? "Custom rate" : `Default rate (${fmt(detail.default_fee_cents)})`}
                                 </p>
                             </div>
@@ -381,13 +370,13 @@ export function ForcePartnersPane() {
 
                         {/* ── Custom fee editor ── */}
                         <div className="bg-white rounded-2xl border border-zinc-100 p-5">
-                            <h3 className="font-black text-zinc-900 mb-1" style={{ fontSize: 17 }}>Override Lead Fee</h3>
-                            <p className="text-zinc-400 font-medium mb-4" style={{ fontSize: 14 }}>
+                            <h3 className="font-black text-zinc-900 mb-1" style={{ fontSize: 22 }}>Override Lead Fee</h3>
+                            <p className="text-zinc-400 font-medium mb-4" style={{ fontSize: 20 }}>
                                 Set a custom per-lead fee for this partner. Leave blank to use the default ({fmt(detail.default_fee_cents)}/lead).
                             </p>
                             <div className="flex items-center gap-3">
-                                <div className="relative max-w-[160px]">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-zinc-400" style={{ fontSize: 16 }}>$</span>
+                                <div className="relative max-w-[180px]">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-zinc-400" style={{ fontSize: 22 }}>$</span>
                                     <input
                                         type="number"
                                         min="0"
@@ -395,23 +384,23 @@ export function ForcePartnersPane() {
                                         value={customFee}
                                         onChange={e => setCustomFee(e.target.value)}
                                         placeholder={(detail.default_fee_cents / 100).toFixed(2)}
-                                        className="w-full pl-7 pr-3 h-11 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                                        style={{ fontSize: 16 }}
+                                        className="w-full pl-7 pr-3 h-12 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                                        style={{ fontSize: 22 }}
                                     />
                                 </div>
                                 <button
                                     onClick={() => saveCustomFee()}
                                     disabled={savingFee}
-                                    className="h-11 px-5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-60"
-                                    style={{ fontSize: 15 }}
+                                    className="h-12 px-6 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-60"
+                                    style={{ fontSize: 20 }}
                                 >
                                     {savingFee ? "Saving…" : "Save"}
                                 </button>
                                 {detail.custom_fee_cents != null && (
                                     <button
                                         onClick={() => { setCustomFee(""); saveCustomFee(null); }}
-                                        className="h-11 px-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-xl font-bold transition-all"
-                                        style={{ fontSize: 14 }}
+                                        className="h-12 px-6 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-xl font-bold transition-all"
+                                        style={{ fontSize: 20 }}
                                     >
                                         Reset to Default
                                     </button>

@@ -68,17 +68,17 @@ export function PinConfirmationModal({ leadId, onConfirmed, onClose }: PinConfir
                     <div className="w-16 h-16 bg-orange-100 rounded-3xl flex items-center justify-center mb-4 mx-auto">
                         <CheckCircle2 className="w-8 h-8 text-orange-600" />
                     </div>
-                    <DialogTitle className="text-2xl font-black text-center text-zinc-900 font-display">
+                    <DialogTitle className="text-3xl font-black text-center text-zinc-900 font-display">
                         Confirm Job Completion
                     </DialogTitle>
-                    <DialogDescription className="text-center text-zinc-500 font-medium">
+                    <DialogDescription className="text-center text-zinc-500 font-medium text-lg">
                         Enter the 4-digit PIN provided by the customer to confirm the job is complete and release the referral payment.
                     </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-6 py-4">
                     <div className="space-y-2">
-                        <Label htmlFor="pin" className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-4">
+                        <Label htmlFor="pin" className="block text-base font-black text-zinc-400 uppercase tracking-widest mb-4">
                             4-Digit Customer PIN
                         </Label>
                         <Input
@@ -92,13 +92,13 @@ export function PinConfirmationModal({ leadId, onConfirmed, onClose }: PinConfir
                                 const val = e.target.value.replace(/\D/g, "");
                                 if (val.length <= 4) setPin(val);
                             }}
-                            className="text-center text-4xl font-black tracking-[1em] h-20 rounded-2xl border-zinc-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all font-display"
+                            className="text-center text-5xl font-black tracking-[1em] h-20 rounded-2xl border-zinc-200 focus:border-orange-500 focus:ring-orange-500/20 transition-all font-display"
                             autoFocus
                         />
                     </div>
 
                     {error && (
-                        <div className="flex items-center gap-2 text-red-500 bg-red-50 p-4 rounded-xl text-sm font-bold border border-red-100 animate-in shake-in">
+                        <div className="flex items-center gap-2 text-red-500 bg-red-50 p-4 rounded-xl text-base font-bold border border-red-100 animate-in shake-in">
                             <XCircle className="w-4 h-4 shrink-0" />
                             {error}
                         </div>
@@ -108,7 +108,7 @@ export function PinConfirmationModal({ leadId, onConfirmed, onClose }: PinConfir
                         <Button
                             type="submit"
                             disabled={pin.length !== 4 || isSubmitting}
-                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full py-6 h-auto text-lg font-bold shadow-lg shadow-orange-500/20 active:scale-95 transition-all"
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full py-6 h-auto text-xl font-bold shadow-lg shadow-orange-500/20 active:scale-95 transition-all"
                         >
                             {isSubmitting ? (
                                 <Loader2 className="w-6 h-6 animate-spin" />

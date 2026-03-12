@@ -83,22 +83,22 @@ export default async function BusinessDashboardPage() {
                                 </div>
                                 <div className="min-w-0">
                                     <div className="flex flex-wrap items-center gap-2">
-                                        <h1 className="font-black text-zinc-900 leading-tight break-words" style={{ fontSize: 24 }}>
+                                        <h1 className="font-black text-zinc-900 leading-tight break-words" style={{ fontSize: 36 }}>
                                             {greeting}, {business.name}
                                         </h1>
-                                        <span className="text-[10px] font-bold bg-slate-800 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">
+                                        <span className="text-sm font-black bg-slate-800 text-white px-3 py-1 rounded-full uppercase tracking-widest">
                                             Business Mode
                                         </span>
                                         <Link href={`/b/${business.slug}?edit=1`} className="p-1.5 text-zinc-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all">
-                                            <Pencil className="w-4 h-4" />
+                                            <Pencil className="w-5 h-5" />
                                         </Link>
                                     </div>
-                                    <p className="text-zinc-500 font-bold uppercase tracking-wide mt-0.5" style={{ fontSize: 12 }}>
+                                    <p className="text-zinc-500 font-black uppercase tracking-[0.15em] mt-1" style={{ fontSize: 18 }}>
                                         Business Command Centre
                                     </p>
                                 </div>
                             </div>
-                            <Button asChild variant="outline" className="rounded-full px-5 border-zinc-200 h-10 font-bold text-zinc-600 hover:text-orange-600 transition-all w-full sm:w-auto justify-center" style={{ fontSize: 14 }}>
+                            <Button asChild variant="outline" className="rounded-full px-8 border-2 border-zinc-200 h-16 font-black text-zinc-600 hover:text-orange-600 transition-all w-full sm:w-auto justify-center shadow-sm active:scale-95" style={{ fontSize: 20 }}>
                                 <Link href={`/b/${business.slug}`} target="_blank">View Live Profile</Link>
                             </Button>
                         </div>
@@ -108,8 +108,8 @@ export default async function BusinessDashboardPage() {
                             <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex flex-col sm:flex-row sm:items-center gap-4">
                                 <AlertTriangle className="w-5 h-5 text-red-500 shrink-0" />
                                 <div className="flex-1">
-                                    <p className="font-bold text-red-700" style={{ fontSize: 14 }}>Wallet below minimum — top up to unlock leads</p>
-                                    <p className="text-red-600 font-medium" style={{ fontSize: 13 }}>Balance: ${(walletCents / 100).toFixed(2)} · Need $25.00</p>
+                                    <p className="font-black text-red-700" style={{ fontSize: 20 }}>Wallet below minimum — top up to unlock leads</p>
+                                    <p className="text-red-600 font-bold mt-0.5" style={{ fontSize: 18 }}>Balance: ${(walletCents / 100).toFixed(2)} · Need $25.00</p>
                                 </div>
                                 <WalletWidget currentBalance={walletCents} />
                             </div>
@@ -125,12 +125,12 @@ export default async function BusinessDashboardPage() {
                                 return (
                                     <div key={stat.label} className="bg-white border border-zinc-100 rounded-2xl p-5 hover:shadow-md hover:-translate-y-px transition-all group">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <div className={`w-8 h-8 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                                                <Icon className="w-4 h-4" />
+                                            <div className={`w-10 h-10 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm`}>
+                                                <Icon className="w-5 h-5" />
                                             </div>
-                                            <span className="font-bold text-zinc-400 uppercase tracking-wider" style={{ fontSize: 14 }}>{stat.label}</span>
+                                            <span className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: 18 }}>{stat.label}</span>
                                         </div>
-                                        <div className="font-black text-zinc-900 leading-none" style={{ fontSize: 32 }}>{stat.value}</div>
+                                        <div className="font-black text-zinc-900 leading-none tracking-tight" style={{ fontSize: 48 }}>{stat.value}</div>
                                     </div>
                                 );
                             })}

@@ -88,7 +88,7 @@ async def release_pending_earnings(db: AsyncSession):
                 """), {"eid": earning["id"]})
                 ref_row = ref_info.mappings().first()
                 if ref_row and ref_row["email"]:
-                    send_referrer_earning_available(
+                    await send_referrer_earning_available(
                         email=ref_row["email"],
                         full_name=ref_row["full_name"] or ref_row["email"],
                         amount_dollars=earning["gross_cents"] / 100,

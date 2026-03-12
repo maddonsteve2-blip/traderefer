@@ -42,29 +42,29 @@ export function StorefrontLinkCard({ slug, businessName }: StorefrontLinkCardPro
     return (
         <div className="bg-zinc-900 rounded-[40px] p-8 text-white relative overflow-hidden shadow-2xl group">
             <LinkIcon className="absolute -right-8 -bottom-8 w-40 h-40 text-orange-500/10 rotate-12 group-hover:scale-110 transition-transform duration-500" />
-            <h3 className="text-xl font-bold mb-4 relative z-10 font-display">Your Storefront</h3>
-            <p className="text-zinc-400 text-sm mb-6 relative z-10 leading-relaxed font-medium">
+            <h3 className="text-3xl font-black mb-4 relative z-10 font-display">Your Storefront</h3>
+            <p className="text-zinc-400 text-lg mb-6 relative z-10 leading-relaxed font-medium">
                 This is your public booking page. Share this link with customers and referrers.
             </p>
 
-            <div className="flex items-center gap-2 p-3 bg-zinc-800 rounded-2xl mb-6 border border-zinc-700 relative z-10 transition-all hover:bg-zinc-700/50">
-                <div className="text-base text-zinc-300 truncate flex-1 font-mono tracking-tight">
+            <div className="flex items-center gap-3 p-4 bg-zinc-800 rounded-2xl mb-6 border border-zinc-700 relative z-10 transition-all hover:bg-zinc-700/50">
+                <div className="text-xl text-zinc-300 truncate flex-1 font-mono tracking-tight font-bold">
                     traderefer.au/b/{slug}
                 </div>
                 <Button
                     onClick={handleCopy}
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                    className="h-10 w-10 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
                 >
-                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                 </Button>
             </div>
 
             <div className="space-y-4 relative z-10">
-                <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full font-bold shadow-lg shadow-orange-500/30 h-12 flex items-center gap-2">
+                <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black shadow-lg shadow-orange-500/30 h-16 flex items-center gap-2 text-xl active:scale-95 transition-all">
                     <Link href={`/b/${slug}`} target="_blank">
-                        View Storefront <ExternalLink className="w-4 h-4" />
+                        View Storefront <ExternalLink className="w-5 h-5" />
                     </Link>
                 </Button>
 

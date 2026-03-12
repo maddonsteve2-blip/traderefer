@@ -29,14 +29,11 @@ import { NotificationBell } from "@/components/NotificationBell";
 
 const BUSINESS_NAV = [
     { label: "Overview",        href: "/dashboard/business",                        matchPath: "/dashboard/business",                 icon: LayoutDashboard, exact: true },
-    { label: "Leads",           href: "/dashboard/business/sales?tab=leads",        matchPath: "/dashboard/business/sales",           icon: Target },
+    { label: "Sales & Growth",  href: "/dashboard/business/sales?tab=leads",        matchPath: "/dashboard/business/sales",           icon: Target },
     { label: "Messages",        href: "/dashboard/business/messages",               matchPath: "/dashboard/business/messages",        icon: MessageSquare },
     { label: "Referral Force",  href: "/dashboard/business/force?tab=partners",     matchPath: "/dashboard/business/force",           icon: Users },
-    { label: "Deals",           href: "/dashboard/business/sales?tab=offers",       matchPath: "/dashboard/business/deals",           icon: Tag },
-    { label: "Campaigns",       href: "/dashboard/business/sales?tab=promotions",   matchPath: "/dashboard/business/campaigns",       icon: Megaphone },
     { label: "Analytics",       href: "/dashboard/business/analytics",              matchPath: "/dashboard/business/analytics",       icon: BarChart3 },
-    { label: "Profile",         href: "/dashboard/business/profile",                matchPath: "/dashboard/business/profile",         icon: Globe },
-    { label: "Settings",        href: "/dashboard/business/settings",               matchPath: "/dashboard/business/settings",        icon: Settings },
+    { label: "Account & Profile",href: "/dashboard/business/profile",               matchPath: "/dashboard/business/profile",         icon: Globe },
 ];
 
 const REFERRER_NAV = [
@@ -45,8 +42,8 @@ const REFERRER_NAV = [
     { label: "My Team",         href: "/dashboard/referrer/manage",            matchPath: "/dashboard/referrer/manage",          icon: Users },
     { label: "Messages",        href: "/dashboard/referrer/messages",          matchPath: "/dashboard/referrer/messages",        icon: MessageSquare },
     { label: "Applications",    href: "/dashboard/referrer/applications",      matchPath: "/dashboard/referrer/applications",    icon: ClipboardList },
-    { label: "Rewards",         href: "/dashboard/referrer/withdraw",          matchPath: "/dashboard/referrer/withdraw",        icon: Gift },
-    { label: "My Profile",      href: "/dashboard/referrer/profile",           matchPath: "/dashboard/referrer/profile",         icon: User },
+    { label: "Gift Cards",      href: "/dashboard/referrer/withdraw",          matchPath: "/dashboard/referrer/withdraw",        icon: Gift },
+    { label: "Account & Profile",href: "/dashboard/referrer/profile",          matchPath: "/dashboard/referrer/profile",         icon: User },
 ];
 
 interface NavItem {
@@ -94,7 +91,7 @@ function SidebarContent({
                         priority
                     />
                     {expanded && (
-                        <span className="text-base font-black tracking-tight leading-none uppercase whitespace-nowrap">
+                        <span className="text-xl font-black tracking-tight leading-none uppercase whitespace-nowrap">
                             <span className="text-white">TRADE</span>
                             <span className="text-orange-500">REFER</span>
                         </span>
@@ -129,7 +126,7 @@ function SidebarContent({
                                 }`}
                             />
                             {expanded && (
-                                <span className={`text-sm font-semibold whitespace-nowrap truncate ${
+                                <span className={`text-lg font-bold whitespace-nowrap truncate ${
                                     active ? "text-white" : "text-zinc-300 group-hover:text-white"
                                 }`}>
                                     {item.label}
@@ -151,7 +148,7 @@ function SidebarContent({
                 >
                     <ArrowLeftRight className="shrink-0 w-[18px] h-[18px]" />
                     {expanded && (
-                        <span className="text-sm font-semibold text-zinc-400 group-hover:text-zinc-200 whitespace-nowrap truncate">
+                        <span className="text-lg font-bold text-zinc-400 group-hover:text-zinc-200 whitespace-nowrap truncate">
                             {isBusinessDashboard ? "Switch to Referrer" : "Switch to Business"}
                         </span>
                     )}
@@ -165,7 +162,7 @@ function SidebarContent({
                 >
                     <LogOut className="shrink-0 w-[18px] h-[18px]" />
                     {expanded && (
-                        <span className="text-sm font-semibold whitespace-nowrap">Sign Out</span>
+                        <span className="text-lg font-bold whitespace-nowrap">Sign Out</span>
                     )}
                 </button>
 
@@ -181,10 +178,10 @@ function SidebarContent({
                     </div>
                     {expanded && (
                         <div className="min-w-0 flex-1">
-                            <p className="text-xs font-bold text-zinc-200 truncate leading-tight">
+                            <p className="text-base font-bold text-zinc-200 truncate leading-tight">
                                 {user?.firstName} {user?.lastName}
                             </p>
-                            <p className="text-[10px] text-zinc-500 truncate">
+                            <p className="text-sm text-zinc-500 truncate">
                                 {user?.emailAddresses?.[0]?.emailAddress}
                             </p>
                         </div>
@@ -264,7 +261,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                         className="rounded-lg"
                         priority
                     />
-                    <span className="text-base font-black tracking-tight leading-none uppercase">
+                    <span className="text-lg font-black tracking-tight leading-none uppercase">
                         <span className="text-white">TRADE</span>
                         <span className="text-orange-500">REFER</span>
                     </span>

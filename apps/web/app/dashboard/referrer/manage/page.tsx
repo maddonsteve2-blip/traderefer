@@ -115,17 +115,17 @@ function InlineChat({ businessId, businessName, token }: { businessId: string; b
     return (
         <div className="flex flex-col h-full">
             {/* Chat header */}
-            <div className="flex-none flex items-center justify-between px-4 py-3 bg-[#1a1a1a] rounded-t-2xl">
-                <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-orange-400" />
-                    <span className="font-black text-white" style={{ fontSize: '16px' }}>Chat with {businessName}</span>
+            <div className="flex-none flex items-center justify-between px-5 py-4 bg-[#1a1a1a] rounded-t-2xl">
+                <div className="flex items-center gap-2.5">
+                    <MessageSquare className="w-5 h-5 text-orange-400" />
+                    <span className="font-black text-white" style={{ fontSize: '18px' }}>Chat with {businessName}</span>
                 </div>
                 <Link
                     href="/dashboard/referrer/messages"
                     className="text-zinc-400 hover:text-orange-400 font-bold transition-colors flex items-center gap-1"
-                    style={{ fontSize: '13px' }}
+                    style={{ fontSize: '15px' }}
                 >
-                    Full view <ChevronRight className="w-3 h-3" />
+                    Full view <ChevronRight className="w-4 h-4" />
                 </Link>
             </div>
 
@@ -350,29 +350,29 @@ export default function ReferrerManagePage() {
                 className={`w-full text-left p-4 rounded-2xl transition-all ${isActive ? "bg-white shadow-lg shadow-zinc-100 ring-2 ring-orange-500/20" : "hover:bg-white hover:shadow-md hover:shadow-zinc-100"}`}
             >
                 <div className="flex items-start gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden" style={{ fontSize: '15px' }}>
+                    <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden" style={{ fontSize: '18px' }}>
                         {link.logo_url ? <img src={link.logo_url} alt="" className="w-full h-full object-cover" /> : initials}
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
-                            <p className="font-black text-zinc-900 truncate leading-tight" style={{ fontSize: '17px' }}>{link.name}</p>
+                            <p className="font-black text-zinc-900 truncate leading-tight" style={{ fontSize: '19px' }}>{link.name}</p>
                             {link.is_verified && <BadgeCheck className="w-4 h-4 text-orange-500 shrink-0" />}
                         </div>
-                        <p className="font-medium text-zinc-500 truncate" style={{ fontSize: '15px' }}>{link.trade_category}</p>
-                        <span className="inline-block mt-1.5 px-2.5 py-1 bg-zinc-900 text-white font-black rounded-lg" style={{ fontSize: '13px' }}>
+                        <p className="font-bold text-zinc-500 truncate mt-0.5" style={{ fontSize: '16px' }}>{link.trade_category}</p>
+                        <span className="inline-block mt-2 px-3 py-1.5 bg-zinc-900 text-white font-black rounded-lg" style={{ fontSize: '14px' }}>
                             ${((link.referral_fee_cents * 0.8) / 100).toFixed(2)} per lead
                         </span>
                     </div>
                 </div>
                 {isActive && (
-                    <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-zinc-100">
+                    <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-zinc-100">
                         <div className="text-center">
-                            <p className="font-black text-zinc-900" style={{ fontSize: '18px' }}>{link.leads}</p>
-                            <p className="font-bold text-zinc-400 uppercase tracking-wide" style={{ fontSize: '11px' }}>Leads</p>
+                            <p className="font-black text-zinc-900" style={{ fontSize: '20px' }}>{link.leads}</p>
+                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '12px' }}>Leads</p>
                         </div>
                         <div className="text-center">
-                            <p className="font-black text-emerald-600" style={{ fontSize: '18px' }}>${link.earned.toFixed(0)}</p>
-                            <p className="font-bold text-zinc-400 uppercase tracking-wide" style={{ fontSize: '11px' }}>Earned</p>
+                            <p className="font-black text-emerald-600" style={{ fontSize: '20px' }}>${link.earned.toFixed(0)}</p>
+                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '12px' }}>Earned</p>
                         </div>
                     </div>
                 )}
@@ -389,18 +389,18 @@ export default function ReferrerManagePage() {
                 className={`w-full text-left p-4 rounded-2xl transition-all ${isActive ? "bg-white shadow-lg shadow-zinc-100 ring-2 ring-amber-400/30" : "hover:bg-white hover:shadow-md hover:shadow-zinc-100"}`}
             >
                 <div className="flex items-start gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center font-black text-amber-600 shrink-0 overflow-hidden" style={{ fontSize: '15px' }}>
+                    <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center font-black text-amber-600 shrink-0 overflow-hidden" style={{ fontSize: '18px' }}>
                         {app.business_logo ? <img src={app.business_logo} alt="" className="w-full h-full object-cover" /> : initials}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="font-black text-zinc-900 truncate leading-tight" style={{ fontSize: '17px' }}>{app.business_name}</p>
-                        <p className="font-medium text-zinc-500 truncate" style={{ fontSize: '15px' }}>{app.trade_category}</p>
-                        <div className="flex items-center justify-between mt-1.5">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 font-black rounded-lg" style={{ fontSize: '12px' }}>
-                                <Clock className="w-3 h-3" /> Awaiting Review
+                        <p className="font-black text-zinc-900 truncate leading-tight" style={{ fontSize: '19px' }}>{app.business_name}</p>
+                        <p className="font-bold text-zinc-500 truncate mt-0.5" style={{ fontSize: '16px' }}>{app.trade_category}</p>
+                        <div className="flex items-center justify-between mt-2">
+                            <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-100 text-amber-700 font-black rounded-lg" style={{ fontSize: '13px' }}>
+                                <Clock className="w-3.5 h-3.5" /> Awaiting Review
                             </span>
                             {app.referral_fee_cents > 0 && (
-                                <span className="font-black text-orange-600" style={{ fontSize: '13px' }}>
+                                <span className="font-black text-orange-600" style={{ fontSize: '15px' }}>
                                     ${((app.referral_fee_cents * 0.8) / 100).toFixed(2)}/lead
                                 </span>
                             )}
@@ -456,7 +456,7 @@ export default function ReferrerManagePage() {
                         {/* ── Active Team section ── */}
                         {links.length > 0 && (
                             <>
-                                <p className="font-black uppercase tracking-widest text-zinc-400 px-2 pt-2 pb-1" style={{ fontSize: '11px' }}>
+                                <p className="font-black uppercase tracking-widest text-zinc-400 px-3 pt-3 pb-1.5" style={{ fontSize: '13px' }}>
                                     My Active Team ({links.length})
                                 </p>
                                 {links.map(link => <ApprovedCard key={link.slug} link={link} />)}
@@ -466,7 +466,7 @@ export default function ReferrerManagePage() {
                         {/* ── Pending section ── */}
                         {pendingApps.length > 0 && (
                             <>
-                                <p className="font-black uppercase tracking-widest text-amber-500 px-2 pt-4 pb-1" style={{ fontSize: '11px' }}>
+                                <p className="font-black uppercase tracking-widest text-amber-500 px-3 pt-5 pb-1.5" style={{ fontSize: '13px' }}>
                                     Pending Review ({pendingApps.length})
                                 </p>
                                 {pendingApps.map(app => <PendingCard key={app.id} app={app} />)}
@@ -493,68 +493,68 @@ export default function ReferrerManagePage() {
                                     <div className="flex items-center justify-between flex-wrap gap-3">
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2 min-w-0">
-                                                <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '28px' }}>{link.name}</h1>
-                                                {link.is_verified && <BadgeCheck className="w-6 h-6 text-orange-500" />}
+                                                <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '32px' }}>{link.name}</h1>
+                                                {link.is_verified && <BadgeCheck className="w-7 h-7 text-orange-500" />}
                                             </div>
-                                            <p className="font-medium text-zinc-500 mt-0.5" style={{ fontSize: '17px' }}>{link.sub}</p>
+                                            <p className="font-bold text-zinc-500 mt-1" style={{ fontSize: '19px' }}>{link.sub}</p>
                                         </div>
                                         <div className="flex flex-wrap items-center gap-3">
-                                            <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2">
-                                                <TrendingUp className="w-4 h-4 text-emerald-500" />
-                                                <span className="font-black text-zinc-900" style={{ fontSize: '15px' }}>{link.leads} leads</span>
+                                            <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 shadow-sm">
+                                                <TrendingUp className="w-5 h-5 text-emerald-500" />
+                                                <span className="font-black text-zinc-900" style={{ fontSize: '17px' }}>{link.leads} leads</span>
                                             </div>
-                                            <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200 rounded-xl px-3 py-2">
-                                                <Zap className="w-4 h-4 text-orange-500" />
-                                                <span className="font-black text-zinc-900" style={{ fontSize: '15px' }}>${link.earned.toFixed(0)} earned</span>
+                                            <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 shadow-sm">
+                                                <Zap className="w-5 h-5 text-orange-500" />
+                                                <span className="font-black text-zinc-900" style={{ fontSize: '17px' }}>${link.earned.toFixed(0)} earned</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                        <div className="bg-zinc-900 px-5 py-4">
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '13px' }}>Your Referral Link</p>
-                                            <p className="font-bold text-zinc-200 mt-0.5" style={{ fontSize: '15px' }}>Share this link — you earn {feeDisplay}</p>
+                                        <div className="bg-zinc-900 px-6 py-5">
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '15px' }}>Your Referral Link</p>
+                                            <p className="font-bold text-zinc-200 mt-1" style={{ fontSize: '17px' }}>Share this link — you earn {feeDisplay}</p>
                                         </div>
-                                        <div className="bg-white px-5 py-5">
-                                            <div className="w-full overflow-x-auto bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 font-mono text-zinc-600 whitespace-nowrap mb-4" style={{ fontSize: '16px' }}>
+                                        <div className="bg-white px-6 py-6">
+                                            <div className="w-full overflow-x-auto bg-zinc-50 border border-zinc-200 rounded-xl px-5 py-4 font-mono text-zinc-600 whitespace-nowrap mb-5" style={{ fontSize: '18px' }}>
                                                 {referralLink}
                                             </div>
-                                            <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl font-black text-white transition-all active:scale-[0.99]" style={{ fontSize: '19px', background: copied ? "#16a34a" : "#FF7A00", boxShadow: copied ? "0 8px 24px rgba(22,163,74,0.25)" : "0 8px 24px rgba(255,122,0,0.35)" }}>
-                                                {copied ? <><Check className="w-5 h-5" /> Link Copied!</> : <><Copy className="w-5 h-5" /> Copy Referral Link</>}
+                                            <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 h-16 rounded-2xl font-black text-white transition-all active:scale-[0.99] shadow-xl shadow-orange-500/30" style={{ fontSize: '22px', background: copied ? "#16a34a" : "#FF7A00" }}>
+                                                {copied ? <><Check className="w-6 h-6" /> Link Copied!</> : <><Copy className="w-6 h-6" /> Copy Referral Link</>}
                                             </button>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-                                                <Link href={referralLink} target="_blank" className="flex items-center justify-center gap-2 px-5 py-3 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-bold text-zinc-700 transition-all" style={{ fontSize: '15px' }}>
-                                                    <Share2 className="w-4 h-4" /> Open Public Link
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                                <Link href={referralLink} target="_blank" className="flex items-center justify-center gap-2.5 px-6 py-4 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-black text-zinc-700 transition-all" style={{ fontSize: '17px' }}>
+                                                    <Share2 className="w-5 h-5" /> Open Public Link
                                                 </Link>
-                                                <Link href={leadFormLink} target="_blank" className="flex items-center justify-center gap-2 px-5 py-3 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl font-bold text-orange-700 transition-all" style={{ fontSize: '15px' }}>
-                                                    <Send className="w-4 h-4" /> Submit Lead / Job
+                                                <Link href={leadFormLink} target="_blank" className="flex items-center justify-center gap-2.5 px-6 py-4 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl font-black text-orange-700 transition-all" style={{ fontSize: '17px' }}>
+                                                    <Send className="w-5 h-5" /> Submit Lead / Job
                                                 </Link>
-                                                <Link href={referrerBusinessPageLink} className="flex items-center justify-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 rounded-xl font-bold text-white transition-all" style={{ fontSize: '15px' }}>
-                                                    <Building2 className="w-4 h-4" /> Referral Page
+                                                <Link href={referrerBusinessPageLink} className="flex items-center justify-center gap-2.5 px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-xl font-black text-white transition-all" style={{ fontSize: '17px' }}>
+                                                    <Building2 className="w-5 h-5" /> Referral Page
                                                 </Link>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                        <div className="bg-zinc-900 px-5 py-4">
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '13px' }}>Marketing Swipe File</p>
-                                            <p className="font-bold text-zinc-200 mt-0.5" style={{ fontSize: '15px' }}>Ready-to-send copy — tap, copy, share</p>
+                                        <div className="bg-zinc-900 px-6 py-5">
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '15px' }}>Marketing Swipe File</p>
+                                            <p className="font-bold text-zinc-200 mt-1" style={{ fontSize: '17px' }}>Ready-to-send copy — tap, copy, share</p>
                                         </div>
                                         <div className="bg-white">
-                                            <div className="flex overflow-x-auto px-5 pt-4 gap-1">
+                                            <div className="flex overflow-x-auto px-6 pt-5 gap-2">
                                                 {([{ key: "sms", icon: MessageSquare, label: "SMS" }, { key: "email", icon: Mail, label: "Email" }, { key: "social", icon: Share2, label: "Social" }] as const).map(({ key, icon: Icon, label }) => (
-                                                    <button key={key} onClick={() => setTab(key)} className={`flex shrink-0 items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all ${tab === key ? "bg-zinc-900 text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"}`} style={{ fontSize: '17px' }}>
-                                                        <Icon className="w-4 h-4" />{label}
+                                                    <button key={key} onClick={() => setTab(key)} className={`flex shrink-0 items-center gap-2.5 px-6 py-3 rounded-xl font-black transition-all ${tab === key ? "bg-zinc-900 text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"}`} style={{ fontSize: '18px' }}>
+                                                        <Icon className="w-5 h-5" />{label}
                                                     </button>
                                                 ))}
                                             </div>
-                                            <div className="px-5 pt-3 pb-5">
-                                                <div className="bg-zinc-50 rounded-2xl p-4 font-medium text-zinc-700 leading-relaxed whitespace-pre-wrap cursor-text select-all" style={{ fontSize: '17px', lineHeight: 1.65 }}>
+                                            <div className="px-6 pt-4 pb-6">
+                                                <div className="bg-zinc-50 rounded-2xl p-6 font-bold text-zinc-700 leading-relaxed whitespace-pre-wrap cursor-text select-all border border-zinc-100" style={{ fontSize: '18px', lineHeight: 1.7 }}>
                                                     {swipeContent[tab]}
                                                 </div>
-                                                <button onClick={handleCopySwipe} className="mt-3 flex items-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all" style={{ fontSize: '16px' }}>
-                                                    <Copy className="w-4 h-4" /> Copy {tab.toUpperCase()} Copy
+                                                <button onClick={handleCopySwipe} className="mt-4 flex items-center gap-2.5 px-7 py-4 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all shadow-lg active:scale-95" style={{ fontSize: '18px' }}>
+                                                    <Copy className="w-5 h-5" /> Copy {tab.toUpperCase()} Copy
                                                 </button>
                                             </div>
                                         </div>

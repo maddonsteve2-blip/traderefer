@@ -183,58 +183,127 @@ async def _issue_prezzee_or_accumulate(
     lead_id: str, referrer_id: str, payout_cents: int,
     ref_name: str, ref_email: str, ref_phone: str, db: AsyncSession
 ):
-    """Issue Prezzee gift card if balance >= $5, otherwise accumulate."""
-    # Re-read current wallet balance
+    """
+    Smart payout logic after each confirmed lead:
+
+    - Balance < $25    → Accumulate silently (no notification sent yet)
+    - Balance $25–$249 → Send SMS + Email: "You have $XX claimable — log in to claim"
+    - Balance >= $250  → Auto-issue Prezzee gift card, zero out wallet, notify via SMS + Email
+
+    The $300 cap per transaction is enforced by capping the amount claimed to $250 
+    for the auto-payout trigger (leaving headroom for manual claims up to $300 total).
+    Manual claims via the dashboard also cap at $300 per transaction.
+    """
+    # Re-read current wallet balance AFTER this lead's payout was added
     bal_res = await db.execute(
         text("SELECT wallet_balance_cents FROM referrers WHERE id = :rid"),
         {"rid": referrer_id}
     )
     current_balance = bal_res.scalar() or 0
 
-    if current_balance < 500:  # < $5 minimum
-        if ref_phone:
-            await send_sms_referrer_reward_accumulating(ref_phone, ref_name, current_balance / 100)
+    MINIMUM_CLAIM_CENTS = 2500   # $25.00 — minimum to claim manually
+    AUTO_PAYOUT_CENTS   = 25000  # $250.00 — triggers automatic payout
+
+    # ── CASE 1: Balance too low to even notify ──────────────────────────────
+    if current_balance < MINIMUM_CLAIM_CENTS:
+        payment_logger.info(
+            f"Referrer {referrer_id}: balance ${current_balance/100:.2f} below $25 minimum — accumulating silently"
+        )
         return
 
-    # Issue Prezzee
-    try:
-        from services.prezzee_service import create_gift_card, get_order_by_reference
-        amount_dollars = current_balance / 100
-        reference = f"tr-{lead_id}"
+    # ── CASE 2: Balance >= $250 → Auto-payout ──────────────────────────────
+    if current_balance >= AUTO_PAYOUT_CENTS:
+        await _auto_issue_prezzee(
+            lead_id=lead_id,
+            referrer_id=referrer_id,
+            current_balance=current_balance,
+            ref_name=ref_name,
+            ref_email=ref_email,
+            ref_phone=ref_phone,
+            db=db,
+        )
+        return
 
+    # ── CASE 3: Balance $25–$249 → Notify to claim manually ────────────────
+    amount_dollars = current_balance / 100
+    payment_logger.info(
+        f"Referrer {referrer_id}: balance ${amount_dollars:.2f} — sending claim-available notification"
+    )
+
+    # SMS notification
+    if ref_phone:
+        await send_sms_referrer_reward_claimable(ref_phone, ref_name, amount_dollars)
+
+    # Email notification
+    if ref_email:
+        try:
+            from services.email import send_referrer_reward_claimable_email
+            await send_referrer_reward_claimable_email(ref_email, ref_name, amount_dollars)
+        except Exception as e:
+            error_logger.warning(f"Claim-available email failed for referrer {referrer_id}: {e}")
+
+
+async def _auto_issue_prezzee(
+    lead_id: str, referrer_id: str, current_balance: int,
+    ref_name: str, ref_email: str, ref_phone: str, db: AsyncSession
+):
+    """Auto-issue a Prezzee gift card when balance hits $250. Caps at $300 per platform rules."""
+    MAX_CLAIM_CENTS = 30000  # $300 hard cap per transaction
+    amount_cents = min(current_balance, MAX_CLAIM_CENTS)
+    amount_dollars = amount_cents / 100
+    reference = f"tr-auto-{referrer_id[:8]}-{lead_id[:8]}"
+
+    try:
+        from services.prezzee_service import create_gift_card
         order = await create_gift_card(
             reference=reference,
             amount_dollars=amount_dollars,
             recipient_name=ref_name,
             recipient_email=ref_email,
         )
-
         order_uuid = order.get("uuid") or order.get("id") or ""
 
-        # Log payout
+        # Log payout record
         await db.execute(text("""
             INSERT INTO payout_requests
                 (referrer_id, amount_cents, status, method, prezzee_order_uuid, destination_email, created_at)
             VALUES (:rid, :amt, 'completed', 'PREZZEE_SWAP', :uuid, :email, now())
         """), {
-            "rid": referrer_id, "amt": current_balance,
+            "rid": referrer_id, "amt": amount_cents,
             "uuid": order_uuid, "email": ref_email,
         })
 
-        # Zero out referrer wallet
+        # Deduct claimed amount from wallet (don't zero out — they may have more above $300)
         await db.execute(text("""
-            UPDATE referrers SET wallet_balance_cents = 0 WHERE id = :rid
-        """), {"rid": referrer_id})
+            UPDATE referrers
+            SET wallet_balance_cents = GREATEST(0, wallet_balance_cents - :claimed)
+            WHERE id = :rid
+        """), {"claimed": amount_cents, "rid": referrer_id})
+
         await db.commit()
 
+        payment_logger.info(
+            f"AUTO Prezzee issued | referrer={referrer_id} | ${amount_dollars:.2f} | uuid={order_uuid}"
+        )
+
+        # Notify via SMS
         if ref_phone:
             await send_sms_referrer_prezzee_issued(ref_phone, ref_name, amount_dollars, ref_email)
 
-        payment_logger.info(f"Prezzee issued | referrer={referrer_id} | ${amount_dollars:.2f} | uuid={order_uuid}")
+        # Notify via email
+        if ref_email:
+            try:
+                from services.email import send_referrer_prezzee_issued_email
+                await send_referrer_prezzee_issued_email(ref_email, ref_name, amount_dollars)
+            except Exception as e:
+                error_logger.warning(f"Prezzee issued email failed for referrer {referrer_id}: {e}")
 
     except Exception as e:
-        error_logger.error(f"Prezzee issuance failed for referrer {referrer_id}: {e}", exc_info=True)
-        # Don't block — earnings already in wallet, will retry on next confirmed lead
+        error_logger.error(
+            f"AUTO Prezzee issuance FAILED for referrer {referrer_id}: {e}", exc_info=True
+        )
+        # Don't block — earnings are already in wallet, will retry on next confirmed lead or manual claim
+
 
 
 # ── Declined / Unconfirmed: refund to business wallet ───────────────────────

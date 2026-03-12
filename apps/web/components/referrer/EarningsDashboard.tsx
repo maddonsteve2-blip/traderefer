@@ -130,21 +130,21 @@ export function EarningsDashboard() {
             <div className="bg-white border border-zinc-200 rounded-2xl p-3">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-orange-50 border border-orange-200 rounded-xl flex items-center justify-center">
-                            <TierIcon className="w-5 h-5 text-[#FF7A00]" />
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-zinc-900 leading-none">{tierCfg.label} Tier</h2>
-                            <p className="text-base text-zinc-500 font-medium mt-0.5">
-                                You keep <span className="font-black text-zinc-800">{tierCfg.split}%</span> · {stats.total_referrals} total referrals
-                            </p>
-                        </div>
+                <div className="flex items-center gap-3 mb-3">
+                    <div className="w-11 h-11 bg-orange-50 border border-orange-200 rounded-xl flex items-center justify-center">
+                        <TierIcon className="w-6 h-6 text-[#FF7A00]" />
                     </div>
-                    <div className="text-right">
-                        <div className="text-3xl font-black text-zinc-900">{tierCfg.split}%</div>
-                        <div className="text-base font-semibold text-zinc-400">your cut</div>
+                    <div>
+                        <h2 className="text-2xl font-black text-zinc-900 leading-none">{tierCfg.label} Tier</h2>
+                        <p className="text-lg text-zinc-500 font-medium mt-1">
+                            You keep <span className="font-black text-zinc-800">{tierCfg.split}%</span> · {stats.total_referrals} total referrals
+                        </p>
                     </div>
+                </div>
+                <div className="text-right">
+                    <div className="text-4xl font-black text-zinc-900">{tierCfg.split}%</div>
+                    <div className="text-lg font-bold text-zinc-400">your cut</div>
+                </div>
                 </div>
 
                 {/* 4-tier breakdown — condensed, authority style */}
@@ -212,48 +212,48 @@ export function EarningsDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-2">
                 {/* Left 3/5: 2×2 earnings cards */}
                 <div className="lg:col-span-3 grid grid-cols-2 gap-2">
-                    <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center justify-between">
-                        <span className="text-base font-bold text-zinc-500">This Week</span>
-                        <span className={`text-2xl font-black ${stats.earnings.this_week > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_week)}</span>
+                    <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
+                        <span className="text-lg font-bold text-zinc-500">This Week</span>
+                        <span className={`text-3xl font-black ${stats.earnings.this_week > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_week)}</span>
                     </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center justify-between">
+                    <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
-                            <span className="text-base font-bold text-zinc-500">This Month</span>
+                            <span className="text-lg font-bold text-zinc-500">This Month</span>
                             {stats.earnings.month_trend !== 0 && (
-                                <span className={`text-base font-bold flex items-center gap-0.5 ${stats.earnings.month_trend > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                                    {stats.earnings.month_trend > 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                                <span className={`text-lg font-bold flex items-center gap-0.5 ${stats.earnings.month_trend > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                    {stats.earnings.month_trend > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                                     {Math.abs(stats.earnings.month_trend)}%
                                 </span>
                             )}
                         </div>
-                        <span className={`text-2xl font-black ${stats.earnings.this_month > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_month)}</span>
+                        <span className={`text-3xl font-black ${stats.earnings.this_month > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{cents(stats.earnings.this_month)}</span>
                     </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center justify-between">
+                    <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span className="text-base font-bold text-zinc-500">Pending</span>
-                            {stats.earnings.pending > 0 && <span className="text-base text-zinc-400 ml-1.5">· awaiting</span>}
+                            <span className="text-lg font-bold text-zinc-500">Pending</span>
+                            {stats.earnings.pending > 0 && <span className="text-lg text-zinc-400 ml-1.5">· awaiting</span>}
                         </div>
-                        <span className="text-2xl font-black text-orange-500">{cents(stats.earnings.pending)}</span>
+                        <span className="text-3xl font-black text-orange-500">{cents(stats.earnings.pending)}</span>
                     </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex items-center justify-between">
+                    <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
                         <div>
-                            <span className="text-base font-bold text-zinc-500">Lifetime</span>
-                            {stats.earnings.lifetime === 0 && <span className="text-base text-zinc-400 ml-1.5">· soon!</span>}
+                            <span className="text-lg font-bold text-zinc-500">Lifetime</span>
+                            {stats.earnings.lifetime === 0 && <span className="text-lg text-zinc-400 ml-1.5">· soon!</span>}
                         </div>
-                        <span className="text-2xl font-black text-green-600">{cents(stats.earnings.lifetime)}</span>
+                        <span className="text-3xl font-black text-green-600">{cents(stats.earnings.lifetime)}</span>
                     </div>
                 </div>
 
                 {/* Right 2/5: Monthly Goal */}
-                <div className="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 px-3 py-2.5 flex flex-col">
-                    <div className="flex items-center justify-between mb-1.5">
+                <div className="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex flex-col">
+                    <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                            <Target className="w-4 h-4 text-orange-500" />
-                            <span className="text-base font-bold text-zinc-700">Monthly Goal</span>
+                            <Target className="w-5 h-5 text-orange-500" />
+                            <span className="text-lg font-bold text-zinc-700">Monthly Goal</span>
                         </div>
                         <button
                             onClick={() => setEditingGoal(!editingGoal)}
-                            className="text-base font-bold text-orange-500 hover:text-orange-600 underline underline-offset-2"
+                            className="text-lg font-bold text-orange-500 hover:text-orange-600 underline underline-offset-2"
                         >
                             {editingGoal ? "Cancel" : stats.monthly_goal_cents ? "Edit" : "Set Goal →"}
                         </button>
@@ -282,18 +282,18 @@ export function EarningsDashboard() {
                         return (
                             <div className="flex flex-col flex-1 justify-between gap-2">
                                 <div className="flex items-end justify-between">
-                                    <span className="text-3xl font-black text-zinc-900">{cents(earned)}</span>
-                                    <span className="text-base font-bold text-zinc-400">/ {cents(goalCents)}</span>
+                                    <span className="text-4xl font-black text-zinc-900">{cents(earned)}</span>
+                                    <span className="text-lg font-bold text-zinc-400">/ {cents(goalCents)}</span>
                                 </div>
-                                <div className="w-full bg-zinc-100 rounded-full h-3 overflow-hidden">
+                                <div className="w-full bg-zinc-100 rounded-full h-4 overflow-hidden">
                                     <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${pct}%` }} />
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-base font-bold text-zinc-500">{pct}% of goal</span>
+                                    <span className="text-lg font-bold text-zinc-500">{pct}% of goal</span>
                                     {!stats.monthly_goal_cents ? (
-                                        <span className="text-base text-zinc-400">suggested $500</span>
+                                        <span className="text-lg text-zinc-400">suggested $500</span>
                                     ) : pct >= 100 ? (
-                                        <span className="text-base font-bold text-green-600 flex items-center gap-1"><Flame className="w-4 h-4" /> Reached!</span>
+                                        <span className="text-lg font-bold text-green-600 flex items-center gap-1"><Flame className="w-5 h-5" /> Reached!</span>
                                     ) : null}
                                 </div>
                             </div>

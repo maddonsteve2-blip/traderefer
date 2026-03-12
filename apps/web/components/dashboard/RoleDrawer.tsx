@@ -158,7 +158,7 @@ export function PeekingRoleDrawer() {
                         <span
                             className={`font-black uppercase tracking-widest select-none ${handleTextClass}`}
                             style={{
-                                fontSize: 12,
+                                fontSize: 14,
                                 writingMode: "vertical-rl",
                                 textOrientation: "mixed",
                                 transform: "rotate(180deg)",
@@ -184,7 +184,7 @@ export function PeekingRoleDrawer() {
                         <span
                             className={`font-black uppercase tracking-widest select-none ${handleTextClass}`}
                             style={{
-                                fontSize: 16,
+                                fontSize: 18,
                                 writingMode: "vertical-rl",
                                 textOrientation: "mixed",
                                 transform: "rotate(180deg)",
@@ -223,13 +223,13 @@ export function PeekingRoleDrawer() {
 
                     {/* Header */}
                     <div className="px-8 pt-8 pb-5">
-                        <p className="text-orange-400 font-black uppercase tracking-widest mb-1" style={{ fontSize: 12 }}>
+                        <p className="text-orange-400 font-black uppercase tracking-widest mb-1" style={{ fontSize: 16 }}>
                             {cfg.eyebrow}
                         </p>
-                        <h2 className="font-black text-white leading-tight mb-1" style={{ fontSize: 22 }}>
+                        <h2 className="font-black text-white leading-tight mb-1" style={{ fontSize: 28 }}>
                             {cfg.headline}
                         </h2>
-                        <p className="text-zinc-400 font-medium leading-snug" style={{ fontSize: 16 }}>
+                        <p className="text-zinc-400 font-medium leading-snug" style={{ fontSize: 20 }}>
                             {cfg.sub}
                         </p>
                     </div>
@@ -242,8 +242,8 @@ export function PeekingRoleDrawer() {
                                     <FIcon className="w-6 h-6 text-orange-400" />
                                 </div>
                                 <div>
-                                    <p className="font-black text-white leading-tight mb-1" style={{ fontSize: 18 }}>{title}</p>
-                                    <p className="text-zinc-400 font-medium leading-relaxed" style={{ fontSize: 16 }}>{desc}</p>
+                                    <p className="font-black text-white leading-tight mb-1" style={{ fontSize: 22 }}>{title}</p>
+                                    <p className="text-zinc-400 font-medium leading-relaxed" style={{ fontSize: 20 }}>{desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -260,11 +260,11 @@ export function PeekingRoleDrawer() {
                             </div>
                             <div className="px-4 pb-3 flex items-center justify-between">
                                 <div className="flex items-center gap-1.5">
-                                    <p className="text-white font-semibold" style={{ fontSize: 13 }}>Powered by</p>
+                                    <p className="text-white font-semibold" style={{ fontSize: 17 }}>Powered by</p>
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={PREZZEE_LOGO} alt="Prezzee" className="h-3 w-auto brightness-0 invert" />
+                                    <img src={PREZZEE_LOGO} alt="Prezzee" className="h-4 w-auto brightness-0 invert" />
                                 </div>
-                                <p className="text-orange-400 font-black" style={{ fontSize: 13 }}>335+ brands</p>
+                                <p className="text-orange-400 font-black" style={{ fontSize: 17 }}>335+ brands</p>
                             </div>
                         </div>
                     </div>
@@ -274,16 +274,16 @@ export function PeekingRoleDrawer() {
                         <Link
                             href={cfg.href}
                             onClick={handleClose}
-                            className="flex items-center justify-center gap-3 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-500/30"
-                            style={{ height: 64, fontSize: 18 }}
+                            className="flex items-center justify-center gap-3 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-500/30 active:scale-95"
+                            style={{ height: 80, fontSize: 24 }}
                         >
                             {cfg.cta}
-                            <ArrowRight className="w-5 h-5" />
+                            <ArrowRight className="w-6 h-6" />
                         </Link>
                         <button
                             onClick={handleClose}
-                            className="w-full mt-4 text-zinc-500 hover:text-zinc-300 font-medium transition-colors"
-                            style={{ fontSize: 14 }}
+                            className="w-full mt-5 text-zinc-500 hover:text-zinc-300 font-bold transition-colors"
+                            style={{ fontSize: 18 }}
                         >
                             Maybe later
                         </button>

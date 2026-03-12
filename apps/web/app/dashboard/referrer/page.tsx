@@ -2,7 +2,6 @@ import { Search, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { HotCampaigns } from "@/components/referrer/HotCampaigns";
 import { EarningsDashboard } from "@/components/referrer/EarningsDashboard";
-import { DiscoverSection } from "@/components/referrer/DiscoverSection";
 import { MyTradesTeam } from "@/components/referrer/MyTradesTeam";
 import { WelcomeDialog } from "@/components/dashboard/WelcomeDialog";
 import { ReferralProgress } from "@/components/referrer/ReferralProgress";
@@ -63,22 +62,20 @@ export default async function ReferrerDashboardPage() {
                     <div className="lg:col-span-9 space-y-4">
 
                         {/* Page header */}
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                             <div>
-                                <h1 className="text-2xl font-black text-zinc-900 leading-tight">Your Earnings</h1>
-                                <p className="text-base text-zinc-500 font-medium">Track referrals · collect Prezzee rewards</p>
+                                <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '36px' }}>Your Earnings</h1>
+                                <p className="font-bold text-zinc-500 mt-1" style={{ fontSize: '19px' }}>Track referrals · collect Prezzee rewards</p>
                             </div>
                             <Link href="/dashboard/referrer/businesses"
-                                className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold text-lg transition-colors shadow-sm shadow-orange-200">
-                                <Search className="w-4 h-4" /> Find Businesses
+                                className="hidden sm:flex items-center gap-2.5 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200 active:scale-95"
+                                style={{ fontSize: '20px' }}>
+                                <Search className="w-6 h-6" /> Find Businesses
                             </Link>
                         </div>
 
                         {/* Tier + Earnings cards + Monthly Goal inline */}
                         <EarningsDashboard />
-
-                        {/* Tabbed Opportunities: Hot Right Now / New */}
-                        <DiscoverSection />
 
                         {/* My Trades Team */}
                         <MyTradesTeam />
@@ -97,21 +94,6 @@ export default async function ReferrerDashboardPage() {
 
                         {/* Hot Campaigns */}
                         <HotCampaigns />
-
-                        {/* Find Businesses CTA */}
-                        <div className="bg-orange-500 rounded-2xl p-4 text-white">
-                            <div className="flex items-center gap-2 mb-2">
-                                <TrendingUp className="w-4 h-4" />
-                                <h3 className="text-base font-black text-white">Find Businesses</h3>
-                            </div>
-                            <p className="text-white font-semibold text-base mb-3 leading-relaxed opacity-90">
-                                Browse verified tradies and grab referral links to start earning.
-                            </p>
-                            <Link href="/dashboard/referrer/businesses"
-                                className="block w-full text-center bg-white hover:bg-zinc-50 text-orange-600 rounded-xl font-bold text-lg py-2.5 transition-colors">
-                                Explore Catalog
-                            </Link>
-                        </div>
 
                     </aside>
                 </div>

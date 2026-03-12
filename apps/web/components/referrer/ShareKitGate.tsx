@@ -64,13 +64,13 @@ export function ShareKitGate({
 
     if (!linked) {
         return (
-            <div className="flex flex-col items-center gap-6 py-12 px-8 text-center bg-zinc-50/50 rounded-3xl border border-zinc-200 border-dashed">
-                <div className="w-16 h-16 rounded-2xl bg-white border border-zinc-200 flex items-center justify-center shadow-sm">
-                    <Lock className="w-6 h-6 text-zinc-400" />
+            <div className="flex flex-col items-center gap-8 py-16 px-10 text-center bg-zinc-50/50 rounded-[40px] border-2 border-zinc-200 border-dashed shadow-sm">
+                <div className="w-20 h-20 rounded-3xl bg-white border-2 border-zinc-100 flex items-center justify-center shadow-md">
+                    <Lock className="w-8 h-8 text-zinc-400" />
                 </div>
-                <div className="space-y-2">
-                    <p className="text-base font-black text-zinc-900 uppercase tracking-widest">Referrers Exclusive</p>
-                    <p className="text-base text-zinc-500 font-medium leading-relaxed max-w-[280px] mx-auto">
+                <div className="space-y-3">
+                    <p className="font-black text-zinc-900 uppercase tracking-[0.2em]" style={{ fontSize: '14px' }}>Referrers Exclusive</p>
+                    <p className="font-bold text-zinc-500 leading-relaxed max-w-[320px] mx-auto" style={{ fontSize: '18px' }}>
                         {isSignedIn
                             ? "Start referring this business to unlock your custom Share Kit & tracking link."
                             : "Sign in and start referring to unlock your custom Share Kit & tracking link."}
@@ -79,7 +79,8 @@ export function ShareKitGate({
                 {!isSignedIn && (
                     <Link
                         href="/login"
-                        className="text-base font-black text-zinc-900 hover:text-orange-600 underline decoration-zinc-300 hover:decoration-orange-600 transition-all underline-offset-4"
+                        className="font-black text-zinc-900 hover:text-orange-600 underline decoration-2 decoration-zinc-300 hover:decoration-orange-600 transition-all underline-offset-8"
+                        style={{ fontSize: '18px' }}
                     >
                         Sign in to unlock
                     </Link>

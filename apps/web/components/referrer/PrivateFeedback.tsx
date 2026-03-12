@@ -55,10 +55,10 @@ export function PrivateFeedback({ businessSlug, businessName }: PrivateFeedbackP
 
     if (sent) {
         return (
-            <div className="bg-green-50 border border-green-200 rounded-2xl p-5 text-center">
-                <Check className="w-6 h-6 text-green-500 mx-auto mb-2" />
-                <p className="text-sm font-bold text-green-800">Feedback sent to {businessName}</p>
-                <button onClick={() => { setSent(false); setOpen(false); }} className="text-xs text-green-600 mt-1 underline">
+            <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 text-center shadow-sm">
+                <Check className="w-8 h-8 text-green-500 mx-auto mb-3" />
+                <p className="text-lg font-black text-green-800">Feedback sent to {businessName}</p>
+                <button onClick={() => { setSent(false); setOpen(false); }} className="text-sm font-bold text-green-600 mt-2 underline underline-offset-4 hover:text-green-700 transition-colors">
                     Send another
                 </button>
             </div>
@@ -66,27 +66,27 @@ export function PrivateFeedback({ businessSlug, businessName }: PrivateFeedbackP
     }
 
     return (
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5">
+        <div className="bg-white rounded-2xl border-2 border-zinc-200 p-6 shadow-sm">
             <button
                 onClick={() => setOpen(!open)}
-                className="flex items-center gap-2 w-full text-left"
+                className="flex items-center gap-3 w-full text-left group"
             >
-                <MessageSquare className="w-4 h-4 text-zinc-400" />
-                <span className="text-sm font-bold text-zinc-700">Private Feedback</span>
+                <MessageSquare className="w-5 h-5 text-zinc-400 group-hover:text-zinc-600 transition-colors" />
+                <span className="text-lg font-black text-zinc-700 group-hover:text-zinc-900 transition-colors">Private Feedback</span>
             </button>
 
             {open && (
-                <div className="mt-4 space-y-3">
-                    <p className="text-xs text-zinc-400">Only the business owner will see this. Help them improve.</p>
-                    <div className="flex flex-wrap gap-1.5">
+                <div className="mt-5 space-y-4">
+                    <p className="text-sm font-bold text-zinc-400">Only the business owner will see this. Help them improve.</p>
+                    <div className="flex flex-wrap gap-2">
                         {CATEGORIES.map(c => (
                             <button
                                 key={c.value}
                                 onClick={() => setCategory(c.value)}
-                                className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all ${
+                                className={`text-sm font-black px-4 py-2 rounded-full transition-all ${
                                     category === c.value
-                                        ? "bg-zinc-900 text-white"
-                                        : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
+                                        ? "bg-zinc-900 text-white shadow-md shadow-zinc-200"
+                                        : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700"
                                 }`}
                             >
                                 {c.label}
@@ -95,7 +95,7 @@ export function PrivateFeedback({ businessSlug, businessName }: PrivateFeedbackP
                     </div>
                     <textarea
                         rows={3}
-                        className="w-full bg-zinc-50 border-none rounded-xl px-3 py-2.5 text-sm text-zinc-900 font-medium focus:ring-2 focus:ring-zinc-200 resize-none placeholder-zinc-300"
+                        className="w-full bg-zinc-50 border-2 border-zinc-100 rounded-2xl px-4 py-3.5 text-lg text-zinc-900 font-bold focus:ring-4 focus:ring-zinc-100 focus:border-zinc-200 focus:outline-none transition-all resize-none placeholder-zinc-300"
                         placeholder="e.g. Response times have been slow lately..."
                         value={message}
                         onChange={e => setMessage(e.target.value)}
@@ -103,9 +103,10 @@ export function PrivateFeedback({ businessSlug, businessName }: PrivateFeedbackP
                     <button
                         onClick={handleSubmit}
                         disabled={sending || !message.trim()}
-                        className="w-full bg-zinc-900 text-white text-sm font-bold py-2.5 rounded-xl hover:bg-black transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="w-full bg-zinc-900 text-white rounded-2xl h-14 font-black hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center gap-2.5 shadow-xl shadow-zinc-200 active:scale-95"
+                        style={{ fontSize: '17px' }}
                     >
-                        {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                        {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                         Send Privately
                     </button>
                 </div>

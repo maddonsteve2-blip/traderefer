@@ -64,11 +64,11 @@ export function WelcomeDialog() {
                                 <Zap className="w-6 h-6 text-white fill-white" />
                             </div>
                             <div>
-                                <p className="text-orange-400 text-xs font-black uppercase tracking-widest">Welcome to</p>
-                                <p className="text-white text-xl font-black">TradeRefer</p>
+                                <p className="text-orange-400 text-base font-black uppercase tracking-widest">Welcome to</p>
+                                <p className="text-white text-3xl font-black">TradeRefer</p>
                             </div>
                         </div>
-                        <h2 className="text-2xl font-black text-white leading-tight">
+                        <h2 className="text-4xl font-black text-white leading-tight">
                             Here's how you'll earn<br />
                             <span className="text-orange-400">Prezzee gift cards</span>
                         </h2>
@@ -77,44 +77,44 @@ export function WelcomeDialog() {
                     {/* How it works */}
                     <div className="px-8 py-6 space-y-5">
                         {HOW_IT_WORKS.map((item, i) => (
-                            <div key={i} className="flex gap-4">
-                                <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
+                            <div key={i} className="flex gap-5">
+                                <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
                                     {item.icon}
                                 </div>
                                 <div>
-                                    <p className="font-black text-zinc-900 text-sm">{item.title}</p>
-                                    <p className="text-zinc-500 text-sm leading-relaxed">{item.desc}</p>
+                                    <p className="font-black text-zinc-900 text-lg">{item.title}</p>
+                                    <p className="text-zinc-500 text-lg leading-relaxed font-medium">{item.desc}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
 
                     {/* Referral incentive banner */}
-                    <div className="mx-6 mb-4 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl px-5 py-4">
+                    <div className="mx-6 mb-5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl px-6 py-5">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-white font-black text-sm">🎁 Invite friends — earn $25</p>
-                                <p className="text-orange-100 text-xs">Get a $25 Prezzee card when 5 friends join</p>
+                                <p className="text-white font-black text-lg">🎁 Invite friends — earn $25</p>
+                                <p className="text-orange-100 text-base font-medium">Get a $25 Prezzee card when 5 friends join</p>
                             </div>
-                            <Gift className="w-8 h-8 text-orange-200 shrink-0" />
+                            <Gift className="w-10 h-10 text-orange-200 shrink-0" />
                         </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="px-6 pb-6 flex flex-col gap-3">
+                    <div className="px-6 pb-8 flex flex-col gap-3">
                         <Button
                             onClick={handleInvite}
-                            className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-12 font-black"
+                            className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 font-black text-xl shadow-xl shadow-zinc-200 active:scale-95 transition-all"
                         >
-                            <Users className="w-4 h-4 mr-2" />
+                            <Users className="w-5 h-5 mr-2" />
                             Invite Friends Now
                         </Button>
                         <Button
                             onClick={handleClose}
                             variant="ghost"
-                            className="w-full rounded-full h-12 font-bold text-zinc-400 hover:text-zinc-900"
+                            className="w-full rounded-full h-14 font-black text-zinc-400 hover:text-zinc-900 text-lg"
                         >
-                            Explore Dashboard <ChevronRight className="w-4 h-4 ml-1" />
+                            Explore Dashboard <ChevronRight className="w-5 h-5 ml-1" />
                         </Button>
                     </div>
                 </DialogContent>

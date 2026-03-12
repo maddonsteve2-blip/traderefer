@@ -15,9 +15,10 @@ export function BackToDashboard() {
     return (
         <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-zinc-400 hover:text-orange-500 transition-colors mb-6"
+            className="inline-flex items-center gap-2 hover:text-orange-500 transition-colors mb-8 font-black"
+            style={{ fontSize: '16px' }}
         >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-5 h-5" />
             Back to My Dashboard
         </Link>
     );

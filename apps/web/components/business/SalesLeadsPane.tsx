@@ -94,9 +94,9 @@ export function SalesLeadsPane() {
             {/* LEFT — leads list */}
             <div className={`${selected ? "hidden md:flex" : "flex"} w-full md:w-[340px] shrink-0 border-r border-zinc-200 overflow-y-auto bg-white flex-col`}>
                 <div className="sticky top-0 bg-white border-b border-zinc-100 px-4 py-3 z-10">
-                    <p className="font-black text-zinc-900" style={{ fontSize: 18 }}>
+                    <p className="font-black text-zinc-900" style={{ fontSize: 22 }}>
                         Leads
-                        <span className="ml-2 font-bold text-zinc-400" style={{ fontSize: 15 }}>({leads.length})</span>
+                        <span className="ml-2 font-bold text-zinc-400" style={{ fontSize: 19 }}>({leads.length})</span>
                     </p>
                 </div>
 
@@ -107,8 +107,8 @@ export function SalesLeadsPane() {
                 ) : leads.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 px-4 text-center flex-1">
                         <Target className="w-10 h-10 text-zinc-200 mb-3" />
-                        <p className="font-bold text-zinc-400" style={{ fontSize: 16 }}>No leads yet</p>
-                        <p className="text-zinc-300 font-medium mt-1" style={{ fontSize: 14 }}>Leads sent by your referrers appear here</p>
+                        <p className="font-bold text-zinc-400" style={{ fontSize: 18 }}>No leads yet</p>
+                        <p className="text-zinc-300 font-medium mt-1" style={{ fontSize: 16 }}>Leads sent by your referrers appear here</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-zinc-100">
@@ -119,22 +119,22 @@ export function SalesLeadsPane() {
                                 <button
                                     key={lead.id}
                                     onClick={() => setSelectedId(lead.id)}
-                                    className={`w-full text-left px-4 py-3.5 transition-colors ${isSelected ? "bg-orange-50 border-l-4 border-orange-500" : "hover:bg-zinc-50 border-l-4 border-transparent"}`}
+                                    className={`w-full text-left px-4 py-4 transition-colors ${isSelected ? "bg-orange-50 border-l-4 border-orange-500" : "hover:bg-zinc-50 border-l-4 border-transparent"}`}
                                 >
-                                    <div className="flex items-start justify-between gap-2">
+                                    <div className="flex items-start justify-between gap-3">
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-black text-zinc-900 truncate" style={{ fontSize: 16 }}>
-                                                {unlocked ? lead.customer_name : lead.customer_name}
+                                            <p className="font-black text-zinc-900 truncate" style={{ fontSize: 22 }}>
+                                                {lead.customer_name}
                                             </p>
-                                            <p className="text-zinc-400 font-medium truncate flex items-center gap-1 mt-0.5" style={{ fontSize: 13 }}>
-                                                <MapPin className="w-3 h-3 shrink-0" />{lead.suburb}
+                                            <p className="text-zinc-400 font-medium truncate flex items-center gap-1.5 mt-1" style={{ fontSize: 19 }}>
+                                                <MapPin className="w-4 h-4 shrink-0" />{lead.suburb}
                                             </p>
                                         </div>
-                                        <div className="flex flex-col items-end gap-1 shrink-0">
-                                            <span className={`px-2 py-0.5 rounded-lg font-bold ${STATUS_COLORS[lead.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"}`} style={{ fontSize: 11 }}>
+                                        <div className="flex flex-col items-end gap-1.5 shrink-0">
+                                            <span className={`px-2 py-0.5 rounded-lg font-bold ${STATUS_COLORS[lead.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"}`} style={{ fontSize: 17 }}>
                                                 {lead.status.replace(/_/g, " ")}
                                             </span>
-                                            <span className="text-zinc-400 font-medium" style={{ fontSize: 12 }}>{fmt(lead.created_at)}</span>
+                                            <span className="text-zinc-400 font-medium" style={{ fontSize: 18 }}>{fmt(lead.created_at)}</span>
                                         </div>
                                     </div>
                                 </button>
@@ -149,92 +149,92 @@ export function SalesLeadsPane() {
                 {!selected ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
                         <ChevronRight className="w-16 h-16 text-zinc-200 mb-4" />
-                        <p className="font-black text-zinc-400" style={{ fontSize: 20 }}>Select a lead</p>
-                        <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: 16 }}>Click a lead on the left to view details</p>
+                        <p className="font-black text-zinc-400" style={{ fontSize: 24 }}>Select a lead</p>
+                        <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: 20 }}>Click a lead on the left to view details</p>
                     </div>
                 ) : (
                     <div className="max-w-lg mx-auto px-6 py-6 space-y-4">
                         <button
                             onClick={() => setSelectedId(null)}
                             className="md:hidden inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 font-bold"
-                            style={{ fontSize: 15 }}
+                            style={{ fontSize: 19 }}
                         >
                             <ArrowLeft className="w-4 h-4" /> Back to leads
                         </button>
 
                         <div className="flex items-start justify-between">
                             <div>
-                                <h2 className="font-black text-zinc-900" style={{ fontSize: 22 }}>{selected.customer_name}</h2>
-                                <p className="flex items-center gap-1 text-zinc-400 font-medium mt-1" style={{ fontSize: 15 }}>
-                                    <MapPin className="w-4 h-4" />{selected.suburb}
+                                <h2 className="font-black text-zinc-900" style={{ fontSize: 32 }}>{selected.customer_name}</h2>
+                                <p className="flex items-center gap-1.5 text-zinc-400 font-medium mt-1.5" style={{ fontSize: 21 }}>
+                                    <MapPin className="w-5 h-5" />{selected.suburb}
                                 </p>
                             </div>
-                            <span className={`px-3 py-1.5 rounded-xl font-bold ${STATUS_COLORS[selected.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"}`} style={{ fontSize: 14 }}>
+                            <span className={`px-4 py-2 rounded-xl font-bold ${STATUS_COLORS[selected.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"}`} style={{ fontSize: 20 }}>
                                 {selected.status.replace(/_/g, " ")}
                             </span>
                         </div>
 
                         {/* Description */}
-                        <div className="bg-white rounded-2xl border border-zinc-100 p-5">
-                            <p className="font-bold text-zinc-500 uppercase tracking-wider mb-2" style={{ fontSize: 12 }}>Job Description</p>
-                            <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: 16 }}>
+                        <div className="bg-white rounded-2xl border border-zinc-100 p-6">
+                            <p className="font-bold text-zinc-500 uppercase tracking-wider mb-2" style={{ fontSize: 18 }}>Job Description</p>
+                            <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: 22 }}>
                                 {selected.description || "No description provided."}
                             </p>
                         </div>
 
                         {/* Contact details (if unlocked) */}
                         {isUnlocked(selected.status) ? (
-                            <div className="bg-white rounded-2xl border border-zinc-100 p-5 space-y-3">
-                                <p className="font-bold text-zinc-500 uppercase tracking-wider mb-1" style={{ fontSize: 12 }}>Contact Details</p>
+                            <div className="bg-white rounded-2xl border border-zinc-100 p-6 space-y-4">
+                                <p className="font-bold text-zinc-500 uppercase tracking-wider mb-1" style={{ fontSize: 18 }}>Contact Details</p>
                                 {selected.phone && (
-                                    <a href={`tel:${selected.phone}`} className="flex items-center gap-3 text-zinc-700 hover:text-orange-600 transition-colors">
-                                        <div className="w-8 h-8 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
-                                            <Phone className="w-4 h-4 text-orange-600" />
+                                    <a href={`tel:${selected.phone}`} className="flex items-center gap-4 text-zinc-700 hover:text-orange-600 transition-colors">
+                                        <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
+                                            <Phone className="w-5 h-5 text-orange-600" />
                                         </div>
-                                        <span className="font-bold" style={{ fontSize: 16 }}>{selected.phone}</span>
+                                        <span className="font-bold" style={{ fontSize: 22 }}>{selected.phone}</span>
                                     </a>
                                 )}
                                 {selected.email && (
-                                    <a href={`mailto:${selected.email}`} className="flex items-center gap-3 text-zinc-700 hover:text-orange-600 transition-colors">
-                                        <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
-                                            <Mail className="w-4 h-4 text-blue-600" />
+                                    <a href={`mailto:${selected.email}`} className="flex items-center gap-4 text-zinc-700 hover:text-orange-600 transition-colors">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                                            <Mail className="w-5 h-5 text-blue-600" />
                                         </div>
-                                        <span className="font-bold" style={{ fontSize: 16 }}>{selected.email}</span>
+                                        <span className="font-bold" style={{ fontSize: 22 }}>{selected.email}</span>
                                     </a>
                                 )}
                             </div>
                         ) : (
-                            <div className="bg-orange-50 border border-orange-200 rounded-2xl p-5 text-center">
-                                <Unlock className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-                                <p className="font-black text-zinc-900 mb-1" style={{ fontSize: 18 }}>Unlock to see contact details</p>
-                                <p className="text-zinc-500 font-medium mb-4" style={{ fontSize: 15 }}>
+                            <div className="bg-orange-50 border border-orange-200 rounded-2xl p-6 text-center">
+                                <Unlock className="w-10 h-10 text-orange-400 mx-auto mb-3" />
+                                <p className="font-black text-zinc-900 mb-1" style={{ fontSize: 24 }}>Unlock to see contact details</p>
+                                <p className="text-zinc-500 font-medium mb-4" style={{ fontSize: 21 }}>
                                     Fee: ${(selected.unlock_fee_cents / 100).toFixed(2)}
                                 </p>
                                 <button
                                     onClick={() => handleUnlock(selected.id)}
                                     disabled={unlocking === selected.id}
-                                    className="w-full h-12 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-60"
-                                    style={{ fontSize: 16 }}
+                                    className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-60"
+                                    style={{ fontSize: 22 }}
                                 >
-                                    {unlocking === selected.id ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : `Unlock Lead — $${(selected.unlock_fee_cents / 100).toFixed(2)}`}
+                                    {unlocking === selected.id ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : `Unlock Lead — $${(selected.unlock_fee_cents / 100).toFixed(2)}`}
                                 </button>
                             </div>
                         )}
 
                         {/* Referrer info */}
                         {selected.referrer_name && (
-                            <div className="bg-white rounded-2xl border border-zinc-100 p-5 flex items-center gap-3">
-                                <div className="w-10 h-10 bg-zinc-100 rounded-xl flex items-center justify-center shrink-0">
-                                    <User className="w-5 h-5 text-zinc-500" />
+                            <div className="bg-white rounded-2xl border border-zinc-100 p-6 flex items-center gap-4">
+                                <div className="w-12 h-12 bg-zinc-100 rounded-xl flex items-center justify-center shrink-0">
+                                    <User className="w-6 h-6 text-zinc-500" />
                                 </div>
                                 <div>
-                                    <p className="font-bold text-zinc-400" style={{ fontSize: 13 }}>Sent by</p>
-                                    <p className="font-black text-zinc-900" style={{ fontSize: 16 }}>{selected.referrer_name}</p>
+                                    <p className="font-bold text-zinc-400" style={{ fontSize: 18 }}>Sent by</p>
+                                    <p className="font-black text-zinc-900" style={{ fontSize: 22 }}>{selected.referrer_name}</p>
                                 </div>
                             </div>
                         )}
 
-                        <p className="text-zinc-400 font-medium text-center" style={{ fontSize: 13 }}>
+                        <p className="text-zinc-400 font-medium text-center" style={{ fontSize: 18 }}>
                             Received {fmt(selected.created_at)}
                         </p>
                     </div>

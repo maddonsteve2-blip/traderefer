@@ -12,8 +12,8 @@ export function BecomeReferrerCard() {
                         <Rocket className="w-6 h-6 text-orange-500" />
                     </div>
                     <div>
-                        <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Become a Referrer</p>
-                        <p className="text-zinc-500 font-medium" style={{ fontSize: '14px' }}>
+                        <p className="font-black text-zinc-900" style={{ fontSize: '22px' }}>Become a Referrer</p>
+                        <p className="text-zinc-500 font-medium" style={{ fontSize: '19px' }}>
                             Earn referral fees from your existing network — at zero cost.
                         </p>
                     </div>

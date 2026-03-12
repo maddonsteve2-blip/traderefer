@@ -42,22 +42,22 @@ function QRModal({ url, label, onClose }: { url: string; label: string; onClose:
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={onClose}>
             <div className="bg-white rounded-3xl p-8 max-w-xs w-full shadow-2xl" onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between mb-5">
-                    <h3 className="font-black text-zinc-900" style={{ fontSize: 18 }}>{label}</h3>
+                    <h3 className="font-black text-zinc-900" style={{ fontSize: 24 }}>{label}</h3>
                     <button onClick={onClose} className="p-2 hover:bg-zinc-100 rounded-xl transition-colors">
-                        <X className="w-5 h-5 text-zinc-400" />
+                        <X className="w-6 h-6 text-zinc-400" />
                     </button>
                 </div>
                 <div className="bg-zinc-50 rounded-2xl p-4 mb-5 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={qrSrc} alt="QR Code" className="w-48 h-48 rounded-xl" />
+                    <img src={qrSrc} alt="QR Code" className="w-56 h-56 rounded-xl" />
                 </div>
-                <p className="text-zinc-500 font-medium text-center mb-5 break-all" style={{ fontSize: 12 }}>{url}</p>
+                <p className="text-zinc-500 font-medium text-center mb-5 break-all" style={{ fontSize: 20 }}>{url}</p>
                 <button
                     onClick={handleDownload}
-                    className="w-full bg-zinc-900 hover:bg-black text-white rounded-2xl py-3 font-bold transition-all flex items-center justify-center gap-2"
-                    style={{ fontSize: 15 }}
+                    className="w-full bg-zinc-900 hover:bg-black text-white rounded-2xl py-4 font-bold transition-all flex items-center justify-center gap-2"
+                    style={{ fontSize: 22, height: 64 }}
                 >
-                    <QrCode className="w-4 h-4" /> Download QR PNG
+                    <QrCode className="w-5 h-5" /> Download QR PNG
                 </button>
             </div>
         </div>
@@ -105,13 +105,13 @@ function SharingTile({ tile }: { tile: Tile }) {
                 {/* Header row */}
                 <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
-                            <Icon className={`w-5 h-5 ${iconColor}`} />
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
+                            <Icon className={`w-6 h-6 ${iconColor}`} />
                         </div>
                         <div>
-                            <h3 className={`font-black leading-tight ${titleColor}`} style={{ fontSize: 16 }}>{tile.title}</h3>
+                            <h3 className={`font-black leading-tight ${titleColor}`} style={{ fontSize: 24 }}>{tile.title}</h3>
                             {tile.badge ? tile.badge : (
-                                <p className={`font-medium mt-0.5 ${subtitleColor}`} style={{ fontSize: 13 }}>{tile.subtitle}</p>
+                                <p className={`font-medium mt-0.5 ${subtitleColor}`} style={{ fontSize: 20 }}>{tile.subtitle}</p>
                             )}
                         </div>
                     </div>
@@ -122,25 +122,25 @@ function SharingTile({ tile }: { tile: Tile }) {
 
                 {/* URL pill */}
                 <div className={`rounded-xl px-3 py-2 ${urlBg}`}>
-                    <p className={`font-mono font-bold truncate ${urlColor}`} style={{ fontSize: 12 }}>{displayUrl}</p>
+                    <p className={`font-mono font-bold truncate ${urlColor}`} style={{ fontSize: 20 }}>{displayUrl}</p>
                 </div>
 
                 {/* Action buttons */}
                 <div className="flex items-center gap-2 mt-auto">
                     <button
                         onClick={handleCopy}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border font-bold transition-all ${btnClass}`}
-                        style={{ fontSize: 14 }}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border font-bold transition-all ${btnClass}`}
+                        style={{ fontSize: 20, height: 56 }}
                     >
-                        {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                        {copied ? <Check className="w-5 h-5 text-emerald-400" /> : <Copy className="w-5 h-5" />}
                         {copied ? "Copied!" : "Copy Link"}
                     </button>
                     <button
                         onClick={() => setShowQR(true)}
-                        className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border font-bold transition-all ${btnClass}`}
-                        style={{ fontSize: 14 }}
+                        className={`flex items-center justify-center gap-2 px-5 py-3 rounded-xl border font-bold transition-all ${btnClass}`}
+                        style={{ fontSize: 20, height: 56 }}
                     >
-                        <QrCode className="w-4 h-4" />
+                        <QrCode className="w-5 h-5" />
                         QR
                     </button>
                 </div>
@@ -173,8 +173,8 @@ export function SharingStrip({ slug, businessName }: SharingStripProps) {
             badge: (
                 <div className="flex items-center gap-1.5 mt-0.5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={PREZZEE_LOGO} alt="Prezzee" className="h-3 w-auto opacity-70" />
-                    <span className="text-orange-500 font-bold" style={{ fontSize: 12 }}>Earn $25 per 5 active</span>
+                    <img src={PREZZEE_LOGO} alt="Prezzee" className="h-4 w-auto opacity-70" />
+                    <span className="text-orange-500 font-bold" style={{ fontSize: 20 }}>Earn $25 per 5 active</span>
                 </div>
             ),
         },

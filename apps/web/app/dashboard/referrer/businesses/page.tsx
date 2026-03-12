@@ -35,23 +35,23 @@ export default async function DashboardBusinessesPage() {
             <div className="w-full px-6 py-6">
 
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-5">
+                <div className="flex items-center gap-3 mb-6">
                     <Link
                         href="/dashboard/referrer"
                         className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold"
-                        style={{ fontSize: '16px' }}
+                        style={{ fontSize: '18px' }}
                     >
                         <ArrowLeft className="w-4 h-4" /> Dashboard
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-bold" style={{ fontSize: '16px' }}>Find Businesses</span>
+                    <span className="text-zinc-700 font-bold" style={{ fontSize: '18px' }}>Find Businesses</span>
                 </div>
 
-                <div className="mb-5">
-                    <h1 className="font-black text-zinc-900 flex items-center gap-3" style={{ fontSize: '28px' }}>
-                        <Search className="w-7 h-7 text-orange-500" /> Find Businesses to Refer
+                <div className="mb-6">
+                    <h1 className="font-black text-zinc-900 flex items-center gap-3" style={{ fontSize: '32px' }}>
+                        <Search className="w-8 h-8 text-orange-500" /> Find Businesses to Refer
                     </h1>
-                    <p className="text-zinc-500 font-medium mt-1" style={{ fontSize: '17px' }}>
+                    <p className="text-zinc-500 font-medium mt-1" style={{ fontSize: '19px' }}>
                         {suburb
                             ? `Showing businesses near ${suburb} first — grab a referral link and start earning.`
                             : "Browse verified businesses and grab referral links to start earning."}

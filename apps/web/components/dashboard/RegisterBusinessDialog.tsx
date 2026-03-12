@@ -32,8 +32,8 @@ export function RegisterBusinessDialog({ children }: { children: React.ReactNode
                             <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mb-4">
                                 <Building2 className="w-7 h-7 text-white" />
                             </div>
-                            <h2 className="text-2xl font-black text-white mb-1">Register Your Business</h2>
-                            <p className="text-zinc-400 font-medium">Get pre-vetted leads delivered by referrers who know your target customers.</p>
+                            <h2 className="text-4xl font-black text-white mb-1">Register Your Business</h2>
+                            <p className="text-zinc-400 font-medium text-xl">Get pre-vetted leads delivered by referrers who know your target customers.</p>
                         </div>
 
                         {/* Benefits */}
@@ -44,8 +44,8 @@ export function RegisterBusinessDialog({ children }: { children: React.ReactNode
                                         <Icon className="w-5 h-5 text-zinc-600" />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-zinc-900" style={{ fontSize: '15px' }}>{title}</p>
-                                        <p className="text-zinc-500 font-medium" style={{ fontSize: '14px' }}>{desc}</p>
+                                        <p className="font-bold text-zinc-900" style={{ fontSize: '20px' }}>{title}</p>
+                                        <p className="text-zinc-500 font-medium" style={{ fontSize: '18px' }}>{desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -55,16 +55,16 @@ export function RegisterBusinessDialog({ children }: { children: React.ReactNode
                         <div className="px-8 pb-8">
                             <Link
                                 href="/onboarding/business"
-                                className="flex items-center justify-center gap-2 w-full h-14 bg-zinc-900 hover:bg-zinc-800 text-white rounded-2xl font-black transition-all shadow-lg shadow-zinc-200"
-                                style={{ fontSize: '17px' }}
+                                className="flex items-center justify-center gap-2 w-full h-16 bg-zinc-900 hover:bg-black text-white rounded-2xl font-black transition-all shadow-lg shadow-zinc-200"
+                                style={{ fontSize: '22px' }}
                                 onClick={() => setOpen(false)}
                             >
-                                Register Business <ArrowRight className="w-5 h-5" />
+                                Register Business <ArrowRight className="w-6 h-6" />
                             </Link>
                             <button
                                 onClick={() => setOpen(false)}
-                                className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors"
-                                style={{ fontSize: '14px' }}
+                                className="w-full mt-4 text-zinc-400 hover:text-zinc-600 font-medium transition-colors"
+                                style={{ fontSize: '18px' }}
                             >
                                 Maybe later
                             </button>

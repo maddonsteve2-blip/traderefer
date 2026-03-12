@@ -64,8 +64,8 @@ export function ForceConfigPane() {
         <div className="flex-1 overflow-y-auto bg-zinc-50 py-8 px-6">
             {/* Header */}
             <div className="mb-6">
-                <h2 className="font-black text-zinc-900 mb-1 uppercase tracking-tighter" style={{ fontSize: 32 }}>Referral Program</h2>
-                <p className="text-zinc-500 font-black uppercase tracking-widest" style={{ fontSize: 12 }}>
+                <h2 className="font-black text-zinc-900 mb-1 uppercase tracking-tighter" style={{ fontSize: 36 }}>Referral Program</h2>
+                <p className="text-zinc-500 font-black uppercase tracking-widest" style={{ fontSize: 20 }}>
                     DEFAULTS • REWARDS • INVITE LINK
                 </p>
             </div>
@@ -80,12 +80,12 @@ export function ForceConfigPane() {
                             <DollarSign className="w-5 h-5 text-orange-600" />
                         </div>
                         <div>
-                            <h3 className="font-black text-zinc-900 uppercase tracking-tight" style={{ fontSize: 20 }}>Default Lead Fee</h3>
-                            <p className="text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 11 }}>Paid per unlocked lead. Min $3.00.</p>
+                            <h3 className="font-black text-zinc-900 uppercase tracking-tight" style={{ fontSize: 26 }}>Default Lead Fee</h3>
+                            <p className="text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 21 }}>Paid per unlocked lead. Min $3.00.</p>
                         </div>
                     </div>
                     <div className="relative max-w-[220px]">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-zinc-400" style={{ fontSize: 18 }}>$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-zinc-400" style={{ fontSize: 22 }}>$</span>
                         <input
                             type="number"
                             min="3"
@@ -94,21 +94,21 @@ export function ForceConfigPane() {
                             onChange={e => setDefaultFeeDollars(e.target.value)}
                             placeholder="8.00"
                             className="w-full pl-8 pr-4 h-12 border border-zinc-200 rounded-xl font-black text-zinc-900 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                            style={{ fontSize: 18 }}
+                            style={{ fontSize: 24 }}
                         />
                     </div>
-                    <p className="text-zinc-400 font-medium mt-3" style={{ fontSize: 14 }}>
+                    <p className="text-zinc-400 font-medium mt-3" style={{ fontSize: 22 }}>
                         Each approved referrer can have a custom fee set in the Active Referrers tab.
                     </p>
                 </div>
 
                 {/* Storefront link */}
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6 flex flex-col">
-                    <h3 className="font-black text-zinc-900 mb-1" style={{ fontSize: 18 }}>Your Referrer Invite Link</h3>
-                    <p className="text-zinc-400 font-medium mb-3" style={{ fontSize: 14 }}>
+                    <h3 className="font-black text-zinc-900 mb-1" style={{ fontSize: 26 }}>Your Referrer Invite Link</h3>
+                    <p className="text-zinc-400 font-medium mb-3" style={{ fontSize: 22 }}>
                         Share this with anyone you want to invite to apply as a referrer.
                     </p>
-                    <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all flex-1 flex items-center" style={{ fontSize: 14 }}>
+                    <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all flex-1 flex items-center" style={{ fontSize: 22 }}>
                         traderefer.au/register?ref={slug}&amp;type=referrer
                     </div>
                 </div>
@@ -120,8 +120,8 @@ export function ForceConfigPane() {
                             <Gift className="w-5 h-5 text-orange-400" />
                         </div>
                         <div>
-                            <h3 className="font-black text-white" style={{ fontSize: 18 }}>Prezzee Reward Triggers</h3>
-                            <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: 14 }}>
+                            <h3 className="font-black text-white" style={{ fontSize: 26 }}>Prezzee Reward Triggers</h3>
+                            <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: 22 }}>
                                 Referrers automatically earn a Prezzee Smart Card after every 5 confirmed leads.
                             </p>
                         </div>
@@ -130,27 +130,27 @@ export function ForceConfigPane() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                         <div className="md:col-span-2 flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
                             <div>
-                                <p className="font-black text-white" style={{ fontSize: 16 }}>Milestone</p>
-                                <p className="text-zinc-400 font-medium" style={{ fontSize: 14 }}>Every 5 confirmed leads</p>
+                                <p className="font-black text-white" style={{ fontSize: 24 }}>Milestone</p>
+                                <p className="text-zinc-400 font-medium" style={{ fontSize: 22 }}>Every 5 confirmed leads</p>
                             </div>
                             <div className="text-right">
-                                <p className="font-black text-orange-400" style={{ fontSize: 24 }}>$25</p>
-                                <p className="text-zinc-400 font-medium" style={{ fontSize: 13 }}>Prezzee Smart Card</p>
+                                <p className="font-black text-orange-400" style={{ fontSize: 36 }}>$25</p>
+                                <p className="text-zinc-400 font-medium" style={{ fontSize: 21 }}>Prezzee Smart Card</p>
                             </div>
                         </div>
                         <div className="flex flex-col justify-center bg-white/5 rounded-xl px-4 py-3 gap-1">
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                                <p className="text-zinc-300 font-medium" style={{ fontSize: 14 }}>Auto-fulfilled</p>
+                                <p className="text-zinc-300 font-medium" style={{ fontSize: 22 }}>Auto-fulfilled</p>
                             </div>
-                            <p className="text-zinc-500 font-medium" style={{ fontSize: 13 }}>No manual action required</p>
+                            <p className="text-zinc-500 font-medium" style={{ fontSize: 21 }}>No manual action required</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <span className="text-zinc-400 font-medium" style={{ fontSize: 13 }}>Powered by</span>
+                        <span className="text-zinc-400 font-medium" style={{ fontSize: 17 }}>Powered by</span>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={PREZZEE_LOGO} alt="Prezzee" className="h-3 w-auto brightness-0 invert" />
+                        <img src={PREZZEE_LOGO} alt="Prezzee" className="h-4 w-auto brightness-0 invert" />
                     </div>
                 </div>
             </div>
@@ -159,7 +159,7 @@ export function ForceConfigPane() {
                 onClick={save}
                 disabled={saving}
                 className="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-                style={{ fontSize: 18, height: 52 }}
+                style={{ fontSize: 24, height: 60 }}
             >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                 {saving ? "Saving…" : "Save Config"}

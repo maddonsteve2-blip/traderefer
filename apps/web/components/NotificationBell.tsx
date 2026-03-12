@@ -126,12 +126,12 @@ export function NotificationBell() {
         <div className="relative" ref={ref}>
             <button
                 onClick={handleOpen}
-                className="relative p-2 text-zinc-500 hover:text-zinc-900 transition-colors"
+                className="relative p-2.5 text-zinc-500 hover:text-zinc-900 transition-all active:scale-95"
                 aria-label="Notifications"
             >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-6 h-6" />
                 {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-orange-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    <span className="absolute top-0.5 right-0.5 w-5.5 h-5.5 bg-orange-600 text-white font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm" style={{ fontSize: '11px' }}>
                         {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                 )}
@@ -139,18 +139,19 @@ export function NotificationBell() {
 
             {open && (
                 <div className="absolute right-0 top-full mt-2 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-zinc-200 z-50 overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100">
-                        <h3 className="font-bold text-zinc-900">Notifications</h3>
-                        <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-100">
+                        <h3 className="font-black text-zinc-900" style={{ fontSize: '18px' }}>Notifications</h3>
+                        <div className="flex items-center gap-3">
                             {unreadCount > 0 && (
                                 <button
                                     onClick={markAllRead}
-                                    className="text-xs font-bold text-orange-500 hover:text-orange-600"
+                                    className="font-black text-orange-600 hover:text-orange-700 underline underline-offset-4"
+                                    style={{ fontSize: '14px' }}
                                 >
                                     Mark all read
                                 </button>
                             )}
-                            <button onClick={() => setOpen(false)} className="text-zinc-400 hover:text-zinc-600">
+                            <button onClick={() => setOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-500 transition-colors">
                                 <X className="w-4 h-4" />
                             </button>
                         </div>
@@ -158,15 +159,17 @@ export function NotificationBell() {
 
                     <div className="max-h-80 overflow-y-auto">
                         {notifications.length === 0 ? (
-                            <div className="p-8 text-center">
-                                <Bell className="w-8 h-8 text-zinc-200 mx-auto mb-2" />
-                                <p className="text-sm text-zinc-400">No notifications yet</p>
+                            <div className="p-12 text-center">
+                                <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Bell className="w-8 h-8 text-zinc-200" />
+                                </div>
+                                <p className="font-bold text-zinc-400" style={{ fontSize: '17px' }}>No notifications yet</p>
                             </div>
                         ) : (
                             notifications.map(n => (
                                 <div
                                     key={n.id}
-                                    className={`px-4 py-3 border-b border-zinc-50 hover:bg-zinc-50 transition-colors cursor-pointer ${
+                                    className={`px-5 py-4 border-b border-zinc-50 hover:bg-zinc-50 transition-colors cursor-pointer ${
                                         !n.is_read ? "bg-orange-50/50" : ""
                                     }`}
                                     onClick={() => {
@@ -177,18 +180,18 @@ export function NotificationBell() {
                                         }
                                     }}
                                 >
-                                    <div className="flex items-start gap-3">
-                                        <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
+                                    <div className="flex items-start gap-4">
+                                        <div className={`w-2.5 h-2.5 rounded-full mt-2.5 shrink-0 ${
                                             !n.is_read ? (TYPE_COLORS[n.type] || "bg-zinc-400") : "bg-transparent"
                                         }`} />
                                         <div className="flex-1 min-w-0">
-                                            <div className="text-sm font-bold text-zinc-900 leading-tight">{n.title}</div>
+                                            <div className="font-black text-zinc-900 leading-tight" style={{ fontSize: '16px' }}>{n.title}</div>
                                             {n.body && (
-                                                <p className="text-sm text-zinc-500 mt-0.5 line-clamp-2">{n.body}</p>
+                                                <p className="text-zinc-500 font-bold mt-1 line-clamp-2" style={{ fontSize: '15px' }}>{n.body}</p>
                                             )}
-                                            <div className="text-xs text-zinc-400 mt-1">{timeAgo(n.created_at)}</div>
+                                            <div className="text-zinc-400 font-bold mt-1.5" style={{ fontSize: '13px' }}>{timeAgo(n.created_at)}</div>
                                         </div>
-                                        {n.link && <ExternalLink className="w-3.5 h-3.5 text-zinc-300 shrink-0 mt-1" />}
+                                        {n.link && <ExternalLink className="w-4 h-4 text-zinc-300 shrink-0 mt-1" />}
                                     </div>
                                 </div>
                             ))
