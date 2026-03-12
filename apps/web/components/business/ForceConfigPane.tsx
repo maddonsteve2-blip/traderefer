@@ -62,19 +62,21 @@ export function ForceConfigPane() {
 
     return (
         <div className="flex-1 overflow-y-auto bg-zinc-50 py-8 px-6">
-            <div className="max-w-lg mx-auto space-y-6">
+            {/* Header */}
+            <div className="mb-6">
+                <h2 className="font-black text-zinc-900 mb-1" style={{ fontSize: 24 }}>Referral Program Settings</h2>
+                <p className="text-zinc-500 font-medium" style={{ fontSize: 16 }}>
+                    Set the default lead fee, rewards, and invite link for your referrer program.
+                </p>
+            </div>
 
-                <div>
-                    <h2 className="font-black text-zinc-900 mb-1" style={{ fontSize: 24 }}>Referral Program Settings</h2>
-                    <p className="text-zinc-500 font-medium" style={{ fontSize: 16 }}>
-                        Set the default lead fee, rewards, and invite link for your referrer program.
-                    </p>
-                </div>
+            {/* 2-column grid on md+, single column on mobile */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                 {/* Default fee */}
-                <div className="bg-white rounded-2xl border border-zinc-200 p-6">
+                <div className="bg-white rounded-2xl border border-zinc-200 p-6 flex flex-col">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                        <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
                             <DollarSign className="w-5 h-5 text-orange-600" />
                         </div>
                         <div>
@@ -82,7 +84,7 @@ export function ForceConfigPane() {
                             <p className="text-zinc-400 font-medium" style={{ fontSize: 14 }}>Paid to referrers per unlocked lead. Minimum $3.00.</p>
                         </div>
                     </div>
-                    <div className="relative max-w-[200px]">
+                    <div className="relative max-w-[220px]">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-zinc-400" style={{ fontSize: 18 }}>$</span>
                         <input
                             type="number"
@@ -100,8 +102,19 @@ export function ForceConfigPane() {
                     </p>
                 </div>
 
-                {/* Prezzee rewards */}
-                <div className="bg-[#0F172A] rounded-2xl p-6 text-white">
+                {/* Storefront link */}
+                <div className="bg-white rounded-2xl border border-zinc-200 p-6 flex flex-col">
+                    <h3 className="font-black text-zinc-900 mb-1" style={{ fontSize: 18 }}>Your Referrer Invite Link</h3>
+                    <p className="text-zinc-400 font-medium mb-3" style={{ fontSize: 14 }}>
+                        Share this with anyone you want to invite to apply as a referrer.
+                    </p>
+                    <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all flex-1 flex items-center" style={{ fontSize: 14 }}>
+                        traderefer.au/register?ref={slug}&amp;type=referrer
+                    </div>
+                </div>
+
+                {/* Prezzee rewards — spans full width */}
+                <div className="md:col-span-2 bg-[#0F172A] rounded-2xl p-6 text-white">
                     <div className="flex items-start gap-3 mb-4">
                         <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
                             <Gift className="w-5 h-5 text-orange-400" />
@@ -114,52 +127,43 @@ export function ForceConfigPane() {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3 mb-3">
-                        <div>
-                            <p className="font-black text-white" style={{ fontSize: 16 }}>Milestone</p>
-                            <p className="text-zinc-400 font-medium" style={{ fontSize: 14 }}>Every 5 confirmed leads</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                        <div className="md:col-span-2 flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
+                            <div>
+                                <p className="font-black text-white" style={{ fontSize: 16 }}>Milestone</p>
+                                <p className="text-zinc-400 font-medium" style={{ fontSize: 14 }}>Every 5 confirmed leads</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="font-black text-orange-400" style={{ fontSize: 24 }}>$25</p>
+                                <p className="text-zinc-400 font-medium" style={{ fontSize: 13 }}>Prezzee Smart Card</p>
+                            </div>
                         </div>
-                        <div className="text-right">
-                            <p className="font-black text-orange-400" style={{ fontSize: 20 }}>$25</p>
-                            <p className="text-zinc-400 font-medium" style={{ fontSize: 13 }}>Smart Card</p>
+                        <div className="flex flex-col justify-center bg-white/5 rounded-xl px-4 py-3 gap-1">
+                            <div className="flex items-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                                <p className="text-zinc-300 font-medium" style={{ fontSize: 14 }}>Auto-fulfilled</p>
+                            </div>
+                            <p className="text-zinc-500 font-medium" style={{ fontSize: 13 }}>No manual action required</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                        <p className="text-zinc-300 font-medium" style={{ fontSize: 14 }}>
-                            Rewards are automatically fulfilled — no manual action required.
-                        </p>
-                    </div>
-
-                    <div className="mt-4 flex items-center gap-2">
                         <span className="text-zinc-400 font-medium" style={{ fontSize: 13 }}>Powered by</span>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={PREZZEE_LOGO} alt="Prezzee" className="h-3 w-auto brightness-0 invert" />
                     </div>
                 </div>
-
-                {/* Storefront link */}
-                <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                    <h3 className="font-black text-zinc-900 mb-1" style={{ fontSize: 18 }}>Your Referrer Invite Link</h3>
-                    <p className="text-zinc-400 font-medium mb-3" style={{ fontSize: 14 }}>
-                        Share this with anyone you want to invite to apply as a referrer.
-                    </p>
-                    <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all" style={{ fontSize: 14 }}>
-                        traderefer.au/register?ref={slug}&amp;type=referrer
-                    </div>
-                </div>
-
-                <button
-                    onClick={save}
-                    disabled={saving}
-                    className="w-full h-13 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-                    style={{ fontSize: 18, height: 52 }}
-                >
-                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    {saving ? "Saving…" : "Save Config"}
-                </button>
             </div>
+
+            <button
+                onClick={save}
+                disabled={saving}
+                className="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                style={{ fontSize: 18, height: 52 }}
+            >
+                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                {saving ? "Saving…" : "Save Config"}
+            </button>
         </div>
     );
 }

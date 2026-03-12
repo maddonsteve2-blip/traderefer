@@ -159,7 +159,8 @@ export function ForceApplicationsPane() {
         }
     };
 
-    const displayed = filter === "pending" ? apps.filter(a => a.status?.toLowerCase() === "pending") : apps;
+    const PENDING_STATUSES = ["pending", "applied", "new", "submitted", "under_review"];
+    const displayed = filter === "pending" ? apps.filter(a => PENDING_STATUSES.includes((a.status ?? "").toLowerCase())) : apps;
 
     const handleSelect = (applicationId: string) => {
         if (isMobile) {

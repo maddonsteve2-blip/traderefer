@@ -273,7 +273,7 @@ export function ForcePartnersPane() {
                         <Loader2 className="w-8 h-8 text-orange-400 animate-spin" />
                     </div>
                 ) : (
-                    <div className="w-full max-w-3xl mx-auto px-6 py-6 space-y-4">
+                    <div className="w-full px-6 py-6 space-y-4">
 
                         {/* ── Hero card ── */}
                         <div className="bg-white rounded-2xl border border-zinc-100 p-6">
