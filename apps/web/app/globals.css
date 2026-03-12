@@ -68,6 +68,13 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  input, textarea, select {
+    font-size: 16px;
+    line-height: 1.5;
   }
 
   h1,
@@ -77,6 +84,7 @@
   h5,
   h6 {
     @apply font-heading font-bold tracking-tight text-industrial-black;
+    line-height: 1.2;
   }
 
   /* Ensure smooth transitions for interactive elements */

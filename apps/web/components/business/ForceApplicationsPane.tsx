@@ -225,7 +225,7 @@ export function ForceApplicationsPane() {
                                                 {app.referrer_suburb}{app.referrer_state ? `, ${app.referrer_state}` : ""} · ⭐ {app.quality_score}
                                             </p>
                                         </div>
-                                        <span className={`shrink-0 px-2 py-1 rounded-xl font-black uppercase tracking-widest ${cfg.bg} ${cfg.text}`} style={{ fontSize: 10 }}>
+                                        <span className={`shrink-0 px-2 py-1 rounded-xl font-black uppercase tracking-widest ${cfg.bg} ${cfg.text}`} style={{ fontSize: 11 }}>
                                             {cfg.label}
                                         </span>
                                     </div>
@@ -341,7 +341,7 @@ export function ForceApplicationsPane() {
                                         <div key={s.label} className={`${s.bg} rounded-2xl p-4 text-center border border-black/5 shadow-sm`}>
                                             <s.icon className={`w-5 h-5 ${s.text} mx-auto mb-1.5`} />
                                             <p className="font-black text-zinc-900 tracking-tighter" style={{ fontSize: 32 }}>{s.value}</p>
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: 10 }}>{s.label}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: 11 }}>{s.label}</p>
                                         </div>
                                     ))}
                                 </div>

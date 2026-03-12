@@ -81,7 +81,7 @@ export function ForceConfigPane() {
                         </div>
                         <div>
                             <h3 className="font-black text-zinc-900 uppercase tracking-tight" style={{ fontSize: 20 }}>Default Lead Fee</h3>
-                            <p className="text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 10 }}>Paid per unlocked lead. Min $3.00.</p>
+                            <p className="text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 11 }}>Paid per unlocked lead. Min $3.00.</p>
                         </div>
                     </div>
                     <div className="relative max-w-[220px]">

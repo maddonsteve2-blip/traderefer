@@ -205,7 +205,7 @@ export function ForcePartnersPane() {
                         ].map(s => (
                             <div key={s.label} className="text-center">
                                 <p className={`font-black ${s.color} leading-none tracking-tighter`} style={{ fontSize: 18 }}>{s.value}</p>
-                                <p className="font-black text-zinc-400 mt-1 uppercase tracking-widest" style={{ fontSize: 9 }}>{s.label}</p>
+                                <p className="font-black text-zinc-400 mt-1 uppercase tracking-widest" style={{ fontSize: 11 }}>{s.label}</p>
                             </div>
                         ))}
                     </div>
@@ -240,7 +240,7 @@ export function ForcePartnersPane() {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-1">
                                                 <p className="font-black text-zinc-900 truncate uppercase tracking-tight" style={{ fontSize: 17 }}>{r.full_name}</p>
-                                                <span className="text-zinc-400 font-black uppercase shrink-0" style={{ fontSize: 10 }}>{timeAgo(r.last_lead_at)}</span>
+                                                <span className="text-zinc-400 font-black uppercase shrink-0" style={{ fontSize: 11 }}>{timeAgo(r.last_lead_at)}</span>
                                             </div>
                                             <div className="flex items-center gap-2 mt-1 flex-wrap">
                                                 <span className="text-zinc-500 font-bold uppercase tracking-wide" style={{ fontSize: 11 }}>{r.leads_created} leads</span>
@@ -346,7 +346,7 @@ export function ForcePartnersPane() {
                                 <div key={s.label} className={`${s.bg} rounded-[24px] p-5 shadow-sm border border-black/5`}>
                                     <div className="flex items-center gap-1.5 mb-2">
                                         <s.icon className={`w-4 h-4 ${s.text}`} />
-                                        <span className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: 10 }}>{s.label}</span>
+                                        <span className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: 11 }}>{s.label}</span>
                                     </div>
                                     <p className="font-black text-zinc-900 tracking-tighter" style={{ fontSize: 32 }}>{s.value}</p>
                                 </div>
