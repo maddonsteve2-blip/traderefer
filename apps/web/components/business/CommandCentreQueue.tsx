@@ -209,19 +209,29 @@ export function PartnerLeaderboard() {
     const router = useRouter();
     const [referrers, setReferrers] = useState<TopReferrer[]>([]);
     const [loading, setLoading] = useState(true);
+    const [pendingCount, setPendingCount] = useState(0);
     const apiUrl = "/api/backend";
 
     const fetchReferrers = useCallback(async () => {
         try {
             const token = await getToken();
-            const res = await fetch(`${apiUrl}/business/me/referrers?sort_by=leads_created&sort_dir=desc`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (res.ok) {
-                const d = await res.json();
+            const [refRes, appRes] = await Promise.all([
+                fetch(`${apiUrl}/business/me/referrers?sort_by=leads_created&sort_dir=desc`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                }),
+                fetch(`${apiUrl}/applications/business/pending`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                }),
+            ]);
+            if (refRes.ok) {
+                const d = await refRes.json();
                 setReferrers((d.referrers ?? []).slice(0, 5));
             } else {
                 setReferrers([]);
+            }
+            if (appRes.ok) {
+                const d = await appRes.json();
+                setPendingCount(d.pending_count ?? 0);
             }
         } catch {
             setReferrers([]);
@@ -249,8 +259,18 @@ export function PartnerLeaderboard() {
                 ) : referrers.length === 0 ? (
                     <div className="p-10 text-center">
                         <TrendingUp className="w-10 h-10 text-zinc-200 mx-auto mb-3" />
-                        <p className="font-bold text-zinc-400 mb-1" style={{ fontSize: 18 }}>No partners yet</p>
-                        <p className="text-zinc-300 font-medium" style={{ fontSize: 15 }}>Approved referrers will rank here</p>
+                        <p className="font-bold text-zinc-400 mb-1" style={{ fontSize: 18 }}>No approved partners yet</p>
+                        {pendingCount > 0 ? (
+                            <button
+                                onClick={() => router.push("/dashboard/business/force?tab=applications")}
+                                className="mt-2 text-amber-600 hover:text-amber-700 font-bold transition-colors"
+                                style={{ fontSize: 15 }}
+                            >
+                                {pendingCount} application{pendingCount > 1 ? "s" : ""} waiting for review →
+                            </button>
+                        ) : (
+                            <p className="text-zinc-300 font-medium" style={{ fontSize: 15 }}>Approved referrers will rank here</p>
+                        )}
                     </div>
                 ) : (
                     <div className="divide-y divide-zinc-50">

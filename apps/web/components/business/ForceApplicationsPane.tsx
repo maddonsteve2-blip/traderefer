@@ -77,8 +77,8 @@ export function ForceApplicationsPane() {
         });
         if (res.ok) {
             const data = await res.json();
-            setApps(data.applications);
-            setPendingCount(data.pending_count);
+            setApps(data.applications ?? []);
+            setPendingCount(data.pending_count ?? 0);
         }
         setLoading(false);
     }, [getToken, apiUrl]);
@@ -159,7 +159,7 @@ export function ForceApplicationsPane() {
         }
     };
 
-    const displayed = filter === "pending" ? apps.filter(a => a.status === "pending") : apps;
+    const displayed = filter === "pending" ? apps.filter(a => a.status?.toLowerCase() === "pending") : apps;
 
     const handleSelect = (applicationId: string) => {
         if (isMobile) {

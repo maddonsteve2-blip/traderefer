@@ -23,7 +23,7 @@ function ForceHubInner() {
     };
 
     return (
-        <div className="min-h-[100dvh] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden">
+        <div className="flex flex-col bg-zinc-50 h-[calc(100dvh-56px)] lg:h-screen overflow-hidden">
             <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
             {tab === "partners" && <ForcePartnersPane />}
             {tab === "applications" && <ForceApplicationsPane />}
