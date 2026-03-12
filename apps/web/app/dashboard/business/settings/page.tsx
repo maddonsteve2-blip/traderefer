@@ -199,8 +199,8 @@ export default function BusinessSettingsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] bg-zinc-50">
-                <div className="min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-100px)] flex items-center justify-center">
+            <div className="min-h-[100dvh] bg-zinc-50">
+                <div className="min-h-screen flex items-center justify-center">
                     <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                 </div>
             </div>
@@ -218,7 +218,7 @@ export default function BusinessSettingsPage() {
 
     return (
         <div className="bg-zinc-100 overflow-hidden">
-            <div className="mt-[72px] md:mt-[100px] min-h-[calc(100vh-72px)] md:min-h-[calc(100vh-100px)] w-full max-w-none px-4 md:px-6 xl:px-10 pb-4 md:pb-6 overflow-visible xl:overflow-hidden flex flex-col xl:flex-row gap-4 xl:gap-0">
+            <div className="min-h-screen w-full max-w-none px-4 md:px-6 xl:px-10 pb-4 md:pb-6 overflow-visible xl:overflow-hidden flex flex-col xl:flex-row gap-4 xl:gap-0">
                 <div className="w-full xl:w-[40%] min-h-0 overflow-hidden bg-white border border-gray-200 xl:border-r xl:border-l-0 xl:border-t-0 xl:border-b-0 rounded-[28px] xl:rounded-none flex flex-col">
                     <div className="flex-1 overflow-y-auto px-4 md:px-6 xl:pr-8 xl:pl-0 pt-6 md:pt-8 pb-20">
                         <div className="space-y-6">

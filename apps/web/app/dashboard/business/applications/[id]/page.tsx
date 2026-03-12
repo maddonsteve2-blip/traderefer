@@ -110,8 +110,8 @@ export default function BusinessApplicationDetailPage() {
 
     if (loading || !app) {
         return (
-            <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] bg-zinc-50">
-                <div className="min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-100px)] flex items-center justify-center">
+            <div className="min-h-[100dvh] bg-zinc-50">
+                <div className="min-h-screen flex items-center justify-center">
                     <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
                 </div>
             </div>
@@ -124,7 +124,7 @@ export default function BusinessApplicationDetailPage() {
     const memberYear = ref.member_since ? new Date(ref.member_since).getFullYear() : null;
 
     return (
-        <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+        <div className="min-h-[100dvh] bg-zinc-50">
             <div className="w-full px-4 md:px-6 py-4 md:py-6 max-w-4xl mx-auto">
 
                 {/* Header */}

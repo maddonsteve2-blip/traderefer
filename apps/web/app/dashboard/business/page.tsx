@@ -65,7 +65,7 @@ export default async function BusinessDashboardPage() {
     const greeting = new Date().getHours() < 12 ? "Good morning" : new Date().getHours() < 17 ? "Good afternoon" : "Good evening";
 
     return (
-        <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] flex flex-col bg-zinc-50 lg:h-screen lg:overflow-hidden">
+        <div className="min-h-[100dvh] flex flex-col bg-zinc-50 lg:h-screen lg:overflow-hidden">
             <BusinessWelcomeDialog />
 
             <div className="w-full flex-1 px-3 lg:px-5 py-4 md:py-5">

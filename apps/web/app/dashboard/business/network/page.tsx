@@ -127,7 +127,7 @@ export default function BusinessNetworkPage() {
 
     if (loading) {
         return (
-            <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+            <div className="min-h-[100dvh] bg-zinc-50">
                 <div className="max-w-4xl mx-auto py-10 md:py-16 px-4">
                 <div className="animate-pulse space-y-6">
                     <div className="h-8 bg-zinc-100 rounded w-64" />
@@ -139,7 +139,7 @@ export default function BusinessNetworkPage() {
     }
 
     return (
-        <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+        <div className="min-h-[100dvh] bg-zinc-50">
         <div className="max-w-4xl mx-auto py-6 md:py-10 px-4 space-y-8">
             <div>
                 <h1 className="text-2xl md:text-3xl font-black text-zinc-900 tracking-tight">My Network</h1>

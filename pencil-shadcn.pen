@@ -1,0 +1,381 @@
+TradeRefer Dashboard Redesign
+
+Build a complete dashboard redesign for TradeRefer using shadcn/ui, Tailwind CSS, and a clean light theme.
+
+This is a from-scratch redesign concept. Do not follow the current dashboard template. Keep the best parts of the product, but redesign the information architecture, flow, and UI so the experience is simpler, clearer, calmer, and more premium on desktop and mobile.
+
+Overall direction:
+- Light theme only
+- Minimal, premium, professional, trustworthy
+- Simple is better than flashy
+- Strong hierarchy and spacing
+- Fast scanning, low cognitive load
+- Mobile-first behavior with excellent desktop layouts
+- Preserve the major features that make the app strong
+
+Core product strengths to preserve:
+- Verified lead flow for businesses
+- Referral network management for businesses
+- Referrer discovery and applications
+- Messaging between businesses and referrers
+- Automated rewards and wallet visibility
+- Deals and campaigns for growth
+- Dual-role product model: business dashboard and referrer dashboard
+
+Primary UX goal:
+Make each dashboard feel action-oriented instead of page-oriented.
+Every screen should answer:
+- What needs attention now?
+- What changed since last visit?
+- What should I do next?
+
+Design system requirements:
+- Use shadcn/ui components and styling patterns
+- Use a light neutral palette with orange as the primary accent
+- White surfaces, soft borders, zinc/slate neutrals, subtle shadows
+- Avoid dark heavy backgrounds except for rare highlight cards if needed
+- Use a strong, readable type scale with clean section hierarchy
+- Consistent button system: primary, secondary, ghost, destructive
+- Consistent card system
+- Consistent empty states, loading states, and error states
+- Use skeleton loaders instead of excessive spinners
+- Keep components reusable and clean
+
+Recommended color feel:
+- Background: very light neutral
+- Surface: white
+- Border: soft gray
+- Text primary: dark neutral
+- Text secondary: medium neutral
+- Accent: orange
+- Success: green
+- Warning: amber
+- Danger: red
+
+Main shell and navigation:
+Desktop:
+- Left sidebar for primary navigation
+- Top utility bar only for workspace switcher, wallet, notifications, user menu
+- No second global horizontal nav under the header
+- Contextual tabs only inside a page section
+- Large content area with generous whitespace
+
+Mobile:
+- Bottom navigation for core destinations
+- Top bar with page title and overflow actions
+- Use segmented controls or tabs only inside a section when needed
+- No stacked sticky nav layers
+- Keep primary actions thumb-friendly
+
+Business dashboard information architecture:
+- Home
+- Leads
+- Network
+- Inbox
+- Growth
+- Analytics
+- Profile
+- Settings
+
+Business page model:
+1. Home
+Purpose:
+- Central command center with priorities and recent activity
+Content:
+- Urgent action cards: applications to review, new leads, pending rewards, unread messages
+- KPI strip: new leads, active referrers, conversion rate, reward spend, attributed revenue
+- Recent activity feed
+- Quick actions: review applications, invite referrers, create deal, update program settings
+- Performance snapshot by week/month toggle
+Desktop layout:
+- Top summary row
+- Left main activity column
+- Right action sidebar
+Mobile layout:
+- Stacked cards
+- Action tray near the top
+- Feed and metrics below
+
+2. Leads
+Purpose:
+- Review, unlock, track, and update lead outcomes
+Desktop layout:
+- Master-detail interface
+- Left list of leads with filters and search
+- Right detail pane with lead info and actions
+- Sticky action footer inside detail pane if needed
+Mobile layout:
+- Lead list first
+- Tapping opens full-screen detail view
+- Sticky bottom action bar: unlock, call, message, mark outcome
+Key UX improvements:
+- Reduce status complexity into plain language states
+- Make next step obvious for each lead
+- Show confidence/trust markers clearly
+
+3. Network
+This is a single workspace with internal tabs:
+- Active Referrers
+- Applications
+- Program Settings
+Purpose:
+- Businesses manage the full referral network in one place
+Desktop:
+- Page header and summary stats
+- Tabs below the page header
+- Each tab uses purpose-built content
+Mobile:
+- One page with segmented control at top
+- Clean stacked cards
+Active Referrers tab:
+- Search
+- Referrer cards or rows
+- Performance stats
+- Custom fee edit action
+- Quick message action
+Applications tab:
+- Review queue with clear approve/reject actions
+- Application card shows quality signals and notes
+- Message before approval option
+Program Settings tab:
+- Default lead fee
+- Reward milestones
+- Invite link
+- Program description and simple settings
+Key UX rule:
+- No duplicate routes for referrers, applications, and force management
+- This section should feel unified and obvious
+
+4. Inbox
+Purpose:
+- A real communication center, not a side feature
+Desktop:
+- Conversation list on left
+- Active thread on right
+- Filters for unread, active, archived
+Mobile:
+- Conversation list
+- Full-screen thread view
+Features:
+- Search
+- Unread emphasis
+- Simple composer
+- Shared context badges like lead, application, or referrer
+
+5. Growth
+This is one workspace with internal tabs:
+- Deals
+- Campaigns
+Purpose:
+- Separate evergreen offers from temporary growth pushes
+Deals:
+- Evergreen offers that referrers can share anytime
+Campaigns:
+- Time-based or bonus-driven pushes
+Desktop:
+- Header, summary, tabs, main list/grid
+Mobile:
+- Stacked cards and compact action buttons
+Key UX improvement:
+- Make the difference between Deals and Campaigns very obvious visually and in copy
+
+6. Analytics
+Purpose:
+- Show the most important business performance signals only
+Content:
+- Lead volume trend
+- Conversion funnel
+- Top referrers
+- Reward spend
+- Revenue influenced or attributed
+Keep it simple:
+- Avoid too many charts
+- Prefer 4 to 6 strong widgets over 15 weak ones
+
+7. Profile
+Purpose:
+- Manage public storefront and trust signals
+Desktop:
+- Edit panel left, preview panel right
+Mobile:
+- Preview-first with edit sections below
+Content:
+- Business identity
+- Categories and service areas
+- Description
+- Images
+- Trust indicators
+- Preview of public business page
+
+8. Settings
+Purpose:
+- Account, notifications, payout, billing, team access if needed
+Use a simple settings layout:
+- Side section nav on desktop
+- Stacked groups on mobile
+
+Referrer dashboard information architecture:
+- Home
+- Find Businesses
+- My Businesses
+- Referrals
+- Inbox
+- Earnings
+- Profile
+- Settings
+
+Referrer page model:
+1. Home
+Purpose:
+- Show earning progress and clear next steps
+Content:
+- Earnings summary
+- Pending actions
+- Application statuses
+- Recent referrals
+- Suggested businesses to apply to
+
+2. Find Businesses
+Purpose:
+- Discovery and applications
+Desktop:
+- Search and filter rail
+- Business results grid/list
+Mobile:
+- Filter sheet and stacked cards
+Make it easy to understand:
+- fee
+- approval chance signals if available
+- location and trade fit
+- quick apply
+
+3. My Businesses
+Purpose:
+- View approved, pending, and paused business relationships
+Desktop:
+- Filtered cards or table-like rows
+Mobile:
+- Relationship cards with status chip and quick actions
+
+4. Referrals
+Purpose:
+- Submit and track all referred leads
+Desktop:
+- List/detail or board-style status sections
+Mobile:
+- Simple list with strong status states
+
+5. Inbox
+Purpose:
+- Messaging with businesses
+Keep it aligned with business inbox patterns
+
+6. Earnings
+Purpose:
+- Make money clarity extremely high
+Content:
+- Available balance
+- Pending balance
+- Recent payouts
+- Referral earnings history
+- Withdraw action
+Desktop:
+- Summary cards plus history table
+Mobile:
+- Summary cards plus stacked transaction list
+
+7. Profile
+Purpose:
+- Show credibility and improve approval odds
+Content:
+- Bio
+- Location
+- Expertise/trade knowledge
+- Social proof or completion score if relevant
+
+8. Settings
+Purpose:
+- Account, payout method, notifications, privacy
+
+Cross-platform interaction rules:
+- No tables on mobile unless absolutely necessary
+- On mobile use cards, sections, bottom sheets, drawers, and segmented controls
+- Use dialogs sparingly; prefer sheets on mobile
+- Keep all primary actions visible without hunting
+- No more than one sticky navigation layer at a time
+- Use destructive actions carefully and clearly
+- Make states and transitions obvious
+
+Component guidance using shadcn:
+- Sidebar for desktop app shell
+- Tabs for page-level contextual sections only
+- Card for summaries and grouped content
+- Sheet for mobile filters and actions
+- Dialog for confirmation and focused edit flows
+- Dropdown menu for overflow actions
+- Table on desktop only when truly useful
+- Badge for statuses
+- Toast for success/error feedback
+- Skeleton for loading states
+- Avatar, Input, Select, Button, Separator, ScrollArea where appropriate
+
+Visual style notes:
+- Rounded corners should feel modern but restrained
+- Use generous padding and white space
+- Avoid overusing gradients
+- One accent color at a time
+- Use icons sparingly and consistently
+- Make empty states calm and helpful
+
+Page-specific content priorities:
+Business Home should prioritize:
+- new leads
+- new applications
+- unread messages
+- pending confirmations
+
+Referrer Home should prioritize:
+- available balance
+- pending approvals
+- recent referrals
+- suggested businesses
+
+Lead statuses should be simplified into plain English, for example:
+- New
+- Contacted
+- Qualified
+- Won
+- Lost
+- Reward Pending
+
+Copy style:
+- Short, clear, plain English
+- Avoid internal jargon where possible
+- Replace confusing labels with obvious ones
+- Keep button labels action-based
+
+Accessibility and usability requirements:
+- Strong contrast in light theme
+- Large tap targets on mobile
+- Clear focus states
+- Keyboard-friendly desktop flows
+- Avoid clutter and visual competition
+
+Deliverable style:
+Generate polished dashboard screens and component layouts for both desktop and mobile based on this system.
+Prioritize these screens first:
+- Business Home desktop and mobile
+- Business Leads desktop and mobile
+- Business Network desktop and mobile
+- Referrer Home desktop and mobile
+- Referrer Find Businesses desktop and mobile
+
+Design these screens as if this is a premium SaaS marketplace workflow product using shadcn/ui in a light theme.
+
+Important constraints:
+- Keep the experience simple
+- Keep the most valuable existing features
+- Improve navigation clarity dramatically
+- Improve mobile usability dramatically
+- Avoid using the existing top-nav-plus-submenu dashboard pattern
+- Prefer a unified workspace model with contextual sections

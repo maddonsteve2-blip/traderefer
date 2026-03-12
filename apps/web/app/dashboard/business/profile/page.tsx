@@ -266,8 +266,8 @@ export default function BusinessProfileManagementPage() {
 
     if (loading) {
         return (
-            <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
-                <div className="min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-100px)] flex items-center justify-center">
+            <div className="min-h-[100dvh] bg-zinc-50">
+                <div className="min-h-screen flex items-center justify-center">
                     <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                 </div>
             </div>
@@ -276,7 +276,7 @@ export default function BusinessProfileManagementPage() {
 
     return (
         <>
-            <div className="min-h-[100dvh] bg-[#fafafa] pt-[72px] md:pt-[100px]">
+            <div className="min-h-[100dvh] bg-[#fafafa]">
                 <div className="max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 mb-8 md:mb-12">
                         <div className="space-y-2">

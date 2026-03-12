@@ -413,7 +413,7 @@ export default function ReferrerManagePage() {
 
     // ── MAIN LAYOUT ──────────────────────────────────────────────────────────
     return (
-        <div className="min-h-[100dvh] pt-[72px] md:pt-[100px] flex flex-col bg-white lg:h-screen lg:overflow-hidden">
+        <div className="min-h-[100dvh] flex flex-col bg-white lg:h-screen lg:overflow-hidden">
             {/* ── MOBILE: Horizontal chip scroll ── */}
             <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
                 {links.map(link => (

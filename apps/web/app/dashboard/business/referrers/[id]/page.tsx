@@ -177,7 +177,7 @@ export default function ReferrerDetailPage() {
 
     if (loading || !referrer) {
         return (
-            <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px] flex items-center justify-center px-4">
+            <div className="min-h-[100dvh] bg-zinc-50 flex items-center justify-center px-4">
                 <div className="animate-pulse text-zinc-400 font-medium text-center">Loading referrer details…</div>
             </div>
         );
@@ -186,7 +186,7 @@ export default function ReferrerDetailPage() {
     const statusColor = referrer.is_active ? "bg-emerald-100 text-emerald-700" : "bg-zinc-100 text-zinc-500";
 
     return (
-        <div className="min-h-[100dvh] bg-zinc-50 pt-[72px] md:pt-[100px]">
+        <div className="min-h-[100dvh] bg-zinc-50">
             <div className="container mx-auto px-4 py-4 md:py-8 max-w-5xl">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-8">
