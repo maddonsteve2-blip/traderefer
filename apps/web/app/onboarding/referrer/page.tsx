@@ -125,38 +125,33 @@ function ReferrerOnboardingInner() {
 
     return (
         <main className="min-h-screen bg-white flex flex-col">
-            <header className="p-6 flex justify-between items-center border-b border-zinc-100 bg-white sticky top-0 z-50">
+            <header className="p-4 md:p-6 flex justify-between items-center border-b border-zinc-100 bg-white sticky top-0 z-50">
                 <Link href="/"><Logo size="sm" /></Link>
                 <Link href="/support" className="text-sm font-bold text-zinc-400 hover:text-zinc-900 transition-colors">Support</Link>
             </header>
 
-            <div className="flex-1 flex flex-col items-center justify-center py-16 px-4">
+            <div className="flex-1 flex flex-col items-center justify-center py-8 md:py-16 px-4">
                 <div className="w-full max-w-lg">
-
-                    {/* Step indicator */}
-                    <div className="flex items-center gap-2 mb-10">
-                        {STEPS.map((label, i) => (
-                            <div key={i} className="flex items-center gap-2">
-                                <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-black transition-all ${
-                                    i < step ? "bg-orange-500 text-white" :
-                                    i === step ? "bg-zinc-900 text-white" :
-                                    "bg-zinc-100 text-zinc-400"
-                                }`}>
-                                    {i < step ? <CheckCircle className="w-4 h-4" /> : i + 1}
-                                </div>
-                                <span className={`text-sm font-bold hidden sm:block ${i === step ? "text-zinc-900" : "text-zinc-400"}`}>{label}</span>
-                                {i < STEPS.length - 1 && <div className={`h-0.5 w-8 rounded ${i < step ? "bg-orange-500" : "bg-zinc-100"}`} />}
-                            </div>
+                    {/* Step indicator - Minimal Lines */}
+                    <div className="flex gap-1.5 mb-6 md:mb-10 w-full max-w-[200px] mx-auto md:mx-0">
+                        {[0, 1, 2].map((i) => (
+                            <div
+                                key={i}
+                                className={`h-1 flex-1 rounded-full transition-all duration-500 ${
+                                    i <= step ? "bg-orange-500" : "bg-zinc-100"
+                                }`}
+                            />
                         ))}
                     </div>
+
 
                     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
 
                         {/* STEP 0: Name + Phone */}
                         {step === 0 && (
-                            <div className="space-y-8">
+                            <div className="space-y-6 md:space-y-8">
                                 <div>
-                                    <h1 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight font-display">
+                                    <h1 className="text-3xl md:text-4xl font-black text-zinc-900 mb-2 md:mb-3 tracking-tight font-display">
                                         Ready to start earning?
                                     </h1>
                                     <p className="text-zinc-500 font-medium leading-relaxed">
@@ -165,7 +160,7 @@ function ReferrerOnboardingInner() {
                                 </div>
 
                                 {/* Prezzee "What you'll earn" strip */}
-                                <div className="rounded-3xl bg-[#EAF4FF] border border-blue-100 p-5 flex items-center gap-5">
+                                <div className="rounded-3xl bg-[#EAF4FF] border border-blue-100 p-4 md:p-5 flex items-center gap-4 md:gap-5">
                                     <div className="shrink-0 hidden sm:block">
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img
@@ -203,19 +198,18 @@ function ReferrerOnboardingInner() {
                                     </div>
                                 )}
 
-                                <div className="space-y-5">
+                                <div className="space-y-4 md:space-y-5">
                                     <div>
-                                        <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-2 md:mb-3 flex items-center gap-2">
                                             <User className="w-3.5 h-3.5" /> Your Name
                                         </label>
-                                        <div className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-lg font-medium text-zinc-700">
+                                        <div className="w-full px-5 py-3 md:px-6 md:py-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-lg font-medium text-zinc-700">
                                             {user?.fullName || user?.firstName || "Loading..."}
                                         </div>
-                                        <p className="text-xs text-zinc-400 mt-1.5 ml-1">From your account — <Link href="/settings" className="text-orange-500 hover:underline">update in settings</Link></p>
                                     </div>
 
                                     <div>
-                                        <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-2 md:mb-3 flex items-center gap-2">
                                             <Phone className="w-3.5 h-3.5" /> Mobile Number
                                         </label>
                                         <input
@@ -223,13 +217,13 @@ function ReferrerOnboardingInner() {
                                             value={phone}
                                             onChange={(e) => { setPhone(e.target.value); setPhoneError(""); }}
                                             placeholder="e.g. 0412 000 000"
-                                            className={`w-full px-6 py-4 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300 ${phoneError ? "border-red-400" : "border-zinc-100"}`}
+                                            className={`w-full px-5 py-3 md:px-6 md:py-4 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300 ${phoneError ? "border-red-400" : "border-zinc-100"}`}
                                         />
                                         {phoneError && <p className="text-red-500 text-xs font-bold mt-1.5 ml-1">{phoneError}</p>}
                                     </div>
                                 </div>
 
-                                <Button onClick={handleSendOTP} disabled={isLoading} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-14 text-lg font-black shadow-xl shadow-zinc-200">
+                                <Button onClick={handleSendOTP} disabled={isLoading} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-zinc-200">
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     Send Verification Code <ChevronRight className="ml-2 w-5 h-5" />
                                 </Button>
@@ -238,12 +232,12 @@ function ReferrerOnboardingInner() {
 
                         {/* STEP 1: OTP Verify */}
                         {step === 1 && (
-                            <div className="space-y-8">
+                            <div className="space-y-6 md:space-y-8">
                                 <div>
-                                    <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-6">
-                                        <ShieldCheck className="w-7 h-7 text-orange-600" />
+                                    <div className="w-12 h-12 md:w-14 md:h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-4 md:mb-6">
+                                        <ShieldCheck className="w-6 h-6 md:w-7 md:h-7 text-orange-600" />
                                     </div>
-                                    <h1 className="text-3xl font-black text-zinc-900 mb-3 tracking-tight font-display">
+                                    <h1 className="text-2xl md:text-3xl font-black text-zinc-900 mb-2 md:mb-3 tracking-tight font-display">
                                         Verify your number
                                     </h1>
                                     <p className="text-zinc-500 font-medium leading-relaxed">
@@ -259,12 +253,12 @@ function ReferrerOnboardingInner() {
                                         value={otpCode}
                                         onChange={(e) => { setOtpCode(e.target.value.replace(/\D/g, "")); setOtpError(""); }}
                                         placeholder="_ _ _ _ _ _"
-                                        className={`w-full px-6 py-5 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-3xl font-black tracking-[0.5em] text-center placeholder:text-zinc-200 placeholder:tracking-widest ${otpError ? "border-red-400" : "border-zinc-100"}`}
+                                        className={`w-full px-6 py-4 md:py-5 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-2xl md:text-3xl font-black tracking-[0.5em] text-center placeholder:text-zinc-200 placeholder:tracking-widest ${otpError ? "border-red-400" : "border-zinc-100"}`}
                                     />
                                     {otpError && <p className="text-red-500 text-xs font-bold mt-2 text-center">{otpError}</p>}
                                 </div>
 
-                                <Button onClick={handleVerifyOTP} disabled={isLoading || otpCode.length !== 6} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-14 text-lg font-black shadow-xl shadow-zinc-200">
+                                <Button onClick={handleVerifyOTP} disabled={isLoading || otpCode.length !== 6} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-zinc-200">
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     Verify Code <ChevronRight className="ml-2 w-5 h-5" />
                                 </Button>
@@ -289,12 +283,12 @@ function ReferrerOnboardingInner() {
 
                         {/* STEP 2: Address */}
                         {step === 2 && (
-                            <div className="space-y-8">
+                            <div className="space-y-6 md:space-y-8">
                                 <div>
-                                    <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
-                                        <MapPin className="w-7 h-7 text-green-600" />
+                                    <div className="w-12 h-12 md:w-14 md:h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-4 md:mb-6">
+                                        <MapPin className="w-6 h-6 md:w-7 md:h-7 text-green-600" />
                                     </div>
-                                    <h1 className="text-3xl font-black text-zinc-900 mb-3 tracking-tight font-display">
+                                    <h1 className="text-2xl md:text-3xl font-black text-zinc-900 mb-2 md:mb-3 tracking-tight font-display">
                                         Your location
                                     </h1>
                                     <p className="text-zinc-500 font-medium leading-relaxed">
@@ -303,7 +297,7 @@ function ReferrerOnboardingInner() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-2 md:mb-3 flex items-center gap-2">
                                         <MapPin className="w-3.5 h-3.5" /> Home Address
                                     </label>
                                     <AddressAutocomplete
@@ -314,7 +308,7 @@ function ReferrerOnboardingInner() {
                                             setAddress({ street, suburb, state: state || "VIC", postcode: postcode || "" });
                                             setAddressError("");
                                         }}
-                                        className={`w-full px-6 py-4 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300 ${addressError ? "border-red-400" : "border-zinc-100"}`}
+                                        className={`w-full px-5 py-3 md:px-6 md:py-4 bg-zinc-50 border rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300 ${addressError ? "border-red-400" : "border-zinc-100"}`}
                                         placeholder="Search your address..."
                                     />
                                     {address.suburb && (
@@ -325,7 +319,7 @@ function ReferrerOnboardingInner() {
                                     {addressError && <p className="text-red-500 text-xs font-bold mt-1.5 ml-1">{addressError}</p>}
                                 </div>
 
-                                <Button onClick={handleComplete} disabled={isLoading || !address.suburb} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-14 text-lg font-black shadow-xl shadow-zinc-200">
+                                <Button onClick={handleComplete} disabled={isLoading || !address.suburb} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-zinc-200">
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     Complete Setup <ChevronRight className="ml-2 w-5 h-5" />
                                 </Button>
@@ -335,9 +329,7 @@ function ReferrerOnboardingInner() {
                 </div>
             </div>
 
-            <footer className="p-10 border-t border-zinc-50 text-center">
-                <p className="text-zinc-300 text-xs font-bold uppercase tracking-[0.2em]">© 2026 TradeRefer Pty Ltd</p>
-            </footer>
+            <div className="pb-10" />
         </main>
     );
 }

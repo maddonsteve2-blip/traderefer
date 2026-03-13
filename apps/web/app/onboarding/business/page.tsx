@@ -587,21 +587,23 @@ Respond with ONLY a JSON object (no markdown, no code fences):
 
     return (
         <main className="min-h-screen bg-white flex flex-col">
-            <header className="p-6 flex justify-between items-center border-b border-zinc-100 bg-white sticky top-0 z-50">
+            <header className="p-4 md:p-6 flex justify-between items-center border-b border-zinc-100 bg-white sticky top-0 z-50">
                 <Link href="/"><Logo size="sm" /></Link>
                 <Link href="/support" className="text-sm font-bold text-zinc-400 hover:text-zinc-900 transition-colors">Contact Support</Link>
             </header>
 
-            <div className={`flex-1 flex flex-col items-center ${step === 2 ? 'justify-start py-4' : 'justify-start md:justify-center py-6 md:py-16'} px-4`}>
+            <div className={`flex-1 flex flex-col items-center ${step === 2 ? 'justify-start py-4' : 'justify-start md:justify-center py-4 md:py-16'} px-4`}>
                 <div className={`w-full transition-all duration-500 ${step === 5 ? 'max-w-4xl' : step === 2 ? 'max-w-2xl' : 'max-w-xl'} ${step === 2 ? 'flex flex-col flex-1 min-h-0' : ''}`}>
-                    {/* Progress Bar */}
-                    <div className={`flex items-center gap-2 ${step === 2 ? 'mb-3' : 'mb-12'}`}>
+                    {/* Progress Bar - Minimal Lines */}
+                    <div className={`flex gap-1.5 w-full max-w-[200px] mx-auto md:mx-0 ${step === 2 ? 'mb-4' : 'mb-8 md:mb-12'}`}>
                         {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s) => (
-                            <div key={s} className="flex-1 h-1.5 rounded-full overflow-hidden bg-zinc-100">
-                                <div className={`h-full transition-all duration-500 ${s <= step ? 'bg-orange-500' : 'bg-transparent'}`} />
-                            </div>
+                            <div
+                                key={s}
+                                className={`h-1 flex-1 rounded-full transition-all duration-500 ${
+                                    s <= step ? 'bg-orange-500' : 'bg-zinc-100'
+                                }`}
+                            />
                         ))}
-                        <span className="ml-4 text-sm font-black text-zinc-400 uppercase tracking-widest whitespace-nowrap">Step {step} of {TOTAL_STEPS}</span>
                     </div>
 
                     <div className={`animate-in fade-in slide-in-from-bottom-4 duration-700 ${step === 2 ? 'flex flex-col flex-1 min-h-0 space-y-3' : 'space-y-8'}`}>
@@ -615,7 +617,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                     <h1 className="text-3xl md:text-5xl font-black text-zinc-900 mb-2 md:mb-3 tracking-tight font-display leading-none">
                                         {isClaiming ? 'Claim your business' : 'Tell us about your business'}
                                     </h1>
-                                    <p className="text-base md:text-xl text-zinc-500 font-medium leading-relaxed">
+                                    <p className="text-sm md:text-xl text-zinc-500 font-medium leading-relaxed">
                                         {isClaiming
                                             ? 'Review and update your business details — we\'ve pre-filled what we know.'
                                             : 'The basics — our AI assistant will chat with you to build the rest.'}
@@ -1521,11 +1523,7 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                 </div>
             </div>
 
-            {step !== 2 && (
-                <footer className="p-10 border-t border-zinc-50 text-center">
-                    <p className="text-zinc-300 text-sm font-bold uppercase tracking-[0.2em]">2026 TradeRefer Pty Ltd</p>
-                </footer>
-            )}
+            <div className="pb-10" />
         </main>
     );
 }
