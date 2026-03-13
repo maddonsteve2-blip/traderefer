@@ -245,24 +245,32 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             </aside>
 
             {/* ── MOBILE TOP BAR ── */}
-            <div className="lg:hidden fixed top-0 left-0 right-0 h-[72px] bg-white border-b border-zinc-100 flex items-center px-5 z-40">
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+            <div className="lg:hidden fixed top-0 left-0 right-0 h-[60px] bg-white border-b border-zinc-100 flex items-center px-4 z-40 gap-3">
+                <Link href="/" className="flex items-center gap-2 shrink-0">
+                    <div className="w-7 h-7 bg-orange-500 rounded-lg flex items-center justify-center">
                         <Image
                             src="/logo-dark.png"
                             alt="TradeRefer"
-                            width={24}
-                            height={24}
+                            width={20}
+                            height={20}
                             className="rounded shadow-sm"
                         />
                     </div>
-                    <span className="text-xl font-black tracking-tight leading-none uppercase text-zinc-900">
+                    <span className="text-[17px] font-black tracking-tight leading-none uppercase text-zinc-900">
                         TradeRefer
                     </span>
                 </Link>
-                <div className="ml-auto">
-                    <NotificationBell />
-                </div>
+
+                {/* Role switcher */}
+                <Link
+                    href={isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business"}
+                    className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900 text-white text-[11px] font-black uppercase tracking-widest shrink-0"
+                >
+                    <ArrowLeftRight className="w-3 h-3" />
+                    {isBusinessDashboard ? "Referrer" : "Business"}
+                </Link>
+
+                <NotificationBell />
             </div>
 
             {/* ── MOBILE DRAWER OVERLAY ── */}
@@ -299,7 +307,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <main
                 className={`flex-1 min-w-0 transition-all duration-300 ease-in-out ${
                     expanded ? "lg:ml-60" : "lg:ml-16"
-                } pt-[72px] lg:pt-0 pb-32 lg:pb-0`}
+                } pt-[60px] lg:pt-0 pb-32 lg:pb-0`}
             >
                 {children}
             </main>

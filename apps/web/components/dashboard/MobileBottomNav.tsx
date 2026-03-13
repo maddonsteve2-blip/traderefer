@@ -6,17 +6,18 @@ import { LayoutGrid, Users, Share2, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 
 const TABS = [
-    { label: "HOME",    href: "/dashboard/business",                icon: LayoutGrid, exact: true },
-    { label: "LEADS",   href: "/dashboard/business/sales?tab=leads", icon: Users },
-    { label: "NETWORK", href: "/dashboard/business/force?tab=partners", icon: Share2 },
-    { label: "INBOX",   href: "/dashboard/business/messages",       icon: MessageSquare },
+    { label: "HOME",    href: "/dashboard/business",                    icon: LayoutGrid, exact: true },
+    { label: "LEADS",   href: "/dashboard/business/sales",               icon: Users, matchPrefix: "/dashboard/business/sales" },
+    { label: "NETWORK", href: "/dashboard/business/force?tab=partners",  icon: Share2, matchPrefix: "/dashboard/business/force" },
+    { label: "INBOX",   href: "/dashboard/business/messages",            icon: MessageSquare, matchPrefix: "/dashboard/business/messages" },
 ];
 
 export function MobileBottomNav() {
     const pathname = usePathname();
 
-    function isActive(href: string, exact?: boolean) {
+    function isActive(href: string, exact?: boolean, matchPrefix?: string) {
         if (exact) return pathname === href;
+        if (matchPrefix) return pathname?.startsWith(matchPrefix);
         return pathname?.startsWith(href.split('?')[0]);
     }
 
@@ -25,7 +26,7 @@ export function MobileBottomNav() {
             <div className="max-w-md mx-auto w-full pointer-events-auto">
                 <nav className="bg-zinc-900 border border-white/10 rounded-[32px] p-1.5 flex items-center justify-between shadow-2xl shadow-black/40">
                     {TABS.map((tab) => {
-                        const active = isActive(tab.href, tab.exact);
+                        const active = isActive(tab.href, tab.exact, tab.matchPrefix);
                         const Icon = tab.icon;
 
                         return (

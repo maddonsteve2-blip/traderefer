@@ -141,13 +141,16 @@ export default function BusinessNetworkPage() {
 
     return (
         <div className="min-h-[100dvh] bg-zinc-50">
-        <div className="max-w-4xl mx-auto py-6 md:py-10 px-4 space-y-8">
+
             {/* ── MOBILE VIEW ── */}
-            <MobileNetworkDashboard 
-                given={given} 
-                received={received} 
-                invitesCount={invites.length} 
+            <MobileNetworkDashboard
+                given={given}
+                received={received}
+                invites={invites}
+                onRefresh={fetchData}
             />
+
+            <div className="max-w-4xl mx-auto py-6 md:py-10 px-4 space-y-8">
 
             {/* ── DESKTOP VIEW ── */}
             <div className="hidden lg:block space-y-8">
