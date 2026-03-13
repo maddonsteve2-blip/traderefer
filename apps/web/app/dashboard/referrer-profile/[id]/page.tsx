@@ -53,8 +53,8 @@ export default function ReferrerProfileViewPage() {
     if (notFound || !profile) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <p className="font-black text-zinc-800" style={{ fontSize: '24px' }}>Referrer not found</p>
-                <Link href="/dashboard" className="text-orange-600 font-bold hover:underline" style={{ fontSize: '16px' }}>← Back to Dashboard</Link>
+                <p className="font-black text-zinc-800 text-2xl">Referrer not found</p>
+                <Link href="/dashboard" className="text-orange-600 font-bold hover:underline text-base">← Back to Dashboard</Link>
             </div>
         );
     }
@@ -110,8 +110,7 @@ export default function ReferrerProfileViewPage() {
                     {/* Back nav */}
                     <Link
                         href="/dashboard/referrer/manage"
-                        className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-200 font-semibold transition-colors mb-8 group"
-                        style={{ fontSize: '14px' }}
+                        className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-200 font-semibold transition-colors mb-8 group text-sm"
                     >
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Manage
                     </Link>
@@ -119,8 +118,8 @@ export default function ReferrerProfileViewPage() {
                     <div className="flex items-center gap-8 flex-wrap">
                         {/* Avatar */}
                         <div
-                            className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden"
-                            style={{ fontSize: '32px', boxShadow: '0 0 0 4px rgba(255,255,255,0.15), 0 4px 20px rgba(0,0,0,0.4)' }}
+                            className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden text-3xl"
+                            style={{ boxShadow: '0 0 0 4px rgba(255,255,255,0.15), 0 4px 20px rgba(0,0,0,0.4)' }}
                         >
                             {profile.profile_photo_url ? (
                                 // eslint-disable-next-line @next/next/no-img-element
@@ -130,24 +129,24 @@ export default function ReferrerProfileViewPage() {
 
                         {/* Name + meta */}
                         <div>
-                            <h1 className="font-black text-white leading-none mb-2" style={{ fontSize: '36px' }}>
+                            <h1 className="font-black text-white leading-none mb-2 text-4xl">
                                 {profile.full_name}
                             </h1>
                             <div className="flex items-center gap-5 flex-wrap mb-3">
                                 {(profile.suburb || profile.state) && (
-                                    <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '15px' }}>
+                                    <span className="flex items-center gap-1.5 text-zinc-400 font-medium text-sm">
                                         <MapPin className="w-3.5 h-3.5" />
                                         {profile.suburb}{profile.state ? `, ${profile.state}` : ""}
                                     </span>
                                 )}
                                 {memberYear && (
-                                    <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '15px' }}>
+                                    <span className="flex items-center gap-1.5 text-zinc-400 font-medium text-sm">
                                         <Award className="w-3.5 h-3.5" /> Member since {memberYear}
                                     </span>
                                 )}
                             </div>
                             {profile.tagline && (
-                                <p className="font-semibold italic text-amber-400 leading-snug" style={{ fontSize: '20px' }}>
+                                <p className="font-semibold italic text-amber-400 leading-snug text-xl">
                                     &ldquo;{profile.tagline}&rdquo;
                                 </p>
                             )}
@@ -172,16 +171,16 @@ export default function ReferrerProfileViewPage() {
                             }`}
                         >
                             <t.icon className={`w-5 h-5 mb-6 ${ t.highlight ? "text-green-400" : "text-gray-300" }`} />
-                            <p className={`font-black leading-none ${t.numClass}`} style={{ fontSize: '48px' }}>
+                            <p className={`font-black leading-none ${t.numClass} text-5xl`}>
                                 {t.value}
                                 {t.suffix && (
-                                    <span className={`font-black ${ t.highlight ? "text-green-300" : "text-gray-300" }`} style={{ fontSize: '24px' }}>{t.suffix}</span>
+                                    <span className={`font-black ${ t.highlight ? "text-green-300" : "text-gray-300" } text-2xl`}>{t.suffix}</span>
                                 )}
                             </p>
-                            <p className="font-bold text-gray-400 tracking-widest uppercase mt-5" style={{ fontSize: '14px' }}>
+                            <p className="font-bold text-gray-400 tracking-widest uppercase mt-5 text-xs">
                                 {t.label}
                             </p>
-                            <p className="font-medium text-gray-400 mt-1.5" style={{ fontSize: '14px' }}>
+                            <p className="font-medium text-gray-400 mt-1.5 text-xs">
                                 {t.desc}
                             </p>
                         </div>
@@ -191,10 +190,10 @@ export default function ReferrerProfileViewPage() {
                 {/* ── PROFESSIONAL SUMMARY ── */}
                 {profile.profile_bio && (
                     <div>
-                        <h2 className="font-black text-zinc-900 mb-6" style={{ fontSize: '28px' }}>
+                        <h2 className="font-black text-zinc-900 mb-6 text-3xl">
                             Professional Summary
                         </h2>
-                        <p className="font-medium text-zinc-600 leading-relaxed max-w-4xl" style={{ fontSize: '22px', lineHeight: 1.85 }}>
+                        <p className="font-medium text-zinc-600 leading-relaxed max-w-4xl text-2xl leading-relaxed">
                             {profile.profile_bio}
                         </p>
                     </div>

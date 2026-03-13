@@ -228,91 +228,85 @@ export default function BusinessSettingsPage() {
                                 </Link>
                                 <div className="flex items-center gap-3">
                                     <Building2 className="w-6 h-6 text-orange-500" />
-                                    <h1 className="font-bold text-zinc-900" style={{ fontSize: 32 }}>Edit Your Business Profile</h1>
+                                    <h1 className="font-bold text-zinc-900 text-3xl">Edit Your Business Profile</h1>
                                 </div>
                                 <p className="text-zinc-500 font-medium text-xl">This profile is what referrers see in the catalog before they decide to promote your business.</p>
                             </div>
 
                             <section className="space-y-6">
                                 <div className="space-y-3">
-                                    <label className={labelClass} style={{ fontSize: 22 }}>Business Name</label>
+                                    <label className={`${labelClass} text-xl`}>Business Name</label>
                                     <input
                                         type="text"
-                                        className={inputClass}
+                                        className={`${inputClass} text-xl`}
                                         value={formData.business_name}
                                         onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
                                         placeholder="TradeRefer Plumbing Co"
-                                        style={{ fontSize: 22 }}
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
                                     <div className="space-y-3">
-                                        <label className={labelClass} style={{ fontSize: 22 }}>Trade Category</label>
+                                        <label className={`${labelClass} text-xl`}>Trade Category</label>
                                         <input
                                             type="text"
-                                            className={inputClass}
+                                            className={`${inputClass} text-xl`}
                                             value={formData.trade_category}
                                             onChange={(e) => setFormData({ ...formData, trade_category: e.target.value })}
                                             placeholder="Plumbing"
-                                            style={{ fontSize: 22 }}
                                         />
                                     </div>
                                     <div className="space-y-3">
-                                        <label className={labelClass} style={{ fontSize: 22 }}>Suburb</label>
+                                        <label className={`${labelClass} text-xl`}>Suburb</label>
                                         <input
                                             type="text"
-                                            className={inputClass}
+                                            className={`${inputClass} text-xl`}
                                             value={formData.suburb}
                                             onChange={(e) => setFormData({ ...formData, suburb: e.target.value })}
                                             placeholder="Brisbane"
-                                            style={{ fontSize: 22 }}
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
                                     <div className="space-y-3">
-                                        <label className={labelClass} style={{ fontSize: 22 }}>Business Phone</label>
+                                        <label className={`${labelClass} text-xl`}>Business Phone</label>
                                         <input
                                             type="tel"
-                                            className={inputClass}
+                                            className={`${inputClass} text-xl`}
                                             value={formData.business_phone}
                                             onChange={(e) => setFormData({ ...formData, business_phone: e.target.value })}
                                             placeholder="0400 000 000"
-                                            style={{ fontSize: 22 }}
                                         />
                                     </div>
                                     <div className="space-y-3">
-                                        <label className={labelClass} style={{ fontSize: 22 }}>Business Email</label>
+                                        <label className={`${labelClass} text-xl`}>Business Email</label>
                                         <input
                                             type="email"
-                                            className={inputClass}
+                                            className={`${inputClass} text-xl`}
                                             value={formData.business_email}
                                             onChange={(e) => setFormData({ ...formData, business_email: e.target.value })}
                                             placeholder="hello@business.com.au"
-                                            style={{ fontSize: 22 }}
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={labelClass} style={{ fontSize: 22 }}>Website</label>
+                                    <label className={`${labelClass} text-xl`}>Website</label>
                                     <input
                                         type="url"
-                                        className={inputClass}
+                                        className={`${inputClass} text-xl`}
                                         value={formData.website}
                                         onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                                         placeholder="https://yourbusiness.com.au"
-                                        style={{ fontSize: 22 }}
                                     />
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={labelClass} style={{ fontSize: 22 }}>Storefront Slug</label>
+                                    <label className={`${labelClass} text-xl`}>Storefront Slug</label>
                                     <input
                                         type="text"
-                                        className={`${inputClass} ${slugStatus === "taken" ? "border-red-300 focus:border-red-400 focus:ring-red-500/20" : ""}`}
+                                        className={`${inputClass} ${slugStatus === "taken" ? "border-red-300 focus:border-red-400 focus:ring-red-500/20" : ""} text-xl`}
                                         value={formData.slug}
                                         onChange={(e) => {
                                             const value = e.target.value.trim().toLowerCase().replace(/\s+/g, "-");
@@ -320,7 +314,6 @@ export default function BusinessSettingsPage() {
                                             checkSlug(value);
                                         }}
                                         placeholder="trade-refer-plumbing"
-                                        style={{ fontSize: 22 }}
                                     />
                                     <p className={`text-lg font-medium ${slugStatus === "taken" ? "text-red-500" : slugStatus === "available" ? "text-emerald-600" : "text-zinc-400"}`}>
                                         {slugStatus === "taken"
@@ -356,63 +349,59 @@ export default function BusinessSettingsPage() {
 
                             <section className="space-y-6">
                                 <div>
-                                    <h2 className="font-bold text-zinc-900" style={{ fontSize: 32 }}>Why Referrers Should Choose You</h2>
+                                    <h2 className="font-bold text-zinc-900 text-3xl">Why Referrers Should Choose You</h2>
                                     <p className="text-zinc-500 font-medium text-lg mt-2">Shape the story referrers see when comparing businesses in the catalog.</p>
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={labelClass} style={{ fontSize: 22 }}>Business Description</label>
+                                    <label className={`${labelClass} text-xl`}>Business Description</label>
                                     <textarea
                                         rows={4}
-                                        className={textareaClass}
+                                        className={`${textareaClass} text-xl`}
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         placeholder="Tell referrers what makes your business credible, trusted, and easy to recommend."
-                                        style={{ fontSize: 22 }}
                                     />
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={labelClass} style={{ fontSize: 22 }}>Referrer Pitch</label>
+                                    <label className={`${labelClass} text-xl`}>Referrer Pitch</label>
                                     <textarea
                                         rows={5}
-                                        className={textareaClass}
+                                        className={`${textareaClass} text-xl`}
                                         value={formData.why_refer_us}
                                         onChange={(e) => setFormData({ ...formData, why_refer_us: e.target.value })}
                                         placeholder="e.g. We answer fast, turn up on time, and give referrers confidence every step of the way."
-                                        style={{ fontSize: 22 }}
                                     />
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={labelClass} style={{ fontSize: 22 }}>Address</label>
+                                    <label className={`${labelClass} text-xl`}>Address</label>
                                     <textarea
                                         rows={3}
-                                        className={textareaClass}
+                                        className={`${textareaClass} text-xl`}
                                         value={formData.address}
                                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                         placeholder="Street address or service HQ"
-                                        style={{ fontSize: 22 }}
                                     />
                                 </div>
                             </section>
 
                             <section className="space-y-6">
                                 <div>
-                                    <h2 className="font-bold text-zinc-900" style={{ fontSize: 32 }}>Referral Fee Settings</h2>
+                                    <h2 className="font-bold text-zinc-900 text-3xl">Referral Fee Settings</h2>
                                     <p className="text-zinc-500 font-medium text-lg mt-2">Set the commercial signal that makes your storefront feel premium to referrers.</p>
                                 </div>
 
                                 <div className="rounded-[28px] border border-orange-200 bg-orange-50/60 p-8 space-y-5">
-                                    <label className={labelClass} style={{ fontSize: 24 }}>Base Referral Fee</label>
+                                    <label className={`${labelClass} text-2xl`}>Base Referral Fee</label>
                                     <div className="relative w-full max-w-[320px]">
-                                        <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-zinc-900" style={{ fontSize: 30 }}>$</span>
+                                        <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-zinc-900 text-3xl">$</span>
                                         <input
                                             type="number"
                                             min="3"
                                             step="1"
-                                            className="w-full h-16 rounded-2xl border-2 border-orange-300 bg-white pl-16 pr-5 font-black text-zinc-900 outline-none transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20"
-                                            style={{ fontSize: 40 }}
+                                            className="w-full h-16 rounded-2xl border-2 border-orange-300 bg-white pl-16 pr-5 font-black text-zinc-900 outline-none transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 text-4xl"
                                             value={formData.referral_fee_cents / 100}
                                             onChange={(e) => {
                                                 const val = parseFloat(e.target.value) || 0;
@@ -426,27 +415,27 @@ export default function BusinessSettingsPage() {
                                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
                                     <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6">
                                         <p className="text-base font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Referrer Reward</p>
-                                        <p className="font-bold text-zinc-900" style={{ fontSize: 40 }}>${(formData.referral_fee_cents / 100).toFixed(2)}</p>
+                                        <p className="font-bold text-zinc-900 text-4xl">${(formData.referral_fee_cents / 100).toFixed(2)}</p>
                                     </div>
                                     <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6">
                                         <p className="text-base font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Platform Fee</p>
-                                        <p className="font-bold text-zinc-900" style={{ fontSize: 40 }}>${(formData.referral_fee_cents * 0.2 / 100).toFixed(2)}</p>
+                                        <p className="font-bold text-zinc-900 text-4xl">${(formData.referral_fee_cents * 0.2 / 100).toFixed(2)}</p>
                                     </div>
                                     <div className="rounded-2xl bg-zinc-900 text-white p-6 shadow-lg shadow-zinc-900/10">
                                         <p className="text-base font-extrabold uppercase tracking-[0.16em] text-white/60 mb-3">Total Unlock Price</p>
-                                        <p className="font-bold text-white" style={{ fontSize: 40 }}>${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
+                                        <p className="font-bold text-white text-4xl">${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
                                     </div>
                                 </div>
                             </section>
 
                             <section className="space-y-6">
                                 <div>
-                                    <h2 className="font-bold text-zinc-900" style={{ fontSize: 32 }}>Operational Trust Signals</h2>
+                                    <h2 className="font-bold text-zinc-900 text-3xl">Operational Trust Signals</h2>
                                     <p className="text-zinc-500 font-medium text-lg mt-2">These cues tell referrers how quickly and confidently you operate.</p>
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={labelClass} style={{ fontSize: 22 }}>Response Time Target</label>
+                                    <label className={`${labelClass} text-xl`}>Response Time Target</label>
                                     <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
                                         {responseTimeOptions.map((opt) => (
                                             <button
@@ -465,7 +454,7 @@ export default function BusinessSettingsPage() {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={labelClass} style={{ fontSize: 22 }}>ABN Verification</label>
+                                    <label className={`${labelClass} text-xl`}>ABN Verification</label>
                                     <div className="flex flex-col xl:flex-row items-stretch gap-4">
                                         <input
                                             type="text"
@@ -509,7 +498,7 @@ export default function BusinessSettingsPage() {
                     <div className="w-full h-full flex flex-col px-4 md:px-6 xl:px-8 py-4 md:py-6">
                         <div className="flex items-center gap-2 mb-4 shrink-0">
                             <Eye className="w-4 h-4 text-zinc-400" />
-                            <span className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: 14 }}>Live Preview</span>
+                            <span className="font-black text-zinc-400 uppercase tracking-widest text-sm">Live Preview</span>
                         </div>
 
                         <div className="flex-1 min-h-0 flex items-center justify-center overflow-hidden">
@@ -521,7 +510,7 @@ export default function BusinessSettingsPage() {
                                                 <CheckCircle2 className="w-3.5 h-3.5" /> Trusted by Referrers
                                             </div>
                                             <div className="space-y-2">
-                                                <h2 className="font-black text-zinc-900 leading-none" style={{ fontSize: 34 }}>
+                                                <h2 className="font-black text-zinc-900 leading-none text-3xl">
                                                     {formData.business_name || biz?.business_name || "Your Business Name"}
                                                 </h2>
                                                 <div className="flex items-center gap-3 flex-wrap text-base text-zinc-500 font-medium">
@@ -545,7 +534,7 @@ export default function BusinessSettingsPage() {
 
                                         <div className="w-full lg:w-[210px] shrink-0 rounded-[24px] bg-zinc-900 text-white p-5">
                                             <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-white/60 mb-3">Referral Fee</p>
-                                            <p className="font-black text-white leading-none" style={{ fontSize: 34 }}>${(formData.referral_fee_cents / 100).toFixed(0)}</p>
+                                            <p className="font-black text-white leading-none text-3xl">${(formData.referral_fee_cents / 100).toFixed(0)}</p>
                                             <p className="text-base text-white/70 font-medium mt-3">What referrers see before they unlock and promote your business.</p>
                                         </div>
                                     </div>
@@ -554,24 +543,24 @@ export default function BusinessSettingsPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 border-b border-gray-100">
                                     <div className="px-7 py-5 bg-white border-b md:border-b-0 md:border-r border-gray-100">
                                         <Clock className="w-4 h-4 text-emerald-400 mb-4" />
-                                        <p className="font-black text-zinc-900 leading-none" style={{ fontSize: 34 }}>{responseTimeLabel}</p>
+                                        <p className="font-black text-zinc-900 leading-none text-3xl">{responseTimeLabel}</p>
                                         <p className="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">Response Promise</p>
                                     </div>
                                     <div className="px-7 py-5 bg-gray-50 border-b md:border-b-0 md:border-r border-gray-100">
                                         <TrendingUp className="w-4 h-4 text-orange-400 mb-4" />
-                                        <p className="font-black text-zinc-900 leading-none" style={{ fontSize: 34 }}>${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
+                                        <p className="font-black text-zinc-900 leading-none text-3xl">${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
                                         <p className="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">Lead Unlock Price</p>
                                     </div>
                                     <div className="px-7 py-5 bg-white">
                                         <Shield className="w-4 h-4 text-blue-400 mb-4" />
-                                        <p className="font-black text-zinc-900 leading-none" style={{ fontSize: 34 }}>{biz?.is_verified ? "Verified" : "Pending"}</p>
+                                        <p className="font-black text-zinc-900 leading-none text-3xl">{biz?.is_verified ? "Verified" : "Pending"}</p>
                                         <p className="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">ABN Status</p>
                                     </div>
                                 </div>
 
                                 <div className="px-7 py-6 space-y-5">
                                     <div>
-                                        <p className="font-black text-zinc-900 mb-3" style={{ fontSize: 16 }}>Why This Business Converts</p>
+                                        <p className="font-black text-zinc-900 mb-3 text-base">Why This Business Converts</p>
                                         <p className="text-zinc-600 leading-7 font-medium text-lg">
                                             {formData.description || "Describe your service quality, reliability, and why referrers can trust you with their reputation."}
                                         </p>

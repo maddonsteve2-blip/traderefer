@@ -41,14 +41,14 @@ function BusinessCard({ biz }: { biz: Business }) {
                         </div>
                     )}
                     <div className="flex-1 min-w-0">
-                        <div className="font-bold text-zinc-900 text-lg truncate group-hover:text-orange-600 transition-colors leading-tight">
+                        <div className="font-bold text-zinc-900 text-[19px] truncate group-hover:text-orange-600 transition-colors leading-tight">
                             {biz.business_name}
                         </div>
-                        <div className="text-lg text-zinc-400 truncate">{biz.trade_category} · {biz.suburb}</div>
+                        <div className="text-[19px] text-zinc-400 truncate">{biz.trade_category} · {biz.suburb}</div>
                     </div>
                 </div>
                 <div className="flex items-center justify-between">
-                    <span className="text-2xl font-black text-green-600">${(biz.referral_fee_cents / 100).toFixed(0)}<span className="text-lg font-bold text-zinc-400">/lead</span></span>
+                    <span className="text-[24px] font-black text-green-600">${(biz.referral_fee_cents / 100).toFixed(0)}<span className="text-[19px] font-bold text-zinc-400">/lead</span></span>
                     {biz.is_verified && (
                         <span className="text-base font-black text-blue-500 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest">Verified</span>
                     )}
@@ -128,7 +128,7 @@ export function DiscoverSection() {
                                 {hasHot && (
                                     <button
                                         onClick={() => setActiveTab("hot")}
-                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-lg font-black transition-all ${
+                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-[19px] font-black transition-all ${
                                             activeTab === "hot" ? "bg-white text-orange-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
                                         }`}
                                     >
@@ -138,7 +138,7 @@ export function DiscoverSection() {
                                 {hasNew && (
                                     <button
                                         onClick={() => setActiveTab("new")}
-                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-lg font-black transition-all ${
+                                        className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-[19px] font-black transition-all ${
                                             activeTab === "new" ? "bg-white text-purple-600 shadow-sm" : "text-zinc-500 hover:text-zinc-700"
                                         }`}
                                     >
@@ -147,12 +147,12 @@ export function DiscoverSection() {
                                 )}
                             </div>
                             {suburb && (
-                                <span className="hidden sm:flex items-center gap-1.5 text-lg font-bold text-zinc-500">
+                                <span className="hidden sm:flex items-center gap-1.5 text-[19px] font-bold text-zinc-500">
                                     <MapPin className="w-4 h-4 text-orange-400" /> Near {suburb}
                                 </span>
                             )}
                         </div>
-                        <Link href="/dashboard/referrer/businesses" className="text-xl font-black text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-4">
+                        <Link href="/dashboard/referrer/businesses" className="text-[21px] font-black text-orange-500 hover:text-orange-600 flex items-center gap-0.5 underline underline-offset-4">
                             View All <ChevronRight className="w-5 h-5" />
                         </Link>
                     </div>
@@ -167,7 +167,7 @@ export function DiscoverSection() {
             {/* Top Earners Leaderboard */}
             {topEarners.length > 0 && (
                 <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 rounded-[32px] p-8 shadow-xl">
-                    <h3 className="text-2xl font-black text-white flex items-center gap-3 mb-6 uppercase tracking-tighter">
+                    <h3 className="text-[24px] font-black text-white flex items-center gap-3 mb-6 uppercase tracking-tighter">
                         <Trophy className="w-6 h-6 text-amber-400" /> Top Earners This Month
                     </h3>
                     <div className="space-y-3">
@@ -177,7 +177,7 @@ export function DiscoverSection() {
                             return (
                                 <div key={e.rank} className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 transition-all rounded-2xl border border-white/5">
                                     <div className="flex items-center gap-4">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg ${
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-[19px] ${
                                             e.rank === 1 ? "bg-amber-400/20 text-amber-400" :
                                             e.rank === 2 ? "bg-zinc-400/20 text-zinc-400" :
                                             e.rank === 3 ? "bg-orange-400/20 text-orange-400" :
@@ -186,14 +186,14 @@ export function DiscoverSection() {
                                             #{e.rank}
                                         </div>
                                         <div>
-                                            <div className="text-lg font-black text-white flex items-center gap-2">
+                                            <div className="text-[19px] font-black text-white flex items-center gap-2">
                                                 Anonymous Referrer
                                                 <TIcon className={`w-4 h-4 ${tColor}`} />
                                             </div>
                                             <div className="text-base text-zinc-400 font-medium">{e.leads_this_month} leads this month</div>
                                         </div>
                                     </div>
-                                    <span className="font-black text-green-400 text-xl">${(e.month_earnings_cents / 100).toFixed(0)}</span>
+                                    <span className="font-black text-green-400 text-[21px]">${(e.month_earnings_cents / 100).toFixed(0)}</span>
                                 </div>
                             );
                         })}

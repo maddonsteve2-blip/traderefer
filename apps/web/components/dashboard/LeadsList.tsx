@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { PinConfirmationModal } from "./PinConfirmationModal";
 import Link from "next/link";
 import posthog from "posthog-js";
+import { toast } from "sonner";
 
 interface Lead {
     id: string;
@@ -50,7 +51,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
 
     const handleUnlock = async (leadId: string) => {
         if (!userId) {
-            alert("Please sign in to unlock leads");
+            toast.error("Please sign in to unlock leads");
             return;
         }
 
@@ -99,7 +100,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
             }
         } catch (error) {
             posthog.captureException(error);
-            alert((error as Error).message);
+            toast.error((error as Error).message);
         } finally {
             setIsUnlocking(null);
         }
@@ -127,7 +128,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
             await refreshLead(leadId);
         } catch (error) {
             posthog.captureException(error);
-            alert((error as Error).message);
+            toast.error((error as Error).message);
         } finally {
             setIsUpdatingStatus(null);
         }

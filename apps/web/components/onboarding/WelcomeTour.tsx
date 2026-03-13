@@ -92,7 +92,8 @@ export function WelcomeTour({ type, onComplete }: WelcomeTourProps) {
     };
 
     return (
-        <div className="fixed inset-0 z-[100] bg-zinc-900 flex items-center justify-center p-6 lg:p-12 overflow-hidden">
+        <div className="fixed inset-0 z-[100] bg-zinc-900 overflow-y-auto">
+            <div className="min-h-full flex items-center justify-center p-6 lg:p-12 relative">
             {/* Decorative Glows */}
             <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[120px]" />
             <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px]" />
@@ -152,6 +153,7 @@ export function WelcomeTour({ type, onComplete }: WelcomeTourProps) {
                         className={`h-1.5 rounded-full transition-all duration-500 ${i === step ? 'w-12 bg-orange-500' : 'w-3 bg-zinc-800'}`}
                     />
                 ))}
+            </div>
             </div>
         </div>
     );

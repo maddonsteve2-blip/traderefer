@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert, CheckCircle2 } from "lucide-react";
+import { ConfirmationDialog } from "@/components/shared/ConfirmationDialog";
 
 interface Dispute {
     id: string;
@@ -15,8 +16,12 @@ interface Dispute {
 export function DisputeList({ initialDisputes }: { initialDisputes: Dispute[] }) {
     const [disputes, setDisputes] = useState(initialDisputes);
 
-    const resolveDispute = (id: string) => {
-        setDisputes(prev => prev.filter(d => d.id !== id));
+    const [disputeToResolve, setDisputeToResolve] = useState<string | null>(null);
+
+    const resolveDispute = () => {
+        if (!disputeToResolve) return;
+        setDisputes(prev => prev.filter(d => d.id !== disputeToResolve));
+        setDisputeToResolve(null);
         // In real app, we would post to API
     };
 
@@ -41,7 +46,7 @@ export function DisputeList({ initialDisputes }: { initialDisputes: Dispute[] })
                         </div>
                         <div className="flex gap-2">
                             <Button
-                                onClick={() => resolveDispute(dispute.id)}
+                                onClick={() => setDisputeToResolve(dispute.id)}
                                 size="sm"
                                 className="bg-zinc-900 text-white rounded-full hover:bg-black px-4 flex items-center gap-2"
                             >
@@ -58,6 +63,17 @@ export function DisputeList({ initialDisputes }: { initialDisputes: Dispute[] })
                     <p className="text-sm text-zinc-500">No open disputes requiring action.</p>
                 </div>
             )}
+
+            <ConfirmationDialog
+                open={!!disputeToResolve}
+                onOpenChange={(open) => !open && setDisputeToResolve(null)}
+                onConfirm={resolveDispute}
+                title="Resolve Dispute?"
+                description="This will clear the dispute and notify the relevant parties. Are you sure you want to proceed?"
+                confirmText="Resolve"
+                cancelText="Cancel"
+                variant="warning"
+            />
         </div>
     );
 }

@@ -8,6 +8,7 @@ import {
     ArrowLeft, Save, Eye, TrendingUp, ExternalLink, Award, Camera, Video, CalendarDays
 } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Profile {
     full_name: string;
@@ -69,7 +70,7 @@ export default function ReferrerProfilePage() {
                 }
             }, 50);
         } catch {
-            alert("Could not access webcam. Please allow camera permissions and try again.");
+            toast.error("Could not access webcam. Please allow camera permissions and try again.");
         }
     };
 
@@ -195,21 +196,19 @@ export default function ReferrerProfilePage() {
                 <div className="flex items-center gap-3">
                     <Link
                         href="/dashboard/referrer/manage"
-                        className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-800 font-bold transition-colors group"
-                        style={{ fontSize: '18px' }}
+                        className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-800 font-bold transition-colors group text-lg"
                     >
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Manage
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-black" style={{ fontSize: '18px' }}>My Referrer Profile</span>
+                    <span className="text-zinc-700 font-black text-lg">My Referrer Profile</span>
                 </div>
                 {publicUrl && (
                     <a
                         href={publicUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all"
-                        style={{ fontSize: '14px' }}
+                        className="flex items-center gap-2 px-5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all text-sm"
                     >
                         <ExternalLink className="w-4 h-4" /> View Live Resume
                     </a>
@@ -224,15 +223,15 @@ export default function ReferrerProfilePage() {
                     <div className="flex-1 p-10 space-y-8">
                         <div className="flex items-center gap-3">
                             <Edit3 className="w-6 h-6 text-orange-500" />
-                            <h2 className="font-black text-zinc-900" style={{ fontSize: '24px' }}>Edit Your Profile</h2>
+                            <h2 className="font-black text-zinc-900 text-2xl">Edit Your Profile</h2>
                         </div>
-                        <p className="text-zinc-500 font-bold" style={{ fontSize: '18px' }}>
+                        <p className="text-zinc-500 font-bold text-lg">
                             Businesses see this resume when you apply to their network.
                         </p>
 
                         {/* Tagline */}
                         <div>
-                            <label className="block font-black text-zinc-700 mb-2.5" style={{ fontSize: '15px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                            <label className="block font-black text-zinc-700 mb-2.5 text-sm uppercase tracking-widest">
                                 Professional Tagline
                             </label>
                             <textarea
@@ -241,15 +240,14 @@ export default function ReferrerProfilePage() {
                                 placeholder="e.g. Property investor with a network of 200+ homeowners, landlords & renovators in Brisbane's south side"
                                 value={tagline}
                                 onChange={e => setTagline(e.target.value)}
-                                className="w-full px-5 py-4 bg-white border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 text-zinc-900 font-bold resize-none transition-all"
-                                style={{ fontSize: '20px', lineHeight: 1.5 }}
+                                className="w-full px-5 py-4 bg-white border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 text-zinc-900 font-bold resize-none transition-all text-xl leading-relaxed"
                             />
-                            <p className="text-zinc-400 font-bold mt-2" style={{ fontSize: '14px' }}>{tagline.length}/120 characters</p>
+                            <p className="text-zinc-400 font-bold mt-2 text-sm">{tagline.length}/120 characters</p>
                         </div>
 
                         {/* Bio */}
                         <div>
-                            <label className="block font-black text-zinc-700 mb-2.5" style={{ fontSize: '15px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                            <label className="block font-black text-zinc-700 mb-2.5 text-sm uppercase tracking-widest">
                                 Referrer Bio
                             </label>
                             <textarea
@@ -258,20 +256,19 @@ export default function ReferrerProfilePage() {
                                 placeholder="Tell businesses who you are, the size of your network, and why you&apos;d be a great referrer for their trade..."
                                 value={bio}
                                 onChange={e => setBio(e.target.value)}
-                                className="w-full px-5 py-4 bg-white border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 text-zinc-900 font-medium resize-none transition-all"
-                                style={{ fontSize: '20px', lineHeight: 1.6 }}
+                                className="w-full px-5 py-4 bg-white border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 text-zinc-900 font-medium resize-none transition-all text-xl leading-relaxed"
                             />
-                            <p className="text-zinc-400 font-bold mt-2" style={{ fontSize: '14px' }}>{bio.length}/500 characters</p>
+                            <p className="text-zinc-400 font-bold mt-2 text-sm">{bio.length}/500 characters</p>
                         </div>
 
                         {/* Profile Photo Upload */}
                         <div>
-                            <label className="block font-black text-zinc-700 mb-3" style={{ fontSize: '15px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                            <label className="block font-black text-zinc-700 mb-3 text-sm uppercase tracking-widest">
                                 Profile Photo
                             </label>
                             <div className="flex items-center gap-6">
                                 {/* Avatar preview */}
-                                <div className="w-24 h-24 rounded-[24px] bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-xl" style={{ fontSize: '32px' }}>
+                                <div className="w-24 h-24 rounded-[24px] bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden shadow-xl text-3xl">
                                     {photoUrl ? (
                                         // eslint-disable-next-line @next/next/no-img-element
                                         <img src={photoUrl} alt="" className="w-full h-full object-cover" />
@@ -296,8 +293,7 @@ export default function ReferrerProfilePage() {
                                             type="button"
                                             onClick={() => fileInputRef.current?.click()}
                                             disabled={uploading}
-                                            className="flex items-center justify-center gap-2 flex-1 h-12 px-5 bg-white border-2 border-dashed border-gray-300 hover:border-orange-400 hover:bg-orange-50 text-zinc-700 hover:text-orange-600 rounded-2xl font-black transition-all disabled:opacity-60 shadow-sm"
-                                            style={{ fontSize: '16px' }}
+                                            className="flex items-center justify-center gap-2 flex-1 h-12 px-5 bg-white border-2 border-dashed border-gray-300 hover:border-orange-400 hover:bg-orange-50 text-zinc-700 hover:text-orange-600 rounded-2xl font-black transition-all disabled:opacity-60 shadow-sm text-base"
                                         >
                                             {uploading ? (
                                                 <><div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" /> Uploading…</>
@@ -309,8 +305,7 @@ export default function ReferrerProfilePage() {
                                             type="button"
                                             onClick={openWebcam}
                                             disabled={uploading}
-                                            className="flex items-center justify-center gap-2 flex-1 h-12 px-5 bg-zinc-900 hover:bg-zinc-700 text-white rounded-2xl font-black transition-all disabled:opacity-60 shadow-lg shadow-zinc-200"
-                                            style={{ fontSize: '16px' }}
+                                            className="flex items-center justify-center gap-2 flex-1 h-12 px-5 bg-zinc-900 hover:bg-zinc-700 text-white rounded-2xl font-black transition-all disabled:opacity-60 shadow-lg shadow-zinc-200 text-base"
                                         >
                                             <Video className="w-5 h-5" /> Take Photo
                                         </button>
@@ -319,13 +314,12 @@ export default function ReferrerProfilePage() {
                                         <button
                                             type="button"
                                             onClick={() => setPhotoUrl("")}
-                                            className="text-red-500 hover:text-red-600 font-bold transition-colors underline underline-offset-4"
-                                            style={{ fontSize: '14px' }}
+                                            className="text-red-500 hover:text-red-600 font-bold transition-colors underline underline-offset-4 text-sm"
                                         >
                                             Remove photo
                                         </button>
                                     )}
-                                    <p className="text-zinc-400 font-bold" style={{ fontSize: '13px' }}>JPG, PNG or WEBP · auto-cropped to square · max 5MB</p>
+                                    <p className="text-zinc-400 font-bold text-xs">JPG, PNG or WEBP · auto-cropped to square · max 5MB</p>
                                 </div>
                             </div>
                         </div>
@@ -337,8 +331,7 @@ export default function ReferrerProfilePage() {
                         <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="flex items-center justify-center gap-3 w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-2xl font-black transition-all shadow-xl shadow-orange-200 active:scale-95"
-                            style={{ fontSize: '20px', height: '64px' }}
+                            className="flex items-center justify-center gap-3 w-full bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-2xl font-black transition-all shadow-xl shadow-orange-200 active:scale-95 text-xl h-16"
                         >
                             {saved ? <><CheckCircle className="w-6 h-6" /> Saved!</> : saving ? "Saving…" : <><Save className="w-6 h-6" /> Save Profile Changes</>}
                         </button>
@@ -350,7 +343,7 @@ export default function ReferrerProfilePage() {
                     <div className="w-full max-w-2xl space-y-4">
                         <div className="flex items-center gap-2.5 mb-4 px-2">
                             <Eye className="w-5 h-5 text-zinc-400" />
-                            <span className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '14px' }}>Live Preview (Business View)</span>
+                            <span className="font-black text-zinc-400 uppercase tracking-widest text-sm">Live Preview (Business View)</span>
                         </div>
 
                         <div className="bg-white border-2 border-gray-100 rounded-[32px] overflow-hidden shadow-2xl">
@@ -360,8 +353,8 @@ export default function ReferrerProfilePage() {
                                 <div className="flex items-center gap-8 flex-wrap">
                                     {/* Avatar */}
                                     <div
-                                        className="w-20 h-24 rounded-3xl bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden"
-                                        style={{ fontSize: '24px', boxShadow: '0 0 0 4px #fff, 0 0 0 6px #f3f4f6, 0 10px 30px rgba(0,0,0,0.15)' }}
+                                        className="w-20 h-24 rounded-3xl bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden text-2xl"
+                                        style={{ boxShadow: '0 0 0 4px #fff, 0 0 0 6px #f3f4f6, 0 10px 30px rgba(0,0,0,0.15)' }}
                                     >
                                         {(photoUrl || profile.profile_photo_url) ? (
                                             // eslint-disable-next-line @next/next/no-img-element
@@ -370,25 +363,25 @@ export default function ReferrerProfilePage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-3 flex-wrap mb-2">
-                                            <h3 className="font-black text-zinc-900 leading-none" style={{ fontSize: '32px' }}>{profile.full_name}</h3>
-                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 border-2 border-green-200 bg-green-50 text-green-700 rounded-full font-black uppercase tracking-widest" style={{ fontSize: '12px' }}>
+                                            <h3 className="font-black text-zinc-900 leading-none text-3xl">{profile.full_name}</h3>
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 border-2 border-green-200 bg-green-50 text-green-700 rounded-full font-black uppercase tracking-widest text-[11px]">
                                                 <CheckCircle className="w-3.5 h-3.5" /> Verified
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-6 flex-wrap mb-3">
                                             {(profile.suburb || profile.state) && (
-                                                <span className="flex items-center gap-1.5 text-zinc-400 font-bold" style={{ fontSize: '16px' }}>
+                                                <span className="flex items-center gap-1.5 text-zinc-400 font-bold text-base">
                                                     <MapPin className="w-4 h-4 text-orange-400" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}
                                                 </span>
                                             )}
                                             {memberYear && (
-                                                <span className="flex items-center gap-1.5 text-zinc-400 font-bold" style={{ fontSize: '16px' }}>
+                                                <span className="flex items-center gap-1.5 text-zinc-400 font-bold text-base">
                                                     <Award className="w-4 h-4 text-amber-400" />Since {memberYear}
                                                 </span>
                                             )}
                                         </div>
                                         {(tagline || profile.tagline) && (
-                                            <p className="font-bold text-zinc-600 leading-relaxed" style={{ fontSize: '18px' }}>
+                                            <p className="font-bold text-zinc-600 leading-relaxed text-lg">
                                                 {tagline || profile.tagline}
                                             </p>
                                         )}
@@ -406,24 +399,24 @@ export default function ReferrerProfilePage() {
                                 ] as const).map((t, i) => (
                                     <div key={t.label} className={`px-6 py-8 flex flex-col items-center text-center${i < 3 ? " border-r-2 border-gray-100" : ""} ${t.highlight ? "bg-green-50/50" : "bg-gray-50/50"}`}>
                                         <t.Icon className={`w-5 h-5 mb-5 ${t.highlight ? "text-green-500" : "text-gray-400"}`} />
-                                        <p className={`font-black leading-none ${t.numClass} mb-2`} style={{ fontSize: '36px' }}>
+                                        <p className={`font-black leading-none ${t.numClass} mb-2 text-4xl`}>
                                             {t.value}
-                                            {t.suffix && <span className={`font-black ${t.highlight ? "text-green-300" : "text-gray-300"}`} style={{ fontSize: '16px' }}>{t.suffix}</span>}
+                                            {t.suffix && <span className={`font-black ${t.highlight ? "text-green-300" : "text-gray-300"} text-base`}>{t.suffix}</span>}
                                         </p>
-                                        <p className="font-black text-gray-400 tracking-widest uppercase" style={{ fontSize: '11px', lineHeight: 1.4 }}>{t.label}</p>
+                                        <p className="font-black text-gray-400 tracking-widest uppercase text-xs leading-tight">{t.label}</p>
                                     </div>
                                 ))}
                             </div>
 
                             {/* Professional Summary */}
                             <div className="px-10 py-8">
-                                <p className="font-black text-zinc-900 mb-4 uppercase tracking-widest" style={{ fontSize: '15px' }}>Professional Summary</p>
+                                <p className="font-black text-zinc-900 mb-4 uppercase tracking-widest text-sm">Professional Summary</p>
                                 {(bio || profile.profile_bio) ? (
-                                    <p className="font-bold text-zinc-500 leading-relaxed" style={{ fontSize: '19px', lineHeight: 1.75 }}>
+                                    <p className="font-bold text-zinc-500 leading-relaxed text-xl leading-relaxed">
                                         {bio || profile.profile_bio}
                                     </p>
                                 ) : (
-                                    <p className="font-bold text-gray-300 italic" style={{ fontSize: '17px' }}>Add a bio above — this becomes your professional summary…</p>
+                                    <p className="font-bold text-gray-300 italic text-lg">Add a bio above — this becomes your professional summary…</p>
                                 )}
                             </div>
 
@@ -440,12 +433,11 @@ export default function ReferrerProfilePage() {
                         <div className="flex items-center justify-between px-8 py-6 border-b border-zinc-800">
                             <div className="flex items-center gap-3">
                                 <Video className="w-6 h-6 text-orange-400" />
-                                <span className="font-black text-white" style={{ fontSize: '22px' }}>Take Your Photo</span>
+                                <span className="font-black text-white text-xl">Take Your Photo</span>
                             </div>
                             <button
                                 onClick={closeWebcam}
-                                className="text-zinc-500 hover:text-white font-bold transition-colors"
-                                style={{ fontSize: '16px' }}
+                                className="text-zinc-500 hover:text-white font-bold transition-colors text-base"
                             >
                                 ✕ Cancel
                             </button>
@@ -469,13 +461,13 @@ export default function ReferrerProfilePage() {
 
                         {/* Snap button */}
                         <div className="px-8 py-8 text-center space-y-4">
-                            <p className="font-bold text-zinc-400" style={{ fontSize: '16px' }}>
+                            <p className="font-bold text-zinc-400 text-base">
                                 Centre your face in the circle, then tap Snap
                             </p>
                             <button
                                 onClick={snapWebcam}
-                                className="flex items-center justify-center gap-3 mx-auto px-12 h-16 rounded-2xl font-black text-white transition-all shadow-xl active:scale-95"
-                                style={{ background: '#FF7A00', fontSize: '20px' }}
+                                className="flex items-center justify-center gap-3 mx-auto px-12 h-16 rounded-2xl font-black text-white transition-all shadow-xl active:scale-95 text-xl"
+                                style={{ background: '#FF7A00' }}
                             >
                                 <Camera className="w-6 h-6" /> Snap Photo
                             </button>

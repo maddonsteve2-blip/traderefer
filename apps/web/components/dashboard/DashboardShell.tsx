@@ -26,6 +26,7 @@ import {
     Tag,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
+import { MobileBottomNav } from "./MobileBottomNav";
 
 const BUSINESS_NAV = [
     { label: "Overview",        href: "/dashboard/business",                        matchPath: "/dashboard/business",                 icon: LayoutDashboard, exact: true },
@@ -244,26 +245,19 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             </aside>
 
             {/* ── MOBILE TOP BAR ── */}
-            <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[#09090B] border-b border-zinc-800 flex items-center px-4 z-40">
-                <button
-                    onClick={() => setMobileOpen(true)}
-                    aria-label="Open menu"
-                    className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all mr-3"
-                >
-                    <Menu className="w-5 h-5" />
-                </button>
+            <div className="lg:hidden fixed top-0 left-0 right-0 h-[72px] bg-white border-b border-zinc-100 flex items-center px-5 z-40">
                 <Link href="/" className="flex items-center gap-2">
-                    <Image
-                        src="/logo-dark.png"
-                        alt="TradeRefer"
-                        width={28}
-                        height={28}
-                        className="rounded-lg"
-                        priority
-                    />
-                    <span className="text-lg font-black tracking-tight leading-none uppercase">
-                        <span className="text-white">TRADE</span>
-                        <span className="text-orange-500">REFER</span>
+                    <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <Image
+                            src="/logo-dark.png"
+                            alt="TradeRefer"
+                            width={24}
+                            height={24}
+                            className="rounded shadow-sm"
+                        />
+                    </div>
+                    <span className="text-xl font-black tracking-tight leading-none uppercase text-zinc-900">
+                        TradeRefer
                     </span>
                 </Link>
                 <div className="ml-auto">
@@ -305,10 +299,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <main
                 className={`flex-1 min-w-0 transition-all duration-300 ease-in-out ${
                     expanded ? "lg:ml-60" : "lg:ml-16"
-                } pt-14 lg:pt-0`}
+                } pt-[72px] lg:pt-0 pb-32 lg:pb-0`}
             >
                 {children}
             </main>
+
+            {/* ── MOBILE BOTTOM NAV ── */}
+            <MobileBottomNav />
         </div>
     );
 }

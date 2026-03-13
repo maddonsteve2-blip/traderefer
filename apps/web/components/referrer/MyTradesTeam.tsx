@@ -88,7 +88,7 @@ export function MyTradesTeam() {
             {/* Dock label + share — shrink-0 so it never wraps */}
             <div className="flex items-center gap-2.5 shrink-0">
                 <Users className="w-5 h-5 text-orange-500" />
-                <span className="text-lg font-black text-zinc-900 whitespace-nowrap">My Team</span>
+                <span className="text-[19px] font-black text-zinc-900 whitespace-nowrap">My Team</span>
                 {businesses.length > 0 && (
                     <span className="text-base font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full whitespace-nowrap">${totalEarned.toFixed(0)}</span>
                 )}
@@ -127,7 +127,7 @@ export function MyTradesTeam() {
                                     )}
                                 </div>
                                 <div className="flex flex-col leading-tight">
-                                    <span className="text-lg font-bold text-zinc-700 group-hover:text-orange-600 transition-colors whitespace-nowrap">{cat}</span>
+                                    <span className="text-[19px] font-bold text-zinc-700 group-hover:text-orange-600 transition-colors whitespace-nowrap">{cat}</span>
                                     {biz.earned > 0 && (
                                         <span className="text-base font-black text-green-600">${biz.earned.toFixed(0)}</span>
                                     )}
@@ -146,7 +146,7 @@ export function MyTradesTeam() {
                             <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
                                 <Plus className="w-5 h-5 text-zinc-300 group-hover:text-orange-400" />
                             </div>
-                            <span className="text-lg font-bold text-zinc-400 group-hover:text-orange-500 whitespace-nowrap">+ {trade}</span>
+                            <span className="text-[19px] font-bold text-zinc-400 group-hover:text-orange-500 whitespace-nowrap">+ {trade}</span>
                         </Link>
                     ))}
                 </div>

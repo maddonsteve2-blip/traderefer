@@ -83,7 +83,7 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
     if (!isSignedIn) {
         return (
             <div className="space-y-4">
-                <Link href="/login" className="flex items-center justify-center gap-3 w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all shadow-xl shadow-zinc-200/50" style={{ fontSize: '20px' }}>
+                <Link href="/login" className="flex items-center justify-center gap-3 w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all shadow-xl shadow-zinc-200/50 text-[21px]">
                     <LogIn className="w-6 h-6" /> Sign In to Apply
                 </Link>
             </div>
@@ -104,22 +104,22 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
             <div className="space-y-4">
                 <div className="flex items-center gap-3 px-5 py-4 bg-green-50 border-2 border-green-200 rounded-2xl">
                     <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />
-                    <span className="font-black text-green-700 leading-tight" style={{ fontSize: '18px' }}>You&apos;re an active referrer for {businessName}!</span>
+                    <span className="font-black text-green-700 leading-tight text-[19px]">You&apos;re an active referrer for {businessName}!</span>
                 </div>
                 {referralLink && (
                     <>
                         <div className="flex items-center gap-3 p-4 bg-white border-2 border-zinc-100 rounded-2xl shadow-sm">
-                            <span className="flex-1 text-zinc-500 truncate font-bold" style={{ fontSize: '17px' }}>{referralLink}</span>
+                            <span className="flex-1 text-zinc-500 truncate font-bold text-[17px]">{referralLink}</span>
                             <button onClick={handleCopy} className={`p-2.5 rounded-xl shrink-0 transition-all ${copied ? "bg-green-100 text-green-700" : "bg-zinc-50 text-zinc-400 hover:text-orange-500"}`}>
                                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                             </button>
                         </div>
-                        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all shadow-xl shadow-zinc-200/50" style={{ fontSize: '20px' }}>
+                        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all shadow-xl shadow-zinc-200/50 text-[21px]">
                             {copied ? <><Check className="w-6 h-6" /> Link Copied!</> : <><Copy className="w-6 h-6" /> Copy Referral Link</>}
                         </button>
                     </>
                 )}
-                <Link href="/dashboard/referrer" className="flex items-center justify-center gap-2.5 w-full py-4 bg-zinc-50 hover:bg-zinc-100 border-2 border-zinc-200 rounded-2xl font-black text-zinc-600 transition-all" style={{ fontSize: '17px' }}>
+                <Link href="/dashboard/referrer" className="flex items-center justify-center gap-2.5 w-full py-4 bg-zinc-50 hover:bg-zinc-100 border-2 border-zinc-200 rounded-2xl font-black text-zinc-600 transition-all text-[17px]">
                     Manage in Dashboard <ExternalLink className="w-5 h-5 opacity-50" />
                 </Link>
             </div>
@@ -132,13 +132,13 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
                 <div className="flex items-start gap-4 px-5 py-5 bg-amber-50 border-2 border-amber-200 rounded-2xl">
                     <Clock className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
                     <div>
-                        <p className="font-black text-amber-800" style={{ fontSize: '18px' }}>Application submitted — awaiting review</p>
-                        <p className="font-bold text-amber-600 mt-1" style={{ fontSize: '17px' }}>
+                        <p className="font-black text-amber-800 text-[19px]">Application submitted — awaiting review</p>
+                        <p className="font-bold text-amber-600 mt-1 text-[17px]">
                             {businessName} will review your profile within 72 hours.
                         </p>
                     </div>
                 </div>
-                <Link href="/dashboard/referrer/applications" className="flex items-center justify-center gap-2.5 w-full py-4 bg-zinc-50 hover:bg-zinc-100 border-2 border-zinc-200 rounded-2xl font-black text-zinc-600 transition-all" style={{ fontSize: '17px' }}>
+                <Link href="/dashboard/referrer/applications" className="flex items-center justify-center gap-2.5 w-full py-4 bg-zinc-50 hover:bg-zinc-100 border-2 border-zinc-200 rounded-2xl font-black text-zinc-600 transition-all text-[17px]">
                     View All My Applications <ChevronRight className="w-5 h-5" />
                 </Link>
             </div>
@@ -152,7 +152,7 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
         <div className="space-y-3">
             {canReapply && (
                 <div className="px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl">
-                    <p className="font-bold text-zinc-500" style={{ fontSize: '15px' }}>
+                    <p className="font-bold text-zinc-500 text-[15px]">
                         {status === "rejected" ? "Your previous application wasn't approved." : "Your previous application expired."}{" "}
                         You can apply again.
                     </p>
@@ -167,23 +167,20 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
                         placeholder={`Introduce yourself to ${businessName}... (optional)`}
                         value={intro}
                         onChange={e => setIntro(e.target.value)}
-                        className="w-full px-5 py-4 bg-white border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 text-zinc-900 font-bold resize-none transition-all"
-                        style={{ fontSize: '18px', lineHeight: 1.6 }}
+                        className="w-full px-5 py-4 bg-white border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 text-zinc-900 font-bold resize-none transition-all text-[19px] leading-[1.6]"
                     />
                     <p className="text-zinc-400 font-bold text-sm">{intro.length}/200 — optional</p>
                     <div className="flex gap-3">
                         <button
                             onClick={() => setShowIntro(false)}
-                            className="flex-1 py-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-2xl font-black transition-all"
-                            style={{ fontSize: '18px' }}
+                            className="flex-1 py-4 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-2xl font-black transition-all text-[19px]"
                         >
                             Back
                         </button>
                         <button
                             onClick={handleApply}
                             disabled={applying}
-                            className="flex-1 flex items-center justify-center gap-2.5 py-4 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-100"
-                            style={{ fontSize: '18px' }}
+                            className="flex-1 flex items-center justify-center gap-2.5 py-4 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-100 text-[19px]"
                         >
                             {applying ? "Sending…" : <><Send className="w-5 h-5" /> Send Application</>}
                         </button>
@@ -192,8 +189,7 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
             ) : (
                 <button
                     onClick={() => setShowIntro(true)}
-                    className="w-full flex items-center justify-center gap-3 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all active:scale-95 shadow-xl shadow-zinc-200/50"
-                    style={{ fontSize: '20px' }}
+                    className="w-full flex items-center justify-center gap-3 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all active:scale-95 shadow-xl shadow-zinc-200/50 text-[21px]"
                 >
                     Apply to Refer {businessName}
                     <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
@@ -201,7 +197,7 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
             )}
 
             {!showIntro && (
-                <p className="text-center font-bold text-zinc-400" style={{ fontSize: '16px' }}>
+                <p className="text-center font-bold text-zinc-400 text-[16px]">
                     {businessName} reviews applications within 72 hours
                 </p>
             )}

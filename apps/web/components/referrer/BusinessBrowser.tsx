@@ -71,13 +71,13 @@ function BizCard({ biz }: { biz: Business }) {
                         )}
                     </div>
                     <div className="flex-1 min-w-0">
-                        <div className="font-black text-zinc-900 leading-tight truncate group-hover:text-orange-600 transition-colors" style={{ fontSize: '22px' }}>
+                        <div className="font-black text-zinc-900 leading-tight truncate group-hover:text-orange-600 transition-colors text-[21px]">
                             {biz.business_name}
                         </div>
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
-                            <span className="text-zinc-500 font-bold truncate uppercase tracking-wide" style={{ fontSize: '17px' }}>{biz.trade_category}</span>
+                            <span className="text-zinc-500 font-bold truncate uppercase tracking-wide text-base">{biz.trade_category}</span>
                             {rating > 0 && (
-                                <span className="flex items-center gap-1 text-amber-500 font-bold shrink-0" style={{ fontSize: '17px' }}>
+                                <span className="flex items-center gap-1 text-amber-500 font-bold shrink-0 text-base">
                                     <Star className="w-4 h-4 fill-amber-400 shrink-0" />
                                     {rating.toFixed(1)}
                                     {biz.total_reviews > 0 && <span className="text-zinc-400 font-normal">({biz.total_reviews})</span>}
@@ -89,7 +89,7 @@ function BizCard({ biz }: { biz: Business }) {
                 </div>
 
                 {/* Location */}
-                <div className="flex items-center gap-1.5 text-zinc-400 font-bold uppercase tracking-wider" style={{ fontSize: '17px' }}>
+                <div className="flex items-center gap-1.5 text-zinc-400 font-bold uppercase tracking-wider text-base">
                     <MapPin className="w-4 h-4 shrink-0" />
                     {biz.suburb}, {biz.state}
                 </div>
@@ -98,7 +98,7 @@ function BizCard({ biz }: { biz: Business }) {
                 {pills.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                         {pills.map((p, i) => (
-                            <span key={i} className="px-3 py-1 bg-zinc-50 border border-zinc-200 text-zinc-600 rounded-lg font-bold" style={{ fontSize: '17px' }}>
+                            <span key={i} className="px-3 py-1 bg-zinc-50 border border-zinc-200 text-zinc-600 rounded-lg font-bold text-base">
                                 {p}
                             </span>
                         ))}
@@ -108,8 +108,8 @@ function BizCard({ biz }: { biz: Business }) {
                 {/* Referral fee */}
                 {feeDisplay && (
                     <div className="flex items-baseline gap-2 mt-auto">
-                        <span className="font-black text-zinc-900 tracking-tight" style={{ fontSize: '28px' }}>{feeDisplay}</span>
-                        <span className="font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '15px' }}>per verified lead</span>
+                        <span className="font-black text-zinc-900 tracking-tight text-[30px]">{feeDisplay}</span>
+                        <span className="font-bold text-zinc-400 uppercase tracking-widest text-sm">per verified lead</span>
                     </div>
                 )}
             </div>
@@ -118,8 +118,7 @@ function BizCard({ biz }: { biz: Business }) {
             <div className="px-5 pb-5">
                 <Link
                     href={`/dashboard/referrer/refer/${biz.slug}`}
-                    className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all py-4 active:scale-95 shadow-md shadow-orange-500/20"
-                    style={{ fontSize: '20px' }}
+                    className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all py-4 active:scale-95 shadow-md shadow-orange-500/20 text-[21px]"
                 >
                     Get Referral Link <ChevronRight className="w-5 h-5" />
                 </Link>
@@ -141,18 +140,18 @@ function SidebarCard({ biz, rank }: { biz: Business; rank: number }) {
             href={`/dashboard/referrer/refer/${biz.slug}`}
             className="flex items-center gap-4 p-4 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-200 rounded-2xl transition-all group"
         >
-            <div className="w-10 h-10 rounded-xl bg-zinc-200 flex items-center justify-center shrink-0 font-black text-zinc-500 group-hover:bg-orange-100 group-hover:text-orange-600 transition-colors" style={{ fontSize: '18px' }}>
+            <div className="w-10 h-10 rounded-xl bg-zinc-200 flex items-center justify-center shrink-0 font-black text-zinc-500 group-hover:bg-orange-100 group-hover:text-orange-600 transition-colors text-[19px]">
                 {rank}
             </div>
             <div className="flex-1 min-w-0">
-                <div className="font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors" style={{ fontSize: '19px' }}>
+                <div className="font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors text-[19px]">
                     {biz.business_name}
                 </div>
-                <div className="text-zinc-400 font-bold uppercase tracking-tight truncate" style={{ fontSize: '15px' }}>
+                <div className="text-zinc-400 font-bold uppercase tracking-tight truncate text-sm">
                     {biz.trade_category} · {biz.suburb}
                 </div>
                 {rating > 0 && (
-                    <div className="flex items-center gap-1 mt-1" style={{ fontSize: '17px' }}>
+                    <div className="flex items-center gap-1 mt-1 text-base">
                         <Star className="w-4 h-4 fill-amber-400 text-amber-400 shrink-0" />
                         <span className="font-bold text-amber-600">{rating.toFixed(1)}</span>
                     </div>
@@ -160,8 +159,8 @@ function SidebarCard({ biz, rank }: { biz: Business; rank: number }) {
             </div>
             {feeDisplay && (
                 <div className="text-right shrink-0">
-                    <div className="font-black text-orange-600" style={{ fontSize: '22px' }}>{feeDisplay}</div>
-                    <div className="text-zinc-400 font-bold uppercase tracking-widest" style={{ fontSize: '13px' }}>/ lead</div>
+                    <div className="font-black text-orange-600 text-[24px]">{feeDisplay}</div>
+                    <div className="text-zinc-400 font-bold uppercase tracking-widest text-xs">/ lead</div>
                 </div>
             )}
         </Link>
@@ -254,12 +253,11 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                             value={q}
                             onChange={e => setQ(e.target.value)}
                             placeholder="Search businesses, trades, suburbs…"
-                            className="w-full pl-12 pr-4 h-14 rounded-2xl border-2 border-zinc-200 focus:outline-none focus:border-orange-400 bg-white font-bold text-zinc-900 transition-all shadow-sm"
-                            style={{ fontSize: '20px' }}
+                            className="w-full pl-12 pr-4 h-14 rounded-2xl border-2 border-zinc-200 focus:outline-none focus:border-orange-400 bg-white font-bold text-zinc-900 transition-all shadow-sm text-[21px]"
                         />
                     </div>
                     {locationLabel && (
-                        <div className="flex items-center gap-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-5 py-3 font-black text-orange-700 shrink-0 uppercase tracking-tight" style={{ fontSize: '18px' }}>
+                        <div className="flex items-center gap-2 bg-orange-50 border-2 border-orange-200 rounded-2xl px-5 py-3 font-black text-orange-700 shrink-0 uppercase tracking-tight text-[19px]">
                             <MapPin className="w-5 h-5" /> Near {locationLabel}
                             <button onClick={() => { setSuburb(null); setLocationLabel(null); }} className="ml-2 text-orange-400 hover:text-orange-600 font-black text-2xl leading-none">×</button>
                         </div>
@@ -273,12 +271,11 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                             <button
                                 key={t}
                                 onClick={() => setTrade(t)}
-                                className={`px-5 py-3 rounded-full font-black whitespace-nowrap transition-all uppercase tracking-tight ${
+                                className={`px-5 py-3 rounded-full font-black whitespace-nowrap transition-all uppercase tracking-tight text-[19px] ${
                                     trade === t
                                         ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20"
                                         : "bg-white border-2 border-zinc-200 text-zinc-500 hover:border-orange-300 hover:text-orange-600"
                                 }`}
-                                style={{ fontSize: '18px' }}
                             >
                                 {t}
                             </button>
@@ -288,13 +285,13 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
 
                 {/* Results meta */}
                 <div className="flex items-center justify-between mb-5 px-1">
-                    <p className="font-black text-zinc-500 uppercase tracking-widest" style={{ fontSize: '17px' }}>
+                    <p className="font-black text-zinc-500 uppercase tracking-widest text-base">
                         {loading && businesses.length === 0
                             ? "Loading…"
                             : `${businesses.length} business${businesses.length !== 1 ? "es" : ""}${locationLabel ? ` near ${locationLabel}` : ""}`}
                     </p>
                     {locationLabel && (
-                        <span className="text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-2" style={{ fontSize: '15px' }}>
+                        <span className="text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-2 text-sm">
                             <SlidersHorizontal className="w-4 h-4" /> Sorted by distance
                         </span>
                     )}
@@ -304,8 +301,8 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                 {businesses.length === 0 && !loading ? (
                     <div className="text-center py-20 bg-white rounded-[32px] border-2 border-dashed border-zinc-100">
                         <Search className="w-16 h-16 mx-auto mb-4 text-zinc-200" />
-                        <p className="font-black text-zinc-900 uppercase tracking-tight" style={{ fontSize: '24px' }}>No businesses found</p>
-                        <p className="font-bold text-zinc-400 mt-2" style={{ fontSize: '19px' }}>Try a different trade or clear your search</p>
+                        <p className="font-black text-zinc-900 uppercase tracking-tight text-[24px]">No businesses found</p>
+                        <p className="font-bold text-zinc-400 mt-2 text-[19px]">Try a different trade or clear your search</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
@@ -336,8 +333,7 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                         <button
                             onClick={loadMore}
                             disabled={loading}
-                            className="px-10 py-4 bg-white border-2 border-zinc-200 hover:border-orange-400 text-zinc-700 hover:text-orange-600 rounded-2xl font-black transition-all disabled:opacity-50 shadow-sm active:scale-95"
-                            style={{ fontSize: '20px' }}
+                            className="px-10 py-4 bg-white border-2 border-zinc-200 hover:border-orange-400 text-zinc-700 hover:text-orange-600 rounded-2xl font-black transition-all disabled:opacity-50 shadow-sm active:scale-95 text-[21px]"
                         >
                             {loading ? <Loader2 className="w-6 h-6 animate-spin inline mr-3" /> : null}
                             Load more businesses
@@ -353,9 +349,9 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                 <div className="bg-zinc-900 rounded-[32px] p-7 text-white shadow-xl">
                     <div className="flex items-center gap-3 mb-2">
                         <TrendingUp className="w-6 h-6 text-orange-400" />
-                        <h2 className="font-black text-white uppercase tracking-tighter" style={{ fontSize: '22px' }}>High-Value Opportunities</h2>
+                        <h2 className="font-black text-white uppercase tracking-tighter text-[21px]">High-Value Opportunities</h2>
                     </div>
-                    <p className="text-zinc-400 font-bold text-lg">Highest earning per referral right now</p>
+                    <p className="text-zinc-400 font-bold text-[19px]">Highest earning per referral right now</p>
                 </div>
 
                 {topPaying.length > 0 ? (
@@ -374,9 +370,9 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                 <div className="bg-orange-50 border-2 border-orange-100 rounded-[32px] p-7 shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
                         <Zap className="w-6 h-6 text-orange-500 shrink-0" />
-                        <span className="font-black text-orange-900 uppercase tracking-widest" style={{ fontSize: '18px' }}>Pro Tip</span>
+                        <span className="font-black text-orange-900 uppercase tracking-widest text-[19px]">Pro Tip</span>
                     </div>
-                    <p className="text-orange-800 font-bold text-lg leading-relaxed">
+                    <p className="text-orange-800 font-bold text-[19px] leading-relaxed">
                         Businesses with higher fees often have fewer referrers — less competition means more earnings for you.
                     </p>
                 </div>
@@ -384,8 +380,8 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                 {/* Earnings reminder */}
                 <div className="bg-white rounded-[32px] border border-zinc-200 p-6 shadow-sm text-center">
                     <DollarSign className="w-8 h-8 text-orange-500 mx-auto mb-2" />
-                    <p className="font-black text-zinc-900 uppercase tracking-tighter" style={{ fontSize: '24px' }}>You keep 80%</p>
-                    <p className="text-zinc-400 font-bold text-lg uppercase tracking-widest mt-1">of every verified referral fee</p>
+                    <p className="font-black text-zinc-900 uppercase tracking-tighter text-[24px]">You keep 80%</p>
+                    <p className="text-zinc-400 font-bold text-[19px] uppercase tracking-widest mt-1">of every verified referral fee</p>
                 </div>
             </div>
 

@@ -69,10 +69,10 @@ export default async function AdminDashboardPage() {
                         { label: "Open Disputes", value: "4", icon: ShieldAlert, color: "text-orange-600" },
                         { label: "Lead Value", value: "$42k", icon: BarChart3, color: "text-green-600" },
                     ].map((stat) => (
-                        <div key={stat.label} className="bg-white p-8 rounded-[32px] border border-zinc-200 shadow-sm">
+                        <div key={stat.label} className="bg-white p-6 md:p-8 rounded-[32px] border border-zinc-200 shadow-sm flex flex-col justify-between">
                             <div className="flex items-center gap-3 mb-4">
                                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
-                                <div className="text-base font-black text-zinc-400 uppercase tracking-widest">{stat.label}</div>
+                                <div className="text-xs font-black text-zinc-400 uppercase tracking-widest">{stat.label}</div>
                             </div>
                             <div className="text-3xl font-black text-zinc-900 font-display">{stat.value}</div>
                         </div>
@@ -86,7 +86,7 @@ export default async function AdminDashboardPage() {
                                 <h3 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
                                     <ShieldAlert className="w-5 h-5 text-orange-500" /> Open Disputes
                                 </h3>
-                                <div className="text-base font-black text-zinc-400 uppercase tracking-widest">Action Required</div>
+                                <div className="text-xs font-black text-zinc-400 uppercase tracking-widest">Action Required</div>
                             </div>
 
                             <DisputeList initialDisputes={disputes} />

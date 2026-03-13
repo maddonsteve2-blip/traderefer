@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Loader2 } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
+import { toast } from 'sonner';
 
 interface StripeConnectButtonProps {
     type: 'business' | 'referrer';
@@ -15,7 +16,7 @@ export function StripeConnectButton({ type }: StripeConnectButtonProps) {
 
     const handleConnect = async () => {
         if (!userId) {
-            alert("Please sign in first");
+            toast.error("Please sign in first");
             return;
         }
 
@@ -39,7 +40,7 @@ export function StripeConnectButton({ type }: StripeConnectButtonProps) {
             window.location.href = url;
         } catch (error) {
             console.error(error);
-            alert("Stripe connection failed. Please try again.");
+            toast.error("Stripe connection failed. Please try again.");
         } finally {
             setLoading(false);
         }

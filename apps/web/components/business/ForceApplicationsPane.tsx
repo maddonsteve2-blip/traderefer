@@ -182,8 +182,7 @@ export function ForceApplicationsPane() {
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-4 py-2 rounded-xl font-black uppercase tracking-widest transition-all ${filter === f ? "bg-orange-500 text-white shadow-lg" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}
-                            style={{ fontSize: 19 }}
+                            className={`px-4 py-2 rounded-xl font-black uppercase tracking-widest transition-all text-[19px] ${filter === f ? "bg-orange-500 text-white shadow-lg" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}
                         >
                             {f === "pending" ? `${f} (${pendingCount})` : f}
                         </button>
@@ -197,7 +196,7 @@ export function ForceApplicationsPane() {
                 ) : displayed.length === 0 ? (
                     <div className="px-4 py-12 text-center">
                         <CheckCircle className="w-10 h-10 text-zinc-200 mx-auto mb-3" />
-                        <p className="font-bold text-zinc-500" style={{ fontSize: 24 }}>
+                        <p className="font-bold text-zinc-500 text-2xl">
                             {filter === "pending" ? "No pending applications" : "No applications yet"}
                         </p>
                     </div>
@@ -214,19 +213,19 @@ export function ForceApplicationsPane() {
                                     className={`w-full text-left px-4 py-4 transition-colors ${isSelected ? "bg-orange-50 border-l-4 border-orange-500" : "hover:bg-zinc-50 border-l-4 border-transparent"}`}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden" style={{ fontSize: 24 }}>
+                                        <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden text-2xl">
                                             {app.profile_photo_url ? (
                                                 // eslint-disable-next-line @next/next/no-img-element
                                                 <img src={app.profile_photo_url} alt="" className="w-full h-full object-cover" />
                                             ) : initials}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-black text-zinc-900 truncate uppercase tracking-tight" style={{ fontSize: 26 }}>{app.referrer_name}</p>
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest mt-1" style={{ fontSize: 19 }}>
+                                            <p className="font-black text-zinc-900 truncate uppercase tracking-tight text-[26px]">{app.referrer_name}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest mt-1 text-[19px]">
                                                 {app.referrer_suburb}{app.referrer_state ? `, ${app.referrer_state}` : ""} · ⭐ {app.quality_score}
                                             </p>
                                         </div>
-                                        <span className={`shrink-0 px-2 py-1 rounded-xl font-black uppercase tracking-widest ${cfg.bg} ${cfg.text}`} style={{ fontSize: 19 }}>
+                                        <span className={`shrink-0 px-2 py-1 rounded-xl font-black uppercase tracking-widest ${cfg.bg} ${cfg.text} text-[19px]`}>
                                             {cfg.label}
                                         </span>
                                     </div>
@@ -242,8 +241,8 @@ export function ForceApplicationsPane() {
                 {!selectedId ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
                         <User className="w-16 h-16 text-zinc-200 mb-4" />
-                        <p className="font-black text-zinc-400" style={{ fontSize: 30 }}>Select an application</p>
-                        <p className="text-zinc-400 font-medium mt-1" style={{ fontSize: 24 }}>Click a name on the left to review their profile</p>
+                        <p className="font-black text-zinc-400 text-3xl">Select an application</p>
+                        <p className="text-zinc-400 font-medium mt-1 text-2xl">Click a name on the left to review their profile</p>
                     </div>
                 ) : detailLoading || !detail ? (
                     <div className="flex items-center justify-center h-64 w-full">
@@ -262,32 +261,29 @@ export function ForceApplicationsPane() {
                                 <div className="sticky top-0 z-10 bg-zinc-900 rounded-2xl px-5 py-3 mb-5 flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                         <Clock className="w-4 h-4 text-amber-400" />
-                                        <span className="font-black text-white uppercase tracking-widest" style={{ fontSize: 22 }}>Applied {fmtDate(detail.applied_at)}</span>
+                                        <span className="font-black text-white uppercase tracking-widest text-[22px]">Applied {fmtDate(detail.applied_at)}</span>
                                         {detail.reminder_count > 0 && (
-                                            <span className="text-amber-400 font-black uppercase" style={{ fontSize: 19 }}>· Reminder {detail.reminder_count}/3</span>
+                                            <span className="text-amber-400 font-black uppercase text-[19px]">· Reminder {detail.reminder_count}/3</span>
                                         )}
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={handleMessage}
-                                            className="flex items-center gap-1.5 h-12 px-5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all"
-                                            style={{ fontSize: 20 }}
+                                            className="flex items-center gap-1.5 h-12 px-5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all text-xl"
                                         >
                                             <MessageSquare className="w-5 h-5" /> Message
                                         </button>
                                         <button
                                             onClick={handleReject}
                                             disabled={acting !== null}
-                                            className="flex items-center gap-1.5 h-12 px-5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl font-bold transition-all disabled:opacity-50"
-                                            style={{ fontSize: 20 }}
+                                            className="flex items-center gap-1.5 h-12 px-5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl font-bold transition-all disabled:opacity-50 text-xl"
                                         >
                                             {acting === "rejecting" ? <div className="w-5 h-5 border-2 border-red-300/30 border-t-red-300 rounded-full animate-spin" /> : <><XCircle className="w-5 h-5" /> Decline</>}
                                         </button>
                                         <button
                                             onClick={handleApprove}
                                             disabled={acting !== null}
-                                            className="flex items-center gap-1.5 h-12 px-6 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-50"
-                                            style={{ fontSize: 24 }}
+                                            className="flex items-center gap-1.5 h-12 px-6 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-50 text-2xl"
                                         >
                                             {acting === "approving" ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><CheckCircle className="w-5 h-5" /> Approve</>}
                                         </button>
@@ -300,7 +296,7 @@ export function ForceApplicationsPane() {
                                     detail.status === "approved" ? "bg-green-50 text-green-700 border border-green-200" :
                                     detail.status === "rejected" ? "bg-red-50 text-red-700 border border-red-200" :
                                     "bg-zinc-50 text-zinc-500 border border-zinc-200"
-                                }`} style={{ fontSize: 22 }}>
+                                } text-[22px]`}>
                                     {detail.status === "approved" ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
                                     {detail.status.charAt(0).toUpperCase() + detail.status.slice(1)}
                                 </div>
@@ -309,23 +305,23 @@ export function ForceApplicationsPane() {
                             {/* Hero card */}
                             <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm mb-4">
                                 <div className="flex items-start gap-4 mb-5">
-                                    <div className="w-20 h-20 rounded-2xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden" style={{ fontSize: 30 }}>
+                                    <div className="w-20 h-20 rounded-2xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden text-3xl">
                                         {ref.profile_photo_url ? (
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img src={ref.profile_photo_url} alt="" className="w-full h-full object-cover" />
                                         ) : initials}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h2 className="font-black text-zinc-900 leading-tight uppercase tracking-tighter" style={{ fontSize: 38 }}>{ref.full_name}</h2>
-                                        {ref.tagline && <p className="font-black text-zinc-500 mt-1 uppercase tracking-tight" style={{ fontSize: 24 }}>{ref.tagline}</p>}
+                                        <h2 className="font-black text-zinc-900 leading-tight uppercase tracking-tighter text-[38px]">{ref.full_name}</h2>
+                                        {ref.tagline && <p className="font-black text-zinc-500 mt-1 uppercase tracking-tight text-2xl">{ref.tagline}</p>}
                                         <div className="flex items-center gap-4 mt-3 flex-wrap">
                                             {(ref.suburb || ref.state) && (
-                                                <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 19 }}>
+                                                <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest text-[19px]">
                                                     <MapPin className="w-4 h-4" />{ref.suburb}{ref.state ? `, ${ref.state}` : ""}
                                                 </span>
                                             )}
                                             {memberYear && (
-                                                <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest" style={{ fontSize: 19 }}>
+                                                <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest text-[19px]">
                                                     <Briefcase className="w-4 h-4" />Member since {memberYear}
                                                 </span>
                                             )}
@@ -341,8 +337,8 @@ export function ForceApplicationsPane() {
                                     ].map(s => (
                                         <div key={s.label} className={`${s.bg} rounded-2xl p-4 text-center border border-black/5 shadow-sm`}>
                                             <s.icon className={`w-5 h-5 ${s.text} mx-auto mb-1.5`} />
-                                            <p className="font-black text-zinc-900 tracking-tighter" style={{ fontSize: 42 }}>{s.value}</p>
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: 21 }}>{s.label}</p>
+                                            <p className="font-black text-zinc-900 tracking-tighter text-[42px]">{s.value}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest text-[21px]">{s.label}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -351,13 +347,13 @@ export function ForceApplicationsPane() {
                                     <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
                                         <div className="flex items-center gap-2 mb-2">
                                             <User className="w-5 h-5 text-orange-500" />
-                                            <span className="font-black text-zinc-700" style={{ fontSize: 24 }}>About</span>
+                                            <span className="font-black text-zinc-700 text-2xl">About</span>
                                         </div>
-                                        <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: 24 }}>{ref.profile_bio}</p>
+                                        <p className="font-medium text-zinc-700 leading-relaxed text-2xl">{ref.profile_bio}</p>
                                     </div>
                                 ) : (
                                     <div className="bg-zinc-50 rounded-xl p-4 border border-dashed border-zinc-200 text-center">
-                                        <p className="font-medium text-zinc-400" style={{ fontSize: 24 }}>No bio added yet.</p>
+                                        <p className="font-medium text-zinc-400 text-2xl">No bio added yet.</p>
                                     </div>
                                 )}
                             </div>
@@ -366,9 +362,9 @@ export function ForceApplicationsPane() {
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
                                     <div className="flex items-center gap-2 mb-2">
                                         <AlertTriangle className="w-5 h-5 text-orange-500" />
-                                        <span className="font-black text-zinc-700" style={{ fontSize: 24 }}>Their intro message</span>
+                                        <span className="font-black text-zinc-700 text-2xl">Their intro message</span>
                                     </div>
-                                    <p className="font-medium text-zinc-600 leading-relaxed italic" style={{ fontSize: 24 }}>
+                                    <p className="font-medium text-zinc-600 leading-relaxed italic text-2xl">
                                         &ldquo;{detail.message}&rdquo;
                                     </p>
                                 </div>

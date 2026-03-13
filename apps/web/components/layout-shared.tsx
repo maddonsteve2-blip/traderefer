@@ -320,8 +320,7 @@ function DualRoleSwitcher({ isBusinessDashboard, isReferrerDashboard }: { isBusi
     return (
         <Link
             href={href}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-bold transition-all ml-1"
-            style={{ fontSize: '13px' }}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-full font-bold transition-all ml-1 text-xs"
         >
             <ArrowLeftRight className="w-3.5 h-3.5" />
             Switch to {label}
@@ -450,12 +449,12 @@ function BecomeReferrerModal({ onClose }: { onClose: () => void }) {
                     {BENEFITS.map(({ icon: Icon, title, desc }) => (
                         <div key={title} className="flex items-start gap-4">
                             <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0 border border-orange-100"><Icon className="w-6 h-6 text-orange-500" /></div>
-                            <div><p className="font-black text-zinc-900" style={{ fontSize: '15px' }}>{title}</p><p className="text-zinc-500 font-medium leading-relaxed" style={{ fontSize: '13px' }}>{desc}</p></div>
+                            <div><p className="font-black text-zinc-900 text-sm">{title}</p><p className="text-zinc-500 font-medium leading-relaxed text-xs">{desc}</p></div>
                         </div>
                     ))}
                 </div>
                 <div className="px-8 pb-8">
-                    <Link href="/onboarding/referrer" onClick={onClose} className="flex items-center justify-center gap-2 w-full h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200" style={{ fontSize: '16px' }}>
+                    <Link href="/onboarding/referrer" onClick={onClose} className="flex items-center justify-center gap-2 w-full h-14 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200 text-base">
                         Activate My Partner Profile <ArrowRight className="w-5 h-5" />
                     </Link>
                     <button onClick={onClose} className="w-full mt-3 text-zinc-400 hover:text-zinc-600 font-medium transition-colors" style={{ fontSize: '14px' }}>Maybe later</button>
@@ -489,7 +488,7 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
                     {BENEFITS.map(({ icon: Icon, title, desc }) => (
                         <div key={title} className="flex items-start gap-4">
                             <div className="w-12 h-12 bg-zinc-100 rounded-2xl flex items-center justify-center shrink-0 border border-zinc-200"><Icon className="w-6 h-6 text-orange-500" /></div>
-                            <div><p className="font-black text-zinc-900" style={{ fontSize: '15px' }}>{title}</p><p className="text-zinc-500 font-medium leading-relaxed" style={{ fontSize: '13px' }}>{desc}</p></div>
+                            <div><p className="font-black text-zinc-900 text-sm">{title}</p><p className="text-zinc-500 font-medium leading-relaxed text-xs">{desc}</p></div>
                         </div>
                     ))}
                 </div>

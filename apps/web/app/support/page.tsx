@@ -54,19 +54,19 @@ export default function SupportPage() {
             {/* Hero + Breadcrumb */}
             <div className="bg-[#1A1A1A] pt-20 md:pt-28 pb-14 text-white">
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest mb-8" style={{ fontSize: '16px' }}>
+                    <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest mb-8 text-base">
                         <Link href="/" className="hover:text-white transition-colors">Home</Link>
                         <ChevronRight className="w-4 h-4" />
                         <span className="text-[#FF6600]">Support</span>
                     </nav>
-                    <div className="flex items-center gap-3 text-[#FF6600] font-black uppercase tracking-widest mb-4" style={{ fontSize: '16px' }}>
+                    <div className="flex items-center gap-3 text-[#FF6600] font-black uppercase tracking-widest mb-4 text-base">
                         <LifeBuoy className="w-5 h-5" />
                         Help Centre
                     </div>
-                    <h1 className="font-black mb-4 font-display leading-tight" style={{ fontSize: 'clamp(42px, 8vw, 72px)' }}>
+                    <h1 className="font-black mb-4 font-display leading-tight text-4xl md:text-5xl lg:text-7xl">
                         How can we help?
                     </h1>
-                    <p className="text-zinc-300 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
+                    <p className="text-zinc-300 max-w-2xl text-xl leading-relaxed">
                         Whether you&apos;re a business looking to connect with leads, or a referrer with questions about payouts, our team is here to assist.
                     </p>
                 </div>
@@ -128,7 +128,7 @@ export default function SupportPage() {
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-3">
-                                            <label className="font-bold uppercase tracking-wider text-zinc-500 ml-1" style={{ fontSize: '16px' }}>Your Name</label>
+                                            <label className="font-bold uppercase tracking-wider text-zinc-500 ml-1 text-base leading-none">Your Name</label>
                                             <Input 
                                                 value={formData.name}
                                                 onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -138,7 +138,7 @@ export default function SupportPage() {
                                             />
                                         </div>
                                         <div className="space-y-3">
-                                            <label className="font-bold uppercase tracking-wider text-zinc-500 ml-1" style={{ fontSize: '16px' }}>Email Address</label>
+                                            <label className="font-bold uppercase tracking-wider text-zinc-500 ml-1 text-base leading-none">Email Address</label>
                                             <Input 
                                                 type="email"
                                                 value={formData.email}

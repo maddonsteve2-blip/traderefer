@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { ImageUpload } from "@/components/ImageUpload";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { TRADE_CATEGORIES } from "@/lib/constants";
+import { ConfirmationDialog } from "@/components/shared/ConfirmationDialog";
 import {
     Dialog,
     DialogContent,
@@ -56,6 +57,7 @@ export default function BusinessProfileManagementPage() {
         postcode: "",
         slug: "",
         service_radius_km: 25,
+        business_phone: "",
         photo_urls: [] as string[],
         features: [] as string[]
     });
@@ -65,6 +67,8 @@ export default function BusinessProfileManagementPage() {
     const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
     const [editingProject, setEditingProject] = useState<any>(null);
     const [projectSaving, setProjectSaving] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
 
     const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
 
@@ -115,6 +119,7 @@ export default function BusinessProfileManagementPage() {
                     postcode: data.postcode || "",
                     slug: data.slug || "",
                     service_radius_km: data.service_radius_km || 25,
+                    business_phone: data.business_phone || "",
                     photo_urls: data.photo_urls || [],
                     features: data.features || []
                 });
@@ -247,11 +252,16 @@ export default function BusinessProfileManagementPage() {
         }));
     };
 
-    const handleDeleteProject = async (projectId: string) => {
-        if (!confirm("Are you sure you want to delete this project?")) return;
+    const handleDeleteProject = (projectId: string) => {
+        setProjectToDelete(projectId);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const confirmDeleteProject = async () => {
+        if (!projectToDelete) return;
         try {
             const token = await getToken();
-            const res = await fetch(`${apiBase}/business/me/projects/${projectId}`, {
+            const res = await fetch(`${apiBase}/business/me/projects/${projectToDelete}`, {
                 method: "DELETE",
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -261,6 +271,9 @@ export default function BusinessProfileManagementPage() {
             }
         } catch (err) {
             toast.error("Failed to delete project");
+        } finally {
+            setIsDeleteDialogOpen(false);
+            setProjectToDelete(null);
         }
     };
 
@@ -387,6 +400,16 @@ export default function BusinessProfileManagementPage() {
                                                 value={formData.website}
                                                 onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                                                 placeholder="https://yourbusiness.com"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-xl font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2 text-left">Business Phone</label>
+                                            <input
+                                                type="tel"
+                                                className="w-full bg-zinc-50 border-none rounded-xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-xl"
+                                                value={formData.business_phone}
+                                                onChange={(e) => setFormData({ ...formData, business_phone: e.target.value })}
+                                                placeholder="0400 000 000"
                                             />
                                         </div>
                                     </div>
@@ -766,6 +789,17 @@ export default function BusinessProfileManagementPage() {
                     </form>
                 </DialogContent>
             </Dialog>
+
+            <ConfirmationDialog
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                title="Delete Project?"
+                description="Are you sure you want to delete this project? This action cannot be undone."
+                confirmText="Delete Project"
+                cancelText="Cancel"
+                variant="destructive"
+                onConfirm={confirmDeleteProject}
+            />
         </>
     );
 }

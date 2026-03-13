@@ -64,12 +64,12 @@ export default async function ReferrerDashboardPage() {
                         {/* Page header */}
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                             <div>
-                                <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '36px' }}>Your Earnings</h1>
-                                <p className="font-bold text-zinc-500 mt-1" style={{ fontSize: '19px' }}>Track referrals · collect Prezzee rewards</p>
+                                <h1 className="font-black text-zinc-900 leading-tight text-4xl">Your Earnings</h1>
+                                <p className="font-bold text-zinc-500 mt-1 text-lg">Track referrals · collect Prezzee rewards</p>
                             </div>
                             <Link href="/dashboard/referrer/businesses"
-                                className="hidden sm:flex items-center gap-2.5 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200 active:scale-95"
-                                style={{ fontSize: '20px' }}>
+                                className="flex items-center justify-center gap-2.5 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200 active:scale-95 w-full sm:w-auto text-xl"
+                                >
                                 <Search className="w-6 h-6" /> Find Businesses
                             </Link>
                         </div>

@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { MobileNetworkDashboard } from "@/components/business/MobileNetworkDashboard";
 
 interface Recommendation {
     business_name: string;
@@ -141,9 +142,18 @@ export default function BusinessNetworkPage() {
     return (
         <div className="min-h-[100dvh] bg-zinc-50">
         <div className="max-w-4xl mx-auto py-6 md:py-10 px-4 space-y-8">
-            <div>
-                <h1 className="text-4xl md:text-5xl font-black text-zinc-900 tracking-tight">My Network</h1>
-                <p className="text-zinc-500 text-xl mt-1">Recommend other tradies and grow together. When you recommend a business, it shows on their profile as social proof.</p>
+            {/* ── MOBILE VIEW ── */}
+            <MobileNetworkDashboard 
+                given={given} 
+                received={received} 
+                invitesCount={invites.length} 
+            />
+
+            {/* ── DESKTOP VIEW ── */}
+            <div className="hidden lg:block space-y-8">
+                <div>
+                    <h1 className="text-4xl md:text-5xl font-black text-zinc-900 tracking-tight">My Network</h1>
+                <p className="text-zinc-500 text-lg md:text-xl mt-1">Recommend other tradies and grow together. When you recommend a business, it shows on their profile as social proof.</p>
             </div>
 
             {/* Tabs */}
@@ -277,6 +287,7 @@ export default function BusinessNetworkPage() {
                     )}
                 </div>
             )}
+            </div>
         </div>
         </div>
     );

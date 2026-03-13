@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ConfirmationDialog } from "@/components/shared/ConfirmationDialog";
 import posthog from "posthog-js";
 
 interface Campaign {
@@ -65,6 +66,11 @@ export function SalesPromotionsPane() {
         promo_text: "",
         ends_at: "",
     });
+
+    // Deletion state
+    const [promoToDelete, setPromoToDelete] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const apiUrl = "/api/backend";
 
     const fetchCampaigns = useCallback(async () => {
@@ -122,11 +128,13 @@ export function SalesPromotionsPane() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Delete this campaign?")) return;
+        setIsDeleting(true);
         const token = await getToken();
         await fetch(`${apiUrl}/business/campaigns/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
         toast.success("Campaign deleted");
         fetchCampaigns();
+        setIsDeleting(false);
+        setPromoToDelete(null);
     };
 
     const activeCampaigns = campaigns.filter(c => c.is_active && !isExpired(c));
@@ -138,12 +146,22 @@ export function SalesPromotionsPane() {
 
     return (
         <div className="flex-1 overflow-y-auto bg-zinc-50 pb-8">
+            <ConfirmationDialog
+                open={!!promoToDelete}
+                onOpenChange={(open) => !open && setPromoToDelete(null)}
+                onConfirm={() => promoToDelete && handleDelete(promoToDelete)}
+                title="Delete Campaign?"
+                description="The bonus will be immediately removed. Referrers will no longer see this incentive in their dashboard."
+                confirmText="Delete Campaign"
+                variant="destructive"
+                isLoading={isDeleting}
+            />
             <div className="max-w-3xl mx-auto px-6 py-6 space-y-6">
 
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="font-black text-zinc-900" style={{ fontSize: 32 }}>Campaigns</h2>
-                        <p className="text-zinc-500 font-medium" style={{ fontSize: 22 }}>Time-limited bonuses to motivate your referral force</p>
+                        <h2 className="font-black text-zinc-900 text-3xl">Campaigns</h2>
+                        <p className="text-zinc-500 font-medium text-xl">Time-limited bonuses to motivate your referral force</p>
                     </div>
                     <Button onClick={() => setShowCreate(true)} className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6 h-14 font-bold text-xl">
                         <Plus className="w-5 h-5 mr-2" />New Campaign
@@ -154,7 +172,7 @@ export function SalesPromotionsPane() {
                 {showCreate && (
                     <div className="bg-white border-2 border-orange-200 rounded-3xl p-7 space-y-5">
                         <div className="flex items-center justify-between">
-                            <h3 className="font-black text-zinc-900 flex items-center gap-2" style={{ fontSize: 26 }}>
+                            <h3 className="font-black text-zinc-900 flex items-center gap-2 text-2xl">
                                 <Megaphone className="w-6 h-6 text-orange-500" />Create Campaign
                             </h3>
                             <button onClick={() => setShowCreate(false)} className="p-2 hover:bg-zinc-100 rounded-xl"><X className="w-6 h-6 text-zinc-400" /></button>
@@ -162,7 +180,7 @@ export function SalesPromotionsPane() {
 
                         {/* Type picker */}
                         <div>
-                            <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-2" style={{ fontSize: 18 }}>Campaign Type</label>
+                            <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-2 text-base">Campaign Type</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {TYPE_OPTIONS.map(opt => (
                                     <button
@@ -171,8 +189,8 @@ export function SalesPromotionsPane() {
                                         className={`p-4 rounded-xl border-2 text-left transition-all ${form.campaign_type === opt.value ? "border-orange-500 bg-orange-50" : "border-zinc-100 hover:border-zinc-200"}`}
                                     >
                                         <opt.icon className={`w-5 h-5 mb-1 ${form.campaign_type === opt.value ? "text-orange-500" : "text-zinc-400"}`} />
-                                        <div className="font-bold text-zinc-900" style={{ fontSize: 20 }}>{opt.label}</div>
-                                        <div className="text-zinc-400 font-medium" style={{ fontSize: 18 }}>{opt.desc}</div>
+                                        <div className="font-bold text-zinc-900 text-xl">{opt.label}</div>
+                                        <div className="text-zinc-400 font-medium text-base">{opt.desc}</div>
                                     </button>
                                 ))}
                             </div>
@@ -180,66 +198,61 @@ export function SalesPromotionsPane() {
 
                         {/* Title */}
                         <div>
-                            <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5" style={{ fontSize: 18 }}>Campaign Title *</label>
+                            <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5 text-base">Campaign Title *</label>
                             <input
                                 type="text"
                                 value={form.title}
                                 onChange={e => setForm({ ...form, title: e.target.value })}
                                 placeholder="e.g. Double Commission Weekend"
-                                className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-medium placeholder:text-zinc-300 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
-                                style={{ fontSize: 21 }}
+                                className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-medium placeholder:text-zinc-300 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-xl"
                             />
                         </div>
 
                         {/* Type-specific fields */}
                         {(form.campaign_type === "flat_bonus" || form.campaign_type === "first_referral") && (
                             <div>
-                                <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5" style={{ fontSize: 18 }}>Bonus Amount ($)</label>
+                                <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5 text-base">Bonus Amount ($)</label>
                                 <input
                                     type="number"
                                     min="1"
                                     step="1"
                                     value={form.bonus_amount_cents / 100}
                                     onChange={e => setForm({ ...form, bonus_amount_cents: Math.round(parseFloat(e.target.value || "0") * 100) })}
-                                    className="w-48 px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
-                                    style={{ fontSize: 22 }}
+                                    className="w-48 px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-2xl"
                                 />
                             </div>
                         )}
                         {form.campaign_type === "multiplier" && (
                             <div>
-                                <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5" style={{ fontSize: 18 }}>Multiplier (×)</label>
+                                <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5 text-base">Multiplier (×)</label>
                                 <input
                                     type="number"
                                     min="1.5"
                                     step="0.5"
                                     value={form.multiplier}
                                     onChange={e => setForm({ ...form, multiplier: parseFloat(e.target.value || "1") })}
-                                    className="w-40 px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
-                                    style={{ fontSize: 22 }}
+                                    className="w-40 px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-2xl"
                                 />
                             </div>
                         )}
                         {form.campaign_type === "volume_bonus" && (
                             <div className="flex gap-4">
                                 <div>
-                                    <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5" style={{ fontSize: 18 }}>Bonus Amount ($)</label>
+                                    <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5 text-base">Bonus Amount ($)</label>
                                     <input
                                         type="number" min="1" step="1"
                                         value={form.bonus_amount_cents / 100}
                                         onChange={e => setForm({ ...form, bonus_amount_cents: Math.round(parseFloat(e.target.value || "0") * 100) })}
-                                        className="w-40 px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
-                                        style={{ fontSize: 22 }}
+                                        className="w-40 px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-2xl"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5" style={{ fontSize: 18 }}>Lead Threshold</label>
+                                     <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5 text-lg">Lead Threshold</label>
                                     <input
                                         type="number" min="1"
                                         value={form.volume_threshold}
                                         onChange={e => setForm({ ...form, volume_threshold: parseInt(e.target.value || "1") })}
-                                        className="w-32 px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
-                                        style={{ fontSize: 22 }}
+                                        className="w-32 px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-2xl"
                                     />
                                 </div>
                             </div>
@@ -247,13 +260,12 @@ export function SalesPromotionsPane() {
 
                         {/* End date */}
                         <div>
-                            <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5" style={{ fontSize: 18 }}>End Date *</label>
+                            <label className="block font-bold text-zinc-400 uppercase tracking-wider mb-1.5 text-base">End Date *</label>
                             <input
                                 type="datetime-local"
                                 value={form.ends_at}
                                 onChange={e => setForm({ ...form, ends_at: e.target.value })}
-                                className="w-full max-w-[280px] px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-medium text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400"
-                                style={{ fontSize: 21 }}
+                                className="w-full max-w-[280px] px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-xl font-medium text-zinc-900 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-xl"
                             />
                         </div>
 
@@ -270,26 +282,26 @@ export function SalesPromotionsPane() {
                 {/* Active campaigns */}
                 {activeCampaigns.length > 0 && (
                     <div className="space-y-3">
-                        <p className="font-bold text-zinc-400 uppercase tracking-wider" style={{ fontSize: 18 }}>Active ({activeCampaigns.length})</p>
+                        <p className="font-bold text-zinc-400 uppercase tracking-wider text-base">Active ({activeCampaigns.length})</p>
                         {activeCampaigns.map(c => (
                             <div key={c.id} className="bg-white rounded-2xl border border-orange-200 p-6 shadow-sm">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                                             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
-                                            <h3 className="font-black text-zinc-900" style={{ fontSize: 22 }}>{c.title}</h3>
-                                            <span className="px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full font-bold" style={{ fontSize: 18 }}>{campaignLabel(c)}</span>
+                                            <h3 className="font-black text-zinc-900 text-xl">{c.title}</h3>
+                                            <span className="px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full font-bold text-base">{campaignLabel(c)}</span>
                                         </div>
-                                        {c.description && <p className="text-zinc-500 font-medium" style={{ fontSize: 20 }}>{c.description}</p>}
-                                        <p className="flex items-center gap-1 text-zinc-400 font-medium mt-1.5" style={{ fontSize: 19 }}>
+                                        {c.description && <p className="text-zinc-500 font-medium text-xl">{c.description}</p>}
+                                        <p className="flex items-center gap-1 text-zinc-400 font-medium mt-1.5 text-lg">
                                             <Clock className="w-4 h-4" />Ends {fmtDate(c.ends_at)}
                                         </p>
                                     </div>
                                     <div className="flex items-center gap-2 shrink-0">
-                                        <button onClick={() => handleToggle(c.id, c.is_active)} className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 rounded-xl font-bold text-zinc-600 transition-all" style={{ fontSize: 21 }}>
+                                        <button onClick={() => handleToggle(c.id, c.is_active)} className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 rounded-xl font-bold text-zinc-600 transition-all text-xl">
                                             Pause
                                         </button>
-                                        <button onClick={() => handleDelete(c.id)} className="p-2.5 hover:bg-red-50 text-zinc-400 hover:text-red-500 rounded-xl transition-colors">
+                                        <button onClick={() => setPromoToDelete(c.id)} className="p-2.5 hover:bg-red-50 text-zinc-400 hover:text-red-500 rounded-xl transition-colors">
                                             <X className="w-5 h-5" />
                                         </button>
                                     </div>
@@ -303,8 +315,8 @@ export function SalesPromotionsPane() {
                 {campaigns.length === 0 && !showCreate && (
                     <div className="bg-white rounded-3xl border border-zinc-200 p-12 text-center">
                         <Megaphone className="w-16 h-16 text-orange-200 mx-auto mb-4" />
-                        <h2 className="font-bold text-zinc-900 mb-2" style={{ fontSize: 30 }}>No campaigns yet</h2>
-                        <p className="text-zinc-500 font-medium mb-6" style={{ fontSize: 24 }}>Launch a time-limited bonus to drive urgency in your force.</p>
+                        <h2 className="font-bold text-zinc-900 mb-2 text-3xl">No campaigns yet</h2>
+                        <p className="text-zinc-500 font-medium mb-6 text-2xl">Launch a time-limited bonus to drive urgency in your force.</p>
                         <Button onClick={() => setShowCreate(true)} className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8 h-14 font-bold text-xl">
                             <Plus className="w-5 h-5 mr-2" />Create First Campaign
                         </Button>
@@ -314,21 +326,21 @@ export function SalesPromotionsPane() {
                 {/* Past campaigns */}
                 {pastCampaigns.length > 0 && (
                     <div className="space-y-3">
-                        <p className="font-bold text-zinc-400 uppercase tracking-wider" style={{ fontSize: 20 }}>Past / Paused</p>
+                        <p className="font-bold text-zinc-400 uppercase tracking-wider text-xl">Past / Paused</p>
                         {pastCampaigns.map(c => (
                             <div key={c.id} className="bg-white rounded-2xl border border-zinc-100 p-6 opacity-60">
                                 <div className="flex items-center justify-between gap-4">
                                     <div>
-                                        <h3 className="font-bold text-zinc-700" style={{ fontSize: 24 }}>{c.title}</h3>
-                                        <p className="text-zinc-400 font-medium" style={{ fontSize: 22 }}>{campaignLabel(c)} · Ended {fmtDate(c.ends_at)}</p>
+                                        <h3 className="font-bold text-zinc-700 text-2xl">{c.title}</h3>
+                                        <p className="text-zinc-400 font-medium text-xl">{campaignLabel(c)} · Ended {fmtDate(c.ends_at)}</p>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {isExpired(c) ? null : (
-                                            <button onClick={() => handleToggle(c.id, c.is_active)} className="px-4 py-2 bg-zinc-100 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl font-bold text-zinc-600 transition-all" style={{ fontSize: 21 }}>
+                                            <button onClick={() => handleToggle(c.id, c.is_active)} className="px-4 py-2 bg-zinc-100 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl font-bold text-zinc-600 transition-all text-xl">
                                                 Re-activate
                                             </button>
                                         )}
-                                        <button onClick={() => handleDelete(c.id)} className="p-2.5 hover:bg-red-50 text-zinc-300 hover:text-red-400 rounded-xl transition-colors">
+                                        <button onClick={() => setPromoToDelete(c.id)} className="p-2.5 hover:bg-red-50 text-zinc-300 hover:text-red-400 rounded-xl transition-colors">
                                             <X className="w-5 h-5" />
                                         </button>
                                     </div>
