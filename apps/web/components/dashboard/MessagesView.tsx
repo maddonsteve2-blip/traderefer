@@ -237,6 +237,13 @@ export function MessagesView() {
                         if (exists) return prev;
                         return [...prev, msg];
                     });
+                    
+                    // Play notification sound for incoming messages if allowed
+                    try {
+                        const audio = new Audio('/sounds/message.mp3');
+                        audio.play().catch(() => {}); // Browsers might block if no interaction
+                    } catch {}
+
                     // Update contact list preview
                     setContacts(prev => prev.map(c =>
                         c.conversation_id === convId
@@ -370,6 +377,12 @@ export function MessagesView() {
     };
 
     const openContact = async (contact: Contact, list?: Contact[]) => {
+        // FIX: Don't wipe messages if we are re-clicking the SAME active contact
+        if (contact.contact_id === activeContactId && messages.length > 0) {
+            setTimeout(() => inputRef.current?.focus(), 100);
+            return;
+        }
+
         setActiveContactId(contact.contact_id);
         setPartnerName(contact.contact_name);
         setPartnerLogo(contact.contact_logo);
@@ -400,6 +413,12 @@ export function MessagesView() {
 
     useEffect(() => {
         if (!activeConvId) return;
+
+        // Request notification permission on first interaction
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
         // 1. Fetch all existing messages (initial load)
         fetchMessages(activeConvId);
         // 2. Open WebSocket for real-time updates

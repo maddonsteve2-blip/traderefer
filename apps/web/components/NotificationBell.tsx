@@ -48,6 +48,7 @@ export function NotificationBell() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [open, setOpen] = useState(false);
+    const lastCountRef = useRef(0);
     const ref = useRef<HTMLDivElement>(null);
 
     const apiUrl = "/api/backend";
@@ -62,7 +63,29 @@ export function NotificationBell() {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    setUnreadCount(data.count);
+                    const newCount = data.count;
+                    
+                    if (newCount > lastCountRef.current) {
+                        // To decide which sound to play, we need to know the type of the latest notification
+                        const notifyRes = await fetch(`${apiUrl}/api/notifications?limit=1`, {
+                            headers: { Authorization: `Bearer ${token}` },
+                        });
+                        if (notifyRes.ok) {
+                            const latestArr = await notifyRes.json();
+                            const latest = latestArr[0];
+                            
+                            // Choose sound based on type
+                            const soundFile = latest?.type === 'new_message' ? '/sounds/message.mp3' : '/sounds/notification.mp3';
+                            
+                            try {
+                                const audio = new Audio(soundFile);
+                                audio.play().catch(() => {});
+                            } catch {}
+                        }
+                    }
+                    
+                    setUnreadCount(newCount);
+                    lastCountRef.current = newCount;
                 }
             } catch {}
         };
@@ -87,7 +110,13 @@ export function NotificationBell() {
             const res = await fetch(`${apiUrl}/api/notifications`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            if (res.ok) setNotifications(await res.json());
+            if (res.ok) {
+                const data = await res.json();
+                setNotifications(data);
+                if (data.length > 0) {
+                    lastCountRef.current = data.filter((n: any) => !n.is_read).length;
+                }
+            }
         } catch {}
     };
 
@@ -104,6 +133,7 @@ export function NotificationBell() {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setUnreadCount(0);
+            lastCountRef.current = 0;
             setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
         } catch {}
     };
@@ -115,7 +145,11 @@ export function NotificationBell() {
                 method: "PATCH",
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setUnreadCount(prev => Math.max(0, prev - 1));
+            setUnreadCount(prev => {
+                const next = Math.max(0, prev - 1);
+                lastCountRef.current = next;
+                return next;
+            });
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
         } catch {}
     };
@@ -131,7 +165,7 @@ export function NotificationBell() {
             >
                 <Bell className="w-6 h-6" />
                 {unreadCount > 0 && (
-                    <span className="absolute top-0.5 right-0.5 w-5.5 h-5.5 bg-orange-600 text-white font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm" style={{ fontSize: '11px' }}>
+                    <span className="absolute top-0.5 right-0.5 w-5 h-5 bg-indigo-600 text-white font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm text-[10px]">
                         {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                 )}

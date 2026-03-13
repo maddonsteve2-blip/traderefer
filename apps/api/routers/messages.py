@@ -38,13 +38,13 @@ class ConnectionManager:
             if not self._rooms[conversation_id]:
                 del self._rooms[conversation_id]
 
-    async def broadcast(self, conversation_id: str, message: dict, exclude_ws: WebSocket = None):
+    async def broadcast(self, conversation_id: str, message: dict, exclude_ws: WebSocket = None, exclude_user_id: str = None):
         """Send a message to all connected clients in a conversation room."""
         if conversation_id not in self._rooms:
             return
         dead = []
         for ws, uid in self._rooms[conversation_id]:
-            if ws is exclude_ws:
+            if ws is exclude_ws or (exclude_user_id and uid == exclude_user_id):
                 continue
             try:
                 await ws.send_json(message)
@@ -463,7 +463,9 @@ async def send_message(
     )
     await db.commit()
 
-    # Notify the recipient via in-app, email and SMS
+    # Notify the recipient via in-app, email and SMS ONLY IF they aren't already in the room
+    is_active = manager.active_count(conversation_id) >= 2
+    
     try:
         from services.sms import _send_sms
 
@@ -475,7 +477,7 @@ async def send_message(
             )
             row = ref_info.mappings().first()
             if row and body_text:
-                # In-app notification
+                # In-app notification (always send this)
                 if row["user_id"]:
                     await db.execute(
                         text("""
@@ -490,22 +492,25 @@ async def send_message(
                         }
                     )
                     await db.commit()
-                # Email notification
-                if row["email"]:
-                    await send_new_message_notification(
-                        email=row["email"],
-                        recipient_name=row["full_name"] or row["email"],
-                        sender_name=row["business_name"],
-                        message_preview=body_text,
-                        conversation_url="/dashboard/referrer/messages",
-                    )
-                # SMS notification
-                if row["phone"]:
-                    sms_preview = body_text[:100] + "..." if len(body_text) > 100 else body_text
-                    await _send_sms(
-                        row["phone"],
-                        f"💬 New message from {row['business_name']}: {sms_preview}\n\nReply at traderefer.au/dashboard/referrer/messages"
-                    )
+                
+                # Heavily skip if they are active
+                if not is_active:
+                    # Email notification
+                    if row["email"]:
+                        await send_new_message_notification(
+                            email=row["email"],
+                            recipient_name=row["full_name"] or row["email"],
+                            sender_name=row["business_name"],
+                            message_preview=body_text,
+                            conversation_url="/dashboard/referrer/messages",
+                        )
+                    # SMS notification
+                    if row["phone"]:
+                        sms_preview = body_text[:100] + "..." if len(body_text) > 100 else body_text
+                        await _send_sms(
+                            row["phone"],
+                            f"💬 New message from {row['business_name']}: {sms_preview}\n\nReply at traderefer.au/dashboard/referrer/messages"
+                        )
         else:
             # Notify the business
             biz_info = await db.execute(
@@ -529,22 +534,24 @@ async def send_message(
                         }
                     )
                     await db.commit()
-                # Email notification
-                if row["business_email"]:
-                    await send_new_message_notification(
-                        email=row["business_email"],
-                        recipient_name=row["business_name"],
-                        sender_name=row["ref_name"] or "A referrer",
-                        message_preview=body_text,
-                        conversation_url="/dashboard/business/messages",
-                    )
-                # SMS notification
-                if row["business_phone"]:
-                    sms_preview = body_text[:100] + "..." if len(body_text) > 100 else body_text
-                    await _send_sms(
-                        row["business_phone"],
-                        f"💬 New message from {row['ref_name'] or 'a referrer'}: {sms_preview}\n\nReply at traderefer.au/dashboard/business/messages"
-                    )
+                
+                if not is_active:
+                    # Email notification
+                    if row["business_email"]:
+                        await send_new_message_notification(
+                            email=row["business_email"],
+                            recipient_name=row["business_name"],
+                            sender_name=row["ref_name"] or "A referrer",
+                            message_preview=body_text,
+                            conversation_url="/dashboard/business/messages",
+                        )
+                    # SMS notification
+                    if row["business_phone"]:
+                        sms_preview = body_text[:100] + "..." if len(body_text) > 100 else body_text
+                        await _send_sms(
+                            row["business_phone"],
+                            f"💬 New message from {row['ref_name'] or 'a referrer'}: {sms_preview}\n\nReply at traderefer.au/dashboard/business/messages"
+                        )
     except Exception as notify_err:
         error_logger.warning(f"Message notification error (non-fatal): {notify_err}")
 
@@ -564,7 +571,8 @@ async def send_message(
         }
     }
     try:
-        await manager.broadcast(conversation_id, ws_payload)
+        # Exclude current user_id from broadcast to avoid echo/duplication
+        await manager.broadcast(conversation_id, ws_payload, exclude_user_id=user.id)
     except Exception as ws_err:
         error_logger.warning(f"WebSocket broadcast error (non-fatal): {ws_err}")
 
