@@ -146,6 +146,20 @@ export function MessagesView() {
         }
     }, []);
 
+    // Watch for layout changes (like images loading) to keep scroll at bottom
+    useEffect(() => {
+        if (!scrollContainerRef.current) return;
+        const resizeObserver = new ResizeObserver(() => {
+            // Only force scroll if we're active and likely want to be at bottom
+            if (activeConvId) {
+                // Check if user is already near bottom (optional, but for now let's just force it)
+                scrollToBottom(false);
+            }
+        });
+        resizeObserver.observe(scrollContainerRef.current);
+        return () => resizeObserver.disconnect();
+    }, [activeConvId, scrollToBottom]);
+
     // Derived viewport height for mobile keyboard handling
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -609,7 +623,12 @@ export function MessagesView() {
                                                     {msg.image_url && (
                                                         <div className="mb-2 -mx-2 -mt-1 overflow-hidden rounded-xl border border-white/10 shadow-sm">
                                                             <a href={msg.image_url} target="_blank" rel="noopener noreferrer">
-                                                                <img src={msg.image_url} alt="Attachment" className="max-w-full max-h-[300px] object-cover hover:brightness-95 transition-all" />
+                                                                <img 
+                                                                    src={msg.image_url} 
+                                                                    alt="Attachment" 
+                                                                    onLoad={() => scrollToBottom(false)}
+                                                                    className="max-w-full max-h-[300px] object-cover hover:brightness-95 transition-all" 
+                                                                />
                                                             </a>
                                                         </div>
                                                     )}
