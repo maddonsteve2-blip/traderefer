@@ -179,12 +179,28 @@ async def websocket_conversation(
         # Send a "connected" handshake
         await websocket.send_json({"type": "connected", "conversation_id": conversation_id})
         
-        # 4. Listen loop — handle pings and detect disconnects
+        # 4. Listen loop — handle pings, typing events, and detect disconnects
         while True:
             try:
                 data = await websocket.receive_json()
-                if isinstance(data, dict) and data.get("type") == "ping":
+                if not isinstance(data, dict):
+                    continue
+                    
+                msg_type = data.get("type")
+                
+                if msg_type == "ping":
                     await websocket.send_json({"type": "pong"})
+                elif msg_type == "typing":
+                    # Broadcast typing status to others in the room
+                    await manager.broadcast(
+                        conversation_id, 
+                        {
+                            "type": "typing",
+                            "user_id": user_id,
+                            "is_typing": data.get("is_typing", True)
+                        },
+                        exclude_ws=websocket
+                    )
             except Exception:
                 break
     except WebSocketDisconnect:
@@ -654,40 +670,3 @@ async def start_conversation_referrer(
     return {"conversation_id": str(conv["id"]), "is_new": True}
 
 
-@router.get("/unread-count")
-async def get_unread_count(
-    db: AsyncSession = Depends(get_db),
-    user: AuthenticatedUser = Depends(get_current_user),
-):
-    """Get total unread message count for the authenticated user."""
-    identity = await _get_user_identity(db, user)
-    biz_id = identity["business_id"]
-    ref_id = identity["referrer_id"]
-
-    if not biz_id and not ref_id:
-        return {"unread_count": 0}
-
-    conditions = []
-    params = {}
-    my_type = "business" if biz_id else "referrer"
-    params["my_type"] = my_type
-
-    if biz_id:
-        conditions.append("c.business_id = :biz_id")
-        params["biz_id"] = biz_id
-    if ref_id:
-        conditions.append("c.referrer_id = :ref_id")
-        params["ref_id"] = ref_id
-
-    where_clause = " OR ".join(conditions)
-
-    result = await db.execute(
-        text(f"""
-            SELECT COUNT(*) FROM messages m
-            JOIN conversations c ON m.conversation_id = c.id
-            WHERE ({where_clause}) AND m.sender_type != :my_type AND m.is_read = false
-        """),
-        params,
-    )
-    count = result.scalar() or 0
-    return {"unread_count": count}

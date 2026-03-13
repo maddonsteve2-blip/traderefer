@@ -134,6 +134,9 @@ export function MessagesView() {
     const searchParams = useSearchParams();
     const convParam = searchParams.get('conv');
     const lastMsgIdRef = useRef<string | null>(null);
+    const [partnerTyping, setPartnerTyping] = useState(false);
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const lastTypingSentRef = useRef<boolean>(false);
 
     // Better scroll to bottom with intersection detection
     const scrollToBottom = useCallback((smooth = true) => {
@@ -240,6 +243,8 @@ export function MessagesView() {
                             ? { ...c, last_message: msg.body || '📷 Image', last_message_at: msg.created_at, unread_count: c.unread_count + 1 }
                             : c
                     ));
+                } else if (payload.type === 'typing') {
+                    setPartnerTyping(payload.is_typing);
                 }
             } catch {}
         };
@@ -297,6 +302,32 @@ export function MessagesView() {
             }
         }
     }, [messages, scrollToBottom]);
+
+    // Handle typing indicator broadcast
+    useEffect(() => {
+        if (!activeConvId || !wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+        
+        const isCurrentlyTyping = newMessage.length > 0;
+        
+        // Only send if status changed
+        if (isCurrentlyTyping !== lastTypingSentRef.current) {
+            wsRef.current.send(JSON.stringify({ type: 'typing', is_typing: isCurrentlyTyping }));
+            lastTypingSentRef.current = isCurrentlyTyping;
+        }
+
+        // Auto-clear typing after inactivity
+        if (isCurrentlyTyping) {
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+            typingTimeoutRef.current = setTimeout(() => {
+                if (wsRef.current?.readyState === WebSocket.OPEN) {
+                    wsRef.current.send(JSON.stringify({ type: 'typing', is_typing: false }));
+                    lastTypingSentRef.current = false;
+                }
+            }, 3000);
+        }
+        
+        return () => { if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current); };
+    }, [newMessage, activeConvId]);
 
 // Merged into effect at line 139
 
@@ -615,10 +646,16 @@ export function MessagesView() {
                                             className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} ${isGroupStart ? 'mt-6' : 'mt-1'}`}
                                         >
                                             <div className={`flex items-end gap-2 max-w-[85%] sm:max-w-[70%]`}>
+                                                {!isMine && isGroupStart && (
+                                                    <div className="flex flex-col mb-1 mr-1">
+                                                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter ml-1 mb-0.5">{partnerName}</span>
+                                                        <Avatar name={partnerName} logo={partnerLogo} size={8} />
+                                                    </div>
+                                                )}
                                                 <div className={`relative px-4 py-3 text-[17px] leading-snug transition-all ${
                                                     isMine
-                                                        ? `bg-indigo-600 text-white shadow-premium ${isGroupStart ? 'rounded-t-[22px] rounded-bl-[22px]' : 'rounded-l-[22px]'} ${isGroupEnd ? 'rounded-br-[8px]' : ''} ${!isGroupStart && !isGroupEnd ? 'rounded-[22px]' : ''}`
-                                                        : `bg-zinc-100 text-zinc-900 ${isGroupStart ? 'rounded-t-[22px] rounded-br-[22px]' : 'rounded-r-[22px]'} ${isGroupEnd ? 'rounded-bl-[8px]' : ''} ${!isGroupStart && !isGroupEnd ? 'rounded-[22px]' : ''}`
+                                                        ? `bg-indigo-600 text-white shadow-premium ${isGroupStart ? 'rounded-t-[22px] rounded-bl-[22px]' : 'rounded-l-[22px]'} ${isGroupEnd ? 'rounded-br-[8px]' : ''}`
+                                                        : `bg-zinc-100 text-zinc-900 ${isGroupStart ? 'rounded-t-[22px] rounded-br-[22px]' : 'rounded-r-[22px]'} ${isGroupEnd ? 'rounded-bl-[8px]' : ''}`
                                                 } ${isOptimistic ? 'scale-95 opacity-50' : ''} ${!isGroupStart && !isGroupEnd ? 'rounded-[22px]' : ''}`}>
                                                     {msg.image_url && (
                                                         <div className="mb-2 -mx-2 -mt-1 overflow-hidden rounded-xl border border-white/10 shadow-sm">
@@ -636,7 +673,7 @@ export function MessagesView() {
                                                 </div>
                                             </div>
                                             {isGroupEnd && (
-                                                <div className={`flex items-center gap-1.5 mt-2 px-1 ${isMine ? 'flex-row-reverse' : ''}`}>
+                                                <div className={`flex items-center gap-1.5 mt-2 px-1 ${isMine ? 'flex-row-reverse' : ''} ${!isMine && isGroupStart ? 'ml-10' : ''}`}>
                                                     <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest">{formatMsgTime(msg.created_at)}</span>
                                                     {isMine && (
                                                         <span className="flex-shrink-0">
@@ -653,6 +690,21 @@ export function MessagesView() {
                                 });
                                 return grouped;
                             })()}
+                             {partnerTyping && (
+                                <div className="flex flex-col items-start mt-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                    <div className="flex items-center gap-2 mb-1 ml-1">
+                                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">{partnerName} is typing</span>
+                                    </div>
+                                    <div className="flex items-end gap-2">
+                                        <Avatar name={partnerName} logo={partnerLogo} size={8} />
+                                        <div className="bg-zinc-100 px-4 py-3 rounded-[22px] rounded-bl-[8px] flex items-center gap-1">
+                                            <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                            <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                            <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             <div className="h-8" />
                         </div>
                     )}
@@ -677,8 +729,8 @@ export function MessagesView() {
                                 </div>
                             </div>
                         )}
-                        <div className="p-4 md:p-6">
-                            <div className="flex items-end gap-3 bg-zinc-50 rounded-3xl px-3 py-2 focus-within:bg-zinc-100/50 transition-all">
+                        <div className="p-4 md:p-6 bg-white">
+                            <div className="flex items-end gap-3 bg-white border-2 border-zinc-100 rounded-[32px] px-3 py-2 focus-within:border-zinc-900 focus-within:ring-4 focus-within:ring-zinc-900/5 transition-all duration-300 shadow-sm">
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     disabled={uploading}
@@ -702,7 +754,7 @@ export function MessagesView() {
                                     }}
                                     placeholder="Type a message..."
                                     rows={1}
-                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed py-3 max-h-[180px] text-lg font-bold"
+                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed py-3 max-h-[180px] text-lg font-bold border-none ring-0 focus:ring-0"
                                 />
                                 <button
                                     onClick={handleSend}
