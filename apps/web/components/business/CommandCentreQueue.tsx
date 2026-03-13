@@ -77,7 +77,8 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
 
     useEffect(() => { if (isLoaded) fetchApps(); }, [isLoaded, fetchApps]);
 
-    const newLeads = recentLeads.filter(l => PENDING_STATUSES.includes(l.status));
+    const safeRecentLeads = Array.isArray(recentLeads) ? recentLeads : [];
+    const newLeads = safeRecentLeads.filter(l => PENDING_STATUSES.includes(l.status));
 
     const queueItems: { key: string; node: React.ReactNode }[] = [];
     apps.forEach(app => {
@@ -168,7 +169,7 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
                 </div>
             )}
 
-            {!loading && recentLeads.length > 0 && (
+            {!loading && safeRecentLeads.length > 0 && (
                 <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
                     <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-50">
                         <h3 className="font-bold text-zinc-700 flex items-center gap-2" style={{ fontSize: 22 }}>
@@ -180,7 +181,7 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
                         </button>
                     </div>
                     <div className="divide-y divide-zinc-50">
-                        {recentLeads.slice(0, 5).map(lead => (
+                        {safeRecentLeads.slice(0, 5).map(lead => (
                             <div key={lead.id} className="flex items-center justify-between px-5 py-4 hover:bg-zinc-50 transition-colors">
                                 <div className="flex items-center gap-3">
                                     <div className={`w-3 h-3 rounded-full shrink-0 ${PENDING_STATUSES.includes(lead.status) ? "bg-orange-400 animate-pulse" : "bg-zinc-300"}`} />

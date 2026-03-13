@@ -72,7 +72,7 @@ export function NotificationBell() {
                         });
                         if (notifyRes.ok) {
                             const latestArr = await notifyRes.json();
-                            const latest = latestArr[0];
+                            const latest = Array.isArray(latestArr) ? latestArr[0] : null;
                             
                             // Choose sound based on type
                             const soundFile = latest?.type === 'new_message' ? '/sounds/message.mp3' : '/sounds/notification.mp3';
@@ -112,9 +112,10 @@ export function NotificationBell() {
             });
             if (res.ok) {
                 const data = await res.json();
-                setNotifications(data);
-                if (data.length > 0) {
-                    lastCountRef.current = data.filter((n: any) => !n.is_read).length;
+                const safeData = Array.isArray(data) ? data : [];
+                setNotifications(safeData);
+                if (safeData.length > 0) {
+                    lastCountRef.current = safeData.filter((n: any) => !n.is_read).length;
                 }
             }
         } catch {}

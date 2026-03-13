@@ -117,10 +117,10 @@ export function EarningsDashboard() {
     const currentIdx = TIER_ORDER.indexOf(stats.tier);
 
     // Progress within current tier — based on rolling 30-day monthly_referrals
-    const currentMin = TIER_MINS[stats.tier];
-    const nextMin = stats.next_tier ? TIER_MINS[stats.next_tier] : currentMin + 20;
+    const currentMin = TIER_MINS[stats.tier] ?? 0;
+    const nextMin = stats.next_tier ? (TIER_MINS[stats.next_tier] ?? 5) : currentMin + 20;
     const tierRange = nextMin - currentMin;
-    const tierProgress = (tierRange > 0 && currentMin !== undefined && !isNaN(tierRange))
+    const tierProgress = (tierRange > 0 && stats?.monthly_referrals !== undefined)
         ? Math.min(100, Math.max(0, Math.round(((stats.monthly_referrals - currentMin) / tierRange) * 100)))
         : 0;
 

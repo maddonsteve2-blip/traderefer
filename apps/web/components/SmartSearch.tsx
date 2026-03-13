@@ -71,8 +71,12 @@ export function SmartSearch({ variant = "landing" }: SmartSearchProps) {
     const timer = setTimeout(async () => {
       try {
         const res = await fetch(`/api/search/suggestions?q=${encodeURIComponent(suburb)}&type=location`);
-        const data = await res.json();
-        setSuburbSuggestions(data.suburbs ?? []);
+            if (res.ok) {
+                const data = await res.json();
+                setSuburbSuggestions(Array.isArray(data.suggestions) ? data.suggestions : []);
+            } else {
+                setSuburbSuggestions([]);
+            }
       } catch {
         setSuburbSuggestions([]);
       } finally {

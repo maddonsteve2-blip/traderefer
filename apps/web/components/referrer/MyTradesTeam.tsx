@@ -41,7 +41,7 @@ export function MyTradesTeam() {
             });
             if (res.ok) {
                 const data = await res.json();
-                setBusinesses(data.links || []);
+                setBusinesses(Array.isArray(data.links) ? data.links : []);
                 if (data.referrer?.id) setReferrerId(data.referrer.id);
             }
         } catch { /* silent */ }

@@ -14,11 +14,13 @@ interface DashboardData {
     recent_activity?: Array<{ id: string; type: string; description: string; amount?: number; created_at: string }>;
 }
 
-function fmt(n: number) {
+function fmt(n: any) {
+    if (typeof n !== 'number') return "$0";
     return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
 }
 
-function fmtTime(iso: string) {
+function fmtTime(iso: any) {
+    if (!iso) return "";
     try {
         const d = new Date(iso);
         const diffMs = Date.now() - d.getTime();
@@ -36,18 +38,28 @@ export function MobileReferrerDashboard() {
     const [data, setData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
     const [copied, setCopied] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     const load = useCallback(async () => {
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/referrer/dashboard`, {
+            const res = await fetch(`/api/backend/referrer/dashboard`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) setData(await res.json());
-        } catch {} finally { setLoading(false); }
+        } catch (e) {
+            console.error("Dashboard load failed:", e);
+        } finally { 
+            setLoading(false); 
+        }
     }, [getToken]);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => { 
+        setMounted(true);
+        load(); 
+    }, [load]);
+
+    if (!mounted) return null;
 
     const primaryLink = data?.links?.[0];
     const BASE = typeof window !== "undefined" ? window.location.origin : "https://traderefer.au";

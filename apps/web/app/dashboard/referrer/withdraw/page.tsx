@@ -46,7 +46,8 @@ export default async function ReferrerRewardsPage() {
 
     const pendingBalance = (referrer.wallet_balance_cents || 0) / 100;
     const totalEarned = (referrer.total_earned_cents || 0) / 100;
-    const prezzeePayouts = payouts.filter((p: { method?: string }) => p.method === 'PREZZEE_SWAP');
+    const safePayouts = Array.isArray(payouts) ? payouts : [];
+    const prezzeePayouts = safePayouts.filter((p: { method?: string }) => p.method === 'PREZZEE_SWAP');
     const lastGiftCard = prezzeePayouts.length > 0 ? prezzeePayouts[0] : null;
     const qualityScore = referrer.quality_score ?? 100;
     const isReady = pendingBalance >= 25;

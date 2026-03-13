@@ -81,8 +81,9 @@ export default async function PublicProfilePage({
         notFound();
     }
 
-    const featuredProject = projects.find((p: any) => p.is_featured);
-    const otherProjects = projects.filter((p: any) => p !== featuredProject);
+    const safeProjects = Array.isArray(projects) ? projects : [];
+    const featuredProject = safeProjects.find((p: any) => p.is_featured);
+    const otherProjects = safeProjects.filter((p: any) => p !== featuredProject);
 
     // Compute derived stats
     const memberSinceYear = business.created_at ? new Date(business.created_at).getFullYear() : null;
@@ -116,7 +117,8 @@ export default async function PublicProfilePage({
         : "HomeAndConstructionBusiness";
 
     // Individual reviews for JSON-LD (only reviews with text, max 5 — must match what's visible on page)
-    const reviewItems = googleReviews
+    const safeReviews = Array.isArray(googleReviews) ? googleReviews : [];
+    const reviewItems = safeReviews
         .filter((r: any) => r.review_text && r.profile_name && r.rating)
         .slice(0, 5)
         .map((r: any) => ({

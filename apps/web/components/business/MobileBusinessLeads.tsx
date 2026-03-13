@@ -49,7 +49,8 @@ export function MobileBusinessLeads() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            setLeads(data);
+            const leadsData = Array.isArray(data) ? data : (data?.leads && Array.isArray(data.leads) ? data.leads : []);
+            setLeads(leadsData);
         } catch (error) {
             console.error("Error fetching leads:", error);
         } finally {

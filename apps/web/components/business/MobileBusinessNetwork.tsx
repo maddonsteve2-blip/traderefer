@@ -46,7 +46,7 @@ export function MobileBusinessNetwork({
 
                 if (res.ok) {
                     const data = await res.json();
-                    setReferrers(data.referrers || []);
+                    setReferrers(Array.isArray(data.referrers) ? data.referrers : []);
                     setStats({
                         total_referrers: data.summary?.total_referrers || 0,
                         new_this_month: 12 // Mocked for design fidelity matching

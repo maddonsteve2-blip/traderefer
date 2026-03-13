@@ -513,8 +513,8 @@ export function MessagesView() {
         ? contacts.filter(c => c.contact_name.toLowerCase().includes(searchQuery.toLowerCase()))
         : [];
 
-    const activeContact = contacts.find(c => c.contact_id === activeContactId);
-    const totalUnread = contacts.reduce((acc, c) => acc + (c.unread_count || 0), 0);
+    const activeContact = Array.isArray(contacts) ? contacts.find(c => c.contact_id === activeContactId) : undefined;
+    const totalUnread = Array.isArray(contacts) ? contacts.reduce((acc, c) => acc + (c.unread_count || 0), 0) : 0;
 
     if (loading) {
         return (

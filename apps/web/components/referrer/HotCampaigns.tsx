@@ -55,7 +55,7 @@ export function HotCampaigns() {
         const apiUrl = "/api/backend";
         fetch(`${apiUrl}/campaigns/hot`)
             .then(r => r.ok ? r.json() : [])
-            .then(setCampaigns)
+            .then(data => setCampaigns(Array.isArray(data) ? data : []))
             .catch(() => {});
     }, []);
 

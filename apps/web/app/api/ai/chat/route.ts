@@ -19,7 +19,7 @@ const FALLBACK_QUESTIONS = [
 
 export async function POST(req: Request) {
     const { messages, business_name, trade_category, suburb } = await req.json();
-    const userMessageCount = (messages || []).filter((m: any) => m.role === 'user').length;
+    const userMessageCount = (Array.isArray(messages) ? messages : []).filter((m: any) => m.role === 'user').length;
 
     try {
         const systemPrompt = `You are a friendly Australian onboarding assistant for TradeRefer — a platform that connects tradies with referrers who send them customers.
