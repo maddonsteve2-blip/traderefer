@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { MapPin, ChevronRight, Phone, CheckCircle, Loader2, User, ShieldCheck } from "lucide-react";
 import Link from "next/link";
@@ -41,6 +41,54 @@ function ReferrerOnboardingInner() {
         postcode: ""
     });
     const [addressError, setAddressError] = useState("");
+    const [isCheckingProfile, setIsCheckingProfile] = useState(true);
+
+    // Auto-skip verification if already a verified business
+    useEffect(() => {
+        const checkStatus = async () => {
+            try {
+                const token = await getToken();
+                if (!token) {
+                    setIsCheckingProfile(false);
+                    return;
+                }
+
+                // Check roles
+                const statusRes = await fetch(`${API}/auth/status`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (!statusRes.ok) throw new Error();
+                const statusData = await statusRes.json();
+
+                if (statusData.has_business) {
+                    // Try to get their business phone to pre-fill
+                    const bizRes = await fetch(`${API}/business/me`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (bizRes.ok) {
+                        const bizData = await bizRes.json();
+                        const verifiedPhone = bizData.owner_phone || bizData.business_phone;
+                        if (verifiedPhone) {
+                            setPhone(verifiedPhone);
+                            setOtpVerified(true);
+                            setStep(1); // Set to verify step but we'll jump to 2
+                            setTimeout(() => {
+                                setStep(2);
+                                toast.info("Reusing your verified business mobile.");
+                            }, 100);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Profile check failed:", e);
+            } finally {
+                setIsCheckingProfile(false);
+            }
+        };
+
+        checkStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [getToken]);
 
     const handleSendOTP = async () => {
         if (!phone.trim()) { setPhoneError("Mobile number is required"); return; }
@@ -122,6 +170,17 @@ function ReferrerOnboardingInner() {
             setIsLoading(false);
         }
     };
+
+    if (isCheckingProfile) {
+        return (
+            <main className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-10 h-10 animate-spin text-orange-500" />
+                    <p className="text-zinc-600 font-medium">Checking profile details…</p>
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="min-h-screen bg-white flex flex-col">
