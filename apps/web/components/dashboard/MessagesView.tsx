@@ -48,11 +48,11 @@ function Avatar({ name, logo, size = 9 }: { name: string; logo: string | null; s
     const sizeClass = sizeClasses[size] || 'w-9 h-9';
     
     return (
-        <div className={`${sizeClass} rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-white shadow-sm`}>
+        <div className={`${sizeClass} rounded-full bg-gradient-to-br from-indigo-50 to-indigo-100 flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-white shadow-sm`}>
             {logo ? (
                 <img src={logo} alt={name} className={`${sizeClass} object-cover`} />
             ) : (
-                <span className="text-[11px] font-black text-orange-600 tracking-tighter">{initials}</span>
+                <span className="text-[11px] font-black text-indigo-600 tracking-tighter">{initials}</span>
             )}
         </div>
     );
@@ -125,6 +125,7 @@ export function MessagesView() {
     const [uploading, setUploading] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [viewportHeight, setViewportHeight] = useState('100dvh');
     const wsRef = useRef<WebSocket | null>(null);
     const pingRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -132,6 +133,40 @@ export function MessagesView() {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const searchParams = useSearchParams();
     const convParam = searchParams.get('conv');
+    const lastMsgIdRef = useRef<string | null>(null);
+
+    // Better scroll to bottom with intersection detection
+    const scrollToBottom = useCallback((smooth = true) => {
+        if (scrollContainerRef.current) {
+            const { scrollHeight, clientHeight } = scrollContainerRef.current;
+            scrollContainerRef.current.scrollTo({
+                top: scrollHeight - clientHeight,
+                behavior: smooth ? 'smooth' : 'instant'
+            });
+        }
+    }, []);
+
+    // Derived viewport height for mobile keyboard handling
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const handler = () => {
+            if (window.visualViewport) {
+                setViewportHeight(`${window.visualViewport.height}px`);
+                // Scroll to bottom when keyboard pops up or viewport changes
+                if (activeConvId) {
+                    setTimeout(() => scrollToBottom(false), 100);
+                }
+            }
+        };
+        const vv = window.visualViewport;
+        vv?.addEventListener('resize', handler);
+        vv?.addEventListener('scroll', handler);
+        handler();
+        return () => {
+            vv?.removeEventListener('resize', handler);
+            vv?.removeEventListener('scroll', handler);
+        };
+    }, [activeConvId, scrollToBottom]);
 
     // Derive WebSocket base URL from the API route
     const getWsUrl = useCallback((convId: string, token: string) => {
@@ -220,18 +255,7 @@ export function MessagesView() {
     }, []);
 
 
-    // Better scroll to bottom with intersection detection
-    const scrollToBottom = useCallback((smooth = true) => {
-        if (scrollContainerRef.current) {
-            const { scrollHeight, clientHeight } = scrollContainerRef.current;
-            scrollContainerRef.current.scrollTo({
-                top: scrollHeight - clientHeight,
-                behavior: smooth ? 'smooth' : 'instant'
-            });
-        }
-    }, []);
-
-    const lastMsgIdRef = useRef<string | null>(null);
+// Ref moved up to line 136
 
     // Prevent body scroll on mobile when chat is open
     useEffect(() => {
@@ -260,17 +284,7 @@ export function MessagesView() {
         }
     }, [messages, scrollToBottom]);
 
-    // Handle mobile keyboard viewport issues & scroll anchoring
-    useEffect(() => {
-        if (!activeConvId) return;
-        const handleResize = () => scrollToBottom(false);
-        visualViewport?.addEventListener('resize', handleResize);
-        visualViewport?.addEventListener('scroll', handleResize);
-        return () => {
-            visualViewport?.removeEventListener('resize', handleResize);
-            visualViewport?.removeEventListener('scroll', handleResize);
-        };
-    }, [activeConvId, scrollToBottom]);
+// Merged into effect at line 139
 
     const fetchContacts = useCallback(async () => {
         try {
@@ -426,7 +440,7 @@ export function MessagesView() {
         return (
             <div className="flex items-center justify-center h-full w-full bg-white">
                 <div className="flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-10 h-10 border-[3px] border-indigo-500 border-t-transparent rounded-full animate-spin" />
                     <p className="text-zinc-400 font-bold text-xl">Loading messages…</p>
                 </div>
             </div>
@@ -434,28 +448,21 @@ export function MessagesView() {
     }
 
     return (
-        <div className={`fixed inset-0 lg:relative flex h-[100dvh] lg:h-full bg-white overflow-hidden overscroll-none ${activeContactId ? 'z-[60]' : 'z-0'} lg:z-auto`}>
-            {/* ── LEFT SIDEBAR ── */}
-            <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-[300px] lg:w-[340px] bg-gray-100`}>
-
-                {/* Sidebar header */}
-                <div className="px-5 pt-4 pb-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-3xl md:text-[28px] font-black text-zinc-900 leading-tight">Messages</h2>
-                        {totalUnread > 0 && (
-                            <span className="bg-orange-500 text-white font-black rounded-full min-w-[24px] h-[24px] flex items-center justify-center px-1.5 text-[10px] md:text-xs">
-                                {totalUnread}
-                            </span>
-                        )}
+        <div className="flex w-full h-full bg-white overflow-hidden text-zinc-900 border-none shadow-none">
+            {/* ── LEFT PANEL (Sidebar) ── */}
+            <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-[320px] lg:w-[380px] border-r border-zinc-100 bg-white flex-shrink-0`}>
+                <div className="px-6 py-6 border-b border-zinc-50 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h1 className="text-3xl font-black text-zinc-900 tracking-tight">Messages</h1>
                     </div>
                     <div className="relative">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
                         <input
                             type="text"
-                            placeholder="Find partner..."
+                            placeholder="Search chats..."
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 h-[52px] bg-white border border-zinc-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none placeholder:text-zinc-400 text-zinc-900 font-bold text-[15px] shadow-sm transition-all"
+                            className="w-full pl-11 pr-4 h-[48px] bg-zinc-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:bg-white outline-none placeholder:text-zinc-400 text-zinc-900 font-bold text-[15px] transition-all"
                         />
                     </div>
                 </div>
@@ -463,27 +470,19 @@ export function MessagesView() {
                 {/* Contact list */}
                 <div className="flex-1 overflow-y-auto">
                     {filteredContacts.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full text-center p-6 gap-4">
-                            <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center">
-                                <Users className="w-8 h-8 text-orange-400" />
+                        <div className="flex flex-col items-center justify-center h-full text-center p-8 gap-4">
+                            <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center">
+                                <Users className="w-10 h-10 text-zinc-300" />
                             </div>
                             <div>
-                                <p className="font-black text-zinc-700 text-xl">No conversations yet</p>
-                                <p className="text-zinc-400 font-medium mt-1 leading-snug text-xl">
+                                <p className="font-extrabold text-zinc-800 text-xl tracking-tight">No conversations</p>
+                                <p className="text-zinc-400 font-medium mt-1 leading-snug">
                                     {myType === 'business' ? 'Referrers will appear here once linked.' : 'Find businesses to start messaging.'}
                                 </p>
                             </div>
-                            {myType !== 'business' && (
-                                <Link
-                                    href="/dashboard/referrer/businesses"
-                                    className="flex items-center gap-2 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold transition-colors text-lg"
-                                >
-                                    <Building2 className="w-4 h-4" /> Browse Businesses
-                                </Link>
-                            )}
                         </div>
                     ) : (
-                        <div className="py-2">
+                        <div className="py-2 px-2">
                             {filteredContacts.map(contact => {
                                 const isActive = activeContactId === contact.contact_id;
                                 const hasUnread = contact.unread_count > 0;
@@ -491,40 +490,31 @@ export function MessagesView() {
                                     <button
                                         key={contact.contact_id}
                                         onClick={() => openContact(contact)}
-                                        className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-all duration-150 mx-1 mb-2 ${
+                                        className={`w-full flex items-center gap-4 px-4 py-4 text-left transition-all duration-200 rounded-2xl mb-1 ${
                                             isActive 
-                                                ? 'bg-orange-50 border border-orange-200 rounded-[20px]' 
-                                                : 'bg-white border border-zinc-200 rounded-[20px]'
+                                                ? 'bg-indigo-50/50' 
+                                                : 'hover:bg-zinc-50'
                                         }`}
-                                        style={{ width: 'calc(100% - 8px)' }}
                                     >
                                         <div className="relative flex-shrink-0">
-                                            <Avatar name={contact.contact_name} logo={contact.contact_logo} size={12} />
+                                            <Avatar name={contact.contact_name} logo={contact.contact_logo} size={14} />
                                             {hasUnread && (
-                                                <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-orange-500 rounded-full border-2 border-white" />
+                                                <span className="absolute bottom-0 right-0 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white" />
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between gap-1 mb-0.5">
-                                                <span className={`truncate font-black ${isActive ? 'text-orange-600' : hasUnread ? 'text-zinc-900' : 'text-zinc-800'} text-lg md:text-xl`}>
+                                            <div className="flex items-center justify-between gap-2">
+                                                <span className={`truncate font-extrabold text-[17px] ${isActive ? 'text-indigo-600' : 'text-zinc-900'}`}>
                                                     {contact.contact_name}
                                                 </span>
-                                                <span className="text-zinc-400 flex-shrink-0 whitespace-nowrap font-medium text-[10px] md:text-sm uppercase tracking-wider">
+                                                <span className="text-zinc-400 flex-shrink-0 font-bold text-[11px] uppercase tracking-wide">
                                                     {contact.last_message_at ? formatListTime(contact.last_message_at) : ''}
                                                 </span>
                                             </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <ShieldCheck className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-                                                <p className={`truncate font-medium ${hasUnread ? 'text-zinc-700 font-semibold' : 'text-zinc-400'} text-base md:text-lg`}>
-                                                    {contact.last_message || 'Verified Trade Partner'}
-                                                </p>
-                                            </div>
+                                            <p className={`truncate text-[15px] font-medium mt-0.5 ${hasUnread ? 'text-indigo-600 font-bold' : 'text-zinc-500'}`}>
+                                                {contact.last_message || 'Start the conversation'}
+                                            </p>
                                         </div>
-                                        {hasUnread && (
-                                            <span className="bg-orange-500 text-white font-black rounded-full min-w-[20px] h-[20px] flex items-center justify-center px-1 flex-shrink-0 text-xs">
-                                                {contact.unread_count}
-                                            </span>
-                                        )}
                                     </button>
                                 );
                             })}
@@ -533,65 +523,62 @@ export function MessagesView() {
                 </div>
             </div>
 
-            {/* ── RIGHT PANEL ── */}
-            <div className={`${activeContactId ? 'flex' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}>
-
-                {/* ── Thread header (conditional) ── */}
+            {/* ── RIGHT PANEL (Chat View) ── */}
+            <div 
+                className={`${activeContactId ? 'flex fixed inset-0 z-50 md:relative md:z-0' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
+                style={{ height: viewportHeight }}
+            >
+                {/* Mobile/Desktop Header */}
                 {activeContactId && activeContact ? (
-                    <div className="flex items-center gap-3 px-5 py-3 bg-white border-b border-zinc-100 shadow-sm flex-shrink-0">
+                    <div className="flex items-center gap-4 px-5 py-4 bg-white/80 backdrop-blur-md border-b border-zinc-100 flex-shrink-0 sticky top-0 z-20">
                         <button
                             onClick={() => { setActiveContactId(null); setActiveConvId(null); setMessages([]); }}
-                            className="md:hidden p-2 hover:bg-zinc-100 rounded-xl transition-colors mr-1"
+                            className="md:hidden p-2 -ml-2 hover:bg-zinc-100 rounded-full transition-colors"
                         >
-                            <ArrowLeft className="w-5 h-5 text-zinc-600" />
+                            <ArrowLeft className="w-6 h-6 text-zinc-900" />
                         </button>
-                        <Avatar name={partnerName} logo={partnerLogo || activeContact.contact_logo} size={11} />
-                        <div className="flex-1 min-w-0">
-                            <p className="font-black text-zinc-900 truncate text-[22px]">{partnerName}</p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                                <span className="flex items-center gap-1 text-green-600 font-bold text-sm">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <Avatar name={partnerName} logo={partnerLogo || activeContact.contact_logo} size={10} />
+                            <div className="truncate">
+                                <p className="font-black text-zinc-900 truncate text-xl tracking-tight leading-none">{partnerName}</p>
+                                <p className="text-green-600 font-bold text-[13px] flex items-center gap-1 mt-1">
                                     <ShieldCheck className="w-3.5 h-3.5" /> Verified Partner
-                                </span>
-                                {activeContact.linked_since && (
-                                    <>
-                                        <span className="text-zinc-200">·</span>
-                                        <span className="text-zinc-400 font-medium text-sm">
-                                            Linked {new Date(activeContact.linked_since).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
-                                        </span>
-                                    </>
-                                )}
+                                </p>
                             </div>
                         </div>
                         {myType !== 'business' && (
                             <Link
-                                href="/dashboard/referrer/businesses"
-                                className="hidden sm:flex items-center gap-1.5 px-3 py-2 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-xl font-bold text-zinc-600 hover:text-orange-600 transition-all text-base"
+                                href={`/b/${activeContact.contact_id}`}
+                                className="p-2 hover:bg-zinc-50 rounded-full text-zinc-400 hover:text-indigo-500 transition-colors"
                             >
-                                <ExternalLink className="w-3.5 h-3.5" /> View Profile
+                                <ExternalLink className="w-5 h-5" />
                             </Link>
                         )}
                     </div>
-                ) : null}
+                ) : (
+                    <div className="hidden md:flex flex-col items-center justify-center flex-1 text-center p-12 bg-zinc-50/30">
+                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-premium mb-6">
+                            <MessageSquare className="w-12 h-12 text-zinc-200" />
+                        </div>
+                        <h3 className="text-3xl font-black text-zinc-900 tracking-tight">Your Inbox</h3>
+                        <p className="text-zinc-400 font-medium text-lg mt-3 max-w-sm">
+                            Choose a conversation to view your messages and start collaborating.
+                        </p>
+                    </div>
+                )}
 
                 {/* ── Scrollable content area ── */}
                 <div 
                     ref={scrollContainerRef}
-                    className="flex-1 overflow-y-auto min-h-0 bg-zinc-50/50 scroll-smooth touch-pan-y overscroll-contain"
-                    style={{ overflowAnchor: 'none' }}
+                    className="flex-1 overflow-y-auto min-h-0 bg-white scroll-smooth touch-pan-y"
+                    style={{ overflowAnchor: 'none', WebkitOverflowScrolling: 'touch' }}
                 >
-                    {activeContactId && activeContact ? (
-                        <div className="px-4 py-4">
+                    {activeContactId && (
+                        <div className="px-5 py-8 max-w-4xl mx-auto w-full">
                             {messages.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-full text-center gap-4 py-16">
-                                    <div className="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center">
-                                        <MessageSquare className="w-10 h-10 text-orange-300" />
-                                    </div>
-                                    <div>
-                                        <p className="font-black text-zinc-700 text-[22px]">Start the conversation</p>
-                                        <p className="text-zinc-400 font-medium mt-1 text-[19px]">
-                                            Send a message to {partnerName.split(' ')[0]} — quote requests, job updates, anything.
-                                        </p>
-                                    </div>
+                                <div className="flex flex-col items-center justify-center text-center py-20 opacity-40">
+                                    <MessageSquare className="w-16 h-16 text-zinc-200 mb-4" />
+                                    <p className="font-bold text-zinc-400 text-lg">No messages between you yet</p>
                                 </div>
                             ) : (() => {
                                 const grouped: ReactElement[] = [];
@@ -611,55 +598,35 @@ export function MessagesView() {
                                     grouped.push(
                                         <div
                                             key={msg.id}
-                                            className={`flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'} ${isGroupStart ? 'mt-3' : 'mt-0.5'}`}
+                                            className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} ${isGroupStart ? 'mt-6' : 'mt-1'}`}
                                         >
-                                            {/* Their avatar — only on group end */}
-                                            {!isMine && (
-                                                <div className="w-8 flex-shrink-0 flex items-end">
-                                                    {isGroupEnd ? (
-                                                        <Avatar name={partnerName} logo={partnerLogo || activeContact.contact_logo} size={8} />
-                                                    ) : <div className="w-8" />}
-                                                </div>
-                                            )}
-
-                                            <div className={`max-w-[72%] flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
-                                                {/* Bubble */}
-                                                <div className={`relative overflow-hidden transition-opacity duration-200 ${isOptimistic ? 'opacity-70' : 'opacity-100'} ${
+                                            <div className={`flex items-end gap-2 max-w-[85%] sm:max-w-[70%]`}>
+                                                <div className={`relative px-4 py-3 text-[17px] leading-snug transition-all ${
                                                     isMine
-                                                        ? `bg-orange-500 text-white ${isGroupStart ? 'rounded-t-2xl' : 'rounded-t-lg'} ${isGroupEnd ? 'rounded-bl-2xl rounded-br-md' : 'rounded-b-lg'}`
-                                                        : `bg-white text-zinc-800 shadow-sm ${isGroupStart ? 'rounded-t-2xl' : 'rounded-t-lg'} ${isGroupEnd ? 'rounded-br-2xl rounded-bl-md' : 'rounded-b-lg'}`
-                                                } rounded-2xl`}>
+                                                        ? `bg-indigo-600 text-white shadow-premium ${isGroupStart ? 'rounded-t-[22px] rounded-bl-[22px]' : 'rounded-l-[22px]'} ${isGroupEnd ? 'rounded-br-[8px]' : ''} ${!isGroupStart && !isGroupEnd ? 'rounded-[22px]' : ''}`
+                                                        : `bg-zinc-100 text-zinc-900 ${isGroupStart ? 'rounded-t-[22px] rounded-br-[22px]' : 'rounded-r-[22px]'} ${isGroupEnd ? 'rounded-bl-[8px]' : ''} ${!isGroupStart && !isGroupEnd ? 'rounded-[22px]' : ''}`
+                                                } ${isOptimistic ? 'scale-95 opacity-50' : ''} ${!isGroupStart && !isGroupEnd ? 'rounded-[22px]' : ''}`}>
                                                     {msg.image_url && (
-                                                        <a href={msg.image_url} target="_blank" rel="noopener noreferrer" className="block">
-                                                            <img src={msg.image_url} alt="Shared image" className="max-w-full max-h-64 object-cover" />
-                                                        </a>
-                                                    )}
-                                                    {msg.body && (
-                                                        <p className="px-4 py-3 leading-relaxed whitespace-pre-wrap text-xl">{msg.body}</p>
-                                                    )}
-                                                </div>
-
-                                                {/* Time + read receipt — only on group end */}
-                                                {isGroupEnd && (
-                                                    <div className={`flex items-center gap-1 mt-1 px-1 ${isMine ? 'justify-end' : 'justify-start'}`}>
-                                                        <span className="text-xs text-zinc-400 font-medium">{formatMsgTime(msg.created_at)}</span>
-                                                        {isMine && (
-                                                            msg.is_read
-                                                                ? <CheckCheck className="w-3.5 h-3.5 text-orange-500" />
-                                                                : <Check className="w-3.5 h-3.5 text-zinc-300" />
-                                                        )}
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* My avatar — only on group end */}
-                                            {isMine && (
-                                                <div className="w-8 flex-shrink-0 flex items-end">
-                                                    {isGroupEnd ? (
-                                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center ring-2 ring-white">
-                                                            <span className="text-white text-[10px] font-black">ME</span>
+                                                        <div className="mb-2 -mx-2 -mt-1 overflow-hidden rounded-xl border border-white/10 shadow-sm">
+                                                            <a href={msg.image_url} target="_blank" rel="noopener noreferrer">
+                                                                <img src={msg.image_url} alt="Attachment" className="max-w-full max-h-[300px] object-cover hover:brightness-95 transition-all" />
+                                                            </a>
                                                         </div>
-                                                    ) : <div className="w-8" />}
+                                                    )}
+                                                    {msg.body && <p className="whitespace-pre-wrap font-bold tracking-tight">{msg.body}</p>}
+                                                </div>
+                                            </div>
+                                            {isGroupEnd && (
+                                                <div className={`flex items-center gap-1.5 mt-2 px-1 ${isMine ? 'flex-row-reverse' : ''}`}>
+                                                    <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest">{formatMsgTime(msg.created_at)}</span>
+                                                    {isMine && (
+                                                        <span className="flex-shrink-0">
+                                                            {msg.is_read 
+                                                                ? <div className="w-3.5 h-3.5 rounded-full bg-indigo-50 flex items-center justify-center"><CheckCheck className="w-2.5 h-2.5 text-indigo-500" /></div>
+                                                                : <Check className="w-3 h-3 text-zinc-300" />
+                                                            }
+                                                        </span>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
@@ -667,76 +634,39 @@ export function MessagesView() {
                                 });
                                 return grouped;
                             })()}
-                            <div className="h-4" />
-                        </div>
-                    ) : (
-                        /* Empty state — no conversation selected */
-                        <div className="flex flex-col items-center justify-center h-full text-center p-8 gap-5">
-                            <div className="w-24 h-24 bg-orange-50 rounded-3xl flex items-center justify-center shadow-sm">
-                                <MessageSquare className="w-12 h-12 text-orange-300" />
-                            </div>
-                            <div className="max-w-sm">
-                                <h3 className="font-black text-zinc-800 text-[26px]">Business Communications Hub</h3>
-                                <p className="text-zinc-400 font-medium mt-2 leading-snug text-xl">
-                                    {contacts.length > 0
-                                        ? 'Select a conversation from your Trades Team to get started.'
-                                        : 'Start messaging your trade partners — quote requests, job updates, and more.'}
-                                </p>
-                            </div>
-                            {contacts.length > 0 ? (
-                                <div className="flex items-center gap-2 text-zinc-400 font-bold text-lg">
-                                    <ArrowLeft className="w-4 h-4" /> Pick a conversation from the sidebar
-                                </div>
-                            ) : (
-                                <div className="flex flex-col sm:flex-row gap-3">
-                                    <Link
-                                        href="/dashboard/referrer/businesses"
-                                        className="flex items-center gap-2 px-6 py-3.5 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-bold transition-colors text-xl"
-                                    >
-                                        <Building2 className="w-5 h-5" /> Explore Businesses
-                                    </Link>
-                                    <Link
-                                        href="/dashboard/referrer"
-                                        className="flex items-center gap-2 px-6 py-3.5 bg-white border-2 border-zinc-200 hover:border-orange-300 text-zinc-700 hover:text-orange-600 rounded-2xl font-bold transition-colors text-xl"
-                                    >
-                                        <ChevronRight className="w-5 h-5" /> Back to Dashboard
-                                    </Link>
-                                </div>
-                            )}
+                            <div className="h-8" />
                         </div>
                     )}
                 </div>
 
-                {/* ── Image preview (active conversation only) ── */}
-                {activeContactId && imagePreview && (
-                    <div className="px-4 pt-3 bg-white border-t border-gray-200 flex-shrink-0">
-                        <div className="relative inline-block">
-                            <img src={imagePreview} alt="Preview" className="h-20 rounded-xl object-cover border border-zinc-200" />
-                            {uploading && (
-                                <div className="absolute inset-0 bg-white/80 rounded-xl flex items-center justify-center">
-                                    <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
-                                </div>
-                            )}
-                            <button onClick={clearImage} className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-zinc-800 text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-colors shadow">
-                                <X className="w-3 h-3" />
-                            </button>
-                        </div>
-                    </div>
-                )}
-
                 {/* ── Input bar ── */}
-                <div className="px-4 py-4 lg:py-6 bg-white border-t border-zinc-100 flex-shrink-0 z-10 pb-safe">
-                    {activeContactId ? (
-                        <div className="flex flex-col gap-2">
-                            <div className="flex items-end gap-2 bg-zinc-100 rounded-[24px] px-3 py-2.5 focus-within:bg-white focus-within:ring-4 focus-within:ring-orange-500/10 focus-within:border-orange-500 border border-transparent transition-all">
-                                <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleImageSelect} />
+                {activeContactId && (
+                    <div className="flex flex-col bg-white border-t border-zinc-100 safe-bottom">
+                        {imagePreview && (
+                            <div className="px-5 py-4 border-b border-zinc-50 overflow-x-auto">
+                                <div className="relative inline-block group">
+                                    <img src={imagePreview} alt="Preview" className="h-24 w-24 rounded-2xl object-cover border-2 border-zinc-100 shadow-premium" />
+                                    {uploading ? (
+                                        <div className="absolute inset-0 bg-white/60 rounded-2xl flex items-center justify-center">
+                                            <Loader2 className="w-6 h-6 text-indigo-500 animate-spin" />
+                                        </div>
+                                    ) : (
+                                        <button onClick={clearImage} className="absolute -top-2 -right-2 w-7 h-7 bg-zinc-900 text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-all shadow-lg active:scale-95">
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        <div className="p-4 md:p-6">
+                            <div className="flex items-end gap-3 bg-zinc-50 rounded-3xl px-3 py-2 focus-within:bg-zinc-100/50 transition-all">
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     disabled={uploading}
-                                    className="flex items-center justify-center w-11 h-11 text-zinc-500 hover:text-orange-500 hover:bg-white rounded-xl transition-all flex-shrink-0 mb-0.5"
-                                    title="Attach photo"
+                                    className="p-3 text-zinc-400 hover:text-indigo-500 hover:bg-white rounded-full transition-all flex-shrink-0 mb-1"
                                 >
                                     <Paperclip className="w-6 h-6" />
+                                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
                                 </button>
                                 <textarea
                                     ref={inputRef}
@@ -744,36 +674,42 @@ export function MessagesView() {
                                     onChange={e => {
                                         setNewMessage(e.target.value);
                                         e.target.style.height = 'auto';
-                                        e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
+                                        e.target.style.height = Math.min(e.target.scrollHeight, 180) + 'px';
                                     }}
                                     onKeyDown={handleKeyDown}
-                                    onFocus={() => setTimeout(() => scrollToBottom(false), 300)}
-                                    placeholder={`Message ${partnerName.split(' ')[0] || 'Partner'}…`}
+                                    onFocus={() => {
+                                        // Scroll to bottom after a short delay to account for keyboard popup
+                                        setTimeout(() => scrollToBottom(false), 200);
+                                    }}
+                                    placeholder="Type a message..."
                                     rows={1}
-                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed py-2.5 max-h-[150px] text-lg lg:text-xl font-medium"
+                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed py-3 max-h-[180px] text-lg font-bold"
                                 />
                                 <button
                                     onClick={handleSend}
                                     disabled={(!newMessage.trim() && !imageUrl) || sending || uploading}
-                                    className="flex-shrink-0 w-11 h-11 bg-orange-500 hover:bg-orange-600 disabled:bg-zinc-200 disabled:text-zinc-400 text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-orange-500/20 mb-0.5"
+                                    className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90 mb-1 shadow-lg ${
+                                        (!newMessage.trim() && !imageUrl) || sending || uploading
+                                            ? 'bg-zinc-200 text-zinc-400 shadow-none'
+                                            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/20'
+                                    }`}
                                 >
-                                    {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 fill-current" />}
+                                    {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 translate-x-0.5" />}
                                 </button>
                             </div>
-                            <div className="flex items-center justify-between px-2">
-                                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">Supports images & rich text</p>
-                                <p className="text-[10px] text-zinc-400 font-bold hidden lg:block uppercase tracking-widest">Enter to send · Shift+Enter for new line</p>
-                            </div>
                         </div>
-                    ) : (
-                        <div className="flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded-[24px] px-4 py-4 opacity-50 cursor-not-allowed">
-                            <div className="flex-1 text-zinc-400 font-bold uppercase tracking-widest text-xs">
-                                Select a conversation to start messaging…
-                            </div>
-                        </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
+
+            <style jsx global>{`
+                .shadow-premium {
+                    box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05), 0 2px 10px -5px rgba(0, 0, 0, 0.05);
+                }
+                .safe-bottom {
+                    padding-bottom: env(safe-area-inset-bottom);
+                }
+            `}</style>
         </div>
     );
 }
