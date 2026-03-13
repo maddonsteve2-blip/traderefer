@@ -137,6 +137,9 @@ export function MessagesView() {
     const [partnerTyping, setPartnerTyping] = useState(false);
     const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const lastTypingSentRef = useRef<boolean>(false);
+    const myTypeRef = useRef(myType);
+
+    useEffect(() => { myTypeRef.current = myType; }, [myType]);
 
     // Better scroll to bottom with intersection detection
     const scrollToBottom = useCallback((smooth = true) => {
@@ -231,23 +234,28 @@ export function MessagesView() {
                 const payload = JSON.parse(event.data);
                 if (payload.type === 'message') {
                     const msg: Message = payload.data;
+                    const finalIsMine = msg.sender_type === myTypeRef.current;
+                    const finalMsg = { ...msg, is_mine: finalIsMine };
+                    
                     setMessages(prev => {
                         // Avoid duplicates (optimistic messages get replaced by actual)
                         const exists = prev.some(m => m.id === msg.id);
                         if (exists) return prev;
-                        return [...prev, msg];
+                        return [...prev, finalMsg];
                     });
                     
-                    // Play notification sound for incoming messages if allowed
-                    try {
-                        const audio = new Audio('/sounds/message.mp3');
-                        audio.play().catch(() => {}); // Browsers might block if no interaction
-                    } catch {}
+                    // Play notification sound for incoming partner messages if allowed
+                    if (!finalIsMine) {
+                        try {
+                            const audio = new Audio('/sounds/message.mp3');
+                            audio.play().catch(() => {}); // Browsers might block if no interaction
+                        } catch {}
+                    }
 
                     // Update contact list preview
                     setContacts(prev => prev.map(c =>
                         c.conversation_id === convId
-                            ? { ...c, last_message: msg.body || '📷 Image', last_message_at: msg.created_at, unread_count: c.unread_count + 1 }
+                            ? { ...c, last_message: msg.body || '📷 Image', last_message_at: msg.created_at, unread_count: finalIsMine ? c.unread_count : c.unread_count + 1 }
                             : c
                     ));
                 } else if (payload.type === 'typing') {

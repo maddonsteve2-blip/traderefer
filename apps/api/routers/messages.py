@@ -191,7 +191,7 @@ async def websocket_conversation(
                 if msg_type == "ping":
                     await websocket.send_json({"type": "pong"})
                 elif msg_type == "typing":
-                    # Broadcast typing status to others in the room
+                    # Broadcast typing status to the partner only (exclude all of the sender's own devices)
                     await manager.broadcast(
                         conversation_id, 
                         {
@@ -199,7 +199,8 @@ async def websocket_conversation(
                             "user_id": user_id,
                             "is_typing": data.get("is_typing", True)
                         },
-                        exclude_ws=websocket
+                        exclude_ws=websocket,
+                        exclude_user_id=user_id
                     )
             except Exception:
                 break
@@ -571,8 +572,9 @@ async def send_message(
         }
     }
     try:
-        # Exclude current user_id from broadcast to avoid echo/duplication
-        await manager.broadcast(conversation_id, ws_payload, exclude_user_id=user.id)
+        # Broadcast to all connected clients in the room (including other devices of the same user)
+        # Duplicate detection on the sender's device is handled by msg.id checks on the frontend
+        await manager.broadcast(conversation_id, ws_payload)
     except Exception as ws_err:
         error_logger.warning(f"WebSocket broadcast error (non-fatal): {ws_err}")
 
