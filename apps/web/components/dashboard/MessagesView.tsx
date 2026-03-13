@@ -135,8 +135,15 @@ export function MessagesView() {
 
     // Derive WebSocket base URL from the API route
     const getWsUrl = useCallback((convId: string, token: string) => {
-        // The Next.js API proxy is at /api/backend → strip that prefix for WS
-        const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
+        // Clean the base URL (trim spaces/newlines and remove trailing slashes)
+        const apiBase = (process.env.NEXT_PUBLIC_API_URL || '').trim().replace(/\/$/, '');
+        
+        // If it's a relative URL (like /api/backend), we need to derive the absolute one for WS
+        if (apiBase === '' || apiBase.startsWith('/')) {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            return `${protocol}//${window.location.host}/messages/ws/${convId}?token=${encodeURIComponent(token)}`;
+        }
+
         const wsBase = apiBase.replace(/^http/, 'ws');
         return `${wsBase}/messages/ws/${convId}?token=${encodeURIComponent(token)}`;
     }, []);
