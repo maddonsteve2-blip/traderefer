@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Campaign Builder - Balanced Readable Prototype</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..0" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97415",
+                        "background-light": "#fcfcfc",
+                        "zinc-900": "#111111",
+                        "border-zinc": "#e5e5e5",
+                        "high-contrast": "#000000"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "card": "24px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            overflow: hidden;
+            font-size: 16px;
+        }
+        .authority-title {
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light text-zinc-900 h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-zinc-900 h-screen flex flex-col shrink-0 px-2">
+        <div class="px-6 py-8 flex items-center gap-3">
+            <img src="logo-dark.png" alt="" class="h-10 w-auto">
+            <span class="text-xl font-black tracking-tight leading-none uppercase"><span class="text-white">TRADE</span><span class="text-orange-500 font-black">REFER</span></span>
+        </div>
+
+        <nav class="flex-1 px-2 space-y-1 mt-2">
+            <a href="index.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">home</span>
+                <span class="text-[15px]">Dashboard</span>
+            </a>
+            <a href="leads.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">group</span>
+                <span class="text-[15px]">Leads</span>
+            </a>
+            <a href="network.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">hub</span>
+                <span class="text-[15px]">Network</span>
+            </a>
+            <a href="analytics.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">analytics</span>
+                <span class="text-[15px]">Analytics</span>
+            </a>
+            <a href="campaigns.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl bg-white/10 text-white font-black transition-all shadow-lg ring-1 ring-white/20">
+                <span class="material-symbols-outlined !text-2xl">campaign</span>
+                <span class="text-[15px]">Campaigns</span>
+            </a>
+            <a href="messages.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">mail</span>
+                <span class="text-[15px]">Inbox</span>
+            </a>
+            <a href="settings.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">settings</span>
+                <span class="text-[15px]">Settings</span>
+            </a>
+        </nav>
+
+        <!-- Role Switcher -->
+        <div class="px-2 mb-4">
+            <a href="referrer-home.html" class="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold transition-all group border border-white/5">
+                <div class="w-9 h-9 bg-primary/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary/30 transition-colors">
+                    <span class="material-symbols-outlined !text-xl text-primary font-black">rocket_launch</span>
+                </div>
+                <div class="text-left">
+                    <p class="text-[13px] font-black text-white leading-tight">Switch to Referrer</p>
+                    <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">Open Dashboard</p>
+                </div>
+                <span class="material-symbols-outlined !text-lg text-zinc-600 ml-auto group-hover:text-primary transition-colors">sync_alt</span>
+            </a>
+        </div>
+
+        <div class="p-6 border-t border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="size-9 rounded-full bg-zinc-800 border-2 border-zinc-700 shadow-xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-black text-white truncate">Alex Rivera</p>
+                    <p class="text-xs text-zinc-500 font-bold uppercase tracking-widest">Admin</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="flex items-center justify-between px-8 py-5 bg-white border-b-2 border-zinc-100 shrink-0">
+            <div>
+                <h1 class="text-3xl font-black authority-title tracking-tighter text-high-contrast uppercase">Broadcast Campaigns</h1>
+                <p class="text-zinc-500 text-xs font-black uppercase mt-1 tracking-[0.2em]">REACH YOUR NETWORK AT SCALE</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="bg-primary px-8 py-3 rounded-xl text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20">Launch New Campaign</button>
+            </div>
+        </header>
+
+        <div class="flex-1 p-8 overflow-y-auto no-scrollbar bg-background-light">
+            <div class="max-w-6xl mx-auto space-y-12">
+                <!-- Active Broadcaster -->
+                <section class="bg-white border-4 border-zinc-900 rounded-[48px] p-12 shadow-3xl text-zinc-900 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col md:flex-row items-center gap-12">
+                         <div class="size-40 rounded-[40px] bg-zinc-900 flex items-center justify-center text-primary shrink-0">
+                            <span class="material-symbols-outlined !text-7xl">broadcast_on_personal</span>
+                        </div>
+                        <div class="space-y-6 flex-1 text-center md:text-left">
+                            <h2 class="text-5xl font-black authority-title uppercase tracking-tighter leading-tight">Reach 450+ Active Referrers Instantly</h2>
+                            <p class="text-xl font-bold text-zinc-500 leading-relaxed">Broadcast a bonus reward to the entire TradeRefer network. Direct alerts sent via Push and SMS.</p>
+                            <div class="flex flex-wrap gap-4 pt-4 justify-center md:justify-start">
+                                <div class="bg-zinc-100 px-6 py-3 rounded-2xl flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-zinc-400">group</span>
+                                    <span class="text-xs font-black uppercase tracking-widest">Target: NSW Coast</span>
+                                </div>
+                                <div class="bg-zinc-100 px-6 py-3 rounded-2xl flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-zinc-400">currency_exchange</span>
+                                    <span class="text-xs font-black uppercase tracking-widest">Standard + $50 Bonus</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                     <div class="bg-white border-2 border-zinc-100 rounded-[40px] p-10 shadow-2xl space-y-8 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="bg-primary/10 text-primary text-[10px] font-black px-4 py-2 rounded-xl uppercase tracking-widest">Completed</span>
+                                <p class="text-xs text-zinc-400 font-bold uppercase tracking-widest">FEBRUARY 2026</p>
+                            </div>
+                            <h3 class="text-3xl font-black text-high-contrast uppercase tracking-tighter mb-4">Summer Rush 2x</h3>
+                            <p class="text-zinc-500 font-bold text-lg leading-snug">Double rewards for all referrals in the Sydney metro area.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 border-t-2 border-zinc-50 pt-8">
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-zinc-400 mb-1 tracking-widest">Open Rate</p>
+                                <p class="text-3xl font-black text-high-contrast">82%</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-zinc-400 mb-1 tracking-widest">Wins</p>
+                                <p class="text-3xl font-black text-high-contrast">12</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border-2 border-zinc-100 rounded-[40px] p-10 shadow-2xl space-y-8 flex flex-col justify-between h-[380px] border-dashed">
+                        <div class="flex-1 flex flex-col items-center justify-center text-center space-y-6">
+                            <div class="size-20 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-300">
+                                <span class="material-symbols-outlined !text-4xl">add</span>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-black text-zinc-400 uppercase tracking-tighter mb-2">Build New Broadcast</h3>
+                                <p class="text-zinc-400 font-bold">Boost your lead flow for the next 48 hours.</p>
+                            </div>
+                        </div>
+                        <button class="w-full border-2 border-zinc-200 text-zinc-400 h-16 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] hover:border-primary hover:text-primary transition-all">Start Builder</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

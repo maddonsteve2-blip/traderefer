@@ -6,6 +6,9 @@ import { HubTabBar } from "@/components/business/HubTabBar";
 import { ForcePartnersPane } from "@/components/business/ForcePartnersPane";
 import { ForceApplicationsPane } from "@/components/business/ForceApplicationsPane";
 import { ForceConfigPane } from "@/components/business/ForceConfigPane";
+import { MobileBusinessNetwork } from "@/components/business/MobileBusinessNetwork";
+import { MobileBusinessApplications } from "@/components/business/MobileBusinessApplications";
+import { MobileBusinessConfig } from "@/components/business/MobileBusinessConfig";
 
 const TABS = [
     { key: "partners", label: "Active Referrers" },
@@ -24,10 +27,27 @@ function ForceHubInner() {
 
     return (
         <div className="flex flex-col bg-zinc-50 h-[calc(100dvh-56px)] lg:h-screen overflow-hidden">
-            <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
-            {tab === "partners" && <ForcePartnersPane />}
-            {tab === "applications" && <ForceApplicationsPane />}
-            {tab === "config" && <ForceConfigPane />}
+            <div className="hidden lg:block">
+                <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
+            </div>
+
+            <div className="lg:hidden flex-1 overflow-y-auto">
+                {tab === "partners" && <MobileBusinessNetwork />}
+                {tab === "applications" && <MobileBusinessApplications />}
+                {tab === "config" && <MobileBusinessConfig />}
+                {/* Fallback to desktop panes for other tabs if they don't have mobile versions yet */}
+                {tab !== "partners" && tab !== "applications" && tab !== "config" && (
+                     <>
+                          <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
+                     </>
+                )}
+            </div>
+
+            <div className="hidden lg:block flex-1 overflow-hidden">
+                {tab === "partners" && <ForcePartnersPane />}
+                {tab === "applications" && <ForceApplicationsPane />}
+                {tab === "config" && <ForceConfigPane />}
+            </div>
         </div>
     );
 }

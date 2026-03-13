@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { Logo } from "@/components/Logo";
 import {
     LayoutDashboard,
     Target,
@@ -247,18 +248,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             {/* ── MOBILE TOP BAR ── */}
             <div className="lg:hidden fixed top-0 left-0 right-0 h-[60px] bg-white border-b border-zinc-100 flex items-center px-4 z-40 gap-3">
                 <Link href="/" className="flex items-center gap-2 shrink-0">
-                    <div className="w-7 h-7 bg-orange-500 rounded-lg flex items-center justify-center">
-                        <Image
-                            src="/logo-dark.png"
-                            alt="TradeRefer"
-                            width={20}
-                            height={20}
-                            className="rounded shadow-sm"
-                        />
-                    </div>
-                    <span className="text-[17px] font-black tracking-tight leading-none uppercase text-zinc-900">
-                        TradeRefer
-                    </span>
+                    <Logo size="sm" />
                 </Link>
 
                 {/* Role switcher */}

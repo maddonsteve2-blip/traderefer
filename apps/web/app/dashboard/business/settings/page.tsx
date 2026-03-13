@@ -23,6 +23,26 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import {
+    DashboardAccentCard,
+    DashboardCard,
+    DashboardDarkCard,
+    DashboardEyebrow,
+    DashboardGrid,
+    DashboardMutedCard,
+    DashboardPage,
+    DashboardPageHeader,
+    DashboardPanel,
+    DashboardPanelBody,
+    DashboardSection,
+    DashboardSectionDescription,
+    DashboardSectionHeader,
+    DashboardSectionTitle,
+    DashboardStickyFooter,
+    DashboardSubtitle,
+    DashboardTitle,
+} from "@/components/dashboard/RedesignPrimitives";
+import { MobileBusinessSettings } from "@/components/business/MobileBusinessSettings";
 
 export default function BusinessSettingsPage() {
     const { getToken, isLoaded } = useAuth();
@@ -199,11 +219,11 @@ export default function BusinessSettingsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-[100dvh] bg-zinc-50">
+            <DashboardPage className="bg-zinc-50">
                 <div className="min-h-screen flex items-center justify-center">
                     <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                 </div>
-            </div>
+            </DashboardPage>
         );
     }
 
@@ -217,10 +237,48 @@ export default function BusinessSettingsPage() {
     const storefrontHref = formData.slug ? `https://traderefer.com.au/b/${formData.slug}` : "https://traderefer.com.au/b/your-business";
 
     return (
-        <div className="bg-zinc-100 overflow-hidden">
-            <div className="min-h-screen w-full max-w-none px-4 md:px-6 xl:px-10 pb-4 md:pb-6 overflow-visible xl:overflow-hidden flex flex-col xl:flex-row gap-4 xl:gap-0">
-                <div className="w-full xl:w-[40%] min-h-0 overflow-hidden bg-white border border-gray-200 xl:border-r xl:border-l-0 xl:border-t-0 xl:border-b-0 rounded-[28px] xl:rounded-none flex flex-col">
-                    <div className="flex-1 overflow-y-auto px-4 md:px-6 xl:pr-8 xl:pl-0 pt-6 md:pt-8 pb-20">
+        <DashboardPage className="overflow-hidden p-0 lg:p-4">
+            <MobileBusinessSettings 
+                formData={formData}
+                setFormData={setFormData}
+                saving={saving}
+                onSave={handleSave}
+                onVerifyABN={handleVerifyABN}
+                verifying={verifying}
+                slugStatus={slugStatus}
+                checkSlug={checkSlug}
+                isVerified={biz?.is_verified || false}
+            />
+
+            <div className="hidden lg:block">
+                <DashboardPageHeader className="mt-4 md:mt-6 xl:mt-8">
+                <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+                    <div className="space-y-3">
+                        <DashboardEyebrow>Phase 1 Foundation Pilot</DashboardEyebrow>
+                        <DashboardTitle>Business Settings</DashboardTitle>
+                        <DashboardSubtitle>
+                            This page now uses shared redesign foundations while preserving the existing settings workflow,
+                            API calls, and save behavior.
+                        </DashboardSubtitle>
+                    </div>
+                    <DashboardAccentCard className="w-full max-w-xl p-5">
+                        <div className="flex items-start gap-3">
+                            <Building2 className="mt-0.5 h-5 w-5 text-orange-500" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-orange-600">Safe rollout</p>
+                                <p className="text-base font-semibold leading-6 text-zinc-700">
+                                    Shared shells, sections, and cards are now reusable here before we migrate more low-risk
+                                    pages in Phase 2.
+                                </p>
+                            </div>
+                        </div>
+                    </DashboardAccentCard>
+                </div>
+            </DashboardPageHeader>
+
+            <DashboardGrid>
+                <DashboardPanel className="w-full xl:w-[40%] min-h-0 xl:rounded-r-none xl:border-r xl:border-l-0 xl:border-t-0 xl:border-b-0">
+                    <DashboardPanelBody className="flex-1 overflow-y-auto xl:pr-8 xl:pl-0">
                         <div className="space-y-6">
                             <div className="space-y-3">
                                 <Link href="/dashboard/business" className="flex items-center gap-1.5 text-base font-semibold text-zinc-400 hover:text-zinc-800 transition-colors group w-fit">
@@ -233,7 +291,7 @@ export default function BusinessSettingsPage() {
                                 <p className="text-zinc-500 font-medium text-xl">This profile is what referrers see in the catalog before they decide to promote your business.</p>
                             </div>
 
-                            <section className="space-y-6">
+                            <DashboardSection>
                                 <div className="space-y-3">
                                     <label className={`${labelClass} text-xl`}>Business Name</label>
                                     <input
@@ -345,13 +403,13 @@ export default function BusinessSettingsPage() {
                                         </div>
                                     </div>
                                 </div>
-                            </section>
+                            </DashboardSection>
 
-                            <section className="space-y-6">
-                                <div>
-                                    <h2 className="font-bold text-zinc-900 text-3xl">Why Referrers Should Choose You</h2>
-                                    <p className="text-zinc-500 font-medium text-lg mt-2">Shape the story referrers see when comparing businesses in the catalog.</p>
-                                </div>
+                            <DashboardSection>
+                                <DashboardSectionHeader>
+                                    <DashboardSectionTitle>Why Referrers Should Choose You</DashboardSectionTitle>
+                                    <DashboardSectionDescription>Shape the story referrers see when comparing businesses in the catalog.</DashboardSectionDescription>
+                                </DashboardSectionHeader>
 
                                 <div className="space-y-3">
                                     <label className={`${labelClass} text-xl`}>Business Description</label>
@@ -385,15 +443,15 @@ export default function BusinessSettingsPage() {
                                         placeholder="Street address or service HQ"
                                     />
                                 </div>
-                            </section>
+                            </DashboardSection>
 
-                            <section className="space-y-6">
-                                <div>
-                                    <h2 className="font-bold text-zinc-900 text-3xl">Referral Fee Settings</h2>
-                                    <p className="text-zinc-500 font-medium text-lg mt-2">Set the commercial signal that makes your storefront feel premium to referrers.</p>
-                                </div>
+                            <DashboardSection>
+                                <DashboardSectionHeader>
+                                    <DashboardSectionTitle>Referral Fee Settings</DashboardSectionTitle>
+                                    <DashboardSectionDescription>Set the commercial signal that makes your storefront feel premium to referrers.</DashboardSectionDescription>
+                                </DashboardSectionHeader>
 
-                                <div className="rounded-[28px] border border-orange-200 bg-orange-50/60 p-8 space-y-5">
+                                <DashboardAccentCard className="space-y-5 p-8">
                                     <label className={`${labelClass} text-2xl`}>Base Referral Fee</label>
                                     <div className="relative w-full max-w-[320px]">
                                         <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-zinc-900 text-3xl">$</span>
@@ -410,29 +468,29 @@ export default function BusinessSettingsPage() {
                                         />
                                     </div>
                                     <p className="text-lg text-zinc-600 font-semibold">Referrers notice stronger offers quickly. $10+ usually feels like a serious, high-intent partnership.</p>
-                                </div>
+                                </DashboardAccentCard>
 
                                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-                                    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6">
+                                    <DashboardMutedCard className="rounded-2xl p-6">
                                         <p className="text-base font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Referrer Reward</p>
                                         <p className="font-bold text-zinc-900 text-4xl">${(formData.referral_fee_cents / 100).toFixed(2)}</p>
-                                    </div>
-                                    <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6">
+                                    </DashboardMutedCard>
+                                    <DashboardMutedCard className="rounded-2xl p-6">
                                         <p className="text-base font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Platform Fee</p>
                                         <p className="font-bold text-zinc-900 text-4xl">${(formData.referral_fee_cents * 0.2 / 100).toFixed(2)}</p>
-                                    </div>
-                                    <div className="rounded-2xl bg-zinc-900 text-white p-6 shadow-lg shadow-zinc-900/10">
+                                    </DashboardMutedCard>
+                                    <DashboardDarkCard className="rounded-2xl p-6 shadow-lg shadow-zinc-900/10">
                                         <p className="text-base font-extrabold uppercase tracking-[0.16em] text-white/60 mb-3">Total Unlock Price</p>
                                         <p className="font-bold text-white text-4xl">${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
-                                    </div>
+                                    </DashboardDarkCard>
                                 </div>
-                            </section>
+                            </DashboardSection>
 
-                            <section className="space-y-6">
-                                <div>
-                                    <h2 className="font-bold text-zinc-900 text-3xl">Operational Trust Signals</h2>
-                                    <p className="text-zinc-500 font-medium text-lg mt-2">These cues tell referrers how quickly and confidently you operate.</p>
-                                </div>
+                            <DashboardSection>
+                                <DashboardSectionHeader>
+                                    <DashboardSectionTitle>Operational Trust Signals</DashboardSectionTitle>
+                                    <DashboardSectionDescription>These cues tell referrers how quickly and confidently you operate.</DashboardSectionDescription>
+                                </DashboardSectionHeader>
 
                                 <div className="space-y-3">
                                     <label className={`${labelClass} text-xl`}>Response Time Target</label>
@@ -478,11 +536,11 @@ export default function BusinessSettingsPage() {
                                         </div>
                                     )}
                                 </div>
-                            </section>
+                            </DashboardSection>
                         </div>
-                    </div>
+                    </DashboardPanelBody>
 
-                    <div className="shrink-0 border-t border-gray-200 bg-white pt-5 pb-8 px-4 md:px-6 xl:pr-8 xl:pl-0">
+                    <DashboardStickyFooter className="shrink-0 xl:pr-8 xl:pl-0">
                         <Button
                             onClick={handleSave}
                             disabled={saving || slugStatus === "taken"}
@@ -491,10 +549,10 @@ export default function BusinessSettingsPage() {
                             {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <Save className="w-6 h-6" />}
                             {saving ? "Saving Changes..." : "Save Changes"}
                         </Button>
-                    </div>
-                </div>
+                    </DashboardStickyFooter>
+                </DashboardPanel>
 
-                <div className="w-full xl:w-[60%] min-h-[460px] xl:h-full bg-gray-50 flex items-center justify-center border border-gray-200 xl:border-l xl:border-r-0 xl:border-t-0 xl:border-b-0 rounded-[28px] xl:rounded-none overflow-hidden">
+                <DashboardPanel className="w-full xl:w-[60%] min-h-[460px] xl:h-full bg-gray-50 flex items-center justify-center xl:rounded-l-none xl:border-l xl:border-r-0 xl:border-t-0 xl:border-b-0">
                     <div className="w-full h-full flex flex-col px-4 md:px-6 xl:px-8 py-4 md:py-6">
                         <div className="flex items-center gap-2 mb-4 shrink-0">
                             <Eye className="w-4 h-4 text-zinc-400" />
@@ -566,28 +624,35 @@ export default function BusinessSettingsPage() {
                                         </p>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
-                                            <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-3">Contact</p>
-                                            <div className="space-y-3 text-base text-zinc-600 font-medium">
-                                                <div className="inline-flex items-center gap-2 w-full"><Phone className="w-4 h-4 text-zinc-400" /> {formData.business_phone || "Add phone number"}</div>
-                                                <div className="inline-flex items-center gap-2 w-full"><Mail className="w-4 h-4 text-zinc-400" /> {formData.business_email || "Add email address"}</div>
+                                    <DashboardCard className="rounded-none border-x-0 border-b-0 border-t border-gray-100 px-7 py-6 shadow-none">
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-4">
+                                                <div className="flex items-center gap-2 text-zinc-400 text-sm font-black uppercase tracking-[0.14em]">
+                                                    <Mail className="w-4 h-4" /> Contact
+                                                </div>
+                                                <div className="space-y-3 text-base text-zinc-600 font-medium">
+                                                    <div className="inline-flex items-center gap-2 w-full"><Phone className="w-4 h-4 text-zinc-400" /> {formData.business_phone || "Add phone number"}</div>
+                                                    <div className="inline-flex items-center gap-2 w-full"><Mail className="w-4 h-4 text-zinc-400" /> {formData.business_email || "Add email address"}</div>
+                                                </div>
+                                            </div>
+                                            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-4">
+                                                <div className="flex items-center gap-2 text-zinc-400 text-sm font-black uppercase tracking-[0.14em]">
+                                                    <MapPin className="w-4 h-4" /> Coverage
+                                                </div>
+                                                <div className="space-y-3 text-base text-zinc-600 font-medium">
+                                                    <div className="inline-flex items-center gap-2 w-full"><MapPin className="w-4 h-4 text-zinc-400" /> {formData.suburb || "Add service suburb"}</div>
+                                                    <div className="inline-flex items-center gap-2 w-full"><Building2 className="w-4 h-4 text-zinc-400" /> {formData.address || "Add business address"}</div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
-                                            <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-3">Coverage</p>
-                                            <div className="space-y-3 text-base text-zinc-600 font-medium">
-                                                <div className="inline-flex items-center gap-2 w-full"><MapPin className="w-4 h-4 text-zinc-400" /> {formData.suburb || "Add service suburb"}</div>
-                                                <div className="inline-flex items-center gap-2 w-full"><Building2 className="w-4 h-4 text-zinc-400" /> {formData.address || "Add business address"}</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </DashboardCard>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </DashboardPanel>
+            </DashboardGrid>
             </div>
-        </div>
+        </DashboardPage>
     );
 }

@@ -100,6 +100,137 @@
   }
 }
 
+@media (min-width: 768px) {
+  :root {
+    --text-xs: 0.75rem;
+    --text-xs--line-height: 1.333333;
+    --text-sm: 0.875rem;
+    --text-sm--line-height: 1.428571;
+    --text-base: 1rem;
+    --text-base--line-height: 1.5;
+    --text-lg: 1rem;
+    --text-lg--line-height: 1.5;
+    --text-xl: 1.25rem;
+    --text-xl--line-height: 1.4;
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: 1.333333;
+    --text-3xl: 2rem;
+    --text-3xl--line-height: 1.2;
+    --text-4xl: 2rem;
+    --text-4xl--line-height: 1.2;
+    --text-5xl: 2rem;
+    --text-5xl--line-height: 1.15;
+    --text-6xl: 2rem;
+    --text-6xl--line-height: 1.1;
+  }
+
+  @layer base {
+    body {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    h1 {
+      font-size: 32px;
+      line-height: 1.15;
+    }
+
+    h2 {
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    h4,
+    h5,
+    h6 {
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    input,
+    textarea,
+    select,
+    button {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    td,
+    li,
+    dt,
+    dd {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    th,
+    time,
+    small {
+      font-size: 12px;
+      line-height: 1.35;
+    }
+  }
+
+  .text-\[9px\],
+  .text-\[10px\],
+  .text-\[11px\] {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  .text-\[12px\] {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+
+  .text-\[13px\],
+  .text-\[14px\] {
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+  }
+
+  .text-\[15px\],
+  .text-\[16px\],
+  .text-\[17px\],
+  .text-\[18px\],
+  .text-\[19px\],
+  .text-\[20px\] {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+  }
+
+  .text-\[21px\],
+  .text-\[22px\],
+  .text-\[23px\],
+  .text-\[24px\] {
+    font-size: 20px !important;
+    line-height: 1.35 !important;
+  }
+
+  .text-\[25px\],
+  .text-\[26px\],
+  .text-\[27px\],
+  .text-\[28px\],
+  .text-\[29px\],
+  .text-\[30px\],
+  .text-\[31px\],
+  .text-\[32px\],
+  .text-\[33px\],
+  .text-\[34px\],
+  .text-\[35px\],
+  .text-\[36px\],
+  .text-\[40px\],
+  .text-\[48px\] {
+    font-size: 24px !important;
+    line-height: 1.2 !important;
+  }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

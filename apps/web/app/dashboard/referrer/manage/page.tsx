@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { MobileReferrerLeads } from "@/components/referrer/MobileReferrerLeads";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -380,7 +381,7 @@ export default function ReferrerManagePage() {
     };
 
     const handleCopySwipe = () => {
-        navigator.clipboard.writeText(swipeContent[tab]);
+        navigator.clipboard.writeText(swipeContent[tab as keyof typeof swipeContent]);
         toast.success(`${tab.toUpperCase()} copy copied!`);
     };
 
@@ -397,21 +398,24 @@ export default function ReferrerManagePage() {
     // ── TRUE EMPTY STATE (no approved AND no pending) ────────────────────────
     if (totalCount === 0) {
         return (
-            <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center px-6 py-16 text-center">
-                <div className="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                    <Users className="w-10 h-10 text-orange-300" />
+            <>
+                <MobileReferrerLeads />
+                <div className="hidden lg:flex min-h-screen bg-zinc-50 flex-col items-center justify-center px-6 py-16 text-center">
+                    <div className="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <Users className="w-10 h-10 text-orange-300" />
+                    </div>
+                    <h1 className="font-black text-zinc-900 mb-3 text-3xl">Build Your Team</h1>
+                    <p className="font-medium text-zinc-500 max-w-md mb-8 text-lg leading-relaxed">
+                        You don't have any referral partnerships yet. Apply to join a business's network to unlock your Command Centre.
+                    </p>
+                    <Link
+                        href="/dashboard/referrer/businesses"
+                        className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black px-8 py-4 rounded-2xl transition-all active:scale-95 shadow-xl shadow-orange-200 text-lg"
+                    >
+                        Find Your First Business <ChevronRight className="w-5 h-5" />
+                    </Link>
                 </div>
-                <h1 className="font-black text-zinc-900 mb-3 text-3xl">Build Your Team</h1>
-                <p className="font-medium text-zinc-500 max-w-md mb-8 text-lg leading-relaxed">
-                    You don't have any referral partnerships yet. Apply to join a business's network to unlock your Command Centre.
-                </p>
-                <Link
-                    href="/dashboard/referrer/businesses"
-                    className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black px-8 py-4 rounded-2xl transition-all active:scale-95 shadow-xl shadow-orange-200 text-lg"
-                >
-                    Find Your First Business <ChevronRight className="w-5 h-5" />
-                </Link>
-            </div>
+            </>
         );
     }
 
@@ -488,273 +492,275 @@ export default function ReferrerManagePage() {
 
     // ── MAIN LAYOUT ──────────────────────────────────────────────────────────
     return (
-        <div className="min-h-[100dvh] flex flex-col bg-white lg:h-screen lg:overflow-hidden">
-            {/* ── MOBILE: Horizontal chip scroll ── */}
-            <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
-                {links.map(link => (
-                    <button
-                        key={link.slug}
-                        onClick={() => setSelected({ type: "approved", link })}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl shrink-0 font-bold transition-all ${selected?.type === "approved" && selected.link.slug === link.slug ? "bg-zinc-900 text-white" : "bg-white border border-zinc-200 text-zinc-700"} text-sm`}
-                    >
-                        {link.logo_url ? <img src={link.logo_url} alt="" className="w-5 h-5 rounded-md object-cover" /> : <Building2 className="w-4 h-4 opacity-50" />}
-                        {link.name}
-                    </button>
-                ))}
-                {pendingApps.map(app => (
-                    <button
-                        key={app.id}
-                        onClick={() => setSelected({ type: "pending", app })}
-                        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl shrink-0 font-bold transition-all ${selected?.type === "pending" && selected.app.id === app.id ? "bg-amber-600 text-white" : "bg-amber-50 border border-amber-200 text-amber-700"} text-sm`}
-                    >
-                        <Clock className="w-4 h-4" /> {app.business_name}
-                    </button>
-                ))}
-                <Link href="/dashboard/referrer/businesses" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl shrink-0 font-bold bg-orange-50 text-orange-600 border border-orange-200 whitespace-nowrap text-sm">
-                    <Plus className="w-4 h-4" /> Join Trade
-                </Link>
-            </div>
+        <>
+            <MobileReferrerLeads />
+            <div className="hidden lg:flex min-h-[100dvh] flex-col bg-white lg:h-screen lg:overflow-hidden">
+                {/* ── MOBILE: Horizontal chip scroll — Redundant but kept for structure if needed ── */}
+                <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
+                    {links.map(link => (
+                        <button
+                            key={link.slug}
+                            onClick={() => setSelected({ type: "approved", link })}
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl shrink-0 font-bold transition-all ${selected?.type === "approved" && selected.link.slug === link.slug ? "bg-zinc-900 text-white" : "bg-white border border-zinc-200 text-zinc-700"} text-sm`}
+                        >
+                            {link.logo_url ? <img src={link.logo_url} alt="" className="w-5 h-5 rounded-md object-cover" /> : <Building2 className="w-4 h-4 opacity-50" />}
+                            {link.name}
+                        </button>
+                    ))}
+                    {pendingApps.map(app => (
+                        <button
+                            key={app.id}
+                            onClick={() => setSelected({ type: "pending", app })}
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl shrink-0 font-bold transition-all ${selected?.type === "pending" && selected.app.id === app.id ? "bg-amber-600 text-white" : "bg-amber-50 border border-amber-200 text-amber-700"} text-sm`}
+                        >
+                            <Clock className="w-4 h-4" /> {app.business_name}
+                        </button>
+                    ))}
+                    <Link href="/dashboard/referrer/businesses" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl shrink-0 font-bold bg-orange-50 text-orange-600 border border-orange-200 whitespace-nowrap text-sm">
+                        <Plus className="w-4 h-4" /> Join Trade
+                    </Link>
+                </div>
 
-            {/* ── DESKTOP: Full-width 2-col layout ── */}
-            <div className="flex-1 flex min-h-0 flex-col md:flex-row lg:overflow-hidden">
+                <div className="flex-1 flex min-h-0 flex-col md:flex-row lg:overflow-hidden">
 
-                {/* ── SIDEBAR ── */}
-                <aside className="hidden md:flex flex-col w-[26%] bg-gray-50 shrink-0 overflow-hidden" style={{ boxShadow: "4px 0 20px rgba(0,0,0,0.05)", scrollbarGutter: "stable" }}>
-                    <div className="px-5 pt-6 pb-3">
-                        <p className="font-black uppercase tracking-widest text-zinc-400 text-[10px]">Command Centre</p>
-                        <p className="font-black text-zinc-900 mt-0.5 text-xl">{totalCount} Business{totalCount !== 1 ? "es" : ""}</p>
-                    </div>
+                    {/* ── SIDEBAR ── */}
+                    <aside className="hidden md:flex flex-col w-[26%] bg-gray-50 shrink-0 overflow-hidden" style={{ boxShadow: "4px 0 20px rgba(0,0,0,0.05)", scrollbarGutter: "stable" }}>
+                        <div className="px-5 pt-6 pb-3">
+                            <p className="font-black uppercase tracking-widest text-zinc-400 text-[10px]">Command Centre</p>
+                            <p className="font-black text-zinc-900 mt-0.5 text-xl">{totalCount} Business{totalCount !== 1 ? "es" : ""}</p>
+                        </div>
 
-                    <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-1" style={{ scrollbarGutter: "stable" }}>
-                        {/* ── Active Team section ── */}
-                        {links.length > 0 && (
-                            <>
-                                <p className="font-black uppercase tracking-widest text-zinc-400 px-3 pt-3 pb-1.5 text-[10px]">
-                                    My Active Team ({links.length})
-                                </p>
-                                {links.map(link => <ApprovedCard key={link.slug} link={link} />)}
-                            </>
-                        )}
+                        <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-1" style={{ scrollbarGutter: "stable" }}>
+                            {/* ── Active Team section ── */}
+                            {links.length > 0 && (
+                                <>
+                                    <p className="font-black uppercase tracking-widest text-zinc-400 px-3 pt-3 pb-1.5 text-[10px]">
+                                        My Active Team ({links.length})
+                                    </p>
+                                    {links.map(link => <ApprovedCard key={link.slug} link={link} />)}
+                                </>
+                            )}
 
-                        {/* ── Pending section ── */}
-                        {pendingApps.length > 0 && (
-                            <>
-                                <p className="font-black uppercase tracking-widest text-amber-500 px-3 pt-5 pb-1.5 text-[10px]">
-                                    Pending Review ({pendingApps.length})
-                                </p>
-                                {pendingApps.map(app => <PendingCard key={app.id} app={app} />)}
-                            </>
-                        )}
-                    </div>
+                            {/* ── Pending section ── */}
+                            {pendingApps.length > 0 && (
+                                <>
+                                    <p className="font-black uppercase tracking-widest text-amber-500 px-3 pt-5 pb-1.5 text-[10px]">
+                                        Pending Review ({pendingApps.length})
+                                    </p>
+                                    {pendingApps.map(app => <PendingCard key={app.id} app={app} />)}
+                                </>
+                            )}
+                        </div>
 
-                    <div className="p-4 border-t border-zinc-100">
-                        <Link href="/dashboard/referrer/businesses" className="flex items-center justify-center gap-2 w-full py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-2xl transition-all active:scale-95 shadow-lg shadow-orange-200 text-base">
-                            <Plus className="w-5 h-5" /> Join a New Trade Team
-                        </Link>
-                    </div>
-                </aside>
+                        <div className="p-4 border-t border-zinc-100">
+                            <Link href="/dashboard/referrer/businesses" className="flex items-center justify-center gap-2 w-full py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-2xl transition-all active:scale-95 shadow-lg shadow-orange-200 text-base">
+                                <Plus className="w-5 h-5" /> Join a New Trade Team
+                            </Link>
+                        </div>
+                    </aside>
 
-                {/* ── MAIN STAGE ── */}
-                <main className="flex-1 flex flex-col min-h-0 bg-white md:overflow-hidden">
+                    {/* ── MAIN STAGE ── */}
+                    <main className="flex-1 flex flex-col min-h-0 bg-white md:overflow-hidden">
 
-                    {/* ══ APPROVED WORKSTATION ══ */}
-                    {approvedSelected && (() => {
-                        const link = approvedSelected;
-                        return (
-                            <div className="flex flex-col flex-1 min-h-0">
-                                <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-4 md:py-6 space-y-5" style={{ scrollbarGutter: "stable" }}>
-                                    <div className="flex items-center justify-between flex-wrap gap-3">
-                                        <div className="min-w-0">
-                                            <div className="flex items-center gap-2 min-w-0">
-                                                <h1 className="font-black text-zinc-900 leading-tight text-3xl">{link.name}</h1>
-                                                {link.is_verified && <BadgeCheck className="w-7 h-7 text-orange-500" />}
-                                            </div>
-                                            <p className="font-bold text-zinc-500 mt-1 text-xl">{link.sub}</p>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-3">
-                                            <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 shadow-sm">
-                                                <TrendingUp className="w-5 h-5 text-emerald-500" />
-                                                <span className="font-black text-zinc-900 text-base">{link.leads} leads</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 shadow-sm">
-                                                <Zap className="w-5 h-5 text-orange-500" />
-                                                <span className="font-black text-zinc-900 text-base">${link.earned.toFixed(0)} earned</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                        <div className="bg-zinc-900 px-6 py-5">
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest text-sm">Your Referral Link</p>
-                                            <p className="font-bold text-zinc-200 mt-1 text-base">Your link — you earn {feeDisplay}</p>
-                                        </div>
-                                        <div className="bg-white px-6 py-6">
-                                            <div className="w-full overflow-x-auto bg-zinc-50 border border-zinc-200 rounded-xl px-5 py-4 font-mono text-zinc-600 whitespace-nowrap mb-5 text-lg">
-                                                {referralLink}
-                                            </div>
-                                            <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 h-16 rounded-2xl font-black text-white transition-all active:scale-[0.99] shadow-xl shadow-orange-500/30 text-2xl" style={{ background: copied ? "#16a34a" : "#FF7A00" }}>
-                                                {copied ? <><Check className="w-6 h-6" /> Link Copied!</> : <><Copy className="w-6 h-6" /> Copy Referral Link</>}
-                                            </button>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                                                <Link href={referralLink} target="_blank" className="flex items-center justify-center gap-2.5 px-6 py-4 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-black text-zinc-700 transition-all text-base">
-                                                    <Share2 className="w-5 h-5" /> Open Public Link
-                                                </Link>
-                                                <Link href={leadFormLink} target="_blank" className="flex items-center justify-center gap-2.5 px-6 py-4 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl font-black text-orange-700 transition-all text-base">
-                                                    <Send className="w-5 h-5" /> Submit Lead / Job
-                                                </Link>
-                                                <Link href={referrerBusinessPageLink} className="flex items-center justify-center gap-2.5 px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-xl font-black text-white transition-all text-base">
-                                                    <Building2 className="w-5 h-5" /> Referral Page
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                        <div className="bg-zinc-900 px-6 py-5">
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest text-sm">Marketing Swipe File</p>
-                                            <p className="font-bold text-zinc-200 mt-1 text-base">Ready-to-send copy — tap, copy, share</p>
-                                        </div>
-                                        <div className="bg-white">
-                                            <div className="flex overflow-x-auto px-6 pt-5 gap-2">
-                                                {([{ key: "sms", icon: MessageSquare, label: "SMS" }, { key: "email", icon: Mail, label: "Email" }, { key: "social", icon: Share2, label: "Social" }] as const).map(({ key, icon: Icon, label }) => (
-                                                    <button key={key} onClick={() => setTab(key)} className={`flex shrink-0 items-center gap-2.5 px-6 py-3 rounded-xl font-black transition-all ${tab === key ? "bg-zinc-900 text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"} text-lg`} >
-                                                        <Icon className="w-5 h-5" />{label}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                            <div className="px-6 pt-4 pb-6">
-                                                <div className="bg-zinc-50 rounded-2xl p-6 font-bold text-zinc-700 leading-relaxed whitespace-pre-wrap cursor-text select-all border border-zinc-100 text-lg">
-                                                    {swipeContent[tab]}
+                        {/* ══ APPROVED WORKSTATION ══ */}
+                        {approvedSelected && (() => {
+                            const link = approvedSelected;
+                            return (
+                                <div className="flex flex-col flex-1 min-h-0">
+                                    <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-4 md:py-6 space-y-5" style={{ scrollbarGutter: "stable" }}>
+                                        <div className="flex items-center justify-between flex-wrap gap-3">
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-2 min-w-0">
+                                                    <h1 className="font-black text-zinc-900 leading-tight text-3xl">{link.name}</h1>
+                                                    {link.is_verified && <BadgeCheck className="w-7 h-7 text-orange-500" />}
                                                 </div>
-                                                <button onClick={handleCopySwipe} className="mt-4 flex items-center gap-2.5 px-7 py-4 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all shadow-lg active:scale-95 text-lg">
-                                                    <Copy className="w-5 h-5" /> Copy {tab.toUpperCase()} Copy
+                                                <p className="font-bold text-zinc-500 mt-1 text-xl">{link.sub}</p>
+                                            </div>
+                                            <div className="flex flex-wrap items-center gap-3">
+                                                <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 shadow-sm">
+                                                    <TrendingUp className="w-5 h-5 text-emerald-500" />
+                                                    <span className="font-black text-zinc-900 text-base">{link.leads} leads</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-2.5 shadow-sm">
+                                                    <Zap className="w-5 h-5 text-orange-500" />
+                                                    <span className="font-black text-zinc-900 text-base">${link.earned.toFixed(0)} earned</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
+                                            <div className="bg-zinc-900 px-6 py-5">
+                                                <p className="font-black text-zinc-400 uppercase tracking-widest text-sm">Your Referral Link</p>
+                                                <p className="font-bold text-zinc-200 mt-1 text-base">Your link — you earn {feeDisplay}</p>
+                                            </div>
+                                            <div className="bg-white px-6 py-6">
+                                                <div className="w-full overflow-x-auto bg-zinc-50 border border-zinc-200 rounded-xl px-5 py-4 font-mono text-zinc-600 whitespace-nowrap mb-5 text-lg">
+                                                    {referralLink}
+                                                </div>
+                                                <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 h-16 rounded-2xl font-black text-white transition-all active:scale-[0.99] shadow-xl shadow-orange-500/30 text-2xl" style={{ background: copied ? "#16a34a" : "#FF7A00" }}>
+                                                    {copied ? <><Check className="w-6 h-6" /> Link Copied!</> : <><Copy className="w-6 h-6" /> Copy Referral Link</>}
                                                 </button>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                                    <Link href={referralLink} target="_blank" className="flex items-center justify-center gap-2.5 px-6 py-4 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-black text-zinc-700 transition-all text-base">
+                                                        <Share2 className="w-5 h-5" /> Open Public Link
+                                                    </Link>
+                                                    <Link href={leadFormLink} target="_blank" className="flex items-center justify-center gap-2.5 px-6 py-4 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl font-black text-orange-700 transition-all text-base">
+                                                        <Send className="w-5 h-5" /> Submit Lead / Job
+                                                    </Link>
+                                                    <Link href={referrerBusinessPageLink} className="flex items-center justify-center gap-2.5 px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-xl font-black text-white transition-all text-base">
+                                                        <Building2 className="w-5 h-5" /> Referral Page
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                {/* Inline Chat — pinned to bottom */}
-                                <div className="shrink-0 px-4 md:px-6 pb-4 md:pb-5 pt-0 bg-white">
-                                    <div className="rounded-2xl overflow-hidden flex flex-col shadow-lg shadow-zinc-100" style={{ height: '220px' }}>
-                                        <InlineChat key={link.business_id} businessId={link.business_id} businessName={link.name.split(" ")[0]} token={token} />
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })()}
-
-                    {/* ══ PENDING / WAITING ROOM WORKSTATION ══ */}
-                    {pendingSelected && (() => {
-                        const app = pendingSelected;
-                        const feeCents = app.referral_fee_cents ?? 0;
-                        const potentialFee = feeCents > 0 ? `$${((feeCents * 0.8) / 100).toFixed(2)}` : null;
-                        const appliedDate = new Date(app.applied_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
-                        return (
-                            <div className="flex flex-col flex-1 min-h-0">
-
-                                {/* TOP: Status Hero — always visible, flex-none */}
-                                <div className="shrink-0 px-4 md:px-6 pt-4 md:pt-6 pb-3">
-                                    <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                        <div className="bg-amber-500 px-6 py-5">
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <Clock className="w-6 h-6 text-white" />
-                                                <p className="font-black text-white uppercase tracking-widest text-[10px]">Application Status</p>
+                                        <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
+                                            <div className="bg-zinc-900 px-6 py-5">
+                                                <p className="font-black text-zinc-400 uppercase tracking-widest text-sm">Marketing Swipe File</p>
+                                                <p className="font-bold text-zinc-200 mt-1 text-base">Ready-to-send copy — tap, copy, share</p>
                                             </div>
-                                            <h1 className="font-black text-white leading-tight text-2xl">
-                                                Your application to join {app.business_name} is being reviewed
-                                            </h1>
-                                            <p className="font-medium text-amber-100 mt-1 text-base">
-                                                Applied {appliedDate} · Businesses respond within 72 hours
-                                            </p>
-                                        </div>
-                                        <div className="bg-white px-6 py-4">
-                                            <div className="flex flex-wrap gap-3">
-                                                <div className="flex-1 min-w-[120px] bg-zinc-50 rounded-2xl px-4 py-3 text-center">
-                                                    <p className="font-black text-zinc-500 uppercase tracking-widest text-[10px]">TRADE</p>
-                                                    <p className="font-black text-zinc-800 mt-1 text-lg">{app.trade_category}</p>
+                                            <div className="bg-white">
+                                                <div className="flex overflow-x-auto px-6 pt-5 gap-2">
+                                                    {([{ key: "sms", icon: MessageSquare, label: "SMS" }, { key: "email", icon: Mail, label: "Email" }, { key: "social", icon: Share2, label: "Social" }] as const).map(({ key, icon: Icon, label }) => (
+                                                        <button key={key} onClick={() => setTab(key)} className={`flex shrink-0 items-center gap-2.5 px-6 py-3 rounded-xl font-black transition-all ${tab === key ? "bg-zinc-900 text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"} text-lg`} >
+                                                            <Icon className="w-5 h-5" />{label}
+                                                        </button>
+                                                    ))}
                                                 </div>
-                                                <div className="flex-1 min-w-[120px] bg-zinc-50 rounded-2xl px-4 py-3 text-center">
-                                                    <p className="font-black text-zinc-500 uppercase tracking-widest text-[10px]">LOCATION</p>
-                                                    <p className="font-black text-zinc-800 mt-1 text-lg">{app.suburb}</p>
-                                                </div>
-                                                <div className="flex-1 min-w-[120px] bg-orange-50 rounded-2xl px-4 py-3 text-center">
-                                                    <p className="font-black text-orange-500 uppercase tracking-widest text-[10px]">POTENTIAL REWARD</p>
-                                                    {potentialFee ? (
-                                                        <p className="font-black text-orange-600 mt-1 text-2xl">{potentialFee}</p>
-                                                    ) : (
-                                                        <p className="font-black text-orange-400 mt-1 text-base">Set by business</p>
-                                                    )}
+                                                <div className="px-6 pt-4 pb-6">
+                                                    <div className="bg-zinc-50 rounded-2xl p-6 font-bold text-zinc-700 leading-relaxed whitespace-pre-wrap cursor-text select-all border border-zinc-100 text-lg">
+                                                        {swipeContent[tab as keyof typeof swipeContent]}
+                                                    </div>
+                                                    <button onClick={handleCopySwipe} className="mt-4 flex items-center gap-2.5 px-7 py-4 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all shadow-lg active:scale-95 text-lg">
+                                                        <Copy className="w-5 h-5" /> Copy {tab.toUpperCase()} Copy
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* MIDDLE: Tips — flex-1, only area that scrolls */}
-                                <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-3" style={{ scrollbarGutter: "stable" }}>
-                                    <div className="rounded-2xl bg-zinc-50 px-6 py-5 shadow-lg shadow-zinc-100">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <AlertCircle className="w-5 h-5 text-zinc-400" />
-                                            <p className="font-black text-zinc-700 text-base">While you wait…</p>
-                                        </div>
-                                        <ul className="space-y-2">
-                                            {[
-                                                "Complete your referrer profile to boost your approval chance",
-                                                "Messaging will unlock as soon as the business approves you",
-                                                "Apply to other businesses in the meantime",
-                                            ].map((tip, i) => (
-                                                <li key={i} className="flex items-start gap-2 font-medium text-zinc-600 text-base">
-                                                    <span className="w-5 h-5 rounded-full bg-zinc-200 text-zinc-500 font-black flex items-center justify-center shrink-0 mt-0.5 text-[10px]">{i + 1}</span>
-                                                    {tip}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                        <div className="flex flex-wrap gap-3 mt-4">
-                                            <Link href="/dashboard/referrer/profile" className="flex items-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all text-base">
-                                                Edit My Profile <ChevronRight className="w-4 h-4" />
-                                            </Link>
-                                            <Link href="/dashboard/referrer/businesses" className="flex items-center gap-2 px-5 py-3 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-bold rounded-xl transition-all text-base">
-                                                Find More Businesses
-                                            </Link>
+                                    {/* Inline Chat — pinned to bottom */}
+                                    <div className="shrink-0 px-4 md:px-6 pb-4 md:pb-5 pt-0 bg-white">
+                                        <div className="rounded-2xl overflow-hidden flex flex-col shadow-lg shadow-zinc-100" style={{ height: '220px' }}>
+                                            <InlineChat key={link.business_id} businessId={link.business_id} businessName={link.name.split(" ")[0]} token={token} />
                                         </div>
                                     </div>
                                 </div>
+                            );
+                        })()}
 
-                                {/* BOTTOM: Locked chat input — always pinned, flex-none */}
-                                <div className="shrink-0 px-4 md:px-6 pb-4 md:pb-5 pt-3">
-                                    <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                        <div className="bg-zinc-900 px-5 py-4 flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <MessageSquare className="w-4 h-4 text-orange-400" />
-                                                <span className="font-black text-white text-base">Chat with {app.business_name.split(" ")[0]}</span>
+                        {/* ══ PENDING / WAITING ROOM WORKSTATION ══ */}
+                        {pendingSelected && (() => {
+                            const app = pendingSelected;
+                            const feeCents = app.referral_fee_cents ?? 0;
+                            const potentialFee = feeCents > 0 ? `$${((feeCents * 0.8) / 100).toFixed(2)}` : null;
+                            const appliedDate = new Date(app.applied_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+                            return (
+                                <div className="flex flex-col flex-1 min-h-0">
+
+                                    {/* TOP: Status Hero — always visible, flex-none */}
+                                    <div className="shrink-0 px-4 md:px-6 pt-4 md:pt-6 pb-3">
+                                        <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
+                                            <div className="bg-amber-500 px-6 py-5">
+                                                <div className="flex items-center gap-3 mb-1">
+                                                    <Clock className="w-6 h-6 text-white" />
+                                                    <p className="font-black text-white uppercase tracking-widest text-[10px]">Application Status</p>
+                                                </div>
+                                                <h1 className="font-black text-white leading-tight text-2xl">
+                                                    Your application to join {app.business_name} is being reviewed
+                                                </h1>
+                                                <p className="font-medium text-amber-100 mt-1 text-base">
+                                                    Applied {appliedDate} · Businesses respond within 72 hours
+                                                </p>
                                             </div>
-                                            <span className="px-3 py-1 bg-amber-500 text-white font-black rounded-lg text-[10px]">Awaiting Approval</span>
-                                        </div>
-                                        <div className="bg-zinc-50 flex items-center gap-4 px-5 py-4 border-b border-zinc-100">
-                                            <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                                                <Clock className="w-5 h-5 text-amber-500" />
-                                            </div>
-                                            <p className="font-medium text-zinc-600 text-base leading-relaxed">
-                                                Messaging unlocks once <strong className="text-zinc-800">{app.business_name}</strong> approves your application.
-                                            </p>
-                                        </div>
-                                        <div className="bg-gray-100 flex items-center gap-3 px-3 py-3 border-t border-gray-300 opacity-50 pointer-events-none">
-                                            <div className="flex-1 bg-white border border-gray-400 rounded-xl px-4 py-2.5 font-semibold text-gray-400 text-lg">
-                                                Available after approval…
-                                            </div>
-                                            <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-zinc-300">
-                                                <Send className="w-4 h-4 text-zinc-400" />
+                                            <div className="bg-white px-6 py-4">
+                                                <div className="flex flex-wrap gap-3">
+                                                    <div className="flex-1 min-w-[120px] bg-zinc-50 rounded-2xl px-4 py-3 text-center">
+                                                        <p className="font-black text-zinc-500 uppercase tracking-widest text-[10px]">TRADE</p>
+                                                        <p className="font-black text-zinc-800 mt-1 text-lg">{app.trade_category}</p>
+                                                    </div>
+                                                    <div className="flex-1 min-w-[120px] bg-zinc-50 rounded-2xl px-4 py-3 text-center">
+                                                        <p className="font-black text-zinc-500 uppercase tracking-widest text-[10px]">LOCATION</p>
+                                                        <p className="font-black text-zinc-800 mt-1 text-lg">{app.suburb}</p>
+                                                    </div>
+                                                    <div className="flex-1 min-w-[120px] bg-orange-50 rounded-2xl px-4 py-3 text-center">
+                                                        <p className="font-black text-orange-500 uppercase tracking-widest text-[10px]">POTENTIAL REWARD</p>
+                                                        {potentialFee ? (
+                                                            <p className="font-black text-orange-600 mt-1 text-2xl">{potentialFee}</p>
+                                                        ) : (
+                                                            <p className="font-black text-orange-400 mt-1 text-base">Set by business</p>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                            </div>
-                        );
-                    })()}
-                </main>
+                                    {/* MIDDLE: Tips — flex-1, only area that scrolls */}
+                                    <div className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-3" style={{ scrollbarGutter: "stable" }}>
+                                        <div className="rounded-2xl bg-zinc-50 px-6 py-5 shadow-lg shadow-zinc-100">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <AlertCircle className="w-5 h-5 text-zinc-400" />
+                                                <p className="font-black text-zinc-700 text-base">While you wait…</p>
+                                            </div>
+                                            <ul className="space-y-2">
+                                                {[
+                                                    "Complete your referrer profile to boost your approval chance",
+                                                    "Messaging will unlock as soon as the business approves you",
+                                                    "Apply to other businesses in the meantime",
+                                                ].map((tip, i) => (
+                                                    <li key={i} className="flex items-start gap-2 font-medium text-zinc-600 text-base">
+                                                        <span className="w-5 h-5 rounded-full bg-zinc-200 text-zinc-500 font-black flex items-center justify-center shrink-0 mt-0.5 text-[10px]">{i + 1}</span>
+                                                        {tip}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className="flex flex-wrap gap-3 mt-4">
+                                                <Link href="/dashboard/referrer/profile" className="flex items-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all text-base">
+                                                    Edit My Profile <ChevronRight className="w-4 h-4" />
+                                                </Link>
+                                                <Link href="/dashboard/referrer/businesses" className="flex items-center gap-2 px-5 py-3 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-bold rounded-xl transition-all text-base">
+                                                    Find More Businesses
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* BOTTOM: Locked chat input — always pinned, flex-none */}
+                                    <div className="shrink-0 px-4 md:px-6 pb-4 md:pb-5 pt-3">
+                                        <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
+                                            <div className="bg-zinc-900 px-5 py-4 flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <MessageSquare className="w-4 h-4 text-orange-400" />
+                                                    <span className="font-black text-white text-base">Chat with {app.business_name.split(" ")[0]}</span>
+                                                </div>
+                                                <span className="px-3 py-1 bg-amber-500 text-white font-black rounded-lg text-[10px]">Awaiting Approval</span>
+                                            </div>
+                                            <div className="bg-zinc-50 flex items-center gap-4 px-5 py-4 border-b border-zinc-100">
+                                                <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                                                    <Clock className="w-5 h-5 text-amber-500" />
+                                                </div>
+                                                <p className="font-medium text-zinc-600 text-base leading-relaxed">
+                                                    Messaging unlocks once <strong className="text-zinc-800">{app.business_name}</strong> approves your application.
+                                                </p>
+                                            </div>
+                                            <div className="bg-gray-100 flex items-center gap-3 px-3 py-3 border-t border-gray-300 opacity-50 pointer-events-none">
+                                                <div className="flex-1 bg-white border border-gray-400 rounded-xl px-4 py-2.5 font-semibold text-gray-400 text-lg">
+                                                    Available after approval…
+                                                </div>
+                                                <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-zinc-300">
+                                                    <Send className="w-4 h-4 text-zinc-400" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            );
+                        })()}
+                    </main>
+                </div>
             </div>
-        </div>
+        </>
     );
 }

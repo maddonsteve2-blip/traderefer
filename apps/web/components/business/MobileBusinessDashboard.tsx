@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { User, Bell, ChevronRight, Share2, Target, DollarSign, Users, Star, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InviteReferrersDialog } from "@/components/dashboard/InviteReferrersDialog";
 
 interface MobileBusinessDashboardProps {
     business: any;
@@ -15,7 +17,8 @@ const ICON_MAP: Record<string, React.ElementType> = { Target, Zap, Star, Users, 
 
 export function MobileBusinessDashboard({ business, stats, recentLeads }: MobileBusinessDashboardProps) {
     const { user } = useUser();
-    const displayName = user?.firstName || business.name.split(' ')[0];
+    const [showInviteModal, setShowInviteModal] = useState(false);
+    const displayName = user?.firstName || (business?.name ? business.name.split(' ')[0] : "there");
 
     return (
         <div className="lg:hidden flex flex-col gap-6 pb-12">
@@ -52,24 +55,20 @@ export function MobileBusinessDashboard({ business, stats, recentLeads }: Mobile
             </div>
 
             {/* Referral Card (The "Simplified Mobile" Look) */}
-            <div className="bg-zinc-900 rounded-[24px] p-6 flex flex-col gap-4 text-white">
+            <div className="bg-zinc-900 rounded-[24px] p-6 flex flex-col gap-4 text-white shadow-xl shadow-zinc-900/10">
                 <div className="flex flex-col gap-1">
-                    <h2 className="text-[16px] font-black tracking-tight">Your Referral Network</h2>
-                    <p className="text-[13px] text-zinc-400 font-medium leading-relaxed">
-                        Share your professional link to start earning commissions instantly.
+                    <h2 className="text-[18px] font-black tracking-tight">Your Referral Network</h2>
+                    <p className="text-[14px] text-zinc-400 font-medium leading-relaxed">
+                        Share your unique portal link with trusted partners to grow your business.
                     </p>
                 </div>
                 
                 <button 
-                    onClick={() => {
-                        const url = `https://traderefer.au/onboarding/referrer?invite=${business.slug}`;
-                        navigator.clipboard.writeText(url);
-                        alert("Link copied!");
-                    }}
-                    className="w-full h-[52px] bg-[#f97316] hover:bg-[#ea580c] text-white rounded-[16px] flex items-center justify-center gap-2 font-black text-[15px] transition-all active:scale-[0.98]"
+                    onClick={() => setShowInviteModal(true)}
+                    className="w-full h-14 bg-orange-600 hover:bg-orange-700 text-white rounded-[20px] flex items-center justify-center gap-3 font-black text-[16px] shadow-lg shadow-orange-600/20 transition-all active:scale-[0.98]"
                 >
-                    <Share2 className="w-4 h-4" />
-                    Share My Link
+                    <Share2 className="w-5 h-5" />
+                    Share Invite Link
                 </button>
             </div>
 
@@ -83,25 +82,39 @@ export function MobileBusinessDashboard({ business, stats, recentLeads }: Mobile
                 </div>
 
                 <div className="flex flex-col gap-3">
-                    {recentLeads.slice(0, 3).map((lead) => (
-                        <div key={lead.id} className="bg-white border border-zinc-100 rounded-[20px] p-4 flex items-center gap-4">
-                            <div className="w-10 h-10 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-400 font-black text-sm uppercase">
+                    {recentLeads.length > 0 ? recentLeads.slice(0, 3).map((lead) => (
+                        <div key={lead.id} className="bg-white border border-zinc-100 rounded-[20px] p-4 flex items-center gap-4 shadow-sm">
+                            <div className="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-300 font-black text-lg uppercase border border-zinc-100">
                                 {lead.contact_name?.[0] || 'L'}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-[15px] font-bold text-zinc-900 truncate">{lead.contact_name}</p>
-                                <p className="text-[12px] font-medium text-zinc-500 truncate">{lead.service_type || 'General Lead'}</p>
+                                <p className="text-[16px] font-black text-zinc-900 truncate tracking-tight">{lead.contact_name}</p>
+                                <p className="text-[13px] font-medium text-zinc-500 truncate">{lead.service_type || 'General Lead'}</p>
                             </div>
                             <div className="text-right flex flex-col items-end gap-1">
-                                <span className="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full uppercase">
+                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase ${
+                                    lead.status === 'confirmed' ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'
+                                }`}>
                                     {lead.status || 'NEW'}
                                 </span>
                                 <ChevronRight className="w-4 h-4 text-zinc-300" />
                             </div>
                         </div>
-                    ))}
+                    )) : (
+                        <div className="py-12 text-center bg-zinc-50 rounded-[24px] border border-dashed border-zinc-200">
+                            <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs">No recent activity</p>
+                        </div>
+                    )}
                 </div>
             </div>
+
+            {/* Invite Modal */}
+            <InviteReferrersDialog 
+                open={showInviteModal}
+                onClose={() => setShowInviteModal(false)}
+                businessName={business?.name || "Business"}
+                slug={business?.slug || ""}
+            />
         </div>
     );
 }

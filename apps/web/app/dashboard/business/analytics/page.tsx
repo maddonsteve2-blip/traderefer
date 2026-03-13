@@ -7,6 +7,7 @@ import {
     Send, Crown, Zap, Star, BarChart3
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MobileBusinessAnalytics } from "@/components/business/MobileBusinessAnalytics";
 import { toast } from "sonner";
 
 interface Analytics {
@@ -113,7 +114,9 @@ export default function AnalyticsPage() {
 
     return (
         <div className="min-h-[100dvh] bg-zinc-50">
-            <div className="max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
+            <MobileBusinessAnalytics />
+            
+            <div className="hidden lg:block max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
                 <div className="mb-8 md:mb-10">
                     <h1 className="text-5xl md:text-6xl font-extrabold text-zinc-900 tracking-tight">Referrer Analytics</h1>
                     <p className="text-zinc-500 text-2xl mt-1">Track referrer performance, campaign ROI, and cost per customer</p>

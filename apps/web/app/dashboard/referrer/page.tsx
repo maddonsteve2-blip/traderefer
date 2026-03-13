@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Search, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { HotCampaigns } from "@/components/referrer/HotCampaigns";
@@ -36,6 +38,8 @@ async function getDashboardData() {
     return res.json();
 }
 
+import { MobileReferrerDashboard } from "@/components/referrer/MobileReferrerDashboard";
+
 export default async function ReferrerDashboardPage() {
     let data;
     try {
@@ -51,53 +55,57 @@ export default async function ReferrerDashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 pb-8">
-            <WelcomeDialog />
+        <>
+            <MobileReferrerDashboard />
+            <div className="hidden lg:block min-h-screen bg-zinc-50 pb-8">
+                <WelcomeDialog />
 
-            {/* ── 2-COLUMN GRID: 75% main / 25% right ── */}
-            <div className="w-full px-3 lg:px-5 py-4 md:py-5">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                {/* ── 2-COLUMN GRID: 75% main / 25% right ── */}
+                <div className="w-full px-3 lg:px-5 py-4 md:py-5">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
 
-                    {/* ══ MAIN (9/12 = 75%) — Tier · Earnings · Opportunities ══ */}
-                    <div className="lg:col-span-9 space-y-4">
+                        {/* ══ MAIN (9/12 = 75%) — Tier · Earnings · Opportunities ══ */}
+                        <div className="lg:col-span-9 space-y-4">
 
-                        {/* Page header */}
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                            <div>
-                                <h1 className="font-black text-zinc-900 leading-tight text-4xl">Your Earnings</h1>
-                                <p className="font-bold text-zinc-500 mt-1 text-lg">Track referrals · collect Prezzee rewards</p>
+                            {/* Page header */}
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                                <div>
+                                    <h1 className="font-black text-zinc-900 leading-tight text-4xl">Your Earnings</h1>
+                                    <p className="font-bold text-zinc-500 mt-1 text-lg">Track referrals · collect Prezzee rewards</p>
+                                </div>
+                                <Link href="/dashboard/referrer/businesses"
+                                    className="flex items-center justify-center gap-2.5 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200 active:scale-95 w-full sm:w-auto text-xl"
+                                    >
+                                    <Search className="w-6 h-6" /> Find Businesses
+                                </Link>
                             </div>
-                            <Link href="/dashboard/referrer/businesses"
-                                className="flex items-center justify-center gap-2.5 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200 active:scale-95 w-full sm:w-auto text-xl"
-                                >
-                                <Search className="w-6 h-6" /> Find Businesses
-                            </Link>
+
+                            {/* Tier + Earnings cards + Monthly Goal inline */}
+                            <EarningsDashboard />
+
+                            {/* My Trades Team */}
+                            <MyTradesTeam />
                         </div>
 
-                        {/* Tier + Earnings cards + Monthly Goal inline */}
-                        <EarningsDashboard />
+                        {/* ══ RIGHT SIDEBAR (3/12 = 25%) — Rewards · Goal · Invite · Tips ══ */}
+                        <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-28">
 
-                        {/* My Trades Team */}
-                        <MyTradesTeam />
+                            {/* Prezzee Rewards — shared card */}
+                            <PrezzeeRewardsCard rewardsHref="/dashboard/referrer/withdraw" />
+
+                            {/* Friend Rewards / Invite */}
+                            <div id="invite">
+                                <ReferralProgress />
+                            </div>
+
+                            {/* Hot Campaigns */}
+                            <HotCampaigns />
+
+                        </aside>
                     </div>
-
-                    {/* ══ RIGHT SIDEBAR (3/12 = 25%) — Rewards · Goal · Invite · Tips ══ */}
-                    <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-28">
-
-                        {/* Prezzee Rewards — shared card */}
-                        <PrezzeeRewardsCard rewardsHref="/dashboard/referrer/withdraw" />
-
-                        {/* Friend Rewards / Invite */}
-                        <div id="invite">
-                            <ReferralProgress />
-                        </div>
-
-                        {/* Hot Campaigns */}
-                        <HotCampaigns />
-
-                    </aside>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
+

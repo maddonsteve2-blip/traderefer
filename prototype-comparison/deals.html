@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TradeRefer Deals - Balanced Readable Prototype</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..0" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97415",
+                        "background-light": "#fcfcfc",
+                        "zinc-900": "#111111",
+                        "border-zinc": "#e5e5e5",
+                        "high-contrast": "#000000"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "card": "24px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            overflow: hidden;
+            font-size: 16px;
+        }
+        .authority-title {
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light text-zinc-900 h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-zinc-900 h-screen flex flex-col shrink-0 px-2">
+        <div class="px-6 py-8 flex items-center gap-3">
+            <img src="logo-dark.png" alt="" class="h-10 w-auto">
+            <span class="text-xl font-black tracking-tight leading-none uppercase"><span class="text-white">TRADE</span><span class="text-orange-500 font-black">REFER</span></span>
+        </div>
+
+        <nav class="flex-1 px-2 space-y-1 mt-2">
+            <a href="index.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">home</span>
+                <span class="text-[15px]">Dashboard</span>
+            </a>
+            <a href="leads.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">group</span>
+                <span class="text-[15px]">Leads</span>
+            </a>
+            <a href="network.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">hub</span>
+                <span class="text-[15px]">Network</span>
+            </a>
+            <a href="analytics.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">analytics</span>
+                <span class="text-[15px]">Analytics</span>
+            </a>
+            <a href="campaigns.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">campaign</span>
+                <span class="text-[15px]">Campaigns</span>
+            </a>
+            <a href="team.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">badge</span>
+                <span class="text-[15px]">My Team</span>
+            </a>
+            <a href="messages.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">mail</span>
+                <span class="text-[15px]">Inbox</span>
+            </a>
+            <a href="settings.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">settings</span>
+                <span class="text-[15px]">Settings</span>
+            </a>
+        </nav>
+
+        <!-- Role Switcher -->
+        <div class="px-2 mb-4">
+            <a href="referrer-home.html" class="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold transition-all group border border-white/5">
+                <div class="w-9 h-9 bg-primary/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary/30 transition-colors">
+                    <span class="material-symbols-outlined !text-xl text-primary font-black">rocket_launch</span>
+                </div>
+                <div class="text-left">
+                    <p class="text-[13px] font-black text-white leading-tight">Switch to Referrer</p>
+                    <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">Open Dashboard</p>
+                </div>
+                <span class="material-symbols-outlined !text-lg text-zinc-600 ml-auto group-hover:text-primary transition-colors">sync_alt</span>
+            </a>
+        </div>
+
+        <div class="p-6 border-t border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="size-9 rounded-full bg-zinc-800 border-2 border-zinc-700 shadow-xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-black text-white truncate">Alex Rivera</p>
+                    <p class="text-xs text-zinc-500 font-bold uppercase tracking-widest">Admin</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="flex items-center justify-between px-8 py-5 bg-white border-b-2 border-zinc-100 shrink-0">
+            <div>
+                <h1 class="text-3xl font-black authority-title tracking-tighter text-high-contrast uppercase">Deals & Rewards</h1>
+                <p class="text-zinc-500 text-xs font-black uppercase mt-1 tracking-[0.2em]">MANAGE PREZZEE BALANCE & AI CAMPAIGNS</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="bg-zinc-100 border-2 border-transparent px-6 py-2.5 rounded-xl text-zinc-900 text-xs font-black uppercase tracking-widest">Top up balance</button>
+            </div>
+        </header>
+
+        <div class="flex-1 p-8 overflow-y-auto no-scrollbar bg-background-light">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Balance Overview -->
+                <div class="bg-zinc-900 rounded-[40px] p-10 text-white shadow-3xl flex flex-col justify-between border-4 border-zinc-800">
+                    <div class="space-y-4">
+                        <p class="text-xs font-black uppercase tracking-[0.3em] text-zinc-500">Available Prezzee Balance</p>
+                        <p class="text-7xl font-black tracking-tighter">$1,250.<span class="text-3xl">00</span></p>
+                    </div>
+                    <div class="pt-10 flex gap-4">
+                        <button class="flex-1 bg-white text-zinc-900 h-16 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl">Top Up</button>
+                        <button class="flex-1 bg-orange-500 text-white h-16 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl ring-2 ring-orange-500/20">Transfer</button>
+                    </div>
+                </div>
+
+                <!-- AI Deal Assistant CTA -->
+                <div class="col-span-1 lg:col-span-2 bg-primary rounded-[40px] p-12 text-white shadow-2xl relative overflow-hidden flex items-center justify-between">
+                    <div class="relative z-10 space-y-6 max-w-xl">
+                        <h2 class="text-4xl font-black authority-title uppercase tracking-tighter leading-tight">Create a Smart Deal<br>with AI Assistant</h2>
+                        <p class="text-white/80 font-bold text-lg leading-snug lg:block hidden">Automatically analyze market rates and set up a double-reward weekend or a limited-time bonus for your top-performing referrers.</p>
+                        <button class="bg-white text-primary h-20 px-12 rounded-[32px] text-base font-black uppercase tracking-[0.2em] shadow-3xl hover:scale-105 active:scale-95 transition-all">Launch AI Builder</button>
+                    </div>
+                    <div class="absolute -right-20 -bottom-20 size-80 bg-white/10 rounded-full blur-3xl lg:block hidden"></div>
+                </div>
+
+                <!-- Active Campaigns -->
+                <div class="col-span-1 md:col-span-2 lg:col-span-3 bg-white border-2 border-zinc-100 rounded-[48px] p-10 shadow-2xl space-y-10">
+                    <div class="flex justify-between items-center border-b-2 border-zinc-50 pb-8">
+                        <h2 class="text-2xl font-black text-high-contrast uppercase tracking-tighter">Active Campaigns</h2>
+                        <div class="flex gap-2">
+                            <span class="bg-green-100 text-green-600 text-[10px] font-black px-4 py-2 rounded-xl uppercase tracking-widest">3 Live Campaigns</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Campaign Card -->
+                        <div class="bg-zinc-50 border-2 border-zinc-100 rounded-[32px] p-8 space-y-6 flex flex-col justify-between group">
+                            <div class="flex justify-between items-start">
+                                <div class="space-y-1">
+                                    <h3 class="text-2xl font-black text-high-contrast uppercase tracking-tighter leading-none">Double Bonus Weekend</h3>
+                                    <p class="text-zinc-500 font-bold uppercase text-[10px] tracking-[0.2em]">MAR 14 - MAR 16 • NATIONAL</p>
+                                </div>
+                                <span class="bg-white px-3 py-1 rounded-lg border-2 border-zinc-100 text-[10px] font-black text-primary uppercase">Active</span>
+                            </div>
+                            <div class="flex items-center gap-10">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-1">Utilization</p>
+                                    <p class="text-4xl font-black text-high-contrast">42<span class="text-xl">%</span></p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-1">Leads Generated</p>
+                                    <p class="text-4xl font-black text-high-contrast">18</p>
+                                </div>
+                            </div>
+                            <button class="w-full bg-zinc-900 group-hover:bg-primary text-white h-16 rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-colors">Manage Campaign</button>
+                        </div>
+
+                         <!-- Campaign Card -->
+                        <div class="bg-zinc-50 border-2 border-zinc-100 rounded-[32px] p-8 space-y-6 flex flex-col justify-between group">
+                            <div class="flex justify-between items-start">
+                                <div class="space-y-1">
+                                    <h3 class="text-2xl font-black text-high-contrast uppercase tracking-tighter leading-none">Inner-West Flash Deal</h3>
+                                    <p class="text-zinc-500 font-bold uppercase text-[10px] tracking-[0.2em]">MAR 10 - MAR 20 • INNER-WEST</p>
+                                </div>
+                                <span class="bg-white px-3 py-1 rounded-lg border-2 border-zinc-100 text-[10px] font-black text-primary uppercase">Active</span>
+                            </div>
+                             <div class="flex items-center gap-10">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-1">Utilization</p>
+                                    <p class="text-4xl font-black text-high-contrast">12<span class="text-xl">%</span></p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-1">Leads Generated</p>
+                                    <p class="text-4xl font-black text-high-contrast">4</p>
+                                </div>
+                            </div>
+                            <button class="w-full bg-zinc-900 group-hover:bg-primary text-white h-16 rounded-2xl text-xs font-black uppercase tracking-[0.2em] transition-colors">Manage Campaign</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

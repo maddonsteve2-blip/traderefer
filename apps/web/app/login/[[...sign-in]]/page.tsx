@@ -9,8 +9,8 @@ import { Logo } from "@/components/Logo";
 export default function LoginPage() {
     return (
         <main className="min-h-screen bg-zinc-50 flex flex-col md:flex-row">
-            {/* Left Side: Branding & Info */}
-            <div className="md:w-1/2 bg-zinc-900 p-12 md:p-24 flex flex-col justify-between relative overflow-hidden">
+            {/* Left Side: Branding & Info - Hidden on Mobile */}
+            <div className="hidden md:flex md:w-1/2 bg-zinc-900 p-12 md:p-24 flex-col justify-between relative overflow-hidden">
                 <div className="relative z-10">
                     <Link href="/" className="flex items-center gap-2 mb-20 group">
                         <Logo size="md" variant="white" />
@@ -43,8 +43,33 @@ export default function LoginPage() {
             </div>
 
             {/* Right Side: Form */}
-            <div className="md:w-1/2 p-8 flex items-center justify-center">
-                <SignIn fallbackRedirectUrl="/dashboard" signUpUrl="/register" />
+            <div className="flex-1 p-8 md:p-12 flex flex-col items-center justify-center bg-white md:bg-zinc-50">
+                <div className="md:hidden flex flex-col items-center mb-12 text-center">
+                    <Link href="/" className="mb-6">
+                        <Logo size="md" />
+                    </Link>
+                    <h2 className="text-2xl font-black text-zinc-900 mb-2">Welcome Back</h2>
+                    <p className="text-sm font-bold text-zinc-500">Sign in to manage your trade network</p>
+                </div>
+                
+                <div className="w-full max-w-sm shadow-2xl md:shadow-none rounded-[28px] overflow-hidden">
+                    <SignIn 
+                        fallbackRedirectUrl="/dashboard" 
+                        signUpUrl="/register" 
+                        appearance={{
+                            elements: {
+                                card: "shadow-none border-none",
+                                footerAction: "font-black text-orange-600 hover:text-orange-700",
+                                formButtonPrimary: "bg-zinc-900 border-none shadow-xl hover:bg-zinc-800 text-base py-6 rounded-2xl",
+                                headerTitle: "font-black tracking-tight",
+                                headerSubtitle: "font-bold text-zinc-500",
+                                socialButtonsBlockButton: "rounded-2xl border-2 border-zinc-100 hover:bg-zinc-50 font-bold",
+                                formFieldLabel: "font-black text-xs uppercase tracking-widest text-zinc-400",
+                                formFieldInput: "rounded-2xl h-12 border-2 border-zinc-100 focus:border-zinc-900 transition-all font-bold"
+                            }
+                        }}
+                    />
+                </div>
             </div>
         </main>
     );

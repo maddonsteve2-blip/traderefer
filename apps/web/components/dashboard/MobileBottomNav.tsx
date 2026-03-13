@@ -5,15 +5,25 @@ import { usePathname } from "next/navigation";
 import { LayoutGrid, Users, Share2, MessageSquare } from "lucide-react";
 import { motion } from "framer-motion";
 
-const TABS = [
-    { label: "HOME",    href: "/dashboard/business",                    icon: LayoutGrid, exact: true },
-    { label: "LEADS",   href: "/dashboard/business/sales",               icon: Users, matchPrefix: "/dashboard/business/sales" },
-    { label: "NETWORK", href: "/dashboard/business/force?tab=partners",  icon: Share2, matchPrefix: "/dashboard/business/force" },
-    { label: "INBOX",   href: "/dashboard/business/messages",            icon: MessageSquare, matchPrefix: "/dashboard/business/messages" },
+const BUSINESS_TABS = [
+    { label: "HOME",    href: "/dashboard/business",                   icon: LayoutGrid, exact: true },
+    { label: "LEADS",   href: "/dashboard/business/sales",             icon: Users,       matchPrefix: "/dashboard/business/sales" },
+    { label: "NETWORK", href: "/dashboard/business/force?tab=partners",icon: Share2,      matchPrefix: "/dashboard/business/force" },
+    { label: "INBOX",   href: "/dashboard/business/messages",          icon: MessageSquare, matchPrefix: "/dashboard/business/messages" },
+];
+
+const REFERRER_TABS = [
+    { label: "HOME",    href: "/dashboard/referrer",                    icon: LayoutGrid, exact: true },
+    { label: "LEADS",   href: "/dashboard/referrer/manage",             icon: Users,       matchPrefix: "/dashboard/referrer/manage" },
+    { label: "NETWORK", href: "/dashboard/referrer/businesses",         icon: Share2,      matchPrefix: "/dashboard/referrer/businesses" },
+    { label: "INBOX",   href: "/dashboard/referrer/messages",           icon: MessageSquare, matchPrefix: "/dashboard/referrer/messages" },
 ];
 
 export function MobileBottomNav() {
     const pathname = usePathname();
+
+    const isReferrer = pathname?.startsWith("/dashboard/referrer");
+    const TABS = isReferrer ? REFERRER_TABS : BUSINESS_TABS;
 
     function isActive(href: string, exact?: boolean, matchPrefix?: string) {
         if (exact) return pathname === href;

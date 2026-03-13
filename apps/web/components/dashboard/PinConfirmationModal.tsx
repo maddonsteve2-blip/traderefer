@@ -104,16 +104,19 @@ export function PinConfirmationModal({ leadId, onConfirmed, onClose }: PinConfir
                         </div>
                     )}
 
-                    <DialogFooter className="sm:justify-center">
+                    <DialogFooter className="flex-col sm:flex-row gap-3">
                         <Button
                             type="submit"
                             disabled={pin.length !== 4 || isSubmitting}
-                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full py-6 h-auto text-xl font-bold shadow-lg shadow-orange-500/20 active:scale-95 transition-all"
+                            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-[24px] h-18 text-xl font-black shadow-2xl shadow-zinc-200 active:scale-95 transition-all"
                         >
                             {isSubmitting ? (
-                                <Loader2 className="w-6 h-6 animate-spin" />
+                                <div className="flex items-center gap-2">
+                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                    <span>Syncing...</span>
+                                </div>
                             ) : (
-                                "Confirm & Finish"
+                                "Confirm & Finish Job"
                             )}
                         </Button>
                     </DialogFooter>

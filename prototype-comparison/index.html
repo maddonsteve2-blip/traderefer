@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TradeRefer Dashboard - Balanced Readable Prototype</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..0" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97415",
+                        "background-light": "#fcfcfc",
+                        "zinc-900": "#111111",
+                        "border-zinc": "#e5e5e5",
+                        "high-contrast": "#000000"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "card": "24px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            overflow: hidden;
+            font-size: 16px;
+        }
+        .authority-title {
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light text-zinc-900 h-screen flex overflow-hidden">
+
+    <!-- Sidebar (Balanced) -->
+    <aside class="w-64 bg-zinc-900 h-screen flex flex-col shrink-0 px-2">
+        <div class="px-6 py-8 flex items-center gap-3">
+            <img src="logo-dark.png" alt="" class="h-10 w-auto">
+            <span class="text-xl font-black tracking-tight leading-none uppercase"><span class="text-white">TRADE</span><span class="text-orange-500 font-black">REFER</span></span>
+        </div>
+
+        <nav class="flex-1 px-2 space-y-1 mt-2">
+            <a href="index.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">home</span>
+                <span class="text-[15px]">Dashboard</span>
+            </a>
+            <a href="leads.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">group</span>
+                <span class="text-[15px]">Leads</span>
+            </a>
+            <a href="network.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">hub</span>
+                <span class="text-[15px]">Network</span>
+            </a>
+            <a href="analytics.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">analytics</span>
+                <span class="text-[15px]">Analytics</span>
+            </a>
+            <a href="campaigns.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">campaign</span>
+                <span class="text-[15px]">Campaigns</span>
+            </a>
+            <a href="team.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">badge</span>
+                <span class="text-[15px]">My Team</span>
+            </a>
+            <a href="messages.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">mail</span>
+                <span class="text-[15px]">Inbox</span>
+            </a>
+            <a href="settings.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-400 font-bold hover:bg-white/5 hover:text-white transition-all">
+                <span class="material-symbols-outlined !text-2xl">settings</span>
+                <span class="text-[15px]">Settings</span>
+            </a>
+        </nav>
+
+        <!-- Role Switcher -->
+        <div class="px-2 mb-4">
+            <a href="referrer-home.html" class="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold transition-all group border border-white/5">
+                <div class="w-9 h-9 bg-primary/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary/30 transition-colors">
+                    <span class="material-symbols-outlined !text-xl text-primary font-black">rocket_launch</span>
+                </div>
+                <div class="text-left">
+                    <p class="text-[13px] font-black text-white leading-tight">Switch to Referrer</p>
+                    <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">Open Dashboard</p>
+                </div>
+                <span class="material-symbols-outlined !text-lg text-zinc-600 ml-auto group-hover:text-primary transition-colors">sync_alt</span>
+            </a>
+        </div>
+
+        <div class="p-6 border-t border-white/5">
+            <div class="flex items-center gap-3">
+                <div class="size-9 rounded-full bg-zinc-800 border-2 border-zinc-700 shadow-xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" class="w-full h-full object-cover">
+                </div>
+                <div class="min-w-0">
+                    <p class="text-sm font-black text-white truncate">Alex Rivera</p>
+                    <p class="text-xs text-zinc-500 font-bold uppercase tracking-widest">Admin</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="flex items-center justify-between px-8 py-5 bg-white border-b-2 border-zinc-100 shrink-0">
+            <div>
+                <h1 class="text-3xl font-black authority-title tracking-tighter text-high-contrast uppercase">Welcome, Steve</h1>
+                <p class="text-zinc-500 text-xs font-black uppercase tracking-widest mt-1">DASHBOARD OVERVIEW • MAR 12</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="bg-zinc-100 border-2 border-zinc-200 size-12 rounded-xl text-zinc-900 flex items-center justify-center shadow-md"><span class="material-symbols-outlined !text-xl">notifications</span></button>
+                <button class="bg-primary px-6 py-3 rounded-xl text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20">Invite Referrer</button>
+            </div>
+        </header>
+
+        <div class="flex-1 p-8 space-y-6 overflow-hidden flex flex-col">
+            <!-- Global Stats (Balanced Reads) -->
+            <section class="grid grid-cols-4 gap-6 shrink-0">
+                <div class="bg-white border-2 border-zinc-100 rounded-[32px] p-6 shadow-xl relative overflow-hidden group hover:border-primary transition-all">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Total Leads</p>
+                    <p class="text-4xl font-black text-high-contrast">24</p>
+                    <div class="absolute -right-2 -bottom-2 size-16 bg-primary/5 rounded-full blur-2xl"></div>
+                </div>
+                <div class="bg-white border-2 border-zinc-100 rounded-[32px] p-6 shadow-xl relative overflow-hidden group hover:border-primary transition-all">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Network Size</p>
+                    <p class="text-4xl font-black text-high-contrast">12</p>
+                </div>
+                <div class="bg-white border-2 border-zinc-100 rounded-[32px] p-6 shadow-xl relative overflow-hidden group hover:border-primary transition-all">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Conversion</p>
+                    <p class="text-4xl font-black text-green-600">18%</p>
+                </div>
+                <div class="bg-zinc-900 rounded-[32px] p-6 shadow-2xl relative overflow-hidden ring-4 ring-zinc-800">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-zinc-600 mb-2">Earnings</p>
+                    <p class="text-4xl font-black text-white">$1,200</p>
+                    <div class="absolute -right-2 -bottom-2 size-16 bg-primary/10 rounded-full blur-2xl"></div>
+                </div>
+            </section>
+
+            <!-- Bottom Area -->
+            <div class="flex-1 grid grid-cols-3 gap-8 min-h-0">
+                <section class="col-span-2 bg-white border-2 border-zinc-100 rounded-[40px] p-8 shadow-2xl flex flex-col min-h-0">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-black text-high-contrast uppercase tracking-tighter">Recent Activity</h2>
+                        <button class="bg-zinc-50 text-zinc-900 text-[10px] font-black uppercase px-4 py-2 rounded-lg border">Full Feed</button>
+                    </div>
+                    <div class="space-y-4 overflow-y-auto pr-2 no-scrollbar">
+                        <div class="flex items-center gap-5 p-4 rounded-2xl bg-zinc-50 border-2 border-transparent hover:border-primary transition-all cursor-pointer">
+                            <div class="size-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined !text-xl font-black">bolt</span></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-lg font-black text-high-contrast uppercase tracking-tight truncate">Sarah Thompson: NEW LEAD</p>
+                                <p class="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">2h ago • Kitchen Renovation • Bondi</p>
+                            </div>
+                            <span class="material-symbols-outlined !text-2xl text-zinc-300">chevron_right</span>
+                        </div>
+                        <div class="flex items-center gap-5 p-4 rounded-2xl bg-zinc-50 border-2 border-transparent hover:border-zinc-200 transition-all cursor-pointer">
+                            <div class="size-12 rounded-xl bg-zinc-900 text-white flex items-center justify-center shadow-sm"><span class="material-symbols-outlined !text-xl font-black">person_add</span></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-lg font-black text-high-contrast uppercase tracking-tight truncate">Wilson Applied to Network</p>
+                                <p class="text-xs text-zinc-500 font-bold uppercase tracking-widest mt-1">5h ago • Decking Specialist</p>
+                            </div>
+                            <span class="material-symbols-outlined !text-2xl text-zinc-300">chevron_right</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-zinc-100 border-2 border-zinc-200 rounded-[40px] p-8 flex flex-col space-y-6">
+                    <h2 class="text-lg font-black text-zinc-400 uppercase tracking-widest">Quick Actions</h2>
+                    <div class="space-y-4">
+                        <button class="w-full bg-white h-16 rounded-xl px-5 text-sm font-black uppercase tracking-widest flex items-center justify-between shadow-lg border-2 border-white hover:border-zinc-900 transition-all">Review Apps <span class="material-symbols-outlined !text-2xl">rule</span></button>
+                        <button class="w-full bg-white h-16 rounded-xl px-5 text-sm font-black uppercase tracking-widest flex items-center justify-between shadow-lg border-2 border-white hover:border-zinc-900 transition-all">Settings <span class="material-symbols-outlined !text-2xl">settings</span></button>
+                        <button class="w-full bg-primary h-20 rounded-2xl px-6 text-base font-black text-white uppercase tracking-widest flex items-center justify-between shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
+                            Create Deal 
+                            <span class="material-symbols-outlined !text-3xl font-black">add_circle</span>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

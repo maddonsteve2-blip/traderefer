@@ -280,23 +280,23 @@ export function MessagesView() {
             <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-[300px] lg:w-[340px] bg-gray-100`}>
 
                 {/* Sidebar header */}
-                <div className="px-5 pt-5 pb-4 border-b border-zinc-100">
+                <div className="px-5 pt-4 pb-6">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="font-black text-zinc-900 text-2xl">Messages</h2>
+                        <h2 className="text-3xl md:text-[28px] font-black text-zinc-900 leading-tight">Messages</h2>
                         {totalUnread > 0 && (
-                            <span className="bg-orange-500 text-white font-black rounded-full min-w-[24px] h-[24px] flex items-center justify-center px-1.5 text-sm">
+                            <span className="bg-orange-500 text-white font-black rounded-full min-w-[24px] h-[24px] flex items-center justify-center px-1.5 text-[10px] md:text-xs">
                                 {totalUnread}
                             </span>
                         )}
                     </div>
                     <div className="relative">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
                         <input
                             type="text"
-                            placeholder="Search businesses…"
+                            placeholder="Search conversations..."
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-400 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 placeholder:text-gray-600 text-zinc-900 transition-all font-medium text-lg"
+                            className="w-full pl-11 pr-4 h-[52px] bg-[#F4F4F5] border-none rounded-2xl focus:outline-none placeholder:text-zinc-400 text-[#18181B] font-medium text-[15px]"
                         />
                     </div>
                 </div>
@@ -332,8 +332,10 @@ export function MessagesView() {
                                     <button
                                         key={contact.contact_id}
                                         onClick={() => openContact(contact)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-all duration-150 mx-1 rounded-2xl mb-1 ${
-                                            isActive ? 'bg-orange-50 border border-orange-100' : 'hover:bg-zinc-50 border border-transparent'
+                                        className={`w-full flex items-center gap-3 px-4 py-4 text-left transition-all duration-150 mx-1 mb-2 ${
+                                            isActive 
+                                                ? 'bg-orange-50 border border-orange-200 rounded-[20px]' 
+                                                : 'bg-white border border-zinc-200 rounded-[20px]'
                                         }`}
                                         style={{ width: 'calc(100% - 8px)' }}
                                     >
@@ -345,16 +347,16 @@ export function MessagesView() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-1 mb-0.5">
-                                                <span className={`truncate font-black ${isActive ? 'text-orange-600' : hasUnread ? 'text-zinc-900' : 'text-zinc-800'} text-xl`}>
+                                                <span className={`truncate font-black ${isActive ? 'text-orange-600' : hasUnread ? 'text-zinc-900' : 'text-zinc-800'} text-lg md:text-xl`}>
                                                     {contact.contact_name}
                                                 </span>
-                                                <span className="text-zinc-400 flex-shrink-0 whitespace-nowrap font-medium text-sm">
+                                                <span className="text-zinc-400 flex-shrink-0 whitespace-nowrap font-medium text-[10px] md:text-sm uppercase tracking-wider">
                                                     {contact.last_message_at ? formatListTime(contact.last_message_at) : ''}
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-1.5">
-                                                <ShieldCheck className="w-3 h-3 text-green-500 flex-shrink-0" />
-                                                <p className={`truncate font-medium ${hasUnread ? 'text-zinc-700 font-semibold' : 'text-zinc-400'} text-lg`}>
+                                                <ShieldCheck className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
+                                                <p className={`truncate font-medium ${hasUnread ? 'text-zinc-700 font-semibold' : 'text-zinc-400'} text-base md:text-lg`}>
                                                     {contact.last_message || 'Verified Trade Partner'}
                                                 </p>
                                             </div>

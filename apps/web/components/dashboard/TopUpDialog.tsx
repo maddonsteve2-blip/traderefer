@@ -178,37 +178,37 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                     </Elements>
                 ) : (
                     <div className="space-y-6 pt-2">
-                        <div className={`text-center p-6 rounded-2xl border ${
+                        <div className={`text-center p-6 md:p-8 rounded-[24px] border-2 ${
                             currentBalance < MIN_WALLET_FLOOR_CENTS
-                                ? "bg-red-50 border-red-200"
+                                ? "bg-red-50 border-red-100"
                                 : currentBalance < 3000
-                                ? "bg-amber-50 border-amber-200"
+                                ? "bg-amber-50 border-amber-100"
                                 : "bg-zinc-50 border-zinc-100"
                         }`}>
-                            <div className="text-lg font-bold text-zinc-400 uppercase tracking-widest mb-1">Current Balance</div>
-                            <div className={`text-5xl font-black font-display ${
+                            <div className="text-xs md:text-sm font-black text-zinc-400 uppercase tracking-widest mb-2">Current Balance</div>
+                            <div className={`text-5xl md:text-6xl font-black font-display tracking-tight ${
                                 currentBalance < MIN_WALLET_FLOOR_CENTS ? "text-red-600" : "text-zinc-900"
                             }`}>
                                 ${(currentBalance / 100).toFixed(2)}
                             </div>
                             {currentBalance < MIN_WALLET_FLOOR_CENTS && (
-                                <p className="text-lg text-red-600 font-bold mt-2">
-                                    ⚠️ Minimum $25.00 balance required to unlock leads
+                                <p className="text-sm md:text-lg text-red-600 font-bold mt-3 leading-tight underline decoration-red-200 underline-offset-4">
+                                    ⚠️ $25.00 minimum required to unlock leads
                                 </p>
                             )}
                         </div>
 
                         <div>
-                            <div className="text-xl font-bold text-zinc-500 mb-3">Select amount</div>
-                            <div className="grid grid-cols-4 gap-2">
+                            <div className="text-sm md:text-base font-black text-zinc-500 uppercase tracking-widest mb-3 ml-1">Select amount</div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {TOPUP_AMOUNTS.map((amt) => (
                                     <button
                                         key={amt.cents}
                                         onClick={() => { setSelectedAmount(amt.cents); setCustomAmount(""); }}
-                                        className={`py-4 rounded-xl text-xl font-black border transition-all ${
+                                        className={`h-14 md:h-16 rounded-2xl text-xl font-black border-2 transition-all active:scale-95 ${
                                             selectedAmount === amt.cents
-                                                ? "bg-orange-500 text-white border-orange-500 shadow-lg shadow-orange-500/20"
-                                                : "bg-white text-zinc-700 border-zinc-200 hover:border-orange-300"
+                                                ? "bg-orange-500 text-white border-orange-500 shadow-xl shadow-orange-500/20 -translate-y-0.5"
+                                                : "bg-white text-zinc-700 border-zinc-50 hover:border-orange-200"
                                         }`}
                                     >
                                         {amt.label}
@@ -218,9 +218,9 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                         </div>
 
                         <div>
-                            <div className="text-xl font-bold text-zinc-500 mb-2">Or enter custom amount</div>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-black text-2xl">$</span>
+                            <div className="text-sm md:text-base font-black text-zinc-500 uppercase tracking-widest mb-3 ml-1">Custom amount</div>
+                            <div className="relative group">
+                                <span className={`absolute left-5 top-1/2 -translate-y-1/2 font-black text-2xl transition-colors ${customAmount ? 'text-zinc-900' : 'text-zinc-300'}`}>$</span>
                                 <input
                                     type="number"
                                     min="5"
@@ -228,7 +228,7 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                                     placeholder="0.00"
                                     value={customAmount}
                                     onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
-                                    className="w-full pl-10 pr-4 py-4 rounded-2xl border border-zinc-200 focus:border-orange-400 focus:ring-4 focus:ring-orange-500/10 outline-none text-2xl font-black text-zinc-900"
+                                    className="w-full h-16 md:h-18 pl-12 pr-6 rounded-[20px] bg-zinc-50 border-2 border-zinc-100 focus:bg-white focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 transition-all outline-none text-2xl font-black text-zinc-900 placeholder:text-zinc-200 shadow-sm"
                                 />
                             </div>
                         </div>
@@ -236,20 +236,23 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                         <Button
                             onClick={handleProceedToPayment}
                             disabled={isCreatingIntent || amountCents < 500}
-                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full py-8 h-auto text-2xl font-black shadow-lg shadow-orange-500/30 active:scale-95 transition-all"
+                            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-[24px] h-18 md:h-20 text-xl md:text-2xl font-black shadow-2xl shadow-zinc-200 active:scale-95 transition-all mt-4"
                         >
                             {isCreatingIntent ? (
-                                <Loader2 className="w-6 h-6 animate-spin" />
+                                <div className="flex items-center gap-3">
+                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                    <span>Processing...</span>
+                                </div>
                             ) : (
-                                <>
-                                    <Plus className="w-6 h-6 mr-2" />
-                                    Continue {amountCents >= 500 ? `— $${(amountCents / 100).toFixed(2)}` : ""}
-                                </>
+                                <div className="flex items-center justify-center gap-3">
+                                    <Plus className="w-6 h-6" />
+                                    <span>Continue {amountCents >= 500 ? `— $${(amountCents / 100).toFixed(2)}` : ""}</span>
+                                </div>
                             )}
                         </Button>
 
-                        <p className="text-lg text-zinc-400 text-center font-medium leading-relaxed">
-                            Payments processed securely via Stripe. A minimum wallet balance of $25.00 is required to unlock leads.
+                        <p className="text-xs md:text-sm text-zinc-400 text-center font-bold leading-relaxed px-4">
+                            Secured by <span className="text-zinc-900">Stripe</span>. Funds are credited instantly but may take up to 24 hours to reflect on bank statements.
                         </p>
                     </div>
                 )}

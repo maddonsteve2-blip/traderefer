@@ -52,7 +52,7 @@ export function WelcomeDialog() {
             <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
                 <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden rounded-3xl border-0 shadow-2xl">
                     {/* Header */}
-                    <div className="bg-zinc-900 px-8 pt-8 pb-6 relative">
+                    <div className="bg-zinc-900 px-6 md:px-8 pt-8 pb-6 relative">
                         <button
                             onClick={handleClose}
                             className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 transition-colors"
@@ -64,11 +64,11 @@ export function WelcomeDialog() {
                                 <Zap className="w-6 h-6 text-white fill-white" />
                             </div>
                             <div>
-                                <p className="text-orange-400 text-base font-black uppercase tracking-widest">Welcome to</p>
-                                <p className="text-white text-3xl font-black">TradeRefer</p>
+                                <p className="text-orange-400 text-[10px] md:text-xs font-black uppercase tracking-[0.2em] mb-0.5">Welcome to</p>
+                                <p className="text-white text-2xl md:text-3xl font-black">TradeRefer</p>
                             </div>
                         </div>
-                        <h2 className="text-4xl font-black text-white leading-tight">
+                        <h2 className="text-3xl md:text-4xl font-black text-white leading-tight">
                             Here's how you'll earn<br />
                             <span className="text-orange-400">Prezzee gift cards</span>
                         </h2>

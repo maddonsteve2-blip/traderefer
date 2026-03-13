@@ -30,12 +30,12 @@ export function BusinessWelcomeDialog() {
         <Dialog open={open} onOpenChange={(v) => { if (!v) dismiss(); }}>
             <DialogContent className="max-w-lg p-0 overflow-hidden rounded-[32px] border-0 shadow-2xl">
                 {/* Header */}
-                <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 px-8 pt-10 pb-8 text-white">
-                    <div className="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center mb-5 shadow-lg shadow-orange-500/30">
-                        <Zap className="w-7 h-7 text-white" />
+                <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 px-6 md:px-8 pt-8 md:pt-10 pb-6 md:pb-8 text-white relative">
+                    <div className="w-12 h-12 md:w-14 md:h-14 bg-orange-500 rounded-2xl flex items-center justify-center mb-4 md:mb-5 shadow-lg shadow-orange-500/30">
+                        <Zap className="w-6 h-6 md:w-7 md:h-7 text-white" />
                     </div>
-                    <h2 className="text-4xl font-black mb-2 font-display">Welcome to TradeRefer!</h2>
-                    <p className="text-zinc-400 font-medium leading-relaxed text-xl">
+                    <h2 className="text-3xl md:text-4xl font-black mb-2 font-display leading-tight">Welcome to TradeRefer!</h2>
+                    <p className="text-zinc-400 font-bold leading-relaxed text-base md:text-xl">
                         Your business profile is live. Here&apos;s how to get the most out of it.
                     </p>
                 </div>

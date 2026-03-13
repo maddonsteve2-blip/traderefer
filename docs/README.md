@@ -31,6 +31,7 @@ The platform digitises word-of-mouth — the #1 way tradies already get their be
 | [08-payments.md](./08-payments.md) | eWAY collection, wallet, PayPal payouts, Zai migration plan |
 | [09-notifications.md](./09-notifications.md) | Every SMS, email, push notification — exact copy and triggers |
 | [10-tech-stack.md](./10-tech-stack.md) | Full stack, monorepo structure, deployment, environment vars |
+| [redesign-roadmap.md](./redesign-roadmap.md) | Safe phased rollout plan for implementing the redesign without risking the live app |
 
 ---
 

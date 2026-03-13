@@ -592,7 +592,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                 <Link href="/support" className="text-sm font-bold text-zinc-400 hover:text-zinc-900 transition-colors">Contact Support</Link>
             </header>
 
-            <div className={`flex-1 flex flex-col items-center ${step === 2 ? 'justify-start py-4' : 'justify-center py-20'} px-4`}>
+            <div className={`flex-1 flex flex-col items-center ${step === 2 ? 'justify-start py-4' : 'justify-start md:justify-center py-6 md:py-16'} px-4`}>
                 <div className={`w-full transition-all duration-500 ${step === 5 ? 'max-w-4xl' : step === 2 ? 'max-w-2xl' : 'max-w-xl'} ${step === 2 ? 'flex flex-col flex-1 min-h-0' : ''}`}>
                     {/* Progress Bar */}
                     <div className={`flex items-center gap-2 ${step === 2 ? 'mb-3' : 'mb-12'}`}>
@@ -612,10 +612,10 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                         {step === 1 && (
                             <>
                                 <div>
-                                    <h1 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight font-display">
+                                    <h1 className="text-3xl md:text-5xl font-black text-zinc-900 mb-2 md:mb-3 tracking-tight font-display leading-none">
                                         {isClaiming ? 'Claim your business' : 'Tell us about your business'}
                                     </h1>
-                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed">
+                                    <p className="text-base md:text-xl text-zinc-500 font-medium leading-relaxed">
                                         {isClaiming
                                             ? 'Review and update your business details — we\'ve pre-filled what we know.'
                                             : 'The basics — our AI assistant will chat with you to build the rest.'}
@@ -664,7 +664,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                     <div className="bg-zinc-50 p-6 rounded-[32px] border border-zinc-100 space-y-6">
                                         {/* Business name */}
                                         <div>
-                                            <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                                                 <Building2 className="w-3.5 h-3.5" /> Business Name
                                             </label>
                                             <input
@@ -683,7 +683,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                                     });
                                                 }}
                                                 placeholder="e.g. Bob's Plumbing & Gas"
-                                                className="w-full px-6 py-4 bg-white border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300"
+                                                className="w-full h-14 md:h-16 px-6 py-4 bg-white border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-bold placeholder:text-zinc-300 shadow-sm"
                                             />
                                         </div>
 
@@ -1225,15 +1225,15 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                         {step === 4 && (
                             <>
                                 <div>
-                                    <h1 className="text-4xl font-black text-zinc-900 mb-3 tracking-tight font-display">Service Area & Fees</h1>
-                                    <p className="text-lg text-zinc-500 font-medium leading-relaxed">Set your service radius and understand how lead unlocking works.</p>
+                                    <h1 className="text-3xl md:text-5xl font-black text-zinc-900 mb-2 md:mb-3 tracking-tight font-display leading-none">Service Area & Fees</h1>
+                                    <p className="text-base md:text-xl text-zinc-500 font-medium leading-relaxed">Set your service radius and understand how lead unlocking works.</p>
                                 </div>
                                 <div className="space-y-6">
                                     <div>
-                                        <label className="block text-sm font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-3 flex items-center gap-2">
                                             <MapPin className="w-3.5 h-3.5" /> Service Radius (km)
                                         </label>
-                                        <input type="number" value={formData.service_radius_km} onChange={(e) => setFormData({ ...formData, service_radius_km: parseInt(e.target.value) })} className="w-full px-6 py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium" />
+                                        <input type="number" value={formData.service_radius_km} onChange={(e) => setFormData({ ...formData, service_radius_km: parseInt(e.target.value) })} className="w-full h-14 md:h-16 px-6 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg md:text-xl font-bold" />
                                     </div>
 
                                     <div className="bg-white p-8 rounded-[32px] border border-zinc-100 shadow-sm space-y-8">
@@ -1245,12 +1245,12 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                             </div>
                                         </div>
                                         <div className="relative">
-                                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-zinc-300">$</div>
+                                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl md:text-4xl font-black text-zinc-300">$</div>
                                             <input
                                                 type="number" min="3" step="1"
                                                 value={formData.referral_fee_cents / 100}
                                                 onChange={(e) => { const val = parseFloat(e.target.value) || 0; setFormData({ ...formData, referral_fee_cents: Math.round(val * 100) }); }}
-                                                className="w-full pl-12 pr-6 py-6 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-3xl font-black text-zinc-900"
+                                                className="w-full h-20 md:h-24 pl-12 md:pl-16 pr-6 bg-zinc-50 border-2 border-orange-100 rounded-[32px] focus:outline-none focus:ring-8 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-4xl md:text-5xl font-black text-zinc-900"
                                             />
                                             {formData.referral_fee_cents < 300 && (
                                                 <div className="absolute -bottom-6 left-2 flex items-center gap-1 text-sm font-bold text-red-500 uppercase tracking-wider">
@@ -1490,12 +1490,12 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                     <Button
                                         onClick={handleNext}
                                         disabled={isGenerating || !chatDone}
-                                        className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         {isGenerating ? (
-                                            <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating profile...</>
+                                            <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating...</>
                                         ) : (
-                                            <><Sparkles className="w-5 h-5 mr-2" /> Generate My Profile <ChevronRight className="ml-2 w-6 h-6" /></>
+                                            <><Sparkles className="w-5 h-5 mr-2" /> Generate My Profile <ChevronRight className="ml-2 w-5 h-5 md:w-6 md:h-6" /></>
                                         )}
                                     </Button>
                                 </div>
@@ -1503,17 +1503,17 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                 <Button
                                     onClick={() => { if (selectedProfileIndex >= 0) setProfileLocked(true); }}
                                     disabled={isGenerating || selectedProfileIndex < 0}
-                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
+                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-zinc-200"
                                 >
-                                    <CheckCircle2 className="w-5 h-5 mr-2" /> Lock In This Profile <ChevronRight className="ml-2 w-6 h-6" />
+                                    <CheckCircle2 className="w-5 h-5 mr-2" /> Lock In Profile <ChevronRight className="ml-2 w-5 h-5 md:w-6 md:h-6" />
                                 </Button>
                             ) : (
                                 <Button
                                     onClick={handleNext}
                                     disabled={isLoading || isGenerating || (step === 4 && formData.referral_fee_cents < 300) || isUploadingMedia}
-                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200"
+                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-zinc-200"
                                 >
-                                    {isLoading ? 'Completing...' : step === 6 ? (isClaiming ? 'View My Free Lead' : 'Go to Dashboard') : 'Continue'} <ChevronRight className="ml-2 w-6 h-6" />
+                                    {isLoading ? 'Completing...' : step === 6 ? (isClaiming ? 'View My Free Lead' : 'Go to Dashboard') : 'Continue'} <ChevronRight className="ml-2 w-5 h-5 md:w-6 md:h-6" />
                                 </Button>
                             )}
                         </div>

@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { WithdrawalForm } from "@/components/dashboard/WithdrawalForm";
+import { MobileReferrerRewards } from "@/components/referrer/MobileReferrerRewards";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -54,7 +55,9 @@ export default async function ReferrerRewardsPage() {
 
     return (
         <div className="min-h-screen bg-zinc-50">
-            <div className="w-full px-4 md:px-6 py-5 md:py-6">
+            <MobileReferrerRewards referrer={referrer} payouts={payouts} />
+            
+            <div className="hidden lg:block w-full px-4 md:px-6 py-5 md:py-6">
 
                 {/* Breadcrumb */}
                 <div className="flex flex-wrap items-center gap-3 mb-6">
@@ -325,12 +328,11 @@ export default async function ReferrerRewardsPage() {
 
                     </div>
                 </div>
-
-                <p className="text-center mt-10 text-zinc-400 font-bold uppercase tracking-widest text-base">
-                    Claims processed instantly via Prezzee API · © 2026 TradeRefer Pty Ltd
-                </p>
-
             </div>
+
+            <p className="hidden lg:block text-center mt-10 text-zinc-400 font-bold uppercase tracking-widest text-base pb-32">
+                Claims processed instantly via Prezzee API · © 2026 TradeRefer Pty Ltd
+            </p>
         </div>
     );
 }

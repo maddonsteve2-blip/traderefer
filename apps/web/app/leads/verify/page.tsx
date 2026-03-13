@@ -83,17 +83,24 @@ function VerifyForm() {
                 </div>
             )}
 
-            <div className="flex justify-center gap-4 mb-10">
+            <div className="flex justify-center gap-2 md:gap-4 mb-10 overflow-x-auto pb-2 scrollbar-none">
                 {otp.map((digit, i) => (
                     <input
                         key={i}
                         id={`otp-${i}`}
                         type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         maxLength={1}
                         value={digit}
                         onChange={(e) => handleChange(i, e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Backspace' && !otp[i] && i > 0) {
+                                document.getElementById(`otp-${i - 1}`)?.focus();
+                            }
+                        }}
                         disabled={isLoading}
-                        className="w-16 h-20 bg-zinc-50 border-2 border-zinc-100 rounded-2xl text-3xl font-black text-center text-zinc-900 focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-display disabled:opacity-50"
+                        className="w-12 h-16 md:w-16 md:h-20 bg-zinc-50 border-2 border-zinc-100 rounded-xl md:rounded-2xl text-2xl md:text-3xl font-black text-center text-zinc-900 focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-display disabled:opacity-50 shrink-0"
                     />
                 ))}
             </div>
@@ -102,23 +109,32 @@ function VerifyForm() {
                 <Button
                     onClick={handleSubmit}
                     disabled={isLoading || otp.join("").length < 6}
-                    className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 text-xl font-black shadow-xl shadow-zinc-200 disabled:opacity-50"
+                    className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 md:h-20 text-xl font-black shadow-xl shadow-zinc-200 disabled:opacity-50 transition-all active:scale-95"
                 >
-                    {isLoading ? "Verifying..." : "Verify Enquiry"} <ArrowRight className="ml-2 w-6 h-6" />
+                    {isLoading ? (
+                        <div className="flex items-center gap-3">
+                            <div className="w-5 h-5 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                            Verifying...
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            Verify Enquiry <ArrowRight className="w-6 h-6" />
+                        </div>
+                    )}
                 </Button>
 
-                <div className="flex items-center justify-center gap-6">
-                    <button className="text-sm font-bold text-zinc-400 hover:text-zinc-600 flex items-center gap-1.5 transition-colors">
+                <div className="flex items-center justify-center gap-4 md:gap-6">
+                    <button className="text-xs md:text-sm font-bold text-zinc-400 hover:text-zinc-600 flex items-center gap-1.5 transition-colors">
                         <RefreshCcw className="w-3.5 h-3.5" /> Resend Code
                     </button>
                     <div className="w-1.5 h-1.5 bg-zinc-200 rounded-full" />
-                    <button className="text-sm font-bold text-zinc-400 hover:text-zinc-600 flex items-center gap-1.5 transition-colors">
+                    <button className="text-xs md:text-sm font-bold text-zinc-400 hover:text-zinc-600 flex items-center gap-1.5 transition-colors">
                         <Edit2 className="w-3.5 h-3.5" /> Edit Number
                     </button>
                 </div>
             </div>
 
-            <p className="text-base text-zinc-400 font-bold uppercase tracking-widest leading-loose">
+            <p className="text-[10px] md:text-xs text-zinc-400 font-bold uppercase tracking-widest leading-relaxed">
                 By verifying, you agree to our Terms of Service.<br />
                 © 2026 TradeRefer
             </p>
@@ -128,8 +144,8 @@ function VerifyForm() {
 
 export default function LeadVerifyPage() {
     return (
-        <main className="min-h-screen bg-zinc-50 pt-32 pb-20 flex items-center justify-center">
-            <div className="container mx-auto px-4 max-w-lg">
+        <main className="min-h-screen bg-zinc-50 flex items-center justify-center p-4">
+            <div className="w-full max-w-lg">
                 <Suspense fallback={<div>Loading...</div>}>
                     <VerifyForm />
                 </Suspense>
