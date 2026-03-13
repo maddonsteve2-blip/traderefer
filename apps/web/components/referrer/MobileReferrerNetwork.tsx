@@ -58,7 +58,7 @@ export function MobileReferrerNetwork({
                     const stats = await refRes.json();
                     const allBiz = await pubRes.json();
                     
-                    setBusinesses(allBiz.slice(0, 10)); // Top 10 for performance
+                    setBusinesses(Array.isArray(allBiz) ? allBiz.slice(0, 10) : []); // Top 10 for performance
                     setPartnersCount(stats.total_referrals);
                     setAvailableCount(allBiz.length);
                 }
@@ -74,6 +74,7 @@ export function MobileReferrerNetwork({
 
 
     const filteredBusinesses = useMemo(() => {
+        if (!Array.isArray(businesses)) return [];
         return businesses.filter(b => 
             b.name.toLowerCase().includes(search.toLowerCase()) ||
             b.trade_category.toLowerCase().includes(search.toLowerCase()) ||

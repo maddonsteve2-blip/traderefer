@@ -509,9 +509,9 @@ export function MessagesView() {
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
     };
 
-    const filteredContacts = contacts.filter(c =>
-        c.contact_name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredContacts = Array.isArray(contacts) 
+        ? contacts.filter(c => c.contact_name.toLowerCase().includes(searchQuery.toLowerCase()))
+        : [];
 
     const activeContact = contacts.find(c => c.contact_id === activeContactId);
     const totalUnread = contacts.reduce((acc, c) => acc + (c.unread_count || 0), 0);

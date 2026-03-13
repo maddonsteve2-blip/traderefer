@@ -18,9 +18,10 @@ interface MobileReferrerRewardsProps {
 }
 
 export function MobileReferrerRewards({ referrer, payouts }: MobileReferrerRewardsProps) {
+    if (!referrer) return null;
     const pendingBalance = (referrer.wallet_balance_cents || 0) / 100;
     const totalEarned = (referrer.total_earned_cents || 0) / 100;
-    const prezzeePayouts = payouts.filter(p => p.method === 'PREZZEE_SWAP');
+    const prezzeePayouts = Array.isArray(payouts) ? payouts.filter(p => p.method === 'PREZZEE_SWAP') : [];
     const isReady = pendingBalance >= 25;
 
     return (

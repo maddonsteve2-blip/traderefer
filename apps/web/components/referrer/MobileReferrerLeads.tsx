@@ -40,7 +40,7 @@ export function MobileReferrerLeads({ leads: initialLeads, loading: initialLoadi
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    setLeads(data);
+                    setLeads(Array.isArray(data) ? data : []);
                 }
             } catch (err) {
                 console.error("Failed to fetch leads", err);
@@ -54,6 +54,7 @@ export function MobileReferrerLeads({ leads: initialLeads, loading: initialLoadi
 
 
     const filteredLeads = useMemo(() => {
+        if (!Array.isArray(leads)) return [];
         return leads.filter(l => {
             const matchesSearch = 
                 l.customer_name.toLowerCase().includes(search.toLowerCase()) ||
