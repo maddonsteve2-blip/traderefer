@@ -11,7 +11,6 @@ import {
     Target,
     MessageSquare,
     Users,
-    ClipboardList,
     BarChart3,
     Globe,
     Settings,
@@ -31,21 +30,22 @@ import { MobileBottomNav } from "./MobileBottomNav";
 
 const BUSINESS_NAV = [
     { label: "Overview",        href: "/dashboard/business",                        matchPath: "/dashboard/business",                 icon: LayoutDashboard, exact: true },
-    { label: "Sales & Growth",  href: "/dashboard/business/sales?tab=leads",        matchPath: "/dashboard/business/sales",           icon: Target },
+    { label: "Leads",           href: "/dashboard/business/sales?tab=leads",        matchPath: "/dashboard/business/sales",           icon: Target },
     { label: "Messages",        href: "/dashboard/business/messages",               matchPath: "/dashboard/business/messages",        icon: MessageSquare },
-    { label: "Referral Force",  href: "/dashboard/business/force?tab=partners",     matchPath: "/dashboard/business/force",           icon: Users },
+    { label: "Growth",          href: "/dashboard/business/force?tab=partners",     matchPath: "/dashboard/business/force",           icon: Users },
     { label: "Analytics",       href: "/dashboard/business/analytics",              matchPath: "/dashboard/business/analytics",       icon: BarChart3 },
-    { label: "Account & Profile",href: "/dashboard/business/profile",               matchPath: "/dashboard/business/profile",         icon: Globe },
+    { label: "Public Profile",  href: "/dashboard/business/profile",                matchPath: "/dashboard/business/profile",         icon: Globe },
+    { label: "Settings",        href: "/dashboard/business/settings",               matchPath: "/dashboard/business/settings",        icon: Settings },
 ];
 
 const REFERRER_NAV = [
     { label: "Overview",        href: "/dashboard/referrer",                   matchPath: "/dashboard/referrer",                 icon: LayoutDashboard, exact: true },
-    { label: "Find Businesses", href: "/dashboard/referrer/businesses",        matchPath: "/dashboard/referrer/businesses",      icon: Search },
+    { label: "Network",         href: "/dashboard/referrer/businesses",        matchPath: "/dashboard/referrer/businesses",      icon: Search },
     { label: "My Team",         href: "/dashboard/referrer/manage",            matchPath: "/dashboard/referrer/manage",          icon: Users },
     { label: "Messages",        href: "/dashboard/referrer/messages",          matchPath: "/dashboard/referrer/messages",        icon: MessageSquare },
-    { label: "Applications",    href: "/dashboard/referrer/applications",      matchPath: "/dashboard/referrer/applications",    icon: ClipboardList },
-    { label: "Gift Cards",      href: "/dashboard/referrer/withdraw",          matchPath: "/dashboard/referrer/withdraw",        icon: Gift },
-    { label: "Account & Profile",href: "/dashboard/referrer/profile",          matchPath: "/dashboard/referrer/profile",         icon: User },
+    { label: "Applications",    href: "/dashboard/referrer/applications",      matchPath: "/dashboard/referrer/applications",    icon: Globe },
+    { label: "Rewards",         href: "/dashboard/referrer/withdraw",          matchPath: "/dashboard/referrer/withdraw",        icon: Gift },
+    { label: "My Profile",      href: "/dashboard/referrer/profile",           matchPath: "/dashboard/referrer/profile",         icon: User },
 ];
 
 interface NavItem {
@@ -247,6 +247,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
             {/* ── MOBILE TOP BAR ── */}
             <div className="lg:hidden fixed top-0 left-0 right-0 h-[60px] bg-white border-b border-zinc-100 flex items-center px-4 z-40 gap-3">
+                <button
+                    onClick={() => setMobileOpen(true)}
+                    aria-label="Open menu"
+                    className="flex items-center justify-center w-10 h-10 rounded-2xl border border-zinc-200 text-zinc-700"
+                >
+                    <Menu className="w-5 h-5" />
+                </button>
+
                 <Link href="/" className="flex items-center gap-2 shrink-0">
                     <Logo size="sm" />
                 </Link>

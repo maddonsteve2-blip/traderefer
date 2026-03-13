@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { MobileReferrerLeads } from "@/components/referrer/MobileReferrerLeads";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -395,11 +394,124 @@ export default function ReferrerManagePage() {
         );
     }
 
-    // ── TRUE EMPTY STATE (no approved AND no pending) ────────────────────────
+    function MobileTeamView() {
+        return (
+            <div className="lg:hidden min-h-screen bg-zinc-50 pb-32">
+                <div className="px-5 pt-4 flex flex-col gap-6">
+                    <div className="flex items-start justify-between gap-4">
+                        <div>
+                            <h1 className="text-[28px] font-extrabold text-zinc-900 leading-tight">My Team</h1>
+                            <p className="mt-1 text-sm font-medium text-zinc-500">Manage active partnerships and keep an eye on reviews in progress.</p>
+                        </div>
+                        <Link
+                            href="/dashboard/referrer/businesses"
+                            className="inline-flex items-center gap-1.5 rounded-2xl border border-orange-200 bg-orange-50 px-3 py-2 text-[11px] font-black uppercase tracking-widest text-orange-600"
+                        >
+                            Join Trade <ChevronRight className="h-3.5 w-3.5" />
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-2xl bg-white border border-zinc-200 p-4">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Active Team</p>
+                            <p className="mt-1 text-2xl font-black text-zinc-900">{links.length}</p>
+                        </div>
+                        <div className="rounded-2xl bg-white border border-zinc-200 p-4">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Pending Review</p>
+                            <p className="mt-1 text-2xl font-black text-amber-600">{pendingApps.length}</p>
+                        </div>
+                    </div>
+
+                    {links.length > 0 && (
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-lg font-bold text-zinc-900">Active businesses</h2>
+                                <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400">{links.length} live</span>
+                            </div>
+                            {links.map((link) => (
+                                <Link
+                                    key={link.slug}
+                                    href={`/dashboard/referrer/manage?business=${link.slug}`}
+                                    className="rounded-[24px] border border-zinc-200 bg-white p-4 shadow-sm"
+                                >
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center overflow-hidden shrink-0 font-black text-orange-600 text-lg">
+                                            {link.logo_url ? <img src={link.logo_url} alt="" className="w-full h-full object-cover" /> : link.name.charAt(0)}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-1.5">
+                                                <p className="text-base font-black text-zinc-900 truncate">{link.name}</p>
+                                                {link.is_verified && <BadgeCheck className="w-4 h-4 text-orange-500 shrink-0" />}
+                                            </div>
+                                            <p className="mt-1 text-[13px] font-medium text-zinc-500">{link.trade_category}</p>
+                                            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                                                <div className="rounded-xl bg-zinc-50 px-2 py-2">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Leads</p>
+                                                    <p className="mt-1 text-sm font-black text-zinc-900">{link.leads}</p>
+                                                </div>
+                                                <div className="rounded-xl bg-zinc-50 px-2 py-2">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Earned</p>
+                                                    <p className="mt-1 text-sm font-black text-emerald-600">${link.earned.toFixed(0)}</p>
+                                                </div>
+                                                <div className="rounded-xl bg-zinc-50 px-2 py-2">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Fee</p>
+                                                    <p className="mt-1 text-sm font-black text-orange-600">${((link.referral_fee_cents * 0.8) / 100).toFixed(0)}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+
+                    {pendingApps.length > 0 && (
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-lg font-bold text-zinc-900">Pending applications</h2>
+                                <Link href="/dashboard/referrer/applications" className="text-[11px] font-black uppercase tracking-widest text-orange-600">Open all</Link>
+                            </div>
+                            {pendingApps.map((app) => (
+                                <Link
+                                    key={app.id}
+                                    href="/dashboard/referrer/applications"
+                                    className="rounded-[24px] border border-amber-200 bg-white p-4 shadow-sm"
+                                >
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center overflow-hidden shrink-0 font-black text-amber-600 text-lg">
+                                            {app.business_logo ? <img src={app.business_logo} alt="" className="w-full h-full object-cover" /> : app.business_name.charAt(0)}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-base font-black text-zinc-900 truncate">{app.business_name}</p>
+                                            <p className="mt-1 text-[13px] font-medium text-zinc-500">{app.trade_category} · {app.suburb}</p>
+                                            <div className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-amber-50 px-3 py-2 text-[11px] font-black uppercase tracking-widest text-amber-700">
+                                                <Clock className="h-3.5 w-3.5" /> Awaiting Review
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+
+                    {totalCount === 0 && (
+                        <div className="rounded-[28px] border border-dashed border-zinc-200 bg-white p-8 text-center">
+                            <div className="w-16 h-16 bg-orange-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                                <Users className="w-8 h-8 text-orange-300" />
+                            </div>
+                            <h2 className="text-xl font-black text-zinc-900">Build your team</h2>
+                            <p className="mt-2 text-sm font-medium text-zinc-500">Apply to your first business to unlock this command centre.</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
     if (totalCount === 0) {
         return (
             <>
-                <MobileReferrerLeads />
+                <MobileTeamView />
                 <div className="hidden lg:flex min-h-screen bg-zinc-50 flex-col items-center justify-center px-6 py-16 text-center">
                     <div className="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
                         <Users className="w-10 h-10 text-orange-300" />
@@ -419,7 +531,6 @@ export default function ReferrerManagePage() {
         );
     }
 
-    // ── SIDEBAR CARD helpers ─────────────────────────────────────────────────
     const ApprovedCard = ({ link }: { link: TeamLink }) => {
         const isActive = selected?.type === "approved" && selected.link.slug === link.slug;
         const initials = link.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
@@ -490,12 +601,10 @@ export default function ReferrerManagePage() {
         );
     };
 
-    // ── MAIN LAYOUT ──────────────────────────────────────────────────────────
     return (
         <>
-            <MobileReferrerLeads />
+            <MobileTeamView />
             <div className="hidden lg:flex min-h-[100dvh] flex-col bg-white lg:h-screen lg:overflow-hidden">
-                {/* ── MOBILE: Horizontal chip scroll — Redundant but kept for structure if needed ── */}
                 <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
                     {links.map(link => (
                         <button

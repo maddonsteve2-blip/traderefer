@@ -27,7 +27,7 @@ function SalesHubInner() {
 
     return (
         <div className="min-h-[100dvh] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden">
-            <div className="hidden md:block">
+            <div>
                 <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
             </div>
 

@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Search, Loader2, Info, UserPlus, Users } from "lucide-react";
+import { Search, Loader2, Info, Users } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
+import { BusinessInviteButton } from "@/components/business/BusinessInviteButton";
 
 interface Referrer {
     referrer_id: string;
@@ -40,7 +41,7 @@ export function MobileBusinessNetwork({
         async function fetchNetwork() {
             try {
                 const token = await getToken();
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/business/me/referrers`, {
+                const res = await fetch(`/api/backend/business/me/referrers`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -49,7 +50,7 @@ export function MobileBusinessNetwork({
                     setReferrers(Array.isArray(data.referrers) ? data.referrers : []);
                     setStats({
                         total_referrers: data.summary?.total_referrers || 0,
-                        new_this_month: 12 // Mocked for design fidelity matching
+                        new_this_month: data.summary?.new_this_month || 0
                     });
                 }
             } catch (err) {
@@ -61,7 +62,6 @@ export function MobileBusinessNetwork({
 
         fetchNetwork();
     }, [getToken, initialReferrers]);
-
 
     const filteredReferrers = useMemo(() => {
         return referrers.filter(r => 
@@ -92,7 +92,7 @@ export function MobileBusinessNetwork({
                 <div className="grid grid-cols-2 gap-3">
                     <div className="bg-[#F4F4F5] rounded-2xl p-4 flex flex-col gap-1">
                         <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Total Referrers</p>
-                        <p className="text-2xl font-black text-[#18181B] leading-none">{stats.total_referrers || 128}</p>
+                        <p className="text-2xl font-black text-[#18181B] leading-none">{stats.total_referrers}</p>
                     </div>
                     <div className="bg-[#F4F4F5] rounded-2xl p-4 flex flex-col gap-1">
                         <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">New This Month</p>
@@ -101,10 +101,9 @@ export function MobileBusinessNetwork({
                 </div>
 
                 {/* ── Invite Button (Pencil: mRPBo) ── */}
-                <button className="w-full h-14 bg-[#18181B] rounded-2xl flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all">
-                    <UserPlus className="w-5 h-5 text-white" />
-                    <span className="text-[15px] font-bold text-white">Invite New Referrer</span>
-                </button>
+                <div className="[&>button]:w-full [&>button]:h-14 [&>button]:rounded-2xl [&>button]:bg-[#18181B] [&>button]:border-0 [&>button]:text-white [&>button]:hover:bg-black [&>button]:justify-center [&>button]:text-[15px] [&>button]:font-bold [&>button]:shadow-lg [&>button]:shadow-black/10">
+                    <BusinessInviteButton />
+                </div>
 
                 {/* ── Referrer List Area (Pencil: P52hZ) ── */}
                 <div className="flex flex-col gap-4">

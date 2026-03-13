@@ -27,7 +27,7 @@ function ForceHubInner() {
 
     return (
         <div className="flex flex-col bg-zinc-50 h-[calc(100dvh-56px)] lg:h-screen overflow-hidden">
-            <div className="hidden lg:block">
+            <div>
                 <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
             </div>
 

@@ -40,12 +40,12 @@ export function MobileBusinessLeads() {
     const fetchLeads = async () => {
         try {
             const token = await getToken();
-            const meRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/business/me`, {
+            const meRes = await fetch(`/api/backend/business/me`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const meData = await meRes.json();
             
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/backend/leads?business_id=${meData.id}`, {
+            const res = await fetch(`/api/backend/leads?business_id=${meData.id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -170,8 +170,8 @@ export function MobileBusinessLeads() {
                 {/* ── Header ── */}
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-1.5">
-                        <h1 className="text-3xl md:text-4xl font-black text-zinc-900 tracking-tight leading-none font-display">Sales Hub</h1>
-                        <p className="text-base font-medium text-zinc-500 leading-relaxed">Manage your active leads and deals.</p>
+                        <h1 className="text-3xl md:text-4xl font-black text-zinc-900 tracking-tight leading-none font-display">Leads</h1>
+                        <p className="text-base font-medium text-zinc-500 leading-relaxed">Manage lead unlocks, customer contact, and job progression.</p>
                     </div>
                     
                     {/* ── Search Box ── */}

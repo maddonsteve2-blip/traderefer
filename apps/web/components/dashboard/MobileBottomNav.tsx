@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Users, Share2, MessageSquare } from "lucide-react";
+import { LayoutGrid, Gift, MessageSquare, Search, Target, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 
 const BUSINESS_TABS = [
-    { label: "HOME",    href: "/dashboard/business",                   icon: LayoutGrid, exact: true },
-    { label: "LEADS",   href: "/dashboard/business/sales",             icon: Users,       matchPrefix: "/dashboard/business/sales" },
-    { label: "NETWORK", href: "/dashboard/business/force?tab=partners",icon: Share2,      matchPrefix: "/dashboard/business/force" },
-    { label: "INBOX",   href: "/dashboard/business/messages",          icon: MessageSquare, matchPrefix: "/dashboard/business/messages" },
+    { label: "HOME", href: "/dashboard/business", icon: LayoutGrid, exact: true },
+    { label: "LEADS", href: "/dashboard/business/sales?tab=leads", icon: Target, matchPrefixes: ["/dashboard/business/sales"] },
+    { label: "MESSAGES", href: "/dashboard/business/messages", icon: MessageSquare, matchPrefixes: ["/dashboard/business/messages"] },
+    { label: "GROWTH", href: "/dashboard/business/force?tab=partners", icon: TrendingUp, matchPrefixes: ["/dashboard/business/force"] },
 ];
 
 const REFERRER_TABS = [
-    { label: "HOME",    href: "/dashboard/referrer",                    icon: LayoutGrid, exact: true },
-    { label: "EARNINGS", href: "/dashboard/referrer/manage",             icon: Users,       matchPrefix: "/dashboard/referrer/manage" },
-    { label: "NETWORK", href: "/dashboard/referrer/businesses",         icon: Share2,      matchPrefix: "/dashboard/referrer/businesses" },
-    { label: "INBOX",   href: "/dashboard/referrer/messages",           icon: MessageSquare, matchPrefix: "/dashboard/referrer/messages" },
+    { label: "HOME", href: "/dashboard/referrer", icon: LayoutGrid, exact: true },
+    { label: "NETWORK", href: "/dashboard/referrer/businesses", icon: Search, matchPrefixes: ["/dashboard/referrer/businesses", "/dashboard/referrer/manage", "/dashboard/referrer/applications", "/dashboard/referrer/refer"] },
+    { label: "MESSAGES", href: "/dashboard/referrer/messages", icon: MessageSquare, matchPrefixes: ["/dashboard/referrer/messages"] },
+    { label: "REWARDS", href: "/dashboard/referrer/withdraw", icon: Gift, matchPrefixes: ["/dashboard/referrer/withdraw"] },
 ];
 
 export function MobileBottomNav() {
@@ -25,9 +25,9 @@ export function MobileBottomNav() {
     const isReferrer = pathname?.startsWith("/dashboard/referrer");
     const TABS = isReferrer ? REFERRER_TABS : BUSINESS_TABS;
 
-    function isActive(href: string, exact?: boolean, matchPrefix?: string) {
+    function isActive(href: string, exact?: boolean, matchPrefixes?: string[]) {
         if (exact) return pathname === href;
-        if (matchPrefix) return pathname?.startsWith(matchPrefix);
+        if (matchPrefixes?.length) return matchPrefixes.some(prefix => pathname?.startsWith(prefix));
         return pathname?.startsWith(href.split('?')[0]);
     }
 
@@ -36,7 +36,7 @@ export function MobileBottomNav() {
             <div className="max-w-md mx-auto w-full pointer-events-auto">
                 <nav className="bg-zinc-900 border border-white/10 rounded-[32px] p-1.5 flex items-center justify-between shadow-2xl shadow-black/40">
                     {TABS.map((tab) => {
-                        const active = isActive(tab.href, tab.exact, tab.matchPrefix);
+                        const active = isActive(tab.href, tab.exact, tab.matchPrefixes);
                         const Icon = tab.icon;
 
                         return (
