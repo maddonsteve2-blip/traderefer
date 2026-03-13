@@ -38,7 +38,7 @@ class ConnectionManager:
             if not self._rooms[conversation_id]:
                 del self._rooms[conversation_id]
 
-    async def broadcast(self, conversation_id: str, message: dict, exclude_ws: WebSocket = None, exclude_user_id: str = None):
+    async def broadcast(self, conversation_id: str, message: dict, exclude_ws: WebSocket = None, exclude_user_id: str = None, sender_user_id: str = None):
         """Send a message to all connected clients in a conversation room."""
         if conversation_id not in self._rooms:
             return
@@ -46,8 +46,17 @@ class ConnectionManager:
         for ws, uid in self._rooms[conversation_id]:
             if ws is exclude_ws or (exclude_user_id and uid == exclude_user_id):
                 continue
+            
+            # Tailor the payload for messages: set is_mine correctly for this recipient's specific session
+            # This ensures that if a user is logged in on both mobile and web, their messages appear as 'mine' on both.
+            final_payload = message
+            if sender_user_id and message.get("type") == "message" and "data" in message:
+                data = message["data"].copy()
+                data["is_mine"] = (str(uid) == str(sender_user_id))
+                final_payload = {"type": "message", "data": data}
+
             try:
-                await ws.send_json(message)
+                await ws.send_json(final_payload)
             except Exception:
                 dead.append(ws)
         # Cleanup dead connections
@@ -574,7 +583,8 @@ async def send_message(
     try:
         # Broadcast to all connected clients in the room (including other devices of the same user)
         # Duplicate detection on the sender's device is handled by msg.id checks on the frontend
-        await manager.broadcast(conversation_id, ws_payload)
+        # Pass sender_user_id so specific sessions can correctly determine 'is_mine'
+        await manager.broadcast(conversation_id, ws_payload, sender_user_id=user.id)
     except Exception as ws_err:
         error_logger.warning(f"WebSocket broadcast error (non-fatal): {ws_err}")
 

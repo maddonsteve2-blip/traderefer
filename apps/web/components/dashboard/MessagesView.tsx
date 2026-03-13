@@ -234,11 +234,12 @@ export function MessagesView() {
                 const payload = JSON.parse(event.data);
                 if (payload.type === 'message') {
                     const msg: Message = payload.data;
-                    const finalIsMine = msg.sender_type === myTypeRef.current;
+                    // Trust the backend's tailored is_mine, fallback to type check if missing
+                    const finalIsMine = typeof msg.is_mine === 'boolean' ? msg.is_mine : (msg.sender_type === myTypeRef.current);
                     const finalMsg = { ...msg, is_mine: finalIsMine };
                     
                     setMessages(prev => {
-                        // Avoid duplicates (optimistic messages get replaced by actual)
+                        // Avoid duplicates if WebSocket arrives after HTTP response replacement
                         const exists = prev.some(m => m.id === msg.id);
                         if (exists) return prev;
                         return [...prev, finalMsg];
@@ -487,7 +488,14 @@ export function MessagesView() {
             });
             if (res.ok) {
                 const msg = await res.json();
-                setMessages(prev => prev.map(m => m.id === optimisticId ? { ...msg, is_mine: true } : m));
+                setMessages(prev => {
+                    // Check if WebSocket broadcast already added this real message (race condition)
+                    const alreadyPresent = prev.some(m => m.id === msg.id);
+                    if (alreadyPresent) {
+                        return prev.filter(m => m.id !== optimisticId);
+                    }
+                    return prev.map(m => m.id === optimisticId ? { ...msg, is_mine: true } : m);
+                });
                 fetchContacts();
             } else {
                 setMessages(prev => prev.filter(m => m.id !== optimisticId));
@@ -672,7 +680,7 @@ export function MessagesView() {
                                             key={msg.id}
                                             className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} ${isGroupStart ? 'mt-6' : 'mt-1'}`}
                                         >
-                                            <div className={`flex items-end gap-2 max-w-[85%] sm:max-w-[70%]`}>
+                                            <div className={`flex items-end gap-2 max-w-[85%] sm:max-w-[70%] ${!isMine && !isGroupStart ? 'ml-10' : ''}`}>
                                                 {!isMine && isGroupStart && (
                                                     <div className="flex flex-col mb-1 mr-1">
                                                         <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter ml-1 mb-0.5">{partnerName}</span>
@@ -699,19 +707,17 @@ export function MessagesView() {
                                                     {msg.body && <p className="whitespace-pre-wrap font-bold tracking-tight">{msg.body}</p>}
                                                 </div>
                                             </div>
-                                            {isGroupEnd && (
-                                                <div className={`flex items-center gap-1.5 mt-2 px-1 ${isMine ? 'flex-row-reverse' : ''} ${!isMine && isGroupStart ? 'ml-10' : ''}`}>
-                                                    <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest">{formatMsgTime(msg.created_at)}</span>
-                                                    {isMine && (
-                                                        <span className="flex-shrink-0">
-                                                            {msg.is_read 
-                                                                ? <div className="w-3.5 h-3.5 rounded-full bg-indigo-50 flex items-center justify-center"><CheckCheck className="w-2.5 h-2.5 text-indigo-500" /></div>
-                                                                : <Check className="w-3 h-3 text-zinc-300" />
-                                                            }
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            )}
+                                            <div className={`flex items-center gap-1.5 mt-1 px-1 ${isMine ? 'flex-row-reverse text-right' : 'text-left'} ${!isMine ? 'ml-10' : ''}`}>
+                                                <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-tight">{formatMsgTime(msg.created_at)}</span>
+                                                {isMine && (
+                                                    <span className="flex-shrink-0 opacity-50 scale-75 origin-right">
+                                                        {msg.is_read 
+                                                            ? <div className="w-3.5 h-3.5 rounded-full bg-indigo-50 flex items-center justify-center"><CheckCheck className="w-2.5 h-2.5 text-indigo-500" /></div>
+                                                            : <Check className="w-3 h-3 text-zinc-300" />
+                                                        }
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     );
                                 });
