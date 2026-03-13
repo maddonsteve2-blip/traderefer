@@ -525,7 +525,7 @@ export function MessagesView() {
 
             {/* ── RIGHT PANEL (Chat View) ── */}
             <div 
-                className={`${activeContactId ? 'flex fixed inset-0 z-50 md:relative md:z-0' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
+                className={`${activeContactId ? 'flex fixed top-0 left-0 right-0 z-[70] md:relative md:z-0' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
                 style={{ height: viewportHeight }}
             >
                 {/* Mobile/Desktop Header */}
