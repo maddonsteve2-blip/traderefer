@@ -33,13 +33,26 @@ const API = '/api/backend';
 
 function Avatar({ name, logo, size = 9 }: { name: string; logo: string | null; size?: number }) {
     const initials = name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '?';
-    const sizeClass = `w-${size} h-${size}`;
+    
+    // Explicit mappings for tailwind classes to ensure they are bundled
+    const sizeClasses: Record<number, string> = {
+        8: 'w-8 h-8',
+        9: 'w-9 h-9',
+        10: 'w-10 h-10',
+        11: 'w-11 h-11',
+        12: 'w-12 h-12',
+        14: 'w-14 h-14',
+        16: 'w-16 h-16'
+    };
+    
+    const sizeClass = sizeClasses[size] || 'w-9 h-9';
+    
     return (
-        <div className={`${sizeClass} rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-white`}>
+        <div className={`${sizeClass} rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-white shadow-sm`}>
             {logo ? (
                 <img src={logo} alt={name} className={`${sizeClass} object-cover`} />
             ) : (
-                <span className="text-[11px] font-black text-orange-600">{initials}</span>
+                <span className="text-[11px] font-black text-orange-600 tracking-tighter">{initials}</span>
             )}
         </div>
     );
@@ -112,18 +125,145 @@ export function MessagesView() {
     const [uploading, setUploading] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const pollRef = useRef<NodeJS.Timeout | null>(null);
+    const wsRef = useRef<WebSocket | null>(null);
+    const pingRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const searchParams = useSearchParams();
     const convParam = searchParams.get('conv');
 
-    const scrollToBottom = (smooth = true) => {
-        messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' });
-    };
+    // Derive WebSocket base URL from the API route
+    const getWsUrl = useCallback((convId: string, token: string) => {
+        // The Next.js API proxy is at /api/backend → strip that prefix for WS
+        const apiBase = process.env.NEXT_PUBLIC_API_URL || '';
+        const wsBase = apiBase.replace(/^http/, 'ws');
+        return `${wsBase}/messages/ws/${convId}?token=${encodeURIComponent(token)}`;
+    }, []);
 
-    useEffect(() => { scrollToBottom(); }, [messages]);
+    // Connect (or reconnect) to the WebSocket for a conversation
+    const connectWs = useCallback(async (convId: string) => {
+        // Tear down any existing connection
+        if (wsRef.current) {
+            wsRef.current.onclose = null;
+            wsRef.current.close();
+            wsRef.current = null;
+        }
+        if (pingRef.current) clearInterval(pingRef.current);
+
+        const token = await getToken();
+        if (!token) return;
+
+        const url = getWsUrl(convId, token);
+        const ws = new WebSocket(url);
+        wsRef.current = ws;
+
+        ws.onopen = () => {
+            // Start heartbeat to keep the connection alive
+            pingRef.current = setInterval(() => {
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: 'ping' }));
+                }
+            }, 30_000);
+        };
+
+        ws.onmessage = (event) => {
+            try {
+                const payload = JSON.parse(event.data);
+                if (payload.type === 'message') {
+                    const msg: Message = payload.data;
+                    setMessages(prev => {
+                        // Avoid duplicates (optimistic messages get replaced by actual)
+                        const exists = prev.some(m => m.id === msg.id);
+                        if (exists) return prev;
+                        return [...prev, msg];
+                    });
+                    // Update contact list preview
+                    setContacts(prev => prev.map(c =>
+                        c.conversation_id === convId
+                            ? { ...c, last_message: msg.body || '📷 Image', last_message_at: msg.created_at, unread_count: c.unread_count + 1 }
+                            : c
+                    ));
+                }
+            } catch {}
+        };
+
+        ws.onerror = () => {
+            // Silently fail — messages still work via POST
+        };
+
+        ws.onclose = (e) => {
+            if (pingRef.current) clearInterval(pingRef.current);
+            // Auto-reconnect after 3s if the close wasn't intentional (code 1000 = normal)
+            if (e.code !== 1000 && wsRef.current === ws) {
+                setTimeout(() => connectWs(convId), 3000);
+            }
+        };
+    }, [getToken, getWsUrl]);
+
+    // Disconnect WebSocket on unmount
+    useEffect(() => {
+        return () => {
+            if (wsRef.current) {
+                wsRef.current.onclose = null;
+                wsRef.current.close(1000, 'unmount');
+            }
+            if (pingRef.current) clearInterval(pingRef.current);
+        };
+    }, []);
+
+
+    // Better scroll to bottom with intersection detection
+    const scrollToBottom = useCallback((smooth = true) => {
+        if (scrollContainerRef.current) {
+            const { scrollHeight, clientHeight } = scrollContainerRef.current;
+            scrollContainerRef.current.scrollTo({
+                top: scrollHeight - clientHeight,
+                behavior: smooth ? 'smooth' : 'instant'
+            });
+        }
+    }, []);
+
+    const lastMsgIdRef = useRef<string | null>(null);
+
+    // Prevent body scroll on mobile when chat is open
+    useEffect(() => {
+        if (activeConvId && window.innerWidth < 1024) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.overscrollBehavior = 'none';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.overscrollBehavior = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+            document.body.style.overscrollBehavior = '';
+        };
+    }, [activeConvId]);
+
+    // Scroll when messages change - only if last message is new
+    useEffect(() => { 
+        if (messages.length > 0) {
+            const lastMsg = messages[messages.length - 1];
+            if (lastMsg.id !== lastMsgIdRef.current) {
+                lastMsgIdRef.current = lastMsg.id;
+                const timer = setTimeout(() => scrollToBottom(messages.length > 1), 50);
+                return () => clearTimeout(timer);
+            }
+        }
+    }, [messages, scrollToBottom]);
+
+    // Handle mobile keyboard viewport issues & scroll anchoring
+    useEffect(() => {
+        if (!activeConvId) return;
+        const handleResize = () => scrollToBottom(false);
+        visualViewport?.addEventListener('resize', handleResize);
+        visualViewport?.addEventListener('scroll', handleResize);
+        return () => {
+            visualViewport?.removeEventListener('resize', handleResize);
+            visualViewport?.removeEventListener('scroll', handleResize);
+        };
+    }, [activeConvId, scrollToBottom]);
 
     const fetchContacts = useCallback(async () => {
         try {
@@ -194,10 +334,22 @@ export function MessagesView() {
 
     useEffect(() => {
         if (!activeConvId) return;
+        // 1. Fetch all existing messages (initial load)
         fetchMessages(activeConvId);
-        pollRef.current = setInterval(() => fetchMessages(activeConvId), 4000);
-        return () => { if (pollRef.current) clearInterval(pollRef.current); };
-    }, [activeConvId, fetchMessages]);
+        // 2. Open WebSocket for real-time updates
+        connectWs(activeConvId);
+        return () => {
+            // Disconnect when conversation changes
+            if (wsRef.current) {
+                wsRef.current.onclose = null;
+                wsRef.current.close(1000, 'conversation_changed');
+                wsRef.current = null;
+            }
+            if (pingRef.current) clearInterval(pingRef.current);
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeConvId]);
+
 
     const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -275,7 +427,7 @@ export function MessagesView() {
     }
 
     return (
-        <div className="flex h-full bg-white overflow-hidden">
+        <div className={`fixed inset-0 lg:relative flex h-[100dvh] lg:h-full bg-white overflow-hidden overscroll-none ${activeContactId ? 'z-[60]' : 'z-0'} lg:z-auto`}>
             {/* ── LEFT SIDEBAR ── */}
             <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-[300px] lg:w-[340px] bg-gray-100`}>
 
@@ -293,10 +445,10 @@ export function MessagesView() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
                         <input
                             type="text"
-                            placeholder="Search conversations..."
+                            placeholder="Find partner..."
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 h-[52px] bg-[#F4F4F5] border-none rounded-2xl focus:outline-none placeholder:text-zinc-400 text-[#18181B] font-medium text-[15px]"
+                            className="w-full pl-11 pr-4 h-[52px] bg-white border border-zinc-200 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none placeholder:text-zinc-400 text-zinc-900 font-bold text-[15px] shadow-sm transition-all"
                         />
                     </div>
                 </div>
@@ -415,7 +567,11 @@ export function MessagesView() {
                 ) : null}
 
                 {/* ── Scrollable content area ── */}
-                <div className="flex-1 overflow-y-auto min-h-0 bg-gray-50">
+                <div 
+                    ref={scrollContainerRef}
+                    className="flex-1 overflow-y-auto min-h-0 bg-zinc-50/50 scroll-smooth touch-pan-y overscroll-contain"
+                    style={{ overflowAnchor: 'none' }}
+                >
                     {activeContactId && activeContact ? (
                         <div className="px-4 py-4">
                             {messages.length === 0 ? (
@@ -504,7 +660,7 @@ export function MessagesView() {
                                 });
                                 return grouped;
                             })()}
-                            <div ref={messagesEndRef} className="h-2" />
+                            <div className="h-4" />
                         </div>
                     ) : (
                         /* Empty state — no conversation selected */
@@ -561,20 +717,19 @@ export function MessagesView() {
                     </div>
                 )}
 
-                {/* ── Input bar — ALWAYS VISIBLE ── */}
-                <div className="px-4 py-4 bg-white flex-shrink-0" style={{ boxShadow: '0 -4px 16px rgba(0,0,0,0.06)' }}>
+                {/* ── Input bar ── */}
+                <div className="px-4 py-4 lg:py-6 bg-white border-t border-zinc-100 flex-shrink-0 z-10 pb-safe">
                     {activeContactId ? (
-                        <>
-                            <div className="flex items-end gap-2 bg-gray-100 rounded-2xl px-3 py-2.5 focus-within:ring-2 focus-within:ring-orange-500 transition-all">
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-end gap-2 bg-zinc-100 rounded-[24px] px-3 py-2.5 focus-within:bg-white focus-within:ring-4 focus-within:ring-orange-500/10 focus-within:border-orange-500 border border-transparent transition-all">
                                 <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleImageSelect} />
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     disabled={uploading}
-                                    className="flex items-center gap-1.5 px-3 py-2 text-zinc-500 hover:text-orange-500 hover:bg-orange-50 border border-gray-200 hover:border-orange-200 rounded-xl transition-all flex-shrink-0 self-end mb-0.5 font-bold text-lg"
-                                    title="Attach quote or photo"
+                                    className="flex items-center justify-center w-11 h-11 text-zinc-500 hover:text-orange-500 hover:bg-white rounded-xl transition-all flex-shrink-0 mb-0.5"
+                                    title="Attach photo"
                                 >
-                                    <Paperclip className="w-5 h-5" />
-                                    <span className="hidden sm:inline">Attach</span>
+                                    <Paperclip className="w-6 h-6" />
                                 </button>
                                 <textarea
                                     ref={inputRef}
@@ -582,30 +737,31 @@ export function MessagesView() {
                                     onChange={e => {
                                         setNewMessage(e.target.value);
                                         e.target.style.height = 'auto';
-                                        e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                                        e.target.style.height = Math.min(e.target.scrollHeight, 150) + 'px';
                                     }}
                                     onKeyDown={handleKeyDown}
+                                    onFocus={() => setTimeout(() => scrollToBottom(false), 300)}
                                     placeholder={`Message ${partnerName.split(' ')[0] || 'Partner'}…`}
                                     rows={1}
-                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-gray-600 focus:outline-none resize-none leading-relaxed py-2 max-h-[120px] text-xl"
+                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed py-2.5 max-h-[150px] text-lg lg:text-xl font-medium"
                                 />
                                 <button
                                     onClick={handleSend}
                                     disabled={(!newMessage.trim() && !imageUrl) || sending || uploading}
-                                    className="flex-shrink-0 self-end mb-0.5 h-12 px-5 bg-orange-600 hover:bg-orange-700 disabled:bg-zinc-800 text-white rounded-xl flex items-center gap-2 font-bold transition-all duration-150 active:scale-95 shadow-md text-xl"
+                                    className="flex-shrink-0 w-11 h-11 bg-orange-500 hover:bg-orange-600 disabled:bg-zinc-200 disabled:text-zinc-400 text-white rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-lg shadow-orange-500/20 mb-0.5"
                                 >
-                                    {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Send className="w-5 h-5" /><span className="hidden sm:inline">Send</span></>}
+                                    {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 fill-current" />}
                                 </button>
                             </div>
-                            <p className="text-xs text-zinc-300 mt-1.5 text-center font-medium">Enter to send · Shift+Enter for new line</p>
-                        </>
-                    ) : (
-                        <div className="flex items-center gap-3 bg-white border-2 border-gray-300 rounded-2xl px-4 py-3 opacity-50 cursor-not-allowed">
-                            <div className="flex-1 text-gray-400 font-medium select-none text-xl">
-                                Select a business to start messaging…
+                            <div className="flex items-center justify-between px-2">
+                                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">Supports images & rich text</p>
+                                <p className="text-[10px] text-zinc-400 font-bold hidden lg:block uppercase tracking-widest">Enter to send · Shift+Enter for new line</p>
                             </div>
-                            <div className="h-12 px-5 bg-zinc-200 text-zinc-400 rounded-xl flex items-center gap-2 font-bold flex-shrink-0 text-xl">
-                                <Send className="w-5 h-5" /><span className="hidden sm:inline">Send</span>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded-[24px] px-4 py-4 opacity-50 cursor-not-allowed">
+                            <div className="flex-1 text-zinc-400 font-bold uppercase tracking-widest text-xs">
+                                Select a conversation to start messaging…
                             </div>
                         </div>
                     )}

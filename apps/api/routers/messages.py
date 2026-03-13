@@ -1,15 +1,88 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, Query
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Dict, List
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
-from services.database import get_db
-from services.auth import get_current_user, AuthenticatedUser
+from services.database import get_db, AsyncSessionLocal
+from services.auth import get_current_user, AuthenticatedUser, get_jwks
 from services.email import send_new_message_notification
+from jose import jwt
 import uuid
+import os
+import json
 from utils.logging_config import error_logger
 
 router = APIRouter()
+
+
+# ─── WebSocket Connection Manager ──────────────────────────────────────────────
+
+class ConnectionManager:
+    """Manages active WebSocket connections per conversation room."""
+    
+    def __init__(self):
+        # Maps conversation_id -> list of (websocket, user_id) tuples
+        self._rooms: Dict[str, List[tuple]] = {}
+
+    async def connect(self, conversation_id: str, websocket: WebSocket, user_id: str):
+        await websocket.accept()
+        if conversation_id not in self._rooms:
+            self._rooms[conversation_id] = []
+        self._rooms[conversation_id].append((websocket, user_id))
+
+    def disconnect(self, conversation_id: str, websocket: WebSocket):
+        if conversation_id in self._rooms:
+            self._rooms[conversation_id] = [
+                (ws, uid) for ws, uid in self._rooms[conversation_id] if ws is not websocket
+            ]
+            if not self._rooms[conversation_id]:
+                del self._rooms[conversation_id]
+
+    async def broadcast(self, conversation_id: str, message: dict, exclude_ws: WebSocket = None):
+        """Send a message to all connected clients in a conversation room."""
+        if conversation_id not in self._rooms:
+            return
+        dead = []
+        for ws, uid in self._rooms[conversation_id]:
+            if ws is exclude_ws:
+                continue
+            try:
+                await ws.send_json(message)
+            except Exception:
+                dead.append(ws)
+        # Cleanup dead connections
+        for ws in dead:
+            self.disconnect(conversation_id, ws)
+
+    def active_count(self, conversation_id: str) -> int:
+        return len(self._rooms.get(conversation_id, []))
+
+
+# Global singleton — lives for the lifetime of the process
+manager = ConnectionManager()
+
+
+async def _verify_ws_token(token: str) -> Optional[str]:
+    """Verify a Clerk JWT from a WebSocket query param. Returns user_id or None."""
+    try:
+        jwks = await get_jwks()
+        header = jwt.get_unverified_header(token)
+        rsa_key = {}
+        for key in jwks["keys"]:
+            if key["kid"] == header["kid"]:
+                rsa_key = {k: key[k] for k in ("kty", "kid", "use", "n", "e")}
+        if not rsa_key:
+            return None
+        payload = jwt.decode(
+            token, rsa_key, algorithms=["RS256"],
+            options={"verify_aud": False, "verify_iss": False, "verify_sub": True}
+        )
+        clerk_id = payload.get("sub")
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, clerk_id)) if clerk_id else None
+    except Exception as e:
+        error_logger.warning(f"WS auth error: {e}")
+        return None
+
 
 
 class SendMessage(BaseModel):
@@ -35,6 +108,89 @@ async def _get_user_identity(db: AsyncSession, user: AuthenticatedUser):
         "business_id": biz["id"] if biz else None,
         "referrer_id": ref["id"] if ref else None,
     }
+
+
+# ─── WebSocket Endpoint ──────────────────────────────────────────────────────
+
+@router.websocket("/ws/{conversation_id}")
+async def websocket_conversation(
+    websocket: WebSocket,
+    conversation_id: str,
+    token: str = Query(...),
+):
+    """
+    Real-time WebSocket endpoint for a conversation.
+    
+    Connect with: ws://host/messages/ws/{conversation_id}?token=<clerk_jwt>
+    
+    The server will push new messages as JSON objects in the shape:
+        { "type": "message", "data": { ...message fields... } }
+    
+    Clients can also ping to keep the connection alive:
+        Send: { "type": "ping" }
+        Receive: { "type": "pong" }
+    """
+    # 1. Authenticate
+    user_id = await _verify_ws_token(token)
+    if not user_id:
+        await websocket.close(code=4001, reason="Unauthorized")
+        return
+
+    # 2. Authorize — check user is part of this conversation
+    async with AsyncSessionLocal() as db:
+        try:
+            conv_uuid = uuid.UUID(conversation_id)
+        except ValueError:
+            await websocket.close(code=4004, reason="Invalid conversation ID")
+            return
+
+        user_uuid = uuid.UUID(user_id)
+        biz_result = await db.execute(
+            text("SELECT id FROM businesses WHERE user_id = :uid"), {"uid": user_uuid}
+        )
+        biz = biz_result.mappings().first()
+        ref_result = await db.execute(
+            text("SELECT id FROM referrers WHERE user_id = :uid"), {"uid": user_uuid}
+        )
+        ref = ref_result.mappings().first()
+
+        biz_id = biz["id"] if biz else None
+        ref_id = ref["id"] if ref else None
+
+        conv_result = await db.execute(
+            text("SELECT business_id, referrer_id FROM conversations WHERE id = :cid"),
+            {"cid": conv_uuid},
+        )
+        conv = conv_result.mappings().first()
+        if not conv:
+            await websocket.close(code=4004, reason="Conversation not found")
+            return
+
+        if conv["business_id"] != biz_id and conv["referrer_id"] != ref_id:
+            await websocket.close(code=4003, reason="Forbidden")
+            return
+
+        my_type = "business" if conv["business_id"] == biz_id else "referrer"
+
+    # 3. Join the room
+    await manager.connect(conversation_id, websocket, user_id)
+    
+    try:
+        # Send a "connected" handshake
+        await websocket.send_json({"type": "connected", "conversation_id": conversation_id})
+        
+        # 4. Listen loop — handle pings and detect disconnects
+        while True:
+            try:
+                data = await websocket.receive_json()
+                if isinstance(data, dict) and data.get("type") == "ping":
+                    await websocket.send_json({"type": "pong"})
+            except Exception:
+                break
+    except WebSocketDisconnect:
+        pass
+    finally:
+        manager.disconnect(conversation_id, websocket)
 
 
 @router.get("/unread-count")
@@ -375,6 +531,26 @@ async def send_message(
                     )
     except Exception as notify_err:
         error_logger.warning(f"Message notification error (non-fatal): {notify_err}")
+
+    # ─── WebSocket Broadcast ─────────────────────────────────────────────────────
+    # Push the new message to all OTHER connected clients in this conversation
+    ws_payload = {
+        "type": "message",
+        "data": {
+            "id": str(msg["id"]),
+            "sender_type": sender_type,
+            "sender_id": str(sender_id),
+            "body": body_text,
+            "image_url": data.image_url,
+            "is_read": False,
+            "created_at": str(msg["created_at"]),
+            "is_mine": False,  # from recipient's perspective
+        }
+    }
+    try:
+        await manager.broadcast(conversation_id, ws_payload)
+    except Exception as ws_err:
+        error_logger.warning(f"WebSocket broadcast error (non-fatal): {ws_err}")
 
     return {
         "id": str(msg["id"]),
