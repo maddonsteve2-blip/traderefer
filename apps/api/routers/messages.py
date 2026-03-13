@@ -255,6 +255,7 @@ async def get_unread_count(
 
 @router.get("/contacts")
 async def list_contacts(
+    role: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user),
 ):
@@ -267,9 +268,17 @@ async def list_contacts(
     if not biz_id and not ref_id:
         raise HTTPException(status_code=404, detail="No business or referrer profile found")
 
-    my_type = "business" if biz_id else "referrer"
+    # If role is provided, try to respect it; otherwise fallback to existing logic
+    if role == "business" and biz_id:
+        active_role = "business"
+    elif role == "referrer" and ref_id:
+        active_role = "referrer"
+    else:
+        active_role = "business" if biz_id else "referrer"
 
-    if biz_id:
+    my_type = active_role
+
+    if active_role == "business":
         # Business sees all their referrers
         query = text("""
             SELECT
@@ -317,6 +326,7 @@ async def list_contacts(
             ORDER BY c.last_message_at DESC NULLS LAST, rl.created_at DESC
         """)
         params = {"my_id": ref_id}
+
 
     result = await db.execute(query, params)
     rows = result.mappings().all()

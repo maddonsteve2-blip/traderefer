@@ -62,16 +62,17 @@ export default async function DashboardReferPage({
     const totalConfirmed = business.total_confirmed || 0;
     const connectionRate = business.connection_rate || 0;
 
-    const allFeatures: string[] = business.features?.length > 0 ? business.features
-        : business.business_highlights?.length > 0 ? business.business_highlights : [];
-    const services: string[] = business.services || [];
-    const specialties: string[] = business.specialties || [];
-    const photoUrls: string[] = business.photo_urls?.slice(0, 3) || [];
+    const allFeatures: string[] = (Array.isArray(business.features) && business.features.length > 0) ? business.features
+        : (Array.isArray(business.business_highlights) && business.business_highlights.length > 0) ? business.business_highlights : [];
+    const services: string[] = Array.isArray(business.services) ? business.services : [];
+    const specialties: string[] = Array.isArray(business.specialties) ? business.specialties : [];
+    const photoUrls: string[] = (Array.isArray(business.photo_urls) ? business.photo_urls : []).slice(0, 3);
 
     const fmt = (n: number) => Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`;
 
-    const topReviews = googleReviews
-        .filter((r: any) => r.review_text && r.rating >= 4);
+    const topReviews = Array.isArray(googleReviews)
+        ? googleReviews.filter((r: any) => r.review_text && r.rating >= 4)
+        : [];
 
     return (
         <main className="min-h-screen bg-zinc-50">
@@ -187,7 +188,7 @@ export default async function DashboardReferPage({
                                     <Wrench className="w-6 h-6 text-orange-500 shrink-0" />
                                     <h2 className="font-black text-zinc-900 text-2xl">Expertise & Services</h2>
                                 </div>
-                                {services.length > 0 ? (
+                                {Array.isArray(services) && services.length > 0 ? (
                                     <div className="flex flex-wrap gap-2.5">
                                         {services.map((s: string, i: number) => (
                                             <span key={i} className="flex items-center gap-2 px-4 py-2.5 bg-orange-50 border-2 border-orange-100 text-orange-800 rounded-2xl font-black text-base">
@@ -195,7 +196,7 @@ export default async function DashboardReferPage({
                                             </span>
                                         ))}
                                     </div>
-                                ) : specialties.length > 0 ? (
+                                ) : Array.isArray(specialties) && specialties.length > 0 ? (
                                     <div className="flex flex-wrap gap-2.5">
                                         {specialties.map((s: string, i: number) => (
                                             <span key={i} className="flex items-center gap-2 px-4 py-2.5 bg-orange-50 border-2 border-orange-100 text-orange-800 rounded-2xl font-black text-base">
@@ -217,7 +218,7 @@ export default async function DashboardReferPage({
                                         ))}
                                     </div>
                                 )}
-                                {allFeatures.length > 0 && (
+                                {Array.isArray(allFeatures) && allFeatures.length > 0 && (
                                     <div className="mt-6 pt-6 border-t-2 border-zinc-100 flex flex-wrap gap-2.5">
                                         {allFeatures.map((f: string, i: number) => (
                                             <span key={i} className="px-4 py-2 bg-zinc-50 border-2 border-zinc-200 text-zinc-700 rounded-xl font-black uppercase tracking-widest text-[10px]">{f}</span>
@@ -297,7 +298,7 @@ export default async function DashboardReferPage({
                         />
 
                         {/* Active Bonus Campaigns */}
-                        {campaigns && campaigns.length > 0 && (
+                        {Array.isArray(campaigns) && campaigns.length > 0 && (
                             <div className="bg-zinc-900 rounded-[32px] p-8 text-white relative overflow-hidden shadow-2xl">
                                 <Flame className="absolute -bottom-8 -right-8 w-48 h-48 text-orange-500 opacity-10 rotate-12" />
                                 <div className="relative z-10">

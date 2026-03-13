@@ -35,7 +35,7 @@ export function MobileReferrerLeads({ leads: initialLeads, loading: initialLoadi
         async function fetchLeads() {
             try {
                 const token = await getToken();
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/referrer/leads`, {
+                const res = await fetch(`/api/backend/referrer/leads`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {

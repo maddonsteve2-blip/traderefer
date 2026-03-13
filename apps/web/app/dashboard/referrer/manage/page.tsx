@@ -82,7 +82,7 @@ function InlineChat({ businessId, businessName, token }: { businessId: string; b
             if (!response?.ok) return;
 
             const data = await response.json();
-            setMessages(data.messages || []);
+            setMessages(Array.isArray(data.messages) ? data.messages : []);
             setTimeout(() => {
                 bottomRef.current?.scrollIntoView({ behavior: "smooth" });
             }, 50);
@@ -278,7 +278,7 @@ export default function ReferrerManagePage() {
                 const dashData = dashRes.ok ? await dashRes.json() : null;
                 const l: TeamLink[] = dashData?.links || dashData?.active_links || [];
                 const allApps = appsRes.ok ? (await appsRes.json()).applications || [] : [];
-                const pending: PendingApp[] = allApps
+                const pending: PendingApp[] = (Array.isArray(allApps) ? allApps : [])
                     .filter((a: { status: string }) => a.status === "pending")
                     .map((a: { id: string; business_id: string; business_name: string; business_slug: string; business_logo: string | null; trade_category: string; suburb: string; referral_fee_cents: number; applied_at: string }) => ({
                         id: a.id,
@@ -311,7 +311,7 @@ export default function ReferrerManagePage() {
     useEffect(() => {
         if (loading) return;
 
-        const approvedMatch = targetBusinessSlug
+        const approvedMatch = (targetBusinessSlug && Array.isArray(links))
             ? links.find((link) => link.slug === targetBusinessSlug)
             : null;
         if (approvedMatch) {
@@ -319,7 +319,7 @@ export default function ReferrerManagePage() {
             return;
         }
 
-        const pendingMatch = targetBusinessSlug
+        const pendingMatch = (targetBusinessSlug && Array.isArray(pendingApps))
             ? pendingApps.find((app) => app.business_slug === targetBusinessSlug)
             : null;
         if (pendingMatch) {
@@ -327,7 +327,7 @@ export default function ReferrerManagePage() {
             return;
         }
 
-        if (links.length > 0) {
+        if (Array.isArray(links) && links.length > 0) {
             setSelected((current) => {
                 if (current?.type === "approved" && links.some((link) => link.slug === current.link.slug)) {
                     return current;
@@ -337,7 +337,7 @@ export default function ReferrerManagePage() {
             return;
         }
 
-        if (pendingApps.length > 0) {
+        if (Array.isArray(pendingApps) && pendingApps.length > 0) {
             setSelected((current) => {
                 if (current?.type === "pending" && pendingApps.some((app) => app.id === current.app.id)) {
                     return current;

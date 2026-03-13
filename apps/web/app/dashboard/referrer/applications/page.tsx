@@ -47,14 +47,14 @@ export default function ReferrerApplicationsPage() {
             });
             if (res.ok) {
                 const data = await res.json();
-                setApps(data.applications);
+                setApps(Array.isArray(data.applications) ? data.applications : []);
             }
             setLoading(false);
         })();
     }, [isLoaded, getToken, apiUrl]);
 
-    const pending = apps.filter(a => a.status === "pending");
-    const rest = apps.filter(a => a.status !== "pending");
+    const pending = Array.isArray(apps) ? apps.filter(a => a.status === "pending") : [];
+    const rest = Array.isArray(apps) ? apps.filter(a => a.status !== "pending") : [];
 
     if (loading) {
         return (

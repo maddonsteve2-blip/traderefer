@@ -109,7 +109,7 @@ function formatListTime(dateStr: string) {
     } catch { return ''; }
 }
 
-export function MessagesView() {
+export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
     const { getToken } = useAuth();
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [activeContactId, setActiveContactId] = useState<string | null>(null);
@@ -117,7 +117,7 @@ export function MessagesView() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [sending, setSending] = useState(false);
-    const [myType, setMyType] = useState<string>('business');
+    const [myType, setMyType] = useState<string>(role || 'business');
     const [partnerName, setPartnerName] = useState('');
     const [partnerLogo, setPartnerLogo] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -350,9 +350,14 @@ export function MessagesView() {
     const fetchContacts = useCallback(async () => {
         try {
             const token = await getToken();
-            const res = await fetch(`${API}/messages/contacts`, {
+            const url = role 
+                ? `${API}/messages/contacts?role=${role}`
+                : `${API}/messages/contacts`;
+                
+            const res = await fetch(url, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+
             if (res.ok) {
                 const data = await res.json();
                 setContacts(data.contacts);

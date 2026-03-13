@@ -14,7 +14,7 @@ const BUSINESS_TABS = [
 
 const REFERRER_TABS = [
     { label: "HOME",    href: "/dashboard/referrer",                    icon: LayoutGrid, exact: true },
-    { label: "LEADS",   href: "/dashboard/referrer/manage",             icon: Users,       matchPrefix: "/dashboard/referrer/manage" },
+    { label: "EARNINGS", href: "/dashboard/referrer/manage",             icon: Users,       matchPrefix: "/dashboard/referrer/manage" },
     { label: "NETWORK", href: "/dashboard/referrer/businesses",         icon: Share2,      matchPrefix: "/dashboard/referrer/businesses" },
     { label: "INBOX",   href: "/dashboard/referrer/messages",           icon: MessageSquare, matchPrefix: "/dashboard/referrer/messages" },
 ];

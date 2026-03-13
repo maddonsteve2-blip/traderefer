@@ -110,7 +110,16 @@ export function MobileReferrerNetwork({
                 </div>
 
                 {/* ── Action Button ── */}
-                <button className="w-full h-14 bg-[#18181B] rounded-2xl flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all">
+                <button 
+                    onClick={() => {
+                        const searchInput = document.getElementById("mobile-biz-search");
+                        if (searchInput) {
+                            searchInput.focus();
+                            searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }}
+                    className="w-full h-14 bg-[#18181B] rounded-2xl flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all"
+                >
                     <UserPlus className="w-5 h-5 text-white" />
                     <span className="text-[15px] font-bold text-white">Apply to New Trade</span>
                 </button>
@@ -121,6 +130,7 @@ export function MobileReferrerNetwork({
                     <div className="bg-[#F4F4F5] rounded-2xl p-3.5 flex items-center gap-3">
                         <Search className="w-5 h-5 text-zinc-400" />
                         <input 
+                            id="mobile-biz-search"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search businesses or trades..."

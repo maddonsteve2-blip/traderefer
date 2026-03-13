@@ -21,7 +21,7 @@ export function MobileBusinessMessages({ loading }: MobileBusinessMessagesProps)
         <div className="lg:hidden flex flex-col min-h-screen bg-white">
             <div className="flex-1 pb-32">
                 <Suspense fallback={<div className="flex items-center justify-center p-8"><Loader2 className="w-8 h-8 text-orange-500 animate-spin" /></div>}>
-                    <MessagesView />
+                    <MessagesView role="business" />
                 </Suspense>
             </div>
         </div>
