@@ -61,22 +61,40 @@ function ReferrerOnboardingInner() {
                 const statusData = await statusRes.json();
 
                 if (statusData.has_business) {
-                    // Try to get their business phone to pre-fill
                     const bizRes = await fetch(`${API}/business/me`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     if (bizRes.ok) {
                         const bizData = await bizRes.json();
+                        
+                        // 1. Mobile Check
                         const verifiedPhone = bizData.owner_phone || bizData.business_phone;
                         if (verifiedPhone) {
                             setPhone(verifiedPhone);
                             setOtpVerified(true);
-                            setStep(1); // Set to verify step but we'll jump to 2
-                            setTimeout(() => {
+                            setStep(1); // Brief jump to show progress
+                        }
+
+                        // 2. Address Check
+                        if (bizData.suburb) {
+                            setAddress({
+                                street: bizData.address || "",
+                                suburb: bizData.suburb,
+                                state: bizData.state || "VIC",
+                                postcode: bizData.postcode || ""
+                            });
+                        }
+
+                        // Determine final jump step
+                        setTimeout(() => {
+                            if (verifiedPhone && bizData.suburb) {
+                                setStep(2); // Go to final address step (already filled)
+                                toast.info("Reusing your verified business details.");
+                            } else if (verifiedPhone) {
                                 setStep(2);
                                 toast.info("Reusing your verified business mobile.");
-                            }, 100);
-                        }
+                            }
+                        }, 100);
                     }
                 }
             } catch (e) {
