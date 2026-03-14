@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { 
     Dialog, 
+    DialogClose,
     DialogContent, 
     DialogHeader, 
     DialogTitle, 
@@ -39,6 +40,7 @@ export function InviteReferrersDialog({ open, onClose, businessName, slug }: Inv
 
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://traderefer.au';
     const joinUrl = `${baseUrl}/register?ref=${slug}&type=referrer`;
+    const shareCopy = `Hey! I'm using TradeRefer to manage my trade referrals. Join as a referrer and earn commissions when you send quality leads my way. Sign up here:\n${joinUrl}`;
     const shareText = `Hey! I'm using TradeRefer to manage my trade referrals. Join as a referrer and earn commissions when you send quality leads my way. Sign up here:`;
 
     const handleCopy = () => {
@@ -56,7 +58,7 @@ export function InviteReferrersDialog({ open, onClose, businessName, slug }: Inv
         }
         setSending(true);
         // Link copying simulation for now
-        navigator.clipboard.writeText(`${shareText}\n${joinUrl}`);
+        navigator.clipboard.writeText(shareCopy);
         toast.success(`Invite link copied! Send it to ${emailList.length} contact${emailList.length > 1 ? 's' : ''}`);
         setSending(false);
         setEmails("");
@@ -80,91 +82,131 @@ export function InviteReferrersDialog({ open, onClose, businessName, slug }: Inv
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-lg p-0 bg-white rounded-[32px] overflow-hidden border-none shadow-2xl">
-                <div className="p-6 md:p-10 space-y-8">
-                    <DialogHeader>
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 md:w-14 md:h-14 bg-orange-100 rounded-2xl flex items-center justify-center shrink-0">
-                                <Users className="w-6 h-6 md:w-7 md:h-7 text-orange-600" />
+            <DialogContent className="left-0 top-0 z-50 h-dvh w-screen translate-x-0 translate-y-0 gap-0 overflow-hidden rounded-none border-none bg-white p-0 shadow-none data-[state=closed]:slide-out-to-left-0 data-[state=closed]:slide-out-to-top-0 data-[state=open]:slide-in-from-left-0 data-[state=open]:slide-in-from-top-0 sm:left-[50%] sm:top-[50%] sm:h-auto sm:max-h-[90vh] sm:w-full sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:gap-4 sm:overflow-hidden sm:rounded-[32px] sm:shadow-2xl sm:data-[state=closed]:slide-out-to-left-1/2 sm:data-[state=closed]:slide-out-to-top-[48%] sm:data-[state=open]:slide-in-from-left-1/2 sm:data-[state=open]:slide-in-from-top-[48%]">
+                <div className="flex h-full flex-col sm:max-h-[90vh]">
+                    <div className="sticky top-0 z-10 border-b border-zinc-100 bg-white px-5 py-4 sm:hidden">
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-zinc-400">Invite Referrers</p>
+                                <p className="mt-1 text-[15px] font-bold text-zinc-900 truncate">{businessName}</p>
                             </div>
-                            <div>
-                                <DialogTitle className="text-2xl md:text-3xl font-black text-zinc-900 font-display leading-none mb-1">
-                                    Invite Referrers
-                                </DialogTitle>
-                                <DialogDescription className="text-base md:text-lg text-zinc-500 font-medium leading-tight">
-                                    Grow your trusted referral network
-                                </DialogDescription>
-                            </div>
+                            <DialogClose className="flex h-11 w-11 items-center justify-center rounded-2xl border border-zinc-200 text-zinc-500">
+                                <X className="h-5 w-5" />
+                                <span className="sr-only">Close</span>
+                            </DialogClose>
                         </div>
-                    </DialogHeader>
+                    </div>
 
-                    <div className="space-y-6">
-                        {/* Copy Link Section */}
-                        <div className="space-y-3">
-                            <label className="text-xs font-black text-zinc-400 uppercase tracking-widest block ml-1">
-                                Your Unique Invite Link
-                            </label>
-                            <div className="flex items-center gap-2 p-2 bg-zinc-50 rounded-2xl border border-zinc-100 group">
-                                <div className="flex-1 px-3 py-2 text-base text-zinc-600 font-mono font-bold truncate">
-                                    {joinUrl}
+                    <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6 sm:py-8 md:px-10">
+                        <DialogHeader className="hidden sm:block">
+                            <div className="mb-4 flex items-center gap-4">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-100 md:h-14 md:w-14">
+                                    <Users className="h-6 w-6 text-orange-600 md:h-7 md:w-7" />
                                 </div>
+                                <div>
+                                    <DialogTitle className="mb-1 font-display text-2xl font-black leading-none text-zinc-900 md:text-3xl">
+                                        Invite Referrers
+                                    </DialogTitle>
+                                    <DialogDescription className="text-base font-medium leading-tight text-zinc-500 md:text-lg">
+                                        Grow your trusted referral network
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </DialogHeader>
+
+                        <div className="space-y-5 sm:space-y-6">
+                            <div className="rounded-[28px] bg-zinc-900 p-5 text-white sm:hidden">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10">
+                                        <Share2 className="h-5 w-5 text-orange-400" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-[20px] font-black tracking-tight">Invite Referrers</h2>
+                                        <p className="mt-1 text-[13px] font-medium leading-relaxed text-zinc-400">
+                                            Share your sign-up link, copy a ready-to-send message, or invite contacts directly.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="ml-1 block text-[11px] font-black uppercase tracking-[0.18em] text-zinc-400 sm:text-xs">
+                                    Your Unique Invite Link
+                                </label>
+                                <div className="rounded-[24px] border border-zinc-100 bg-zinc-50 p-3 sm:rounded-2xl">
+                                    <div className="break-all rounded-[18px] bg-white px-4 py-3 font-mono text-[13px] font-bold leading-relaxed text-zinc-600 sm:text-sm">
+                                        {joinUrl}
+                                    </div>
+                                    <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                        <Button
+                                            onClick={handleCopy}
+                                            className="h-12 rounded-2xl bg-orange-600 text-[13px] font-black uppercase tracking-widest text-white hover:bg-orange-700 sm:h-12 sm:rounded-xl sm:text-xs"
+                                        >
+                                            {copied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+                                            {copied ? "Copied" : "Copy Link"}
+                                        </Button>
+                                        <Button
+                                            onClick={() => navigator.clipboard.writeText(shareCopy).then(() => toast.success("Invite message copied!"))}
+                                            variant="outline"
+                                            className="h-12 rounded-2xl border-zinc-200 bg-white text-[13px] font-black uppercase tracking-widest text-zinc-900 hover:bg-zinc-50 sm:h-12 sm:rounded-xl sm:text-xs"
+                                        >
+                                            <Mail className="mr-2 h-4 w-4 text-orange-500" />
+                                            Copy Message
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="ml-1 block text-[11px] font-black uppercase tracking-[0.18em] text-zinc-400 sm:text-xs">
+                                    Quick Share
+                                </label>
+                                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                    <button onClick={() => shareSocial('facebook')} className="flex min-h-[88px] flex-col items-center justify-center gap-2 rounded-[24px] border border-zinc-100 bg-zinc-50 p-4 transition-all hover:border-blue-200 hover:bg-blue-50 group sm:min-h-[96px] sm:rounded-2xl md:p-6">
+                                        <Facebook className="h-6 w-6 text-zinc-400 group-hover:text-blue-600 md:h-7 md:w-7" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-blue-600">FB</span>
+                                    </button>
+                                    <button onClick={() => shareSocial('twitter')} className="flex min-h-[88px] flex-col items-center justify-center gap-2 rounded-[24px] border border-zinc-100 bg-zinc-50 p-4 transition-all hover:border-sky-200 hover:bg-sky-50 group sm:min-h-[96px] sm:rounded-2xl md:p-6">
+                                        <Twitter className="h-6 w-6 text-zinc-400 group-hover:text-sky-500 md:h-7 md:w-7" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-sky-500">X</span>
+                                    </button>
+                                    <button onClick={() => shareSocial('linkedin')} className="flex min-h-[88px] flex-col items-center justify-center gap-2 rounded-[24px] border border-zinc-100 bg-zinc-50 p-4 transition-all hover:border-blue-200 hover:bg-blue-50 group sm:min-h-[96px] sm:rounded-2xl md:p-6">
+                                        <Linkedin className="h-6 w-6 text-zinc-400 group-hover:text-blue-700 md:h-7 md:w-7" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-blue-700">LinkedIn</span>
+                                    </button>
+                                    <button onClick={() => shareSocial('whatsapp')} className="flex min-h-[88px] flex-col items-center justify-center gap-2 rounded-[24px] border border-zinc-100 bg-zinc-50 p-4 transition-all hover:border-green-200 hover:bg-green-50 group sm:min-h-[96px] sm:rounded-2xl md:p-6">
+                                        <MessageCircle className="h-6 w-6 text-zinc-400 group-hover:text-green-600 md:h-7 md:w-7" />
+                                        <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-green-600">WA</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <label className="ml-1 block text-[11px] font-black uppercase tracking-[0.18em] text-zinc-400 sm:text-xs">
+                                    <Mail className="mr-1 inline h-3 w-3 text-orange-500" /> Invite via Email
+                                </label>
+                                <textarea
+                                    value={emails}
+                                    onChange={(e) => setEmails(e.target.value)}
+                                    placeholder="Enter emails separated by commas..."
+                                    rows={4}
+                                    className="w-full resize-none rounded-[24px] border border-zinc-100 bg-zinc-50 p-4 text-[16px] font-medium text-zinc-900 placeholder:text-zinc-300 focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-500/10 sm:rounded-[24px] sm:p-5 sm:text-lg"
+                                />
                                 <Button
-                                    onClick={handleCopy}
-                                    variant="ghost"
-                                    className="h-12 px-6 rounded-xl bg-white shadow-sm border border-zinc-100 text-orange-600 hover:text-orange-700 hover:bg-orange-50 font-black uppercase text-xs tracking-widest"
+                                    onClick={handleSendEmails}
+                                    disabled={sending || !emails.trim()}
+                                    className="h-14 w-full rounded-[20px] bg-zinc-900 text-[15px] font-black text-white shadow-xl shadow-zinc-200 hover:bg-black sm:h-16 sm:rounded-full sm:text-xl"
                                 >
-                                    {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-                                    {copied ? 'Copied' : 'Copy'}
+                                    {sending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-3 h-5 w-5" />}
+                                    Send Invites
                                 </Button>
                             </div>
                         </div>
 
-                        {/* Social Share grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <button onClick={() => shareSocial('facebook')} className="flex flex-col items-center gap-2 p-4 md:p-6 bg-zinc-50 rounded-2xl border border-zinc-100 hover:bg-blue-50 hover:border-blue-200 transition-all group">
-                                <Facebook className="w-6 h-6 md:w-7 md:h-7 text-zinc-400 group-hover:text-blue-600" />
-                                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest group-hover:text-blue-600">FB</span>
-                            </button>
-                            <button onClick={() => shareSocial('twitter')} className="flex flex-col items-center gap-2 p-4 md:p-6 bg-zinc-50 rounded-2xl border border-zinc-100 hover:bg-sky-50 hover:border-sky-200 transition-all group">
-                                <Twitter className="w-6 h-6 md:w-7 md:h-7 text-zinc-400 group-hover:text-sky-500" />
-                                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest group-hover:text-sky-500">X</span>
-                            </button>
-                            <button onClick={() => shareSocial('linkedin')} className="flex flex-col items-center gap-2 p-4 md:p-6 bg-zinc-50 rounded-2xl border border-zinc-100 hover:bg-blue-50 hover:border-blue-200 transition-all group">
-                                <Linkedin className="w-6 h-6 md:w-7 md:h-7 text-zinc-400 group-hover:text-blue-700" />
-                                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest group-hover:text-blue-700">LinkedIn</span>
-                            </button>
-                            <button onClick={() => shareSocial('whatsapp')} className="flex flex-col items-center gap-2 p-4 md:p-6 bg-zinc-50 rounded-2xl border border-zinc-100 hover:bg-green-50 hover:border-green-200 transition-all group">
-                                <MessageCircle className="w-6 h-6 md:w-7 md:h-7 text-zinc-400 group-hover:text-green-600" />
-                                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest group-hover:text-green-600">WA</span>
-                            </button>
-                        </div>
-
-                        {/* Email box */}
-                        <div className="space-y-3">
-                            <label className="text-xs font-black text-zinc-400 uppercase tracking-widest block ml-1">
-                                <Mail className="w-3 h-3 inline mr-1 text-orange-500" /> Invite via Email
-                            </label>
-                            <textarea
-                                value={emails}
-                                onChange={(e) => setEmails(e.target.value)}
-                                placeholder="Enter emails separated by commas..."
-                                rows={2}
-                                className="w-full p-5 bg-zinc-50 border border-zinc-100 rounded-[24px] focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300 resize-none"
-                            />
-                            <Button
-                                onClick={handleSendEmails}
-                                disabled={sending || !emails.trim()}
-                                className="w-full h-16 bg-zinc-900 hover:bg-black text-white rounded-full font-black text-xl shadow-xl shadow-zinc-200"
-                            >
-                                {sending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-3" />}
-                                Send Invites
-                            </Button>
-                        </div>
+                        <p className="mx-auto mt-6 max-w-[320px] text-center text-[13px] font-medium leading-relaxed text-zinc-400 sm:mt-8 sm:text-sm">
+                            Referrers who sign up via your link are automatically connected to your business.
+                        </p>
                     </div>
-
-                    <p className="text-sm text-zinc-400 text-center font-medium leading-relaxed max-w-[280px] mx-auto">
-                        Referrers who sign up via your link are automatically connected to your business.
-                    </p>
                 </div>
             </DialogContent>
         </Dialog>
