@@ -6,6 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PinConfirmationModal } from "@/components/dashboard/PinConfirmationModal";
+import { WalletWidget } from "@/components/dashboard/WalletWidget";
 import Link from "next/link";
 import { toast } from "sonner";
 import posthog from "posthog-js";
@@ -36,6 +37,7 @@ export function MobileBusinessLeads() {
     const [isUpdatingStatus, setIsUpdatingStatus] = useState<string | null>(null);
     const [showPinModal, setShowPinModal] = useState<string | null>(null);
     const [walletError, setWalletError] = useState<string | null>(null);
+    const [walletBalance, setWalletBalance] = useState(0);
 
     const fetchLeads = async () => {
         try {
@@ -44,6 +46,7 @@ export function MobileBusinessLeads() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const meData = await meRes.json();
+            setWalletBalance(meData.wallet_balance_cents || 0);
             
             const res = await fetch(`/api/backend/leads?business_id=${meData.id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
@@ -193,9 +196,9 @@ export function MobileBusinessLeads() {
                             <XCircle className="w-5 h-5 shrink-0" />
                             <p className="font-bold">{walletError}</p>
                         </div>
-                        <Link href="/dashboard/business" className="w-full h-12 bg-red-600 text-white rounded-xl font-black flex items-center justify-center gap-2">
-                             Top Up Wallet <ArrowRight className="w-4 h-4" />
-                        </Link>
+                        <div className="flex justify-center">
+                            <WalletWidget currentBalance={walletBalance} />
+                        </div>
                     </div>
                 )}
 

@@ -38,7 +38,7 @@ export function InviteReferrersDialog({ open, onClose, businessName, slug }: Inv
     const [copied, setCopied] = useState(false);
 
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://traderefer.au';
-    const joinUrl = `${baseUrl}/join?ref=${slug}`;
+    const joinUrl = `${baseUrl}/register?ref=${slug}&type=referrer`;
     const shareText = `Hey! I'm using TradeRefer to manage my trade referrals. Join as a referrer and earn commissions when you send quality leads my way. Sign up here:`;
 
     const handleCopy = () => {
