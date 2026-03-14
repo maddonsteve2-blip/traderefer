@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, ArrowRight, Shield, TrendingUp, Info, DollarSign, FileText, Wrench, ExternalLink, BadgeCheck, Clock, Phone } from "lucide-react";
+import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, ArrowRight, Shield, TrendingUp, Info, DollarSign, FileText, Wrench, ExternalLink, BadgeCheck, Clock, Phone, Search, Camera, Zap } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { Metadata } from "next";
@@ -354,6 +354,34 @@ export default async function TradeLocationPage({ params }: PageProps) {
                 </div>
             </div>
 
+            {/* ── PAY ONLY WHEN YOU WIN BANNER ── */}
+            <div className="bg-gradient-to-r from-orange-50 via-white to-orange-50 border-b border-orange-100 py-4">
+                <div className="container mx-auto px-4">
+                    <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                <Zap className="w-4 h-4 text-green-600" />
+                            </div>
+                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>No lead fees — ever</p>
+                        </div>
+                        <div className="hidden sm:block w-1.5 h-1.5 bg-zinc-300 rounded-full" />
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <Shield className="w-4 h-4 text-blue-600" />
+                            </div>
+                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Pay only when you win the job</p>
+                        </div>
+                        <div className="hidden sm:block w-1.5 h-1.5 bg-zinc-300 rounded-full" />
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <CheckCircle2 className="w-4 h-4 text-orange-600" />
+                            </div>
+                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>100% ABN-verified businesses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* ── MAIN CONTENT ── */}
             <div className="bg-[#FCFCFC] py-20" id="businesses">
                 <div className="container mx-auto px-4">
@@ -361,6 +389,35 @@ export default async function TradeLocationPage({ params }: PageProps) {
 
                         {/* ── RESULTS LISTING ── */}
                         <div className="lg:col-span-2 flex-1 space-y-8">
+                            {/* ── SEARCH / FILTER BAR ── */}
+                            <div className="bg-white rounded-2xl border border-zinc-200 p-4 shadow-sm">
+                                <div className="flex flex-col sm:flex-row gap-3">
+                                    <div className="flex-1 relative">
+                                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                                        <input
+                                            type="text"
+                                            readOnly
+                                            value={`${tradeName} in ${suburbName}, ${cityName}`}
+                                            className="w-full h-12 pl-12 pr-4 rounded-xl bg-zinc-50 border border-zinc-200 font-bold text-zinc-700 cursor-default"
+                                            style={{ fontSize: '16px' }}
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+                                        {relatedTrades.slice(0, 3).map((rt: any) => (
+                                            <Link
+                                                key={rt.slug}
+                                                href={`/local/${state}/${city}/${suburb}/${rt.slug}`}
+                                                className="inline-flex items-center gap-1.5 px-4 h-12 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-600 hover:border-orange-300 hover:text-orange-600 transition-colors whitespace-nowrap shrink-0"
+                                                style={{ fontSize: '14px' }}
+                                            >
+                                                <Wrench className="w-3.5 h-3.5" />
+                                                {rt.name}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* ── AGGREGATED REVIEW STARS BANNER ── */}
                             {totalReviews > 10 && (
                                 <div className="flex flex-wrap items-center gap-4 bg-orange-50 border border-orange-100 rounded-2xl px-6 py-4">
@@ -424,9 +481,26 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                     <h3 className="text-2xl md:text-3xl font-black text-zinc-900 mb-2 group-hover:text-orange-600 transition-colors">
                                                         {biz.business_name}
                                                     </h3>
-                                                    <p className="text-zinc-500 text-lg mb-6 line-clamp-2" style={{lineHeight: '1.6'}}>
+                                                    <p className="text-zinc-500 text-lg mb-4 line-clamp-2" style={{lineHeight: '1.6'}}>
                                                         {biz.description || `Specialist ${biz.trade_category} based in ${biz.suburb}, serving the ${suburbName} community with expert solutions.`}
                                                     </p>
+
+                                                    {/* Photo thumbnails */}
+                                                    {biz.photo_urls?.length > 0 && (
+                                                        <div className="flex items-center gap-2 mb-5">
+                                                            {biz.photo_urls.slice(0, 4).map((url: string, i: number) => (
+                                                                <Link key={i} href={`/b/${biz.slug}`} className="relative w-20 h-20 rounded-xl overflow-hidden border border-zinc-100 shrink-0 hover:border-orange-300 transition-colors">
+                                                                    <img src={url} alt={`${biz.business_name} work ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+                                                                </Link>
+                                                            ))}
+                                                            {biz.photo_urls.length > 4 && (
+                                                                <Link href={`/b/${biz.slug}`} className="w-20 h-20 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col items-center justify-center shrink-0 hover:border-orange-300 transition-colors">
+                                                                    <Camera className="w-4 h-4 text-zinc-400 mb-0.5" />
+                                                                    <span className="text-xs font-bold text-zinc-500">+{biz.photo_urls.length - 4}</span>
+                                                                </Link>
+                                                            )}
+                                                        </div>
+                                                    )}
 
                                                     <div className="flex flex-wrap items-center gap-6 text-zinc-600 font-bold mb-8" style={{ fontSize: '16px' }}>
                                                         <div className="flex items-center gap-2">

@@ -18,7 +18,9 @@ import {
     Facebook,
     Instagram,
     Linkedin,
-    BadgeCheck
+    BadgeCheck,
+    HelpCircle,
+    CheckCircle2
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -29,6 +31,7 @@ import { ScrollNavButtons } from "@/components/ScrollNavButtons";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import Script from "next/script";
 import { proxyLogoUrl } from "@/lib/logo";
+import { TRADE_FAQ_BANK } from "@/lib/constants";
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -164,6 +167,21 @@ export default async function PublicProfilePage({
         ...(reviewItems.length > 0 ? { "review": reviewItems } : {}),
     };
 
+    // FAQ schema for SEO
+    const tradeFaqs = TRADE_FAQ_BANK[business.trade_category]?.slice(0, 5) || [];
+    const faqJsonLd = tradeFaqs.length > 0 ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": tradeFaqs.map((faq: { q: string; a: string }) => ({
+            "@type": "Question",
+            "name": faq.q,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.a,
+            },
+        })),
+    } : null;
+
     return (
         <EditableProfile businessSlug={slug}>
             <main className="min-h-screen bg-zinc-50">
@@ -172,6 +190,13 @@ export default async function PublicProfilePage({
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
                 />
+                {faqJsonLd && (
+                    <Script
+                        id="faq-jsonld"
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+                    />
+                )}
 
                 {/* ── BREADCRUMBS ── */}
                 <div className="bg-white border-b border-zinc-100 pt-20 md:pt-28 pb-3">
@@ -479,6 +504,24 @@ export default async function PublicProfilePage({
                         {/* ── MAIN CONTENT ── */}
                         <div className="space-y-6 min-w-0">
 
+                            {/* Pay Only When You Win Banner */}
+                            <div className="flex flex-wrap items-center gap-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-100 rounded-2xl px-5 py-3.5">
+                                <div className="flex items-center gap-2">
+                                    <Zap className="w-4 h-4 text-green-600" />
+                                    <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>No lead fees</span>
+                                </div>
+                                <div className="w-1 h-1 bg-zinc-300 rounded-full" />
+                                <div className="flex items-center gap-2">
+                                    <ShieldCheck className="w-4 h-4 text-blue-600" />
+                                    <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>Pay only when you win</span>
+                                </div>
+                                <div className="w-1 h-1 bg-zinc-300 rounded-full" />
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle2 className="w-4 h-4 text-orange-600" />
+                                    <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>ABN verified</span>
+                                </div>
+                            </div>
+
                             {/* Scroll nav buttons */}
                             <ScrollNavButtons
                                 hasServices={!!(business.services?.length > 0 || business.specialties?.length > 0)}
@@ -600,6 +643,29 @@ export default async function PublicProfilePage({
                                                     </div>
                                                 )}
                                             </div>
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Trade FAQs */}
+                            {TRADE_FAQ_BANK[business.trade_category]?.length > 0 && (
+                                <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
+                                    <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3" style={{ fontSize: '16px' }}>
+                                        <div className="w-6 h-px bg-zinc-200" /> Frequently Asked Questions
+                                    </h2>
+                                    <div className="space-y-4">
+                                        {TRADE_FAQ_BANK[business.trade_category].slice(0, 5).map((faq: { q: string; a: string }, i: number) => (
+                                            <details key={i} className="group rounded-xl border border-zinc-100 bg-zinc-50 hover:bg-white hover:border-zinc-200 transition-all">
+                                                <summary className="flex items-start gap-3 p-5 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                                                    <HelpCircle className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                                                    <span className="font-black text-zinc-900 flex-1" style={{ fontSize: '16px' }}>{faq.q}</span>
+                                                    <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0 transition-transform group-open:rotate-90" />
+                                                </summary>
+                                                <div className="px-5 pb-5 pl-13">
+                                                    <p className="text-zinc-600 font-medium" style={{ fontSize: '16px', lineHeight: 1.7 }}>{faq.a}</p>
+                                                </div>
+                                            </details>
                                         ))}
                                     </div>
                                 </section>
