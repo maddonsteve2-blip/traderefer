@@ -143,7 +143,7 @@ async function fetchMultiplePhotos(place, slug) {
     const photosToFetch = place.photos.slice(0, MAX_PHOTOS);
     for (let pi = 0; pi < photosToFetch.length; pi++) {
         const photoRef = photosToFetch[pi].name;
-        const size = pi === 0 ? 200 : 400; // logo small, others medium
+        const size = 400; // all photos are gallery size, not logos
         const photoUrl = `https://places.googleapis.com/v1/${photoRef}/media?maxWidthPx=${size}&maxHeightPx=${size}&key=${GOOGLE_API_KEY}`;
         try {
             const res = await fetch(photoUrl, { signal: AbortSignal.timeout(10000) });
@@ -172,7 +172,8 @@ async function fetchMultiplePhotos(place, slug) {
                 } catch { /* Blob failed */ }
             }
 
-            if (pi === 0) logoUrl = blobUrl;
+            // All photos go to gallery only — logo stays null (letter avatar)
+            // Google Places photos are project/work photos, not real business logos
             if (blobUrl) photoUrls.push(blobUrl);
         } catch { /* skip */ }
     }

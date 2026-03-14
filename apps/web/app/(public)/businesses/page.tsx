@@ -272,7 +272,7 @@ export default async function BusinessDirectory({
                                 <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-4 flex-1 min-w-0">
                                         <div className="w-16 h-16 bg-zinc-100 rounded-xl flex items-center justify-center overflow-hidden border border-zinc-200 shadow-inner">
-                                            <BusinessLogo logoUrl={proxyLogoUrl(biz.logo_url)} name={biz.business_name} />
+                                            <BusinessLogo logoUrl={proxyLogoUrl(biz.logo_url)} name={biz.business_name} photoUrls={biz.photo_urls} />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <Link href={`/b/${biz.slug}`} className="hover:underline">

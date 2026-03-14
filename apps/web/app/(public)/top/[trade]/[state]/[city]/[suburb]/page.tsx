@@ -296,7 +296,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                         )}
                                         <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start pl-16">
                                             <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-zinc-100 shadow-lg shrink-0">
-                                                <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} />
+                                                <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex flex-wrap items-center gap-2 mb-2">

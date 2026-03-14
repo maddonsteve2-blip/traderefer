@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function BusinessLogo({ logoUrl, name, size = "md" }: { logoUrl: string | null; name: string; size?: "sm" | "md" | "lg" }) {
+export function BusinessLogo({ logoUrl, name, size = "md", photoUrls }: { logoUrl: string | null; name: string; size?: "sm" | "md" | "lg"; photoUrls?: string[] }) {
     const [failed, setFailed] = useState(false);
 
     const sizeClasses = {
@@ -11,9 +11,12 @@ export function BusinessLogo({ logoUrl, name, size = "md" }: { logoUrl: string |
         lg: "w-24 h-24 text-5xl"
     };
 
-    const displayUrl = logoUrl?.includes("googleusercontent.com")
+    // If logo_url is the same as a gallery photo, it's a project photo misused as logo
+    const isProjectPhoto = logoUrl && Array.isArray(photoUrls) && photoUrls.includes(logoUrl);
+
+    const displayUrl = !isProjectPhoto && logoUrl?.includes("googleusercontent.com")
         ? `/api/logo-proxy?url=${encodeURIComponent(logoUrl)}`
-        : logoUrl;
+        : isProjectPhoto ? null : logoUrl;
 
     if (displayUrl && !failed) {
         return (

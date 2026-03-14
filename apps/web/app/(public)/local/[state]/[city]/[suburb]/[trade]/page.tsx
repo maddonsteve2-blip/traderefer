@@ -484,7 +484,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                             )}
                                             <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start">
                                                 <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-zinc-100 shadow-xl shrink-0">
-                                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} />
+                                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex flex-wrap items-center gap-2 mb-3">
