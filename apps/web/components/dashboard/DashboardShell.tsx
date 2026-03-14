@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { Logo } from "@/components/Logo";
@@ -198,10 +198,43 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     const [expanded, setExpanded] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const overlayRef = useRef<HTMLDivElement>(null);
 
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
     const navLinks = isBusinessDashboard ? BUSINESS_NAV : REFERRER_NAV;
+    const salesTab = searchParams?.get("tab") ?? "leads";
+    const forceTab = searchParams?.get("tab") ?? "partners";
+
+    const mobileBreadcrumb = (() => {
+        if (pathname === "/dashboard/business") return { eyebrow: "Business", title: "Overview" };
+        if (pathname?.startsWith("/dashboard/business/sales")) {
+            if (salesTab === "offers") return { eyebrow: "Business", title: "Deals" };
+            if (salesTab === "promotions") return { eyebrow: "Business", title: "Campaigns" };
+            return { eyebrow: "Business", title: "Leads" };
+        }
+        if (pathname === "/dashboard/business/messages") return { eyebrow: "Business", title: "Messages" };
+        if (pathname?.startsWith("/dashboard/business/force")) {
+            if (forceTab === "applications") return { eyebrow: "Business", title: "Applications" };
+            if (forceTab === "config") return { eyebrow: "Business", title: "Config" };
+            return { eyebrow: "Business", title: "Growth" };
+        }
+        if (pathname?.startsWith("/dashboard/business/referrers/")) return { eyebrow: "Business", title: "Referrer Details" };
+        if (pathname === "/dashboard/business/analytics") return { eyebrow: "Business", title: "Analytics" };
+        if (pathname === "/dashboard/business/profile") return { eyebrow: "Business", title: "Public Profile" };
+        if (pathname === "/dashboard/business/settings") return { eyebrow: "Business", title: "Settings" };
+
+        if (pathname === "/dashboard/referrer") return { eyebrow: "Referrer", title: "Overview" };
+        if (pathname === "/dashboard/referrer/businesses") return { eyebrow: "Referrer", title: "Network" };
+        if (pathname?.startsWith("/dashboard/referrer/refer/")) return { eyebrow: "Referrer", title: "Business Details" };
+        if (pathname === "/dashboard/referrer/manage") return { eyebrow: "Referrer", title: "My Team" };
+        if (pathname === "/dashboard/referrer/messages") return { eyebrow: "Referrer", title: "Messages" };
+        if (pathname === "/dashboard/referrer/applications") return { eyebrow: "Referrer", title: "Applications" };
+        if (pathname === "/dashboard/referrer/withdraw") return { eyebrow: "Referrer", title: "Rewards" };
+        if (pathname === "/dashboard/referrer/profile") return { eyebrow: "Referrer", title: "My Profile" };
+
+        return { eyebrow: isBusinessDashboard ? "Business" : "Referrer", title: "Dashboard" };
+    })();
 
     // Close mobile menu on route change
     useEffect(() => {
@@ -259,10 +292,19 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                     <Logo size="sm" />
                 </Link>
 
+                <div className="min-w-0 flex-1">
+                    <p className="truncate text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">
+                        {mobileBreadcrumb.eyebrow}
+                    </p>
+                    <p className="truncate text-[15px] font-black text-zinc-900">
+                        {mobileBreadcrumb.title}
+                    </p>
+                </div>
+
                 {/* Role switcher */}
                 <Link
                     href={isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business"}
-                    className="ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900 text-white text-[11px] font-black uppercase tracking-widest shrink-0"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900 text-white text-[11px] font-black uppercase tracking-widest shrink-0"
                 >
                     <ArrowLeftRight className="w-3 h-3" />
                     {isBusinessDashboard ? "Referrer" : "Business"}
