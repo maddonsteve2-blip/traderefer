@@ -153,6 +153,7 @@ export default async function PublicProfilePage({
             "@type": "PostalAddress",
             "addressLocality": business.suburb,
             "addressRegion": business.state,
+            ...(business.address?.match(/\b([A-Z]{2,3})\s+(\d{4})\b/)?.[2] ? { "postalCode": business.address.match(/\b([A-Z]{2,3})\s+(\d{4})\b/)[2] } : {}),
             "addressCountry": "AU"
         },
         ...(hasValidRating ? {

@@ -21,6 +21,14 @@ function formatSlug(slug: string) {
         .join(" ");
 }
 
+// Extract Australian 4-digit postcode from a Google Places formatted address
+// e.g. "123 Main St, Parramatta NSW 2150, Australia" → "2150"
+function extractPostcode(address: string | null | undefined): string | null {
+    if (!address) return null;
+    const match = address.match(/\b([A-Z]{2,3})\s+(\d{4})\b/);
+    return match ? match[2] : null;
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { trade, suburb, city, state } = await params;
     const tradeName = formatSlug(trade);
@@ -34,6 +42,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const businesses = await getBusinesses(trade, suburb);
     const count = businesses.length;
     const topBiz = businesses[0];
+    const postcode = businesses.map((b: any) => extractPostcode(b.address)).find(Boolean) || null;
+    const suburbWithPostcode = postcode ? `${suburbName} ${postcode}` : suburbName;
     const avgRating = count > 0
         ? (businesses.reduce((acc: number, biz: any) => acc + (parseFloat(biz.avg_rating) || 0), 0) / count).toFixed(1)
         : "4.8";
@@ -41,12 +51,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const topBizStr = topBiz && topBiz.avg_rating ? ` Top rated: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}\u2605).` : "";
 
     return {
-        title: `${tradeName} in ${suburbName}, ${cityName}${priceStr} | TradeRefer`,
-        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateUpper}.${topBizStr} ${totalReviews > 0 ? totalReviews + ' reviews.' : ''} Get free quotes from ABN-verified locals today.`,
+        title: `${tradeName} in ${suburbWithPostcode}, ${cityName}${priceStr} | TradeRefer`,
+        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbWithPostcode}, ${cityName} ${stateUpper}.${topBizStr} ${totalReviews > 0 ? totalReviews + ' reviews.' : ''} Get free quotes from ABN-verified locals today.`,
         robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
         openGraph: {
-            title: `${tradeName} in ${suburbName}, ${cityName} | TradeRefer`,
-            description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbName}. Compare ratings, pricing and referrals.`,
+            title: `${tradeName} in ${suburbWithPostcode}, ${cityName} | TradeRefer`,
+            description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbWithPostcode}. Compare ratings, pricing and referrals.`,
         },
     };
 }
@@ -150,6 +160,10 @@ export default async function TradeLocationPage({ params }: PageProps) {
         : "4.8";
     const totalReviews = businesses.reduce((acc: number, biz: any) => acc + (parseInt(biz.total_reviews) || 0), 0);
 
+    // Extract postcode from the first business with an address
+    const postcode = businesses.map((b: any) => extractPostcode(b.address)).find(Boolean) || null;
+    const suburbWithPostcode = postcode ? `${suburbName} ${postcode}` : suburbName;
+
     const tradeKey = normalizeTradeName(tradeName);
     const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
     const faqs = TRADE_FAQ_BANK[tradeKey] || TRADE_FAQ_BANK[tradeName] || [];
@@ -167,7 +181,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const breadcrumbs = [
         { name: stateName, href: `/local/${state}` },
         { name: cityName, href: `/local/${state}/${city}` },
-        { name: suburbName, href: `/local/${state}/${city}/${suburb}` },
+        { name: suburbWithPostcode, href: `/local/${state}/${city}/${suburb}` },
         { name: tradeName, href: "#" }
     ];
 
@@ -179,19 +193,20 @@ export default async function TradeLocationPage({ params }: PageProps) {
             { "@type": "ListItem", "position": 2, "name": "Directory", "item": "https://traderefer.au/local" },
             { "@type": "ListItem", "position": 3, "name": stateName, "item": `https://traderefer.au/local/${state}` },
             { "@type": "ListItem", "position": 4, "name": cityName, "item": `https://traderefer.au/local/${state}/${city}` },
-            { "@type": "ListItem", "position": 5, "name": suburbName, "item": `https://traderefer.au/local/${state}/${city}/${suburb}` },
-            { "@type": "ListItem", "position": 6, "name": `${tradeName} in ${suburbName}` },
+            { "@type": "ListItem", "position": 5, "name": suburbWithPostcode, "item": `https://traderefer.au/local/${state}/${city}/${suburb}` },
+            { "@type": "ListItem", "position": 6, "name": `${tradeName} in ${suburbWithPostcode}` },
         ]
     };
 
     const serviceJsonLd = {
         "@context": "https://schema.org",
         "@type": "Service",
-        "name": `${tradeName} in ${suburbName}`,
+        "name": `${tradeName} in ${suburbWithPostcode}`,
         "serviceType": tradeName,
         "areaServed": {
             "@type": "City",
             "name": suburbName,
+            ...(postcode ? { "postalCode": postcode } : {}),
             "containedInPlace": { "@type": "AdministrativeArea", "name": stateName }
         },
         ...(cost ? {
@@ -223,10 +238,17 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const localBusinessJsonLd = businesses.length > 0 && totalReviews > 0 ? {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
-        "name": `${tradeName} in ${suburbName} — TradeRefer`,
-        "description": `Find verified ${tradeName.toLowerCase()} in ${suburbName}, ${cityName}. ABN-checked, community-ranked.`,
+        "name": `${tradeName} in ${suburbWithPostcode} — TradeRefer`,
+        "description": `Find verified ${tradeName.toLowerCase()} in ${suburbWithPostcode}, ${cityName}. ABN-checked, community-ranked.`,
         "url": `https://traderefer.au/local/${state}/${city}/${suburb}/${trade}`,
-        "areaServed": { "@type": "City", "name": suburbName, "containedInPlace": { "@type": "AdministrativeArea", "name": stateName } },
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": suburbName,
+            "addressRegion": stateName,
+            ...(postcode ? { "postalCode": postcode } : {}),
+            "addressCountry": "AU"
+        },
+        "areaServed": { "@type": "City", "name": suburbName, ...(postcode ? { "postalCode": postcode } : {}), "containedInPlace": { "@type": "AdministrativeArea", "name": stateName } },
         "aggregateRating": {
             "@type": "AggregateRating",
             "ratingValue": avgRating,
@@ -239,8 +261,8 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        "name": `Top ${tradeName} in ${suburbName}`,
-        "description": `List of highest rated and verified ${tradeName} in the ${suburbName} area.`,
+        "name": `Top ${tradeName} in ${suburbWithPostcode}`,
+        "description": `List of highest rated and verified ${tradeName} in the ${suburbWithPostcode} area.`,
         "numberOfItems": businesses.length,
         "itemListElement": businesses.map((biz: any, i: number) => ({
             "@type": "ListItem",
@@ -287,7 +309,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl">
                         <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
-                            <span className="text-[#FF6600]">{tradeName}</span> in {suburbName}, {cityName}
+                            <span className="text-[#FF6600]">{tradeName}</span> in {suburbWithPostcode}, {cityName}
                         </h1>
                         <p className="text-gray-600 mb-6 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             {localizedIntro}
