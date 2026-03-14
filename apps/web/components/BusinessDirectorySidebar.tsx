@@ -192,50 +192,60 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
                 </div>
             )}
 
-            {/* Location Drill-Down */}
+            {/* Location Drill-Down (replaces view at each level) */}
             <CollapsibleSection title="Location" icon={MapPin}>
-                {/* States */}
-                <div className="space-y-0.5">
-                    {Object.keys(AUSTRALIA_LOCATIONS).map((s) => (
-                        <div key={s}>
+                {currentState && currentCity ? (
+                    /* Level 3: Suburbs */
+                    <div className="space-y-1">
+                        <button onClick={() => handleCityChange("")} className="flex items-center gap-1.5 text-xs font-bold text-[#FF6600] hover:text-[#E65C00] mb-2">
+                            <ChevronUp className="w-3 h-3" /> Back to {STATE_LABELS[currentState] || currentState} cities
+                        </button>
+                        <p className="text-xs font-black text-zinc-500 uppercase tracking-wider px-2 mb-1">{currentCity} suburbs</p>
+                        <div className="space-y-0.5 max-h-64 overflow-y-auto">
+                            {suburbs.map((sub) => (
+                                <FilterCheckbox
+                                    key={sub}
+                                    label={sub}
+                                    count={counts?.suburbs?.[sub]}
+                                    checked={currentSuburb === sub}
+                                    onChange={() => handleSuburbChange(sub)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ) : currentState ? (
+                    /* Level 2: Cities */
+                    <div className="space-y-1">
+                        <button onClick={() => handleStateChange("")} className="flex items-center gap-1.5 text-xs font-bold text-[#FF6600] hover:text-[#E65C00] mb-2">
+                            <ChevronUp className="w-3 h-3" /> Back to all states
+                        </button>
+                        <p className="text-xs font-black text-zinc-500 uppercase tracking-wider px-2 mb-1">{STATE_LABELS[currentState] || currentState}</p>
+                        <div className="space-y-0.5 max-h-64 overflow-y-auto">
+                            {cities.map((c) => (
+                                <FilterCheckbox
+                                    key={c}
+                                    label={c}
+                                    count={counts?.cities?.[c]}
+                                    checked={currentCity === c}
+                                    onChange={() => handleCityChange(c)}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    /* Level 1: States */
+                    <div className="space-y-0.5">
+                        {Object.keys(AUSTRALIA_LOCATIONS).map((s) => (
                             <FilterCheckbox
+                                key={s}
                                 label={STATE_LABELS[s] || s}
                                 count={counts?.states?.[s]}
                                 checked={currentState === s}
                                 onChange={() => handleStateChange(s)}
                             />
-                            {/* Cities (when state selected) */}
-                            {currentState === s && cities.length > 0 && (
-                                <div className="pl-4 mt-1 space-y-0.5 border-l-2 border-orange-200 ml-4">
-                                    {cities.map((c) => (
-                                        <div key={c}>
-                                            <FilterCheckbox
-                                                label={c}
-                                                count={counts?.cities?.[c]}
-                                                checked={currentCity === c}
-                                                onChange={() => handleCityChange(c)}
-                                            />
-                                            {/* Suburbs (when city selected) */}
-                                            {currentCity === c && suburbs.length > 0 && (
-                                                <div className="pl-4 mt-1 space-y-0.5 border-l-2 border-orange-100 ml-4 max-h-48 overflow-y-auto">
-                                                    {suburbs.map((sub) => (
-                                                        <FilterCheckbox
-                                                            key={sub}
-                                                            label={sub}
-                                                            count={counts?.suburbs?.[sub]}
-                                                            checked={currentSuburb === sub}
-                                                            onChange={() => handleSuburbChange(sub)}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </CollapsibleSection>
 
             {/* Service Categories */}
