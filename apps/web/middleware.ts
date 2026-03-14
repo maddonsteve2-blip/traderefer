@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { LOCATION_REDIRECTS } from "@/lib/location-redirects";
 
 const isPublicRoute = createRouteMatcher([
     "/",
@@ -34,6 +35,30 @@ const isOnboardingRootOnly = createRouteMatcher(["/onboarding"]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
     const { userId, sessionClaims, redirectToSignIn } = await auth();
+
+    // 0. Location 301 redirects (old → corrected URLs)
+    const pathname = req.nextUrl.pathname;
+    if (pathname.startsWith("/local/")) {
+        // Check exact path match first
+        const redirectTo = LOCATION_REDIRECTS[pathname];
+        if (redirectTo) {
+            const url = req.nextUrl.clone();
+            url.pathname = redirectTo;
+            return NextResponse.redirect(url, 301);
+        }
+        // Also handle /local/state/city/suburb/trade paths where the base suburb path has a redirect
+        const segments = pathname.split("/").filter(Boolean); // ["local", state, city, suburb, ...]
+        if (segments.length >= 4) {
+            const basePath = `/${segments.slice(0, 4).join("/")}`;
+            const baseRedirect = LOCATION_REDIRECTS[basePath];
+            if (baseRedirect) {
+                const remaining = segments.slice(4).join("/");
+                const url = req.nextUrl.clone();
+                url.pathname = remaining ? `${baseRedirect}/${remaining}` : baseRedirect;
+                return NextResponse.redirect(url, 301);
+            }
+        }
+    }
 
     // 1. Public routes: always accessible
     if (isPublicRoute(req)) {
