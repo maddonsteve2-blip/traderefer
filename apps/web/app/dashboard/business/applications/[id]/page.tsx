@@ -129,11 +129,11 @@ export default function BusinessApplicationDetailPage() {
 
                 {/* Header */}
                 <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-6">
-                    <Link href="/dashboard/business/applications" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold" style={{ fontSize: '20px' }}>
+                    <Link href="/dashboard/business/applications" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold text-base md:text-xl">
                         <ArrowLeft className="w-5 h-5" /> Applications
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-bold truncate max-w-full sm:max-w-[200px]" style={{ fontSize: '20px' }}>{ref.full_name}</span>
+                    <span className="text-zinc-700 font-bold truncate max-w-full sm:max-w-[200px] text-base md:text-xl">{ref.full_name}</span>
                 </div>
 
                 {/* Reminder banner */}
@@ -141,10 +141,10 @@ export default function BusinessApplicationDetailPage() {
                     <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-6">
                         <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
                         <div>
-                            <p className="font-black text-amber-800" style={{ fontSize: '20px' }}>
+                            <p className="font-black text-amber-800 text-base md:text-xl">
                                 Reminder {app.reminder_count}/3 — please action this application
                             </p>
-                            <p className="font-medium text-amber-600" style={{ fontSize: '19px' }}>
+                            <p className="font-medium text-amber-600 text-sm md:text-lg">
                                 If no action is taken, this application will auto-expire after 72 hours from submission.
                             </p>
                         </div>
@@ -157,7 +157,7 @@ export default function BusinessApplicationDetailPage() {
                         app.status === "approved" ? "bg-green-50 text-green-700 border border-green-200" :
                         app.status === "rejected" ? "bg-red-50 text-red-700 border border-red-200" :
                         "bg-zinc-50 text-zinc-500 border border-zinc-200"
-                    }`} style={{ fontSize: '20px' }}>
+                    }`}>
                         {app.status === "approved" ? <CheckCircle className="w-5 h-5" /> :
                          app.status === "rejected" ? <XCircle className="w-5 h-5" /> :
                          <AlertTriangle className="w-5 h-5" />}
@@ -180,20 +180,20 @@ export default function BusinessApplicationDetailPage() {
                                     ) : initials}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h1 className="font-black text-zinc-900 leading-tight" style={{ fontSize: '38px' }}>{ref.full_name}</h1>
+                                    <h1 className="font-black text-zinc-900 leading-tight text-2xl md:text-4xl">{ref.full_name}</h1>
                                     {ref.tagline && (
-                                        <p className="font-medium text-zinc-500 mt-1 leading-snug" style={{ fontSize: '22px' }}>
+                                        <p className="font-medium text-zinc-500 mt-1 leading-snug text-base md:text-xl">
                                             {ref.tagline}
                                         </p>
                                     )}
                                     <div className="flex items-center gap-4 mt-2 flex-wrap">
                                         {(ref.suburb || ref.state) && (
-                                            <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '19px' }}>
+                                            <span className="flex items-center gap-1.5 text-zinc-400 font-medium text-sm md:text-lg">
                                                 <MapPin className="w-4 h-4" />{ref.suburb}{ref.state ? `, ${ref.state}` : ""}
                                             </span>
                                         )}
                                         {memberYear && (
-                                            <span className="flex items-center gap-1.5 text-zinc-400 font-medium" style={{ fontSize: '19px' }}>
+                                            <span className="flex items-center gap-1.5 text-zinc-400 font-medium text-sm md:text-lg">
                                                 <Briefcase className="w-4 h-4" />Member since {memberYear}
                                             </span>
                                         )}
@@ -210,8 +210,8 @@ export default function BusinessApplicationDetailPage() {
                                 ].map(s => (
                                     <div key={s.label} className={`${s.bg} rounded-xl p-4 text-center`}>
                                         <s.icon className={`w-6 h-6 ${s.text} mx-auto mb-1`} />
-                                        <p className="font-black text-zinc-900" style={{ fontSize: '42px' }}>{s.value}</p>
-                                        <p className="font-bold text-zinc-500 leading-tight" style={{ fontSize: '17px' }}>{s.label}</p>
+                                        <p className="font-black text-zinc-900 text-3xl md:text-4xl">{s.value}</p>
+                                        <p className="font-bold text-zinc-500 leading-tight text-xs md:text-base">{s.label}</p>
                                     </div>
                                 ))}
                             </div>
@@ -221,15 +221,15 @@ export default function BusinessApplicationDetailPage() {
                                 <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
                                     <div className="flex items-center gap-2 mb-2">
                                         <User className="w-5 h-5 text-orange-500" />
-                                        <span className="font-black text-zinc-700" style={{ fontSize: '22px' }}>About this referrer</span>
+                                        <span className="font-black text-zinc-700 text-base md:text-xl">About this referrer</span>
                                     </div>
-                                    <p className="font-medium text-zinc-700 leading-relaxed" style={{ fontSize: '22px', lineHeight: 1.65 }}>
+                                    <p className="font-medium text-zinc-700 leading-relaxed text-sm md:text-xl">
                                         {ref.profile_bio}
                                     </p>
                                 </div>
                             ) : (
                                 <div className="bg-zinc-50 rounded-xl p-4 border border-dashed border-zinc-200 text-center">
-                                    <p className="font-medium text-zinc-400" style={{ fontSize: '22px' }}>This referrer hasn&apos;t added a bio yet.</p>
+                                    <p className="font-medium text-zinc-400 text-sm md:text-xl">This referrer hasn&apos;t added a bio yet.</p>
                                 </div>
                             )}
                         </div>
@@ -237,8 +237,8 @@ export default function BusinessApplicationDetailPage() {
                         {/* Intro message */}
                         {app.message && (
                             <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-                                <p className="font-black text-zinc-700 mb-2" style={{ fontSize: '22px' }}>Their intro message</p>
-                                <p className="font-medium text-zinc-600 leading-relaxed italic" style={{ fontSize: '22px', lineHeight: 1.65 }}>
+                                <p className="font-black text-zinc-700 mb-2 text-base md:text-xl">Their intro message</p>
+                                <p className="font-medium text-zinc-600 leading-relaxed italic text-sm md:text-xl">
                                     &ldquo;{app.message}&rdquo;
                                 </p>
                             </div>
@@ -249,12 +249,12 @@ export default function BusinessApplicationDetailPage() {
                     <div className="lg:sticky lg:top-24 self-start space-y-4">
                         <div className="bg-white rounded-2xl border-2 border-zinc-200 overflow-hidden shadow-xl">
                             <div className="bg-zinc-900 px-6 py-5">
-                                <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '17px' }}>Application</p>
-                                <p className="font-bold text-white mt-0.5" style={{ fontSize: '20px' }}>Applied {fmtDate(app.applied_at)}</p>
+                                <p className="font-black text-zinc-400 uppercase tracking-widest text-xs md:text-base">Application</p>
+                                <p className="font-bold text-white mt-0.5 text-sm md:text-xl">Applied {fmtDate(app.applied_at)}</p>
                                 {isPending && (
                                     <div className="flex items-center gap-1.5 mt-2">
                                         <Clock className="w-5 h-5 text-amber-400" />
-                                        <span className="font-bold text-amber-400" style={{ fontSize: '18px' }}>Awaiting your decision</span>
+                                        <span className="font-bold text-amber-400 text-sm md:text-lg">Awaiting your decision</span>
                                     </div>
                                 )}
                             </div>
@@ -265,8 +265,7 @@ export default function BusinessApplicationDetailPage() {
                                         <button
                                             onClick={handleApprove}
                                             disabled={acting !== null}
-                                            className="w-full flex items-center justify-center gap-2 h-14 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-xl font-black transition-all"
-                                            style={{ fontSize: '22px' }}
+                                            className="w-full flex items-center justify-center gap-2 h-12 md:h-14 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-xl font-black transition-all text-base md:text-xl"
                                         >
                                             {acting === "approving" ? (
                                                 <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -277,8 +276,7 @@ export default function BusinessApplicationDetailPage() {
 
                                         <button
                                             onClick={handleMessage}
-                                            className="w-full flex items-center justify-center gap-2 h-12 bg-zinc-50 hover:bg-blue-50 border border-zinc-200 hover:border-blue-200 text-zinc-700 hover:text-blue-700 rounded-xl font-bold transition-all"
-                                            style={{ fontSize: '20px' }}
+                                            className="w-full flex items-center justify-center gap-2 h-11 md:h-12 bg-zinc-50 hover:bg-blue-50 border border-zinc-200 hover:border-blue-200 text-zinc-700 hover:text-blue-700 rounded-xl font-bold transition-all text-sm md:text-xl"
                                         >
                                             <MessageSquare className="w-5 h-5" /> Open Discussion
                                         </button>
@@ -286,8 +284,7 @@ export default function BusinessApplicationDetailPage() {
                                         <button
                                             onClick={handleReject}
                                             disabled={acting !== null}
-                                            className="w-full flex items-center justify-center gap-2 h-12 bg-zinc-50 hover:bg-red-50 border border-zinc-200 hover:border-red-200 text-zinc-500 hover:text-red-600 rounded-xl font-bold transition-all disabled:opacity-60"
-                                            style={{ fontSize: '20px' }}
+                                            className="w-full flex items-center justify-center gap-2 h-11 md:h-12 bg-zinc-50 hover:bg-red-50 border border-zinc-200 hover:border-red-200 text-zinc-500 hover:text-red-600 rounded-xl font-bold transition-all disabled:opacity-60 text-sm md:text-xl"
                                         >
                                             {acting === "rejecting" ? (
                                                 <div className="w-5 h-5 border-2 border-zinc-300 border-t-red-500 rounded-full animate-spin" />
@@ -301,16 +298,14 @@ export default function BusinessApplicationDetailPage() {
                                         {app.status === "approved" && (
                                             <button
                                                 onClick={handleMessage}
-                                                className="w-full flex items-center justify-center gap-2 h-12 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold transition-all"
-                                                style={{ fontSize: '20px' }}
+                                                className="w-full flex items-center justify-center gap-2 h-11 md:h-12 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold transition-all text-sm md:text-xl"
                                             >
                                                 <MessageSquare className="w-5 h-5" /> Message {ref.full_name.split(" ")[0]}
                                             </button>
                                         )}
                                         <Link
                                             href="/dashboard/business/applications"
-                                            className="flex items-center justify-center gap-2 w-full py-4 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-bold text-zinc-600 transition-all"
-                                            style={{ fontSize: '20px' }}
+                                            className="flex items-center justify-center gap-2 w-full py-3 md:py-4 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-xl font-bold text-zinc-600 transition-all text-sm md:text-xl"
                                         >
                                             ← Back to Applications
                                         </Link>
@@ -319,7 +314,7 @@ export default function BusinessApplicationDetailPage() {
                             </div>
                         </div>
 
-                        <p className="text-center text-zinc-400 font-medium" style={{ fontSize: '17px' }}>
+                        <p className="text-center text-zinc-400 font-medium text-xs md:text-base">
                             Only you can see this referrer&apos;s application.
                         </p>
                     </div>

@@ -539,15 +539,15 @@ export default function BusinessProfileManagementPage() {
                         </section>
 
                         {/* Finished Projects Section */}
-                        <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
-                            <div className="flex items-center justify-between mb-8 border-b border-zinc-100 pb-6">
+                        <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
                                 <div className="flex items-center gap-4">
-                                    <div className="size-14 rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600">
-                                        <ImageIcon className="w-7 h-7" />
+                                    <div className="size-10 md:size-14 rounded-xl md:rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600">
+                                        <ImageIcon className="w-5 h-5 md:w-7 md:h-7" />
                                     </div>
                                     <div>
-                                        <h2 className="text-4xl font-bold text-zinc-900">Finished Projects</h2>
-                                        <p className="text-xl text-zinc-500 font-medium">Showcase complete jobs with titles and descriptions</p>
+                                        <h2 className="text-xl md:text-4xl font-bold text-zinc-900">Finished Projects</h2>
+                                        <p className="text-sm md:text-xl text-zinc-500 font-medium">Showcase complete jobs with titles and descriptions</p>
                                     </div>
                                 </div>
                                 <Button
@@ -555,7 +555,7 @@ export default function BusinessProfileManagementPage() {
                                         setEditingProject(null);
                                         setIsProjectDialogOpen(true);
                                     }}
-                                    className="rounded-full bg-zinc-900 text-white hover:bg-black font-bold h-14 px-8 flex items-center gap-2 text-xl"
+                                    className="rounded-full bg-zinc-900 text-white hover:bg-black font-bold h-12 md:h-14 px-6 md:px-8 flex items-center gap-2 text-base md:text-xl w-full sm:w-auto"
                                 >
                                     <Plus className="w-5 h-5" /> Add Project
                                 </Button>
@@ -614,14 +614,14 @@ export default function BusinessProfileManagementPage() {
                         </section>
 
                         {/* Service Features Section */}
-                        <section className="bg-white border border-zinc-200 rounded-[32px] p-8 md:p-10 shadow-sm">
-                            <div className="flex items-center gap-4 mb-8 border-b border-zinc-100 pb-6">
-                                <div className="size-14 rounded-2xl bg-green-100 flex items-center justify-center text-green-600">
-                                    <CheckCircle2 className="w-7 h-7" />
+                        <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
+                            <div className="flex items-center gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
+                                <div className="size-10 md:size-14 rounded-xl md:rounded-2xl bg-green-100 flex items-center justify-center text-green-600">
+                                    <CheckCircle2 className="w-5 h-5 md:w-7 md:h-7" />
                                 </div>
                                 <div>
-                                    <h2 className="text-4xl font-bold text-zinc-900">Service Highlights</h2>
-                                    <p className="text-xl text-zinc-500 font-medium">Select features that help you stand out</p>
+                                    <h2 className="text-xl md:text-4xl font-bold text-zinc-900">Service Highlights</h2>
+                                    <p className="text-sm md:text-xl text-zinc-500 font-medium">Select features that help you stand out</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -653,18 +653,18 @@ export default function BusinessProfileManagementPage() {
                                             }`}>
                                             {formData.features.includes(feature) && <CheckCircle2 className="w-4 h-4" />}
                                         </div>
-                                        <span className="font-bold text-lg">{feature}</span>
+                                        <span className="font-bold text-base md:text-lg">{feature}</span>
                                     </label>
                                 ))}
                             </div>
                         </section>
 
                         {/* Tips Sidebar/Footer */}
-                        <div className="p-8 bg-zinc-900 rounded-[40px] text-white relative overflow-hidden group">
+                        <div className="p-6 md:p-8 bg-zinc-900 rounded-[28px] md:rounded-[40px] text-white relative overflow-hidden group">
                             <div className="absolute -right-10 -bottom-10 size-40 bg-orange-500/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
                             <div className="relative z-10">
-                                <h3 className="text-3xl font-bold mb-4 font-display">Pro Tip: Complete Profiles Convert Better</h3>
-                                <p className="text-zinc-400 text-2xl leading-relaxed max-w-2xl">
+                                <h3 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 font-display">Pro Tip: Complete Profiles Convert Better</h3>
+                                <p className="text-zinc-400 text-base md:text-2xl leading-relaxed max-w-2xl">
                                     Businesses with a high-quality logo, at least 5 job photos, and a detailed description receive <span className="text-orange-400 font-bold">250% more enquiries</span> through TradeRefer.
                                 </p>
                             </div>

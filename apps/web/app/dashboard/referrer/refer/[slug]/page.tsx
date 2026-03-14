@@ -78,16 +78,16 @@ export default async function DashboardReferPage({
         <main className="min-h-screen bg-zinc-50">
 
             {/* ── BREADCRUMB ── */}
-            <div className="bg-white border-b border-zinc-100 pt-5 pb-4">
+            <div className="bg-white border-b border-zinc-100 pt-4 md:pt-5 pb-3 md:pb-4">
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-3 font-black text-zinc-400 uppercase tracking-widest text-base">
-                        <Link href="/dashboard/referrer" className="hover:text-zinc-700 transition-colors flex items-center gap-2">
-                            <LayoutDashboard className="w-5 h-5" /> Dashboard
+                    <nav className="flex items-center gap-2 md:gap-3 font-black text-zinc-400 uppercase tracking-widest text-xs md:text-base">
+                        <Link href="/dashboard/referrer" className="hover:text-zinc-700 transition-colors flex items-center gap-1.5 md:gap-2 shrink-0">
+                            <LayoutDashboard className="w-4 h-4 md:w-5 md:h-5" /> <span className="hidden sm:inline">Dashboard</span>
                         </Link>
-                        <ChevronRight className="w-5 h-5" />
-                        <Link href="/dashboard/referrer/businesses" className="hover:text-zinc-700 transition-colors">Businesses</Link>
-                        <ChevronRight className="w-5 h-5" />
-                        <span className="text-orange-600 font-black truncate max-w-[240px]">{business.business_name}</span>
+                        <ChevronRight className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                        <Link href="/dashboard/referrer/businesses" className="hover:text-zinc-700 transition-colors shrink-0 hidden sm:inline">Businesses</Link>
+                        <ChevronRight className="w-4 h-4 md:w-5 md:h-5 shrink-0 hidden sm:inline" />
+                        <span className="text-orange-600 font-black truncate max-w-[160px] md:max-w-[240px]">{business.business_name}</span>
                     </nav>
                 </div>
             </div>
