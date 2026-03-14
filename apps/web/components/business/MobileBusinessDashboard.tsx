@@ -15,6 +15,21 @@ interface MobileBusinessDashboardProps {
 
 const ICON_MAP: Record<string, React.ElementType> = { Target, Zap, Star, Users, DollarSign };
 
+function getLeadDisplayName(lead: any) {
+    return lead?.contact_name || lead?.customer_name || "New lead";
+}
+
+function getLeadSecondaryText(lead: any) {
+    if (lead?.service_type) return lead.service_type;
+    if (lead?.description) return lead.description;
+    if (lead?.suburb) return lead.suburb;
+    return "Lead update";
+}
+
+function getLeadStatus(lead: any) {
+    return String(lead?.status || "NEW").toUpperCase();
+}
+
 export function MobileBusinessDashboard({ business, stats, recentLeads }: MobileBusinessDashboardProps) {
     const { user } = useUser();
     const [showInviteModal, setShowInviteModal] = useState(false);
@@ -83,23 +98,23 @@ export function MobileBusinessDashboard({ business, stats, recentLeads }: Mobile
 
                 <div className="flex flex-col gap-3">
                     {recentLeads.length > 0 ? recentLeads.slice(0, 3).map((lead) => (
-                        <div key={lead.id} className="bg-white border border-zinc-100 rounded-[20px] p-4 flex items-center gap-4 shadow-sm">
+                        <Link key={lead.id} href="/dashboard/business/sales?tab=leads" className="bg-white border border-zinc-100 rounded-[20px] p-4 flex items-center gap-4 shadow-sm">
                             <div className="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-300 font-black text-lg uppercase border border-zinc-100">
-                                {lead.contact_name?.[0] || 'L'}
+                                {getLeadDisplayName(lead)?.[0] || 'L'}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-[16px] font-black text-zinc-900 truncate tracking-tight">{lead.contact_name}</p>
-                                <p className="text-[13px] font-medium text-zinc-500 truncate">{lead.service_type || 'General Lead'}</p>
+                                <p className="text-[16px] font-black text-zinc-900 truncate tracking-tight">{getLeadDisplayName(lead)}</p>
+                                <p className="text-[13px] font-medium text-zinc-500 truncate">{getLeadSecondaryText(lead)}</p>
                             </div>
                             <div className="text-right flex flex-col items-end gap-1">
                                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase ${
-                                    lead.status === 'confirmed' ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'
+                                    getLeadStatus(lead).includes('CONFIRMED') ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'
                                 }`}>
-                                    {lead.status || 'NEW'}
+                                    {getLeadStatus(lead)}
                                 </span>
                                 <ChevronRight className="w-4 h-4 text-zinc-300" />
                             </div>
-                        </div>
+                        </Link>
                     )) : (
                         <div className="py-12 text-center bg-zinc-50 rounded-[24px] border border-dashed border-zinc-200">
                             <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs">No recent activity</p>

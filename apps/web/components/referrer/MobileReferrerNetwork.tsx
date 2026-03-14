@@ -8,6 +8,7 @@ import { useAuth } from "@clerk/nextjs";
 interface Business {
     id: string;
     name: string;
+    slug?: string;
     trade_category: string;
     suburb: string;
     logo_url: string | null;
@@ -15,6 +16,21 @@ interface Business {
     is_partner?: boolean;
     leads_count?: number;
     revenue_cents?: number;
+}
+
+function normalizeBusiness(raw: any): Business {
+    return {
+        id: String(raw?.id ?? raw?.slug ?? raw?.name ?? raw?.business_name ?? ""),
+        name: raw?.name ?? raw?.business_name ?? "",
+        slug: raw?.slug ?? undefined,
+        trade_category: raw?.trade_category ?? "",
+        suburb: raw?.suburb ?? raw?.city ?? "",
+        logo_url: raw?.logo_url ?? null,
+        referral_fee_cents: Number(raw?.referral_fee_cents ?? 0),
+        is_partner: raw?.is_partner,
+        leads_count: typeof raw?.leads_count === "number" ? raw.leads_count : undefined,
+        revenue_cents: typeof raw?.revenue_cents === "number" ? raw.revenue_cents : undefined,
+    };
 }
 
 interface MobileReferrerNetworkProps {
@@ -84,9 +100,13 @@ export function MobileReferrerNetwork({
                     ? appsData.applications
                     : [];
 
-                setBusinesses(businessList.slice(0, 24));
+                const normalizedBusinesses = businessList
+                    .map((business: any) => normalizeBusiness(business))
+                    .filter((business: Business) => business.name);
+
+                setBusinesses(normalizedBusinesses.slice(0, 24));
                 setPartnersCount(typeof stats?.total_referrals === "number" ? stats.total_referrals : 0);
-                setAvailableCount(businessList.length);
+                setAvailableCount(normalizedBusinesses.length);
                 setPendingApplications(applicationList.filter((app: PendingApplication) => app.status === "pending"));
             } catch (err) {
                 console.error("Failed to fetch network data", err);
@@ -211,7 +231,7 @@ export function MobileReferrerNetwork({
                                 {filteredBusinesses.map(b => (
                                     <Link 
                                         key={b.id}
-                                        href={`/dashboard/referrer/refer/${b.id}`}
+                                        href={`/dashboard/referrer/refer/${b.slug ?? b.id}`}
                                         className="bg-white border border-[#E4E4E7] rounded-[20px] p-4 flex items-center gap-4 transition-all active:scale-[0.99]"
                                     >
                                         <div className="w-14 h-14 rounded-full bg-[#F4F4F5] flex items-center justify-center shrink-0 overflow-hidden border border-[#E4E4E7]">

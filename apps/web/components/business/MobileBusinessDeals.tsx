@@ -82,9 +82,6 @@ export function MobileBusinessDeals() {
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-bold text-[#18181B] tracking-tight">Active Offers</h3>
-                    <button className="flex items-center gap-1.5 text-orange-600 font-bold text-sm">
-                        <Plus className="w-4 h-4" /> New Deal
-                    </button>
                 </div>
 
                 {deals.length === 0 ? (
