@@ -31,3 +31,6 @@ env/
 
 # Local Netlify folder
 .netlify
+
+# Logo cache - stored in Vercel Blob, not Git
+logos-cache/
