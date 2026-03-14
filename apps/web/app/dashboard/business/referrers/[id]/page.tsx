@@ -188,23 +188,150 @@ export default function ReferrerDetailPage() {
 
     return (
         <div className="min-h-[100dvh] bg-zinc-50">
-            <div className="container mx-auto px-4 py-4 md:py-8 max-w-5xl">
+            <div className="md:hidden px-4 py-4 space-y-4">
+                <div className="flex items-start gap-3">
+                    <Link href="/dashboard/business/force?tab=partners" className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-zinc-200 bg-white text-zinc-500">
+                        <ArrowLeft className="w-4 h-4" />
+                    </Link>
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 text-base font-black text-zinc-600">
+                                {referrer.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-[20px] font-black text-zinc-900 truncate">{referrer.full_name}</p>
+                                <p className="text-[13px] font-medium text-zinc-500 truncate">{referrer.email}</p>
+                            </div>
+                        </div>
+                        <div className="mt-3 flex items-center gap-2">
+                            <Badge className={`${statusColor} px-2.5 py-1 text-[11px] font-black uppercase tracking-wider`}>
+                                {referrer.is_active ? "Active" : "Inactive"}
+                            </Badge>
+                            <div className="flex items-center gap-1 text-[13px] font-black text-amber-600">
+                                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                {referrer.quality_score}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                    {[
+                        { label: "Leads", value: referrer.leads_created },
+                        { label: "Confirmed", value: referrer.confirmed_jobs },
+                        { label: "Earned", value: fmt(referrer.total_earned_cents) },
+                        { label: "Fee", value: fmt(referrer.effective_fee_cents) },
+                    ].map((item) => (
+                        <div key={item.label} className="rounded-[22px] border border-zinc-200 bg-white p-4">
+                            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">{item.label}</p>
+                            <p className="mt-2 text-[22px] font-black text-zinc-900">{item.value}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="rounded-[24px] border border-zinc-200 bg-white p-4 space-y-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400">Actions</p>
+                    <Button
+                        onClick={async () => {
+                            try {
+                                const token = await getToken();
+                                const res = await fetch(`${apiUrl}/messages/conversations/start/${referrerId}`, {
+                                    method: 'POST',
+                                    headers: { Authorization: `Bearer ${token}` },
+                                });
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    router.push(`/dashboard/business/messages?conv=${data.conversation_id}`);
+                                }
+                            } catch {}
+                        }}
+                        className="h-12 w-full rounded-2xl bg-zinc-900 text-[15px] font-black text-white hover:bg-black"
+                    >
+                        <MessageSquare className="mr-2 h-4 w-4 text-orange-400" />
+                        Message Referrer
+                    </Button>
+                </div>
+
+                <div className="rounded-[24px] border border-zinc-200 bg-white p-4 space-y-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400">Custom Fee</p>
+                    <div className="relative">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">$</span>
+                        <Input
+                            type="number"
+                            step="0.01"
+                            min="3.00"
+                            placeholder="Custom fee"
+                            value={customFee}
+                            onChange={(e) => setCustomFee(e.target.value)}
+                            className="h-12 rounded-2xl pl-8 text-base font-bold"
+                        />
+                    </div>
+                    <Button onClick={handleFeeUpdate} disabled={feeLoading} className="h-12 w-full rounded-2xl bg-orange-500 text-[15px] font-black text-white hover:bg-orange-600">
+                        {feeLoading ? "Saving…" : customFee ? "Set Custom Fee" : "Reset Default Fee"}
+                    </Button>
+                </div>
+
+                <div className="rounded-[24px] border border-zinc-200 bg-white p-4 space-y-3">
+                    <p className="text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400">Notes</p>
+                    <Textarea
+                        placeholder="Add notes about this referrer…"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        className="min-h-[120px] rounded-2xl text-base leading-relaxed"
+                    />
+                    <Button onClick={handleNotesUpdate} disabled={notesLoading} variant="outline" className="h-12 w-full rounded-2xl border-zinc-200 text-[15px] font-black text-zinc-700">
+                        {notesLoading ? "Saving…" : "Save Notes"}
+                    </Button>
+                </div>
+
+                <div className="rounded-[24px] border border-zinc-200 bg-white p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400">Lead History</p>
+                        <span className="text-[12px] font-black text-zinc-500">{leads.length}</span>
+                    </div>
+                    {leads.length === 0 ? (
+                        <p className="py-6 text-center text-[14px] font-medium text-zinc-400">No leads yet from this referrer.</p>
+                    ) : (
+                        <div className="space-y-3">
+                            {leads.slice(0, 5).map((lead) => (
+                                <div key={lead.id} className="rounded-2xl bg-zinc-50 p-4">
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <p className="text-[15px] font-black text-zinc-900 truncate">{lead.consumer_name}</p>
+                                            <p className="mt-1 text-[13px] font-medium text-zinc-500 truncate">{lead.job_description || "—"}</p>
+                                        </div>
+                                        <Badge variant={lead.status === "CONFIRMED" ? "default" : "secondary"} className="text-[10px] font-black uppercase tracking-wider">
+                                            {lead.status}
+                                        </Badge>
+                                    </div>
+                                    <div className="mt-3 flex items-center justify-between text-[12px] font-bold text-zinc-400">
+                                        <span>{lead.consumer_suburb}</span>
+                                        <span>{fmtDate(lead.created_at)}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <div className="hidden md:block container mx-auto px-4 py-4 md:py-8 max-w-5xl">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-8">
                     <div className="flex items-start gap-3 min-w-0 flex-1">
-                    <Link href="/dashboard/business/referrers" className="p-2 text-zinc-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all">
-                        <ArrowLeft className="w-5 h-5" />
-                    </Link>
-                    <div className="w-14 h-14 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-600 font-bold text-xl">
-                        {referrer.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
-                    </div>
-                    <div className="min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                            <h1 className="text-4xl font-bold text-zinc-900 font-display break-words">{referrer.full_name}</h1>
-                            <Badge className={`${statusColor} text-sm px-3 py-1`}>{referrer.is_active ? "Active" : "Inactive"}</Badge>
+                        <Link href="/dashboard/business/referrers" className="p-2 text-zinc-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all">
+                            <ArrowLeft className="w-5 h-5" />
+                        </Link>
+                        <div className="w-14 h-14 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-600 font-bold text-xl">
+                            {referrer.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                         </div>
-                        <p className="text-lg text-zinc-400 break-words">{referrer.email} · {referrer.phone} · Member since {fmtDate(referrer.referrer_since)}</p>
-                    </div>
+                        <div className="min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <h1 className="text-4xl font-bold text-zinc-900 font-display break-words">{referrer.full_name}</h1>
+                                <Badge className={`${statusColor} text-sm px-3 py-1`}>{referrer.is_active ? "Active" : "Inactive"}</Badge>
+                            </div>
+                            <p className="text-lg text-zinc-400 break-words">{referrer.email} · {referrer.phone} · Member since {fmtDate(referrer.referrer_since)}</p>
+                        </div>
                     </div>
                     <div className="flex w-full sm:w-auto items-center justify-between sm:justify-end gap-3">
                         <Button

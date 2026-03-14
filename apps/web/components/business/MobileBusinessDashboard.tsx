@@ -1,36 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { User, Bell, ChevronRight, Share2, Target, DollarSign, Users, Star, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Share2, Target, DollarSign, Users, Star, Zap } from "lucide-react";
 import { InviteReferrersDialog } from "@/components/dashboard/InviteReferrersDialog";
 
 interface MobileBusinessDashboardProps {
     business: any;
     stats: any[];
-    recentLeads: any[];
+    recentLeads?: any[];
 }
 
 const ICON_MAP: Record<string, React.ElementType> = { Target, Zap, Star, Users, DollarSign };
 
-function getLeadDisplayName(lead: any) {
-    return lead?.contact_name || lead?.customer_name || "New lead";
-}
-
-function getLeadSecondaryText(lead: any) {
-    if (lead?.service_type) return lead.service_type;
-    if (lead?.description) return lead.description;
-    if (lead?.suburb) return lead.suburb;
-    return "Lead update";
-}
-
-function getLeadStatus(lead: any) {
-    return String(lead?.status || "NEW").toUpperCase();
-}
-
-export function MobileBusinessDashboard({ business, stats, recentLeads }: MobileBusinessDashboardProps) {
+export function MobileBusinessDashboard({ business, stats }: MobileBusinessDashboardProps) {
     const { user } = useUser();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const displayName = user?.firstName || (business?.name ? business.name.split(' ')[0] : "there");
@@ -85,42 +68,6 @@ export function MobileBusinessDashboard({ business, stats, recentLeads }: Mobile
                     <Share2 className="w-5 h-5" />
                     Share Invite Link
                 </button>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-[18px] font-black text-zinc-900">Recent Activity</h2>
-                    <Link href="/dashboard/business/sales?tab=leads" className="text-[13px] font-bold text-orange-600">
-                        View All
-                    </Link>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                    {recentLeads.length > 0 ? recentLeads.slice(0, 3).map((lead) => (
-                        <Link key={lead.id} href="/dashboard/business/sales?tab=leads" className="bg-white border border-zinc-100 rounded-[20px] p-4 flex items-center gap-4 shadow-sm">
-                            <div className="w-12 h-12 bg-zinc-50 rounded-full flex items-center justify-center text-zinc-300 font-black text-lg uppercase border border-zinc-100">
-                                {getLeadDisplayName(lead)?.[0] || 'L'}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-[16px] font-black text-zinc-900 truncate tracking-tight">{getLeadDisplayName(lead)}</p>
-                                <p className="text-[13px] font-medium text-zinc-500 truncate">{getLeadSecondaryText(lead)}</p>
-                            </div>
-                            <div className="text-right flex flex-col items-end gap-1">
-                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase ${
-                                    getLeadStatus(lead).includes('CONFIRMED') ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'
-                                }`}>
-                                    {getLeadStatus(lead)}
-                                </span>
-                                <ChevronRight className="w-4 h-4 text-zinc-300" />
-                            </div>
-                        </Link>
-                    )) : (
-                        <div className="py-12 text-center bg-zinc-50 rounded-[24px] border border-dashed border-zinc-200">
-                            <p className="text-zinc-400 font-bold uppercase tracking-widest text-xs">No recent activity</p>
-                        </div>
-                    )}
-                </div>
             </div>
 
             {/* Invite Modal */}
