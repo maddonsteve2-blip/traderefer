@@ -97,6 +97,10 @@ const DEFAULT_TEXT_EDITOR_META: Record<EditableTextField, { title: string; label
     business_email: { title: "Edit Business Email", label: "Business Email" },
     website: { title: "Edit Website", label: "Website" },
     abn: { title: "Edit ABN", label: "ABN" },
+    licence_number: { title: "Edit Licence Number", label: "Trade Licence Number" },
+    facebook_url: { title: "Edit Facebook URL", label: "Facebook Page URL" },
+    instagram_url: { title: "Edit Instagram URL", label: "Instagram Profile URL" },
+    linkedin_url: { title: "Edit LinkedIn URL", label: "LinkedIn Page URL" },
 };
 
 interface EditableProfileContextValue {
