@@ -797,7 +797,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     style={{ border: 0 }}
                                     loading="lazy"
                                     referrerPolicy="no-referrer-when-downgrade"
-                                    src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCCRQCqPgWr0WAUszGQtutWXm2KDQBEfbk&q=${encodeURIComponent(suburbName + ', ' + cityName + ', ' + stateName + ', Australia')}`}
+                                    src={`https://maps.google.com/maps?q=${encodeURIComponent(suburbName + ', ' + cityName + ', ' + stateName + ', Australia')}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                                 />
                             </div>
 

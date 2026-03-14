@@ -193,6 +193,34 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                 </div>
             </div>
 
+            {/* ── PAY ONLY WHEN YOU WIN BANNER ── */}
+            <div className="bg-gradient-to-r from-orange-50 via-white to-orange-50 border-b border-orange-100 py-4">
+                <div className="container mx-auto px-4">
+                    <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                <ShieldCheck className="w-4 h-4 text-green-600" />
+                            </div>
+                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>No lead fees — ever</p>
+                        </div>
+                        <div className="hidden sm:block w-1.5 h-1.5 bg-zinc-300 rounded-full" />
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <MapPin className="w-4 h-4 text-blue-600" />
+                            </div>
+                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Pay only when you win the job</p>
+                        </div>
+                        <div className="hidden sm:block w-1.5 h-1.5 bg-zinc-300 rounded-full" />
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <ShieldCheck className="w-4 h-4 text-orange-600" />
+                            </div>
+                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>100% ABN-verified businesses</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* ── MAIN CONTENT ── */}
             <div className="py-20">
                 <div className="container mx-auto px-4">
