@@ -648,11 +648,6 @@ export default async function BusinessDirectory({
                                                     <Link href={`/b/${biz.slug}#enquiry-form`} className="px-6 py-3 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl text-base transition-colors">
                                                         Get a Free Quote
                                                     </Link>
-                                                    {biz.website && (
-                                                        <a href={biz.website} target="_blank" rel="noopener noreferrer" className="px-5 py-3 border-2 border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5">
-                                                            <ExternalLink className="w-4 h-4" /> Website
-                                                        </a>
-                                                    )}
                                                     {biz.business_phone && (
                                                         <a href={`tel:${biz.business_phone}`} className="px-5 py-3 border-2 border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5">
                                                             <Phone className="w-4 h-4" /> Call
@@ -660,6 +655,9 @@ export default async function BusinessDirectory({
                                                     )}
                                                 </>
                                             )}
+                                            <Link href={`/b/${biz.slug}`} className="ml-auto px-5 py-3 bg-zinc-900 hover:bg-black text-white font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5">
+                                                View Business <ChevronRight className="w-4 h-4" />
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>

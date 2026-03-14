@@ -36,23 +36,9 @@ const isOnboardingRootOnly = createRouteMatcher(["/onboarding"]);
 export default clerkMiddleware(async (auth, req: NextRequest) => {
     const { userId, sessionClaims, redirectToSignIn } = await auth();
 
-    // 0a. /businesses with location params → /local/ SEO redirect
+    // 0a. /businesses directory page — no redirect, filters stay on this page
+    // (Users reach /local/ pages via direct links, SEO, and internal linking)
     const pathname = req.nextUrl.pathname;
-    if (pathname === "/businesses") {
-        const sp = req.nextUrl.searchParams;
-        const bState = sp.get("state")?.toLowerCase();
-        const bCity = sp.get("city")?.toLowerCase().replace(/\s+/g, "-");
-        const bSuburb = sp.get("suburb")?.toLowerCase().replace(/\s+/g, "-");
-        const bCategory = sp.get("category")?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-        if (bState && bCity && bSuburb) {
-            const url = req.nextUrl.clone();
-            url.search = "";
-            url.pathname = bCategory
-                ? `/local/${bState}/${bCity}/${bSuburb}/${bCategory}`
-                : `/local/${bState}/${bCity}/${bSuburb}`;
-            return NextResponse.redirect(url, 301);
-        }
-    }
 
     // 0b. Location 301 redirects (old → corrected URLs)
     if (pathname.startsWith("/local/")) {
