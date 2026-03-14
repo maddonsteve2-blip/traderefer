@@ -32,6 +32,7 @@ import { BusinessLogo } from "@/components/BusinessLogo";
 import Script from "next/script";
 import { proxyLogoUrl } from "@/lib/logo";
 import { TRADE_FAQ_BANK } from "@/lib/constants";
+import { ReviewSection } from "@/components/ReviewSection";
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -229,7 +230,11 @@ export default async function PublicProfilePage({
                                             initialValue={business.cover_photo_url}
                                             alt={`${business.business_name} cover`}
                                             className="w-full h-full object-cover"
-                                            empty={<div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-zinc-50 to-zinc-200" />}
+                                            empty={
+                                                business.photo_urls?.[0]
+                                                    ? <img src={business.photo_urls[0]} alt={`${business.business_name} cover`} className="w-full h-full object-cover" />
+                                                    : <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-zinc-50 to-zinc-200" />
+                                            }
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                                         {/* Claim CTA overlay for unclaimed businesses with no cover photo */}
@@ -595,7 +600,7 @@ export default async function PublicProfilePage({
                                                 <Star key={i} className={`w-4 h-4 ${i < Math.floor(googleRating || 5) ? 'fill-current' : 'opacity-30'}`} />
                                             ))}
                                         </div>
-                                        <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>Google</p>
+                                        <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>Rating</p>
                                         <p className="text-zinc-400 mt-0.5" style={{ fontSize: '16px' }}>{reviewCount} reviews</p>
                                     </div>
                                     <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100">
@@ -605,49 +610,15 @@ export default async function PublicProfilePage({
                                 </div>
                             </section>
 
-                            {/* Google Reviews */}
+                            {/* Reviews */}
                             {googleReviews.length > 0 && (
-                                <section id="reviews" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                    <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between" style={{ fontSize: '16px' }}>
-                                        <span className="flex items-center gap-3"><div className="w-6 h-px bg-zinc-200" /> Google Reviews</span>
-                                        <span className="flex items-center gap-1.5 text-[#FF6600]">
-                                            <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                                            <span className="text-zinc-900 font-black" style={{ fontSize: '16px' }}>{googleRating}</span>
-                                            <span className="text-zinc-400" style={{ fontSize: '16px' }}>({reviewCount})</span>
-                                        </span>
-                                    </h2>
-                                    <div className="space-y-4">
-                                        {googleReviews.map((review: any) => (
-                                            <div key={review.id} className="p-5 bg-zinc-50 rounded-xl border border-zinc-100 hover:border-orange-100 hover:bg-white hover:shadow-sm transition-all">
-                                                <div className="flex items-start justify-between gap-3 mb-3">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-[#FF6600] flex items-center justify-center text-white font-black shrink-0" style={{ fontSize: '18px' }}>
-                                                            {(review.profile_name || 'A')[0].toUpperCase()}
-                                                        </div>
-                                                        <div>
-                                                            <p className="font-black text-zinc-900 leading-none" style={{ fontSize: '16px' }}>{review.profile_name || 'Google Reviewer'}</p>
-                                                            <p className="text-zinc-400 font-medium mt-0.5" style={{ fontSize: '16px' }}>Google Review</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-0.5 shrink-0">
-                                                        {[...Array(5)].map((_, i) => (
-                                                            <Star key={i} className={`w-3.5 h-3.5 ${i < (review.rating || 5) ? 'fill-orange-400 text-orange-400' : 'text-zinc-200 fill-zinc-200'}`} />
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                                {review.review_text && (
-                                                    <p className="text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.6 }}>&ldquo;{review.review_text}&rdquo;</p>
-                                                )}
-                                                {review.owner_answer && (
-                                                    <div className="mt-3 pl-4 border-l-2 border-orange-200">
-                                                        <p className="font-black text-[#FF6600] uppercase tracking-widest mb-1" style={{ fontSize: '16px' }}>Owner Response</p>
-                                                        <p className="text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.6 }}>{review.owner_answer}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
+                                <ReviewSection
+                                    reviews={googleReviews}
+                                    avgRating={googleRating}
+                                    totalReviews={reviewCount}
+                                    businessName={business.business_name}
+                                    businessSlug={slug}
+                                />
                             )}
 
                             {/* Trade FAQs */}
