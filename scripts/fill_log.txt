@@ -1,0 +1,22 @@
+--empty-only: filtered 1052 → 289 suburbs with 0 businesses
+Checking 289 suburbs × 45 trades
+12931 suburb+trade combos need filling
+
+
+--- Progress: 0/12931 | added: 0 | logos: 0 | reviews: 0 | API: 0 ---
+[1] VIC>Nerrina>Plumbing... +1 (1 logos)
+[2] VIC>Nerrina>Electrical... +3 (3 logos)
+[3] VIC>Nerrina>Carpentry... +1 (1 logos)
+[4] VIC>Nerrina>Landscaping... +1 (1 logos)
+[5] VIC>Nerrina>Roofing... +2 (1 logos)
+[6] VIC>Nerrina>Painting... +3 (3 logos)
+[7] VIC>Nerrina>Cleaning... +2 (2 logos)
+[8] VIC>Nerrina>Building... +5 (5 logos)
+[9] VIC>Nerrina>Concreting... +3 (3 logos)
+[10] VIC>Nerrina>Tiling... +1 (1 logos)
+[11] VIC>Nerrina>Plastering... +4 (3 logos)
+[12] VIC>Nerrina>Fencing... +1 (1 logos)
+[13] VIC>Nerrina>Demolition... +3 (3 logos)
+[14] VIC>Nerrina>Excavation... +5 (5 logos)
+[15] VIC>Nerrina>Air Conditioning & Heating... +3 (1 logos)
+[16] VIC>Nerrina>Solar & Energy... 

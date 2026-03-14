@@ -7,3 +7,12 @@ apps/api/.venv
 apps/api/__pycache__
 **/*.pyc
 .git
+logos-cache
+prototype-comparison
+*.mp3
+*.png
+*.webp
+*.img
+combined.sql
+scraped_businesses.json
+neon

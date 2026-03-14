@@ -80,7 +80,7 @@ export function MobileReferrerNetwork({
                     fetch(`/api/backend/referrer/stats`, {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    fetch(`/api/backend/public/businesses`),
+                    fetch(`/api/backend/businesses?limit=50`),
                     fetch(`/api/backend/applications/my-applications`, {
                         headers: { Authorization: `Bearer ${token}` }
                     })

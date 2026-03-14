@@ -1,0 +1,4970 @@
+[
+  {
+    "state": "ACT",
+    "city": "Canberra",
+    "suburb": "Kambah",
+    "current_count": 0,
+    "url": "/local/act/canberra/kambah",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Bathurst",
+    "suburb": "Orange",
+    "current_count": 0,
+    "url": "/local/nsw/bathurst/orange",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Beverly Hills",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/beverly-hills",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Bossley Park",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/bossley-park",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Cabramatta",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/cabramatta",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Canley Heights",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/canley-heights",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Condell Park",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/condell-park",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Engadine",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/engadine",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Glenmore Park",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/glenmore-park",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Harrington Park",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/harrington-park",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Hinchinbrook",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/hinchinbrook",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Kingswood Park",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/kingswood-park",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Macquarie Fields",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/macquarie-fields",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Menai",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/menai",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Mortdale",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/mortdale",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Mount Annan",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/mount-annan",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Oatley",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/oatley",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Padstow",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/padstow",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Panania",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/panania",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Peakhurst",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/peakhurst",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Revesby",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/revesby",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Roselands",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/roselands",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "South Penrith",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/south-penrith",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "St Clair",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/st-clair",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Wiley Park",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/wiley-park",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Yagoona",
+    "current_count": 0,
+    "url": "/local/nsw/liverpool/yagoona",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Maitland",
+    "suburb": "Cessnock",
+    "current_count": 0,
+    "url": "/local/nsw/maitland/cessnock",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Maitland",
+    "suburb": "East Maitland",
+    "current_count": 0,
+    "url": "/local/nsw/maitland/east-maitland",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Maitland",
+    "suburb": "Raymond Terrace",
+    "current_count": 0,
+    "url": "/local/nsw/maitland/raymond-terrace",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Maitland",
+    "suburb": "Rutherford",
+    "current_count": 0,
+    "url": "/local/nsw/maitland/rutherford",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Newcastle",
+    "suburb": "Jesmond",
+    "current_count": 0,
+    "url": "/local/nsw/newcastle/jesmond",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Newcastle",
+    "suburb": "Newcastle CBD",
+    "current_count": 0,
+    "url": "/local/nsw/newcastle/newcastle-cbd",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Newcastle",
+    "suburb": "Shortland",
+    "current_count": 0,
+    "url": "/local/nsw/newcastle/shortland",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Cranebrook",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/cranebrook",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Doonside",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/doonside",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Glenwood",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/glenwood",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Granville",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/granville",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Greenacre",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/greenacre",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Greystanes",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/greystanes",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Kellyville Ridge",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/kellyville-ridge",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Lakemba",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/lakemba",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Lidcombe",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/lidcombe",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Marsfield",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/marsfield",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Merrylands",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/merrylands",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Mount Druitt",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/mount-druitt",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Mount Kuring Gai",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/mount-kuring-gai",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "North Parramatta",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/north-parramatta",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Northmead",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/northmead",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Quakers Hill",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/quakers-hill",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Rhodes",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/rhodes",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "The Ponds",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/the-ponds",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Toongabbie",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/toongabbie",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Toongabbie West",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/toongabbie-west",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Winston Hills",
+    "current_count": 0,
+    "url": "/local/nsw/parramatta/winston-hills",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Arncliffe",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/arncliffe",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Balmain",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/balmain",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Belmore",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/belmore",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Bexley",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/bexley",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Brighton Le Sands",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/brighton-le-sands",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Campsie",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/campsie",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Cremorne",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/cremorne",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Dulwich Hill",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/dulwich-hill",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Earlwood",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/earlwood",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Frenchs Forest",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/frenchs-forest",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Kingsgrove",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/kingsgrove",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Mona Vale",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/mona-vale",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Neutral Bay",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/neutral-bay",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "North Ryde",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/north-ryde",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Potts Point",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/potts-point",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Saint Ives",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/saint-ives",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Sans Souci",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/sans-souci",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Sydney Central Business District",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/sydney-central-business-district",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Woy Woy",
+    "current_count": 0,
+    "url": "/local/nsw/sydney/woy-woy",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Wollongong",
+    "suburb": "Bowral",
+    "current_count": 0,
+    "url": "/local/nsw/wollongong/bowral",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Wollongong",
+    "suburb": "Wollongong city centre",
+    "current_count": 0,
+    "url": "/local/nsw/wollongong/wollongong-city-centre",
+    "priority": "high"
+  },
+  {
+    "state": "NSW",
+    "city": "Wollongong",
+    "suburb": "Woonona",
+    "current_count": 0,
+    "url": "/local/nsw/wollongong/woonona",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Albany Creek",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/albany-creek",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Bracken Ridge",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/bracken-ridge",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Brassall",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/brassall",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Bray Park",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/bray-park",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Brookside",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/brookside",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Carrara",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/carrara",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Clayfield",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/clayfield",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Coombabah",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/coombabah",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Deception Bay",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/deception-bay",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Eagleby",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/eagleby",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Jimboomba",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/jimboomba",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Logan",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/logan",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Marsden",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/marsden",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Mermaid Waters",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/mermaid-waters",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Morayfield",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/morayfield",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Murrumba Downs",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/murrumba-downs",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Redbank Plains",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/redbank-plains",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Redlands",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/redlands",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Springfield Lakes",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/springfield-lakes",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Tarragindi",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/tarragindi",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Warner",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/warner",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Wishart",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/wishart",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Wynnum West",
+    "current_count": 0,
+    "url": "/local/qld/brisbane/wynnum-west",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Buderim",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/buderim",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Caloundra",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/caloundra",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Coolum Beach",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/coolum-beach",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Forest Glen",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/forest-glen",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Gympie",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/gympie",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Kawana Waters",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/kawana-waters",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Maleny",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/maleny",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Mooloolaba",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/mooloolaba",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Noosa Heads",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/noosa-heads",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Sippy Downs",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/sippy-downs",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Tewantin",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/tewantin",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Woombye",
+    "current_count": 0,
+    "url": "/local/qld/sunshine-coast/woombye",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Aitkenvale",
+    "current_count": 0,
+    "url": "/local/qld/townsville/aitkenvale",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Belgian Gardens",
+    "current_count": 0,
+    "url": "/local/qld/townsville/belgian-gardens",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Condon",
+    "current_count": 0,
+    "url": "/local/qld/townsville/condon",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Cranbrook",
+    "current_count": 0,
+    "url": "/local/qld/townsville/cranbrook",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Douglas",
+    "current_count": 0,
+    "url": "/local/qld/townsville/douglas",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Garbutt",
+    "current_count": 0,
+    "url": "/local/qld/townsville/garbutt",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Idalia",
+    "current_count": 0,
+    "url": "/local/qld/townsville/idalia",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Kirwan",
+    "current_count": 0,
+    "url": "/local/qld/townsville/kirwan",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Mount Louisa",
+    "current_count": 0,
+    "url": "/local/qld/townsville/mount-louisa",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Mundingburra",
+    "current_count": 0,
+    "url": "/local/qld/townsville/mundingburra",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "North Ward",
+    "current_count": 0,
+    "url": "/local/qld/townsville/north-ward",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Pimlico",
+    "current_count": 0,
+    "url": "/local/qld/townsville/pimlico",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Rasmussen",
+    "current_count": 0,
+    "url": "/local/qld/townsville/rasmussen",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Rowes Bay",
+    "current_count": 0,
+    "url": "/local/qld/townsville/rowes-bay",
+    "priority": "high"
+  },
+  {
+    "state": "QLD",
+    "city": "Townsville",
+    "suburb": "Townsville CBD",
+    "current_count": 0,
+    "url": "/local/qld/townsville/townsville-cbd",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Aberfoyle Park",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/aberfoyle-park",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Adelaide city centre",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/adelaide-city-centre",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Adelaide Hills",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/adelaide-hills",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Kilburn",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/kilburn",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Mitcham",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/mitcham",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Mount Gambier",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/mount-gambier",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Munno Para",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/munno-para",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Murray Bridge",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/murray-bridge",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Noarlunga",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/noarlunga",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Semaphore",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/semaphore",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "St Marys",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/st-marys",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Victor Harbor",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/victor-harbor",
+    "priority": "high"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Walkerville",
+    "current_count": 0,
+    "url": "/local/sa/adelaide/walkerville",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Ballarat",
+    "suburb": "Invermay Park",
+    "current_count": 0,
+    "url": "/local/vic/ballarat/invermay-park",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Ballarat",
+    "suburb": "Nerrina",
+    "current_count": 0,
+    "url": "/local/vic/ballarat/nerrina",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Geelong",
+    "suburb": "Anakie",
+    "current_count": 0,
+    "url": "/local/vic/geelong/anakie",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Geelong",
+    "suburb": "Whittington",
+    "current_count": 0,
+    "url": "/local/vic/geelong/whittington",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Altona Meadows",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/altona-meadows",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Altona North",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/altona-north",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Avondale Heights",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/avondale-heights",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Bacchus Marsh",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/bacchus-marsh",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Balwyn",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/balwyn",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Balwyn North",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/balwyn-north",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Beaumaris",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/beaumaris",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Bentleigh East",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/bentleigh-east",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Berwick",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/berwick",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Blackburn",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/blackburn",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Blackburn South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/blackburn-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Boronia",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/boronia",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Box Hill North",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/box-hill-north",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Brighton East",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/brighton-east",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Broadmeadows",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/broadmeadows",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Brunswick East",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/brunswick-east",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Brunswick West",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/brunswick-west",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Bulleen",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/bulleen",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Carnegie",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/carnegie",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Caroline Springs",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/caroline-springs",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Carrum Downs",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/carrum-downs",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Caulfield North",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/caulfield-north",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Caulfield South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/caulfield-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Clayton South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/clayton-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Clyde",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/clyde",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Cranbourne East",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/cranbourne-east",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Cranbourne North",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/cranbourne-north",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Cranbourne West",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/cranbourne-west",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Dandenong North",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/dandenong-north",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Deer Park",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/deer-park",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Diamond Creek",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/diamond-creek",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Dingley Village",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/dingley-village",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Docklands",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/docklands",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Donvale",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/donvale",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Elsternwick",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/elsternwick",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Eltham",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/eltham",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Elwood",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/elwood",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Endeavour Hills",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/endeavour-hills",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Fawkner",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/fawkner",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Ferntree Gully",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/ferntree-gully",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Fitzroy North",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/fitzroy-north",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Forest Hill",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/forest-hill",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Frankston East",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/frankston-east",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Frankston South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/frankston-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Glen Iris",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/glen-iris",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Glenferrie",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/glenferrie",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Glenroy",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/glenroy",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Greensborough",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/greensborough",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Greenvale",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/greenvale",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Hallam",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/hallam",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Hampton",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/hampton",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Hampton Park",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/hampton-park",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Hawthorn South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/hawthorn-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Highett",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/highett",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Hillside",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/hillside",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Ivanhoe",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/ivanhoe",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Kew",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/kew",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Keysborough",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/keysborough",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Kilsyth",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/kilsyth",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Kurunjang",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/kurunjang",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Langwarrin",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/langwarrin",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Malvern East",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/malvern-east",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Maribyrnong",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/maribyrnong",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Meadow Heights",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/meadow-heights",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Melbourne CBD",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/melbourne-cbd",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Melbourne City Centre",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/melbourne-city-centre",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Melton South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/melton-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Mernda",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/mernda",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Mitcham",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/mitcham",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Mooroolbark",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/mooroolbark",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Mornington",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/mornington",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Mount Eliza",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/mount-eliza",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Mount Martha",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/mount-martha",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Narre Warren South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/narre-warren-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "North Melbourne",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/north-melbourne",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Officer",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/officer",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Parkdale",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/parkdale",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Pascoe Vale",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/pascoe-vale",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Port Melbourne",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/port-melbourne",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Prahran",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/prahran",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Reservoir",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/reservoir",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Ringwood East",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/ringwood-east",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Rosebud",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/rosebud",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Roxburgh Park",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/roxburgh-park",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Saint Kilda",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/saint-kilda",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Sandringham",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/sandringham",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "South Melbourne",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/south-melbourne",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "South Morang",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/south-morang",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Southbank",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/southbank",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Springvale South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/springvale-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "St Albans",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/st-albans",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "St Kilda East",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/st-kilda-east",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Sunshine North",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/sunshine-north",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Sunshine West",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/sunshine-west",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Sydenham",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/sydenham",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Taylors Hill",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/taylors-hill",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Taylors Lakes",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/taylors-lakes",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Templestowe",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/templestowe",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Templestowe Lower",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/templestowe-lower",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Thornbury",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/thornbury",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Toorak",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/toorak",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Vermont South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/vermont-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Wallan",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/wallan",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Wantirna South",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/wantirna-south",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "West Footscray",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/west-footscray",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Wheelers Hill",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/wheelers-hill",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Wyndham Vale",
+    "current_count": 0,
+    "url": "/local/vic/melbourne/wyndham-vale",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Bunbury",
+    "suburb": "Australind",
+    "current_count": 0,
+    "url": "/local/wa/bunbury/australind",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Mandurah",
+    "suburb": "Halls Head",
+    "current_count": 0,
+    "url": "/local/wa/mandurah/halls-head",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Mandurah",
+    "suburb": "Secret Harbour",
+    "current_count": 0,
+    "url": "/local/wa/mandurah/secret-harbour",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Ballajura",
+    "current_count": 0,
+    "url": "/local/wa/perth/ballajura",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Cockburn",
+    "current_count": 0,
+    "url": "/local/wa/perth/cockburn",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Dianella",
+    "current_count": 0,
+    "url": "/local/wa/perth/dianella",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Duncraig",
+    "current_count": 0,
+    "url": "/local/wa/perth/duncraig",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "East Perth",
+    "current_count": 0,
+    "url": "/local/wa/perth/east-perth",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Girrawheen",
+    "current_count": 0,
+    "url": "/local/wa/perth/girrawheen",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Greenwood",
+    "current_count": 0,
+    "url": "/local/wa/perth/greenwood",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Hillarys",
+    "current_count": 0,
+    "url": "/local/wa/perth/hillarys",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Innaloo",
+    "current_count": 0,
+    "url": "/local/wa/perth/innaloo",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Joondanna",
+    "current_count": 0,
+    "url": "/local/wa/perth/joondanna",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Kelmscott",
+    "current_count": 0,
+    "url": "/local/wa/perth/kelmscott",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Kingsley",
+    "current_count": 0,
+    "url": "/local/wa/perth/kingsley",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Leederville",
+    "current_count": 0,
+    "url": "/local/wa/perth/leederville",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Maylands",
+    "current_count": 0,
+    "url": "/local/wa/perth/maylands",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Mirrabooka",
+    "current_count": 0,
+    "url": "/local/wa/perth/mirrabooka",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Mount Lawley",
+    "current_count": 0,
+    "url": "/local/wa/perth/mount-lawley",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Mount Pleasant",
+    "current_count": 0,
+    "url": "/local/wa/perth/mount-pleasant",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Mundaring",
+    "current_count": 0,
+    "url": "/local/wa/perth/mundaring",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Nollamara",
+    "current_count": 0,
+    "url": "/local/wa/perth/nollamara",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "North Perth",
+    "current_count": 0,
+    "url": "/local/wa/perth/north-perth",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Northbridge",
+    "current_count": 0,
+    "url": "/local/wa/perth/northbridge",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Perth CBD",
+    "current_count": 0,
+    "url": "/local/wa/perth/perth-cbd",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Perth city centre",
+    "current_count": 0,
+    "url": "/local/wa/perth/perth-city-centre",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Rivervale",
+    "current_count": 0,
+    "url": "/local/wa/perth/rivervale",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Seville Grove",
+    "current_count": 0,
+    "url": "/local/wa/perth/seville-grove",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Spearwood",
+    "current_count": 0,
+    "url": "/local/wa/perth/spearwood",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Wanneroo",
+    "current_count": 0,
+    "url": "/local/wa/perth/wanneroo",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Wembley",
+    "current_count": 0,
+    "url": "/local/wa/perth/wembley",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Whitford",
+    "current_count": 0,
+    "url": "/local/wa/perth/whitford",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Willeton",
+    "current_count": 0,
+    "url": "/local/wa/perth/willeton",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Yokine",
+    "current_count": 0,
+    "url": "/local/wa/perth/yokine",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Rockingham",
+    "suburb": "Byford",
+    "current_count": 0,
+    "url": "/local/wa/rockingham/byford",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Rockingham",
+    "suburb": "Kwinana",
+    "current_count": 0,
+    "url": "/local/wa/rockingham/kwinana",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Rockingham",
+    "suburb": "Port Kennedy",
+    "current_count": 0,
+    "url": "/local/wa/rockingham/port-kennedy",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Rockingham",
+    "suburb": "Rockingham city centre",
+    "current_count": 0,
+    "url": "/local/wa/rockingham/rockingham-city-centre",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Rockingham",
+    "suburb": "Waikiki",
+    "current_count": 0,
+    "url": "/local/wa/rockingham/waikiki",
+    "priority": "high"
+  },
+  {
+    "state": "WA",
+    "city": "Rockingham",
+    "suburb": "Warnbro",
+    "current_count": 0,
+    "url": "/local/wa/rockingham/warnbro",
+    "priority": "high"
+  },
+  {
+    "state": "VIC",
+    "city": "Ballarat",
+    "suburb": "Brown Hill",
+    "current_count": 1,
+    "url": "/local/vic/ballarat/brown-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Ballarat",
+    "suburb": "Mount Helen",
+    "current_count": 1,
+    "url": "/local/vic/ballarat/mount-helen",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Bendigo",
+    "suburb": "Epsom",
+    "current_count": 1,
+    "url": "/local/vic/bendigo/epsom",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Bendigo",
+    "suburb": "Kennington",
+    "current_count": 1,
+    "url": "/local/vic/bendigo/kennington",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Geelong",
+    "suburb": "East Geelong",
+    "current_count": 1,
+    "url": "/local/vic/geelong/east-geelong",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Geelong",
+    "suburb": "Thomson",
+    "current_count": 1,
+    "url": "/local/vic/geelong/thomson",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Altona",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/altona",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Balaclava",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/balaclava",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Bannockburn",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/bannockburn",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Derrimut",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/derrimut",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Fyansford",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/fyansford",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Knox",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/knox",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Laverton North",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/laverton-north",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Manor Lakes",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/manor-lakes",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Marshall",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/marshall",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Oak Park",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/oak-park",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Travancore",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/travancore",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Truganina",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/truganina",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Wonga Park",
+    "current_count": 1,
+    "url": "/local/vic/melbourne/wonga-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Central Coast",
+    "suburb": "Warnervale",
+    "current_count": 1,
+    "url": "/local/nsw/central-coast/warnervale",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Austral",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/austral",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Bargo",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/bargo",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Camden",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/camden",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Casula",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/casula",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Eschol Park",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/eschol-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Guildford West",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/guildford-west",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Narellan",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/narellan",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Prestons",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/prestons",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Spring Farm",
+    "current_count": 1,
+    "url": "/local/nsw/liverpool/spring-farm",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Arndell Park",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/arndell-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Avalon Beach",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/avalon-beach",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Beecroft",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/beecroft",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Bella Vista",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/bella-vista",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Doreen",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/doreen",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Ermington",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/ermington",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Galston",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/galston",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Glendenning",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/glendenning",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Kellyville",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/kellyville",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Mill Park",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/mill-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Minchinbury",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/minchinbury",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Normanhurst",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/normanhurst",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Pennant Hills",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/pennant-hills",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Riverstone",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/riverstone",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "The Entrance",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/the-entrance",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Turrella",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/turrella",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "West Pennant Hills",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/west-pennant-hills",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "West Ryde",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/west-ryde",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Wollert",
+    "current_count": 1,
+    "url": "/local/nsw/parramatta/wollert",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Ashbury",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/ashbury",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Bangor",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/bangor",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Beacon Hill",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/beacon-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Birchgrove",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/birchgrove",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Brompton",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/brompton",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Castlecrag",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/castlecrag",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Chatswood West",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/chatswood-west",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Chester Hill",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/chester-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Collaroy",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/collaroy",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Crows Nest",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/crows-nest",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Darlinghurst",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/darlinghurst",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Dolans Bay",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/dolans-bay",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Drummoyne",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/drummoyne",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Enmore",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/enmore",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Erina",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/erina",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Five Dock",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/five-dock",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Forest Lodge",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/forest-lodge",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Fountaindale",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/fountaindale",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Haymarket",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/haymarket",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Heathcote",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/heathcote",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Heatherbrae",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/heatherbrae",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Hunters Hill",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/hunters-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Illawong",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/illawong",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Kareela",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/kareela",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Knoxfield",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/knoxfield",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Lane Cove West",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/lane-cove-west",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Lilyfield",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/lilyfield",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Manly Vale",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/manly-vale",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Mount Moriac",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/mount-moriac",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "North Manly",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/north-manly",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "North Narrabeen",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/north-narrabeen",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "North Willoughby",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/north-willoughby",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Pagewood",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/pagewood",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Penshurst",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/penshurst",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Pitt Town",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/pitt-town",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Rockdale",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/rockdale",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Rooty Hill",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/rooty-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Rosebery",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/rosebery",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Rosslyn Park",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/rosslyn-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Rozelle",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/rozelle",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Somerville",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/somerville",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "South Hurstville",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/south-hurstville",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Stanmore",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/stanmore",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Tempe",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/tempe",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "The Rocks",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/the-rocks",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Trinity Gardens",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/trinity-gardens",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Vermont",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/vermont",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Waterloo",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/waterloo",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "West Pymble",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/west-pymble",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Woolooware",
+    "current_count": 1,
+    "url": "/local/nsw/sydney/woolooware",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Algester",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/algester",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Archerfield",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/archerfield",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Brisbane CBD",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/brisbane-cbd",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Chambers Flat",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/chambers-flat",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Dutton Park",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/dutton-park",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Gatton",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/gatton",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Geebung",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/geebung",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Holmview",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/holmview",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Laidley",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/laidley",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Logan Central",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/logan-central",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Loganlea",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/loganlea",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Lota",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/lota",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Parkinson",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/parkinson",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Regents Park",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/regents-park",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Robertson",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/robertson",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Russell Island",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/russell-island",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Sunnybank Hills",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/sunnybank-hills",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Taigum",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/taigum",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Thorneside",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/thorneside",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Willowbank",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/willowbank",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Yatala",
+    "current_count": 1,
+    "url": "/local/qld/brisbane/yatala",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Maroochydore",
+    "current_count": 1,
+    "url": "/local/qld/sunshine-coast/maroochydore",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Nambour",
+    "current_count": 1,
+    "url": "/local/qld/sunshine-coast/nambour",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Sunshine Coast",
+    "suburb": "Noosaville",
+    "current_count": 1,
+    "url": "/local/qld/sunshine-coast/noosaville",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Attadale",
+    "current_count": 1,
+    "url": "/local/wa/perth/attadale",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Bakery Hill",
+    "current_count": 1,
+    "url": "/local/wa/perth/bakery-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Balcatta",
+    "current_count": 1,
+    "url": "/local/wa/perth/balcatta",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Beechboro",
+    "current_count": 1,
+    "url": "/local/wa/perth/beechboro",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Beldon",
+    "current_count": 1,
+    "url": "/local/wa/perth/beldon",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Booragoon",
+    "current_count": 1,
+    "url": "/local/wa/perth/booragoon",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Brabham",
+    "current_count": 1,
+    "url": "/local/wa/perth/brabham",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Bullsbrook",
+    "current_count": 1,
+    "url": "/local/wa/perth/bullsbrook",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Darch",
+    "current_count": 1,
+    "url": "/local/wa/perth/darch",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Doubleview",
+    "current_count": 1,
+    "url": "/local/wa/perth/doubleview",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Gosnells",
+    "current_count": 1,
+    "url": "/local/wa/perth/gosnells",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Henderson",
+    "current_count": 1,
+    "url": "/local/wa/perth/henderson",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Henley Brook",
+    "current_count": 1,
+    "url": "/local/wa/perth/henley-brook",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Marangaroo",
+    "current_count": 1,
+    "url": "/local/wa/perth/marangaroo",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Mariginiup",
+    "current_count": 1,
+    "url": "/local/wa/perth/mariginiup",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Martin",
+    "current_count": 1,
+    "url": "/local/wa/perth/martin",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Melville",
+    "current_count": 1,
+    "url": "/local/wa/perth/melville",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Merriwa",
+    "current_count": 1,
+    "url": "/local/wa/perth/merriwa",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Nowergup",
+    "current_count": 1,
+    "url": "/local/wa/perth/nowergup",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Pickering Brook",
+    "current_count": 1,
+    "url": "/local/wa/perth/pickering-brook",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Saint Albans",
+    "current_count": 1,
+    "url": "/local/wa/perth/saint-albans",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Swan View",
+    "current_count": 1,
+    "url": "/local/wa/perth/swan-view",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Trigg",
+    "current_count": 1,
+    "url": "/local/wa/perth/trigg",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "West Perth",
+    "current_count": 1,
+    "url": "/local/wa/perth/west-perth",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "White Gum Valley",
+    "current_count": 1,
+    "url": "/local/wa/perth/white-gum-valley",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Wilsonton",
+    "current_count": 1,
+    "url": "/local/wa/perth/wilsonton",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Hampstead Gardens",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/hampstead-gardens",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Magill",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/magill",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "O'Halloran Hill",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/o'halloran-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "O'halloran Hill",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/o'halloran-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Old Reynella",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/old-reynella",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Para Hills",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/para-hills",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Seacliff Park",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/seacliff-park",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Sturt",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/sturt",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Tea Tree Gully",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/tea-tree-gully",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Woodville",
+    "current_count": 1,
+    "url": "/local/sa/adelaide/woodville",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Salisbury Park",
+    "current_count": 1,
+    "url": "/local/sa/gawler/salisbury-park",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Ballarat",
+    "suburb": "Miners Rest",
+    "current_count": 2,
+    "url": "/local/vic/ballarat/miners-rest",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Ballarat",
+    "suburb": "Mount Clear",
+    "current_count": 2,
+    "url": "/local/vic/ballarat/mount-clear",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Bendigo",
+    "suburb": "Flora Hill",
+    "current_count": 2,
+    "url": "/local/vic/bendigo/flora-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Bendigo",
+    "suburb": "Strathdale",
+    "current_count": 2,
+    "url": "/local/vic/bendigo/strathdale",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Geelong",
+    "suburb": "Portarlington",
+    "current_count": 2,
+    "url": "/local/vic/geelong/portarlington",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Keilor East",
+    "current_count": 2,
+    "url": "/local/vic/melbourne/keilor-east",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Central Coast",
+    "suburb": "Niagara Park",
+    "current_count": 2,
+    "url": "/local/nsw/central-coast/niagara-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Bradbury",
+    "current_count": 2,
+    "url": "/local/nsw/liverpool/bradbury",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Cabramatta West",
+    "current_count": 2,
+    "url": "/local/nsw/liverpool/cabramatta-west",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Canley Vale",
+    "current_count": 2,
+    "url": "/local/nsw/liverpool/canley-vale",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Green Valley",
+    "current_count": 2,
+    "url": "/local/nsw/liverpool/green-valley",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Leumeah",
+    "current_count": 2,
+    "url": "/local/nsw/liverpool/leumeah",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Picton",
+    "current_count": 2,
+    "url": "/local/nsw/liverpool/picton",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Saint Helens Park",
+    "current_count": 2,
+    "url": "/local/nsw/liverpool/saint-helens-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Cherrybrook",
+    "current_count": 2,
+    "url": "/local/nsw/parramatta/cherrybrook",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "North Epping",
+    "current_count": 2,
+    "url": "/local/nsw/parramatta/north-epping",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Annandale",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/annandale",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Berowra",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/berowra",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Botany Bay",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/botany-bay",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Concord",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/concord",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Croydon",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/croydon",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Gladesville",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/gladesville",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Greenhills Beach",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/greenhills-beach",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Hawthorn East",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/hawthorn-east",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Kurnell",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/kurnell",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Lane Cove North",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/lane-cove-north",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Lindfield",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/lindfield",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Mortlake",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/mortlake",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Oxford Falls",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/oxford-falls",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Oyster Bay",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/oyster-bay",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Queenscliff",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/queenscliff",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Saint Peters",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/saint-peters",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Strathfield South",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/strathfield-south",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Sylvania",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/sylvania",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Zetland",
+    "current_count": 2,
+    "url": "/local/nsw/sydney/zetland",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Burpengary",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/burpengary",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Cannon Hill",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/cannon-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Carina Heights",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/carina-heights",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Chandler",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/chandler",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Crestmead",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/crestmead",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Holland Park West",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/holland-park-west",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Lawnton",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/lawnton",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Meadowbrook",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/meadowbrook",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Molendinar",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/molendinar",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Mount Cotton",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/mount-cotton",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Mount Gravatt East",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/mount-gravatt-east",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Ormeau",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/ormeau",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Park Ridge South",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/park-ridge-south",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Rochedale South",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/rochedale-south",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Runcorn",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/runcorn",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Slacks Creek",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/slacks-creek",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Stones Corner",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/stones-corner",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Tingalpa",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/tingalpa",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Underwood",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/underwood",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Wakerley",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/wakerley",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Woodridge",
+    "current_count": 2,
+    "url": "/local/qld/brisbane/woodridge",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Gold Coast",
+    "suburb": "Main Beach",
+    "current_count": 2,
+    "url": "/local/qld/gold-coast/main-beach",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Applecross",
+    "current_count": 2,
+    "url": "/local/wa/perth/applecross",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Landsdale",
+    "current_count": 2,
+    "url": "/local/wa/perth/landsdale",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Leeming",
+    "current_count": 2,
+    "url": "/local/wa/perth/leeming",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Morley",
+    "current_count": 2,
+    "url": "/local/wa/perth/morley",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Subiaco",
+    "current_count": 2,
+    "url": "/local/wa/perth/subiaco",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "The Vines",
+    "current_count": 2,
+    "url": "/local/wa/perth/the-vines",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Upper Swan",
+    "current_count": 2,
+    "url": "/local/wa/perth/upper-swan",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Vasse",
+    "current_count": 2,
+    "url": "/local/wa/perth/vasse",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Victoria Park",
+    "current_count": 2,
+    "url": "/local/wa/perth/victoria-park",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Mawson Lakes",
+    "current_count": 2,
+    "url": "/local/sa/adelaide/mawson-lakes",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Seaview Downs",
+    "current_count": 2,
+    "url": "/local/sa/adelaide/seaview-downs",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Torrensville",
+    "current_count": 2,
+    "url": "/local/sa/adelaide/torrensville",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Trott Park",
+    "current_count": 2,
+    "url": "/local/sa/adelaide/trott-park",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Banksia Park",
+    "current_count": 2,
+    "url": "/local/sa/gawler/banksia-park",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Gepps Cross",
+    "current_count": 2,
+    "url": "/local/sa/gawler/gepps-cross",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Modbury North",
+    "current_count": 2,
+    "url": "/local/sa/gawler/modbury-north",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Redwood Park",
+    "current_count": 2,
+    "url": "/local/sa/gawler/redwood-park",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Surrey Downs",
+    "current_count": 2,
+    "url": "/local/sa/gawler/surrey-downs",
+    "priority": "medium"
+  },
+  {
+    "state": "TAS",
+    "city": "Hobart",
+    "suburb": "West Hobart",
+    "current_count": 2,
+    "url": "/local/tas/hobart/west-hobart",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Gregory Hills",
+    "current_count": 3,
+    "url": "/local/nsw/liverpool/gregory-hills",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Seven Hills",
+    "current_count": 3,
+    "url": "/local/nsw/liverpool/seven-hills",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Smeaton Grange",
+    "current_count": 3,
+    "url": "/local/nsw/liverpool/smeaton-grange",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Asquith",
+    "current_count": 3,
+    "url": "/local/nsw/parramatta/asquith",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Carlingford",
+    "current_count": 3,
+    "url": "/local/nsw/parramatta/carlingford",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Hornsby Heights",
+    "current_count": 3,
+    "url": "/local/nsw/parramatta/hornsby-heights",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Seven Hills",
+    "current_count": 3,
+    "url": "/local/nsw/parramatta/seven-hills",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "West Gosford",
+    "current_count": 3,
+    "url": "/local/nsw/parramatta/west-gosford",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Barangaroo",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/barangaroo",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Belrose",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/belrose",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Breakwater",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/breakwater",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Freshwater",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/freshwater",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Kensington Park",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/kensington-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Kingsford",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/kingsford",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Leichhardt",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/leichhardt",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Narrabeen",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/narrabeen",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Newport",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/newport",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Royal Park",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/royal-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "West Gosford",
+    "current_count": 3,
+    "url": "/local/nsw/sydney/west-gosford",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Browns Plains",
+    "current_count": 3,
+    "url": "/local/qld/brisbane/browns-plains",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Hemmant",
+    "current_count": 3,
+    "url": "/local/qld/brisbane/hemmant",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Loganholme",
+    "current_count": 3,
+    "url": "/local/qld/brisbane/loganholme",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Macgregor",
+    "current_count": 3,
+    "url": "/local/qld/brisbane/macgregor",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Narangba",
+    "current_count": 3,
+    "url": "/local/qld/brisbane/narangba",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Ormiston",
+    "current_count": 3,
+    "url": "/local/qld/brisbane/ormiston",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "South Brisbane",
+    "current_count": 3,
+    "url": "/local/qld/brisbane/south-brisbane",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Gnangara",
+    "current_count": 3,
+    "url": "/local/wa/perth/gnangara",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Hamilton Hill",
+    "current_count": 3,
+    "url": "/local/wa/perth/hamilton-hill",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Quinns Rocks",
+    "current_count": 3,
+    "url": "/local/wa/perth/quinns-rocks",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Southern River",
+    "current_count": 3,
+    "url": "/local/wa/perth/southern-river",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Yanchep",
+    "current_count": 3,
+    "url": "/local/wa/perth/yanchep",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Marion",
+    "current_count": 3,
+    "url": "/local/sa/adelaide/marion",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Parafield Gardens",
+    "current_count": 3,
+    "url": "/local/sa/adelaide/parafield-gardens",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Seaton",
+    "current_count": 3,
+    "url": "/local/sa/adelaide/seaton",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Flinders Park",
+    "current_count": 3,
+    "url": "/local/sa/gawler/flinders-park",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Para Vista",
+    "current_count": 3,
+    "url": "/local/sa/gawler/para-vista",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Salisbury North",
+    "current_count": 3,
+    "url": "/local/sa/gawler/salisbury-north",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Valley View",
+    "current_count": 3,
+    "url": "/local/sa/gawler/valley-view",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Ballarat",
+    "suburb": "Ballarat East",
+    "current_count": 4,
+    "url": "/local/vic/ballarat/ballarat-east",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Ballarat",
+    "suburb": "Ballarat North",
+    "current_count": 4,
+    "url": "/local/vic/ballarat/ballarat-north",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Ascot Vale",
+    "current_count": 4,
+    "url": "/local/vic/melbourne/ascot-vale",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "Campbellfield",
+    "current_count": 4,
+    "url": "/local/vic/melbourne/campbellfield",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Blair Athol",
+    "current_count": 4,
+    "url": "/local/nsw/liverpool/blair-athol",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Fairfield Heights",
+    "current_count": 4,
+    "url": "/local/nsw/liverpool/fairfield-heights",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Fairfield West",
+    "current_count": 4,
+    "url": "/local/nsw/liverpool/fairfield-west",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Ingleburn",
+    "current_count": 4,
+    "url": "/local/nsw/liverpool/ingleburn",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Minto",
+    "current_count": 4,
+    "url": "/local/nsw/liverpool/minto",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Liverpool",
+    "suburb": "Wetherill Park",
+    "current_count": 4,
+    "url": "/local/nsw/liverpool/wetherill-park",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Newcastle",
+    "suburb": "Waratah",
+    "current_count": 4,
+    "url": "/local/nsw/newcastle/waratah",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Campbellfield",
+    "current_count": 4,
+    "url": "/local/nsw/parramatta/campbellfield",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Dural",
+    "current_count": 4,
+    "url": "/local/nsw/parramatta/dural",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Eastwood",
+    "current_count": 4,
+    "url": "/local/nsw/parramatta/eastwood",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Thornleigh",
+    "current_count": 4,
+    "url": "/local/nsw/parramatta/thornleigh",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Camperdown",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/camperdown",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Coogee",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/coogee",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Ingleburn",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/ingleburn",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Kensington Gardens",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/kensington-gardens",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Mascot",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/mascot",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Narraweena",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/narraweena",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Sutherland",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/sutherland",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Sydney CBD",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/sydney-cbd",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Wetherill Park",
+    "current_count": 4,
+    "url": "/local/nsw/sydney/wetherill-park",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Birkdale",
+    "current_count": 4,
+    "url": "/local/qld/brisbane/birkdale",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Brisbane",
+    "current_count": 4,
+    "url": "/local/qld/brisbane/brisbane",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Taringa",
+    "current_count": 4,
+    "url": "/local/qld/brisbane/taringa",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Glenside",
+    "current_count": 4,
+    "url": "/local/sa/adelaide/glenside",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Happy Valley",
+    "current_count": 4,
+    "url": "/local/sa/adelaide/happy-valley",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Burton",
+    "current_count": 4,
+    "url": "/local/sa/gawler/burton",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Fairview Park",
+    "current_count": 4,
+    "url": "/local/sa/gawler/fairview-park",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Ridgehaven",
+    "current_count": 4,
+    "url": "/local/sa/gawler/ridgehaven",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Salisbury Plain",
+    "current_count": 4,
+    "url": "/local/sa/gawler/salisbury-plain",
+    "priority": "medium"
+  },
+  {
+    "state": "NT",
+    "city": "Darwin",
+    "suburb": "Stuart Park",
+    "current_count": 4,
+    "url": "/local/nt/darwin/stuart-park",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Bendigo",
+    "suburb": "Strathfieldsaye",
+    "current_count": 5,
+    "url": "/local/vic/bendigo/strathfieldsaye",
+    "priority": "medium"
+  },
+  {
+    "state": "VIC",
+    "city": "Melbourne",
+    "suburb": "North Shore",
+    "current_count": 5,
+    "url": "/local/vic/melbourne/north-shore",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Newcastle",
+    "suburb": "Glendale",
+    "current_count": 5,
+    "url": "/local/nsw/newcastle/glendale",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Mount Colah",
+    "current_count": 5,
+    "url": "/local/nsw/parramatta/mount-colah",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Waitara",
+    "current_count": 5,
+    "url": "/local/nsw/parramatta/waitara",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Parramatta",
+    "suburb": "Westmead",
+    "current_count": 5,
+    "url": "/local/nsw/parramatta/westmead",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Alexandria",
+    "current_count": 5,
+    "url": "/local/nsw/sydney/alexandria",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Caringbah South",
+    "current_count": 5,
+    "url": "/local/nsw/sydney/caringbah-south",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Mount Colah",
+    "current_count": 5,
+    "url": "/local/nsw/sydney/mount-colah",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Pyrmont",
+    "current_count": 5,
+    "url": "/local/nsw/sydney/pyrmont",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Roseville",
+    "current_count": 5,
+    "url": "/local/nsw/sydney/roseville",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Taren Point",
+    "current_count": 5,
+    "url": "/local/nsw/sydney/taren-point",
+    "priority": "medium"
+  },
+  {
+    "state": "NSW",
+    "city": "Sydney",
+    "suburb": "Willoughby",
+    "current_count": 5,
+    "url": "/local/nsw/sydney/willoughby",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Alexandra Hills",
+    "current_count": 5,
+    "url": "/local/qld/brisbane/alexandra-hills",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Carina",
+    "current_count": 5,
+    "url": "/local/qld/brisbane/carina",
+    "priority": "medium"
+  },
+  {
+    "state": "QLD",
+    "city": "Brisbane",
+    "suburb": "Seventeen Mile Rocks",
+    "current_count": 5,
+    "url": "/local/qld/brisbane/seventeen-mile-rocks",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Karrinyup",
+    "current_count": 5,
+    "url": "/local/wa/perth/karrinyup",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Kenwick",
+    "current_count": 5,
+    "url": "/local/wa/perth/kenwick",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Neerabup",
+    "current_count": 5,
+    "url": "/local/wa/perth/neerabup",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "South Perth",
+    "current_count": 5,
+    "url": "/local/wa/perth/south-perth",
+    "priority": "medium"
+  },
+  {
+    "state": "WA",
+    "city": "Perth",
+    "suburb": "Thornlie",
+    "current_count": 5,
+    "url": "/local/wa/perth/thornlie",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Adelaide",
+    "suburb": "Sheidow Park",
+    "current_count": 5,
+    "url": "/local/sa/adelaide/sheidow-park",
+    "priority": "medium"
+  },
+  {
+    "state": "SA",
+    "city": "Gawler",
+    "suburb": "Saint Agnes",
+    "current_count": 5,
+    "url": "/local/sa/gawler/saint-agnes",
+    "priority": "medium"
+  },
+  {
+    "state": "ACT",
+    "city": "Canberra",
+    "suburb": "Wright",
+    "current_count": 5,
+    "url": "/local/act/canberra/wright",
+    "priority": "medium"
+  }
+]
