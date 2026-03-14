@@ -284,11 +284,8 @@ export function EditableImage({
     const context = useEditableProfileOptional();
     const value = context?.isOwner ? context.fields?.[field] || "" : (initialValue || "");
 
-    // If logo_url is the same as a gallery photo, treat it as no logo
-    const isProjectPhoto = field === "logo_url" && value && Array.isArray(photoUrls) && photoUrls.includes(value);
-
     if (!context?.isOwner || !context.editMode) {
-        if (value && !isProjectPhoto) {
+        if (value) {
             return <img src={value} alt={alt} className={className} />;
         }
         return <>{empty}</>;

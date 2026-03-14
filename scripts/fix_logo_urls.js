@@ -1,7 +1,6 @@
 /**
- * Fix logo_url for businesses where logo_url is the same as one of their photo_urls.
- * These are project/work photos from Google Places that were incorrectly used as logos.
- * Sets logo_url to NULL so the letter avatar shows instead.
+ * Restore logo_url from photo_urls[1] (Postgres 1-indexed) for businesses
+ * where logo_url was incorrectly set to NULL.
  */
 require('dotenv').config({ path: require('path').join(__dirname, '..', 'apps', 'web', '.env.local') });
 const pg = require('pg');
@@ -10,21 +9,16 @@ async function run() {
     const db = new pg.Client(process.env.DATABASE_URL);
     await db.connect();
 
-    // Find businesses where logo_url appears in photo_urls array
     const result = await db.query(`
         UPDATE businesses 
-        SET logo_url = NULL 
-        WHERE logo_url IS NOT NULL 
+        SET logo_url = photo_urls[1]
+        WHERE logo_url IS NULL 
           AND photo_urls IS NOT NULL 
-          AND logo_url = ANY(photo_urls)
-        RETURNING id, business_name, logo_url
+          AND array_length(photo_urls, 1) > 0
+        RETURNING id, business_name
     `);
 
-    console.log(`Fixed ${result.rowCount} businesses:`);
-    for (const row of result.rows) {
-        console.log(`  - ${row.business_name} (${row.id})`);
-    }
-
+    console.log(`Restored logos for ${result.rowCount} businesses`);
     await db.end();
 }
 
