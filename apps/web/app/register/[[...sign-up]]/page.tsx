@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { SignUp } from "@clerk/nextjs";
 import {
     Quote
@@ -5,6 +6,21 @@ import {
 import Link from "next/link";
 import { Suspense } from "react";
 import { Logo } from "@/components/Logo";
+
+export const metadata: Metadata = {
+    title: "Join TradeRefer as a Referrer",
+    description: "Get invited to TradeRefer, refer trusted tradies, and earn commissions on verified trade leads.",
+    openGraph: {
+        title: "Join TradeRefer as a Referrer",
+        description: "Get invited to TradeRefer, refer trusted tradies, and earn commissions on verified trade leads.",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Join TradeRefer as a Referrer",
+        description: "Get invited to TradeRefer, refer trusted tradies, and earn commissions on verified trade leads.",
+    },
+};
 
 export default function RegisterPage() {
     return (
