@@ -298,13 +298,27 @@ export default async function BusinessDirectory({
                                 </div>
 
                                 <div className="space-y-3 mb-6">
+                                    {(parseFloat(biz.connection_rate) > 0 || parseInt(biz.total_confirmed) > 0 || parseFloat(biz.avg_rating) > 0) && (
                                     <div className="flex items-center gap-2">
-                                        <div className="flex items-center gap-0.5 text-orange-500">
-                                            <Star className="w-4 h-4 fill-current" />
-                                        </div>
-                                        <span className="font-bold text-zinc-900 text-base">{biz.connection_rate}% connection rate</span>
-                                        <span className="text-zinc-400 text-base">• {biz.total_confirmed} verified leads</span>
+                                        {parseFloat(biz.avg_rating) > 0 ? (
+                                            <>
+                                                <div className="flex items-center gap-0.5 text-orange-500">
+                                                    <Star className="w-4 h-4 fill-current" />
+                                                </div>
+                                                <span className="font-bold text-zinc-900 text-base">{parseFloat(biz.avg_rating).toFixed(1)} rating</span>
+                                                {parseInt(biz.total_reviews) > 0 && <span className="text-zinc-400 text-base">• {biz.total_reviews} reviews</span>}
+                                            </>
+                                        ) : parseFloat(biz.connection_rate) > 0 ? (
+                                            <>
+                                                <div className="flex items-center gap-0.5 text-orange-500">
+                                                    <Star className="w-4 h-4 fill-current" />
+                                                </div>
+                                                <span className="font-bold text-zinc-900 text-base">{biz.connection_rate}% connection rate</span>
+                                                <span className="text-zinc-400 text-base">• {biz.total_confirmed} verified leads</span>
+                                            </>
+                                        ) : null}
                                     </div>
+                                    )}
                                     <p className="text-zinc-600 line-clamp-2 leading-relaxed text-base">
                                         {biz.description || `Expert ${biz.trade_category} serving the ${biz.suburb} area. High quality workmanship and reliable service.`}
                                     </p>

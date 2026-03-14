@@ -2,7 +2,9 @@ import { sql } from "@/lib/db";
 import { ChevronRight, Hammer, Lightbulb, Pipette as Pipe, Paintbrush, Wrench, Home, Truck, Trash2, Shovel, Scissors, Lock, Wind, Bug, PenTool, HardHat, Construction, LayoutGrid, Fence, MapPin, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { SUBURB_CONTEXT } from "@/lib/constants";
+import { parseSuburbSlug, getPostcode } from "@/lib/postcodes";
 
 interface PageProps {
     params: Promise<{ state: string; city: string; suburb: string }>;
@@ -33,7 +35,9 @@ const TRADE_ICONS: Record<string, any> = {
 function formatSlug(slug: string) {
     if (!slug) return "";
     try { slug = decodeURIComponent(slug); } catch { /* already decoded */ }
-    return slug.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+    // Strip postcode suffix if present (e.g. "parramatta-2150" → "Parramatta")
+    const { suburb: cleanSlug } = parseSuburbSlug(slug);
+    return cleanSlug.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -41,9 +45,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const suburbName = formatSlug(suburb);
     const cityName = formatSlug(city);
     const stateUpper = state.toUpperCase();
+    const { postcode } = parseSuburbSlug(suburb);
+    const pc = postcode || getPostcode(parseSuburbSlug(suburb).suburb, state);
+    const pcLabel = pc ? ` ${stateUpper} ${pc}` : ` ${stateUpper}`;
     return {
-        title: `Best Trades in ${suburbName}, ${cityName} | TradeRefer`,
-        description: `Find verified local trade businesses in ${suburbName}, ${cityName} ${stateUpper}. Browse by trade category to connect with ABN-checked experts near you.`,
+        title: `Best Trades in ${suburbName}, ${cityName}${pcLabel} | TradeRefer`,
+        description: `Find verified local trade businesses in ${suburbName}, ${cityName}${pcLabel}. Browse by trade category to connect with ABN-checked experts near you.`,
+        alternates: { canonical: `https://traderefer.au/local/${state}/${city}/${suburb}` },
     };
 }
 
@@ -99,6 +107,16 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
     const suburbName = formatSlug(suburb);
     const stateUpper = state.toUpperCase();
 
+    // If URL has no postcode but we know it, 301 redirect to postcode URL
+    const { postcode: urlPostcode, suburb: bareSuburb } = parseSuburbSlug(suburb);
+    if (!urlPostcode) {
+        const knownPostcode = getPostcode(bareSuburb, state);
+        if (knownPostcode) {
+            redirect(`/local/${state}/${city}/${bareSuburb}-${knownPostcode}`);
+        }
+    }
+    const postcode = urlPostcode || getPostcode(bareSuburb, state);
+
     const [suburbStats, tradesWithCounts, nearbySuburbs] = await Promise.all([
         getSuburbStats(suburb),
         getTradesWithCounts(suburb),
@@ -124,7 +142,7 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
             { "@type": "ListItem", "position": 2, "name": "Directory", "item": "https://traderefer.au/local" },
             { "@type": "ListItem", "position": 3, "name": stateUpper, "item": `https://traderefer.au/local/${state}` },
             { "@type": "ListItem", "position": 4, "name": cityName, "item": `https://traderefer.au/local/${state}/${city}` },
-            { "@type": "ListItem", "position": 5, "name": `Best Trades in ${suburbName}` },
+            { "@type": "ListItem", "position": 5, "name": `Best Trades in ${suburbName}${postcode ? ` ${postcode}` : ''}` },
         ]
     };
 
@@ -145,7 +163,7 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                         <ChevronRight className="w-3 h-3" />
                         <Link href={`/local/${state}/${city}`} className="hover:text-[#FF6600] transition-colors">{cityName}</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <span className="text-[#FF6600]">{suburbName}</span>
+                        <span className="text-[#FF6600]">{suburbName}{postcode ? ` ${postcode}` : ''}</span>
                     </nav>
                 </div>
             </div>
@@ -166,7 +184,7 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                     </div>
                     <div className="max-w-4xl">
                         <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
-                            Best Trades in <span className="text-[#FF6600]">{suburbName}</span>
+                            Best Trades in <span className="text-[#FF6600]">{suburbName}{postcode ? ` ${stateUpper} ${postcode}` : ''}</span>
                         </h1>
                         <p className="text-gray-600 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             All businesses ABN-verified and ranked by real community referrals — not paid placement.
@@ -243,15 +261,19 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
                                 </h2>
                                 <p className="text-gray-500 mb-6" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find trade professionals in suburbs adjacent to {suburbName}:</p>
                                 <div className="flex flex-wrap gap-3">
-                                    {nearbySuburbs.map((s) => (
+                                    {nearbySuburbs.map((s) => {
+                                        const nSlug = s.toLowerCase().replace(/ /g, '-');
+                                        const nPc = getPostcode(nSlug, state);
+                                        return (
                                         <Link
                                             key={s}
-                                            href={`/local/${state}/${city}/${s.toLowerCase().replace(/ /g, '-')}`}
+                                            href={`/local/${state}/${city}/${nSlug}${nPc ? `-${nPc}` : ''}`}
                                             className="px-5 py-3 bg-white border-2 border-zinc-200 rounded-xl font-bold text-[#1A1A1A] hover:bg-orange-50 hover:border-[#FF6600] hover:text-[#FF6600] transition-colors" style={{ fontSize: '16px' }}
                                         >
-                                            {s}
+                                            {s}{nPc ? ` ${nPc}` : ''}
                                         </Link>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </section>
                         )}

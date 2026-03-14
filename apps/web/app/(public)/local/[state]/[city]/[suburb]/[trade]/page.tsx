@@ -4,7 +4,9 @@ import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, Ar
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, STATE_AUTHORITY_LINKS, SUBURB_CONTEXT, JOB_TYPES, jobToSlug, generateLocalizedIntro, normalizeTradeName } from "@/lib/constants";
+import { parseSuburbSlug, getPostcode } from "@/lib/postcodes";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +17,9 @@ interface PageProps {
 function formatSlug(slug: string) {
     if (!slug) return "";
     try { slug = decodeURIComponent(slug); } catch { /* already decoded */ }
-    return slug
+    // Strip postcode suffix if present (e.g. "parramatta-2150" → "Parramatta")
+    const { suburb: cleanSlug } = parseSuburbSlug(slug);
+    return cleanSlug
         .split("-")
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
@@ -144,6 +148,15 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const cityName = formatSlug(city);
     const stateName = state.toUpperCase();
 
+    // If URL has no postcode but we know it, 301 redirect to postcode URL
+    const { postcode: urlPostcode, suburb: bareSuburb } = parseSuburbSlug(suburb);
+    if (!urlPostcode) {
+        const knownPostcode = getPostcode(bareSuburb, state);
+        if (knownPostcode) {
+            redirect(`/local/${state}/${city}/${bareSuburb}-${knownPostcode}/${trade}`);
+        }
+    }
+
     const [businesses, relatedTrades, nearbySuburbs, cityReferralCount] = await Promise.all([
         getBusinesses(trade, suburb),
         getRelatedTrades(suburb, tradeName),
@@ -157,11 +170,11 @@ export default async function TradeLocationPage({ params }: PageProps) {
 
     const avgRating = businesses.length > 0
         ? (businesses.reduce((acc: number, biz: any) => acc + (parseFloat(biz.avg_rating) || 0), 0) / businesses.length).toFixed(1)
-        : "4.8";
+        : null;
     const totalReviews = businesses.reduce((acc: number, biz: any) => acc + (parseInt(biz.total_reviews) || 0), 0);
 
-    // Extract postcode from the first business with an address
-    const postcode = businesses.map((b: any) => extractPostcode(b.address)).find(Boolean) || null;
+    // Use postcode from URL first, then extract from business addresses, then lookup
+    const postcode = urlPostcode || businesses.map((b: any) => extractPostcode(b.address)).find(Boolean) || getPostcode(bareSuburb, state);
     const suburbWithPostcode = postcode ? `${suburbName} ${postcode}` : suburbName;
 
     const tradeKey = normalizeTradeName(tradeName);
@@ -169,7 +182,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const faqs = TRADE_FAQ_BANK[tradeKey] || TRADE_FAQ_BANK[tradeName] || [];
     const licenceText = STATE_LICENSING[tradeKey]?.[stateName] || STATE_LICENSING[tradeName]?.[stateName] || null;
     const relatedJobs = (JOB_TYPES[tradeKey] || JOB_TYPES[tradeName])?.slice(0, 6) || [];
-    const localizedIntro = generateLocalizedIntro(tradeName, suburbName, cityName, stateName, businesses.length, avgRating, totalReviews);
+    const localizedIntro = generateLocalizedIntro(tradeName, suburbName, cityName, stateName, businesses.length, avgRating || "0", totalReviews);
 
     const availabilityLabel = businesses.length >= 5 ? "High" : businesses.length >= 2 ? "Moderate" : "Limited";
     const availabilityColor = businesses.length >= 5 ? "text-green-600" : businesses.length >= 2 ? "text-yellow-600" : "text-red-500";
@@ -740,10 +753,12 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     {suburbName} Market Insights
                                 </h3>
                                 <div className="space-y-4 text-sm text-zinc-600">
+                                    {avgRating && (
                                     <div className="flex justify-between items-center py-2 border-b border-zinc-50">
                                         <span>Avg Google Rating</span>
                                         <span className="font-bold text-zinc-900 text-base">{avgRating} ★</span>
                                     </div>
+                                    )}
                                     {totalReviews > 0 && (
                                         <div className="flex justify-between items-center py-2 border-b border-zinc-50">
                                             <span>Total Reviews</span>
@@ -760,8 +775,10 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     </div>
                                     <div className="pt-2">
                                         <p className="leading-relaxed">
-                                            Currently there are {businesses.length > 0 ? businesses.length : 'multiple'} trusted <span className="font-bold text-zinc-800">{tradeName.toLowerCase()}</span> listed in <span className="font-bold text-zinc-800">{suburbName}</span>.
-                                            Our directory prioritizes businesses based on community verified links and historical performance.
+                                            {businesses.length > 0
+                                                ? <>Currently there are {businesses.length} trusted <span className="font-bold text-zinc-800">{tradeName.toLowerCase()}</span> listed in <span className="font-bold text-zinc-800">{suburbName}</span>. Our directory prioritizes businesses based on community verified links and historical performance.</>
+                                                : <>Be the first <span className="font-bold text-zinc-800">{tradeName.toLowerCase()}</span> to list in <span className="font-bold text-zinc-800">{suburbName}</span>. TradeRefer prioritizes businesses based on community referrals and ABN verification.</>
+                                            }
                                         </p>
                                     </div>
                                 </div>
@@ -865,16 +882,20 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         {tradeName} in Nearby Suburbs
                                     </h4>
                                     <div className="grid grid-cols-1 gap-2">
-                                        {nearbySuburbs.map((s: any) => (
+                                        {nearbySuburbs.map((s: any) => {
+                                            const nSlug = s.suburb.toLowerCase().replace(/\s+/g, '-');
+                                            const nPc = getPostcode(nSlug, state);
+                                            return (
                                             <Link
                                                 key={s.suburb}
-                                                href={`/local/${state}/${city}/${s.suburb.toLowerCase().replace(/\s+/g, '-')}/${trade}`}
+                                                href={`/local/${state}/${city}/${nSlug}${nPc ? `-${nPc}` : ''}/${trade}`}
                                                 className="flex items-center justify-between px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-xs font-bold text-zinc-600 hover:bg-zinc-100 transition-colors"
                                             >
-                                                <span>{formatSlug(s.suburb)}</span>
+                                                <span>{formatSlug(s.suburb)}{nPc ? ` ${nPc}` : ''}</span>
                                                 <ChevronRight className="w-4 h-4 text-zinc-300" />
                                             </Link>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             )}
