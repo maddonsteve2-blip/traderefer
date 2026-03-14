@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { Logo } from "@/components/Logo";
@@ -198,13 +198,20 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     const [expanded, setExpanded] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const pathname = usePathname();
-    const searchParams = useSearchParams();
+    const [currentSearch, setCurrentSearch] = useState("");
     const overlayRef = useRef<HTMLDivElement>(null);
 
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
     const navLinks = isBusinessDashboard ? BUSINESS_NAV : REFERRER_NAV;
-    const salesTab = searchParams?.get("tab") ?? "leads";
-    const forceTab = searchParams?.get("tab") ?? "partners";
+
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        setCurrentSearch(window.location.search);
+    }, [pathname]);
+
+    const currentParams = new URLSearchParams(currentSearch);
+    const salesTab = currentParams.get("tab") ?? "leads";
+    const forceTab = currentParams.get("tab") ?? "partners";
 
     const mobileBreadcrumb = (() => {
         if (pathname === "/dashboard/business") return { eyebrow: "Business", title: "Overview" };
