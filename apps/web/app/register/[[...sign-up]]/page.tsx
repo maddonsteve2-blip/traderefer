@@ -14,11 +14,20 @@ export const metadata: Metadata = {
         title: "Join TradeRefer as a Referrer",
         description: "Get invited to TradeRefer, refer trusted tradies, and earn commissions on verified trade leads.",
         type: "website",
+        images: [
+            {
+                url: "/invite-preview/opengraph-image",
+                width: 1200,
+                height: 630,
+                alt: "Join TradeRefer as a Referrer",
+            },
+        ],
     },
     twitter: {
         card: "summary_large_image",
         title: "Join TradeRefer as a Referrer",
         description: "Get invited to TradeRefer, refer trusted tradies, and earn commissions on verified trade leads.",
+        images: ["/invite-preview/opengraph-image"],
     },
 };
 
