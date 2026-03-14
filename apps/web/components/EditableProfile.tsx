@@ -507,6 +507,16 @@ export function EditableContactField({
                 ? (value.startsWith("http") ? value : `https://${value}`)
                 : undefined;
 
+    // Clean display for website URLs: strip protocol, www, UTM params, trailing slash
+    const cleanWebsiteDisplay = (url: string) => {
+        try {
+            const u = new URL(url.startsWith("http") ? url : `https://${url}`);
+            return u.hostname.replace(/^www\./, "");
+        } catch {
+            return url.replace(/^https?:\/\//, "").replace(/^www\./, "").split("?")[0].replace(/\/$/, "");
+        }
+    };
+
     const content = (
         <>
             <div className="w-9 h-9 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center justify-center text-zinc-400 shrink-0">
@@ -514,17 +524,21 @@ export function EditableContactField({
             </div>
             <div className="min-w-0 flex-1">
                 <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>{label}</p>
-                <EditableText
-                    field={field}
-                    initialValue={initialValue}
-                    as="p"
-                    className={`font-bold ${type === "phone" || type === "website" ? "text-[#FF6600]" : "text-zinc-700 break-all"}`}
-                    style={{ fontSize: '16px' }}
-                    frameClassName="p-3"
-                    editorTitle={`Edit ${label}`}
-                    editorLabel={label}
-                    editorMinHeight={type === "website" ? undefined : 300}
-                />
+                {type === "website" && !(context?.isOwner && context.editMode) ? (
+                    <p className="font-bold text-[#FF6600] truncate" style={{ fontSize: '16px' }}>{cleanWebsiteDisplay(value)}</p>
+                ) : (
+                    <EditableText
+                        field={field}
+                        initialValue={initialValue}
+                        as="p"
+                        className={`font-bold ${type === "phone" || type === "website" ? "text-[#FF6600]" : "text-zinc-700 break-all"}`}
+                        style={{ fontSize: '16px' }}
+                        frameClassName="p-3"
+                        editorTitle={`Edit ${label}`}
+                        editorLabel={label}
+                        editorMinHeight={type === "website" ? undefined : 300}
+                    />
+                )}
             </div>
         </>
     );

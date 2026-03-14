@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, STATE_AUTHORITY_LINKS, SUBURB_CONTEXT, JOB_TYPES, jobToSlug, generateLocalizedIntro, normalizeTradeName } from "@/lib/constants";
 import { parseSuburbSlug, getPostcode } from "@/lib/postcodes";
+import { generateFallbackDescription } from "@/lib/business-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -281,7 +282,30 @@ export default async function TradeLocationPage({ params }: PageProps) {
             "@type": "ListItem",
             "position": i + 1,
             "url": `https://traderefer.au/b/${biz.slug}`,
-            "name": biz.business_name
+            "name": biz.business_name,
+            "item": {
+                "@type": "LocalBusiness",
+                "name": biz.business_name,
+                "url": `https://traderefer.au/b/${biz.slug}`,
+                ...(biz.business_phone ? { "telephone": biz.business_phone } : {}),
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": biz.suburb || suburbName,
+                    "addressRegion": stateName,
+                    ...(postcode ? { "postalCode": postcode } : {}),
+                    "addressCountry": "AU"
+                },
+                ...(parseFloat(biz.avg_rating) > 0 && parseInt(biz.total_reviews) > 0 ? {
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": parseFloat(biz.avg_rating).toFixed(1),
+                        "reviewCount": parseInt(biz.total_reviews),
+                        "bestRating": "5",
+                        "worstRating": "1"
+                    }
+                } : {}),
+                ...(biz.logo_url ? { "image": biz.logo_url } : {}),
+            }
         }))
     };
 
@@ -464,6 +488,24 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                 </div>
                             )}
 
+                            {/* ── SERVICE SUB-TYPE QUICK FILTERS ── */}
+                            {relatedJobs.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-zinc-900 text-white rounded-full font-bold" style={{ fontSize: '14px' }}>
+                                        <Search className="w-3.5 h-3.5" /> All {tradeName}
+                                    </span>
+                                    {relatedJobs.map((job) => (
+                                        <Link
+                                            key={job}
+                                            href={`/local/${state}/${city}/${suburb}/${trade}/${jobToSlug(job)}`}
+                                            className="inline-flex items-center px-4 py-2.5 bg-white border border-zinc-200 rounded-full font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50 transition-all" style={{ fontSize: '14px' }}
+                                        >
+                                            {job.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+
                             <div className="flex items-center justify-between">
                                 <h2 className="text-2xl font-black text-zinc-900">
                                     {businesses.length} {tradeName} Businesses Found
@@ -517,7 +559,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                         {biz.business_name}
                                                     </h3>
                                                     <p className="text-zinc-500 text-lg mb-4 line-clamp-2" style={{lineHeight: '1.6'}}>
-                                                        {biz.description || `Specialist ${biz.trade_category} based in ${biz.suburb}, serving the ${suburbName} community with expert solutions.`}
+                                                        {biz.description || generateFallbackDescription(biz)}
                                                     </p>
 
                                                     {/* Photo thumbnails */}
@@ -552,18 +594,22 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                                 <a href={`tel:${biz.business_phone}`} className="hover:text-[#FF6600] transition-colors">{biz.business_phone}</a>
                                                             </div>
                                                         )}
+                                                        {parseFloat(biz.avg_rating) > 0 && (
                                                         <div className="flex items-center gap-2">
                                                             <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
                                                                 <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
                                                             </div>
-                                                            {biz.avg_rating ? `${parseFloat(biz.avg_rating).toFixed(1)} ★` : 'Not rated'}{biz.total_reviews > 0 ? ` (${biz.total_reviews} reviews)` : ''}
+                                                            {parseFloat(biz.avg_rating).toFixed(1)} ★{parseInt(biz.total_reviews) > 0 ? ` (${biz.total_reviews} reviews)` : ''}
                                                         </div>
+                                                        )}
+                                                        {parseInt(biz.trusted_count) > 0 && (
                                                         <div className="flex items-center gap-2">
                                                             <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
                                                                 <Users className="w-3.5 h-3.5" />
                                                             </div>
-                                                            {biz.trusted_count || 0} Trusted Links
+                                                            {biz.trusted_count} Trusted Links
                                                         </div>
+                                                        )}
                                                     </div>
 
                                                     <div className="flex flex-wrap items-center gap-3">
@@ -623,6 +669,42 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     </div>
                                 </section>
                             )}
+
+                            {/* ── FEATURED REVIEWS SECTION ── */}
+                            {(() => {
+                                const reviewSnippets = businesses
+                                    .filter((b: any) => parseFloat(b.avg_rating) >= 4.0 && parseInt(b.total_reviews) > 0)
+                                    .slice(0, 3)
+                                    .map((b: any) => ({
+                                        name: b.business_name,
+                                        slug: b.slug,
+                                        rating: parseFloat(b.avg_rating).toFixed(1),
+                                        reviews: parseInt(b.total_reviews),
+                                        suburb: b.suburb,
+                                    }));
+                                return reviewSnippets.length > 0 ? (
+                                    <section className="bg-gradient-to-br from-orange-50 to-white rounded-3xl border border-orange-100 p-8 md:p-10">
+                                        <h2 className="text-2xl font-black text-zinc-900 mb-2 flex items-center gap-2">
+                                            <Award className="w-6 h-6 text-orange-500" />
+                                            Top Rated {tradeName} in {suburbName}
+                                        </h2>
+                                        <p className="text-zinc-500 mb-6" style={{ fontSize: '16px' }}>Highest rated by Google reviews from real customers</p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                            {reviewSnippets.map((r: any, i: number) => (
+                                                <Link key={r.slug} href={`/b/${r.slug}`} className="bg-white rounded-2xl border border-zinc-100 p-5 hover:shadow-lg hover:border-orange-200 transition-all group">
+                                                    <div className="flex items-center gap-1 mb-2">
+                                                        {[1,2,3,4,5].map(s => (
+                                                            <Star key={s} className={`w-4 h-4 ${s <= Math.round(parseFloat(r.rating)) ? 'fill-orange-400 text-orange-400' : 'text-zinc-200'}`} />
+                                                        ))}
+                                                    </div>
+                                                    <p className="font-black text-zinc-900 group-hover:text-orange-600 transition-colors mb-1" style={{ fontSize: '16px' }}>{r.name}</p>
+                                                    <p className="text-zinc-500 text-sm">{r.rating} ★ from {r.reviews} reviews</p>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </section>
+                                ) : null;
+                            })()}
 
                             {/* ── SEO CONTENT SECTION ── */}
                             <div className="mt-20 space-y-12">
@@ -912,7 +994,29 @@ export default async function TradeLocationPage({ params }: PageProps) {
                     </div>
                 </div>
             </div>
+        {/* Spacer for sticky CTA */}
+        {businesses.length > 0 && <div className="h-20" />}
         </main>
+
+        {/* ── STICKY GET QUOTES CTA BAR ── */}
+        {businesses.length > 0 && (
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-zinc-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] py-3 px-4 md:px-6">
+                <div className="container mx-auto flex items-center justify-between gap-4">
+                    <div className="hidden sm:block">
+                        <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>{businesses.length} verified {tradeName.toLowerCase()} in {suburbName}</p>
+                        <p className="text-zinc-500 text-sm">ABN-checked · Pay only when you win</p>
+                    </div>
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <Button asChild size="lg" className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-bold h-12 px-6 border-none flex-1 sm:flex-initial">
+                            <Link href="/register?type=business">List Your Business Free</Link>
+                        </Button>
+                        <Button asChild variant="outline" size="lg" className="border-zinc-300 hover:bg-zinc-50 rounded-xl font-bold h-12 px-6 hidden sm:flex">
+                            <Link href={`/b/${businesses[0]?.slug}#enquiry-form`}>Get a Quote</Link>
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        )}
         </>
     );
 }

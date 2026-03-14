@@ -7,6 +7,7 @@ import { proxyLogoUrl } from "@/lib/logo";
 import { BusinessDirectoryFilters } from "@/components/BusinessDirectoryFilters";
 import { Suspense } from "react";
 import { BackToDashboard } from "@/components/BackToDashboard";
+import { generateFallbackDescription } from "@/lib/business-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -320,7 +321,7 @@ export default async function BusinessDirectory({
                                     </div>
                                     )}
                                     <p className="text-zinc-600 line-clamp-2 leading-relaxed text-base">
-                                        {biz.description || `Expert ${biz.trade_category} serving the ${biz.suburb} area. High quality workmanship and reliable service.`}
+                                        {biz.description || generateFallbackDescription(biz)}
                                     </p>
                                 </div>
 
