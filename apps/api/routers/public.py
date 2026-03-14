@@ -26,6 +26,7 @@ PUBLIC_BUSINESS_COLUMNS = """
 async def get_businesses(
     suburb: Optional[str] = None,
     category: Optional[str] = None,
+    q: Optional[str] = None,
     page: int = 1,
     limit: int = 20,
     db: AsyncSession = Depends(get_db)
@@ -38,6 +39,9 @@ async def get_businesses(
     base_where = "WHERE status = 'active' AND listing_visibility = 'public'"
     query_params = {"limit": limit, "offset": offset}
     
+    if q:
+        base_where += " AND (business_name ILIKE :q_pattern OR trade_category ILIKE :q_pattern OR suburb ILIKE :q_pattern)"
+        query_params["q_pattern"] = f"%{q}%"
     if suburb:
         base_where += " AND suburb ILIKE :suburb_pattern"
         query_params["suburb_pattern"] = f"%{suburb}%"
