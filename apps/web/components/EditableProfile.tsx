@@ -34,9 +34,14 @@ export interface EditableFields {
     slug: string;
     abn: string;
     referral_fee_cents: number;
+    licence_number: string;
+    payment_methods: string[];
+    facebook_url: string;
+    instagram_url: string;
+    linkedin_url: string;
 }
 
-type EditableTextField = "business_name" | "trade_category" | "description" | "why_refer_us" | "suburb" | "state" | "address" | "years_experience" | "business_phone" | "business_email" | "website" | "abn";
+type EditableTextField = "business_name" | "trade_category" | "description" | "why_refer_us" | "suburb" | "state" | "address" | "years_experience" | "business_phone" | "business_email" | "website" | "abn" | "licence_number" | "facebook_url" | "instagram_url" | "linkedin_url";
 type EditableImageField = "logo_url" | "cover_photo_url";
 type FocusEditorState =
     | {
@@ -784,6 +789,11 @@ export function EditableProfile({ businessSlug, children }: EditableProfileProps
                         slug: data.slug || "",
                         abn: data.abn || "",
                         referral_fee_cents: data.referral_fee_cents || 1000,
+                        licence_number: data.licence_number || "",
+                        payment_methods: Array.isArray(data.payment_methods) ? data.payment_methods : [],
+                        facebook_url: data.facebook_url || "",
+                        instagram_url: data.instagram_url || "",
+                        linkedin_url: data.linkedin_url || "",
                     };
                     setFields(nextFields);
                     setOriginalFields(nextFields);

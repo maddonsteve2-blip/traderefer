@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, ArrowRight, Shield, TrendingUp, Info, DollarSign, FileText, Wrench, ExternalLink, BadgeCheck, Clock } from "lucide-react";
+import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, ArrowRight, Shield, TrendingUp, Info, DollarSign, FileText, Wrench, ExternalLink, BadgeCheck, Clock, Phone } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { Metadata } from "next";
@@ -435,6 +435,14 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                             </div>
                                                             {biz.suburb}
                                                         </div>
+                                                        {biz.business_phone && (
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
+                                                                    <Phone className="w-3.5 h-3.5" />
+                                                                </div>
+                                                                <a href={`tel:${biz.business_phone}`} className="hover:text-[#FF6600] transition-colors">{biz.business_phone}</a>
+                                                            </div>
+                                                        )}
                                                         <div className="flex items-center gap-2">
                                                             <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
                                                                 <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
@@ -453,9 +461,18 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                         <Button asChild size="lg" className="bg-zinc-900 hover:bg-black text-white rounded-xl font-bold h-14 px-6 border-none">
                                                             <Link href={`/b/${biz.slug}`}>View Profile</Link>
                                                         </Button>
-                                                        <Button asChild variant="outline" size="lg" className="border-zinc-200 hover:bg-zinc-50 rounded-xl font-bold h-14 px-6">
-                                                            <Link href={`/b/${biz.slug}#enquiry-form`}>Request Quote</Link>
-                                                        </Button>
+                                                        {biz.is_claimed === false ? (
+                                                            <Button asChild size="lg" className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-bold h-14 px-6 border-none">
+                                                                <Link href={`/claim/${biz.slug}`}>
+                                                                    <ShieldCheck className="w-4 h-4 mr-2" />
+                                                                    Claim This Business
+                                                                </Link>
+                                                            </Button>
+                                                        ) : (
+                                                            <Button asChild variant="outline" size="lg" className="border-zinc-200 hover:bg-zinc-50 rounded-xl font-bold h-14 px-6">
+                                                                <Link href={`/b/${biz.slug}#enquiry-form`}>Request Quote</Link>
+                                                            </Button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -652,6 +669,23 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         </p>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* Location Map */}
+                            <div className="bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm">
+                                <h3 className="text-lg font-black text-zinc-900 px-8 pt-6 pb-3 flex items-center gap-2">
+                                    <MapPin className="w-5 h-5 text-orange-500" />
+                                    {suburbName}, {cityName}
+                                </h3>
+                                <iframe
+                                    title={`${suburbName} ${tradeName} location map`}
+                                    width="100%"
+                                    height="220"
+                                    style={{ border: 0 }}
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCCRQCqPgWr0WAUszGQtutWXm2KDQBEfbk&q=${encodeURIComponent(suburbName + ', ' + cityName + ', ' + stateName + ', Australia')}`}
+                                />
                             </div>
 
                             {/* Geographic Urgency */}

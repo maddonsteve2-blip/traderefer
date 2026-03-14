@@ -13,7 +13,12 @@ import {
     ArrowRight,
     ShieldCheck,
     ExternalLink,
-    Tag
+    Tag,
+    CreditCard,
+    Facebook,
+    Instagram,
+    Linkedin,
+    BadgeCheck
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -356,6 +361,80 @@ export default async function PublicProfilePage({
                                     icon={<Briefcase className="w-4 h-4" />}
                                 />
                             </div>
+
+                            {/* Licence Number */}
+                            {business.licence_number && (
+                                <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
+                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2" style={{ fontSize: '16px' }}>
+                                        <BadgeCheck className="w-4 h-4 text-blue-500" /> Licences
+                                    </h3>
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-9 h-9 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-blue-500 shrink-0">
+                                            <BadgeCheck className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>Trade Licence</p>
+                                            <p className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>{business.licence_number}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Ways to Pay */}
+                            {business.payment_methods?.length > 0 && (
+                                <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
+                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2" style={{ fontSize: '16px' }}>
+                                        <CreditCard className="w-4 h-4 text-green-500" /> Ways to Pay
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {business.payment_methods.map((method: string) => (
+                                            <span key={method} className="px-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-full font-bold text-zinc-600" style={{ fontSize: '16px' }}>
+                                                {method}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Social Links */}
+                            {(business.facebook_url || business.instagram_url || business.linkedin_url) && (
+                                <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
+                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100" style={{ fontSize: '16px' }}>Follow Us</h3>
+                                    <div className="flex items-center gap-3">
+                                        {business.facebook_url && (
+                                            <a href={business.facebook_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all">
+                                                <Facebook className="w-5 h-5" />
+                                            </a>
+                                        )}
+                                        {business.instagram_url && (
+                                            <a href={business.instagram_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-500 hover:text-pink-600 hover:border-pink-200 hover:bg-pink-50 transition-all">
+                                                <Instagram className="w-5 h-5" />
+                                            </a>
+                                        )}
+                                        {business.linkedin_url && (
+                                            <a href={business.linkedin_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-500 hover:text-blue-700 hover:border-blue-200 hover:bg-blue-50 transition-all">
+                                                <Linkedin className="w-5 h-5" />
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Location Map */}
+                            {(business.address || business.suburb) && (
+                                <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm">
+                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest px-5 pt-5 pb-3" style={{ fontSize: '16px' }}>Location</h3>
+                                    <iframe
+                                        title={`${business.business_name} location`}
+                                        width="100%"
+                                        height="200"
+                                        style={{ border: 0 }}
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCCRQCqPgWr0WAUszGQtutWXm2KDQBEfbk&q=${encodeURIComponent((business.address ? business.address + ', ' : '') + (business.suburb || '') + (business.state ? ', ' + business.state : '') + ', Australia')}`}
+                                    />
+                                </div>
+                            )}
 
                             {/* Claim banner (sidebar) — hidden for owners via data-claim-banner */}
                             {business.is_claimed === false && (

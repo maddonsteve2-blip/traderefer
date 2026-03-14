@@ -18,7 +18,8 @@ PUBLIC_BUSINESS_COLUMNS = """
     is_verified, listing_rank, logo_url, cover_photo_url, photo_urls, features, abn,
     referral_fee_cents, listing_visibility, avg_response_minutes, why_refer_us, created_at,
     years_experience, services, specialties, business_highlights,
-    is_claimed, claim_status
+    is_claimed, claim_status,
+    licence_number, payment_methods, facebook_url, instagram_url, linkedin_url
 """
 
 @router.get("/businesses")

@@ -99,6 +99,11 @@ class BusinessUpdate(BaseModel):
     why_refer_us: Optional[str] = None
     features: Optional[list[str]] = None
     abn: Optional[str] = None
+    licence_number: Optional[str] = None
+    payment_methods: Optional[list[str]] = None
+    facebook_url: Optional[str] = None
+    instagram_url: Optional[str] = None
+    linkedin_url: Optional[str] = None
     owner_phone: Optional[str] = None
     owner_phone_verified: Optional[bool] = None
 
