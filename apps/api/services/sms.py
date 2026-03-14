@@ -70,7 +70,7 @@ async def send_sms_claimed_new_lead(phone: str, business_name: str, suburb: str)
 
 async def send_sms_unclaimed_teaser(phone: str, business_name: str, slug: str, suburb: str):
     """Notify an unclaimed business that they have an enquiry and prompt them to claim."""
-    claim_url = f"{FRONTEND_URL}/onboarding/business?slug={slug}"
+    claim_url = f"{FRONTEND_URL}/claim/{slug}"
     body = (
         f"TradeRefer: A customer in {suburb} just enquired about {business_name}. "
         f"Claim your free profile to view and respond: {claim_url}\n"

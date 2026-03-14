@@ -200,7 +200,7 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
     # Fetch data to notify business
     res = await db.execute(text("""
         SELECT l.consumer_name, l.consumer_suburb, l.job_description, l.consumer_phone,
-               l.unlock_fee_cents, l.referrer_id, l.twilio_from_number,
+               l.unlock_fee_cents, l.referrer_id, l.twilio_from_number, l.business_id,
                b.business_name, b.business_email, b.business_phone, b.is_claimed, b.slug
         FROM leads l JOIN businesses b ON b.id = l.business_id
         WHERE l.id = :id
@@ -209,8 +209,8 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
     if not row:
         return
 
-    from services.email import send_business_new_lead
-    from services.sms import send_sms_claimed_new_lead, _send_sms
+    from services.email import send_business_new_lead, send_business_enquiry_teaser
+    from services.sms import send_sms_claimed_new_lead, send_sms_unclaimed_teaser, _send_sms
 
     lead_logger.info(f"Screening PASSED | lead={lead_id} | is_claimed={row['is_claimed']} | email={row['business_email']} | phone={row['business_phone']}")
     
@@ -251,7 +251,31 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
             from utils.logging_config import error_logger
             error_logger.error(f"Failed to send business notifications: {e}", exc_info=True)
     else:
-        lead_logger.info(f"Business not claimed - skipping notifications")
+        lead_logger.info(f"Business not claimed - sending teaser notifications")
+        try:
+            if row["business_email"]:
+                lead_logger.info(f"Sending teaser email to {row['business_email']}")
+                await send_business_enquiry_teaser(
+                    email=row["business_email"],
+                    business_name=row["business_name"],
+                    business_id=str(row["business_id"]),
+                    slug=row["slug"],
+                    suburb=row["consumer_suburb"],
+                    job_description=row["job_description"]
+                )
+                lead_logger.info(f"Teaser email sent successfully")
+            if row["business_phone"]:
+                lead_logger.info(f"Sending teaser SMS to {row['business_phone']}")
+                await send_sms_unclaimed_teaser(
+                    phone=row["business_phone"],
+                    business_name=row["business_name"],
+                    slug=row["slug"],
+                    suburb=row["consumer_suburb"],
+                )
+                lead_logger.info(f"Teaser SMS sent successfully")
+        except Exception as e:
+            from utils.logging_config import error_logger
+            error_logger.error(f"Failed to send business teaser notifications: {e}", exc_info=True)
 
     # Update referrer quality score
     if row["referrer_id"]:

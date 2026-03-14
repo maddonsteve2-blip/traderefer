@@ -53,7 +53,7 @@ async function getSuburbCentre(suburb: string, city: string, state: string): Pro
             const row2 = res2[0];
             if (row2?.lat && row2?.lng) return { lat: Number(row2.lat), lng: Number(row2.lng) };
         }
-    } catch {}
+    } catch { }
     return null;
 }
 
@@ -300,25 +300,25 @@ export default async function BusinessDirectory({
 
                                 <div className="space-y-3 mb-6">
                                     {(parseFloat(biz.connection_rate) > 0 || parseInt(biz.total_confirmed) > 0 || parseFloat(biz.avg_rating) > 0) && (
-                                    <div className="flex items-center gap-2">
-                                        {parseFloat(biz.avg_rating) > 0 ? (
-                                            <>
-                                                <div className="flex items-center gap-0.5 text-orange-500">
-                                                    <Star className="w-4 h-4 fill-current" />
-                                                </div>
-                                                <span className="font-bold text-zinc-900 text-base">{parseFloat(biz.avg_rating).toFixed(1)} rating</span>
-                                                {parseInt(biz.total_reviews) > 0 && <span className="text-zinc-400 text-base">• {biz.total_reviews} reviews</span>}
-                                            </>
-                                        ) : parseFloat(biz.connection_rate) > 0 ? (
-                                            <>
-                                                <div className="flex items-center gap-0.5 text-orange-500">
-                                                    <Star className="w-4 h-4 fill-current" />
-                                                </div>
-                                                <span className="font-bold text-zinc-900 text-base">{biz.connection_rate}% connection rate</span>
-                                                <span className="text-zinc-400 text-base">• {biz.total_confirmed} verified leads</span>
-                                            </>
-                                        ) : null}
-                                    </div>
+                                        <div className="flex items-center gap-2">
+                                            {parseFloat(biz.avg_rating) > 0 ? (
+                                                <>
+                                                    <div className="flex items-center gap-0.5 text-orange-500">
+                                                        <Star className="w-4 h-4 fill-current" />
+                                                    </div>
+                                                    <span className="font-bold text-zinc-900 text-base">{parseFloat(biz.avg_rating).toFixed(1)} rating</span>
+                                                    {parseInt(biz.total_reviews) > 0 && <span className="text-zinc-400 text-base">• {biz.total_reviews} reviews</span>}
+                                                </>
+                                            ) : parseFloat(biz.connection_rate) > 0 ? (
+                                                <>
+                                                    <div className="flex items-center gap-0.5 text-orange-500">
+                                                        <Star className="w-4 h-4 fill-current" />
+                                                    </div>
+                                                    <span className="font-bold text-zinc-900 text-base">{biz.connection_rate}% connection rate</span>
+                                                    <span className="text-zinc-400 text-base">• {biz.total_confirmed} verified leads</span>
+                                                </>
+                                            ) : null}
+                                        </div>
                                     )}
                                     <p className="text-zinc-600 line-clamp-2 leading-relaxed text-base">
                                         {biz.description || generateFallbackDescription(biz)}
@@ -350,9 +350,16 @@ export default async function BusinessDirectory({
                                             </div>
                                         )}
                                     </div>
-                                    <Link href={`/b/${biz.slug}/refer`} className="w-full sm:w-auto bg-[#1A1A1A] hover:bg-black text-white font-black rounded-full px-6 inline-flex items-center justify-center gap-1.5 transition-colors text-base" style={{ minHeight: '48px' }}>
-                                        Start Referring <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                                    </Link>
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        {biz.is_claimed === false && (
+                                            <Link href={`/claim/${biz.slug}`} className="w-full sm:w-auto bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-full px-6 inline-flex items-center justify-center gap-1.5 transition-colors text-base shadow-sm" style={{ minHeight: '48px' }}>
+                                                <ShieldCheck className="w-4 h-4" /> Claim This Business
+                                            </Link>
+                                        )}
+                                        <Link href={`/b/${biz.slug}/refer`} className="w-full sm:w-auto bg-[#1A1A1A] hover:bg-black text-white font-black rounded-full px-6 inline-flex items-center justify-center gap-1.5 transition-colors text-base" style={{ minHeight: '48px' }}>
+                                            Start Referring <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -403,11 +410,10 @@ export default async function BusinessDirectory({
                                         <span key={`ellipsis-${idx}`} className="px-2 text-zinc-400 font-bold text-base">…</span>
                                     ) : (
                                         <Link key={p} href={buildPageUrl(params, p as number)}
-                                            className={`w-12 h-12 flex items-center justify-center rounded-xl font-bold transition-all ${
-                                                p === page
+                                            className={`w-12 h-12 flex items-center justify-center rounded-xl font-bold transition-all ${p === page
                                                     ? "bg-orange-500 text-white shadow-sm"
                                                     : "bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 hover:border-zinc-300"
-                                            }`} style={{ fontSize: '16px' }}>
+                                                }`} style={{ fontSize: '16px' }}>
                                             {p}
                                         </Link>
                                     )
