@@ -88,7 +88,6 @@ export default function ReferrerProfileViewPage() {
     const qm = qualityMeta(profile.quality_score);
     const allBadges = BADGE_DEFS.map(b => ({ ...b, isEarned: b.earned(profile) }));
     const earnedBadges = allBadges.filter(b => b.isEarned);
-    const lockedBadges = allBadges.filter(b => !b.isEarned);
 
     return (
         <div className="min-h-screen bg-zinc-50">
@@ -210,15 +209,15 @@ export default function ReferrerProfileViewPage() {
                             </div>
                         )}
 
-                        {/* Badges & Achievements */}
-                        <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 md:p-8">
-                            <h2 className="text-sm font-bold text-zinc-700 uppercase tracking-wider mb-1 pl-3 border-l-2 border-orange-500">
-                                Badges &amp; Achievements
-                            </h2>
-                            <p className="text-xs text-zinc-400 mb-5 pl-3 mt-1">Earned through activity and performance on TradeRefer</p>
+                        {/* Badges & Achievements — only show if referrer has earned at least one */}
+                        {earnedBadges.length > 0 && (
+                            <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-6 md:p-8">
+                                <h2 className="text-sm font-bold text-zinc-700 uppercase tracking-wider mb-1 pl-3 border-l-2 border-orange-500">
+                                    Badges &amp; Achievements
+                                </h2>
+                                <p className="text-xs text-zinc-400 mb-5 pl-3 mt-1">Earned through activity and performance on TradeRefer</p>
 
-                            {earnedBadges.length > 0 && (
-                                <div className="flex flex-wrap gap-3 mb-5">
+                                <div className="flex flex-wrap gap-3">
                                     {earnedBadges.map(b => (
                                         <div key={b.id} className={`flex flex-col items-center gap-2 px-4 py-3 rounded-xl border ${b.colorClass} min-w-[100px] text-center`}>
                                             <b.icon className={`w-5 h-5 ${b.iconClass}`} />
@@ -229,22 +228,8 @@ export default function ReferrerProfileViewPage() {
                                         </div>
                                     ))}
                                 </div>
-                            )}
-
-                            {lockedBadges.length > 0 && (
-                                <div>
-                                    <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-3">Locked — keep growing to unlock</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {lockedBadges.map(b => (
-                                            <div key={b.id} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-zinc-100 bg-zinc-50 opacity-50" title={b.desc}>
-                                                <b.icon className="w-3.5 h-3.5 text-zinc-400" />
-                                                <span className="text-xs font-semibold text-zinc-400">{b.label}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* ── RIGHT SIDEBAR ── */}
@@ -285,26 +270,6 @@ export default function ReferrerProfileViewPage() {
                             </Link>
                         </div>
 
-                        {/* Next badge to unlock */}
-                        {lockedBadges.length > 0 && (
-                            <div className="bg-white border border-zinc-200 rounded-2xl p-5">
-                                <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wide mb-3">Next Badge to Unlock</p>
-                                {(() => {
-                                    const next = lockedBadges[0];
-                                    return (
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-center">
-                                                <next.icon className="w-5 h-5 text-zinc-400" />
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-bold text-zinc-700">{next.label}</p>
-                                                <p className="text-xs text-zinc-400 mt-0.5">{next.desc}</p>
-                                            </div>
-                                        </div>
-                                    );
-                                })()}
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
