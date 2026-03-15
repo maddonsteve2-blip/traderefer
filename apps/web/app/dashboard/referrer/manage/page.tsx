@@ -610,7 +610,7 @@ export default function ReferrerManagePage() {
                         <button
                             key={link.slug}
                             onClick={() => setSelected({ type: "approved", link })}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl shrink-0 font-bold transition-all ${selected?.type === "approved" && selected.link.slug === link.slug ? "bg-zinc-900 text-white" : "bg-white border border-zinc-200 text-zinc-700"} text-sm`}
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl shrink-0 font-bold transition-all ${selected?.type === "approved" && selected.link.slug === link.slug ? "bg-orange-600 text-white" : "bg-white border border-zinc-200 text-zinc-700"} text-sm`}
                         >
                             {link.logo_url ? <img src={link.logo_url} alt="" className="w-5 h-5 rounded-md object-cover" /> : <Building2 className="w-4 h-4 opacity-50" />}
                             {link.name}
@@ -698,8 +698,8 @@ export default function ReferrerManagePage() {
                                         </div>
 
                                         <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                            <div className="bg-zinc-900 px-6 py-5">
-                                                <p className="font-black text-zinc-400 uppercase tracking-widest text-sm">Your Referral Link</p>
+                                            <div className="bg-orange-600 px-6 py-5">
+                                                <p className="font-black text-orange-200 uppercase tracking-widest text-sm">Your Referral Link</p>
                                                 <p className="font-bold text-zinc-200 mt-1 text-base">Your link — you earn {feeDisplay}</p>
                                             </div>
                                             <div className="bg-white px-6 py-6">
@@ -716,7 +716,7 @@ export default function ReferrerManagePage() {
                                                     <Link href={leadFormLink} target="_blank" className="flex items-center justify-center gap-2.5 px-6 py-4 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl font-black text-orange-700 transition-all text-base">
                                                         <Send className="w-5 h-5" /> Submit Lead / Job
                                                     </Link>
-                                                    <Link href={referrerBusinessPageLink} className="flex items-center justify-center gap-2.5 px-6 py-4 bg-zinc-900 hover:bg-zinc-800 rounded-xl font-black text-white transition-all text-base">
+                                                    <Link href={referrerBusinessPageLink} className="flex items-center justify-center gap-2.5 px-6 py-4 bg-orange-600 hover:bg-orange-700 rounded-xl font-black text-white transition-all text-base">
                                                         <Building2 className="w-5 h-5" /> Referral Page
                                                     </Link>
                                                 </div>
@@ -724,14 +724,14 @@ export default function ReferrerManagePage() {
                                         </div>
 
                                         <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                            <div className="bg-zinc-900 px-6 py-5">
-                                                <p className="font-black text-zinc-400 uppercase tracking-widest text-sm">Marketing Swipe File</p>
+                                            <div className="bg-orange-600 px-6 py-5">
+                                                <p className="font-black text-orange-200 uppercase tracking-widest text-sm">Marketing Swipe File</p>
                                                 <p className="font-bold text-zinc-200 mt-1 text-base">Ready-to-send copy — tap, copy, share</p>
                                             </div>
                                             <div className="bg-white">
                                                 <div className="flex overflow-x-auto px-6 pt-5 gap-2">
                                                     {([{ key: "sms", icon: MessageSquare, label: "SMS" }, { key: "email", icon: Mail, label: "Email" }, { key: "social", icon: Share2, label: "Social" }] as const).map(({ key, icon: Icon, label }) => (
-                                                        <button key={key} onClick={() => setTab(key)} className={`flex shrink-0 items-center gap-2.5 px-6 py-3 rounded-xl font-black transition-all ${tab === key ? "bg-zinc-900 text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"} text-lg`} >
+                                                        <button key={key} onClick={() => setTab(key)} className={`flex shrink-0 items-center gap-2.5 px-6 py-3 rounded-xl font-black transition-all ${tab === key ? "bg-orange-600 text-white" : "text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50"} text-lg`} >
                                                             <Icon className="w-5 h-5" />{label}
                                                         </button>
                                                     ))}
@@ -740,7 +740,7 @@ export default function ReferrerManagePage() {
                                                     <div className="bg-zinc-50 rounded-2xl p-6 font-bold text-zinc-700 leading-relaxed whitespace-pre-wrap cursor-text select-all border border-zinc-100 text-lg">
                                                         {swipeContent[tab as keyof typeof swipeContent]}
                                                     </div>
-                                                    <button onClick={handleCopySwipe} className="mt-4 flex items-center gap-2.5 px-7 py-4 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all shadow-lg active:scale-95 text-lg">
+                                                    <button onClick={handleCopySwipe} className="mt-4 flex items-center gap-2.5 px-7 py-4 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl transition-all shadow-lg active:scale-95 text-lg">
                                                         <Copy className="w-5 h-5" /> Copy {tab.toUpperCase()} Copy
                                                     </button>
                                                 </div>
@@ -825,7 +825,7 @@ export default function ReferrerManagePage() {
                                                 ))}
                                             </ul>
                                             <div className="flex flex-wrap gap-3 mt-4">
-                                                <Link href="/dashboard/referrer/profile" className="flex items-center gap-2 px-5 py-3 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl transition-all text-base">
+                                                <Link href="/dashboard/referrer/profile" className="flex items-center gap-2 px-5 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition-all text-base">
                                                     Edit My Profile <ChevronRight className="w-4 h-4" />
                                                 </Link>
                                                 <Link href="/dashboard/referrer/businesses" className="flex items-center gap-2 px-5 py-3 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-bold rounded-xl transition-all text-base">
@@ -838,9 +838,9 @@ export default function ReferrerManagePage() {
                                     {/* BOTTOM: Locked chat input — always pinned, flex-none */}
                                     <div className="shrink-0 px-4 md:px-6 pb-4 md:pb-5 pt-3">
                                         <div className="rounded-2xl overflow-hidden shadow-lg shadow-zinc-100">
-                                            <div className="bg-zinc-900 px-5 py-4 flex items-center justify-between">
+                                            <div className="bg-orange-600 px-5 py-4 flex items-center justify-between">
                                                 <div className="flex items-center gap-2">
-                                                    <MessageSquare className="w-4 h-4 text-orange-400" />
+                                                    <MessageSquare className="w-4 h-4 text-white/70" />
                                                     <span className="font-black text-white text-base">Chat with {app.business_name.split(" ")[0]}</span>
                                                 </div>
                                                 <span className="px-3 py-1 bg-amber-500 text-white font-black rounded-lg text-[10px]">Awaiting Approval</span>

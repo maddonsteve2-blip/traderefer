@@ -193,7 +193,7 @@ export function InviteReferrersDialog({ open, onClose, businessName, slug }: Inv
                                 <Button
                                     onClick={handleSendEmails}
                                     disabled={sending || !emails.trim()}
-                                    className="h-11 sm:h-14 w-full rounded-[14px] sm:rounded-[20px] bg-zinc-900 text-[13px] sm:text-[15px] font-black text-white shadow-xl shadow-zinc-200 hover:bg-black sm:h-16 sm:rounded-full sm:text-xl"
+                                    className="h-11 sm:h-14 w-full rounded-[14px] sm:rounded-[20px] bg-orange-600 text-[13px] sm:text-[15px] font-black text-white shadow-xl shadow-orange-500/20 hover:bg-orange-700 sm:h-16 sm:rounded-full sm:text-xl"
                                 >
                                     {sending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-3 h-5 w-5" />}
                                     Send Invites

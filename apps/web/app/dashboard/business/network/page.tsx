@@ -161,10 +161,10 @@ export default function BusinessNetworkPage() {
 
             {/* Tabs */}
             <div className="flex flex-col sm:flex-row gap-2">
-                <button onClick={() => setTab("network")} className={`px-6 py-3 rounded-full text-lg font-bold transition-all ${tab === "network" ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}>
+                <button onClick={() => setTab("network")} className={`px-6 py-3 rounded-full text-lg font-bold transition-all ${tab === "network" ? "bg-orange-600 text-white" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}>
                     <Users className="w-5 h-5 inline mr-1.5" /> My Network ({given.length + received.length})
                 </button>
-                <button onClick={() => setTab("invite")} className={`px-6 py-3 rounded-full text-lg font-bold transition-all ${tab === "invite" ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}>
+                <button onClick={() => setTab("invite")} className={`px-6 py-3 rounded-full text-lg font-bold transition-all ${tab === "invite" ? "bg-orange-600 text-white" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}>
                     <UserPlus className="w-5 h-5 inline mr-1.5" /> Invite a Business ({invites.length})
                 </button>
             </div>
@@ -192,7 +192,7 @@ export default function BusinessNetworkPage() {
                             <Button
                                 onClick={handleRecommend}
                                 disabled={recSending}
-                                className="bg-zinc-900 hover:bg-black text-white rounded-xl font-bold text-xl h-14"
+                                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold text-xl h-14"
                             >
                                 {recSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 mr-1.5" />}
                                 Recommend

@@ -55,7 +55,7 @@ export function RegisterBusinessDialog({ children }: { children: React.ReactNode
                         <div className="px-8 pb-8">
                             <Link
                                 href="/onboarding/business"
-                                className="flex items-center justify-center gap-2 w-full h-16 bg-zinc-900 hover:bg-black text-white rounded-2xl font-black transition-all shadow-lg shadow-zinc-200"
+                                className="flex items-center justify-center gap-2 w-full h-16 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-500/20"
                                 style={{ fontSize: '22px' }}
                                 onClick={() => setOpen(false)}
                             >

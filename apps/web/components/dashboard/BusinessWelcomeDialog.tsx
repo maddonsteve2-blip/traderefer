@@ -75,7 +75,7 @@ export function BusinessWelcomeDialog() {
                     <div className="flex flex-col gap-3 pt-2">
                         <Button
                             onClick={dismiss}
-                            className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 font-black shadow-lg shadow-zinc-200 flex items-center justify-center gap-2 text-2xl active:scale-95 transition-all"
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-16 font-black shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 text-2xl active:scale-95 transition-all"
                         >
                             Go to Dashboard <ChevronRight className="w-5 h-5" />
                         </Button>
