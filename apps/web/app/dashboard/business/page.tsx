@@ -63,7 +63,14 @@ export default async function BusinessDashboardPage() {
         return <DashboardError fetchError={fetchError} noProfile={data?.noProfile} profileType="business" />;
     }
 
-    const { business, stats: apiStats, recent_leads } = data;
+    const { business, stats: rawStats, recent_leads } = data;
+    const apiStats = (rawStats as { label: string; value: string | number; icon: string; color: string; bg: string }[]).map(stat => {
+        if (stat.label === "Referral Fee") {
+            const feeDollars = parseFloat(String(stat.value).replace("$", "")) || 0;
+            return { ...stat, label: "Lead Unlock Cost", value: `$${(feeDollars * 1.2).toFixed(2)}` };
+        }
+        return stat;
+    });
     const walletCents: number = business.wallet_balance_cents || 0;
 
     const greeting = new Date().getHours() < 12 ? "Good morning" : new Date().getHours() < 17 ? "Good afternoon" : "Good evening";
