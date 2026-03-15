@@ -87,7 +87,7 @@ export function BusinessClaimDialog({
                         <p className="text-zinc-600">
                             We've received your claim request for <strong>{businessName}</strong>. Our team will verify your details and contact you via email shortly.
                         </p>
-                        <Button onClick={() => setOpen(false)} className="mt-8 bg-zinc-900 hover:bg-black text-white px-8 rounded-full">
+                        <Button onClick={() => setOpen(false)} className="mt-8 bg-orange-600 hover:bg-orange-700 text-white px-8 rounded-full">
                             Close
                         </Button>
                     </div>

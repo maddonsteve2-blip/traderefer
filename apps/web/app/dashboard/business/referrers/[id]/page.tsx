@@ -405,7 +405,7 @@ export default function ReferrerDetailPage() {
                                     className="pl-8 h-14 rounded-xl text-xl font-bold"
                                 />
                             </div>
-                            <Button onClick={handleFeeUpdate} disabled={feeLoading} className="bg-zinc-900 hover:bg-black text-white rounded-xl h-14 px-8 text-xl font-bold">
+                            <Button onClick={handleFeeUpdate} disabled={feeLoading} className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl h-14 px-8 text-xl font-bold">
                                 {feeLoading ? "…" : customFee ? "Set Custom" : "Reset Default"}
                             </Button>
                         </div>

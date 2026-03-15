@@ -76,7 +76,7 @@ export function BusinessDelistDialog({
                         <p className="text-zinc-600">
                             We've received your request to remove <strong>{businessName}</strong> from our directory. We will verify the request and process it within 48 hours.
                         </p>
-                        <Button onClick={() => setOpen(false)} className="mt-8 bg-zinc-900 hover:bg-black text-white px-8 rounded-full">
+                        <Button onClick={() => setOpen(false)} className="mt-8 bg-orange-600 hover:bg-orange-700 text-white px-8 rounded-full">
                             Close
                         </Button>
                     </div>

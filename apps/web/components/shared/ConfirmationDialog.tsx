@@ -37,7 +37,7 @@ export function ConfirmationDialog({
     const Icon = variant === "destructive" ? Trash2 : variant === "warning" ? AlertTriangle : HelpCircle;
     const iconColor = variant === "destructive" ? "text-red-600" : variant === "warning" ? "text-orange-600" : "text-blue-600";
     const iconBg = variant === "destructive" ? "bg-red-100" : variant === "warning" ? "bg-orange-100" : "bg-blue-100";
-    const buttonClass = variant === "destructive" ? "bg-red-600 hover:bg-red-700 shadow-red-500/20" : variant === "warning" ? "bg-orange-600 hover:bg-orange-700 shadow-orange-500/20" : "bg-zinc-900 hover:bg-black shadow-zinc-500/20";
+    const buttonClass = variant === "destructive" ? "bg-red-600 hover:bg-red-700 shadow-red-500/20" : variant === "warning" ? "bg-orange-600 hover:bg-orange-700 shadow-orange-500/20" : "bg-blue-600 hover:bg-blue-700 shadow-blue-500/20";
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

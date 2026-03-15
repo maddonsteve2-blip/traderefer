@@ -812,7 +812,7 @@ export function Navbar() {
 
                                                 <Link href="/dashboard/business" className="hidden sm:block ml-1">
 
-                                                    <Button variant={isBusinessOverview ? "default" : "ghost"} className={isBusinessOverview ? "bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-5 font-bold text-base shadow-sm" : "text-base font-bold px-3 transition-colors text-zinc-600 hover:text-orange-600"}>
+                                                    <Button variant={isBusinessOverview ? "default" : "ghost"} className={isBusinessOverview ? "bg-orange-600 hover:bg-orange-700 text-white rounded-full px-5 font-bold text-base shadow-sm" : "text-base font-bold px-3 transition-colors text-zinc-600 hover:text-orange-600"}>
 
                                                         Dashboard
 
@@ -947,7 +947,7 @@ export function Navbar() {
 
                                         <Link href="/dashboard" className="hidden sm:block ml-1">
 
-                                            <Button className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-5 font-bold text-sm shadow-sm">
+                                            <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-5 font-bold text-sm shadow-sm">
 
                                                 My Dashboard
 
