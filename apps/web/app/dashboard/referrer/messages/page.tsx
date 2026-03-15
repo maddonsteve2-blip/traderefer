@@ -5,10 +5,11 @@ export const dynamic = "force-dynamic";
 import { Suspense } from 'react';
 import { MessagesView } from '@/components/dashboard/MessagesView';
 import { MobileReferrerInbox } from '@/components/referrer/MobileReferrerInbox';
+import { PageTransition } from '@/components/ui/PageTransition';
 
 export default function ReferrerMessagesPage() {
     return (
-        <>
+        <PageTransition>
             <MobileReferrerInbox />
             <div className="hidden lg:flex flex-col bg-zinc-50 h-[calc(100dvh-56px)] lg:h-screen overflow-hidden">
                 <div className="flex items-center justify-between px-6 pt-5 pb-0 shrink-0">
@@ -23,6 +24,6 @@ export default function ReferrerMessagesPage() {
                     </Suspense>
                 </div>
             </div>
-        </>
+        </PageTransition>
     );
 }

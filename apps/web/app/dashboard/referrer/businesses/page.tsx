@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { BusinessBrowser } from "@/components/referrer/BusinessBrowser";
 import { MobileReferrerNetwork } from "@/components/referrer/MobileReferrerNetwork";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 async function getReferrerLocation(token: string) {
     try {
@@ -30,7 +31,7 @@ export default async function DashboardBusinessesPage() {
     const { suburb, state } = await getReferrerLocation(token);
 
     return (
-        <>
+        <PageTransition>
             <MobileReferrerNetwork />
             <div className="hidden lg:flex flex-col bg-zinc-50 h-screen overflow-hidden">
                 <div className="flex items-center justify-between px-6 pt-5 pb-0 shrink-0">
@@ -47,6 +48,6 @@ export default async function DashboardBusinessesPage() {
                     <BusinessBrowser initialSuburb={suburb} initialState={state} />
                 </div>
             </div>
-        </>
+        </PageTransition>
     );
 }

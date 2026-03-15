@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -602,7 +603,7 @@ export default function ReferrerManagePage() {
     };
 
     return (
-        <>
+        <PageTransition>
             <MobileTeamView />
             <div className="hidden lg:flex min-h-[100dvh] flex-col bg-white lg:h-screen lg:overflow-hidden">
                 <div className="md:hidden shrink-0 w-full overflow-x-auto bg-gray-50 px-4 py-3 flex gap-2">
@@ -870,6 +871,6 @@ export default function ReferrerManagePage() {
                     </main>
                 </div>
             </div>
-        </>
+        </PageTransition>
     );
 }

@@ -9,6 +9,7 @@ import { auth } from "@clerk/nextjs/server";
 import { ApplyToReferButton } from "@/components/referrer/ApplyToReferButton";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { ReviewsSection } from "@/components/referrer/ReviewsSection";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 const apiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -75,6 +76,7 @@ export default async function DashboardReferPage({
         : [];
 
     return (
+        <PageTransition>
         <main className="min-h-screen bg-zinc-50">
 
             {/* ── BREADCRUMB ── */}
@@ -409,5 +411,6 @@ export default async function DashboardReferPage({
                 </div>
             </div>
         </main>
+        </PageTransition>
     );
 }

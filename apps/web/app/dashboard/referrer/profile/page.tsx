@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 interface Profile {
     full_name: string;
@@ -190,7 +191,7 @@ export default function ReferrerProfilePage() {
     const publicUrl = profileSlug ? `${siteUrl}/dashboard/referrer-profile/${profileSlug}` : null;
 
     return (
-        <div className="min-h-screen bg-zinc-100">
+        <PageTransition className="min-h-screen bg-zinc-100">
             <div className="md:hidden px-4 py-4 space-y-4 bg-zinc-50">
                 <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
@@ -713,6 +714,6 @@ export default function ReferrerProfilePage() {
                     </div>
                 </div>
             )}
-        </div>
+        </PageTransition>
     );
 }

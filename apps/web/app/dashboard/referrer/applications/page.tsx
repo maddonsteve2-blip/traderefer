@@ -7,6 +7,7 @@ import {
     ChevronRight, ClipboardList
 } from "lucide-react";
 import Link from "next/link";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 interface Application {
     id: string;
@@ -115,7 +116,7 @@ export default function ReferrerApplicationsPage() {
     const sorted = [...pending, ...rest];
 
     return (
-        <div className="min-h-[100dvh] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden">
+        <PageTransition className="min-h-[100dvh] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden">
 
             {/* ── DESKTOP HEADER ── */}
             <div className="hidden lg:flex items-center justify-between px-6 pt-5 pb-0 shrink-0">
@@ -173,6 +174,6 @@ export default function ReferrerApplicationsPage() {
                     </div>
                 )}
             </div>
-        </div>
+        </PageTransition>
     );
 }

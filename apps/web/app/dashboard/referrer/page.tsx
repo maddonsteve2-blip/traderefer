@@ -16,6 +16,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { DashboardError } from "@/components/dashboard/DashboardError";
 import { PrezzeeRewardsCard } from "@/components/shared/PrezzeeRewardsCard";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 async function getDashboardData() {
     const { userId, getToken } = await auth();
@@ -59,7 +60,7 @@ export default async function ReferrerDashboardPage() {
     }
 
     return (
-        <>
+        <PageTransition>
             <MobileReferrerDashboard />
             {/* Badge unlock celebration modal — client-side, checks for new badges on load */}
             <BadgeUnlockModal />
@@ -120,7 +121,7 @@ export default async function ReferrerDashboardPage() {
                     </div>
                 </div>
             </div>
-        </>
+        </PageTransition>
     );
 }
 

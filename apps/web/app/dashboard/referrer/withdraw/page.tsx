@@ -6,6 +6,7 @@ import {
 import Link from "next/link";
 import { WithdrawalForm } from "@/components/dashboard/WithdrawalForm";
 import { MobileReferrerRewards } from "@/components/referrer/MobileReferrerRewards";
+import { PageTransition } from "@/components/ui/PageTransition";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -55,7 +56,7 @@ export default async function ReferrerRewardsPage() {
     const qualityBarColor = qualityScore >= 70 ? "bg-green-500" : qualityScore >= 50 ? "bg-amber-400" : "bg-red-500";
 
     return (
-        <div className="min-h-screen bg-zinc-50">
+        <PageTransition className="min-h-screen bg-zinc-50">
             <MobileReferrerRewards referrer={referrer} payouts={payouts} />
             
             <div className="hidden lg:flex flex-col bg-zinc-50 h-screen overflow-hidden">
@@ -317,6 +318,6 @@ export default async function ReferrerRewardsPage() {
             <p className="hidden lg:block text-center mt-10 text-zinc-400 font-bold uppercase tracking-widest text-base pb-32">
                 Claims processed instantly via Prezzee API · © 2026 TradeRefer Pty Ltd
             </p>
-        </div>
+        </PageTransition>
     );
 }
