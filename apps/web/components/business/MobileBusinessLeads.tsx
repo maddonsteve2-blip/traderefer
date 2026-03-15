@@ -331,7 +331,7 @@ export function MobileBusinessLeads() {
                                             <Button
                                                 onClick={() => handleOnTheWay(lead.id)}
                                                 disabled={isUpdatingStatus === lead.id}
-                                                className="w-full h-16 bg-zinc-900 hover:bg-black text-white rounded-2xl font-black text-xl"
+                                                className="w-full h-16 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black text-xl"
                                             >
                                                 {isUpdatingStatus === lead.id ? (
                                                     <Loader2 className="w-6 h-6 animate-spin" />

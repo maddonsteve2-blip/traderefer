@@ -258,7 +258,7 @@ export function ForceApplicationsPane() {
                         <div className="w-full px-6 py-6">
                             {/* Sticky action bar */}
                             {isPending && (
-                                <div className="sticky top-0 z-10 bg-zinc-900 rounded-2xl px-5 py-3 mb-5 flex items-center justify-between gap-3">
+                                <div className="sticky top-0 z-10 bg-orange-600 rounded-2xl px-5 py-3 mb-5 flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                         <Clock className="w-4 h-4 text-amber-400" />
                                         <span className="font-black text-white uppercase tracking-widest text-[22px]">Applied {fmtDate(detail.applied_at)}</span>

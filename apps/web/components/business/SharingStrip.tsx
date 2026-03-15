@@ -54,7 +54,7 @@ function QRModal({ url, label, onClose }: { url: string; label: string; onClose:
                 <p className="text-zinc-500 font-medium text-center mb-5 break-all" style={{ fontSize: 20 }}>{url}</p>
                 <button
                     onClick={handleDownload}
-                    className="w-full bg-zinc-900 hover:bg-black text-white rounded-2xl py-4 font-bold transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-2xl py-4 font-bold transition-all flex items-center justify-center gap-2"
                     style={{ fontSize: 22, height: 64 }}
                 >
                     <QrCode className="w-5 h-5" /> Download QR PNG

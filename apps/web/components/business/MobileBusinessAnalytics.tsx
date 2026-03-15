@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Users, TrendingUp, DollarSign, Megaphone, Loader2, Award, Send, Crown, Zap, Star, BarChart3, ChevronRight } from "lucide-react";
+import { Users, TrendingUp, DollarSign, Loader2, Award, Crown, Zap, Star, BarChart3, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 interface Analytics {
@@ -49,9 +49,6 @@ export function MobileBusinessAnalytics() {
     const { getToken, isLoaded } = useAuth();
     const [data, setData] = useState<Analytics | null>(null);
     const [loading, setLoading] = useState(true);
-    const [broadcastMsg, setBroadcastMsg] = useState("");
-    const [sending, setSending] = useState(false);
-
     const apiUrl = "/api/backend";
 
     const fetchData = useCallback(async () => {
@@ -69,29 +66,6 @@ export function MobileBusinessAnalytics() {
     }, [getToken, apiUrl]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
-
-    const handleBroadcast = async () => {
-        if (!broadcastMsg.trim()) { toast.error("Enter a message"); return; }
-        setSending(true);
-        try {
-            const token = await getToken();
-            const res = await fetch(`${apiUrl}/business/broadcast`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ message: broadcastMsg }),
-            });
-            if (res.ok) {
-                toast.success("Broadcast sent!");
-                setBroadcastMsg("");
-            } else {
-                toast.error("Failed to send broadcast");
-            }
-        } catch {
-            toast.error("Error sending broadcast");
-        } finally {
-            setSending(false);
-        }
-    };
 
     if (loading) {
         return (
@@ -157,31 +131,6 @@ export function MobileBusinessAnalytics() {
                 </div>
             </div>
 
-            {/* Broadcast */}
-            <div className="bg-zinc-900 rounded-[24px] p-6 text-white flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                    <Megaphone className="w-5 h-5 text-blue-400" />
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest">Broadcast</h3>
-                </div>
-                <p className="text-[12px] font-medium text-zinc-400 leading-relaxed">
-                    Instantly update all your connected partners.
-                </p>
-                <textarea 
-                    value={broadcastMsg}
-                    onChange={e => setBroadcastMsg(e.target.value)}
-                    placeholder="Type a message to all referrers..."
-                    rows={2}
-                    className="w-full bg-white/10 rounded-xl p-4 text-[14px] font-medium text-white border-none outline-none focus:bg-white/20"
-                />
-                <button 
-                    onClick={handleBroadcast}
-                    disabled={sending || !broadcastMsg.trim()}
-                    className="w-full h-12 bg-blue-600 rounded-xl flex items-center justify-center gap-2 text-[13px] font-black text-white disabled:opacity-50"
-                >
-                    {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                    Send Update
-                </button>
-            </div>
         </div>
     );
 }

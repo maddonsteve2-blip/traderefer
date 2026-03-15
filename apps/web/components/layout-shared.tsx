@@ -470,7 +470,7 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
     const BENEFITS = [
         { icon: Target, title: "Pre-Vetted Leads, Delivered", desc: "Receive pre-screened leads from trusted referrers who personally vouch for each job." },
         { icon: Users2, title: "Your Own Referrer Force", desc: "Approve trusted referrers to represent your brand â€” they grow your pipeline hands-free." },
-        { icon: BarChart3, title: "Command Centre Analytics", desc: "Track lead quality, conversion rates, and referrer performance from one dashboard." },
+        { icon: BarChart3, title: "Dashboard Analytics", desc: "Track lead quality, conversion rates, and referrer performance from one dashboard." },
         { icon: Gift, title: "Zero-Admin Reward System", desc: "Prezzee Smart Cards handle referrer payouts automatically. No bank transfers, no invoices." },
     ];
     return createPortal(
@@ -480,8 +480,8 @@ function RegisterBusinessModal({ onClose }: { onClose: () => void }) {
                 <div className="bg-zinc-900 px-8 pt-8 pb-10 relative">
                     <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"><X className="w-4 h-4" /></button>
                     <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mb-5"><Building2 className="w-9 h-9 text-orange-400" /></div>
-                    <p className="text-orange-400 font-black text-xs uppercase tracking-widest mb-2">Business Command Centre</p>
-                    <h2 className="text-[22px] font-black text-white mb-2 leading-tight">Unlock Your Business<br />Command Centre</h2>
+                    <p className="text-orange-400 font-black text-xs uppercase tracking-widest mb-2">Business Dashboard</p>
+                    <h2 className="text-[22px] font-black text-white mb-2 leading-tight">Unlock Your Business<br />Dashboard</h2>
                     <p className="text-zinc-400 font-medium text-sm">A professional hub where your referrer force delivers verified leads â€” on autopilot.</p>
                 </div>
                 <div className="px-8 py-6 space-y-5">

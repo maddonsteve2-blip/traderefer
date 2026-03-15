@@ -14,9 +14,9 @@ const CASES = {
     /** On referrer dash → pitch Business */
     business: {
         tabLabel: "BUSINESS MODE",
-        eyebrow: "Business Command Centre",
+        eyebrow: "Business Dashboard",
         headline: "Do you own a Business?",
-        sub: "Unlock your Business Command Centre.",
+        sub: "Unlock your Business Dashboard.",
         features: [
             { icon: Target,  title: "Verified Leads",       desc: "Pre-screened leads from partners who vouch for every job." },
             { icon: Network, title: "Referral Force",        desc: "Approve and manage your own network of local referrers." },

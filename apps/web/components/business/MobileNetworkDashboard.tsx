@@ -109,7 +109,7 @@ export function MobileNetworkDashboard({ given, received, invites, onRefresh }: 
                             <p className="text-[13px] text-zinc-500">Invite your trusted trades to build your network.</p>
                             <button
                                 onClick={() => setActiveTab("invite")}
-                                className="mt-1 h-10 px-5 bg-zinc-900 text-white rounded-full text-[12px] font-black uppercase tracking-widest"
+                                className="mt-1 h-10 px-5 bg-orange-600 hover:bg-orange-700 text-white rounded-full text-[12px] font-black uppercase tracking-widest transition-colors"
                             >
                                 Invite Now
                             </button>

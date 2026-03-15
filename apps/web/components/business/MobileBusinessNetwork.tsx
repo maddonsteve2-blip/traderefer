@@ -101,7 +101,7 @@ export function MobileBusinessNetwork({
                 </div>
 
                 {/* ── Invite Button (Pencil: mRPBo) ── */}
-                <div className="[&>button]:w-full [&>button]:h-14 [&>button]:rounded-2xl [&>button]:bg-[#18181B] [&>button]:border-0 [&>button]:text-white [&>button]:hover:bg-black [&>button]:justify-center [&>button]:text-[15px] [&>button]:font-bold [&>button]:shadow-lg [&>button]:shadow-black/10">
+                <div className="[&>button]:w-full [&>button]:h-14 [&>button]:rounded-2xl [&>button]:bg-orange-600 [&>button]:border-0 [&>button]:text-white [&>button]:hover:bg-orange-700 [&>button]:justify-center [&>button]:text-[15px] [&>button]:font-bold [&>button]:shadow-lg [&>button]:shadow-orange-500/20">
                     <BusinessInviteButton />
                 </div>
 
