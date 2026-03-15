@@ -10,6 +10,7 @@ import { ForceConfigPane } from "@/components/business/ForceConfigPane";
 import { MobileBusinessNetwork } from "@/components/business/MobileBusinessNetwork";
 import { MobileBusinessApplications } from "@/components/business/MobileBusinessApplications";
 import { MobileBusinessConfig } from "@/components/business/MobileBusinessConfig";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 const TABS = [
     { key: "partners", label: "Partners" },
@@ -36,7 +37,7 @@ function ForceHubInner() {
     };
 
     return (
-        <div className="flex flex-col bg-zinc-50 h-[calc(100dvh-56px)] lg:h-screen overflow-hidden">
+        <PageTransition className="flex flex-col bg-zinc-50 h-[calc(100dvh-56px)] lg:h-screen overflow-hidden">
             <div className="hidden lg:flex items-center justify-between px-6 pt-5 pb-0">
                 <div>
                     <h1 className="text-2xl font-black text-zinc-900">Partners</h1>
@@ -68,7 +69,7 @@ function ForceHubInner() {
                     </>
                 )}
             </div>
-        </div>
+        </PageTransition>
     );
 }
 

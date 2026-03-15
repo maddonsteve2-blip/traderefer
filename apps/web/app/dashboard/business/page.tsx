@@ -12,6 +12,7 @@ import { CommandActionQueue, PartnerLeaderboard } from "@/components/business/Co
 import { BusinessSidebar } from "@/components/business/BusinessSidebar";
 import { CommandStrip } from "@/components/business/CommandStrip";
 import { MobileBusinessDashboard } from "@/components/business/MobileBusinessDashboard";
+import { AnimatedStatGrid, AnimatedStatCard } from "@/components/ui/AnimatedStatGrid";
 
 const ICON_MAP: Record<string, React.ElementType> = { Target, Zap, Star, Users, DollarSign };
 
@@ -137,22 +138,24 @@ export default async function BusinessDashboardPage() {
                         <CommandStrip slug={business.slug} />
 
                         {/* Power Metrics — full-width row, 48px bold values */}
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <AnimatedStatGrid>
                             {apiStats.map((stat: { label: string; icon: string; bg: string; color: string; value: string | number }) => {
                                 const Icon = ICON_MAP[stat.icon] || Target;
                                 return (
-                                    <div key={stat.label} className="bg-white border border-zinc-100 rounded-2xl p-4 hover:shadow-md hover:-translate-y-px transition-all group">
-                                        <div className="flex items-center gap-1.5 mb-1.5">
-                                            <div className="w-9 h-9 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                                                <Icon className="w-4 h-4" />
+                                    <AnimatedStatCard key={stat.label}>
+                                        <div className="bg-white border border-zinc-100 rounded-2xl p-4 hover:shadow-md transition-all group">
+                                            <div className="flex items-center gap-1.5 mb-1.5">
+                                                <div className="w-9 h-9 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                                                    <Icon className="w-4 h-4" />
+                                                </div>
+                                                <span className="font-bold text-zinc-400 text-[11px]">{stat.label}</span>
                                             </div>
-                                            <span className="font-bold text-zinc-400 text-[11px]">{stat.label}</span>
+                                            <div className="font-black text-zinc-900 leading-none tracking-tight text-base">{stat.value}</div>
                                         </div>
-                                        <div className="font-black text-zinc-900 leading-none tracking-tight text-base">{stat.value}</div>
-                                    </div>
+                                    </AnimatedStatCard>
                                 );
                             })}
-                        </div>
+                        </AnimatedStatGrid>
 
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
                             <div>

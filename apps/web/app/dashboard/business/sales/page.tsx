@@ -9,6 +9,7 @@ import { SalesPromotionsPane } from "@/components/business/SalesPromotionsPane";
 import { MobileBusinessLeads } from "@/components/business/MobileBusinessLeads";
 import { MobileBusinessDeals } from "@/components/business/MobileBusinessDeals";
 import { MobileBusinessCampaigns } from "@/components/business/MobileBusinessCampaigns";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 const TABS = [
     { key: "leads", label: "Leads" },
@@ -26,7 +27,7 @@ function SalesHubInner() {
     };
 
     return (
-        <div className="min-h-[100dvh] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden">
+        <PageTransition className="min-h-[100dvh] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden">
             <div className="hidden lg:flex items-center justify-between px-6 pt-5 pb-0">
                 <div>
                     <h1 className="text-2xl font-black text-zinc-900">Leads</h1>
@@ -48,7 +49,7 @@ function SalesHubInner() {
                 {tab === "offers" && <SalesOffersPane />}
                 {tab === "promotions" && <SalesPromotionsPane />}
             </div>
-        </div>
+        </PageTransition>
     );
 }
 

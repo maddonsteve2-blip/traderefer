@@ -8,6 +8,7 @@ import { MobileBusinessMessages } from '@/components/business/MobileBusinessMess
 import { useAuth } from '@clerk/nextjs';
 import { Megaphone, Send, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'sonner';
+import { PageTransition } from '@/components/ui/PageTransition';
 
 function BroadcastBar() {
     const { getToken } = useAuth();
@@ -106,13 +107,13 @@ export default function BusinessMessagesPage() {
     }
 
     return (
-        <div className="flex flex-col bg-zinc-50 h-screen overflow-hidden">
+        <PageTransition className="flex flex-col bg-zinc-50 h-screen overflow-hidden">
             <BroadcastBar />
             <div className="flex flex-1 min-h-0">
                 <Suspense fallback={<div className="flex items-center justify-center h-[600px] w-full"><div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" /></div>}>
                     <MessagesView role="business" />
                 </Suspense>
             </div>
-        </div>
+        </PageTransition>
     );
 }

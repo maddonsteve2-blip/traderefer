@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MobileBusinessAnalytics } from "@/components/business/MobileBusinessAnalytics";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageTransition } from "@/components/ui/PageTransition";
 import { toast } from "sonner";
 
 interface Analytics {
@@ -88,7 +89,7 @@ export default function AnalyticsPage() {
     if (!data) return null;
 
     return (
-        <div className="min-h-[100dvh] bg-zinc-50 lg:h-screen lg:overflow-hidden lg:flex lg:flex-col">
+        <PageTransition className="min-h-[100dvh] bg-zinc-50 lg:h-screen lg:overflow-hidden lg:flex lg:flex-col">
             <MobileBusinessAnalytics />
             
             <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
@@ -212,6 +213,6 @@ export default function AnalyticsPage() {
 
                 </div>
             </div>
-        </div>
+        </PageTransition>
     );
 }
