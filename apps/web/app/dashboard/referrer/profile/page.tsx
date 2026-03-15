@@ -459,7 +459,7 @@ export default function ReferrerProfilePage() {
                         <div className="w-full max-w-2xl space-y-4">
                             <div className="flex items-center gap-2.5 mb-4 px-2">
                                 <Eye className="w-5 h-5 text-zinc-400" />
-                                <span className="font-black text-zinc-400 uppercase tracking-widest text-xs md:text-sm">Live Preview (Business View)</span>
+                                <span className="font-bold text-zinc-400 text-xs md:text-sm">Business View — how businesses see your profile</span>
                             </div>
 
                             <div className="bg-white border md:border-2 border-gray-100 rounded-[24px] md:rounded-[32px] overflow-hidden shadow-xl md:shadow-2xl">
