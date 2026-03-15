@@ -348,7 +348,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                         <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
                             <span className="text-[#FF6600]">{tradeName}</span> in {suburbWithPostcode}, {cityName}
                         </h1>
-                        <p className="text-gray-600 mb-6 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
+                        <p className="text-gray-700 mb-6 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             {localizedIntro}
                         </p>
                         {cost && (
@@ -466,7 +466,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                             <Link
                                                 key={rt.slug}
                                                 href={`/local/${state}/${city}/${suburb}/${rt.slug}`}
-                                                className="inline-flex items-center gap-1.5 px-4 h-12 bg-zinc-50 border border-zinc-200 rounded-xl font-bold text-zinc-600 hover:border-orange-300 hover:text-orange-600 transition-colors whitespace-nowrap shrink-0"
+                                                className="inline-flex items-center gap-1.5 px-4 h-12 bg-zinc-50 border-2 border-zinc-300 rounded-xl font-bold text-zinc-700 hover:border-orange-400 hover:text-orange-600 transition-colors whitespace-nowrap shrink-0"
                                                 style={{ fontSize: '14px' }}
                                             >
                                                 <Wrench className="w-3.5 h-3.5" />
@@ -481,7 +481,18 @@ export default async function TradeLocationPage({ params }: PageProps) {
                             {totalReviews > 10 && (
                                 <div className="flex flex-wrap items-center gap-4 bg-orange-50 border border-orange-100 rounded-2xl px-6 py-4">
                                     <div className="flex items-center gap-1.5">
-                                        {[1,2,3,4,5].map(s => <Star key={s} className="w-5 h-5 fill-orange-400 text-orange-400" />)}
+                                        {[1,2,3,4,5].map(s => {
+                                            const rating = parseFloat(avgRating || '0');
+                                            const fillPercentage = Math.max(0, Math.min(100, (rating - s + 1) * 100));
+                                            return (
+                                                <div key={s} className="relative w-5 h-5">
+                                                    <Star className="w-5 h-5 text-orange-200 absolute" />
+                                                    <div style={{ width: `${fillPercentage}%`, overflow: 'hidden' }} className="absolute">
+                                                        <Star className="w-5 h-5 fill-orange-400 text-orange-400" />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                     <p className="text-zinc-800 font-bold text-lg">{avgRating} average</p>
                                     <p className="text-zinc-500 font-medium">across <span className="font-bold text-zinc-700">{totalReviews.toLocaleString()} verified reviews</span> from {suburbName} {tradeName.toLowerCase()} businesses</p>
@@ -498,7 +509,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         <Link
                                             key={job}
                                             href={`/local/${state}/${city}/${suburb}/${trade}/${jobToSlug(job)}`}
-                                            className="inline-flex items-center px-4 py-2.5 bg-white border border-zinc-200 rounded-full font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50 transition-all" style={{ fontSize: '14px' }}
+                                            className="inline-flex items-center px-4 py-2.5 bg-white border-2 border-zinc-300 rounded-full font-bold text-zinc-700 hover:border-orange-400 hover:text-orange-600 hover:bg-orange-50 transition-all" style={{ fontSize: '14px' }}
                                         >
                                             {job.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                                         </Link>
@@ -514,6 +525,24 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     Sorted by Trust Score
                                 </div>
                             </div>
+
+                            {/* ── BUSINESS OWNER BANNER ── */}
+                            {businesses.some((b: any) => b.is_claimed === false) && (
+                                <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                                            <ShieldCheck className="w-5 h-5 text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <p className="font-black text-zinc-900 text-lg mb-1">Are you a {tradeName.toLowerCase()} in {suburbName}?</p>
+                                            <p className="text-zinc-600" style={{ fontSize: '15px' }}>Claim your free listing to manage your profile, respond to reviews, and connect with customers.</p>
+                                        </div>
+                                    </div>
+                                    <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold h-12 px-6 border-none whitespace-nowrap">
+                                        <Link href="/register?type=business">Claim Your Listing →</Link>
+                                    </Button>
+                                </div>
+                            )}
 
                             {businesses.length === 0 ? (
                                 <div className="bg-white rounded-3xl border border-zinc-200 p-12 text-center">
@@ -547,11 +576,6 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                         {biz.is_verified && (
                                                             <span className="verified-pulse flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-full font-black uppercase" style={{ fontSize: '16px' }}>
                                                                 <ShieldCheck className="w-4 h-4" /> Verified
-                                                            </span>
-                                                        )}
-                                                        {biz.is_claimed === false && (
-                                                            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-600 border border-orange-100 rounded-full font-black uppercase" style={{ fontSize: '16px' }}>
-                                                                Unclaimed
                                                             </span>
                                                         )}
                                                     </div>
@@ -613,21 +637,12 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                     </div>
 
                                                     <div className="flex flex-wrap items-center gap-3">
-                                                        <Button asChild size="lg" className="bg-zinc-900 hover:bg-black text-white rounded-xl font-bold h-14 px-6 border-none">
+                                                        <Button asChild size="lg" className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-bold h-14 px-6 border-none">
                                                             <Link href={`/b/${biz.slug}`}>View Profile</Link>
                                                         </Button>
-                                                        {biz.is_claimed === false ? (
-                                                            <Button asChild size="lg" className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-bold h-14 px-6 border-none">
-                                                                <Link href={`/claim/${biz.slug}`}>
-                                                                    <ShieldCheck className="w-4 h-4 mr-2" />
-                                                                    Claim This Business
-                                                                </Link>
-                                                            </Button>
-                                                        ) : (
-                                                            <Button asChild variant="outline" size="lg" className="border-zinc-200 hover:bg-zinc-50 rounded-xl font-bold h-14 px-6">
-                                                                <Link href={`/b/${biz.slug}#enquiry-form`}>Request Quote</Link>
-                                                            </Button>
-                                                        )}
+                                                        <Button asChild variant="outline" size="lg" className="border-2 border-zinc-300 hover:bg-zinc-50 hover:border-zinc-400 rounded-xl font-bold h-14 px-6">
+                                                            <Link href={`/b/${biz.slug}#enquiry-form`}>Request Quote</Link>
+                                                        </Button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -693,9 +708,18 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                             {reviewSnippets.map((r: any, i: number) => (
                                                 <Link key={r.slug} href={`/b/${r.slug}`} className="bg-white rounded-2xl border border-zinc-100 p-5 hover:shadow-lg hover:border-orange-200 transition-all group">
                                                     <div className="flex items-center gap-1 mb-2">
-                                                        {[1,2,3,4,5].map(s => (
-                                                            <Star key={s} className={`w-4 h-4 ${s <= Math.round(parseFloat(r.rating)) ? 'fill-orange-400 text-orange-400' : 'text-zinc-200'}`} />
-                                                        ))}
+                                                        {[1,2,3,4,5].map(s => {
+                                                            const rating = parseFloat(r.rating);
+                                                            const fillPercentage = Math.max(0, Math.min(100, (rating - s + 1) * 100));
+                                                            return (
+                                                                <div key={s} className="relative w-4 h-4">
+                                                                    <Star className="w-4 h-4 text-zinc-200 absolute" />
+                                                                    <div style={{ width: `${fillPercentage}%`, overflow: 'hidden' }} className="absolute">
+                                                                        <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })}
                                                     </div>
                                                     <p className="font-black text-zinc-900 group-hover:text-orange-600 transition-colors mb-1" style={{ fontSize: '16px' }}>{r.name}</p>
                                                     <p className="text-zinc-500 text-sm">{r.rating} ★ from {r.reviews} reviews</p>
@@ -719,17 +743,17 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         <p className="text-lg text-zinc-500 mb-6" style={{lineHeight: '1.6'}}>Pricing data based on Australian industry averages for {stateName}.</p>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                                <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>Typical Range</p>
+                                                <p className="font-black text-zinc-600 uppercase tracking-wider mb-1" style={{ fontSize: '13px' }}>Typical Range</p>
                                                 <p className="text-2xl font-black text-zinc-900">${cost.low}–${cost.high}</p>
                                                 <p className="text-zinc-500" style={{ fontSize: '16px' }}>{cost.unit}</p>
                                             </div>
                                             <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                                <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>Emergency Rate</p>
+                                                <p className="font-black text-zinc-600 uppercase tracking-wider mb-1" style={{ fontSize: '13px' }}>Emergency Rate</p>
                                                 <p className="text-2xl font-black text-zinc-900">${Math.round(cost.high * 1.5)}</p>
                                                 <p className="text-zinc-500" style={{ fontSize: '16px' }}>After-hours callout</p>
                                             </div>
                                             <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                                <p className="font-black text-zinc-400 uppercase tracking-wider mb-1" style={{ fontSize: '16px' }}>Get Quotes</p>
+                                                <p className="font-black text-zinc-600 uppercase tracking-wider mb-1" style={{ fontSize: '13px' }}>Get Quotes</p>
                                                 <p className="text-2xl font-black text-zinc-900">{businesses.length > 0 ? businesses.length : "Free"}</p>
                                                 <p className="text-zinc-500" style={{ fontSize: '16px' }}>{businesses.length > 0 ? "local providers" : "no obligation"}</p>
                                             </div>
@@ -1008,10 +1032,10 @@ export default async function TradeLocationPage({ params }: PageProps) {
                     </div>
                     <div className="flex items-center gap-3 w-full sm:w-auto">
                         <Button asChild size="lg" className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-bold h-12 px-6 border-none flex-1 sm:flex-initial">
-                            <Link href="/register?type=business">List Your Business Free</Link>
-                        </Button>
-                        <Button asChild variant="outline" size="lg" className="border-zinc-300 hover:bg-zinc-50 rounded-xl font-bold h-12 px-6 hidden sm:flex">
                             <Link href={`/b/${businesses[0]?.slug}#enquiry-form`}>Get a Quote</Link>
+                        </Button>
+                        <Button asChild variant="outline" size="lg" className="border-2 border-zinc-300 hover:bg-zinc-50 rounded-xl font-bold h-12 px-6 hidden sm:flex">
+                            <Link href="/register?type=business">List Your Business</Link>
                         </Button>
                     </div>
                 </div>

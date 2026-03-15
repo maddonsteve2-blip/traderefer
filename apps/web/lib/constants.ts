@@ -2876,7 +2876,7 @@ export function generateLocalizedIntro(
             localDetail = `${suburbName}'s ${ctx.housing} and ${ctx.climate} mean local ${tradeName.toLowerCase()} contractors understand the specific requirements of properties in the ${ctx.region} area.`;
         }
     } else {
-        localDetail = `Local ${tradeName.toLowerCase()} in ${suburbName} bring specialist knowledge of ${cityName}'s building regulations, soil conditions, and climate — delivering better results than tradies without local experience.`;
+        localDetail = `Local ${tradeName.toLowerCase()} businesses in ${suburbName} bring specialist knowledge of ${cityName}'s building regulations, soil conditions, and climate — delivering better results than tradies without local experience.`;
     }
 
     const licenceInfo = STATE_LICENSING[tradeName]?.[stateName.toUpperCase()];

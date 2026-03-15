@@ -172,8 +172,7 @@ async function fetchMultiplePhotos(place, slug) {
                 } catch { /* Blob failed */ }
             }
 
-            // All photos go to gallery — logo stays null (shows initials)
-            // Real logos will be filled later via DataForSEO
+            if (pi === 0) logoUrl = blobUrl;
             if (blobUrl) photoUrls.push(blobUrl);
         } catch { /* skip */ }
     }
