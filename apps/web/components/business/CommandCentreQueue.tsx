@@ -132,7 +132,7 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
 
     if (newLeads.length > 0) {
         const plural = newLeads.length > 1;
-        const suburbs = [...new Set(newLeads.map(l => l.suburb))].slice(0, 2).join(" and ");
+        const suburbs = [...new Set(newLeads.map(l => l.suburb).filter(Boolean))].slice(0, 2).join(" and ");
         queueItems.push({
             key: "leads",
             node: (
@@ -278,10 +278,12 @@ export function PartnerLeaderboard() {
                     <div className="p-12 flex items-center justify-center">
                         <Loader2 className="w-6 h-6 text-orange-400 animate-spin" />
                     </div>
-                ) : referrers.length === 0 ? (
+                ) : referrers.length === 0 || referrers.every(r => r.leads_created === 0 && r.total_earned_cents === 0) ? (
                     <div className="p-10 text-center">
                         <TrendingUp className="w-12 h-12 text-zinc-200 mx-auto mb-3" />
-                        <p className="font-bold text-zinc-400 mb-1" style={{ fontSize: 22 }}>No approved partners yet</p>
+                        <p className="font-bold text-zinc-400 mb-1" style={{ fontSize: 22 }}>
+                            {referrers.length === 0 ? "No approved partners yet" : "No activity yet"}
+                        </p>
                         {pendingCount > 0 ? (
                             <button
                                 onClick={() => router.push("/dashboard/business/force?tab=applications")}
@@ -291,7 +293,7 @@ export function PartnerLeaderboard() {
                                 {pendingCount} application{pendingCount > 1 ? "s" : ""} waiting for review →
                             </button>
                         ) : (
-                            <p className="text-zinc-300 font-medium" style={{ fontSize: 19 }}>Approved referrers will rank here</p>
+                            <p className="text-zinc-300 font-medium" style={{ fontSize: 19 }}>Leaderboard will populate once referrers start sending leads</p>
                         )}
                     </div>
                 ) : (

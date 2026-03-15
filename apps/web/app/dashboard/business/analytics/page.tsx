@@ -118,7 +118,7 @@ export default function AnalyticsPage() {
             
             <div className="hidden lg:block max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
                 <div className="mb-8 md:mb-10">
-                    <h1 className="text-5xl md:text-6xl font-extrabold text-zinc-900 tracking-tight">Referrer Analytics</h1>
+                    <h1 className="text-5xl md:text-6xl font-extrabold text-zinc-900 tracking-tight">Analytics</h1>
                     <p className="text-zinc-500 text-2xl mt-1">Track referrer performance, campaign ROI, and cost per customer</p>
                 </div>
 
@@ -138,7 +138,7 @@ export default function AnalyticsPage() {
                     </div>
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6">
                         <div className="text-lg font-bold text-zinc-400 uppercase tracking-wider mb-1">Cost / Customer</div>
-                        <div className="text-5xl font-black text-orange-600">{cents(data.summary.cost_per_customer_cents)}</div>
+                        <div className="text-5xl font-black text-orange-600">{data.summary.confirmed_leads === 0 ? "—" : cents(data.summary.cost_per_customer_cents)}</div>
                     </div>
                 </div>
 

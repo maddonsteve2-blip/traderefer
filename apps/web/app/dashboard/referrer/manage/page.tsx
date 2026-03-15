@@ -500,7 +500,7 @@ export default function ReferrerManagePage() {
                                 <Users className="w-8 h-8 text-orange-300" />
                             </div>
                             <h2 className="text-xl font-black text-zinc-900">Build your team</h2>
-                            <p className="mt-2 text-sm font-medium text-zinc-500">Apply to your first business to unlock this command centre.</p>
+                            <p className="mt-2 text-sm font-medium text-zinc-500">Apply to your first business to start building your partnerships.</p>
                         </div>
                     )}
                 </div>
@@ -518,7 +518,7 @@ export default function ReferrerManagePage() {
                     </div>
                     <h1 className="font-black text-zinc-900 mb-3 text-3xl">Build Your Team</h1>
                     <p className="font-medium text-zinc-500 max-w-md mb-8 text-lg leading-relaxed">
-                        You don't have any referral partnerships yet. Apply to join a business's network to unlock your Command Centre.
+                        You don't have any referral partnerships yet. Apply to join a business's network to get started.
                     </p>
                     <Link
                         href="/dashboard/referrer/businesses"
@@ -635,7 +635,7 @@ export default function ReferrerManagePage() {
                     {/* ── SIDEBAR ── */}
                     <aside className="hidden md:flex flex-col w-[26%] bg-gray-50 shrink-0 overflow-hidden" style={{ boxShadow: "4px 0 20px rgba(0,0,0,0.05)", scrollbarGutter: "stable" }}>
                         <div className="px-5 pt-6 pb-3">
-                            <p className="font-black uppercase tracking-widest text-zinc-400 text-[10px]">Command Centre</p>
+                            <p className="font-black uppercase tracking-widest text-zinc-400 text-[10px]">My Partnerships</p>
                             <p className="font-black text-zinc-900 mt-0.5 text-xl">{totalCount} Business{totalCount !== 1 ? "es" : ""}</p>
                         </div>
 

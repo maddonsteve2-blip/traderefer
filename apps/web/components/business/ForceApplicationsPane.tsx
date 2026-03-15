@@ -220,8 +220,8 @@ export function ForceApplicationsPane() {
                                             ) : initials}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-black text-zinc-900 truncate uppercase tracking-tight text-[26px]">{app.referrer_name}</p>
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest mt-1 text-[19px]">
+                                            <p className="font-black text-zinc-900 line-clamp-2 uppercase tracking-tight text-[18px] leading-snug">{app.referrer_name}</p>
+                                            <p className="font-black text-zinc-400 uppercase tracking-widest mt-1 text-[15px]">
                                                 {app.referrer_suburb}{app.referrer_state ? `, ${app.referrer_state}` : ""} · ⭐ {app.quality_score}
                                             </p>
                                         </div>
@@ -331,7 +331,7 @@ export function ForceApplicationsPane() {
 
                                 <div className="grid grid-cols-3 gap-3 mb-5">
                                     {[
-                                        { label: "Quality Score", value: ref.quality_score, icon: Star, bg: "bg-amber-50", text: "text-amber-500" },
+                                        { label: "Quality Score", value: `${ref.quality_score}/100`, icon: Star, bg: "bg-amber-50", text: "text-amber-500" },
                                         { label: "Confirmed Leads", value: ref.confirmed_referrals, icon: TrendingUp, bg: "bg-emerald-50", text: "text-emerald-600" },
                                         { label: "Businesses", value: ref.businesses_linked, icon: Briefcase, bg: "bg-blue-50", text: "text-blue-600" },
                                     ].map(s => (

@@ -1,7 +1,8 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
+// Suspense is used in ForceHubPage wrapper below
 import { HubTabBar } from "@/components/business/HubTabBar";
 import { ForcePartnersPane } from "@/components/business/ForcePartnersPane";
 import { ForceApplicationsPane } from "@/components/business/ForceApplicationsPane";
@@ -20,6 +21,15 @@ function ForceHubInner() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const tab = searchParams.get("tab") ?? "partners";
+    const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        const update = () => setIsDesktop(window.innerWidth >= 1024);
+        update();
+        const mq = window.matchMedia('(min-width: 1024px)');
+        mq.addEventListener('change', e => setIsDesktop(e.matches));
+        return () => mq.removeEventListener('change', e => setIsDesktop(e.matches));
+    }, []);
 
     const setTab = (key: string) => {
         router.replace(`/dashboard/business/force?tab=${key}`);
@@ -31,22 +41,26 @@ function ForceHubInner() {
                 <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
             </div>
 
-            <div className="lg:hidden flex-1 overflow-y-auto">
-                {tab === "partners" && <MobileBusinessNetwork />}
-                {tab === "applications" && <MobileBusinessApplications />}
-                {tab === "config" && <MobileBusinessConfig />}
-                {/* Fallback to desktop panes for other tabs if they don't have mobile versions yet */}
-                {tab !== "partners" && tab !== "applications" && tab !== "config" && (
-                     <>
-                          <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
-                     </>
+            <div className="flex-1 overflow-hidden">
+                {isDesktop === null && (
+                    <div className="flex items-center justify-center h-full">
+                        <div className="w-8 h-8 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+                    </div>
                 )}
-            </div>
-
-            <div className="hidden lg:block flex-1 overflow-hidden">
-                {tab === "partners" && <ForcePartnersPane />}
-                {tab === "applications" && <ForceApplicationsPane />}
-                {tab === "config" && <ForceConfigPane />}
+                {isDesktop === false && (
+                    <>
+                        {tab === "partners" && <MobileBusinessNetwork />}
+                        {tab === "applications" && <MobileBusinessApplications />}
+                        {tab === "config" && <MobileBusinessConfig />}
+                    </>
+                )}
+                {isDesktop === true && (
+                    <>
+                        {tab === "partners" && <ForcePartnersPane />}
+                        {tab === "applications" && <ForceApplicationsPane />}
+                        {tab === "config" && <ForceConfigPane />}
+                    </>
+                )}
             </div>
         </div>
     );

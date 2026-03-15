@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -41,10 +41,11 @@ async function getBusinessDashboardData() {
 }
 
 export default async function BusinessDashboardPage() {
-    const { sessionClaims } = await auth();
+    const [{ sessionClaims }, clerkUser] = await Promise.all([auth(), currentUser()]);
     const meta = sessionClaims?.metadata as { role?: string; roles?: string[] } | undefined;
     const roles = meta?.roles ?? (meta?.role ? [meta.role] : []);
     const hasReferrer = roles.includes("referrer");
+    const ownerFirstName = clerkUser?.firstName ?? null;
 
     let data;
     let fetchError = null;
@@ -94,7 +95,7 @@ export default async function BusinessDashboardPage() {
                                 <div className="min-w-0">
                                     <div className="flex flex-wrap items-center gap-2">
                                         <h1 className="font-black text-zinc-900 leading-tight break-words text-4xl">
-                                            {greeting}, {business.name}
+                                            {greeting}, {ownerFirstName ?? business.name}
                                         </h1>
                                         <span className="text-sm font-black bg-slate-800 text-white px-3 py-1 rounded-full uppercase tracking-widest">
                                             Business Mode
@@ -104,7 +105,7 @@ export default async function BusinessDashboardPage() {
                                         </Link>
                                     </div>
                                     <p className="text-zinc-500 font-black uppercase tracking-[0.15em] mt-1 text-lg">
-                                        Business Command Centre
+                                        Business Dashboard
                                     </p>
                                 </div>
                             </div>

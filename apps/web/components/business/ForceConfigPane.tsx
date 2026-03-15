@@ -2,7 +2,7 @@
 
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { DollarSign, Gift, Save, Loader2, CheckCircle2 } from "lucide-react";
+import { DollarSign, Gift, Save, Loader2, CheckCircle2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
 const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";
@@ -13,7 +13,17 @@ export function ForceConfigPane() {
     const [saving, setSaving] = useState(false);
     const [defaultFeeDollars, setDefaultFeeDollars] = useState("");
     const [slug, setSlug] = useState("");
+    const [copied, setCopied] = useState(false);
     const apiUrl = "/api/backend";
+
+    const copyInviteLink = () => {
+        const link = `https://traderefer.au/register?ref=${slug}&type=referrer`;
+        navigator.clipboard.writeText(link).then(() => {
+            setCopied(true);
+            toast.success("Invite link copied!");
+            setTimeout(() => setCopied(false), 2000);
+        });
+    };
 
     useEffect(() => {
         if (!isLoaded) return;
@@ -107,9 +117,17 @@ export function ForceConfigPane() {
                     <p className="text-zinc-400 font-medium mb-3 text-[22px]">
                         Share this with anyone you want to invite to apply as a referrer.
                     </p>
-                    <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all flex-1 flex items-center text-[22px]">
+                    <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all flex-1 flex items-center text-[18px]">
                         traderefer.au/register?ref={slug}&amp;type=referrer
                     </div>
+                    <button
+                        onClick={copyInviteLink}
+                        disabled={!slug}
+                        className="mt-3 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white rounded-xl px-4 py-3 font-bold transition-all text-[19px]"
+                    >
+                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copied ? "Copied!" : "Copy Link"}
+                    </button>
                 </div>
 
                 {/* Prezzee rewards — spans full width */}
@@ -160,7 +178,7 @@ export function ForceConfigPane() {
                 className="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all disabled:opacity-60 flex items-center justify-center gap-2 text-2xl h-[60px]"
             >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                {saving ? "Saving…" : "Save Config"}
+                {saving ? "Saving…" : "Save Changes"}
             </button>
         </div>
     );

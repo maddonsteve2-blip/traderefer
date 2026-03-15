@@ -347,7 +347,7 @@ export default function BusinessSettingsPage() {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={`${labelClass} text-xl`}>Storefront Slug</label>
+                                    <label className={`${labelClass} text-xl`}>Profile Link</label>
                                     <input
                                         type="text"
                                         className={`${inputClass} ${slugStatus === "taken" ? "border-red-300 focus:border-red-400 focus:ring-red-500/20" : ""} text-xl`}
@@ -474,7 +474,7 @@ export default function BusinessSettingsPage() {
 
                             <DashboardSection>
                                 <DashboardSectionHeader>
-                                    <DashboardSectionTitle>Operational Trust Signals</DashboardSectionTitle>
+                                    <DashboardSectionTitle>How You Operate</DashboardSectionTitle>
                                     <DashboardSectionDescription>These cues tell referrers how quickly and confidently you operate.</DashboardSectionDescription>
                                 </DashboardSectionHeader>
 

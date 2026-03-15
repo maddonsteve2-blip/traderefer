@@ -464,10 +464,10 @@ export default async function PublicProfilePage({
                             {business.licence_number && (
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
                                     <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2" style={{ fontSize: '16px' }}>
-                                        <BadgeCheck className="w-4 h-4 text-blue-500" /> Licences
+                                        <BadgeCheck className="w-4 h-4 text-orange-500" /> Licences
                                     </h3>
                                     <div className="flex items-start gap-3">
-                                        <div className="w-9 h-9 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-blue-500 shrink-0">
+                                        <div className="w-9 h-9 bg-orange-50 border border-orange-100 rounded-xl flex items-center justify-center text-orange-500 shrink-0">
                                             <BadgeCheck className="w-4 h-4" />
                                         </div>
                                         <div>
@@ -482,7 +482,7 @@ export default async function PublicProfilePage({
                             {business.payment_methods?.length > 0 && (
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
                                     <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2" style={{ fontSize: '16px' }}>
-                                        <CreditCard className="w-4 h-4 text-green-500" /> Ways to Pay
+                                        <CreditCard className="w-4 h-4 text-orange-500" /> Ways to Pay
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
                                         {business.payment_methods.map((method: string) => (
