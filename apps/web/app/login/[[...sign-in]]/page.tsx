@@ -60,7 +60,7 @@ export default function LoginPage() {
                             elements: {
                                 card: "shadow-none border-none",
                                 footerAction: "font-black text-orange-600 hover:text-orange-700",
-                                formButtonPrimary: "bg-zinc-900 border-none shadow-xl hover:bg-zinc-800 text-base py-6 rounded-2xl",
+                                formButtonPrimary: "bg-orange-600 border-none shadow-xl hover:bg-orange-700 text-base py-6 rounded-2xl",
                                 headerTitle: "font-black tracking-tight",
                                 headerSubtitle: "font-bold text-zinc-500",
                                 socialButtonsBlockButton: "rounded-2xl border-2 border-zinc-100 hover:bg-zinc-50 font-bold",
