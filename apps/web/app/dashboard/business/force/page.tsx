@@ -12,7 +12,7 @@ import { MobileBusinessApplications } from "@/components/business/MobileBusiness
 import { MobileBusinessConfig } from "@/components/business/MobileBusinessConfig";
 
 const TABS = [
-    { key: "partners", label: "Active Referrers" },
+    { key: "partners", label: "Partners" },
     { key: "applications", label: "Applications" },
     { key: "config", label: "Reward Structure" },
 ];
@@ -37,6 +37,12 @@ function ForceHubInner() {
 
     return (
         <div className="flex flex-col bg-zinc-50 h-[calc(100dvh-56px)] lg:h-screen overflow-hidden">
+            <div className="hidden lg:flex items-center justify-between px-6 pt-5 pb-0">
+                <div>
+                    <h1 className="text-2xl font-black text-zinc-900">Partners</h1>
+                    <p className="text-sm font-medium text-zinc-500 mt-0.5">Manage your referrer network, applications, and reward structure.</p>
+                </div>
+            </div>
             <div>
                 <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
             </div>

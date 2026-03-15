@@ -33,7 +33,7 @@ const BUSINESS_NAV = [
     { label: "Overview",        href: "/dashboard/business",                        matchPath: "/dashboard/business",                 icon: LayoutDashboard, exact: true },
     { label: "Leads",           href: "/dashboard/business/sales?tab=leads",        matchPath: "/dashboard/business/sales",           icon: Target },
     { label: "Messages",        href: "/dashboard/business/messages",               matchPath: "/dashboard/business/messages",        icon: MessageSquare },
-    { label: "Growth",          href: "/dashboard/business/force?tab=partners",     matchPath: "/dashboard/business/force",           icon: Users },
+    { label: "Partners",        href: "/dashboard/business/force?tab=partners",     matchPath: "/dashboard/business/force",           icon: Users },
     { label: "Analytics",       href: "/dashboard/business/analytics",              matchPath: "/dashboard/business/analytics",       icon: BarChart3 },
     { label: "Public Profile",  href: "/dashboard/business/profile",                matchPath: "/dashboard/business/profile",         icon: UserCircle },
     { label: "Settings",        href: "/dashboard/business/settings",               matchPath: "/dashboard/business/settings",        icon: Settings },
@@ -225,8 +225,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         if (pathname === "/dashboard/business/messages") return { eyebrow: "Business", title: "Messages" };
         if (pathname?.startsWith("/dashboard/business/force")) {
             if (forceTab === "applications") return { eyebrow: "Business", title: "Applications" };
-            if (forceTab === "config") return { eyebrow: "Business", title: "Config" };
-            return { eyebrow: "Business", title: "Growth" };
+            if (forceTab === "config") return { eyebrow: "Business", title: "Reward Structure" };
+            return { eyebrow: "Business", title: "Partners" };
         }
         if (pathname?.startsWith("/dashboard/business/referrers/")) return { eyebrow: "Business", title: "Referrer Details" };
         if (pathname === "/dashboard/business/analytics") return { eyebrow: "Business", title: "Analytics" };

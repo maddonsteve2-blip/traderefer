@@ -111,8 +111,8 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
                         <UserPlus className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <p className="font-black text-zinc-900 truncate" style={{ fontSize: 22 }}>
-                            <span className="text-amber-700">{app.referrer_name}</span> applied to your Force
+                        <p className="font-black text-zinc-900 line-clamp-2 leading-snug" style={{ fontSize: 20 }}>
+                            <span className="text-amber-700">{app.referrer_name}</span> applied to your network
                         </p>
                         <p className="text-zinc-500 font-medium" style={{ fontSize: 19 }}>
                             {app.referrer_suburb}, {app.referrer_state}   {app.quality_score}  {timeAgo(app.applied_at)}

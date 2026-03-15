@@ -170,12 +170,12 @@ export default function ReferrerApplicationsPage() {
                         <ArrowLeft className="w-4 h-4" /> Dashboard
                     </Link>
                     <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-bold" style={{ fontSize: '18px' }}>My Applications</span>
+                    <span className="text-zinc-700 font-bold" style={{ fontSize: '18px' }}>Applications</span>
                 </div>
 
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <h1 className="font-black text-zinc-900" style={{ fontSize: '32px' }}>Referrer Applications</h1>
+                        <h1 className="font-black text-zinc-900" style={{ fontSize: '32px' }}>Applications</h1>
                         <p className="text-zinc-500 font-medium mt-1" style={{ fontSize: '19px' }}>
                             Track which businesses have approved you as a referrer.
                         </p>

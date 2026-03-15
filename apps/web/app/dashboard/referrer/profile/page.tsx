@@ -193,7 +193,7 @@ export default function ReferrerProfilePage() {
             <div className="md:hidden px-4 py-4 space-y-4 bg-zinc-50">
                 <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                        <Link href="/dashboard/referrer/manage" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-zinc-200 bg-white text-zinc-500">
+                        <Link href="/dashboard/referrer" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-zinc-200 bg-white text-zinc-500">
                             <ArrowLeft className="w-4 h-4" />
                         </Link>
                         <div className="min-w-0">
@@ -318,13 +318,13 @@ export default function ReferrerProfilePage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between px-4 md:px-8 py-4 bg-white border-b border-gray-200 shrink-0 gap-4">
                     <div className="flex items-center gap-3">
                         <Link
-                            href="/dashboard/referrer/manage"
+                            href="/dashboard/referrer"
                             className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-800 font-bold transition-colors group text-sm md:text-lg"
                         >
-                            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Manage
+                            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Dashboard
                         </Link>
                         <span className="text-zinc-300">/</span>
-                        <span className="text-zinc-700 font-black text-sm md:text-lg">My Referrer Profile</span>
+                        <span className="text-zinc-700 font-black text-sm md:text-lg">My Profile</span>
                     </div>
                     {publicUrl && (
                         <a

@@ -516,7 +516,7 @@ export default function ReferrerManagePage() {
                     <div className="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
                         <Users className="w-10 h-10 text-orange-300" />
                     </div>
-                    <h1 className="font-black text-zinc-900 mb-3 text-3xl">Build Your Team</h1>
+                    <h1 className="font-black text-zinc-900 mb-3 text-3xl">My Team</h1>
                     <p className="font-medium text-zinc-500 max-w-md mb-8 text-lg leading-relaxed">
                         You don't have any referral partnerships yet. Apply to join a business's network to get started.
                     </p>

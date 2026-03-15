@@ -610,7 +610,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
 
             {/* ── RIGHT PANEL (Chat View) ── */}
             <div 
-                className={`${activeContactId ? 'flex fixed top-0 left-0 right-0 z-[70] md:relative md:z-0' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
+                className={`${activeContactId ? 'flex fixed top-0 left-0 right-0 z-[70] md:relative md:z-0' : contacts.length === 0 ? 'hidden' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
                 style={{ height: viewportHeight }}
             >
                 {/* Mobile/Desktop Header */}
@@ -645,9 +645,9 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                         <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-premium mb-6">
                             <MessageSquare className="w-12 h-12 text-zinc-200" />
                         </div>
-                        <h3 className="text-3xl font-black text-zinc-900 tracking-tight">Your Inbox</h3>
+                        <h3 className="text-3xl font-black text-zinc-900 tracking-tight">Select a conversation</h3>
                         <p className="text-zinc-400 font-medium text-lg mt-3 max-w-sm">
-                            Choose a conversation to view your messages and start collaborating.
+                            Click a conversation on the left to view messages.
                         </p>
                     </div>
                 )}
