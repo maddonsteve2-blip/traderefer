@@ -106,6 +106,13 @@ export function MobileBusinessAnalytics() {
             {/* Top Referrers */}
             <div className="flex flex-col gap-4 mb-8">
                 <h3 className="text-lg font-bold text-[#18181B] tracking-tight">Top Performing Partners</h3>
+                {data.top_referrers.length === 0 ? (
+                    <div className="flex flex-col items-center text-center py-8 bg-zinc-50 rounded-[24px] border border-zinc-100">
+                        <Users className="w-10 h-10 text-zinc-200 mb-3" />
+                        <p className="font-bold text-zinc-700 text-base mb-1">No referrer data yet</p>
+                        <p className="text-sm text-zinc-400 font-medium max-w-[240px]">Once approved referrers start sending leads, their performance will rank here.</p>
+                    </div>
+                ) : (
                 <div className="flex flex-col gap-3">
                     {data.top_referrers.slice(0, 3).map((r, i) => {
                          const TIcon = TIER_ICONS[r.tier] || Star;
@@ -129,6 +136,7 @@ export function MobileBusinessAnalytics() {
                          );
                     })}
                 </div>
+                )}
             </div>
 
         </div>
