@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Building2 } from "lucide-react";
 import Link from "next/link";
 import { BusinessBrowser } from "@/components/referrer/BusinessBrowser";
 import { MobileReferrerNetwork } from "@/components/referrer/MobileReferrerNetwork";
@@ -45,12 +45,12 @@ export default async function DashboardBusinessesPage() {
                             <ArrowLeft className="w-4 h-4" /> Dashboard
                         </Link>
                         <span className="text-zinc-300">/</span>
-                        <span className="text-zinc-700 font-bold text-lg">Find Businesses</span>
+                        <span className="text-zinc-700 font-bold text-lg">Network</span>
                     </div>
 
                     <div className="mb-6">
                         <h1 className="font-black text-zinc-900 flex items-center gap-3 text-3xl">
-                            <Search className="w-8 h-8 text-orange-500" /> Find Businesses to Refer
+                            <Building2 className="w-8 h-8 text-orange-500" /> Network
                         </h1>
                         <p className="text-zinc-500 font-medium mt-1 text-xl">
                             {suburb
