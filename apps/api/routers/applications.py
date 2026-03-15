@@ -342,11 +342,12 @@ async def list_pending_applications(
             FROM referrer_applications ra
             JOIN referrers r ON r.id = ra.referrer_id
             WHERE ra.business_id = :bid
+              AND r.user_id != :owner_uid
             ORDER BY
                 CASE ra.status WHEN 'pending' THEN 0 ELSE 1 END,
                 ra.applied_at DESC
         """),
-        {"bid": business_id}
+        {"bid": business_id, "owner_uid": user.id}
     )
     apps = []
     for row in result.mappings().all():

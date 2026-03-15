@@ -2,11 +2,11 @@ import { Variants } from 'framer-motion'
 
 // Page entry — used on every page mount
 export const pageVariants: Variants = {
-  hidden: { opacity: 0, y: 12 },
+  hidden: { opacity: 0.85, y: 4 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }
+    transition: { duration: 0.15, ease: 'easeOut' }
   }
 }
 

@@ -565,6 +565,11 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                 <p className="text-zinc-400 font-medium mt-1 leading-snug">
                                     {myType === 'business' ? 'Referrers will appear here once linked.' : 'Find businesses to start messaging.'}
                                 </p>
+                                {myType !== 'business' && (
+                                    <Link href="/dashboard/referrer/businesses" className="mt-4 inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-xl transition-all text-sm">
+                                        <Building2 className="w-4 h-4" /> Browse Businesses
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     ) : (

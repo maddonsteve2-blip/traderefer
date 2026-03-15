@@ -4,7 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Target, Zap, Star, Pencil, User, DollarSign, AlertTriangle, Users } from "lucide-react";
+import { Target, Zap, Star, Pencil, User, DollarSign, AlertTriangle, Users, Shield, Info } from "lucide-react";
 import { WalletWidget } from "@/components/dashboard/WalletWidget";
 import { DashboardError } from "@/components/dashboard/DashboardError";
 import { BusinessWelcomeDialog } from "@/components/dashboard/BusinessWelcomeDialog";
@@ -122,6 +122,18 @@ export default async function BusinessDashboardPage() {
                             </Button>
                         </div>
 
+                        {/* ABN pending banner */}
+                        {!business.is_verified && (
+                            <Link href="/dashboard/business/settings" className="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-4 hover:bg-amber-100 transition-all group">
+                                <Shield className="w-5 h-5 text-amber-500 shrink-0" />
+                                <div className="flex-1">
+                                    <p className="font-black text-amber-800 text-lg">ABN not yet verified</p>
+                                    <p className="text-amber-700 font-medium text-base">Verify your ABN in Settings to build trust with referrers and unlock all features.</p>
+                                </div>
+                                <span className="text-amber-600 font-bold text-sm group-hover:translate-x-1 transition-transform">Go to Settings &rarr;</span>
+                            </Link>
+                        )}
+
                         {/* Wallet warning */}
                         {walletCents < 2500 && (
                             <div className="p-4 bg-red-50 border border-red-200 rounded-2xl flex flex-col sm:flex-row sm:items-center gap-4">
@@ -150,7 +162,7 @@ export default async function BusinessDashboardPage() {
                                                 <div className="w-9 h-9 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                                                     <Icon className="w-4 h-4" />
                                                 </div>
-                                                <span className="font-bold text-zinc-400 text-[11px]">{stat.label}</span>
+                                                <span className="font-bold text-zinc-400 text-[11px]">{stat.label}{stat.label === 'Lead Unlock Cost' && <span title="This is the cost a business pays to unlock a lead's contact details. It includes the referral fee + 20% platform fee." className="inline-flex ml-1 cursor-help"><Info className="w-3 h-3 text-zinc-300" /></span>}</span>
                                             </div>
                                             <div className="font-black text-zinc-900 leading-none tracking-tight text-base">{stat.value}</div>
                                         </div>

@@ -122,7 +122,7 @@ function BizCard({ biz, isFirst }: { biz: Business; isFirst?: boolean }) {
                     id={isFirst ? "tour-network-referral-link" : undefined}
                     className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all py-4 active:scale-95 shadow-md shadow-orange-500/20 text-[21px]"
                 >
-                    Get Referral Link <ChevronRight className="w-5 h-5" />
+                    Apply to Refer <ChevronRight className="w-5 h-5" />
                 </Link>
             </div>
         </div>

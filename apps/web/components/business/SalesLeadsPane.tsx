@@ -79,6 +79,19 @@ function fmt(d: string) {
     }
 }
 
+function daysRemaining(createdAt: string): number | null {
+    if (!createdAt) return null;
+    try {
+        const date = new Date(createdAt.endsWith("Z") || createdAt.includes("+") || createdAt.includes("T") ? createdAt : createdAt + "Z");
+        if (isNaN(date.getTime())) return null;
+        const expiresAt = date.getTime() + 7 * 24 * 60 * 60 * 1000;
+        const remaining = Math.ceil((expiresAt - Date.now()) / (24 * 60 * 60 * 1000));
+        return remaining > 0 ? remaining : 0;
+    } catch {
+        return null;
+    }
+}
+
 export function SalesLeadsPane() {
     const { getToken, isLoaded } = useAuth();
     const [leads, setLeads] = useState<Lead[]>([]);
@@ -194,7 +207,16 @@ export function SalesLeadsPane() {
                                                     {formatStatus(lead.status)}
                                                 </span>
                                             </div>
-                                            <p className="text-zinc-400 font-bold text-[11px] uppercase tracking-tighter mt-0.5">{fmt(lead.created_at)}</p>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <p className="text-zinc-400 font-bold text-[11px] uppercase tracking-tighter">{fmt(lead.created_at)}</p>
+                                                {!unlocked && (() => {
+                                                    const days = daysRemaining(lead.created_at);
+                                                    if (days === null) return null;
+                                                    if (days === 0) return <span className="text-red-500 font-black text-[9px] uppercase tracking-wider">Expired</span>;
+                                                    if (days <= 2) return <span className="text-red-500 font-black text-[9px] uppercase tracking-wider">{days}d left</span>;
+                                                    return <span className="text-amber-500 font-bold text-[9px] uppercase tracking-wider">{days}d left</span>;
+                                                })()}
+                                            </div>
                                         </div>
                                     </div>
                                 </button>

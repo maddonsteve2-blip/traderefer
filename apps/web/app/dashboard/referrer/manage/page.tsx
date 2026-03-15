@@ -533,13 +533,13 @@ export default function ReferrerManagePage() {
                     </div>
                     <h1 className="font-black text-zinc-900 mb-3 text-3xl">My Team</h1>
                     <p className="font-medium text-zinc-500 max-w-md mb-8 text-lg leading-relaxed">
-                        You don't have any referral partnerships yet. Apply to join a business's network to get started.
+                        You haven&apos;t built a team yet. Apply to businesses in the Network to start building partnerships — approved businesses will appear here.
                     </p>
                     <Link
                         href="/dashboard/referrer/businesses"
                         className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black px-8 py-4 rounded-2xl transition-all active:scale-95 shadow-xl shadow-orange-200 text-lg"
                     >
-                        Find Your First Business <ChevronRight className="w-5 h-5" />
+                        Browse Businesses <ChevronRight className="w-5 h-5" />
                     </Link>
                 </div>
             </>

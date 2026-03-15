@@ -117,7 +117,7 @@ export default function BusinessSettingsPage() {
                     abn: data.abn || "",
                     referral_fee_cents: data.referral_fee_cents || 1000,
                     why_refer_us: data.why_refer_us || "",
-                    response_sla_minutes: data.response_sla_minutes || null,
+                    response_sla_minutes: data.response_sla_minutes ?? null,
                 });
             }
         } catch (err) {
@@ -505,19 +505,25 @@ export default function BusinessSettingsPage() {
                                             value={formData.abn}
                                             onChange={(e) => setFormData({ ...formData, abn: e.target.value.replace(/\s/g, "") })}
                                         />
-                                        <Button
-                                            onClick={handleVerifyABN}
-                                            disabled={verifying || !formData.abn || formData.abn.length < 11}
-                                            className="h-10 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm"
-                                        >
-                                            {verifying ? <Loader2 className="w-6 h-6 animate-spin" /> : <Shield className="w-6 h-6" />}
-                                            {verifying ? "Verifying..." : "Start ABN Verification"}
-                                        </Button>
+                                        {!biz?.is_verified && (
+                                            <Button
+                                                onClick={handleVerifyABN}
+                                                disabled={verifying || !formData.abn || formData.abn.length < 11}
+                                                className="h-10 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm disabled:opacity-50"
+                                            >
+                                                {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
+                                                {verifying ? "Checking..." : "Verify ABN"}
+                                            </Button>
+                                        )}
                                     </div>
-                                    {biz?.is_verified && (
+                                    {biz?.is_verified ? (
                                         <div className="flex items-center gap-2 text-emerald-600 font-semibold text-sm ml-1">
                                             <BadgeCheck className="w-4 h-4" /> Verified business identity on file
                                         </div>
+                                    ) : formData.abn && formData.abn.length >= 11 ? (
+                                        <p className="text-amber-600 font-medium text-sm ml-1">ABN entered but not yet verified — click Verify ABN to check.</p>
+                                    ) : (
+                                        <p className="text-zinc-400 font-medium text-sm ml-1">Enter your 11-digit ABN above to get verified.</p>
                                     )}
                                 </div>
                             </DashboardSection>

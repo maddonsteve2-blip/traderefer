@@ -326,7 +326,7 @@ export default async function PublicProfilePage({
                                             alt={`${business.business_name} cover`}
                                             className="w-full h-full object-cover"
                                             empty={
-                                                <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-900" />
+                                                <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-zinc-100" />
                                             }
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
@@ -704,9 +704,7 @@ export default async function PublicProfilePage({
                                         {reviewCount > 0 && <p className="text-zinc-400 mt-0.5 text-sm">{reviewCount} reviews</p>}
                                     </div>
                                     <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100">
-                                        {jobsCompleted > 0
-                                            ? <p className="text-3xl font-black text-zinc-900">{jobsCompleted}</p>
-                                            : <p className="text-sm font-medium text-zinc-400 mt-1">New</p>}
+                                        <p className="text-3xl font-black text-zinc-900">{jobsCompleted}</p>
                                         <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-1">Connections</p>
                                     </div>
                                 </div>

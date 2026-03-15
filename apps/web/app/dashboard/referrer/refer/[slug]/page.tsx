@@ -13,6 +13,19 @@ import { PageTransition } from "@/components/ui/PageTransition";
 
 const apiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+function decodeEntities(text: string): string {
+    const entities: Record<string, string> = {
+        '&raquo;': '\u00BB', '&laquo;': '\u00AB', '&mdash;': '\u2014',
+        '&ndash;': '\u2013', '&hellip;': '\u2026', '&amp;': '&',
+        '&quot;': '"', '&apos;': "'", '&rsquo;': '\u2019', '&lsquo;': '\u2018',
+        '&rdquo;': '\u201D', '&ldquo;': '\u201C', '&nbsp;': ' ',
+        '&bull;': '\u2022', '&copy;': '\u00A9', '&reg;': '\u00AE',
+        '&trade;': '\u2122', '&deg;': '\u00B0',
+    };
+    return text.replace(/&[a-zA-Z]+;/g, (match) => entities[match] ?? match)
+               .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code)));
+}
+
 async function getBusiness(slug: string) {
     const res = await fetch(`${apiUrl()}/businesses/${slug}`, { cache: 'no-store' });
     if (!res.ok) return null;
@@ -267,7 +280,7 @@ export default async function DashboardReferPage({
                             </div>
                             {business.description ? (
                                 <p className="text-zinc-700 font-bold leading-relaxed mb-8 text-xl">
-                                    {business.description}
+                                    {decodeEntities(business.description)}
                                 </p>
                             ) : (
                                 <p className="text-zinc-700 font-bold mb-8 text-xl leading-relaxed">

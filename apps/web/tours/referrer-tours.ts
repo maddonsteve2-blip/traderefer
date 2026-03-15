@@ -73,8 +73,8 @@ export const referrerTours: Tour[] = [
       },
       {
         icon: '🔗',
-        title: 'Get Your Personal Referral Link',
-        content: 'Click "Get Referral Link" to copy your unique tracking link for this business. Share it anywhere — text, email, social media. When someone books through your link, you earn a commission.',
+        title: 'Apply to Refer a Business',
+        content: 'Click "Apply to Refer" to view a business\'s referral opportunity and join their network. Once approved, you\'ll get a unique tracking link to share — when someone books through it, you earn a commission.',
         selector: '#tour-network-referral-link',
         side: 'left',
         showControls: true,
