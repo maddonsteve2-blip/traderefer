@@ -163,7 +163,7 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-zinc-900 rounded-xl flex items-center justify-center">
+                <div className="w-8 h-8 bg-orange-600 rounded-xl flex items-center justify-center">
                     <Inbox className="w-4 h-4 text-white" />
                 </div>
                 <h2 className="font-black text-zinc-900" style={{ fontSize: 28 }}>Action Queue</h2>

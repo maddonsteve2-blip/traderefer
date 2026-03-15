@@ -112,7 +112,7 @@ export function MobileBusinessApplications() {
                                     <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
                                         Applied {new Date(app.applied_at).toLocaleDateString()}
                                     </span>
-                                    <span className="text-[11px] font-black px-3 py-1 bg-[#18181B] text-white rounded-full uppercase tracking-widest">
+                                    <span className="text-[11px] font-black px-3 py-1 bg-orange-600 text-white rounded-full uppercase tracking-widest">
                                         REVIEW
                                     </span>
                                 </div>

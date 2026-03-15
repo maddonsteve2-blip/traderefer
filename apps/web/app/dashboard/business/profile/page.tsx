@@ -555,7 +555,7 @@ export default function BusinessProfileManagementPage() {
                                         setEditingProject(null);
                                         setIsProjectDialogOpen(true);
                                     }}
-                                    className="rounded-full bg-zinc-900 text-white hover:bg-black font-bold h-12 md:h-14 px-6 md:px-8 flex items-center gap-2 text-base md:text-xl w-full sm:w-auto"
+                                    className="rounded-full bg-orange-600 text-white hover:bg-orange-700 font-bold h-12 md:h-14 px-6 md:px-8 flex items-center gap-2 text-base md:text-xl w-full sm:w-auto"
                                 >
                                     <Plus className="w-5 h-5" /> Add Project
                                 </Button>
