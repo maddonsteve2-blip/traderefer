@@ -236,7 +236,7 @@ export function TopUpDialog({ open, onOpenChange, currentBalance, onTopUpSuccess
                         <Button
                             onClick={handleProceedToPayment}
                             disabled={isCreatingIntent || amountCents < 500}
-                            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-[24px] h-18 md:h-20 text-xl md:text-2xl font-black shadow-2xl shadow-zinc-200 active:scale-95 transition-all mt-4"
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-[24px] h-18 md:h-20 text-xl md:text-2xl font-black shadow-2xl shadow-orange-500/20 active:scale-95 transition-all mt-4"
                         >
                             {isCreatingIntent ? (
                                 <div className="flex items-center gap-3">

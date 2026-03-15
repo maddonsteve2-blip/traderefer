@@ -313,7 +313,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                         <Button
                                             onClick={() => handleOnTheWay(lead.id)}
                                             disabled={isUpdatingStatus === lead.id}
-                                            className="w-full bg-zinc-900 hover:bg-black text-white rounded-full py-8 h-auto text-xl font-bold transition-all shadow-xl"
+                                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full py-8 h-auto text-xl font-bold transition-all shadow-xl shadow-orange-500/20"
                                         >
                                             {isUpdatingStatus === lead.id ? (
                                                 <Loader2 className="w-5 h-5 animate-spin" />

@@ -108,7 +108,7 @@ export function PinConfirmationModal({ leadId, onConfirmed, onClose }: PinConfir
                         <Button
                             type="submit"
                             disabled={pin.length !== 4 || isSubmitting}
-                            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-[24px] h-18 text-xl font-black shadow-2xl shadow-zinc-200 active:scale-95 transition-all"
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-[24px] h-18 text-xl font-black shadow-2xl shadow-orange-500/20 active:scale-95 transition-all"
                         >
                             {isSubmitting ? (
                                 <div className="flex items-center gap-2">

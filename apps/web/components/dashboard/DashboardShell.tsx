@@ -312,7 +312,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 {/* Role switcher */}
                 <Link
                     href={isBusinessDashboard ? "/dashboard/referrer" : "/dashboard/business"}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900 text-white text-[11px] font-black uppercase tracking-widest shrink-0"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-600 text-white text-[11px] font-black uppercase tracking-widest shrink-0"
                 >
                     <ArrowLeftRight className="w-3 h-3" />
                     {isBusinessDashboard ? "Referrer" : "Business"}
