@@ -284,21 +284,31 @@ export function PartnerLeaderboard() {
                         <Loader2 className="w-6 h-6 text-orange-400 animate-spin" />
                     </div>
                 ) : referrers.length === 0 || referrers.every(r => r.leads_created === 0 && r.total_earned_cents === 0) ? (
-                    <div className="p-10 text-center">
-                        <TrendingUp className="w-12 h-12 text-zinc-200 mx-auto mb-3" />
-                        <p className="font-bold text-zinc-400 mb-1" style={{ fontSize: 22 }}>
-                            {referrers.length === 0 ? "No approved partners yet" : "No activity yet"}
+                    <div className="p-8 flex flex-col items-center text-center">
+                        <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
+                            <Trophy className="w-7 h-7 text-amber-400" />
+                        </div>
+                        <p className="font-black text-zinc-800 mb-1" style={{ fontSize: 20 }}>Your Partner Leaderboard</p>
+                        <p className="text-zinc-400 font-medium max-w-[300px] mb-4" style={{ fontSize: 16 }}>
+                            Once your referrers start sending leads, they&apos;ll rank here by performance.
+                            {referrers.length === 0 ? " Approve your pending applications to get started." : ""}
                         </p>
                         {pendingCount > 0 ? (
                             <button
                                 onClick={() => router.push("/dashboard/business/force?tab=applications")}
-                                className="mt-2 text-amber-600 hover:text-amber-700 font-bold transition-colors"
-                                style={{ fontSize: 19 }}
+                                className="bg-amber-500 hover:bg-amber-600 text-white rounded-full font-bold px-5 h-10 transition-colors"
+                                style={{ fontSize: 16 }}
                             >
-                                {pendingCount} application{pendingCount > 1 ? "s" : ""} waiting for review →
+                                Review {pendingCount} Application{pendingCount > 1 ? "s" : ""} →
                             </button>
                         ) : (
-                            <p className="text-zinc-300 font-medium" style={{ fontSize: 19 }}>Leaderboard will populate once referrers start sending leads</p>
+                            <button
+                                onClick={() => router.push("/dashboard/business/force?tab=partners")}
+                                className="bg-orange-500 hover:bg-orange-600 text-white rounded-full font-bold px-5 h-10 transition-colors"
+                                style={{ fontSize: 16 }}
+                            >
+                                View Partner Network
+                            </button>
                         )}
                     </div>
                 ) : (

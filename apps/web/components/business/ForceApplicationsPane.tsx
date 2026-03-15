@@ -240,9 +240,13 @@ export function ForceApplicationsPane() {
             <div className="hidden md:flex flex-1 overflow-y-auto bg-zinc-50">
                 {!selectedId ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                        <User className="w-16 h-16 text-zinc-200 mb-4" />
-                        <p className="font-black text-zinc-400 text-3xl">Select an application</p>
-                        <p className="text-zinc-400 font-medium mt-1 text-2xl">Click a name on the left to review their profile</p>
+                        <div className="w-16 h-16 bg-amber-50 border border-amber-100 rounded-2xl flex items-center justify-center mb-5">
+                            <User className="w-8 h-8 text-amber-400" />
+                        </div>
+                        <p className="font-black text-zinc-900 text-2xl mb-2">Review Applications</p>
+                        <p className="text-zinc-400 font-medium text-base max-w-xs leading-relaxed">
+                            When someone applies to join your referral network, they appear here. Approve them to give them access to your referral links and fees.
+                        </p>
                     </div>
                 ) : detailLoading || !detail ? (
                     <div className="flex items-center justify-center h-64 w-full">

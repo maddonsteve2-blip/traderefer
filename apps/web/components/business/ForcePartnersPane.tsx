@@ -252,11 +252,13 @@ export function ForcePartnersPane() {
             <div className="hidden md:flex flex-1 overflow-y-auto bg-zinc-50">
                 {!selectedId ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-sm border border-zinc-100 mb-6">
-                            <UserCheck className="w-12 h-12 text-zinc-200" />
+                        <div className="w-16 h-16 bg-green-50 border border-green-100 rounded-2xl flex items-center justify-center mb-5">
+                            <UserCheck className="w-8 h-8 text-green-400" />
                         </div>
-                        <p className="text-2xl font-black text-zinc-900 tracking-tight">Select a partner</p>
-                        <p className="text-zinc-400 font-medium text-lg mt-3 max-w-sm">Click a partner on the left to view details.</p>
+                        <p className="text-2xl font-black text-zinc-900 tracking-tight mb-2">Your Partner Network</p>
+                        <p className="text-zinc-400 font-medium text-base mt-1 max-w-xs leading-relaxed">
+                            Click a partner on the left to view their stats, customise their referral fee, or message them directly.
+                        </p>
                     </div>
                 ) : detailLoading || !detail ? (
                     <div className="flex items-center justify-center w-full h-full">

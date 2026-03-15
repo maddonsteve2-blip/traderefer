@@ -206,11 +206,16 @@ export function SalesLeadsPane() {
             <div className={`${selected ? "flex" : "hidden md:flex"} flex-1 min-h-0 flex-col overflow-y-auto bg-zinc-50`}>
                 {!selected ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-sm border border-zinc-100 mb-6">
-                            <Target className="w-12 h-12 text-zinc-200" />
+                        <div className="w-16 h-16 bg-orange-50 border border-orange-100 rounded-2xl flex items-center justify-center mb-5">
+                            <Target className="w-8 h-8 text-orange-400" />
                         </div>
-                        <p className="text-2xl font-black text-zinc-900 tracking-tight">Select a lead</p>
-                        <p className="text-zinc-400 font-medium text-lg mt-3 max-w-sm">Click a lead on the left to view details.</p>
+                        <p className="text-2xl font-black text-zinc-900 tracking-tight mb-2">How Leads Work</p>
+                        <p className="text-zinc-400 font-medium text-base mt-1 max-w-xs leading-relaxed">
+                            Referrers in your network send leads your way. Leads marked &ldquo;Ready to Unlock&rdquo; can be claimed &mdash; top up your wallet to reveal the customer&apos;s contact details.
+                        </p>
+                        {leads.length > 0 && (
+                            <p className="text-zinc-300 font-medium text-sm mt-5">← Select a lead on the left to view details</p>
+                        )}
                     </div>
                 ) : (
                     <div className="max-w-lg mx-auto px-6 py-6 space-y-4">

@@ -642,12 +642,15 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                     </div>
                 ) : (
                     <div className="hidden md:flex flex-col items-center justify-center flex-1 text-center p-12 bg-zinc-50/30">
-                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-premium mb-6">
-                            <MessageSquare className="w-12 h-12 text-zinc-200" />
+                        <div className="w-16 h-16 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-center mb-5">
+                            <MessageSquare className="w-8 h-8 text-blue-400" />
                         </div>
-                        <h3 className="text-3xl font-black text-zinc-900 tracking-tight">Select a conversation</h3>
-                        <p className="text-zinc-400 font-medium text-lg mt-3 max-w-sm">
-                            Click a conversation on the left to view messages.
+                        <h3 className="text-2xl font-black text-zinc-900 tracking-tight mb-2">Select a conversation</h3>
+                        <p className="text-zinc-400 font-medium text-base mt-1 max-w-xs leading-relaxed">
+                            Chat directly with your referrers to keep them motivated, share deals, or answer questions.
+                        </p>
+                        <p className="text-zinc-300 font-medium text-sm mt-4 max-w-xs">
+                            ← Pick a conversation on the left to get started
                         </p>
                     </div>
                 )}

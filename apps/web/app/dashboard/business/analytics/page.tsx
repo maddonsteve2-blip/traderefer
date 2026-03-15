@@ -147,14 +147,19 @@ export default function AnalyticsPage() {
                                 })}
                             </div>
                         ) : (
-                            <div className="space-y-3 py-4">
-                                <p className="text-sm font-medium text-zinc-400 text-center mb-5">Partner up with referrers to see performance data here.</p>
-                                {[60, 45, 75, 30, 55].map((w, i) => (
-                                    <div key={i} className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-zinc-100 shrink-0" />
-                                        <div className="flex-1 h-3 bg-zinc-100 rounded-full" style={{ maxWidth: `${w}%` }} />
-                                    </div>
-                                ))}
+                            <div className="flex flex-col items-center justify-center py-10 text-center">
+                                <div className="w-14 h-14 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-4">
+                                    <Users className="w-7 h-7 text-orange-400" />
+                                </div>
+                                <p className="font-black text-zinc-800 text-lg mb-1">No referrer data yet</p>
+                                <p className="text-sm text-zinc-400 font-medium max-w-[280px] mb-5">Once approved referrers start sending leads, their performance will rank here.</p>
+                                <Button
+                                    onClick={() => window.location.href = '/dashboard/business/force?tab=applications'}
+                                    size="sm"
+                                    className="bg-orange-500 hover:bg-orange-600 text-white rounded-full font-bold px-5"
+                                >
+                                    Review Applications
+                                </Button>
                             </div>
                         )}
                     </div>
@@ -186,14 +191,19 @@ export default function AnalyticsPage() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="space-y-3 py-4">
-                                <p className="text-sm font-medium text-zinc-400 text-center mb-5">Create a campaign to boost referrer activity and track results here.</p>
-                                {[80, 50, 65, 40, 70].map((w, i) => (
-                                    <div key={i} className="h-10 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center px-4 gap-3">
-                                        <div className="h-2.5 bg-zinc-200 rounded-full flex-1" style={{ maxWidth: `${w}%` }} />
-                                        <div className="h-2.5 w-10 bg-zinc-100 rounded-full shrink-0" />
-                                    </div>
-                                ))}
+                            <div className="flex flex-col items-center justify-center py-10 text-center">
+                                <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
+                                    <BarChart3 className="w-7 h-7 text-blue-400" />
+                                </div>
+                                <p className="font-black text-zinc-800 text-lg mb-1">No campaign data yet</p>
+                                <p className="text-sm text-zinc-400 font-medium max-w-[280px] mb-5">Launch a time-limited bonus to motivate your referrers and track results here.</p>
+                                <Button
+                                    onClick={() => window.location.href = '/dashboard/business/sales?tab=promotions'}
+                                    size="sm"
+                                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full font-bold px-5"
+                                >
+                                    Create a Campaign
+                                </Button>
                             </div>
                         )}
                     </div>

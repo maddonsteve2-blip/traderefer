@@ -120,7 +120,7 @@ export default async function ReferrerRewardsPage() {
                                     <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
                                         <p className="font-black text-zinc-400 uppercase tracking-widest mb-1 text-lg">Last Gift Card</p>
                                         <p className="font-black text-zinc-100 text-2xl">
-                                            {lastGiftCard ? `$${(lastGiftCard.amount_cents / 100).toFixed(2)}` : "None yet"}
+                                            {lastGiftCard ? `$${(lastGiftCard.amount_cents / 100).toFixed(2)}` : <span className="text-zinc-500 italic text-lg font-medium">Not issued yet</span>}
                                         </p>
                                     </div>
                                 </div>

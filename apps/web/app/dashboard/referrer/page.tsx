@@ -10,6 +10,7 @@ import { ReferralProgress } from "@/components/referrer/ReferralProgress";
 import { BadgeUnlockModal } from "@/components/dashboard/BadgeUnlockModal";
 import { AchievementsWidget } from "@/components/referrer/AchievementsWidget";
 import { SocialProofTicker } from "@/components/dashboard/SocialProofTicker";
+import { GettingStartedCard } from "@/components/referrer/GettingStartedCard";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -84,6 +85,9 @@ export default async function ReferrerDashboardPage() {
                                     <Building2 className="w-6 h-6" /> Find Businesses
                                 </Link>
                             </div>
+
+                            {/* Getting Started checklist — hides once all steps done or dismissed */}
+                            <GettingStartedCard />
 
                             {/* Social proof ticker */}
                             <SocialProofTicker />
