@@ -305,9 +305,9 @@ export default async function PublicProfilePage({
 
                                     <div className="flex items-center gap-2 font-bold text-zinc-600" style={{ fontSize: '16px' }}>
                                         <MapPin className="w-4 h-4 text-[#FF6600] shrink-0" />
-                                        <div className="flex items-center gap-1.5 min-w-0">
+                                        <div className="flex items-center min-w-0">
                                             <EditableText field="suburb" initialValue={business.suburb} as="span" className="font-bold text-zinc-600" style={{ fontSize: '16px' }} inputClassName="min-w-[120px]" />
-                                            <span>,</span>
+                                            {business.state && <span>,&nbsp;</span>}
                                             <EditableText field="state" initialValue={business.state} as="span" className="font-bold text-zinc-600" style={{ fontSize: '16px' }} inputClassName="min-w-[60px]" />
                                         </div>
                                     </div>
@@ -525,11 +525,15 @@ export default async function PublicProfilePage({
                                     <ShieldCheck className="w-4 h-4 text-blue-600" />
                                     <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>Pay only when you win</span>
                                 </div>
-                                <div className="w-1 h-1 bg-zinc-300 rounded-full" />
-                                <div className="flex items-center gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                    <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>ABN verified</span>
-                                </div>
+                                {business.is_verified && (
+                                    <>
+                                        <div className="w-1 h-1 bg-zinc-300 rounded-full" />
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle2 className="w-4 h-4 text-orange-600" />
+                                            <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>ABN verified</span>
+                                        </div>
+                                    </>
+                                )}
                             </div>
 
                             {/* Scroll nav buttons */}

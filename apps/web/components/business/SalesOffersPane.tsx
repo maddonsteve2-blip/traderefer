@@ -174,7 +174,7 @@ export function SalesOffersPane() {
                 <div className="flex gap-3 flex-wrap">
                     <Button
                         onClick={() => { setShowAI(true); setShowCreate(false); }}
-                        className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white rounded-full px-8 h-14 font-bold shadow-lg shadow-purple-500/20 text-xl"
+                        className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-8 h-14 font-bold shadow-lg shadow-orange-500/20 text-xl"
                     >
                         <Sparkles className="w-5 h-5 mr-2" /> AI Create Deal
                     </Button>
@@ -189,11 +189,11 @@ export function SalesOffersPane() {
 
                 {/* AI Generator Panel */}
                 {showAI && (
-                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-3xl p-8">
+                    <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 rounded-3xl p-8">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                                    <Wand2 className="w-6 h-6 text-purple-600" />
+                                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                                    <Wand2 className="w-6 h-6 text-orange-600" />
                                 </div>
                                 <div>
                                     <h2 className="font-bold text-zinc-900 text-2xl">AI Deal Generator</h2>
@@ -210,16 +210,16 @@ export function SalesOffersPane() {
                                 value={aiHint}
                                 onChange={e => setAiHint(e.target.value)}
                                 placeholder='e.g. "seasonal summer deal", "first-time discount"'
-                                className="flex-1 px-5 py-4 bg-white border border-purple-200 rounded-xl font-medium placeholder:text-zinc-300 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400 text-xl"
+                                className="flex-1 px-5 py-4 bg-white border border-orange-200 rounded-xl font-medium placeholder:text-zinc-300 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-xl"
                                 onKeyDown={e => { if (e.key === "Enter") generateAI(); }}
                             />
-                            <Button onClick={generateAI} disabled={aiLoading} className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-6 h-14 font-bold text-xl">
+                            <Button onClick={generateAI} disabled={aiLoading} className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl px-6 h-14 font-bold text-xl">
                                 {aiLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Sparkles className="w-5 h-5 mr-2" />Generate</>}
                             </Button>
                         </div>
                         <div className="flex flex-wrap gap-2 mb-4">
                             {["First-time discount", "Seasonal special", "Free quote", "Bundle deal"].map(p => (
-                                <button key={p} onClick={() => setAiHint(p)} className="px-3 py-1.5 bg-white border border-purple-100 rounded-full font-bold text-purple-600 hover:bg-purple-50 transition-all text-base">
+                                <button key={p} onClick={() => setAiHint(p)} className="px-3 py-1.5 bg-white border border-orange-100 rounded-full font-bold text-orange-600 hover:bg-orange-50 transition-all text-base">
                                     {p}
                                 </button>
                             ))}
@@ -228,9 +228,9 @@ export function SalesOffersPane() {
                         {aiSuggestions.length > 0 && (
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between">
-                                    <p className="font-bold text-purple-600 uppercase tracking-wider text-lg">Pick a suggestion</p>
-                                    {aiSource === "ai" && <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full font-bold text-lg"><Sparkles className="w-4 h-4" />AI</span>}
-                                    <button onClick={generateAI} className="flex items-center gap-1 font-bold text-purple-500 hover:text-purple-700 transition-colors text-lg"><RefreshCw className="w-4 h-4" />Regenerate</button>
+                                    <p className="font-bold text-orange-600 uppercase tracking-wider text-lg">Pick a suggestion</p>
+                                    {aiSource === "ai" && <span className="flex items-center gap-1 px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full font-bold text-lg"><Sparkles className="w-4 h-4" />AI</span>}
+                                    <button onClick={generateAI} className="flex items-center gap-1 font-bold text-orange-500 hover:text-orange-700 transition-colors text-lg"><RefreshCw className="w-4 h-4" />Regenerate</button>
                                 </div>
                                 {aiSuggestions.map((s, i) => (
                                     <button key={i} onClick={() => useSuggestion(s)} className="w-full text-left bg-white border border-purple-100 rounded-2xl p-6 hover:border-purple-300 hover:shadow-md transition-all group">
@@ -242,7 +242,7 @@ export function SalesOffersPane() {
                                                     <Tag className="w-4 h-4" />{s.discount_text}
                                                 </span>
                                             </div>
-                                            <div className="p-2 bg-purple-50 rounded-xl text-purple-500 group-hover:bg-purple-100 transition-colors shrink-0">
+                                            <div className="p-2 bg-orange-50 rounded-xl text-orange-500 group-hover:bg-orange-100 transition-colors shrink-0">
                                                 <Edit3 className="w-4 h-4" />
                                             </div>
                                         </div>

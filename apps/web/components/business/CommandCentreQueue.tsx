@@ -37,13 +37,34 @@ interface TopReferrer {
 
 const PENDING_STATUSES = ["PENDING", "VERIFIED", "READY_FOR_BUSINESS", "SCREENING"];
 
+const STATUS_LABELS: Record<string, string> = {
+    NEW: "New Lead", PENDING: "New Lead", VERIFIED: "Ready to Unlock",
+    SCREENING: "Under Review", READY_FOR_BUSINESS: "Ready to Unlock",
+    SCREENING_FAILED: "Not a Match", UNLOCKED: "Unlocked",
+    ON_THE_WAY: "On the Way", CONFIRMED: "Confirmed",
+    CONFIRMED_SUCCESS: "Job Confirmed", MEETING_VERIFIED: "Meeting Verified",
+    VALID_LEAD: "Valid Lead", PAYMENT_PENDING_CONFIRMATION: "Awaiting Confirmation",
+    EXPIRED: "Expired", DISPUTED: "Under Review",
+};
+
+function formatStatus(status: string): string {
+    return STATUS_LABELS[status.toUpperCase()] || status.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+
 function timeAgo(dateStr: string) {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.floor(hrs / 24)}d ago`;
+    if (!dateStr) return "";
+    try {
+        const d = new Date(dateStr.endsWith("Z") || dateStr.includes("+") || dateStr.includes("T") ? dateStr : dateStr + "Z");
+        if (isNaN(d.getTime())) return "";
+        const diff = Date.now() - d.getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 60) return `${mins}m ago`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs}h ago`;
+        return `${Math.floor(hrs / 24)}d ago`;
+    } catch {
+        return "";
+    }
 }
 
 /* 
@@ -111,7 +132,7 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
 
     if (newLeads.length > 0) {
         const plural = newLeads.length > 1;
-        const suburbs = [...new Set(newLeads.map(l => l.suburb))].slice(0, 2).join(" & ");
+        const suburbs = [...new Set(newLeads.map(l => l.suburb))].slice(0, 2).join(" and ");
         queueItems.push({
             key: "leads",
             node: (
@@ -191,7 +212,7 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
                                     </div>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full font-bold border ${PENDING_STATUSES.includes(lead.status) ? "bg-orange-50 text-orange-700 border-orange-100" : "bg-zinc-50 text-zinc-500 border-zinc-100"}`} style={{ fontSize: 17 }}>
-                                    {lead.status}
+                                    {formatStatus(lead.status)}
                                 </span>
                             </div>
                         ))}

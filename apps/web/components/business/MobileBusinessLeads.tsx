@@ -11,6 +11,28 @@ import Link from "next/link";
 import { toast } from "sonner";
 import posthog from "posthog-js";
 
+const STATUS_LABELS: Record<string, string> = {
+    NEW: "New Lead",
+    PENDING: "New Lead",
+    VERIFIED: "Ready to Unlock",
+    SCREENING: "Under Review",
+    READY_FOR_BUSINESS: "Ready to Unlock",
+    SCREENING_FAILED: "Not a Match",
+    UNLOCKED: "Unlocked",
+    ON_THE_WAY: "On the Way",
+    CONFIRMED: "Confirmed",
+    CONFIRMED_SUCCESS: "Job Confirmed",
+    MEETING_VERIFIED: "Meeting Verified",
+    VALID_LEAD: "Valid Lead",
+    PAYMENT_PENDING_CONFIRMATION: "Awaiting Confirmation",
+    EXPIRED: "Expired",
+    DISPUTED: "Under Review",
+};
+
+function formatStatus(status: string): string {
+    return STATUS_LABELS[status.toUpperCase()] || status.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+
 interface Lead {
     id: string;
     customer_name: string;
@@ -45,15 +67,18 @@ export function MobileBusinessLeads() {
             const meRes = await fetch(`/api/backend/business/me`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+            if (!meRes.ok) { setLoading(false); return; }
             const meData = await meRes.json();
             setWalletBalance(meData.wallet_balance_cents || 0);
             
-            const res = await fetch(`/api/backend/leads?business_id=${meData.id}`, {
+            const res = await fetch(`/api/backend/business/${meData.id}/leads?limit=50`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            const data = await res.json();
-            const leadsData = Array.isArray(data) ? data : (data?.leads && Array.isArray(data.leads) ? data.leads : []);
-            setLeads(leadsData);
+            if (res.ok) {
+                const data = await res.json();
+                const leadsData = Array.isArray(data) ? data : (data?.leads && Array.isArray(data.leads) ? data.leads : []);
+                setLeads(leadsData);
+            }
         } catch (error) {
             console.error("Error fetching leads:", error);
         } finally {
@@ -63,7 +88,8 @@ export function MobileBusinessLeads() {
 
     useEffect(() => {
         fetchLeads();
-    }, [getToken]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleUnlock = async (leadId: string) => {
         if (!userId) {
@@ -242,7 +268,7 @@ export function MobileBusinessLeads() {
                                             variant={isUnlocked ? (['CONFIRMED', 'CONFIRMED_SUCCESS'].includes(lead.status) ? 'success' : 'warning') : 'outline'}
                                             className="uppercase font-black tracking-widest text-[10px]"
                                         >
-                                            {lead.status.replace(/_/g, ' ')}
+                                            {formatStatus(lead.status)}
                                         </Badge>
                                     </div>
 

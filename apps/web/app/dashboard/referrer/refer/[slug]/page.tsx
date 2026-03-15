@@ -346,7 +346,7 @@ export default async function DashboardReferPage({
                             <div className="p-8 space-y-6">
                                 <p className="font-bold text-zinc-600 text-center leading-relaxed text-lg">
                                     Join {business.business_name}&apos;s referral team and earn every time you send a confirmed job.
-                                </p>@@
+                                </p>
                                 <ApplyToReferButton slug={slug} businessName={business.business_name} />
                                 <div className="space-y-4">
                                     {(totalConfirmed > 0 || connectionRate > 0) && (

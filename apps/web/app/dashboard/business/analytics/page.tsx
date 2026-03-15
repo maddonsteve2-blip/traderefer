@@ -214,14 +214,14 @@ export default function AnalyticsPage() {
                 {/* Broadcast to Referrers */}
                 <div className="bg-white rounded-2xl border border-zinc-200 p-8">
                     <h2 className="font-bold text-zinc-900 text-2xl flex items-center gap-2 mb-4">
-                        <Megaphone className="w-6 h-6 text-blue-500" /> Broadcast to All Referrers
+                        <Megaphone className="w-6 h-6 text-orange-500" /> Broadcast to All Referrers
                     </h2>
                     <p className="text-lg text-zinc-500 mb-5 leading-relaxed">
                         Send an update to everyone referring your business. Great for holiday hours, new certifications, or special announcements.
                     </p>
                     <textarea
                         rows={3}
-                        className="w-full bg-zinc-50 border-none rounded-2xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-blue-500/20 resize-none mb-4 text-xl"
+                        className="w-full bg-zinc-50 border-none rounded-2xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 resize-none mb-4 text-xl"
                         placeholder="e.g. We just got certified for gas fitting — let your network know!"
                         value={broadcastMsg}
                         onChange={e => setBroadcastMsg(e.target.value)}
@@ -229,7 +229,7 @@ export default function AnalyticsPage() {
                     <Button
                         onClick={handleBroadcast}
                         disabled={sending || !broadcastMsg.trim()}
-                        className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-xl py-4 px-8 h-auto shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
+                        className="bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black text-xl py-4 px-8 h-auto shadow-lg shadow-orange-500/20 active:scale-95 transition-all"
                     >
                         {sending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
                         Send Broadcast

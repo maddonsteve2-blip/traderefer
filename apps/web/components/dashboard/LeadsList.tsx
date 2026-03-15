@@ -23,6 +23,28 @@ import Link from "next/link";
 import posthog from "posthog-js";
 import { toast } from "sonner";
 
+const STATUS_LABELS: Record<string, string> = {
+    NEW: "New Lead",
+    PENDING: "New Lead",
+    VERIFIED: "Ready to Unlock",
+    SCREENING: "Under Review",
+    READY_FOR_BUSINESS: "Ready to Unlock",
+    SCREENING_FAILED: "Not a Match",
+    UNLOCKED: "Unlocked",
+    ON_THE_WAY: "On the Way",
+    CONFIRMED: "Confirmed",
+    CONFIRMED_SUCCESS: "Job Confirmed",
+    MEETING_VERIFIED: "Meeting Verified",
+    VALID_LEAD: "Valid Lead",
+    PAYMENT_PENDING_CONFIRMATION: "Awaiting Confirmation",
+    EXPIRED: "Expired",
+    DISPUTED: "Under Review",
+};
+
+function formatStatus(status: string): string {
+    return STATUS_LABELS[status.toUpperCase()] || status.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+
 interface Lead {
     id: string;
     customer_name: string;
@@ -222,7 +244,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                             }
                                             className="uppercase text-lg py-1 px-3"
                                         >
-                                            {lead.status.replace(/_/g, ' ')}
+                                            {formatStatus(lead.status)}
                                         </Badge>
                                     </div>
                                     {UNLOCKED_STATUSES.includes(lead.status) ? (

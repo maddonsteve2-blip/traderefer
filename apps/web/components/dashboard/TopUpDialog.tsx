@@ -18,10 +18,10 @@ import { toast } from "sonner";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const TOPUP_AMOUNTS = [
+    { label: "$25", cents: 2500 },
     { label: "$50", cents: 5000 },
     { label: "$100", cents: 10000 },
     { label: "$250", cents: 25000 },
-    { label: "$500", cents: 50000 },
 ];
 
 const MIN_WALLET_FLOOR_CENTS = 2500; // $25 minimum balance required to unlock leads

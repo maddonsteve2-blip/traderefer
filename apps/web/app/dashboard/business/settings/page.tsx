@@ -124,7 +124,7 @@ export default function BusinessSettingsPage() {
             }
         } catch (err) {
             console.error("Failed to fetch business:", err);
-            toast.error("Cloud not load your profile settings.");
+            toast.error("Could not load your profile settings.");
         } finally {
             setLoading(false);
         }
@@ -254,25 +254,11 @@ export default function BusinessSettingsPage() {
                 <DashboardPageHeader className="mt-4 md:mt-6 xl:mt-8">
                 <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
                     <div className="space-y-3">
-                        <DashboardEyebrow>Phase 1 Foundation Pilot</DashboardEyebrow>
                         <DashboardTitle>Business Settings</DashboardTitle>
                         <DashboardSubtitle>
-                            This page now uses shared redesign foundations while preserving the existing settings workflow,
-                            API calls, and save behavior.
+                            Manage your business profile, referral fees, and operational settings.
                         </DashboardSubtitle>
                     </div>
-                    <DashboardAccentCard className="w-full max-w-xl p-5">
-                        <div className="flex items-start gap-3">
-                            <Building2 className="mt-0.5 h-5 w-5 text-orange-500" />
-                            <div className="space-y-1">
-                                <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-orange-600">Safe rollout</p>
-                                <p className="text-base font-semibold leading-6 text-zinc-700">
-                                    Shared shells, sections, and cards are now reusable here before we migrate more low-risk
-                                    pages in Phase 2.
-                                </p>
-                            </div>
-                        </div>
-                    </DashboardAccentCard>
                 </div>
             </DashboardPageHeader>
 
@@ -501,8 +487,8 @@ export default function BusinessSettingsPage() {
                                                 type="button"
                                                 onClick={() => setFormData({ ...formData, response_sla_minutes: opt.value })}
                                                 className={`h-16 rounded-2xl border-2 text-center font-black transition-all text-xl ${formData.response_sla_minutes === opt.value
-                                                    ? "border-emerald-500 bg-emerald-50 text-emerald-700 shadow-md"
-                                                    : "border-zinc-200 bg-white text-zinc-600 hover:border-emerald-300"
+                                                    ? "border-orange-500 bg-orange-50 text-orange-700 shadow-md"
+                                                    : "border-zinc-200 bg-white text-zinc-600 hover:border-orange-300"
                                                 }`}
                                             >
                                                 {opt.label}
@@ -524,14 +510,14 @@ export default function BusinessSettingsPage() {
                                         <Button
                                             onClick={handleVerifyABN}
                                             disabled={verifying || !formData.abn || formData.abn.length < 11}
-                                            className="h-16 min-w-[240px] rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-wide text-xl shadow-lg shadow-blue-500/20"
+                                            className="h-16 min-w-[240px] rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black uppercase tracking-wide text-xl shadow-lg shadow-orange-500/20"
                                         >
                                             {verifying ? <Loader2 className="w-6 h-6 animate-spin" /> : <Shield className="w-6 h-6" />}
                                             {verifying ? "Verifying..." : "Verify ABN"}
                                         </Button>
                                     </div>
                                     {biz?.is_verified && (
-                                        <div className="flex items-center gap-2 text-blue-600 font-bold text-lg ml-1">
+                                        <div className="flex items-center gap-2 text-orange-600 font-bold text-lg ml-1">
                                             <BadgeCheck className="w-5 h-5" /> Verified business identity on file
                                         </div>
                                     )}

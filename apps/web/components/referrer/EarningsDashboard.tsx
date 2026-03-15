@@ -238,7 +238,7 @@ export function EarningsDashboard() {
                     <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
                         <div>
                             <span className="text-[19px] font-bold text-zinc-500">Lifetime</span>
-                            {stats.earnings.lifetime === 0 && <span className="text-[19px] text-zinc-400 ml-1.5">· soon!</span>}
+                            {stats.earnings.lifetime === 0 && <span className="text-[19px] text-zinc-400 ml-1.5">· since joining</span>}
                         </div>
                         <span className="text-[36px] font-black text-green-600">{centsLabel(stats.earnings.lifetime)}</span>
                     </div>

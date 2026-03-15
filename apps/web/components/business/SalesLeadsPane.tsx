@@ -28,6 +28,11 @@ interface Lead {
 
 const STATUS_COLORS: Record<string, string> = {
     NEW: "bg-orange-100 text-orange-700",
+    PENDING: "bg-orange-100 text-orange-700",
+    VERIFIED: "bg-orange-100 text-orange-700",
+    SCREENING: "bg-zinc-100 text-zinc-600",
+    READY_FOR_BUSINESS: "bg-orange-100 text-orange-700",
+    SCREENING_FAILED: "bg-red-100 text-red-700",
     UNLOCKED: "bg-blue-100 text-blue-700",
     ON_THE_WAY: "bg-blue-100 text-blue-700",
     CONFIRMED: "bg-emerald-100 text-emerald-700",
@@ -37,8 +42,37 @@ const STATUS_COLORS: Record<string, string> = {
     PAYMENT_PENDING_CONFIRMATION: "bg-amber-100 text-amber-700",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+    NEW: "New Lead",
+    PENDING: "New Lead",
+    VERIFIED: "Ready to Unlock",
+    SCREENING: "Under Review",
+    READY_FOR_BUSINESS: "Ready to Unlock",
+    SCREENING_FAILED: "Not a Match",
+    UNLOCKED: "Unlocked",
+    ON_THE_WAY: "On the Way",
+    CONFIRMED: "Confirmed",
+    CONFIRMED_SUCCESS: "Job Confirmed",
+    MEETING_VERIFIED: "Meeting Verified",
+    VALID_LEAD: "Valid Lead",
+    PAYMENT_PENDING_CONFIRMATION: "Awaiting Confirmation",
+    EXPIRED: "Expired",
+    DISPUTED: "Under Review",
+};
+
+function formatStatus(status: string): string {
+    return STATUS_LABELS[status.toUpperCase()] || status.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+
 function fmt(d: string) {
-    return new Date(d).toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+    if (!d) return "";
+    try {
+        const date = new Date(d.endsWith("Z") || d.includes("+") || d.includes("T") ? d : d + "Z");
+        if (isNaN(date.getTime())) return "";
+        return date.toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+    } catch {
+        return "";
+    }
 }
 
 export function SalesLeadsPane() {
@@ -146,7 +180,7 @@ export function SalesLeadsPane() {
                                                     {lead.customer_name}
                                                 </p>
                                                 <span className={`px-2 py-0.5 rounded-full font-black text-[9px] uppercase tracking-widest ${STATUS_COLORS[lead.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"}`}>
-                                                    {lead.status.replace(/_/g, " ")}
+                                                    {formatStatus(lead.status)}
                                                 </span>
                                             </div>
                                             <div className="flex items-center justify-between gap-2 mt-1">
@@ -189,7 +223,7 @@ export function SalesLeadsPane() {
                                 </p>
                             </div>
                             <span className={`px-4 py-2 rounded-xl font-bold ${STATUS_COLORS[selected.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"} text-xl`}>
-                                {selected.status.replace(/_/g, " ")}
+                                {formatStatus(selected.status)}
                             </span>
                         </div>
 
