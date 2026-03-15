@@ -560,7 +560,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     <p className="text-zinc-500 max-w-md mx-auto mb-8 text-lg">
                                         Be the first local expert to join our network and reach customers in {suburbName}.
                                     </p>
-                                    <Button asChild size="lg" className="bg-zinc-900 hover:bg-black text-white rounded-xl font-bold px-8">
+                                    <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold px-8">
                                         <Link href="/register?type=business">Create Your Free Profile</Link>
                                     </Button>
                                 </div>

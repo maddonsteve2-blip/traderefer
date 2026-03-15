@@ -331,7 +331,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                                     )}
                                                 </div>
                                                 <div className="flex flex-wrap gap-3">
-                                                    <Button asChild size="sm" className="bg-zinc-900 hover:bg-black text-white rounded-xl font-bold px-5 border-none">
+                                                    <Button asChild size="sm" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold px-5 border-none">
                                                         <Link href={`/b/${biz.slug}`}>View Profile</Link>
                                                     </Button>
                                                     <Button asChild variant="outline" size="sm" className="border-zinc-200 hover:bg-zinc-50 rounded-xl font-bold px-5">

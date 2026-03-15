@@ -426,7 +426,7 @@ export default function RewardsPage() {
                             <Link href="/onboarding/referrer" className="inline-flex items-center justify-center gap-2 bg-[#FF6600] hover:bg-[#E55A00] text-white font-black px-10 py-4 rounded-full text-lg shadow-xl shadow-orange-200 transition-all hover:-translate-y-0.5">
                                 Join as Referrer <ArrowRight className="w-5 h-5" />
                             </Link>
-                            <Link href="/onboarding/business" className="inline-flex items-center justify-center gap-2 bg-zinc-900 hover:bg-black text-white font-black px-10 py-4 rounded-full text-lg transition-all hover:-translate-y-0.5">
+                            <Link href="/onboarding/business" className="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black px-10 py-4 rounded-full text-lg transition-all hover:-translate-y-0.5">
                                 Join as Business <ArrowRight className="w-5 h-5" />
                             </Link>
                         </div>
@@ -615,7 +615,7 @@ export default function RewardsPage() {
                                 <ChevronRight className="w-5 h-5 text-zinc-300 mb-5" />
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <div className="w-14 h-14 bg-zinc-900 rounded-full flex items-center justify-center shadow-lg">
+                                <div className="w-14 h-14 bg-orange-600 rounded-full flex items-center justify-center shadow-lg">
                                     <Gift className="w-6 h-6 text-[#FF6600]" />
                                 </div>
                                 <span className="text-xs font-black text-[#FF6600]">$25 Card</span>
