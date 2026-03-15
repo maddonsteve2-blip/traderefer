@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
     MapPin, Briefcase, CheckCircle, Edit3,
-    ArrowLeft, Save, Eye, TrendingUp, ExternalLink, Award, Camera, Video, CalendarDays
+    Save, Eye, TrendingUp, ExternalLink, Award, Camera, Video, CalendarDays
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -192,14 +192,9 @@ export default function ReferrerProfilePage() {
         <div className="min-h-screen bg-zinc-100">
             <div className="md:hidden px-4 py-4 space-y-4 bg-zinc-50">
                 <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                        <Link href="/dashboard/referrer" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-zinc-200 bg-white text-zinc-500">
-                            <ArrowLeft className="w-4 h-4" />
-                        </Link>
-                        <div className="min-w-0">
-                            <h1 className="text-[22px] font-black text-zinc-900">My Profile</h1>
-                            <p className="text-[13px] font-medium text-zinc-500">Edit the profile businesses see when you apply.</p>
-                        </div>
+                    <div className="min-w-0">
+                        <h1 className="text-[22px] font-black text-zinc-900">My Profile</h1>
+                        <p className="text-[13px] font-medium text-zinc-500">Edit the profile businesses see when you apply.</p>
                     </div>
                     {publicUrl && (
                         <a
@@ -319,14 +314,7 @@ export default function ReferrerProfilePage() {
                 {/* ── TOP BAR ── */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between px-4 md:px-8 py-4 bg-white border-b border-gray-200 shrink-0 gap-4">
                     <div className="flex items-center gap-3">
-                        <Link
-                            href="/dashboard/referrer"
-                            className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-800 font-bold transition-colors group text-sm md:text-lg"
-                        >
-                            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Dashboard
-                        </Link>
-                        <span className="text-zinc-300">/</span>
-                        <span className="text-zinc-700 font-black text-sm md:text-lg">My Profile</span>
+                        <span className="text-zinc-900 font-black text-lg">My Profile</span>
                     </div>
                     {publicUrl && (
                         <a

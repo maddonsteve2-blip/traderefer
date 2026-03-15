@@ -1,6 +1,6 @@
 import {
-    ArrowLeft, Gift, CheckCircle2, Clock,
-    Mail, HelpCircle, History, LayoutDashboard,
+    Gift, CheckCircle2, Clock,
+    Mail, HelpCircle, History,
     ShieldCheck, TrendingUp, Star,
 } from "lucide-react";
 import Link from "next/link";
@@ -58,26 +58,14 @@ export default async function ReferrerRewardsPage() {
         <div className="min-h-screen bg-zinc-50">
             <MobileReferrerRewards referrer={referrer} payouts={payouts} />
             
-            <div className="hidden lg:block w-full px-4 md:px-6 py-5 md:py-6">
-
-                {/* Breadcrumb */}
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                    <Link href="/dashboard/referrer" className="flex items-center gap-1.5 text-zinc-400 hover:text-zinc-700 transition-colors font-bold text-lg">
-                        <ArrowLeft className="w-4 h-4" /> Dashboard
-                    </Link>
-                    <span className="text-zinc-300">/</span>
-                    <span className="text-zinc-700 font-bold text-lg">Gift Card Rewards</span>
+            <div className="hidden lg:flex flex-col bg-zinc-50 h-screen overflow-hidden">
+                <div className="flex items-center justify-between px-6 pt-5 pb-0 shrink-0">
+                    <div>
+                        <h1 className="text-2xl font-black text-zinc-900">Rewards</h1>
+                        <p className="text-sm font-medium text-zinc-500 mt-0.5">Your referral earnings are automatically paid as Prezzee gift cards — accepted at 400+ stores.</p>
+                    </div>
                 </div>
-
-                <div className="mb-8">
-                    <h1 className="font-black text-zinc-900 flex items-center gap-3 text-3xl">
-                        <Gift className="w-8 h-8 text-orange-500" /> Gift Card Rewards
-                    </h1>
-                    <p className="text-zinc-500 font-medium mt-1 text-xl">
-                        Your referral earnings are automatically paid as Prezzee gift cards — accepted at 400+ stores.
-                    </p>
-                </div>
-
+                <div className="flex-1 overflow-y-auto px-6 py-4">
                 {/* ── 2-COLUMN GRID ── */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
@@ -221,12 +209,6 @@ export default async function ReferrerRewardsPage() {
                         {/* ACTION BUTTONS */}
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link
-                                href="/dashboard/referrer"
-                                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-zinc-100 text-zinc-700 font-bold hover:bg-zinc-200 transition-colors text-lg"
-                            >
-                                <LayoutDashboard className="w-5 h-5" /> Back to Dashboard
-                            </Link>
-                            <Link
                                 href="/contact"
                                 className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-white border-2 border-zinc-200 text-zinc-700 font-bold hover:border-orange-400 hover:text-orange-600 transition-colors text-lg"
                             >
@@ -328,6 +310,7 @@ export default async function ReferrerRewardsPage() {
                         </div>
 
                     </div>
+                </div>
                 </div>
             </div>
 
