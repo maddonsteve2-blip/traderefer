@@ -245,7 +245,7 @@ export default function ReferrerDetailPage() {
                                 }
                             } catch {}
                         }}
-                        className="h-12 w-full rounded-2xl bg-zinc-900 text-[15px] font-black text-white hover:bg-black"
+                        className="h-12 w-full rounded-2xl bg-orange-600 text-[15px] font-black text-white hover:bg-orange-700"
                     >
                         <MessageSquare className="mr-2 h-4 w-4 text-orange-400" />
                         Message Referrer
