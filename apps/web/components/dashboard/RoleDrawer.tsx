@@ -19,7 +19,7 @@ const CASES = {
         sub: "Unlock your Business Dashboard.",
         features: [
             { icon: Target,  title: "Verified Leads",       desc: "Pre-screened leads from partners who vouch for every job." },
-            { icon: Network, title: "Referral Force",        desc: "Approve and manage your own network of local referrers." },
+            { icon: Network, title: "Partner Network",        desc: "Approve and manage your own network of local referrers." },
             { icon: Zap,     title: "Zero-Admin Rewards",   desc: "Automatic rewards via Prezzee Smart Cards. No invoicing needed." },
         ],
         cta: "Start Business Onboarding",

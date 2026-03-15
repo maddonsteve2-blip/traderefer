@@ -316,7 +316,7 @@ export function SalesPromotionsPane() {
                     <div className="bg-white rounded-3xl border border-zinc-200 p-12 text-center">
                         <Megaphone className="w-16 h-16 text-orange-200 mx-auto mb-4" />
                         <h2 className="font-bold text-zinc-900 mb-2 text-3xl">No campaigns yet</h2>
-                        <p className="text-zinc-500 font-medium mb-6 text-2xl">Launch a time-limited bonus to drive urgency in your force.</p>
+                        <p className="text-zinc-500 font-medium mb-6 text-2xl">Launch a time-limited bonus to drive urgency in your partner network.</p>
                         <Button onClick={() => setShowCreate(true)} className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8 h-14 font-bold text-xl">
                             <Plus className="w-5 h-5 mr-2" />Create First Campaign
                         </Button>
