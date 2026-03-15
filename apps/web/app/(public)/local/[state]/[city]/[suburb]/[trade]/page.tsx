@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     return {
         title: `${tradeName} in ${suburbWithPostcode}, ${cityName}${priceStr} | TradeRefer`,
-        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbWithPostcode}, ${cityName} ${stateUpper}.${topBizStr} ${totalReviews > 0 ? totalReviews + ' reviews.' : ''} Get free quotes from ABN-verified locals today.`,
+        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbWithPostcode}, ${cityName} ${stateUpper}.${priceStr ? ` Average cost: $${cost.low}–$${cost.high}${cost.unit}.` : ''}${topBizStr} ${totalReviews > 0 ? totalReviews + ' reviews.' : ''} Get free quotes from ABN-verified locals.`,
         robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
         openGraph: {
             title: `${tradeName} in ${suburbWithPostcode}, ${cityName} | TradeRefer`,
@@ -342,13 +342,14 @@ export default async function TradeLocationPage({ params }: PageProps) {
             {/* ── HERO SECTION ── */}
             <div className="bg-[#FCFCFC] pb-20 pt-12 relative overflow-hidden border-b border-gray-200">
                 <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: 'url(\'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2670&auto=format&fit=crop\')' }} />
-                <div className="absolute inset-0 z-0 bg-[#FCFCFC]/82" />
+                <div className="absolute inset-0 z-0 bg-[#FCFCFC]/88" />
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl">
-                        <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
                             <span className="text-[#FF6600]">{tradeName}</span> in {suburbWithPostcode}, {cityName}
                         </h1>
-                        <p className="text-gray-700 mb-6 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
+                        <p className="text-base sm:text-lg font-bold text-zinc-600 mb-4">Find trusted {tradeName.toLowerCase()} near {suburbName} — ABN-verified, community-ranked</p>
+                        <p className="text-gray-700 mb-6 max-w-2xl text-base sm:text-lg md:text-xl" style={{ lineHeight: 1.7 }}>
                             {localizedIntro}
                         </p>
                         {cost && (
@@ -792,13 +793,16 @@ export default async function TradeLocationPage({ params }: PageProps) {
 
                                 {/* How to Choose */}
                                 <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                                    <h2 className="text-2xl font-black text-zinc-900 mb-6">How Do I Find a Reliable {tradeName} in {suburbName}?</h2>
+                                    <h2 className="text-2xl font-black text-zinc-900 mb-6">How to Choose a {tradeName} in {suburbName}</h2>
+                                    <p className="text-lg text-zinc-600 mb-6 leading-relaxed">Finding the right tradesperson protects your investment and ensures quality work. Follow these best practices:</p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {[
                                             { title: "Verify Licence & Insurance", body: `Confirm they hold the correct ${stateName} trade licence and carry public liability insurance. All TradeRefer businesses have ABN verification.` },
                                             { title: "Read Community Referrals", body: `Look beyond star ratings. TradeRefer shows verified peer referrals from real ${suburbName} residents — not anonymous reviews.` },
                                             { title: "Get 2–3 Written Quotes", body: `Always compare quotes for any job over $500. A written quote protects you and clarifies exactly what's included in the scope.` },
                                             { title: "Choose Local Knowledge", body: `A ${tradeName.toLowerCase()} who works regularly in ${suburbName} understands local council requirements, suppliers, and common property issues.` },
+                                            { title: "Check References & Past Work", body: `Ask to see photos of completed projects similar to yours. A reputable ${tradeName.toLowerCase()} will gladly share examples of their work.` },
+                                            { title: "Clarify Payment Terms", body: `Never pay the full amount upfront. Standard practice is a deposit (10-30%), progress payments, and final payment on completion and your satisfaction.` },
                                         ].map((item, i) => (
                                             <div key={i} className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100">
                                                 <h4 className="font-bold text-zinc-900 mb-2 flex items-center gap-2">
