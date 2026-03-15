@@ -95,7 +95,7 @@ export default function ReferrerProfileViewPage() {
 
             {/* ── TOP NAV ── */}
             <div className="bg-white border-b border-zinc-100 sticky top-0 z-10">
-                <div className="max-w-5xl mx-auto px-4 md:px-8 py-3 flex items-center gap-4">
+                <div className="w-full px-6 md:px-10 lg:px-16 py-3 flex items-center gap-4">
                     <Link
                         href="/dashboard/referrer/profile"
                         className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 hover:text-zinc-900 transition-colors group"
@@ -109,7 +109,7 @@ export default function ReferrerProfileViewPage() {
                 </div>
             </div>
 
-            <div className="max-w-5xl mx-auto px-4 md:px-8 py-6 md:py-8">
+            <div className="w-full px-6 md:px-10 lg:px-16 py-6 md:py-8">
 
                 {/* ── HERO CARD ── */}
                 <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden mb-6">
