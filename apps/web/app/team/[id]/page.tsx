@@ -118,7 +118,7 @@ export default async function MyTeamPage({ params }: { params: Promise<{ id: str
                 {/* Footer CTA */}
                 <div className="mt-12 text-center">
                     <p className="text-sm text-zinc-400 mb-4">Want to earn money recommending tradies like {data.referrer_name}?</p>
-                    <Link href="/onboarding/referrer" className="inline-flex items-center gap-2 bg-zinc-900 text-white px-8 py-3 rounded-full font-bold hover:bg-black transition-colors">
+                    <Link href="/onboarding/referrer" className="inline-flex items-center gap-2 bg-orange-600 text-white px-8 py-3 rounded-full font-bold hover:bg-orange-700 transition-colors">
                         Become a Referrer <ChevronRight className="w-4 h-4" />
                     </Link>
                 </div>
