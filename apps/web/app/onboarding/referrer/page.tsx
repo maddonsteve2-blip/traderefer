@@ -300,7 +300,7 @@ function ReferrerOnboardingInner() {
                                     </div>
                                 </div>
 
-                                <Button onClick={handleSendOTP} disabled={isLoading} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-zinc-200">
+                                <Button onClick={handleSendOTP} disabled={isLoading} className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-orange-500/20">
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     Send Verification Code <ChevronRight className="ml-2 w-5 h-5" />
                                 </Button>
@@ -335,7 +335,7 @@ function ReferrerOnboardingInner() {
                                     {otpError && <p className="text-red-500 text-xs font-bold mt-2 text-center">{otpError}</p>}
                                 </div>
 
-                                <Button onClick={handleVerifyOTP} disabled={isLoading || otpCode.length !== 6} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-zinc-200">
+                                <Button onClick={handleVerifyOTP} disabled={isLoading || otpCode.length !== 6} className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-orange-500/20">
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     Verify Code <ChevronRight className="ml-2 w-5 h-5" />
                                 </Button>
@@ -396,7 +396,7 @@ function ReferrerOnboardingInner() {
                                     {addressError && <p className="text-red-500 text-xs font-bold mt-1.5 ml-1">{addressError}</p>}
                                 </div>
 
-                                <Button onClick={handleComplete} disabled={isLoading || !address.suburb} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-zinc-200">
+                                <Button onClick={handleComplete} disabled={isLoading || !address.suburb} className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-13 md:h-14 text-lg font-black shadow-xl shadow-orange-500/20">
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                                     Complete Setup <ChevronRight className="ml-2 w-5 h-5" />
                                 </Button>

@@ -141,7 +141,7 @@ export default function ReferrerApplicationsPage() {
                                                         href={`/dashboard/referrer/manage?business=${app.business_slug}`}
                                                         className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-black text-orange-600"
                                                     >
-                                                        Open Command Centre <ChevronRight className="w-4 h-4" />
+                                                        Open My Partnerships <ChevronRight className="w-4 h-4" />
                                                     </Link>
                                                 )}
                                                 {(app.status === "rejected" || app.status === "expired") && (
@@ -252,7 +252,7 @@ export default function ReferrerApplicationsPage() {
                                                         className="flex items-center gap-1.5 text-orange-600 hover:text-orange-700 font-black transition-colors underline underline-offset-4"
                                                         style={{ fontSize: '17px' }}
                                                     >
-                                                        Open Command Centre <ChevronRight className="w-4 h-4" />
+                                                        Open My Partnerships <ChevronRight className="w-4 h-4" />
                                                     </Link>
                                                 )}
                                                 {(app.status === "rejected" || app.status === "expired") && (

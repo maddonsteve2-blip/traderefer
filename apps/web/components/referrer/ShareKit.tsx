@@ -218,7 +218,7 @@ export function ReferrerShareKit({ businessName, tradeCategory, suburb, slug, co
                                 navigator.clipboard.writeText(referralUrl);
                                 toast.success("Link copied!");
                             }}
-                            className="px-12 py-5 rounded-full bg-zinc-900 font-black text-white hover:bg-zinc-800 transition-all shadow-xl shadow-zinc-200/50 active:scale-95 text-[19px]"
+                            className="px-12 py-5 rounded-full bg-orange-600 font-black text-white hover:bg-orange-700 transition-all shadow-xl shadow-orange-500/20 active:scale-95 text-[19px]"
                         >
                             Copy Direct Link
                         </button>

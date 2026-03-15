@@ -820,7 +820,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                                         type="button"
                                                         onClick={sendOwnerOtp}
                                                         disabled={ownerOtpLoading || !ownerPhone.trim()}
-                                                        className="px-5 py-3.5 bg-zinc-900 hover:bg-black text-white rounded-2xl font-bold text-sm disabled:opacity-40 transition-all flex items-center gap-2 whitespace-nowrap"
+                                                        className="px-5 py-3.5 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-bold text-sm disabled:opacity-40 transition-all flex items-center gap-2 whitespace-nowrap"
                                                     >
                                                         {ownerOtpLoading && !ownerOtpSent ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                                                         {ownerOtpSent ? 'Resend' : 'Send Code'}
@@ -968,7 +968,7 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                                             <Button
                                                 type="submit"
                                                 disabled={!chatInput.trim() || isChatting}
-                                                className="bg-zinc-900 hover:bg-black text-white rounded-2xl px-5 h-[46px] shadow-sm"
+                                                className="bg-orange-600 hover:bg-orange-700 text-white rounded-2xl px-5 h-[46px] shadow-sm"
                                             >
                                                 <Send className="w-4 h-4" />
                                             </Button>
