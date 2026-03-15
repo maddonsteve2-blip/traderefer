@@ -111,6 +111,7 @@ function SidebarContent({
                             key={item.matchPath}
                             href={item.href}
                             title={!expanded ? item.label : undefined}
+                            aria-label={item.label}
                             onClick={onClose}
                             className={`relative flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-all duration-150 group ${
                                 active
@@ -195,7 +196,7 @@ function SidebarContent({
 }
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
     const pathname = usePathname();
     const [currentSearch, setCurrentSearch] = useState("");

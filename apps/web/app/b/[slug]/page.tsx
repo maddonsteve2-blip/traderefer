@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 import { LeadForm } from "@/components/LeadForm";
 import { EditableConditionalSection, EditableContactField, EditableFee, EditableGallery, EditableImage, EditableProfile, EditableServices, EditableText } from "@/components/EditableProfile";
 import { BusinessDelistDialog } from "@/components/BusinessDelistDialog";
@@ -79,6 +80,7 @@ export default async function PublicProfilePage({
 }) {
     const { slug } = await params;
     const { ref: referralCode } = await searchParams;
+    const { userId } = await auth();
     const [business, projects, googleReviews, deals] = await Promise.all([
         getBusiness(slug),
         getProjects(slug),
@@ -93,6 +95,9 @@ export default async function PublicProfilePage({
     const safeProjects = Array.isArray(projects) ? projects : [];
     const featuredProject = safeProjects.find((p: any) => p.is_featured);
     const otherProjects = safeProjects.filter((p: any) => p !== featuredProject);
+
+    // Hide claim banners if the authenticated user owns this business
+    const isOwner = !!(userId && business.clerk_user_id && userId === business.clerk_user_id);
 
     // Compute derived stats
     const memberSinceYear = business.created_at ? new Date(business.created_at).getFullYear() : null;
@@ -238,7 +243,7 @@ export default async function PublicProfilePage({
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                                         {/* Claim CTA overlay for unclaimed businesses with no cover photo */}
-                                        {business.is_claimed === false && !business.cover_photo_url && (
+                                        {business.is_claimed === false && !isOwner && !business.cover_photo_url && (
                                             <div data-claim-banner className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-zinc-900/60">
                                                 <p className="text-white font-black uppercase tracking-widest" style={{ fontSize: '16px' }}>This business is unclaimed</p>
                                                 <Link
@@ -339,7 +344,7 @@ export default async function PublicProfilePage({
 
                             {/* CTA Buttons */}
                             <div className="space-y-2">
-                                {business.is_claimed === false && (
+                                {business.is_claimed === false && !isOwner && (
                                     <Link data-claim-banner href={`/claim/${slug}`} className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 transition-all active:scale-95 flex items-center justify-center mb-2" style={{ minHeight: '64px', fontSize: '18px' }}>Claim This Business</Link>
                                 )}
                                 <Link href="#enquiry-form" className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 transition-all active:scale-95 flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>Get a Free Quote</Link>
@@ -472,7 +477,7 @@ export default async function PublicProfilePage({
                             )}
 
                             {/* Claim banner (sidebar) — hidden for owners via data-claim-banner */}
-                            {business.is_claimed === false && (
+                            {business.is_claimed === false && !isOwner && (
                                 <Link
                                     data-claim-banner
                                     href={`/claim/${slug}`}

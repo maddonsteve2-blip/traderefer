@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Share2, Target, DollarSign, Users, Star, Zap } from "lucide-react";
+import { Share2, Target, DollarSign, Users, Star, Zap, AlertTriangle, Wallet, Clock, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { InviteReferrersDialog } from "@/components/dashboard/InviteReferrersDialog";
 
 interface MobileBusinessDashboardProps {
@@ -13,7 +14,7 @@ interface MobileBusinessDashboardProps {
 
 const ICON_MAP: Record<string, React.ElementType> = { Target, Zap, Star, Users, DollarSign };
 
-export function MobileBusinessDashboard({ business, stats }: MobileBusinessDashboardProps) {
+export function MobileBusinessDashboard({ business, stats, recentLeads }: MobileBusinessDashboardProps) {
     const { user } = useUser();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const displayName = user?.firstName || (business?.name ? business.name.split(' ')[0] : "there");
@@ -37,7 +38,7 @@ export function MobileBusinessDashboard({ business, stats }: MobileBusinessDashb
                     return (
                         <div key={stat.label} className="bg-white border border-zinc-100 rounded-[20px] p-4 flex flex-col gap-3">
                             <div className="flex items-center gap-2">
-                                <div className={`w-8 h-8 ${stat.bg} ${stat.color} rounded-lg flex items-center justify-center`}>
+                                <div className="w-8 h-8 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center">
                                     <Icon className="w-4 h-4" />
                                 </div>
                                 <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest leading-none">
@@ -51,6 +52,47 @@ export function MobileBusinessDashboard({ business, stats }: MobileBusinessDashb
                     );
                 })}
             </div>
+
+            {/* Wallet Warning */}
+            {(business?.wallet_balance_cents ?? 0) < 2500 && (
+                <div className="bg-red-50 border border-red-200 rounded-[20px] p-4 flex items-start gap-3">
+                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center shrink-0">
+                        <AlertTriangle className="w-5 h-5 text-red-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[15px] font-black text-red-800 leading-tight">Low wallet balance</p>
+                        <p className="text-[13px] font-bold text-red-600 mt-0.5">Top up to unlock incoming leads. Min $25 required.</p>
+                    </div>
+                    <Link href="/dashboard/business/wallet" className="shrink-0 px-4 py-2 bg-red-600 text-white rounded-xl text-[13px] font-black">
+                        Top Up
+                    </Link>
+                </div>
+            )}
+
+            {/* Action Queue — recent leads */}
+            {Array.isArray(recentLeads) && recentLeads.length > 0 && (
+                <div className="bg-white border border-zinc-100 rounded-[20px] p-4">
+                    <h3 className="text-[13px] font-black text-zinc-400 uppercase tracking-widest mb-3">Action Queue</h3>
+                    <div className="space-y-2">
+                        {recentLeads.slice(0, 3).map((lead: any) => (
+                            <Link
+                                key={lead.id}
+                                href={`/dashboard/business/sales?tab=leads`}
+                                className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 hover:bg-orange-50 transition-all"
+                            >
+                                <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+                                    <Target className="w-4 h-4 text-orange-600" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-[14px] font-black text-zinc-900 truncate">{lead.consumer_name || "New Lead"}</p>
+                                    <p className="text-[12px] font-bold text-zinc-400 truncate">{lead.suburb || lead.trade_category || ""}</p>
+                                </div>
+                                <ArrowRight className="w-4 h-4 text-zinc-300 shrink-0" />
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Referral Card (The "Simplified Mobile" Look) */}
             <div className="bg-zinc-900 rounded-[24px] p-6 flex flex-col gap-4 text-white shadow-xl shadow-zinc-900/10">

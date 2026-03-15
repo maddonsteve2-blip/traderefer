@@ -43,6 +43,7 @@ export function MobileBottomNav() {
                             <Link
                                 key={tab.label}
                                 href={tab.href}
+                                aria-label={tab.label}
                                 className="relative flex-1 flex flex-col items-center justify-center py-2.5 outline-none transition-all"
                             >
                                 {active && (

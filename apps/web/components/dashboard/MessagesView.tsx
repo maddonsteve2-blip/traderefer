@@ -48,11 +48,11 @@ function Avatar({ name, logo, size = 9 }: { name: string; logo: string | null; s
     const sizeClass = sizeClasses[size] || 'w-9 h-9';
     
     return (
-        <div className={`${sizeClass} rounded-full bg-gradient-to-br from-indigo-50 to-indigo-100 flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-white shadow-sm`}>
+        <div className={`${sizeClass} rounded-full bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center flex-shrink-0 overflow-hidden ring-2 ring-white shadow-sm`}>
             {logo ? (
                 <img src={logo} alt={name} className={`${sizeClass} object-cover`} />
             ) : (
-                <span className="text-[11px] font-black text-indigo-600 tracking-tighter">{initials}</span>
+                <span className="text-[11px] font-black text-orange-600 tracking-tighter">{initials}</span>
             )}
         </div>
     );
@@ -525,7 +525,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
         return (
             <div className="flex items-center justify-center h-full w-full bg-white">
                 <div className="flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 border-[3px] border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
                     <p className="text-zinc-400 font-bold text-xl">Loading messages…</p>
                 </div>
             </div>
@@ -547,7 +547,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                             placeholder="Search chats..."
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 h-[48px] bg-zinc-100 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:bg-white outline-none placeholder:text-zinc-400 text-zinc-900 font-bold text-[15px] transition-all"
+                            className="w-full pl-11 pr-4 h-[48px] bg-zinc-100 border-none rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:bg-white outline-none placeholder:text-zinc-400 text-zinc-900 font-bold text-[15px] transition-all"
                         />
                     </div>
                 </div>
@@ -577,26 +577,26 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                         onClick={() => openContact(contact)}
                                         className={`w-full flex items-center gap-4 px-4 py-4 text-left transition-all duration-200 rounded-2xl mb-1 ${
                                             isActive 
-                                                ? 'bg-indigo-50/50' 
+                                                ? 'bg-orange-50/50' 
                                                 : 'hover:bg-zinc-50'
                                         }`}
                                     >
                                         <div className="relative flex-shrink-0">
                                             <Avatar name={contact.contact_name} logo={contact.contact_logo} size={14} />
                                             {hasUnread && (
-                                                <span className="absolute bottom-0 right-0 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white" />
+                                                <span className="absolute bottom-0 right-0 w-4 h-4 bg-orange-500 rounded-full border-2 border-white" />
                                             )}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-2">
-                                                <span className={`truncate font-extrabold text-[17px] ${isActive ? 'text-indigo-600' : 'text-zinc-900'}`}>
+                                                <span className={`truncate font-extrabold text-[17px] ${isActive ? 'text-orange-600' : 'text-zinc-900'}`}>
                                                     {contact.contact_name}
                                                 </span>
                                                 <span className="text-zinc-400 flex-shrink-0 font-bold text-[11px] uppercase tracking-wide">
                                                     {contact.last_message_at ? formatListTime(contact.last_message_at) : ''}
                                                 </span>
                                             </div>
-                                            <p className={`truncate text-[15px] font-medium mt-0.5 ${hasUnread ? 'text-indigo-600 font-bold' : 'text-zinc-500'}`}>
+                                            <p className={`truncate text-[15px] font-medium mt-0.5 ${hasUnread ? 'text-orange-600 font-bold' : 'text-zinc-500'}`}>
                                                 {contact.last_message || 'Start the conversation'}
                                             </p>
                                         </div>
@@ -634,7 +634,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                         {myType !== 'business' && (
                             <Link
                                 href={`/b/${activeContact.contact_id}`}
-                                className="p-2 hover:bg-zinc-50 rounded-full text-zinc-400 hover:text-indigo-500 transition-colors"
+                                className="p-2 hover:bg-zinc-50 rounded-full text-zinc-400 hover:text-orange-500 transition-colors"
                             >
                                 <ExternalLink className="w-5 h-5" />
                             </Link>
@@ -694,7 +694,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                                 )}
                                                 <div className={`relative px-4 py-3 text-[17px] leading-snug transition-all ${
                                                     isMine
-                                                        ? `bg-indigo-600 text-white shadow-premium ${isGroupStart ? 'rounded-t-[22px] rounded-bl-[22px]' : 'rounded-l-[22px]'} ${isGroupEnd ? 'rounded-br-[8px]' : ''}`
+                                                        ? `bg-orange-600 text-white shadow-premium ${isGroupStart ? 'rounded-t-[22px] rounded-bl-[22px]' : 'rounded-l-[22px]'} ${isGroupEnd ? 'rounded-br-[8px]' : ''}`
                                                         : `bg-zinc-100 text-zinc-900 ${isGroupStart ? 'rounded-t-[22px] rounded-br-[22px]' : 'rounded-r-[22px]'} ${isGroupEnd ? 'rounded-bl-[8px]' : ''}`
                                                 } ${isOptimistic ? 'scale-95 opacity-50' : ''} ${!isGroupStart && !isGroupEnd ? 'rounded-[22px]' : ''}`}>
                                                     {msg.image_url && (
@@ -717,7 +717,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                                 {isMine && (
                                                     <span className="flex-shrink-0 opacity-50 scale-75 origin-right">
                                                         {msg.is_read 
-                                                            ? <div className="w-3.5 h-3.5 rounded-full bg-indigo-50 flex items-center justify-center"><CheckCheck className="w-2.5 h-2.5 text-indigo-500" /></div>
+                                                            ? <div className="w-3.5 h-3.5 rounded-full bg-orange-50 flex items-center justify-center"><CheckCheck className="w-2.5 h-2.5 text-orange-500" /></div>
                                                             : <Check className="w-3 h-3 text-zinc-300" />
                                                         }
                                                     </span>
@@ -757,7 +757,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                     <img src={imagePreview} alt="Preview" className="h-24 w-24 rounded-2xl object-cover border-2 border-zinc-100 shadow-premium" />
                                     {uploading ? (
                                         <div className="absolute inset-0 bg-white/60 rounded-2xl flex items-center justify-center">
-                                            <Loader2 className="w-6 h-6 text-indigo-500 animate-spin" />
+                                            <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
                                         </div>
                                     ) : (
                                         <button onClick={clearImage} className="absolute -top-2 -right-2 w-7 h-7 bg-zinc-900 text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-all shadow-lg active:scale-95">
@@ -772,7 +772,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
                                     disabled={uploading}
-                                    className="p-3 text-zinc-400 hover:text-indigo-500 hover:bg-white rounded-full transition-all flex-shrink-0 mb-1"
+                                    className="p-3 text-zinc-400 hover:text-orange-500 hover:bg-white rounded-full transition-all flex-shrink-0 mb-1"
                                 >
                                     <Paperclip className="w-6 h-6" />
                                     <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
@@ -800,7 +800,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                     className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90 mb-1 shadow-lg ${
                                         (!newMessage.trim() && !imageUrl) || sending || uploading
                                             ? 'bg-zinc-200 text-zinc-400 shadow-none'
-                                            : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-500/20'
+                                            : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-500/20'
                                     }`}
                                 >
                                     {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 translate-x-0.5" />}

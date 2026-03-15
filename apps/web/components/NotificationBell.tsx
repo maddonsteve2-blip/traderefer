@@ -16,27 +16,34 @@ interface Notification {
 }
 
 function timeAgo(dateStr: string) {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return "just now";
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    if (days < 7) return `${days}d ago`;
-    return new Date(dateStr).toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+    if (!dateStr) return "";
+    try {
+        const d = new Date(dateStr.endsWith("Z") || dateStr.includes("+") || dateStr.includes("T") ? dateStr : dateStr + "Z");
+        if (isNaN(d.getTime())) return "";
+        const diff = Date.now() - d.getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return "just now";
+        if (mins < 60) return `${mins}m ago`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs}h ago`;
+        const days = Math.floor(hrs / 24);
+        if (days < 7) return `${days}d ago`;
+        return d.toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+    } catch {
+        return "";
+    }
 }
 
 const TYPE_COLORS: Record<string, string> = {
-    lead_accepted: "bg-green-500",
-    tier_unlock: "bg-purple-500",
+    lead_accepted: "bg-emerald-500",
+    tier_unlock: "bg-orange-500",
     new_campaign: "bg-orange-500",
-    fee_change: "bg-blue-500",
+    fee_change: "bg-amber-500",
     new_business: "bg-emerald-500",
     nudge: "bg-amber-500",
     general: "bg-zinc-500",
-    new_application: "bg-blue-500",
-    application_approved: "bg-green-500",
+    new_application: "bg-orange-500",
+    application_approved: "bg-emerald-500",
     application_rejected: "bg-red-500",
     application_expired: "bg-zinc-500",
     application_reminder: "bg-amber-500",
@@ -166,7 +173,7 @@ export function NotificationBell() {
             >
                 <Bell className="w-6 h-6" />
                 {unreadCount > 0 && (
-                    <span className="absolute top-0.5 right-0.5 w-5 h-5 bg-indigo-600 text-white font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm text-[10px]">
+                    <span className="absolute top-0.5 right-0.5 w-5 h-5 bg-orange-600 text-white font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm text-[10px]">
                         {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                 )}

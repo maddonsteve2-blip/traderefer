@@ -313,7 +313,7 @@ export function ForceApplicationsPane() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <h2 className="font-black text-zinc-900 leading-tight uppercase tracking-tighter text-[38px]">{ref.full_name}</h2>
-                                        {ref.tagline && <p className="font-black text-zinc-500 mt-1 uppercase tracking-tight text-2xl">{ref.tagline}</p>}
+                                        {ref.tagline && <p className="font-bold text-zinc-500 mt-1 tracking-tight text-2xl">{ref.tagline}</p>}
                                         <div className="flex items-center gap-4 mt-3 flex-wrap">
                                             {(ref.suburb || ref.state) && (
                                                 <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest text-[19px]">
