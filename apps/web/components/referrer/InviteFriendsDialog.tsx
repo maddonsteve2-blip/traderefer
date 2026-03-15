@@ -94,7 +94,7 @@ export function InviteFriendsDialog({
                             <p className="font-black text-orange-800" style={{ fontSize: '18px' }}>🎁 Earn $25 when 5 friends join!</p>
                             <p className="text-orange-600 font-bold mt-1.5" style={{ fontSize: '15px' }}>Track progress in your dashboard.</p>
                         </div>
-                        <Button onClick={handleClose} className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95" style={{ fontSize: '20px' }}>Done</Button>
+                        <Button onClick={handleClose} className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-16 font-black shadow-xl shadow-orange-500/20 transition-all active:scale-95" style={{ fontSize: '20px' }}>Done</Button>
                     </div>
                 ) : (
                     <>
@@ -202,7 +202,7 @@ export function InviteFriendsDialog({
                             <Button
                                 onClick={sendInvitations}
                                 disabled={sending || invitees.length === 0}
-                                className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95"
+                                className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-16 font-black shadow-xl shadow-orange-500/20 transition-all active:scale-95"
                                 style={{ fontSize: '20px' }}
                             >
                                 {sending ? <Loader2 className="w-6 h-6 animate-spin mr-3" /> : <Send className="w-6 h-6 mr-3" />}

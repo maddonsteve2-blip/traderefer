@@ -85,7 +85,7 @@ export function PrivateFeedback({ businessSlug, businessName }: PrivateFeedbackP
                                 onClick={() => setCategory(c.value)}
                                 className={`text-sm font-black px-4 py-2 rounded-full transition-all ${
                                     category === c.value
-                                        ? "bg-zinc-900 text-white shadow-md shadow-zinc-200"
+                                        ? "bg-orange-600 text-white shadow-md shadow-orange-200"
                                         : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700"
                                 }`}
                             >

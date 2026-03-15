@@ -134,7 +134,7 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
         <Button
             onClick={handleStartReferring}
             disabled={linking}
-            className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] h-auto py-4 px-6 font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group text-[21px]"
+            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full min-h-[64px] h-auto py-4 px-6 font-black shadow-xl shadow-orange-500/20 transition-all active:scale-95 group text-[21px]"
         >
             {linking ? (
                 <div className="flex items-center gap-3">

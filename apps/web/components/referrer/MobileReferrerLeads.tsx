@@ -102,19 +102,19 @@ export function MobileReferrerLeads({ leads: initialLeads, loading: initialLoadi
                 <div className="flex gap-2.5 overflow-x-auto no-scrollbar py-1">
                     <button 
                         onClick={() => setFilter("all")}
-                        className={`px-6 py-3 rounded-xl text-[14px] font-bold transition-all ${filter === "all" ? "bg-[#18181B] text-white" : "bg-[#F4F4F5] text-zinc-500"}`}
+                        className={`px-6 py-3 rounded-xl text-[14px] font-bold transition-all ${filter === "all" ? "bg-orange-600 text-white" : "bg-[#F4F4F5] text-zinc-500"}`}
                     >
                         All
                     </button>
                     <button 
                         onClick={() => setFilter("new")}
-                        className={`px-6 py-3 rounded-xl text-[14px] font-bold transition-all ${filter === "new" ? "bg-[#18181B] text-white" : "bg-[#F4F4F5] text-zinc-500"}`}
+                        className={`px-6 py-3 rounded-xl text-[14px] font-bold transition-all ${filter === "new" ? "bg-orange-600 text-white" : "bg-[#F4F4F5] text-zinc-500"}`}
                     >
                         New
                     </button>
                     <button 
                         onClick={() => setFilter("won")}
-                        className={`px-6 py-3 rounded-xl text-[14px] font-bold transition-all ${filter === "won" ? "bg-[#18181B] text-white" : "bg-[#F4F4F5] text-zinc-500"}`}
+                        className={`px-6 py-3 rounded-xl text-[14px] font-bold transition-all ${filter === "won" ? "bg-orange-600 text-white" : "bg-[#F4F4F5] text-zinc-500"}`}
                     >
                         Won
                     </button>

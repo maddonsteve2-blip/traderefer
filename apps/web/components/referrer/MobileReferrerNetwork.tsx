@@ -192,7 +192,7 @@ export function MobileReferrerNetwork({
                                 searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             }
                         }}
-                        className="w-full h-14 bg-[#18181B] rounded-2xl flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all"
+                        className="w-full h-14 bg-orange-600 hover:bg-orange-700 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all"
                     >
                         <UserPlus className="w-5 h-5 text-white" />
                         <span className="text-[15px] font-bold text-white">Apply to New Trade</span>
@@ -200,7 +200,7 @@ export function MobileReferrerNetwork({
                 ) : (
                     <Link
                         href="/dashboard/referrer/applications"
-                        className="w-full h-14 bg-[#18181B] rounded-2xl flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all"
+                        className="w-full h-14 bg-orange-600 hover:bg-orange-700 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all"
                     >
                         <Clock className="w-5 h-5 text-white" />
                         <span className="text-[15px] font-bold text-white">Open Full Applications View</span>
