@@ -622,9 +622,14 @@ async def start_conversation_business(
 
     ref_uuid = uuid.UUID(referrer_id)
 
-    # Verify referrer is linked to this business
+    # Verify referrer is linked to this business OR has a pending/approved application
     link_check = await db.execute(
-        text("SELECT id FROM referral_links WHERE business_id = :biz_id AND referrer_id = :ref_id"),
+        text("""
+            SELECT 1 FROM referral_links WHERE business_id = :biz_id AND referrer_id = :ref_id
+            UNION ALL
+            SELECT 1 FROM applications WHERE business_id = :biz_id AND referrer_id = :ref_id AND status IN ('pending', 'approved')
+            LIMIT 1
+        """),
         {"biz_id": biz_id, "ref_id": ref_uuid},
     )
     if not link_check.fetchone():
