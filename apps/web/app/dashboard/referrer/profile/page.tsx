@@ -247,7 +247,7 @@ export default function ReferrerProfilePage() {
 
                 <div className="rounded-[24px] border border-zinc-200 bg-white p-4 space-y-4 shadow-sm">
                     <div>
-                        <label className="mb-2 block text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400">Professional Tagline</label>
+                        <label className="mb-2 block text-[11px] font-bold text-zinc-500">Professional Tagline</label>
                         <textarea
                             rows={2}
                             maxLength={120}
@@ -259,7 +259,7 @@ export default function ReferrerProfilePage() {
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400">Referrer Bio</label>
+                        <label className="mb-2 block text-[11px] font-bold text-zinc-500">Referrer Bio</label>
                         <textarea
                             rows={5}
                             maxLength={500}
@@ -271,7 +271,7 @@ export default function ReferrerProfilePage() {
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-[11px] font-black uppercase tracking-[0.16em] text-zinc-400">Profile Photo</label>
+                        <label className="mb-2 block text-[11px] font-bold text-zinc-500">Profile Photo</label>
                         <input
                             ref={fileInputRef}
                             type="file"
@@ -354,7 +354,7 @@ export default function ReferrerProfilePage() {
 
                             {/* Tagline */}
                             <div className="space-y-2">
-                                <label className="block font-black text-zinc-700 text-xs uppercase tracking-widest">
+                                <label className="block font-bold text-zinc-600 text-xs">
                                     Professional Tagline
                                 </label>
                                 <textarea
@@ -370,7 +370,7 @@ export default function ReferrerProfilePage() {
 
                             {/* Bio */}
                             <div className="space-y-2">
-                                <label className="block font-black text-zinc-700 text-xs uppercase tracking-widest">
+                                <label className="block font-bold text-zinc-600 text-xs">
                                     Referrer Bio
                                 </label>
                                 <textarea
@@ -386,7 +386,7 @@ export default function ReferrerProfilePage() {
 
                             {/* Profile Photo Upload */}
                             <div className="space-y-4">
-                                <label className="block font-black text-zinc-700 text-xs uppercase tracking-widest">
+                                <label className="block font-bold text-zinc-600 text-xs">
                                     Profile Photo
                                 </label>
                                 <div className="flex flex-col sm:flex-row items-center gap-6">

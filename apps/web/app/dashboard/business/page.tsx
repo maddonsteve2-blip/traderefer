@@ -146,7 +146,7 @@ export default async function BusinessDashboardPage() {
                                             <div className="w-9 h-9 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
                                                 <Icon className="w-4 h-4" />
                                             </div>
-                                            <span className="font-black text-zinc-400 uppercase tracking-widest text-[9px]">{stat.label}</span>
+                                            <span className="font-bold text-zinc-400 text-[11px]">{stat.label}</span>
                                         </div>
                                         <div className="font-black text-zinc-900 leading-none tracking-tight text-base">{stat.value}</div>
                                     </div>

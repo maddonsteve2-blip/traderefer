@@ -204,7 +204,7 @@ export function ForcePartnersPane() {
                         ].map(s => (
                             <div key={s.label} className="text-center">
                                 <p className={`font-black ${s.color} leading-none tracking-tighter text-[26px]`}>{s.value}</p>
-                                <p className="font-black text-zinc-400 mt-1 uppercase tracking-widest text-[19px]">{s.label}</p>
+                                <p className="font-bold text-zinc-400 mt-1 text-[14px]">{s.label}</p>
                             </div>
                         ))}
                     </div>
@@ -330,7 +330,7 @@ export function ForcePartnersPane() {
                                 <div key={s.label} className={`${s.bg} rounded-[24px] p-5 shadow-sm border border-black/5`}>
                                     <div className="flex items-center gap-1.5 mb-2">
                                         <s.icon className={`w-5 h-5 ${s.text}`} />
-                                        <span className="font-black text-zinc-500 uppercase tracking-widest text-[22px]">{s.label}</span>
+                                        <span className="font-bold text-zinc-500 text-[16px]">{s.label}</span>
                                     </div>
                                     <p className="font-black text-zinc-900 tracking-tighter text-[42px]">{s.value}</p>
                                 </div>
