@@ -156,7 +156,7 @@ export default function AnalyticsPage() {
                     {/* Campaign Performance */}
                     <div className="bg-white rounded-2xl border border-zinc-200 p-8">
                         <h2 className="font-bold text-zinc-900 text-2xl flex items-center gap-2 mb-6">
-                            <BarChart3 className="w-6 h-6 text-purple-500" /> Campaign Performance
+                            <BarChart3 className="w-6 h-6 text-orange-500" /> Campaign Performance
                         </h2>
                         {data.campaign_performance.length > 0 ? (
                             <div className="space-y-4">

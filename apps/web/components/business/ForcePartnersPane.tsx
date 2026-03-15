@@ -199,7 +199,7 @@ export function ForcePartnersPane() {
                         {[
                             { label: "Partners", value: summary.total_referrers, color: "text-orange-600" },
                             { label: "Leads", value: summary.total_leads, color: "text-zinc-800" },
-                            { label: "Confirmed", value: summary.total_confirmed, color: "text-emerald-600" },
+                            { label: "Confirmed", value: summary.total_confirmed, color: summary.total_confirmed > 0 ? "text-emerald-600" : "text-zinc-400" },
                             { label: "Paid Out", value: fmt(summary.total_paid_cents), color: "text-zinc-800" },
                         ].map(s => (
                             <div key={s.label} className="text-center">

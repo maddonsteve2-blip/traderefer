@@ -176,20 +176,18 @@ export function SalesLeadsPane() {
                                             {unlocked ? (lead.customer_name?.[0] || 'L') : <LockIcon className="w-4 h-4" />}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between gap-2">
-                                                <p className={`font-bold truncate text-[16px] ${unlocked ? 'text-zinc-900' : 'text-zinc-400 italic'}`}>
-                                                    {unlocked ? lead.customer_name : 'Locked Lead'}
-                                                </p>
-                                                <span className={`px-2 py-0.5 rounded-full font-black text-[9px] uppercase tracking-widest ${STATUS_COLORS[lead.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"}`}>
-                                                    {formatStatus(lead.status)}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between gap-2 mt-1">
+                                            <p className={`font-bold truncate text-[16px] ${unlocked ? 'text-zinc-900' : 'text-zinc-400 italic'}`}>
+                                                {unlocked ? lead.customer_name : 'Locked Lead'}
+                                            </p>
+                                            <div className="flex items-center justify-between gap-1.5 mt-1">
                                                 <p className="text-zinc-500 font-medium truncate flex items-center gap-1 text-[13px]">
                                                     <MapPin className="w-3.5 h-3.5" />{lead.suburb}
                                                 </p>
-                                                <p className="text-zinc-400 font-bold text-[11px] uppercase tracking-tighter shrink-0">{fmt(lead.created_at)}</p>
+                                                <span className={`shrink-0 px-2 py-0.5 rounded-full font-black text-[9px] uppercase tracking-widest ${STATUS_COLORS[lead.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"}`}>
+                                                    {formatStatus(lead.status)}
+                                                </span>
                                             </div>
+                                            <p className="text-zinc-400 font-bold text-[11px] uppercase tracking-tighter mt-0.5">{fmt(lead.created_at)}</p>
                                         </div>
                                     </div>
                                 </button>

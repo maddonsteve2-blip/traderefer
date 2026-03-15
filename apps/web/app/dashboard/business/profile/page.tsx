@@ -293,9 +293,11 @@ export default function BusinessProfileManagementPage() {
                 <div className="max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 md:mb-12">
                         <div className="space-y-3">
-                            <Link href="/dashboard/business" className="flex items-center gap-1.5 text-sm md:text-lg font-semibold text-zinc-400 hover:text-zinc-800 transition-colors group w-fit mb-2">
-                                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 transition-transform group-hover:-translate-x-0.5" /> Back to Dashboard
-                            </Link>
+                            <div className="flex items-center gap-2 text-sm md:text-base font-semibold text-zinc-400 mb-2">
+                                <Link href="/dashboard/business" className="hover:text-zinc-800 transition-colors">Dashboard</Link>
+                                <span>/</span>
+                                <span className="text-zinc-700">Public Profile</span>
+                            </div>
                             <h1 className="text-zinc-900 text-3xl md:text-6xl font-black font-display tracking-tight">Public Profile</h1>
                             <p className="text-zinc-500 text-base md:text-2xl font-medium leading-relaxed">Manage how your business appears to customers and referrers.</p>
                         </div>
@@ -617,7 +619,7 @@ export default function BusinessProfileManagementPage() {
                         {/* Service Features Section */}
                         <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
                             <div className="flex items-center gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
-                                <div className="size-10 md:size-14 rounded-xl md:rounded-2xl bg-green-100 flex items-center justify-center text-green-600">
+                                <div className="size-10 md:size-14 rounded-xl md:rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600">
                                     <CheckCircle2 className="w-5 h-5 md:w-7 md:h-7" />
                                 </div>
                                 <div>

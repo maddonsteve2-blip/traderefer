@@ -555,7 +555,7 @@ export default async function BusinessDirectory({
                                         <div className="flex items-start justify-between mb-1">
                                             <div className="flex-1 min-w-0">
                                                 <Link href={`/b/${biz.slug}`} className="hover:underline">
-                                                    <h2 className="text-2xl font-black text-zinc-900 group-hover:text-[#FF6600] transition-colors line-clamp-1">
+                                                    <h2 className="text-2xl font-black text-zinc-900 group-hover:text-[#FF6600] transition-colors line-clamp-2">
                                                         {biz.business_name}
                                                     </h2>
                                                 </Link>

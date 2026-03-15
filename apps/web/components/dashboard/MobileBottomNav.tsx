@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Gift, MessageSquare, Building2, Target, Users, User } from "lucide-react";
+import { LayoutGrid, Gift, MessageSquare, Building2, Target, Users, User, BarChart3 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const BUSINESS_TABS = [
@@ -10,6 +10,7 @@ const BUSINESS_TABS = [
     { label: "LEADS", href: "/dashboard/business/sales?tab=leads", icon: Target, matchPrefixes: ["/dashboard/business/sales"] },
     { label: "MESSAGES", href: "/dashboard/business/messages", icon: MessageSquare, matchPrefixes: ["/dashboard/business/messages"] },
     { label: "PARTNERS", href: "/dashboard/business/force?tab=partners", icon: Users, matchPrefixes: ["/dashboard/business/force"] },
+    { label: "ANALYTICS", href: "/dashboard/business/analytics", icon: BarChart3, matchPrefixes: ["/dashboard/business/analytics"] },
 ];
 
 const REFERRER_TABS = [

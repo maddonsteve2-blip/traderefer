@@ -31,7 +31,6 @@ import {
     DashboardGrid,
     DashboardMutedCard,
     DashboardPage,
-    DashboardPageHeader,
     DashboardPanel,
     DashboardPanelBody,
     DashboardSection,
@@ -39,8 +38,6 @@ import {
     DashboardSectionHeader,
     DashboardSectionTitle,
     DashboardStickyFooter,
-    DashboardSubtitle,
-    DashboardTitle,
 } from "@/components/dashboard/RedesignPrimitives";
 import { MobileBusinessSettings } from "@/components/business/MobileBusinessSettings";
 
@@ -251,30 +248,22 @@ export default function BusinessSettingsPage() {
             />
 
             <div className="hidden lg:block">
-                <DashboardPageHeader className="mt-4 md:mt-6 xl:mt-8">
-                <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-                    <div className="space-y-3">
-                        <DashboardTitle>Business Settings</DashboardTitle>
-                        <DashboardSubtitle>
-                            Manage your business profile, referral fees, and operational settings.
-                        </DashboardSubtitle>
-                    </div>
-                </div>
-            </DashboardPageHeader>
 
             <DashboardGrid>
                 <DashboardPanel className="w-full xl:w-[40%] min-h-0 xl:rounded-r-none xl:border-r xl:border-l-0 xl:border-t-0 xl:border-b-0">
                     <DashboardPanelBody className="flex-1 overflow-y-auto xl:pr-8 xl:pl-0">
                         <div className="space-y-6">
                             <div className="space-y-3">
-                                <Link href="/dashboard/business" className="flex items-center gap-1.5 text-base font-semibold text-zinc-400 hover:text-zinc-800 transition-colors group w-fit">
-                                    <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Dashboard
-                                </Link>
+                                <div className="flex items-center gap-2 text-base font-semibold text-zinc-400">
+                                    <Link href="/dashboard/business" className="hover:text-zinc-800 transition-colors">Dashboard</Link>
+                                    <span>/</span>
+                                    <span className="text-zinc-700">Settings</span>
+                                </div>
                                 <div className="flex items-center gap-3">
                                     <Building2 className="w-6 h-6 text-orange-500" />
-                                    <h1 className="font-bold text-zinc-900 text-3xl">Edit Your Business Profile</h1>
+                                    <h1 className="font-bold text-zinc-900 text-3xl">Settings</h1>
                                 </div>
-                                <p className="text-zinc-500 font-medium text-xl">This profile is what referrers see in the catalog before they decide to promote your business.</p>
+                                <p className="text-zinc-500 font-medium text-xl">Manage your referral fees, profile visibility, and business details.</p>
                             </div>
 
                             <DashboardSection>
