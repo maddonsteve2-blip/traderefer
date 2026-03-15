@@ -8,7 +8,7 @@ const BENEFITS = [
     { icon: Target, title: "Receive vetted leads", desc: "Pre-screened leads from trusted referrers who personally vouch for each job." },
     { icon: Users, title: "Build a referrer network", desc: "Approve referrers to represent your business and grow your pipeline hands-free." },
     { icon: BarChart3, title: "Run targeted campaigns", desc: "Create campaigns that attract the exact type of customer you want." },
-    { icon: Building2, title: "Professional storefront", desc: "A public business profile that builds trust before the first call." },
+    { icon: Building2, title: "Professional profile", desc: "A public business profile that builds trust before the first call." },
 ];
 
 export function RegisterBusinessDialog({ children }: { children: React.ReactNode }) {
