@@ -157,7 +157,7 @@ export function SharingStrip({ slug, businessName }: SharingStripProps) {
     const tiles: Tile[] = [
         {
             key: "storefront",
-            title: "Your Public Storefront",
+            title: "Your Public Profile",
             subtitle: "Send to customers for trust & bookings",
             url: `${base}/b/${slug}`,
             icon: Store,

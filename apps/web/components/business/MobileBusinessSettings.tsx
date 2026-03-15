@@ -128,7 +128,7 @@ export function MobileBusinessSettings({
                 <div className="bg-zinc-50 rounded-[32px] p-6 flex flex-col gap-6 border border-zinc-100 shadow-sm">
                      <div className="flex flex-col gap-2">
                         <label className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-                             <Globe className="w-3 h-3" /> Storefront URL
+                             <Globe className="w-3 h-3" /> Profile URL
                         </label>
                         <div className="flex items-center gap-2">
                             <input 

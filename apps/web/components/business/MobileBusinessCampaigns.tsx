@@ -94,7 +94,7 @@ export function MobileBusinessCampaigns() {
                         active.map(c => (
                             <div key={c.id} className="bg-white border border-zinc-200 rounded-[32px] p-6 flex items-center justify-between shadow-sm">
                                 <div className="flex items-center gap-5 min-w-0">
-                                     <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex flex-col items-center justify-center text-white shrink-0 shadow-lg shadow-zinc-200">
+                                     <div className="w-16 h-16 bg-orange-600 rounded-2xl flex flex-col items-center justify-center text-white shrink-0 shadow-lg shadow-orange-200">
                                          <span className="text-lg font-black leading-none font-display">{campaignLabel(c)}</span>
                                          <span className="text-[9px] font-black opacity-40 uppercase tracking-widest mt-1">BONUS</span>
                                      </div>

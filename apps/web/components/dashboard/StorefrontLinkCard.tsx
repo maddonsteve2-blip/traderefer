@@ -42,7 +42,7 @@ export function StorefrontLinkCard({ slug, businessName }: StorefrontLinkCardPro
     return (
         <div className="bg-zinc-900 rounded-[40px] p-8 text-white relative overflow-hidden shadow-2xl group">
             <LinkIcon className="absolute -right-8 -bottom-8 w-40 h-40 text-orange-500/10 rotate-12 group-hover:scale-110 transition-transform duration-500" />
-            <h3 className="text-3xl font-black mb-4 relative z-10 font-display">Your Storefront</h3>
+            <h3 className="text-3xl font-black mb-4 relative z-10 font-display">Your Profile Link</h3>
             <p className="text-zinc-400 text-lg mb-6 relative z-10 leading-relaxed font-medium">
                 This is your public booking page. Share this link with customers and referrers.
             </p>
@@ -64,7 +64,7 @@ export function StorefrontLinkCard({ slug, businessName }: StorefrontLinkCardPro
             <div className="space-y-4 relative z-10">
                 <Button asChild className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-full font-black shadow-lg shadow-orange-500/30 h-16 flex items-center gap-2 text-xl active:scale-95 transition-all">
                     <Link href={`/b/${slug}`} target="_blank">
-                        View Storefront <ExternalLink className="w-5 h-5" />
+                        View Profile <ExternalLink className="w-5 h-5" />
                     </Link>
                 </Button>
 

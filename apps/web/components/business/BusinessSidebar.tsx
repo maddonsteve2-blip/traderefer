@@ -35,7 +35,7 @@ export function BusinessSidebar({ slug, businessName, hasReferrer }: BusinessSid
             {/* ── Card 1: Public Storefront — dark charcoal ── */}
             <div className="bg-[#111827] rounded-2xl p-5 border border-[#1f2937]">
                 <p className="text-zinc-400 font-bold uppercase tracking-wider mb-1 text-base">
-                    PUBLIC STOREFRONT
+                    PUBLIC PROFILE
                 </p>
                 <p className="text-white font-black leading-tight mb-4 text-2xl">
                     {businessName}

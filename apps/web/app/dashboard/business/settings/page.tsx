@@ -361,10 +361,10 @@ export default function BusinessSettingsPage() {
                                     />
                                     <p className={`text-lg font-medium ${slugStatus === "taken" ? "text-red-500" : slugStatus === "available" ? "text-emerald-600" : "text-zinc-400"}`}>
                                         {slugStatus === "taken"
-                                            ? "This storefront URL is already taken."
+                                            ? "This profile URL is already taken."
                                             : slugStatus === "available"
-                                                ? "This storefront URL is available."
-                                                : "Your storefront updates live as you type."}
+                                                ? "This profile URL is available."
+                                                : "Your profile URL updates live as you type."}
                                     </p>
                                     <div className="space-y-2">
                                         <p className="text-lg font-bold text-zinc-900">Live URL</p>

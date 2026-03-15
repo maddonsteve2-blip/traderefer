@@ -436,7 +436,7 @@ export function EditableGallery({ initialImages, businessName }: { initialImages
 export function EditableFee({
     initialValue,
     title = "Referrer Reward",
-    helperText = "Set the high-authority reward your referrers will see on the storefront.",
+    helperText = "Set the high-authority reward your referrers will see on your profile.",
 }: {
     initialValue?: number;
     title?: string;
