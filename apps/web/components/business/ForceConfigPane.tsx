@@ -74,9 +74,9 @@ export function ForceConfigPane() {
         <div className="flex-1 overflow-y-auto bg-zinc-50 py-8 px-6">
             {/* Header */}
             <div className="mb-6">
-                <h2 className="font-black text-zinc-900 mb-1 uppercase tracking-tighter text-[36px]">Referral Program</h2>
-                <p className="text-zinc-500 font-black uppercase tracking-widest text-xl">
-                    DEFAULTS • REWARDS • INVITE LINK
+                <h2 className="font-black text-zinc-900 mb-1 text-2xl">Referral Program</h2>
+                <p className="text-zinc-500 font-medium text-sm">
+                    Configure your default lead fee, invite link, and Prezzee reward triggers.
                 </p>
             </div>
 
@@ -90,12 +90,12 @@ export function ForceConfigPane() {
                             <DollarSign className="w-5 h-5 text-orange-600" />
                         </div>
                         <div>
-                            <h3 className="font-black text-zinc-900 uppercase tracking-tight text-[26px]">Default Lead Fee</h3>
-                            <p className="text-zinc-400 font-black uppercase tracking-widest text-[21px]">Paid per unlocked lead. Min $3.00.</p>
+                            <h3 className="font-bold text-zinc-900 text-base">Default Lead Fee</h3>
+                            <p className="text-zinc-400 font-medium text-xs">Paid per unlocked lead. Min $3.00.</p>
                         </div>
                     </div>
                     <div className="relative max-w-[220px]">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-zinc-400 text-[22px]">$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-zinc-400 text-base">$</span>
                         <input
                             type="number"
                             min="3"
@@ -103,27 +103,27 @@ export function ForceConfigPane() {
                             value={defaultFeeDollars}
                             onChange={e => setDefaultFeeDollars(e.target.value)}
                             placeholder="8.00"
-                            className="w-full pl-8 pr-4 h-12 border border-zinc-200 rounded-xl font-black text-zinc-900 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 text-2xl"
+                            className="w-full pl-8 pr-4 h-11 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 text-base"
                         />
                     </div>
-                    <p className="text-zinc-400 font-medium mt-3 text-[22px]">
-                        Each approved referrer can have a custom fee set in the Active Referrers tab.
+                    <p className="text-zinc-400 font-medium mt-3 text-xs">
+                        Each approved referrer can have a custom fee set in the Partners tab.
                     </p>
                 </div>
 
                 {/* Storefront link */}
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6 flex flex-col">
-                    <h3 className="font-black text-zinc-900 mb-1 text-[26px]">Your Referrer Invite Link</h3>
-                    <p className="text-zinc-400 font-medium mb-3 text-[22px]">
+                    <h3 className="font-bold text-zinc-900 mb-1 text-base">Your Referrer Invite Link</h3>
+                    <p className="text-zinc-400 font-medium mb-3 text-xs">
                         Share this with anyone you want to invite to apply as a referrer.
                     </p>
-                    <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all flex-1 flex items-center text-[18px]">
+                    <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all flex-1 flex items-center text-sm">
                         traderefer.au/register?ref={slug}&amp;type=referrer
                     </div>
                     <button
                         onClick={copyInviteLink}
                         disabled={!slug}
-                        className="mt-3 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white rounded-xl px-4 py-3 font-bold transition-all text-[19px]"
+                        className="mt-3 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white rounded-xl px-4 py-2.5 font-bold transition-all text-sm"
                     >
                         {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         {copied ? "Copied!" : "Copy Link"}
@@ -137,8 +137,8 @@ export function ForceConfigPane() {
                             <Gift className="w-5 h-5 text-orange-400" />
                         </div>
                         <div>
-                            <h3 className="font-black text-white text-[26px]">Prezzee Reward Triggers</h3>
-                            <p className="text-zinc-400 font-medium mt-0.5 text-[22px]">
+                            <h3 className="font-black text-white text-base">Prezzee Reward Triggers</h3>
+                            <p className="text-zinc-400 font-medium mt-0.5 text-sm">
                                 Referrers automatically earn a Prezzee Smart Card after every 5 confirmed leads.
                             </p>
                         </div>
@@ -147,25 +147,25 @@ export function ForceConfigPane() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                         <div className="md:col-span-2 flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
                             <div>
-                                <p className="font-black text-white text-2xl">Milestone</p>
-                                <p className="text-zinc-400 font-medium text-[22px]">Every 5 confirmed leads</p>
+                                <p className="font-black text-white text-sm">Milestone</p>
+                                <p className="text-zinc-400 font-medium text-xs">Every 5 confirmed leads</p>
                             </div>
                             <div className="text-right">
-                                <p className="font-black text-orange-400 text-[36px]">$25</p>
-                                <p className="text-zinc-400 font-medium text-[21px]">Prezzee Smart Card</p>
+                                <p className="font-black text-orange-400 text-2xl">$25</p>
+                                <p className="text-zinc-400 font-medium text-xs">Prezzee Smart Card</p>
                             </div>
                         </div>
                         <div className="flex flex-col justify-center bg-white/5 rounded-xl px-4 py-3 gap-1">
                             <div className="flex items-center gap-2">
                                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                                <p className="text-zinc-300 font-medium text-[22px]">Auto-fulfilled</p>
+                                <p className="text-zinc-300 font-medium text-sm">Auto-fulfilled</p>
                             </div>
-                            <p className="text-zinc-500 font-medium text-[21px]">No manual action required</p>
+                            <p className="text-zinc-500 font-medium text-xs">No manual action required</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <span className="text-zinc-400 font-medium text-[17px]">Powered by</span>
+                        <span className="text-zinc-400 font-medium text-xs">Powered by</span>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={PREZZEE_LOGO} alt="Prezzee" className="h-4 w-auto brightness-0 invert" />
                     </div>
@@ -175,7 +175,7 @@ export function ForceConfigPane() {
             <button
                 onClick={save}
                 disabled={saving}
-                className="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black transition-all disabled:opacity-60 flex items-center justify-center gap-2 text-2xl h-[60px]"
+                className="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-60 flex items-center justify-center gap-2 text-base h-12"
             >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                 {saving ? "Saving…" : "Save Changes"}

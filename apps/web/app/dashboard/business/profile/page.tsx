@@ -8,7 +8,6 @@ import {
     Save,
     Image as ImageIcon,
     X,
-    ChevronLeft,
     Loader2,
     CheckCircle2,
     Shield,
@@ -289,40 +288,112 @@ export default function BusinessProfileManagementPage() {
 
     return (
         <>
-            <div className="min-h-[100dvh] bg-[#fafafa]">
-                <div className="max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 md:mb-12">
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-2 text-sm md:text-base font-semibold text-zinc-400 mb-2">
-                                <Link href="/dashboard/business" className="hover:text-zinc-800 transition-colors">Dashboard</Link>
-                                <span>/</span>
-                                <span className="text-zinc-700">Public Profile</span>
+            <div className="min-h-[100dvh] bg-zinc-50 lg:h-screen lg:overflow-hidden lg:flex lg:flex-col">
+
+                {/* ── DESKTOP HEADER ── */}
+                <div className="hidden lg:flex items-center justify-between px-6 pt-5 pb-0 shrink-0">
+                    <div>
+                        <h1 className="text-2xl font-black text-zinc-900">Public Profile</h1>
+                        <p className="text-sm font-medium text-zinc-500 mt-0.5">Manage how your business appears to customers and referrers.</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Button asChild variant="outline" className="rounded-xl h-9 px-4 border-zinc-200 text-zinc-600 font-bold text-sm">
+                            <Link href={`/b/${biz?.slug}`} target="_blank" className="flex items-center gap-2">
+                                <ExternalLink className="w-4 h-4" /> View Live
+                            </Link>
+                        </Button>
+                        <Button onClick={handleSave} disabled={saving} className="flex items-center gap-2 rounded-xl h-9 px-5 bg-orange-500 text-white text-sm font-bold hover:bg-orange-600 active:scale-95 transition-all">
+                            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                            {saving ? "Saving..." : "Save Changes"}
+                        </Button>
+                    </div>
+                </div>
+
+                {/* ── TWO-COLUMN BODY ── */}
+                <div className="flex flex-1 overflow-hidden">
+
+                    {/* ── LEFT SIDEBAR — profile preview (desktop only) ── */}
+                    <div className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 border-r border-zinc-200 bg-white overflow-y-auto">
+                        <div className="p-5 border-b border-zinc-100">
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Profile Preview</p>
+                            <div className="flex flex-col items-center text-center">
+                                <div className="w-20 h-20 rounded-2xl bg-zinc-100 flex items-center justify-center overflow-hidden mb-3 border border-zinc-200 shrink-0">
+                                    {formData.logo_url
+                                        ? <img src={formData.logo_url} alt="Logo" className="w-full h-full object-cover" />
+                                        : <User className="w-8 h-8 text-zinc-300" />}
+                                </div>
+                                <h3 className="font-black text-zinc-900 text-sm leading-tight">{formData.business_name || "Your Business Name"}</h3>
+                                {formData.trade_category && (
+                                    <span className="mt-1.5 inline-block bg-orange-50 text-orange-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-orange-100">{formData.trade_category}</span>
+                                )}
+                                {formData.suburb && (
+                                    <p className="flex items-center justify-center gap-1 text-zinc-400 font-medium text-xs mt-2">
+                                        <MapPin className="w-3 h-3" />{formData.suburb}{formData.state ? `, ${formData.state}` : ""}
+                                    </p>
+                                )}
                             </div>
-                            <h1 className="text-zinc-900 text-3xl md:text-6xl font-black font-display tracking-tight">Public Profile</h1>
-                            <p className="text-zinc-500 text-base md:text-2xl font-medium leading-relaxed">Manage how your business appears to customers and referrers.</p>
                         </div>
-                        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                            <Button
-                                asChild
-                                variant="outline"
-                                className="rounded-full h-12 md:h-14 px-6 md:px-8 border-zinc-200 text-zinc-600 font-bold hover:bg-zinc-50 w-full md:w-auto text-base md:text-xl"
-                            >
-                                <Link href={`/b/${biz?.slug}`} target="_blank" className="flex items-center gap-2">
-                                    <ExternalLink className="w-5 h-5" /> View Live
+
+                        {formData.features.length > 0 && (
+                            <div className="p-5 border-b border-zinc-100">
+                                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Highlights</p>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {formData.features.map(f => (
+                                        <span key={f} className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 text-[11px] font-bold px-2 py-1 rounded-lg border border-orange-100">{f}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="p-5">
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Profile Strength</p>
+                            <div className="space-y-2.5">
+                                {[
+                                    { label: "Logo uploaded", done: !!formData.logo_url },
+                                    { label: "Description (50+ chars)", done: formData.description.length > 50 },
+                                    { label: "Gallery (3+ photos)", done: formData.photo_urls.length >= 3 },
+                                    { label: "Service area set", done: !!formData.suburb },
+                                    { label: "Phone number", done: !!formData.business_phone },
+                                ].map(item => (
+                                    <div key={item.label} className="flex items-center gap-2">
+                                        <CheckCircle2 className={`w-4 h-4 shrink-0 ${item.done ? "text-green-500" : "text-zinc-200"}`} />
+                                        <span className={`text-xs font-medium ${item.done ? "text-zinc-700" : "text-zinc-400"}`}>{item.label}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            {biz?.slug && (
+                                <Link href={`/b/${biz.slug}`} target="_blank" className="mt-5 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold transition-all">
+                                    <ExternalLink className="w-3.5 h-3.5" /> View Live Profile
                                 </Link>
-                            </Button>
-                            <Button
-                                onClick={handleSave}
-                                disabled={saving}
-                                className="flex min-w-[160px] md:min-w-[180px] items-center justify-center rounded-full h-12 md:h-14 px-8 md:px-10 bg-orange-500 text-white text-base md:text-xl font-bold shadow-lg shadow-orange-500/30 hover:scale-[1.02] active:scale-95 transition-all w-full md:w-auto"
-                            >
-                                {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
-                                {saving ? "Saving..." : "Save Changes"}
-                            </Button>
+                            )}
                         </div>
                     </div>
 
-                    <div className="space-y-6 md:space-y-8">
+                    {/* ── MAIN CONTENT (scrollable) ── */}
+                    <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4 lg:py-5">
+
+                        {/* Mobile header */}
+                        <div className="lg:hidden mb-5">
+                            <div className="flex items-center justify-between mb-3">
+                                <div>
+                                    <h1 className="text-2xl font-black text-zinc-900">Public Profile</h1>
+                                    <p className="text-sm font-medium text-zinc-500 mt-0.5">Manage your business listing.</p>
+                                </div>
+                                <Button onClick={handleSave} disabled={saving} className="flex items-center gap-1.5 rounded-xl h-9 px-4 bg-orange-500 text-white text-sm font-bold hover:bg-orange-600 shrink-0">
+                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                    Save
+                                </Button>
+                            </div>
+                            {biz?.slug && (
+                                <Button asChild variant="outline" className="w-full rounded-xl h-10 border-zinc-200 text-sm font-bold">
+                                    <Link href={`/b/${biz.slug}`} target="_blank" className="flex items-center gap-2 justify-center">
+                                        <ExternalLink className="w-4 h-4" /> View Live Profile
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
+
+                    <div className="space-y-5 max-w-3xl">
                         {/* Identity Section */}
                         <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
                             <div className="flex items-center gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
@@ -672,6 +743,7 @@ export default function BusinessProfileManagementPage() {
                                 </p>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>

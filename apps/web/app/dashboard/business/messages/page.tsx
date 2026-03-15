@@ -41,33 +41,41 @@ function BroadcastBar() {
 
     return (
         <div className="shrink-0 border-b border-zinc-200 bg-white">
-            <div className="flex items-center justify-between px-6 py-3">
-                <p className="text-sm font-bold text-zinc-500">Messages</p>
-                <button
-                    onClick={() => setOpen(o => !o)}
-                    className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-full px-4 py-2 text-sm transition-all shadow-sm shadow-orange-200"
-                >
-                    <Megaphone className="w-3.5 h-3.5" /> Broadcast to referrers
-                    {open ? <ChevronUp className="w-3.5 h-3.5 ml-0.5" /> : <ChevronDown className="w-3.5 h-3.5 ml-0.5" />}
-                </button>
+            <div className="flex items-center justify-between px-6 pt-5 pb-3">
+                <div>
+                    <h1 className="text-2xl font-black text-zinc-900">Messages</h1>
+                    <p className="text-sm font-medium text-zinc-500 mt-0.5">Chat with referrers in your network.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setOpen(o => !o)}
+                        className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-full px-4 py-2 text-sm transition-all shadow-sm shadow-orange-200"
+                    >
+                        <Megaphone className="w-3.5 h-3.5" /> Broadcast to all referrers
+                        {open ? <ChevronUp className="w-3.5 h-3.5 ml-0.5" /> : <ChevronDown className="w-3.5 h-3.5 ml-0.5" />}
+                    </button>
+                </div>
             </div>
             {open && (
-                <div className="px-6 pb-4 flex items-end gap-3">
-                    <textarea
-                        rows={2}
-                        className="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 text-zinc-900 font-medium text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none resize-none"
-                        placeholder="e.g. We just got certified for gas fitting — let your referrer network know!"
-                        value={msg}
-                        onChange={e => setMsg(e.target.value)}
-                    />
-                    <button
-                        onClick={send}
-                        disabled={sending || !msg.trim()}
-                        className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 text-white font-black rounded-2xl px-5 py-3 text-sm transition-all shrink-0"
-                    >
-                        {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                        Send
-                    </button>
+                <div className="px-6 pb-4 space-y-2">
+                    <p className="text-xs font-medium text-zinc-400">Send one message to <span className="text-zinc-600 font-bold">all connected referrers</span> at once — great for announcing new services, certifications, or seasonal availability.</p>
+                    <div className="flex items-end gap-3">
+                        <textarea
+                            rows={2}
+                            className="flex-1 bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 text-zinc-900 font-medium text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 outline-none resize-none"
+                            placeholder="e.g. We just got certified for gas fitting — let your referrer network know!"
+                            value={msg}
+                            onChange={e => setMsg(e.target.value)}
+                        />
+                        <button
+                            onClick={send}
+                            disabled={sending || !msg.trim()}
+                            className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 text-white font-black rounded-2xl px-5 py-3 text-sm transition-all shrink-0"
+                        >
+                            {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                            Send
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

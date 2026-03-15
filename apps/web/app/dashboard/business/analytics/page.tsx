@@ -87,33 +87,31 @@ export default function AnalyticsPage() {
     if (!data) return null;
 
     return (
-        <div className="min-h-[100dvh] bg-zinc-50">
+        <div className="min-h-[100dvh] bg-zinc-50 lg:h-screen lg:overflow-hidden lg:flex lg:flex-col">
             <MobileBusinessAnalytics />
             
-            <div className="hidden lg:block max-w-[1024px] mx-auto px-4 md:px-6 lg:px-0 py-6 md:py-12">
-                <div className="mb-8 md:mb-10">
-                    <h1 className="text-5xl md:text-6xl font-extrabold text-zinc-900 tracking-tight">Analytics</h1>
-                    <p className="text-zinc-500 text-2xl mt-1">Track referrer performance, campaign ROI, and cost per customer</p>
+            <div className="hidden lg:flex flex-col flex-1 overflow-hidden">
+                <div className="flex items-center justify-between px-6 pt-5 pb-0 shrink-0">
+                    <div>
+                        <h1 className="text-2xl font-black text-zinc-900">Analytics</h1>
+                        <p className="text-sm font-medium text-zinc-500 mt-0.5">Track referrer performance, campaign ROI, and cost per customer.</p>
+                    </div>
                 </div>
+                <div className="flex-1 overflow-y-auto px-6 py-4">
 
                 {/* Summary Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-                    <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                        <div className="text-sm font-bold text-zinc-400 mb-1">Total Leads</div>
-                        <div className="text-5xl font-black text-zinc-900">{data.summary.total_leads}</div>
-                    </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                        <div className="text-sm font-bold text-zinc-400 mb-1">Confirmed</div>
-                        <div className="text-5xl font-black text-green-600">{data.summary.confirmed_leads}</div>
-                    </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                        <div className="text-sm font-bold text-zinc-400 mb-1">Total Spent</div>
-                        <div className="text-5xl font-black text-zinc-900">{cents(data.summary.total_spent_cents)}</div>
-                    </div>
-                    <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                        <div className="text-sm font-bold text-zinc-400 mb-1">Cost / Customer</div>
-                        <div className="text-5xl font-black text-orange-600">{data.summary.confirmed_leads === 0 ? "—" : cents(data.summary.cost_per_customer_cents)}</div>
-                    </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    {[
+                        { label: "Total Leads", value: data.summary.total_leads, color: "text-zinc-900" },
+                        { label: "Confirmed", value: data.summary.confirmed_leads, color: "text-green-600" },
+                        { label: "Total Spent", value: cents(data.summary.total_spent_cents), color: "text-zinc-900" },
+                        { label: "Cost / Customer", value: data.summary.confirmed_leads === 0 ? "—" : cents(data.summary.cost_per_customer_cents), color: "text-orange-600" },
+                    ].map(s => (
+                        <div key={s.label} className="bg-white rounded-2xl border border-zinc-200 p-5">
+                            <div className="text-xs font-bold text-zinc-400 mb-1">{s.label}</div>
+                            <div className={`text-3xl font-black ${s.color}`}>{s.value}</div>
+                        </div>
+                    ))}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
@@ -201,6 +199,7 @@ export default function AnalyticsPage() {
                     </div>
                 </div>
 
+                </div>
             </div>
         </div>
     );

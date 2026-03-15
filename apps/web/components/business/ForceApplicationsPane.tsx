@@ -182,7 +182,7 @@ export function ForceApplicationsPane() {
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-4 py-2 rounded-xl font-black uppercase tracking-widest transition-all text-[19px] ${filter === f ? "bg-orange-500 text-white shadow-lg" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}
+                            className={`px-4 py-2 rounded-xl font-black transition-all text-sm ${filter === f ? "bg-orange-500 text-white shadow-sm" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}
                         >
                             {f === "pending" ? `${f} (${pendingCount})` : f}
                         </button>
@@ -196,7 +196,7 @@ export function ForceApplicationsPane() {
                 ) : displayed.length === 0 ? (
                     <div className="px-4 py-12 text-center">
                         <CheckCircle className="w-10 h-10 text-zinc-200 mx-auto mb-3" />
-                        <p className="font-bold text-zinc-500 text-2xl">
+                        <p className="font-bold text-zinc-500 text-base">
                             {filter === "pending" ? "No pending applications" : "No applications yet"}
                         </p>
                     </div>
@@ -220,12 +220,12 @@ export function ForceApplicationsPane() {
                                             ) : initials}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-black text-zinc-900 line-clamp-2 uppercase tracking-tight text-[18px] leading-snug">{app.referrer_name}</p>
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest mt-1 text-[15px]">
+                                            <p className="font-bold text-zinc-900 truncate text-sm leading-snug">{app.referrer_name}</p>
+                                            <p className="font-medium text-zinc-400 mt-0.5 text-xs">
                                                 {app.referrer_suburb}{app.referrer_state ? `, ${app.referrer_state}` : ""} · ⭐ {app.quality_score}
                                             </p>
                                         </div>
-                                        <span className={`shrink-0 px-2 py-1 rounded-xl font-black uppercase tracking-widest ${cfg.bg} ${cfg.text} text-[19px]`}>
+                                        <span className={`shrink-0 px-2 py-1 rounded-lg font-bold ${cfg.bg} ${cfg.text} text-[10px] uppercase tracking-wide`}>
                                             {cfg.label}
                                         </span>
                                     </div>
@@ -261,68 +261,68 @@ export function ForceApplicationsPane() {
                                 <div className="sticky top-0 z-10 bg-orange-600 rounded-2xl px-5 py-3 mb-5 flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                         <Clock className="w-4 h-4 text-amber-400" />
-                                        <span className="font-black text-white uppercase tracking-widest text-[22px]">Applied {fmtDate(detail.applied_at)}</span>
+                                        <span className="font-bold text-white text-sm">Applied {fmtDate(detail.applied_at)}</span>
                                         {detail.reminder_count > 0 && (
-                                            <span className="text-amber-400 font-black uppercase text-[19px]">· Reminder {detail.reminder_count}/3</span>
+                                            <span className="text-amber-300 font-medium text-sm">· Reminder {detail.reminder_count}/3</span>
                                         )}
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={handleMessage}
-                                            className="flex items-center gap-1.5 h-12 px-5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all text-xl"
+                                            className="flex items-center gap-1.5 h-9 px-4 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all text-sm"
                                         >
-                                            <MessageSquare className="w-5 h-5" /> Message
+                                            <MessageSquare className="w-4 h-4" /> Message
                                         </button>
                                         <button
                                             onClick={handleReject}
                                             disabled={acting !== null}
-                                            className="flex items-center gap-1.5 h-12 px-5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl font-bold transition-all disabled:opacity-50 text-xl"
+                                            className="flex items-center gap-1.5 h-9 px-4 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl font-bold transition-all disabled:opacity-50 text-sm"
                                         >
-                                            {acting === "rejecting" ? <div className="w-5 h-5 border-2 border-red-300/30 border-t-red-300 rounded-full animate-spin" /> : <><XCircle className="w-5 h-5" /> Decline</>}
+                                            {acting === "rejecting" ? <div className="w-4 h-4 border-2 border-red-300/30 border-t-red-300 rounded-full animate-spin" /> : <><XCircle className="w-4 h-4" /> Decline</>}
                                         </button>
                                         <button
                                             onClick={handleApprove}
                                             disabled={acting !== null}
-                                            className="flex items-center gap-1.5 h-12 px-6 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-50 text-2xl"
+                                            className="flex items-center gap-1.5 h-9 px-5 bg-white text-orange-600 rounded-xl font-black transition-all disabled:opacity-50 text-sm"
                                         >
-                                            {acting === "approving" ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><CheckCircle className="w-5 h-5" /> Approve</>}
+                                            {acting === "approving" ? <div className="w-4 h-4 border-2 border-orange-200 border-t-orange-500 rounded-full animate-spin" /> : <><CheckCircle className="w-4 h-4" /> Approve</>}
                                         </button>
                                     </div>
                                 </div>
                             )}
 
                             {!isPending && (
-                                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold mb-5 ${
+                                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl font-bold mb-5 ${
                                     detail.status === "approved" ? "bg-green-50 text-green-700 border border-green-200" :
                                     detail.status === "rejected" ? "bg-red-50 text-red-700 border border-red-200" :
                                     "bg-zinc-50 text-zinc-500 border border-zinc-200"
-                                } text-[22px]`}>
-                                    {detail.status === "approved" ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-                                    {detail.status.charAt(0).toUpperCase() + detail.status.slice(1)}
-                                </div>
+                                } text-sm`}>
+                                {detail.status === "approved" ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
+                                {detail.status.charAt(0).toUpperCase() + detail.status.slice(1)}
+                            </div>
                             )}
 
                             {/* Hero card */}
                             <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm mb-4">
                                 <div className="flex items-start gap-4 mb-5">
-                                    <div className="w-20 h-20 rounded-2xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden text-3xl">
+                                    <div className="w-20 h-20 rounded-2xl bg-orange-100 flex items-center justify-center font-bold text-orange-600 shrink-0 overflow-hidden text-3xl">
                                         {ref.profile_photo_url ? (
                                             // eslint-disable-next-line @next/next/no-img-element
                                             <img src={ref.profile_photo_url} alt="" className="w-full h-full object-cover" />
                                         ) : initials}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h2 className="font-black text-zinc-900 leading-tight uppercase tracking-tighter text-[38px]">{ref.full_name}</h2>
-                                        {ref.tagline && <p className="font-bold text-zinc-500 mt-1 tracking-tight text-2xl">{ref.tagline}</p>}
-                                        <div className="flex items-center gap-4 mt-3 flex-wrap">
+                                        <h2 className="font-bold text-zinc-900 leading-tight text-xl">{ref.full_name}</h2>
+                                        {ref.tagline && <p className="font-medium text-zinc-500 mt-0.5 text-sm">{ref.tagline}</p>}
+                                        <div className="flex items-center gap-4 mt-2 flex-wrap">
                                             {(ref.suburb || ref.state) && (
-                                                <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest text-[19px]">
-                                                    <MapPin className="w-4 h-4" />{ref.suburb}{ref.state ? `, ${ref.state}` : ""}
+                                                <span className="flex items-center gap-1.5 text-zinc-400 font-medium text-sm">
+                                                    <MapPin className="w-3.5 h-3.5" />{ref.suburb}{ref.state ? `, ${ref.state}` : ""}
                                                 </span>
                                             )}
                                             {memberYear && (
-                                                <span className="flex items-center gap-1.5 text-zinc-400 font-black uppercase tracking-widest text-[19px]">
-                                                    <Briefcase className="w-4 h-4" />Member since {memberYear}
+                                                <span className="flex items-center gap-1.5 text-zinc-400 font-medium text-sm">
+                                                    <Briefcase className="w-3.5 h-3.5" />Member since {memberYear}
                                                 </span>
                                             )}
                                         </div>
@@ -337,8 +337,8 @@ export function ForceApplicationsPane() {
                                     ].map(s => (
                                         <div key={s.label} className={`${s.bg} rounded-2xl p-4 text-center border border-black/5 shadow-sm`}>
                                             <s.icon className={`w-5 h-5 ${s.text} mx-auto mb-1.5`} />
-                                            <p className="font-black text-zinc-900 tracking-tighter text-[42px]">{s.value}</p>
-                                            <p className="font-black text-zinc-400 uppercase tracking-widest text-[21px]">{s.label}</p>
+                                            <p className="font-bold text-zinc-900 text-sm">{s.value}</p>
+                                            <p className="font-bold text-zinc-400 text-xs mt-0.5">{s.label}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -347,13 +347,13 @@ export function ForceApplicationsPane() {
                                     <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-100">
                                         <div className="flex items-center gap-2 mb-2">
                                             <User className="w-5 h-5 text-orange-500" />
-                                            <span className="font-black text-zinc-700 text-2xl">About</span>
+                                            <span className="font-bold text-zinc-700 text-sm">About</span>
                                         </div>
-                                        <p className="font-medium text-zinc-700 leading-relaxed text-2xl">{ref.profile_bio}</p>
+                                        <p className="font-medium text-zinc-600 leading-relaxed text-sm">{ref.profile_bio}</p>
                                     </div>
                                 ) : (
                                     <div className="bg-zinc-50 rounded-xl p-4 border border-dashed border-zinc-200 text-center">
-                                        <p className="font-medium text-zinc-400 text-2xl">No bio added yet.</p>
+                                        <p className="font-medium text-zinc-400 text-sm">No bio added yet.</p>
                                     </div>
                                 )}
                             </div>
@@ -362,9 +362,9 @@ export function ForceApplicationsPane() {
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
                                     <div className="flex items-center gap-2 mb-2">
                                         <AlertTriangle className="w-5 h-5 text-orange-500" />
-                                        <span className="font-black text-zinc-700 text-2xl">Their intro message</span>
+                                        <span className="font-bold text-zinc-700 text-sm">Their intro message</span>
                                     </div>
-                                    <p className="font-medium text-zinc-600 leading-relaxed italic text-2xl">
+                                    <p className="font-medium text-zinc-600 leading-relaxed italic text-sm">
                                         &ldquo;{detail.message}&rdquo;
                                     </p>
                                 </div>
