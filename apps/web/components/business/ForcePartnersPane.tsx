@@ -254,7 +254,7 @@ export function ForcePartnersPane() {
                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
                         <UserCheck className="w-16 h-16 text-zinc-200 mb-4" />
                         <p className="font-black text-zinc-400 text-2xl">Select a partner</p>
-                        <p className="text-zinc-400 font-medium mt-1 text-xl">Click a partner on the left to view their profile</p>
+                        <p className="text-zinc-400 font-medium mt-1 text-xl">Click a partner on the left to view details</p>
                     </div>
                 ) : detailLoading || !detail ? (
                     <div className="flex items-center justify-center w-full h-full">
