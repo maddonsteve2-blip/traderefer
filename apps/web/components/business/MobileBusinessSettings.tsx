@@ -28,8 +28,8 @@ export function MobileBusinessSettings({
     isVerified
 }: MobileBusinessSettingsProps) {
 
-    const storefrontDisplayUrl = formData.slug ? `traderefer.com.au/b/${formData.slug}` : "traderefer.com.au/b/your-business";
-    const storefrontHref = formData.slug ? `https://traderefer.com.au/b/${formData.slug}` : "https://traderefer.com.au/b/your-business";
+    const storefrontDisplayUrl = formData.slug ? `traderefer.au/b/${formData.slug}` : "traderefer.au/b/your-business";
+    const storefrontHref = formData.slug ? `https://traderefer.au/b/${formData.slug}` : "https://traderefer.au/b/your-business";
 
     return (
         <div className="lg:hidden flex flex-col min-h-screen bg-white pb-32">

@@ -12,9 +12,7 @@ import {
     MessageSquare,
     Users,
     BarChart3,
-    Globe,
     Settings,
-    Search,
     Gift,
     User,
     ChevronRight,
@@ -24,6 +22,9 @@ import {
     X,
     Megaphone,
     Tag,
+    Building2,
+    ClipboardList,
+    UserCircle,
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { MobileBottomNav } from "./MobileBottomNav";
@@ -34,16 +35,16 @@ const BUSINESS_NAV = [
     { label: "Messages",        href: "/dashboard/business/messages",               matchPath: "/dashboard/business/messages",        icon: MessageSquare },
     { label: "Growth",          href: "/dashboard/business/force?tab=partners",     matchPath: "/dashboard/business/force",           icon: Users },
     { label: "Analytics",       href: "/dashboard/business/analytics",              matchPath: "/dashboard/business/analytics",       icon: BarChart3 },
-    { label: "Public Profile",  href: "/dashboard/business/profile",                matchPath: "/dashboard/business/profile",         icon: Globe },
+    { label: "Public Profile",  href: "/dashboard/business/profile",                matchPath: "/dashboard/business/profile",         icon: UserCircle },
     { label: "Settings",        href: "/dashboard/business/settings",               matchPath: "/dashboard/business/settings",        icon: Settings },
 ];
 
 const REFERRER_NAV = [
     { label: "Overview",        href: "/dashboard/referrer",                   matchPath: "/dashboard/referrer",                 icon: LayoutDashboard, exact: true },
-    { label: "Network",         href: "/dashboard/referrer/businesses",        matchPath: "/dashboard/referrer/businesses",      icon: Search },
+    { label: "Network",         href: "/dashboard/referrer/businesses",        matchPath: "/dashboard/referrer/businesses",      icon: Building2 },
     { label: "My Team",         href: "/dashboard/referrer/manage",            matchPath: "/dashboard/referrer/manage",          icon: Users },
     { label: "Messages",        href: "/dashboard/referrer/messages",          matchPath: "/dashboard/referrer/messages",        icon: MessageSquare },
-    { label: "Applications",    href: "/dashboard/referrer/applications",      matchPath: "/dashboard/referrer/applications",    icon: Globe },
+    { label: "Applications",    href: "/dashboard/referrer/applications",      matchPath: "/dashboard/referrer/applications",    icon: ClipboardList },
     { label: "Rewards",         href: "/dashboard/referrer/withdraw",          matchPath: "/dashboard/referrer/withdraw",        icon: Gift },
     { label: "My Profile",      href: "/dashboard/referrer/profile",           matchPath: "/dashboard/referrer/profile",         icon: User },
 ];

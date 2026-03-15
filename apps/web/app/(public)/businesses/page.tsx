@@ -62,7 +62,8 @@ async function getSuburbCentre(suburb: string, city: string, state: string): Pro
 
 async function getBusinesses(
     category?: string, suburb?: string, search?: string,
-    state?: string, city?: string, page = 1
+    state?: string, city?: string, page = 1,
+    openNow?: boolean, is24h?: boolean
 ) {
     try {
         const sCat = category?.trim() || "";
@@ -77,10 +78,39 @@ async function getBusinesses(
         const stateFilter = sState ? sql`AND state ILIKE ${sState}` : sql``;
         const searchFilter = sQ ? sql`AND (business_name ILIKE ${'%' + sQ + '%'} OR trade_category ILIKE ${'%' + sQ + '%'} OR description ILIKE ${'%' + sQ + '%'})` : sql``;
 
+        // Trading hours filters
+        const open24hFilter = is24h ? sql`
+            AND b.opening_hours IS NOT NULL
+            AND jsonb_array_length(b.opening_hours->'periods') = 1
+            AND (b.opening_hours->'periods'->0->'open'->>'day')::int = 0
+            AND (b.opening_hours->'periods'->0->'open'->>'hour')::int = 0
+            AND b.opening_hours->'periods'->0->'close' IS NULL
+        ` : sql``;
+        const openNowFilter = (openNow && !is24h) ? sql`
+            AND b.opening_hours IS NOT NULL
+            AND (
+                (jsonb_array_length(b.opening_hours->'periods') = 1
+                 AND (b.opening_hours->'periods'->0->'open'->>'day')::int = 0
+                 AND (b.opening_hours->'periods'->0->'open'->>'hour')::int = 0
+                 AND b.opening_hours->'periods'->0->'close' IS NULL)
+                OR EXISTS (
+                    SELECT 1 FROM jsonb_array_elements(b.opening_hours->'periods') p
+                    WHERE (p->'open'->>'day')::int = EXTRACT(DOW FROM NOW() AT TIME ZONE 'Australia/Sydney')::int
+                      AND (p->'open'->>'hour')::int * 60 + (p->'open'->>'minute')::int
+                          <= EXTRACT(HOUR FROM NOW() AT TIME ZONE 'Australia/Sydney')::int * 60
+                           + EXTRACT(MINUTE FROM NOW() AT TIME ZONE 'Australia/Sydney')::int
+                      AND (p->'close' IS NULL
+                           OR (p->'close'->>'hour')::int * 60 + (p->'close'->>'minute')::int
+                              > EXTRACT(HOUR FROM NOW() AT TIME ZONE 'Australia/Sydney')::int * 60
+                              + EXTRACT(MINUTE FROM NOW() AT TIME ZONE 'Australia/Sydney')::int)
+                )
+            )
+        ` : sql``;
+
         const baseWhere = sql`
             WHERE b.status = 'active'
               AND (b.listing_visibility = 'public' OR b.listing_visibility IS NULL)
-              ${catFilter} ${stateFilter} ${searchFilter}
+              ${catFilter} ${stateFilter} ${searchFilter} ${open24hFilter} ${openNowFilter}
         `;
 
         // Try exact suburb first
@@ -276,17 +306,19 @@ function buildPageUrl(searchParams: Record<string, string | undefined>, page: nu
 export default async function BusinessDirectory({
     searchParams
 }: {
-    searchParams: Promise<{ category?: string; suburb?: string; q?: string; state?: string; city?: string; page?: string }>
+    searchParams: Promise<{ category?: string; suburb?: string; q?: string; state?: string; city?: string; page?: string; openNow?: string; is24h?: string }>
 }) {
     const params = await searchParams;
     const { category, suburb, q, state, city } = params;
+    const openNow = params.openNow === "true";
+    const is24h = params.is24h === "true";
     const page = Math.max(1, parseInt(params.page || "1", 10));
     const [{ businesses, total, totalPages, nearbyFallback }, counts] = await Promise.all([
-        getBusinesses(category, suburb, q, state, city, page),
+        getBusinesses(category, suburb, q, state, city, page, openNow, is24h),
         getCounts(),
     ]);
 
-    const hasFilters = category || suburb || q || state || city;
+    const hasFilters = category || suburb || q || state || city || openNow || is24h;
 
     // Dynamic H1
     const h1Parts: string[] = [];
@@ -476,25 +508,20 @@ export default async function BusinessDirectory({
 
                 {/* ── MOBILE FILTER TOGGLE ── */}
                 <details className="lg:hidden mb-6 bg-white rounded-xl border border-zinc-200">
-                    <summary className="flex items-center gap-2 px-4 py-3 font-black text-zinc-900 text-base cursor-pointer">
-                        <Filter className="w-4 h-4" /> Filters {hasFilters && <span className="bg-[#FF6600] text-white text-xs px-2 py-0.5 rounded-full">{[state, city, suburb, category, q].filter(Boolean).length}</span>}
+                    <summary className="flex items-center gap-2 px-4 py-3 font-black text-zinc-900 cursor-pointer select-none">
+                        <Filter className="w-4 h-4 text-orange-500" /> Filters
                     </summary>
                     <div className="px-4 pb-4">
-                        <Suspense fallback={null}>
-                            <BusinessDirectorySidebar counts={counts} total={total} />
-                        </Suspense>
+                        <Suspense fallback={null}><BusinessDirectorySidebar counts={counts} total={total} /></Suspense>
                     </div>
                 </details>
 
                 {/* ── SIDEBAR + LISTINGS LAYOUT ── */}
                 <div className="flex gap-8">
                     {/* Left Sidebar (desktop only) */}
-                    <aside className="hidden lg:block w-[280px] shrink-0 sticky top-28 self-start max-h-[calc(100vh-8rem)] overflow-y-auto bg-white border border-zinc-200 rounded-2xl p-5">
-                        <Suspense fallback={null}>
-                            <BusinessDirectorySidebar counts={counts} total={total} />
-                        </Suspense>
+                    <aside className="hidden lg:block w-[280px] shrink-0 sticky top-28 self-start max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent bg-white border border-zinc-200 rounded-2xl p-5">
+                        <Suspense fallback={null}><BusinessDirectorySidebar counts={counts} total={total} /></Suspense>
                     </aside>
-
                     {/* Main Content — Single Column Listings */}
                     <div className="flex-1 min-w-0 space-y-4">
 

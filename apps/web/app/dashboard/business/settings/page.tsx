@@ -233,8 +233,8 @@ export default function BusinessSettingsPage() {
             : `${formData.response_sla_minutes / 60} hour${formData.response_sla_minutes > 60 ? "s" : ""}`
         : "Fast replies";
 
-    const storefrontDisplayUrl = formData.slug ? `traderefer.com.au/b/${formData.slug}` : "traderefer.com.au/b/your-business";
-    const storefrontHref = formData.slug ? `https://traderefer.com.au/b/${formData.slug}` : "https://traderefer.com.au/b/your-business";
+    const storefrontDisplayUrl = formData.slug ? `traderefer.au/b/${formData.slug}` : "traderefer.au/b/your-business";
+    const storefrontHref = formData.slug ? `https://traderefer.au/b/${formData.slug}` : "https://traderefer.au/b/your-business";
 
     return (
         <DashboardPage className="overflow-hidden p-0 lg:p-4">
