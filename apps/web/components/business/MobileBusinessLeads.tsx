@@ -236,7 +236,7 @@ export function MobileBusinessLeads() {
                             onClick={() => setFilter(f)}
                             className={`px-6 h-12 rounded-2xl text-xs font-black transition-all whitespace-nowrap uppercase tracking-[0.15em] border ${
                                 filter === f 
-                                    ? "bg-zinc-900 text-white border-zinc-900 shadow-lg shadow-zinc-200" 
+                                    ? "bg-orange-600 text-white border-orange-600 shadow-lg shadow-orange-200" 
                                     : "bg-white text-zinc-400 border-zinc-100"
                             }`}
                         >
