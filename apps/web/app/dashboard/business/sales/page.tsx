@@ -27,6 +27,12 @@ function SalesHubInner() {
 
     return (
         <div className="min-h-[100dvh] flex flex-col bg-zinc-50 md:h-screen md:overflow-hidden">
+            <div className="hidden lg:flex items-center justify-between px-6 pt-5 pb-0">
+                <div>
+                    <h1 className="text-2xl font-black text-zinc-900">Leads</h1>
+                    <p className="text-sm font-medium text-zinc-500 mt-0.5">Incoming leads, deals in progress, and active referrer campaigns.</p>
+                </div>
+            </div>
             <div>
                 <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
             </div>

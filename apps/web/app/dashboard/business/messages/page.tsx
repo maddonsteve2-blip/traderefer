@@ -41,15 +41,16 @@ function BroadcastBar() {
 
     return (
         <div className="shrink-0 border-b border-zinc-200 bg-white">
-            <button
-                onClick={() => setOpen(o => !o)}
-                className="w-full flex items-center justify-between px-6 py-3 hover:bg-zinc-50 transition-colors"
-            >
-                <span className="flex items-center gap-2 font-black text-zinc-700 text-sm uppercase tracking-widest">
-                    <Megaphone className="w-4 h-4 text-orange-500" /> Broadcast to all referrers
-                </span>
-                {open ? <ChevronUp className="w-4 h-4 text-zinc-400" /> : <ChevronDown className="w-4 h-4 text-zinc-400" />}
-            </button>
+            <div className="flex items-center justify-between px-6 py-3">
+                <p className="text-sm font-bold text-zinc-500">Messages</p>
+                <button
+                    onClick={() => setOpen(o => !o)}
+                    className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-full px-4 py-2 text-sm transition-all shadow-sm shadow-orange-200"
+                >
+                    <Megaphone className="w-3.5 h-3.5" /> Broadcast to referrers
+                    {open ? <ChevronUp className="w-3.5 h-3.5 ml-0.5" /> : <ChevronDown className="w-3.5 h-3.5 ml-0.5" />}
+                </button>
+            </div>
             {open && (
                 <div className="px-6 pb-4 flex items-end gap-3">
                     <textarea
