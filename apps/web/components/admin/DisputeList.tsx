@@ -48,7 +48,7 @@ export function DisputeList({ initialDisputes }: { initialDisputes: Dispute[] })
                             <Button
                                 onClick={() => setDisputeToResolve(dispute.id)}
                                 size="sm"
-                                className="bg-zinc-900 text-white rounded-full hover:bg-black px-4 flex items-center gap-2"
+                                className="bg-orange-600 text-white rounded-full hover:bg-orange-700 px-4 flex items-center gap-2"
                             >
                                 <CheckCircle2 className="w-4 h-4" /> Resolve
                             </Button>
