@@ -166,14 +166,25 @@ async def trigger_confirmed_success(lead_id: str, db: AsyncSession):
         f"referrer=${payout/100:.2f} | platform=${platform_cut/100:.2f}"
     )
 
-    # Badge check — lead_generator, lead_champion
+    # SSE: push earning_update to referrer dashboard
     if lead["referrer_id"]:
         try:
             uid_res = await db.execute(text("SELECT user_id FROM referrers WHERE id = :rid"), {"rid": lead["referrer_id"]})
             uid_row = uid_res.mappings().first()
             if uid_row and uid_row["user_id"]:
+                from services.event_bus import event_bus
+                event_bus.publish(str(uid_row["user_id"]), "earning_update", {"lead_id": lead_id, "amount_cents": payout})
+        except Exception:
+            pass
+
+    # Badge check — lead_generator, lead_champion
+    if lead["referrer_id"]:
+        try:
+            uid_res2 = await db.execute(text("SELECT user_id FROM referrers WHERE id = :rid"), {"rid": lead["referrer_id"]})
+            uid_row2 = uid_res2.mappings().first()
+            if uid_row2 and uid_row2["user_id"]:
                 from services.badge_service import check_and_award_badges
-                await check_and_award_badges(str(uid_row["user_id"]), "referrer", db)
+                await check_and_award_badges(str(uid_row2["user_id"]), "referrer", db)
         except Exception as badge_err:
             from utils.logging_config import error_logger
             error_logger.warning(f"Badge check after confirmed_success (non-fatal): {badge_err}")

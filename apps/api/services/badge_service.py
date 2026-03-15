@@ -127,6 +127,15 @@ async def check_and_award_badges(user_id: str, user_type: str, db: AsyncSession)
 
         await db.commit()
 
+        # SSE: push badge_earned to referrer dashboard
+        try:
+            from services.event_bus import event_bus
+            for bid in newly_awarded:
+                bdef = badge_map.get(bid)
+                event_bus.publish(user_id, "badge_earned", {"badge_id": bid, "label": bdef[1] if bdef else bid})
+        except Exception:
+            pass
+
         # Fire email/SMS after commit (non-fatal)
         for badge_id in newly_awarded:
             badge_def = badge_map.get(badge_id)

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Flame } from "lucide-react";
+import { useLiveEvent } from "@/hooks/useLiveEvents";
 
 interface FeedEvent { emoji: string; text: string; type: string; ts: string }
 
@@ -39,6 +40,31 @@ export function SocialProofTicker() {
             } catch { /* non-fatal */ }
         })();
     }, [isLoaded, isSignedIn, getToken]);
+
+    // SSE: inject live events into the ticker as they happen
+    const SSE_TYPE_MAP: Record<string, { emoji: string; textFn: (p: Record<string, unknown>) => string; type: string }> = {
+        badge_earned:   { emoji: "🎖️", textFn: (p) => `A referrer just unlocked ${p.label || "a new badge"}!`, type: "badge" },
+        earning_update: { emoji: "💰", textFn: () => "A referrer just got a lead confirmed and earned!", type: "lead_confirmed" },
+        lead_new:       { emoji: "🚀", textFn: (p) => `A new lead just came in from ${p.suburb || "Australia"}!`, type: "signup" },
+    };
+
+    const injectEvent = useCallback((sseType: string, payload: Record<string, unknown>) => {
+        const mapping = SSE_TYPE_MAP[sseType];
+        if (!mapping) return;
+        const newEvent: FeedEvent = {
+            emoji: mapping.emoji,
+            text: mapping.textFn(payload),
+            type: mapping.type,
+            ts: new Date().toISOString(),
+        };
+        setEvents(prev => [newEvent, ...prev].slice(0, 20));
+        // Jump to the new event immediately
+        setIdx(0);
+    }, []);
+
+    useLiveEvent("badge_earned", (e) => injectEvent("badge_earned", e.payload));
+    useLiveEvent("earning_update", (e) => injectEvent("earning_update", e.payload));
+    useLiveEvent("lead_new", (e) => injectEvent("lead_new", e.payload));
 
     useEffect(() => {
         if (events.length <= 1) return;

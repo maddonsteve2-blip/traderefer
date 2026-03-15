@@ -151,6 +151,13 @@ async def apply_to_business(
         )
         await db.commit()
 
+        # SSE: push application_new to business dashboard
+        try:
+            from services.event_bus import event_bus
+            event_bus.publish(str(biz_user_row["user_id"]), "application_new", {"app_id": str(app_id), "referrer_name": ref["full_name"]})
+        except Exception:
+            pass
+
     # Email + SMS to business
     try:
         if biz["business_email"]:
@@ -479,6 +486,13 @@ async def approve_application(
             }
         )
         await db.commit()
+
+        # SSE: push application_status to referrer dashboard
+        try:
+            from services.event_bus import event_bus
+            event_bus.publish(str(app["referrer_user_id"]), "application_status", {"status": "approved", "business_name": app["business_name"]})
+        except Exception:
+            pass
 
     # Email + SMS
     try:

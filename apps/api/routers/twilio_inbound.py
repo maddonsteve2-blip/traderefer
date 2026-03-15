@@ -213,7 +213,17 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
     from services.sms import send_sms_claimed_new_lead, send_sms_unclaimed_teaser, _send_sms
 
     lead_logger.info(f"Screening PASSED | lead={lead_id} | is_claimed={row['is_claimed']} | email={row['business_email']} | phone={row['business_phone']}")
-    
+
+    # SSE: push new lead event to business dashboard
+    try:
+        from services.event_bus import event_bus
+        biz_uid_res = await db.execute(text("SELECT user_id FROM businesses WHERE id = :id"), {"id": row["business_id"]})
+        biz_uid_row = biz_uid_res.mappings().first()
+        if biz_uid_row and biz_uid_row["user_id"]:
+            event_bus.publish(str(biz_uid_row["user_id"]), "lead_new", {"lead_id": lead_id, "suburb": row["consumer_suburb"]})
+    except Exception:
+        pass
+
     # Send thank you message to consumer
     if row["consumer_phone"]:
         thank_you_msg = (

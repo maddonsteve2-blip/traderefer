@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { PinConfirmationModal } from "@/components/dashboard/PinConfirmationModal";
 import { toast } from "sonner";
+import { useLiveEvent } from "@/hooks/useLiveEvents";
 
 interface Lead {
     id: string;
@@ -98,6 +99,10 @@ export function SalesLeadsPane() {
     }, [getToken, apiUrl]);
 
     useEffect(() => { if (isLoaded) fetchLeads(); }, [isLoaded, fetchLeads]);
+
+    // SSE: refresh leads when new lead arrives or one gets unlocked
+    useLiveEvent("lead_new", () => { fetchLeads(); });
+    useLiveEvent("lead_unlocked", () => { fetchLeads(); });
 
     const handleUnlock = async (leadId: string) => {
         setUnlocking(leadId);

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Bell, Check, ExternalLink, X } from "lucide-react";
 import Link from "next/link";
+import { useLiveEvent } from "@/hooks/useLiveEvents";
 
 interface Notification {
     id: string;
@@ -60,46 +61,47 @@ export function NotificationBell() {
 
     const apiUrl = "/api/backend";
 
+    const fetchCount = useCallback(async () => {
+        try {
+            const token = await getToken();
+            const res = await fetch(`${apiUrl}/api/notifications/unread-count`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                const newCount = data.count;
+                
+                if (newCount > lastCountRef.current) {
+                    const notifyRes = await fetch(`${apiUrl}/api/notifications?limit=1`, {
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    if (notifyRes.ok) {
+                        const latestArr = await notifyRes.json();
+                        const latest = Array.isArray(latestArr) ? latestArr[0] : null;
+                        const soundFile = latest?.type === 'new_message' ? '/sounds/message.mp3' : '/sounds/notification.mp3';
+                        try {
+                            const audio = new Audio(soundFile);
+                            audio.play().catch(() => {});
+                        } catch {}
+                    }
+                }
+                
+                setUnreadCount(newCount);
+                lastCountRef.current = newCount;
+            }
+        } catch {}
+    }, [getToken, apiUrl]);
+
+    // Initial fetch on mount
     useEffect(() => {
         if (!isSignedIn) return;
-        const fetchCount = async () => {
-            try {
-                const token = await getToken();
-                const res = await fetch(`${apiUrl}/api/notifications/unread-count`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    const newCount = data.count;
-                    
-                    if (newCount > lastCountRef.current) {
-                        // To decide which sound to play, we need to know the type of the latest notification
-                        const notifyRes = await fetch(`${apiUrl}/api/notifications?limit=1`, {
-                            headers: { Authorization: `Bearer ${token}` },
-                        });
-                        if (notifyRes.ok) {
-                            const latestArr = await notifyRes.json();
-                            const latest = Array.isArray(latestArr) ? latestArr[0] : null;
-                            
-                            // Choose sound based on type
-                            const soundFile = latest?.type === 'new_message' ? '/sounds/message.mp3' : '/sounds/notification.mp3';
-                            
-                            try {
-                                const audio = new Audio(soundFile);
-                                audio.play().catch(() => {});
-                            } catch {}
-                        }
-                    }
-                    
-                    setUnreadCount(newCount);
-                    lastCountRef.current = newCount;
-                }
-            } catch {}
-        };
         fetchCount();
-        const interval = setInterval(fetchCount, 30000);
-        return () => clearInterval(interval);
-    }, [isSignedIn, getToken, apiUrl]);
+    }, [isSignedIn, fetchCount]);
+
+    // SSE: re-fetch instantly when any notification arrives
+    useLiveEvent("notification", () => {
+        fetchCount();
+    });
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {

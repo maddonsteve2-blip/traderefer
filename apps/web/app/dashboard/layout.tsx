@@ -1,9 +1,12 @@
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { LiveEventsProvider } from "@/contexts/LiveEventsProvider";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     return (
-        <DashboardShell>
-            {children}
-        </DashboardShell>
+        <LiveEventsProvider>
+            <DashboardShell>
+                {children}
+            </DashboardShell>
+        </LiveEventsProvider>
     );
 }

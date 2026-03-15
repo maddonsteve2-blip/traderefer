@@ -20,6 +20,13 @@ async def create_notification(db: AsyncSession, user_id: str, type: str, title: 
     )
     await db.commit()
 
+    # Push real-time SSE event
+    try:
+        from services.event_bus import event_bus
+        event_bus.publish(user_id, "notification", {"notif_type": type, "title": title, "body": body, "link": link})
+    except Exception:
+        pass
+
 
 async def notify_all_referrers_for_business(db: AsyncSession, business_id, type: str, title: str, body: str = None, link: str = None):
     """Send a notification to all referrers connected to a business."""

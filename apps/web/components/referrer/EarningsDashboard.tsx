@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import {
     TrendingUp, TrendingDown, Award, Target,
     Loader2, Zap, Crown, Star, Flame
 } from "lucide-react";
 import { toast } from "sonner";
+import { useLiveEvent } from "@/hooks/useLiveEvents";
 
 interface Stats {
     tier: string;
@@ -58,27 +59,31 @@ export function EarningsDashboard() {
     const [goalInput, setGoalInput] = useState("");
     const apiUrl = "/api/backend";
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const token = await getToken();
-                const res = await fetch(`${apiUrl}/referrer/stats`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setStats(data);
-                    if (data.monthly_goal_cents) {
-                        setGoalInput(String(data.monthly_goal_cents / 100));
-                    }
+    const fetchStats = useCallback(async () => {
+        try {
+            const token = await getToken();
+            const res = await fetch(`${apiUrl}/referrer/stats`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setStats(data);
+                if (data.monthly_goal_cents) {
+                    setGoalInput(String(data.monthly_goal_cents / 100));
                 }
-            } catch {
-                // silent
-            } finally {
-                setLoading(false);
             }
-        })();
-    }, [getToken]);
+        } catch {
+            // silent
+        } finally {
+            setLoading(false);
+        }
+    }, [getToken, apiUrl]);
+
+    useEffect(() => { fetchStats(); }, [fetchStats]);
+
+    // SSE: refresh stats when earnings change or badge earned
+    useLiveEvent("earning_update", () => { fetchStats(); });
+    useLiveEvent("badge_earned", () => { fetchStats(); });
 
     const saveGoal = async () => {
         const val = parseFloat(goalInput);

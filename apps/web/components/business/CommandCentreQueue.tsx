@@ -7,6 +7,7 @@ import {
     UserPlus, Target, ArrowRight, Star, Trophy,
     Loader2, Clock, CheckCircle, TrendingUp, Inbox
 } from "lucide-react";
+import { useLiveEvent } from "@/hooks/useLiveEvents";
 
 interface PendingApp {
     id: string;
@@ -97,6 +98,10 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
     }, [getToken, apiUrl]);
 
     useEffect(() => { if (isLoaded) fetchApps(); }, [isLoaded, fetchApps]);
+
+    // SSE: refresh when new applications or leads arrive
+    useLiveEvent("application_new", () => { fetchApps(); });
+    useLiveEvent("lead_new", () => { router.refresh(); });
 
     const safeRecentLeads = Array.isArray(recentLeads) ? recentLeads : [];
     const newLeads = safeRecentLeads.filter(l => PENDING_STATUSES.includes(l.status));

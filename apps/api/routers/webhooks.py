@@ -130,6 +130,24 @@ async def stripe_webhook(
             
             await db.commit()
 
+            # SSE: push real-time events to connected dashboards
+            try:
+                from services.event_bus import event_bus
+                # Notify business of lead unlock
+                biz_uid_res = await db.execute(text("SELECT user_id FROM businesses WHERE id = :id"), {"id": business_id})
+                biz_uid_row = biz_uid_res.mappings().first()
+                if biz_uid_row and biz_uid_row["user_id"]:
+                    event_bus.publish(str(biz_uid_row["user_id"]), "lead_unlocked", {"lead_id": lead_id})
+                    event_bus.publish(str(biz_uid_row["user_id"]), "wallet_updated", {"lead_id": lead_id})
+                # Notify referrer of earning
+                if referrer_id:
+                    ref_uid_res = await db.execute(text("SELECT user_id FROM referrers WHERE id = :id"), {"id": referrer_id})
+                    ref_uid_row = ref_uid_res.mappings().first()
+                    if ref_uid_row and ref_uid_row["user_id"]:
+                        event_bus.publish(str(ref_uid_row["user_id"]), "earning_update", {"lead_id": lead_id, "amount_cents": payout_amount})
+            except Exception:
+                pass
+
             # Email: notify business of unlocked lead with full contact details
             full_lead = await db.execute(text("""
                 SELECT l.consumer_name, l.consumer_phone, l.consumer_email, l.consumer_suburb, l.job_description,
@@ -246,5 +264,15 @@ async def stripe_wallet_topup_webhook(
             )
             await db.commit()
             payment_logger.info(f"Wallet top-up via webhook: business {business_id} +${amount/100:.2f}")
+
+            # SSE: push wallet update to business dashboard
+            try:
+                from services.event_bus import event_bus
+                biz_uid_res = await db.execute(text("SELECT user_id FROM businesses WHERE id = :id"), {"id": business_id})
+                biz_uid_row = biz_uid_res.mappings().first()
+                if biz_uid_row and biz_uid_row["user_id"]:
+                    event_bus.publish(str(biz_uid_row["user_id"]), "wallet_updated", {"new_balance_cents": new_balance})
+            except Exception:
+                pass
 
     return {"status": "success"}
