@@ -55,7 +55,7 @@ app.include_router(twilio_inbound.router, prefix="/twilio", tags=["Twilio"])
 app.include_router(invitations.router, prefix="/invitations", tags=["Invitations"])
 app.include_router(business_invitations.router, prefix="/business/invitations", tags=["Business Invitations"])
 app.include_router(applications.router, prefix="/applications", tags=["Applications"])
-app.include_router(badges_router.router, prefix="/api", tags=["Badges"])
+app.include_router(badges_router.router, prefix="", tags=["Badges"])
 app.include_router(events_router.router, prefix="/api", tags=["Events"])
 
 @app.get("/")
