@@ -60,7 +60,7 @@ export function WithdrawalForm({ maxClaimCents, totalPendingCents }: { maxClaimC
                 <p className="text-zinc-500 mb-10 font-medium text-lg lg:text-xl leading-relaxed">
                     We've emailed your link. You can open it instantly to select your brand.
                 </p>
-                <Button onClick={() => setStatus("idle")} className="bg-zinc-900 hover:bg-black text-white rounded-full px-10 h-16 font-black text-xl shadow-xl active:scale-95 transition-all">
+                <Button onClick={() => setStatus("idle")} className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-10 h-16 font-black text-xl shadow-xl shadow-orange-500/20 active:scale-95 transition-all">
                     Done
                 </Button>
             </div>

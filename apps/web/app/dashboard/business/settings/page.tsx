@@ -211,9 +211,9 @@ export default function BusinessSettingsPage() {
     const handleCopyStorefrontUrl = async () => {
         try {
             await navigator.clipboard.writeText(storefrontHref);
-            toast.success("Storefront URL copied");
+            toast.success("Profile URL copied");
         } catch {
-            toast.error("Could not copy storefront URL");
+            toast.error("Could not copy profile URL");
         }
     };
 
@@ -382,7 +382,7 @@ export default function BusinessSettingsPage() {
                                                 type="button"
                                                 onClick={handleCopyStorefrontUrl}
                                                 className="inline-flex h-12 w-12 items-center justify-center rounded-xl border border-orange-200 bg-white text-orange-600 hover:bg-orange-100 transition-colors shrink-0"
-                                                aria-label="Copy storefront URL"
+                                                aria-label="Copy profile URL"
                                             >
                                                 <Copy className="w-5 h-5" />
                                             </button>
@@ -434,7 +434,7 @@ export default function BusinessSettingsPage() {
                             <DashboardSection>
                                 <DashboardSectionHeader>
                                     <DashboardSectionTitle>Referral Fee Settings</DashboardSectionTitle>
-                                    <DashboardSectionDescription>Set the commercial signal that makes your storefront feel premium to referrers.</DashboardSectionDescription>
+                                    <DashboardSectionDescription>Set the commercial signal that makes your profile feel premium to referrers.</DashboardSectionDescription>
                                 </DashboardSectionHeader>
 
                                 <DashboardAccentCard className="space-y-5 p-8">

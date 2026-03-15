@@ -1492,7 +1492,7 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                     <Button
                                         onClick={handleNext}
                                         disabled={isGenerating || !chatDone}
-                                        className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                                        className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-orange-500/20 disabled:opacity-40 disabled:cursor-not-allowed"
                                     >
                                         {isGenerating ? (
                                             <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating...</>
@@ -1505,7 +1505,7 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                 <Button
                                     onClick={() => { if (selectedProfileIndex >= 0) setProfileLocked(true); }}
                                     disabled={isGenerating || selectedProfileIndex < 0}
-                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-zinc-200"
+                                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-orange-500/20"
                                 >
                                     <CheckCircle2 className="w-5 h-5 mr-2" /> Lock In Profile <ChevronRight className="ml-2 w-5 h-5 md:w-6 md:h-6" />
                                 </Button>
@@ -1513,7 +1513,7 @@ Return ONLY this JSON (no wrapping, no "profiles" array, just one flat object):
                                 <Button
                                     onClick={handleNext}
                                     disabled={isLoading || isGenerating || (step === 4 && formData.referral_fee_cents < 300) || isUploadingMedia}
-                                    className="flex-1 bg-zinc-900 hover:bg-black text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-zinc-200"
+                                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full h-14 md:h-16 text-lg md:text-xl font-black shadow-xl shadow-orange-500/20"
                                 >
                                     {isLoading ? 'Completing...' : step === 6 ? (isClaiming ? 'View My Free Lead' : 'Go to Dashboard') : 'Continue'} <ChevronRight className="ml-2 w-5 h-5 md:w-6 md:h-6" />
                                 </Button>

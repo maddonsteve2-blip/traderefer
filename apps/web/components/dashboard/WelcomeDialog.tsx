@@ -104,7 +104,7 @@ export function WelcomeDialog() {
                     <div className="px-6 pb-8 flex flex-col gap-3">
                         <Button
                             onClick={handleInvite}
-                            className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 font-black text-xl shadow-xl shadow-zinc-200 active:scale-95 transition-all"
+                            className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-16 font-black text-xl shadow-xl shadow-orange-500/20 active:scale-95 transition-all"
                         >
                             <Users className="w-5 h-5 mr-2" />
                             Invite Friends Now
