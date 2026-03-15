@@ -89,7 +89,7 @@ export default async function ReferPublicPage({
 
                 <Link
                     href={`/join/referrer?next=/dashboard/referrer/refer/${slug}`}
-                    className="w-full flex items-center justify-center gap-3 bg-zinc-900 hover:bg-zinc-800 text-white font-black text-lg md:text-xl rounded-2xl h-16 md:h-18 transition-all shadow-xl shadow-zinc-200 active:scale-95"
+                    className="w-full flex items-center justify-center gap-3 bg-orange-600 hover:bg-orange-700 text-white font-black text-lg md:text-xl rounded-2xl h-16 md:h-18 transition-all shadow-xl shadow-orange-500/20 active:scale-95"
                 >
                     Join & Start Earning <ArrowRight className="w-5 h-5" />
                 </Link>
