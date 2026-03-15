@@ -2,21 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Gift, MessageSquare, Search, Target, TrendingUp } from "lucide-react";
+import { LayoutGrid, Gift, MessageSquare, Building2, Target, Users, User } from "lucide-react";
 import { motion } from "framer-motion";
 
 const BUSINESS_TABS = [
     { label: "HOME", href: "/dashboard/business", icon: LayoutGrid, exact: true },
     { label: "LEADS", href: "/dashboard/business/sales?tab=leads", icon: Target, matchPrefixes: ["/dashboard/business/sales"] },
     { label: "MESSAGES", href: "/dashboard/business/messages", icon: MessageSquare, matchPrefixes: ["/dashboard/business/messages"] },
-    { label: "GROWTH", href: "/dashboard/business/force?tab=partners", icon: TrendingUp, matchPrefixes: ["/dashboard/business/force"] },
+    { label: "PARTNERS", href: "/dashboard/business/force?tab=partners", icon: Users, matchPrefixes: ["/dashboard/business/force"] },
 ];
 
 const REFERRER_TABS = [
     { label: "HOME", href: "/dashboard/referrer", icon: LayoutGrid, exact: true },
-    { label: "NETWORK", href: "/dashboard/referrer/businesses", icon: Search, matchPrefixes: ["/dashboard/referrer/businesses", "/dashboard/referrer/manage", "/dashboard/referrer/applications", "/dashboard/referrer/refer"] },
+    { label: "NETWORK", href: "/dashboard/referrer/businesses", icon: Building2, matchPrefixes: ["/dashboard/referrer/businesses", "/dashboard/referrer/manage", "/dashboard/referrer/applications", "/dashboard/referrer/refer"] },
     { label: "MESSAGES", href: "/dashboard/referrer/messages", icon: MessageSquare, matchPrefixes: ["/dashboard/referrer/messages"] },
     { label: "REWARDS", href: "/dashboard/referrer/withdraw", icon: Gift, matchPrefixes: ["/dashboard/referrer/withdraw"] },
+    { label: "PROFILE", href: "/dashboard/referrer/profile", icon: User, matchPrefixes: ["/dashboard/referrer/profile"] },
 ];
 
 export function MobileBottomNav() {

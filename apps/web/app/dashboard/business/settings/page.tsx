@@ -513,7 +513,7 @@ export default function BusinessSettingsPage() {
                                             className="h-16 min-w-[240px] rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black uppercase tracking-wide text-xl shadow-lg shadow-orange-500/20"
                                         >
                                             {verifying ? <Loader2 className="w-6 h-6 animate-spin" /> : <Shield className="w-6 h-6" />}
-                                            {verifying ? "Verifying..." : "Verify ABN"}
+                                            {verifying ? "Verifying..." : "Start ABN Verification"}
                                         </Button>
                                     </div>
                                     {biz?.is_verified && (
@@ -542,7 +542,7 @@ export default function BusinessSettingsPage() {
                     <div className="w-full h-full flex flex-col px-4 md:px-6 xl:px-8 py-4 md:py-6">
                         <div className="flex items-center gap-2 mb-4 shrink-0">
                             <Eye className="w-4 h-4 text-zinc-400" />
-                            <span className="font-black text-zinc-400 uppercase tracking-widest text-sm">Live Preview</span>
+                            <span className="font-black text-zinc-400 uppercase tracking-widest text-sm">Partner&rsquo;s View</span>
                         </div>
 
                         <div className="flex-1 min-h-0 flex items-center justify-center overflow-hidden">

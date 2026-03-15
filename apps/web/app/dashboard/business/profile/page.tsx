@@ -362,7 +362,8 @@ export default function BusinessProfileManagementPage() {
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs md:text-sm font-black uppercase tracking-wider text-zinc-400 ml-1 block">Public Handle (Slug)</label>
+                                            <label className="text-xs md:text-sm font-black uppercase tracking-wider text-zinc-400 ml-1 block">Profile URL</label>
+                                            <p className="text-xs text-zinc-400 font-medium ml-1 mb-1">Your public address: traderefer.au/b/[your-handle]</p>
                                             <div className="flex items-center bg-zinc-50 rounded-xl px-4 py-3.5">
                                                 <span className="text-zinc-400 mr-1 text-base md:text-lg">/b/</span>
                                                 <input
