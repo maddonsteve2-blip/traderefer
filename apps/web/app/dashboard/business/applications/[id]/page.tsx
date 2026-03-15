@@ -151,17 +151,33 @@ export default function BusinessApplicationDetailPage() {
                     </div>
                 )}
 
-                {/* Status badge (for non-pending) */}
-                {!isPending && (
-                    <div className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold mb-6 ${
-                        app.status === "approved" ? "bg-green-50 text-green-700 border border-green-200" :
-                        app.status === "rejected" ? "bg-red-50 text-red-700 border border-red-200" :
-                        "bg-zinc-50 text-zinc-500 border border-zinc-200"
-                    }`}>
-                        {app.status === "approved" ? <CheckCircle className="w-5 h-5" /> :
-                         app.status === "rejected" ? <XCircle className="w-5 h-5" /> :
-                         <AlertTriangle className="w-5 h-5" />}
-                        {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                {/* Status bar (for non-pending) */}
+                {!isPending && app.status === "rejected" && (
+                    <div className="bg-zinc-700 rounded-2xl px-5 py-3 mb-6 flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                            <XCircle className="w-4 h-4 text-red-400" />
+                            <span className="font-bold text-white text-sm">Declined · Archived</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={handleMessage}
+                                className="flex items-center gap-1.5 h-9 px-4 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all text-sm"
+                            >
+                                <MessageSquare className="w-4 h-4" /> Message
+                            </button>
+                            <button
+                                onClick={handleApprove}
+                                disabled={acting !== null}
+                                className="flex items-center gap-1.5 h-9 px-5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-black transition-all disabled:opacity-50 text-sm"
+                            >
+                                {acting === "approving" ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><CheckCircle className="w-4 h-4" /> Reconsider</>}
+                            </button>
+                        </div>
+                    </div>
+                )}
+                {!isPending && app.status === "approved" && (
+                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold mb-6 bg-green-50 text-green-700 border border-green-200">
+                        <CheckCircle className="w-5 h-5" /> Approved
                     </div>
                 )}
 

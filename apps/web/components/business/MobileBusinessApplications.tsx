@@ -21,7 +21,7 @@ export function MobileBusinessApplications() {
     const router = useRouter();
     const [apps, setApps] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState<"pending" | "all">("pending");
+    const [filter, setFilter] = useState<"pending" | "declined" | "all">("pending");
 
     const fetchApps = useCallback(async () => {
         const token = await getToken();
@@ -41,8 +41,9 @@ export function MobileBusinessApplications() {
     useEffect(() => { if (isLoaded) fetchApps(); }, [isLoaded, fetchApps]);
 
     const displayed = (Array.isArray(apps) ? apps : []).filter(a => {
-        if (filter !== "pending") return true;
-        return ["pending", "applied", "new"].includes(a.status.toLowerCase());
+        if (filter === "pending") return ["pending", "applied", "new"].includes(a.status.toLowerCase());
+        if (filter === "declined") return a.status === "rejected";
+        return true;
     });
 
     if (loading) {
@@ -59,18 +60,15 @@ export function MobileBusinessApplications() {
 
             {/* Filter */}
             <div className="flex bg-[#F4F4F5] p-1 rounded-2xl mb-6">
-                <button 
-                    onClick={() => setFilter("pending")}
-                    className={`flex-1 flex items-center justify-center h-11 rounded-xl text-[14px] font-black uppercase tracking-widest transition-all ${filter === "pending" ? "bg-white text-orange-600 shadow-sm" : "text-zinc-400"}`}
-                >
-                    Pending
-                </button>
-                <button 
-                    onClick={() => setFilter("all")}
-                    className={`flex-1 flex items-center justify-center h-11 rounded-xl text-[14px] font-black uppercase tracking-widest transition-all ${filter === "all" ? "bg-white text-orange-600 shadow-sm" : "text-zinc-400"}`}
-                >
-                    All History
-                </button>
+                {(["pending", "declined", "all"] as const).map(f => (
+                    <button
+                        key={f}
+                        onClick={() => setFilter(f)}
+                        className={`flex-1 flex items-center justify-center h-11 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all ${filter === f ? "bg-white text-orange-600 shadow-sm" : "text-zinc-400"}`}
+                    >
+                        {f === "pending" ? "Pending" : f === "declined" ? "Declined" : "All"}
+                    </button>
+                ))}
             </div>
 
             <div className="flex flex-col gap-4">
@@ -112,8 +110,12 @@ export function MobileBusinessApplications() {
                                     <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
                                         Applied {new Date(app.applied_at).toLocaleDateString()}
                                     </span>
-                                    <span className="text-[11px] font-black px-3 py-1 bg-orange-600 text-white rounded-full uppercase tracking-widest">
-                                        REVIEW
+                                    <span className={`text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${
+                                        app.status === "rejected" ? "bg-zinc-600 text-white" :
+                                        app.status === "approved" ? "bg-green-600 text-white" :
+                                        "bg-orange-600 text-white"
+                                    }`}>
+                                        {app.status === "rejected" ? "ARCHIVED" : app.status === "approved" ? "APPROVED" : "REVIEW"}
                                     </span>
                                 </div>
                             </button>

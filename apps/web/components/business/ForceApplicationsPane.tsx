@@ -63,8 +63,9 @@ export function ForceApplicationsPane() {
     const [apps, setApps] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
-    const [filter, setFilter] = useState<"pending" | "all">("pending");
+    const [filter, setFilter] = useState<"pending" | "declined" | "all">("pending");
     const [pendingCount, setPendingCount] = useState(0);
+    const [rejectedCount, setRejectedCount] = useState(0);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [detail, setDetail] = useState<ApplicationDetail | null>(null);
     const [detailLoading, setDetailLoading] = useState(false);
@@ -80,6 +81,7 @@ export function ForceApplicationsPane() {
             const data = await res.json();
             setApps(data.applications ?? []);
             setPendingCount(data.pending_count ?? 0);
+            setRejectedCount(data.rejected_count ?? 0);
         }
         setLoading(false);
     }, [getToken, apiUrl]);
@@ -161,7 +163,28 @@ export function ForceApplicationsPane() {
     };
 
     const PENDING_STATUSES = ["pending", "applied", "new", "submitted", "under_review"];
-    const displayed = filter === "pending" ? apps.filter(a => PENDING_STATUSES.includes((a.status ?? "").toLowerCase())) : apps;
+    const displayed = filter === "pending" ? apps.filter(a => PENDING_STATUSES.includes((a.status ?? "").toLowerCase()))
+        : filter === "declined" ? apps.filter(a => a.status === "rejected")
+        : apps;
+
+    const handleReconsider = async () => {
+        if (!selectedId || !detail) return;
+        setActing("approving");
+        const token = await getToken();
+        const res = await fetch(`${apiUrl}/applications/business/${selectedId}/approve`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        setActing(null);
+        if (res.ok) {
+            toast.success(`${detail.referrer.full_name} has been approved!`);
+            setSelectedId(null);
+            fetchApps();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            toast.error(err.detail || "Something went wrong.");
+        }
+    };
 
     const handleSelect = (applicationId: string) => {
         if (isMobile) {
@@ -178,13 +201,13 @@ export function ForceApplicationsPane() {
             <div className="w-full md:w-[400px] shrink-0 border-r border-zinc-200 overflow-y-auto bg-white flex flex-col">
                 {/* Filter bar */}
                 <div className="sticky top-0 bg-white border-b border-zinc-100 px-4 py-3 flex gap-2 z-10">
-                    {(["pending", "all"] as const).map(f => (
+                    {(["pending", "declined", "all"] as const).map(f => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-3 py-1.5 rounded-full border font-semibold transition-all text-sm ${filter === f ? "bg-orange-500 text-white border-orange-500 shadow-sm" : "bg-white text-zinc-600 border-zinc-200 hover:border-zinc-300"}`}
                         >
-                            {f === "pending" ? `${f} (${pendingCount})` : f}
+                            {f === "pending" ? `pending (${pendingCount})` : f === "declined" ? `declined (${rejectedCount})` : f}
                         </button>
                     ))}
                 </div>
@@ -295,15 +318,33 @@ export function ForceApplicationsPane() {
                                 </div>
                             )}
 
-                            {!isPending && (
-                                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl font-bold mb-5 ${
-                                    detail.status === "approved" ? "bg-green-50 text-green-700 border border-green-200" :
-                                    detail.status === "rejected" ? "bg-red-50 text-red-700 border border-red-200" :
-                                    "bg-zinc-50 text-zinc-500 border border-zinc-200"
-                                } text-sm`}>
-                                {detail.status === "approved" ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-                                {detail.status.charAt(0).toUpperCase() + detail.status.slice(1)}
-                            </div>
+                            {!isPending && detail.status === "rejected" && (
+                                <div className="bg-zinc-700 rounded-2xl px-5 py-3 mb-5 flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                        <XCircle className="w-4 h-4 text-red-400" />
+                                        <span className="font-bold text-white text-sm">Declined · Archived</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={handleMessage}
+                                            className="flex items-center gap-1.5 h-9 px-4 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold transition-all text-sm"
+                                        >
+                                            <MessageSquare className="w-4 h-4" /> Message
+                                        </button>
+                                        <button
+                                            onClick={handleReconsider}
+                                            disabled={acting !== null}
+                                            className="flex items-center gap-1.5 h-9 px-5 bg-green-500 hover:bg-green-600 text-white rounded-xl font-black transition-all disabled:opacity-50 text-sm"
+                                        >
+                                            {acting === "approving" ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><CheckCircle className="w-4 h-4" /> Reconsider &amp; Approve</>}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                            {!isPending && detail.status === "approved" && (
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl font-bold mb-5 bg-green-50 text-green-700 border border-green-200 text-sm">
+                                    <CheckCircle className="w-5 h-5" /> Approved
+                                </div>
                             )}
 
                             {/* Hero card */}

@@ -365,7 +365,8 @@ async def list_pending_applications(
             "tagline": row["tagline"],
         })
     pending_count = sum(1 for a in apps if a["status"] == "pending")
-    return {"applications": apps, "pending_count": pending_count}
+    rejected_count = sum(1 for a in apps if a["status"] == "rejected")
+    return {"applications": apps, "pending_count": pending_count, "rejected_count": rejected_count}
 
 
 @router.get("/business/{application_id}")
@@ -445,7 +446,7 @@ async def approve_application(
     app = app_res.mappings().first()
     if not app:
         raise HTTPException(status_code=404, detail="Application not found")
-    if app["status"] != "pending":
+    if app["status"] not in ("pending", "rejected"):
         raise HTTPException(status_code=400, detail=f"Application is already {app['status']}")
 
     referrer_id = app["referrer_id"]
