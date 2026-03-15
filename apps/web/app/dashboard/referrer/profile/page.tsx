@@ -4,9 +4,9 @@ import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
-    MapPin, Briefcase, CheckCircle, Edit3,
+    MapPin, Briefcase, CheckCircle, Edit3, ArrowLeft,
     Save, Eye, TrendingUp, ExternalLink, Award, Camera, Video, CalendarDays,
-    ShieldCheck, Zap, Crown, Trophy, Star,
+    ShieldCheck, Zap, Crown, Trophy, Star, Target, Users,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -447,97 +447,219 @@ export default function ReferrerProfilePage() {
                     </div>
 
                     {/* ── RIGHT: PREVIEW PANE ── */}
-                    <div className="flex-1 h-auto md:h-full bg-zinc-50 overflow-y-visible md:overflow-y-auto flex items-start justify-center p-6 md:p-8 order-2">
-                        <div className="w-full max-w-xl space-y-3">
-                            <div className="flex items-center gap-2 mb-3 px-1">
-                                <Eye className="w-4 h-4 text-zinc-400" />
-                                <span className="font-semibold text-zinc-400 text-xs">Business View — how businesses see your profile</span>
-                            </div>
+                    <div className="flex-1 h-auto md:h-full bg-zinc-50 overflow-y-visible md:overflow-y-auto p-4 md:p-6 order-2">
+                        {/* Label */}
+                        <div className="flex items-center gap-2 mb-3">
+                            <Eye className="w-4 h-4 text-zinc-400" />
+                            <span className="font-semibold text-zinc-400 text-xs">Business View — exact copy of the live profile</span>
+                        </div>
 
-                            {/* Hero card */}
-                            <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
-                                <div className="h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-amber-400" />
-                                <div className="p-5">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden text-xl ring-2 ring-orange-100">
-                                            {(photoUrl || profile.profile_photo_url) ? (
-                                                // eslint-disable-next-line @next/next/no-img-element
-                                                <img src={photoUrl || profile.profile_photo_url!} alt="" className="w-full h-full object-cover" />
-                                            ) : initials}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex flex-wrap items-center gap-1.5 mb-1">
-                                                <p className="font-black text-zinc-900 text-base">{profile.full_name}</p>
-                                                {(() => { const s = profile.quality_score; const ql = s >= 96 ? {l:'Elite',c:'bg-amber-50 border-amber-200 text-amber-700'} : s >= 80 ? {l:'Expert',c:'bg-orange-50 border-orange-200 text-orange-700'} : s >= 60 ? {l:'Active',c:'bg-blue-50 border-blue-200 text-blue-700'} : {l:'Growing',c:'bg-green-50 border-green-200 text-green-700'}; return <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border ${ql.c}`}><Zap className="w-2.5 h-2.5" /> {ql.l}</span>; })()}
-                                                <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700"><ShieldCheck className="w-2.5 h-2.5" /> Verified</span>
-                                            </div>
-                                            {(profile.suburb || profile.state) && <p className="flex items-center gap-1 text-xs text-zinc-500 font-medium mb-1"><MapPin className="w-3 h-3 text-orange-400" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}</p>}
-                                            {(tagline || profile.tagline) && <p className="text-xs italic font-semibold text-orange-600 truncate">&ldquo;{tagline || profile.tagline}&rdquo;</p>}
-                                        </div>
-                                        <div className="shrink-0 bg-zinc-50 border border-zinc-200 rounded-xl p-2.5 text-center min-w-[72px]">
-                                            <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wide">Score</p>
-                                            <p className="text-2xl font-black text-zinc-900 leading-tight">{profile.quality_score}<span className="text-xs text-zinc-300">/100</span></p>
-                                            <div className="mt-1 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                                                <div className={`h-full rounded-full ${profile.quality_score >= 96 ? 'bg-amber-400' : profile.quality_score >= 80 ? 'bg-orange-400' : profile.quality_score >= 60 ? 'bg-blue-400' : 'bg-green-400'}`} style={{ width: `${profile.quality_score}%` }} />
-                                            </div>
-                                        </div>
+                        {/* ── MINI NAV BAR ── */}
+                        <div className="bg-white border border-zinc-100 rounded-xl px-4 py-2 flex items-center gap-3 mb-3">
+                            <span className="flex items-center gap-1 text-xs font-semibold text-zinc-500">
+                                <ArrowLeft className="w-3 h-3" /> My Profile
+                            </span>
+                            <div className="flex-1" />
+                            <span className="hidden sm:block text-[9px] font-medium text-zinc-400 bg-zinc-50 border border-zinc-200 px-2 py-1 rounded-full">Business View · What businesses see when reviewing your application</span>
+                        </div>
+
+                        {/* ── HERO CARD ── */}
+                        <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden mb-3">
+                            <div className="h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-amber-400" />
+                            <div className="px-5 py-5">
+                                <div className="flex flex-col sm:flex-row items-start gap-4">
+                                    {/* Avatar */}
+                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden text-xl ring-[3px] ring-orange-50">
+                                        {(photoUrl || profile.profile_photo_url) ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img src={photoUrl || profile.profile_photo_url!} alt="" className="w-full h-full object-cover" />
+                                        ) : initials}
                                     </div>
+                                    {/* Info */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                                            <p className="font-black text-zinc-900 text-base">{profile.full_name}</p>
+                                            {(() => { const s = profile.quality_score; const ql = s >= 96 ? {l:'Elite',c:'bg-amber-50 border-amber-200 text-amber-700'} : s >= 80 ? {l:'Expert',c:'bg-orange-50 border-orange-200 text-orange-700'} : s >= 60 ? {l:'Active',c:'bg-blue-50 border-blue-200 text-blue-700'} : {l:'Growing',c:'bg-green-50 border-green-200 text-green-700'}; return <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border ${ql.c}`}><Zap className="w-2.5 h-2.5" /> {ql.l} Referrer</span>; })()}
+                                            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700"><ShieldCheck className="w-2.5 h-2.5" /> Verified</span>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-3 mb-2">
+                                            {(profile.suburb || profile.state) && <span className="flex items-center gap-1 text-xs text-zinc-500 font-medium"><MapPin className="w-3 h-3 text-orange-400" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}</span>}
+                                            {memberYear && <span className="flex items-center gap-1 text-xs text-zinc-500 font-medium"><CalendarDays className="w-3 h-3 text-zinc-400" /> Member since {memberYear}</span>}
+                                        </div>
+                                        {(tagline || profile.tagline) && <p className="text-xs italic font-semibold text-orange-600 mb-3">&ldquo;{tagline || profile.tagline}&rdquo;</p>}
+                                        {/* Earned badge chips — same as live */}
+                                        {(() => {
+                                            const yrs = profile.member_since ? new Date().getFullYear() - new Date(profile.member_since).getFullYear() : 0;
+                                            const earned = [
+                                                { label: 'Verified Member',  show: true,                             cls: 'bg-emerald-50 border-emerald-200 text-emerald-700', icon: ShieldCheck, ic: 'text-emerald-500' },
+                                                { label: 'Elite Referrer',   show: profile.quality_score >= 96,      cls: 'bg-amber-50 border-amber-200 text-amber-700',       icon: Crown,       ic: 'text-amber-500' },
+                                                { label: 'Top Performer',    show: profile.quality_score >= 80,      cls: 'bg-orange-50 border-orange-200 text-orange-700',     icon: Trophy,      ic: 'text-orange-500' },
+                                                { label: 'Rising Star',      show: profile.quality_score >= 60,      cls: 'bg-blue-50 border-blue-200 text-blue-700',           icon: Star,        ic: 'text-blue-400' },
+                                                { label: 'Lead Champion',    show: profile.confirmed_referrals >= 5, cls: 'bg-violet-50 border-violet-200 text-violet-700',     icon: Target,      ic: 'text-violet-500' },
+                                                { label: 'Lead Generator',   show: profile.confirmed_referrals >= 1, cls: 'bg-sky-50 border-sky-200 text-sky-700',              icon: TrendingUp,  ic: 'text-sky-500' },
+                                                { label: 'Power Networker',  show: profile.businesses_linked >= 3,   cls: 'bg-green-50 border-green-200 text-green-700',        icon: Users,       ic: 'text-green-500' },
+                                                { label: 'Networker',        show: profile.businesses_linked >= 1,   cls: 'bg-teal-50 border-teal-200 text-teal-700',           icon: Briefcase,   ic: 'text-teal-500' },
+                                                { label: 'Veteran',          show: yrs >= 2,                         cls: 'bg-purple-50 border-purple-200 text-purple-700',     icon: Award,       ic: 'text-purple-500' },
+                                            ].filter(b => b.show);
+                                            return earned.length > 0 ? (
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {earned.map(b => (
+                                                        <span key={b.label} title={b.label} className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] font-bold border ${b.cls}`}>
+                                                            <b.icon className={`w-3 h-3 ${b.ic}`} /> {b.label}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            ) : null;
+                                        })()}
+                                    </div>
+                                    {/* Quality Score widget */}
+                                    <div className="shrink-0 bg-zinc-50 border border-zinc-200 rounded-2xl p-3 text-center min-w-[80px] self-start">
+                                        <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wide mb-1">Quality Score</p>
+                                        <p className="text-2xl font-black text-zinc-900 leading-none">{profile.quality_score}<span className="text-xs font-black text-zinc-300">/100</span></p>
+                                        <div className="mt-2 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                                            <div className={`h-full rounded-full ${profile.quality_score >= 96 ? 'bg-amber-400' : profile.quality_score >= 80 ? 'bg-orange-400' : profile.quality_score >= 60 ? 'bg-blue-400' : 'bg-green-400'}`} style={{ width: `${profile.quality_score}%` }} />
+                                        </div>
+                                        <p className={`text-[9px] font-bold mt-1 ${profile.quality_score >= 96 ? 'text-amber-600' : profile.quality_score >= 80 ? 'text-orange-600' : profile.quality_score >= 60 ? 'text-blue-600' : 'text-green-600'}`}>
+                                            {profile.quality_score >= 96 ? 'Elite' : profile.quality_score >= 80 ? 'Expert' : profile.quality_score >= 60 ? 'Active' : 'Growing'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                    {/* Earned badges */}
+                        {/* ── TWO-COLUMN BODY (mirrors live layout) ── */}
+                        <div className="grid grid-cols-1 lg:grid-cols-[1fr_190px] gap-3 items-start">
+
+                            {/* LEFT: About + Badges */}
+                            <div className="space-y-3">
+                                {/* About */}
+                                {(bio || profile.profile_bio) ? (
+                                    <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-4">
+                                        <h2 className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider mb-3 pl-2.5 border-l-2 border-orange-500">
+                                            About {profile.full_name.split(" ")[0]}
+                                        </h2>
+                                        <p className="text-xs font-medium text-zinc-700 leading-relaxed line-clamp-4">{bio || profile.profile_bio}</p>
+                                    </div>
+                                ) : (
+                                    <div className="bg-white rounded-2xl border border-dashed border-zinc-200 p-4 text-center">
+                                        <p className="text-xs font-medium text-zinc-400 italic">No professional summary added yet.</p>
+                                    </div>
+                                )}
+
+                                {/* Badges & Achievements */}
+                                <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-4">
+                                    <h2 className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider mb-1 pl-2.5 border-l-2 border-orange-500">Badges &amp; Achievements</h2>
+                                    <p className="text-[10px] text-zinc-400 mb-3 pl-2.5 mt-1">Earned through activity and performance on TradeRefer</p>
                                     {(() => {
-                                        const earned = [
-                                            { label: 'Verified',       show: true,                              cls: 'bg-emerald-50 border-emerald-200 text-emerald-700', icon: ShieldCheck, ic: 'text-emerald-500' },
-                                            { label: 'Elite Referrer', show: profile.quality_score >= 96,       cls: 'bg-amber-50 border-amber-200 text-amber-700',       icon: Crown,       ic: 'text-amber-500' },
-                                            { label: 'Top Performer',  show: profile.quality_score >= 80,       cls: 'bg-orange-50 border-orange-200 text-orange-700',     icon: Trophy,      ic: 'text-orange-500' },
-                                            { label: 'Rising Star',    show: profile.quality_score >= 60,       cls: 'bg-blue-50 border-blue-200 text-blue-700',           icon: Star,        ic: 'text-blue-400' },
-                                            { label: 'Lead Generator', show: profile.confirmed_referrals >= 1,  cls: 'bg-sky-50 border-sky-200 text-sky-700',              icon: TrendingUp,  ic: 'text-sky-500' },
-                                            { label: 'Networker',      show: profile.businesses_linked >= 1,    cls: 'bg-teal-50 border-teal-200 text-teal-700',           icon: Briefcase,   ic: 'text-teal-500' },
-                                        ].filter(b => b.show);
-                                        return earned.length > 0 ? (
-                                            <div className="flex flex-wrap gap-1.5 mt-4">
-                                                {earned.map(b => (
-                                                    <span key={b.label} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border ${b.cls}`}>
-                                                        <b.icon className={`w-3 h-3 ${b.ic}`} /> {b.label}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        ) : null;
+                                        const yrs = profile.member_since ? new Date().getFullYear() - new Date(profile.member_since).getFullYear() : 0;
+                                        const ALL = [
+                                            { label: 'Verified Member',  show: true,                             cls: 'bg-emerald-50 border-emerald-200 text-emerald-700', icon: ShieldCheck, ic: 'text-emerald-500' },
+                                            { label: 'Elite Referrer',   show: profile.quality_score >= 96,      cls: 'bg-amber-50 border-amber-200 text-amber-700',       icon: Crown,       ic: 'text-amber-500' },
+                                            { label: 'Top Performer',    show: profile.quality_score >= 80,      cls: 'bg-orange-50 border-orange-200 text-orange-700',     icon: Trophy,      ic: 'text-orange-500' },
+                                            { label: 'Rising Star',      show: profile.quality_score >= 60,      cls: 'bg-blue-50 border-blue-200 text-blue-700',           icon: Star,        ic: 'text-blue-400' },
+                                            { label: 'Lead Champion',    show: profile.confirmed_referrals >= 5, cls: 'bg-violet-50 border-violet-200 text-violet-700',     icon: Target,      ic: 'text-violet-500' },
+                                            { label: 'Lead Generator',   show: profile.confirmed_referrals >= 1, cls: 'bg-sky-50 border-sky-200 text-sky-700',              icon: TrendingUp,  ic: 'text-sky-500' },
+                                            { label: 'Power Networker',  show: profile.businesses_linked >= 3,   cls: 'bg-green-50 border-green-200 text-green-700',        icon: Users,       ic: 'text-green-500' },
+                                            { label: 'Networker',        show: profile.businesses_linked >= 1,   cls: 'bg-teal-50 border-teal-200 text-teal-700',           icon: Briefcase,   ic: 'text-teal-500' },
+                                            { label: 'Veteran',          show: yrs >= 2,                         cls: 'bg-purple-50 border-purple-200 text-purple-700',     icon: Award,       ic: 'text-purple-500' },
+                                        ];
+                                        const earned = ALL.filter(b => b.show);
+                                        const locked = ALL.filter(b => !b.show);
+                                        return (
+                                            <>
+                                                {earned.length > 0 && (
+                                                    <div className="flex flex-wrap gap-2 mb-3">
+                                                        {earned.map(b => (
+                                                            <div key={b.label} className={`flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl border ${b.cls} min-w-[80px] text-center`}>
+                                                                <b.icon className={`w-4 h-4 ${b.ic}`} />
+                                                                <div>
+                                                                    <p className="text-[10px] font-bold leading-tight">{b.label}</p>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                {locked.length > 0 && (
+                                                    <div>
+                                                        <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider mb-2">Locked — keep growing to unlock</p>
+                                                        <div className="flex flex-wrap gap-1.5">
+                                                            {locked.map(b => (
+                                                                <div key={b.label} className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-zinc-100 bg-zinc-50 opacity-50">
+                                                                    <b.icon className="w-3 h-3 text-zinc-400" />
+                                                                    <span className="text-[10px] font-semibold text-zinc-400">{b.label}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
+                                        );
                                     })()}
                                 </div>
                             </div>
 
-                            {/* Track record */}
-                            <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
-                                <div className="divide-y divide-zinc-50">
-                                    {([
-                                        { label: 'Confirmed Leads',     value: profile.confirmed_referrals,    icon: TrendingUp,   color: 'text-blue-500',   bg: 'bg-blue-50' },
-                                        { label: 'Active Partnerships', value: profile.businesses_linked,      icon: Briefcase,    color: 'text-green-500',  bg: 'bg-green-50' },
-                                        { label: 'Member Since',        value: memberYear ?? '—',              icon: CalendarDays, color: 'text-zinc-500',   bg: 'bg-zinc-100' },
-                                    ] as const).map(stat => (
-                                        <div key={stat.label} className="flex items-center gap-3 px-4 py-3">
-                                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${stat.bg}`}>
-                                                <stat.icon className={`w-3.5 h-3.5 ${stat.color}`} />
+                            {/* RIGHT SIDEBAR */}
+                            <div className="space-y-3">
+                                {/* Track Record */}
+                                <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+                                    <div className="px-4 pt-3 pb-1">
+                                        <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wide">Track Record</h3>
+                                    </div>
+                                    <div className="divide-y divide-zinc-50">
+                                        {([
+                                            { label: 'Confirmed Leads',     value: profile.confirmed_referrals,    icon: TrendingUp,   color: 'text-blue-500',   bg: 'bg-blue-50' },
+                                            { label: 'Active Partnerships', value: profile.businesses_linked,      icon: Briefcase,    color: 'text-green-500',  bg: 'bg-green-50' },
+                                            { label: 'Quality Score',       value: `${profile.quality_score}/100`, icon: CheckCircle,  color: 'text-orange-500', bg: 'bg-orange-50' },
+                                            { label: 'Member Since',        value: memberYear ?? '—',              icon: CalendarDays, color: 'text-zinc-500',   bg: 'bg-zinc-100' },
+                                        ] as const).map(stat => (
+                                            <div key={stat.label} className="flex items-center gap-2 px-4 py-2.5">
+                                                <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${stat.bg} shrink-0`}>
+                                                    <stat.icon className={`w-3 h-3 ${stat.color}`} />
+                                                </div>
+                                                <p className="flex-1 text-[10px] font-medium text-zinc-600 truncate">{stat.label}</p>
+                                                <p className="text-xs font-black text-zinc-900 shrink-0">{stat.value}</p>
                                             </div>
-                                            <p className="flex-1 text-xs font-medium text-zinc-600">{stat.label}</p>
-                                            <p className="text-sm font-black text-zinc-900">{stat.value}</p>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* CTA */}
+                                <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-2xl p-4">
+                                    <p className="text-[9px] font-semibold text-zinc-500 uppercase tracking-wide mb-0.5">Interested?</p>
+                                    <p className="text-[11px] font-bold text-zinc-800 mb-3 leading-snug">Add {profile.full_name.split(" ")[0]} to your referral network and start receiving quality leads</p>
+                                    <div className="flex items-center justify-center w-full bg-orange-500 text-white rounded-xl h-8 text-[11px] font-bold">
+                                        View Referral Network
+                                    </div>
+                                </div>
+
+                                {/* Next badge */}
+                                {(() => {
+                                    const yrs = profile.member_since ? new Date().getFullYear() - new Date(profile.member_since).getFullYear() : 0;
+                                    const locked = [
+                                        { label: 'Elite Referrer',   show: profile.quality_score >= 96,      icon: Crown      },
+                                        { label: 'Top Performer',    show: profile.quality_score >= 80,      icon: Trophy     },
+                                        { label: 'Rising Star',      show: profile.quality_score >= 60,      icon: Star       },
+                                        { label: 'Lead Champion',    show: profile.confirmed_referrals >= 5, icon: Target     },
+                                        { label: 'Lead Generator',   show: profile.confirmed_referrals >= 1, icon: TrendingUp },
+                                        { label: 'Power Networker',  show: profile.businesses_linked >= 3,   icon: Users      },
+                                        { label: 'Networker',        show: profile.businesses_linked >= 1,   icon: Briefcase  },
+                                        { label: 'Veteran',          show: yrs >= 2,                         icon: Award      },
+                                    ].filter(b => !b.show);
+                                    if (locked.length === 0) return null;
+                                    const next = locked[0];
+                                    return (
+                                        <div className="bg-white border border-zinc-200 rounded-2xl p-3">
+                                            <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wide mb-2">Next Badge to Unlock</p>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-8 h-8 rounded-xl bg-zinc-50 border border-zinc-200 flex items-center justify-center">
+                                                    <next.icon className="w-4 h-4 text-zinc-400" />
+                                                </div>
+                                                <p className="text-xs font-bold text-zinc-700">{next.label}</p>
+                                            </div>
                                         </div>
-                                    ))}
-                                </div>
+                                    );
+                                })()}
                             </div>
-
-                            {/* Bio preview */}
-                            {(bio || profile.profile_bio) ? (
-                                <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm p-4">
-                                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 pl-3 border-l-2 border-orange-500">About</p>
-                                    <p className="text-sm font-medium text-zinc-700 leading-relaxed line-clamp-4">{bio || profile.profile_bio}</p>
-                                </div>
-                            ) : (
-                                <div className="bg-white border border-dashed border-zinc-200 rounded-2xl p-4 text-center">
-                                    <p className="text-xs font-medium text-zinc-400 italic">Add a bio on the left to fill this section…</p>
-                                </div>
-                            )}
-
-                            <p className="text-center text-[11px] text-zinc-400 font-medium pt-1">Full profile also shows Badges &amp; Achievements section</p>
                         </div>
                     </div>
                 </div>
