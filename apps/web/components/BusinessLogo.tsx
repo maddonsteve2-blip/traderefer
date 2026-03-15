@@ -17,13 +17,13 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls }: { logoUr
 
     if (displayUrl && !failed) {
         return (
-            <div className={`${sizeClasses[size]} rounded-2xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-zinc-200 relative`}>
+            <div className={`${sizeClasses[size]} rounded-2xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-zinc-200 relative bg-white`}>
                 <img
                     src={displayUrl}
                     alt={name}
                     width={200}
                     height={200}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain p-1"
                     onError={() => setFailed(true)}
                 />
             </div>
