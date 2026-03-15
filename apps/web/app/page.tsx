@@ -45,7 +45,7 @@ export default function HomePage() {
           <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-[#1A1A1A] mb-4 md:mb-6 leading-[1.1] tracking-tight font-display">
             Australia&apos;s Verified{" "}
             <span className="text-[#FF6600]">Trade Referral</span>{" "}
-            Marketplace.
+            Marketplace
           </h1>
           <p className="text-xl md:text-2xl lg:text-3xl text-gray-600 mb-8 md:mb-16 max-w-3xl mx-auto leading-relaxed">
             Built on Trust, Paid on Success. The smartest way to scale your trade business.

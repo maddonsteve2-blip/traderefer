@@ -37,6 +37,7 @@ function extractPostcode(address: string | null | undefined): string | null {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { trade, suburb, city, state } = await params;
     const tradeName = formatSlug(trade);
+    const tradeNamePlural = tradeName.endsWith('s') ? tradeName : tradeName + 's';
     const suburbName = formatSlug(suburb);
     const cityName = formatSlug(city);
     const stateUpper = state.toUpperCase();
@@ -148,6 +149,7 @@ async function getCityReferralCount(city: string): Promise<number> {
 export default async function TradeLocationPage({ params }: PageProps) {
     const { trade, suburb, city, state } = await params;
     const tradeName = formatSlug(trade);
+    const tradeNamePlural = tradeName.endsWith('s') ? tradeName : tradeName + 's';
     const suburbName = formatSlug(suburb);
     const cityName = formatSlug(city);
     const stateName = state.toUpperCase();
@@ -352,7 +354,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                         <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
                             <span className="text-[#FF6600]">{tradeName}</span> in {suburbWithPostcode}{cityDisplay}
                         </h1>
-                        <p className="text-base sm:text-lg font-bold text-zinc-600 mb-4">Find trusted {tradeName.toLowerCase()} near {suburbName} — ABN-verified, community-ranked</p>
+                        <p className="text-base sm:text-lg font-bold text-zinc-600 mb-4">Find trusted {tradeNamePlural.toLowerCase()} near {suburbName} — ABN-verified, community-ranked</p>
                         <p className="text-gray-700 mb-6 max-w-2xl text-base sm:text-lg md:text-xl" style={{ lineHeight: 1.7 }}>
                             {localizedIntro}
                         </p>
@@ -508,7 +510,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                             {relatedJobs.length > 0 && (
                                 <div className="flex flex-wrap gap-2">
                                     <span className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-zinc-900 text-white rounded-full font-bold" style={{ fontSize: '14px' }}>
-                                        <Search className="w-3.5 h-3.5" /> All {tradeName}
+                                        <Search className="w-3.5 h-3.5" /> All {tradeNamePlural}
                                     </span>
                                     {relatedJobs.map((job) => (
                                         <Link
@@ -524,7 +526,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
 
                             <div className="flex items-center justify-between">
                                 <h2 className="text-2xl font-black text-zinc-900">
-                                    {businesses.length} {tradeName} Businesses Found
+                                    {businesses.length} {tradeNamePlural} Found
                                 </h2>
                                 <div className="text-zinc-500 font-medium" style={{ fontSize: '16px' }}>
                                     Sorted by Trust Score
@@ -743,7 +745,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
                                         <h2 className="text-2xl font-black text-zinc-900 mb-2 flex items-center gap-2">
                                             <DollarSign className="w-6 h-6 text-orange-500" />
-                                            How Much Do {tradeName} Cost in {suburbName}?
+                                            How Much Do {tradeNamePlural} Cost in {suburbName}?
                                         </h2>
                                         <p className="text-lg text-zinc-500 mb-6" style={{lineHeight: '1.6'}}>Pricing data based on Australian industry averages for {stateName}.</p>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -890,7 +892,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     <div className="pt-2">
                                         <p className="leading-relaxed">
                                             {businesses.length > 0
-                                                ? <>Currently there are {businesses.length} trusted <span className="font-bold text-zinc-800">{tradeName.toLowerCase()}</span> listed in <span className="font-bold text-zinc-800">{suburbName}</span>. Our directory prioritizes businesses based on community verified links and historical performance.</>
+                                                ? <>Currently there are {businesses.length} trusted <span className="font-bold text-zinc-800">{tradeNamePlural.toLowerCase()}</span> listed in <span className="font-bold text-zinc-800">{suburbName}</span>. Our directory prioritizes businesses based on community verified links and historical performance.</>
                                                 : <>Be the first <span className="font-bold text-zinc-800">{tradeName.toLowerCase()}</span> to list in <span className="font-bold text-zinc-800">{suburbName}</span>. TradeRefer prioritizes businesses based on community referrals and ABN verification.</>
                                             }
                                         </p>
@@ -1035,7 +1037,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
             <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-zinc-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] py-3 px-4 md:px-6">
                 <div className="container mx-auto flex items-center justify-between gap-4">
                     <div className="hidden sm:block">
-                        <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>{businesses.length} verified {tradeName.toLowerCase()} in {suburbName}</p>
+                        <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>{businesses.length} verified {tradeNamePlural.toLowerCase()} in {suburbName}</p>
                         <p className="text-zinc-500 text-sm">ABN-checked · Pay only when you win</p>
                     </div>
                     <div className="flex items-center gap-3 w-full sm:w-auto">

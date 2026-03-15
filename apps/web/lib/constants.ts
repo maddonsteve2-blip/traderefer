@@ -2858,13 +2858,14 @@ export function generateLocalizedIntro(
     const suburbKey = suburbName.toLowerCase().replace(/\s+/g, "-");
     const ctx = SUBURB_CONTEXT[suburbKey];
     const cost = TRADE_COST_GUIDE[tradeName];
+    const tradeNamePlural = tradeName.endsWith('s') ? tradeName : tradeName + 's';
 
     const reviewText = totalReviews && totalReviews > 0
         ? ` across ${totalReviews.toLocaleString()} Google reviews`
         : "";
 
     const countText = businessCount > 0
-        ? `TradeRefer currently lists ${businessCount} verified ${tradeName.toLowerCase()} in ${suburbName} with an average Google rating of ${avgRating}★${reviewText}.`
+        ? `TradeRefer currently lists ${businessCount} verified ${tradeNamePlural.toLowerCase()} in ${suburbName} with an average Google rating of ${avgRating}★${reviewText}.`
         : `${tradeName} services are in high demand in ${suburbName} — be among the first to list your business and connect with local customers.`;
 
     let localDetail: string;
@@ -2876,7 +2877,7 @@ export function generateLocalizedIntro(
             localDetail = `${suburbName}'s ${ctx.housing} and ${ctx.climate} mean local ${tradeName.toLowerCase()} contractors understand the specific requirements of properties in the ${ctx.region} area.`;
         }
     } else {
-        localDetail = `Local ${tradeName.toLowerCase()} businesses in ${suburbName} bring specialist knowledge of ${cityName}'s building regulations, soil conditions, and climate — delivering better results than tradies without local experience.`;
+        localDetail = `Local ${tradeNamePlural.toLowerCase()} in ${suburbName} bring specialist knowledge of ${cityName}'s building regulations, soil conditions, and climate — delivering better results than tradies without local experience.`;
     }
 
     const licenceInfo = STATE_LICENSING[tradeName]?.[stateName.toUpperCase()];
@@ -2885,7 +2886,7 @@ export function generateLocalizedIntro(
         : "";
 
     const priceText = cost
-        ? `Qualified ${tradeName.toLowerCase()} in ${suburbName} typically charge $${cost.low}–$${cost.high}${cost.unit} depending on job complexity. `
+        ? `Qualified ${tradeNamePlural.toLowerCase()} in ${suburbName} typically charge $${cost.low}–$${cost.high}${cost.unit} depending on job complexity. `
         : "";
 
     return `${priceText}${localDetail} ${countText}${licenceText} All businesses listed on TradeRefer are ABN-verified and ranked by real community referrals — not paid placement.`;

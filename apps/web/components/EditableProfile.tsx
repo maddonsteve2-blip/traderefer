@@ -507,6 +507,20 @@ export function EditableContactField({
                 ? (value.startsWith("http") ? value : `https://${value}`)
                 : undefined;
 
+    // Format AU phone numbers: +61XXXXXXXXX → 04XX XXX XXX
+    const formatAUPhone = (phone: string): string => {
+        if (!phone) return phone;
+        const digits = phone.replace(/\D/g, '');
+        const local = digits.startsWith('61') ? '0' + digits.slice(2) : digits;
+        if (local.startsWith('04') && local.length === 10) {
+            return `${local.slice(0, 4)} ${local.slice(4, 7)} ${local.slice(7)}`;
+        }
+        if (local.length === 10) {
+            return `(${local.slice(0, 2)}) ${local.slice(2, 6)} ${local.slice(6)}`;
+        }
+        return phone;
+    };
+
     // Clean display for website URLs: strip protocol, www, UTM params, trailing slash
     const cleanWebsiteDisplay = (url: string) => {
         try {
@@ -524,7 +538,9 @@ export function EditableContactField({
             </div>
             <div className="min-w-0 flex-1">
                 <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>{label}</p>
-                {type === "website" && !(context?.isOwner && context.editMode) ? (
+                {type === "phone" && !(context?.isOwner && context.editMode) ? (
+                    <p className="font-bold text-[#FF6600]" style={{ fontSize: '16px' }}>{formatAUPhone(value)}</p>
+                ) : type === "website" && !(context?.isOwner && context.editMode) ? (
                     <p className="font-bold text-[#FF6600] truncate" style={{ fontSize: '16px' }}>{cleanWebsiteDisplay(value)}</p>
                 ) : (
                     <EditableText

@@ -260,7 +260,16 @@ export default async function PublicProfilePage({
                         <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>
                             <Link href="/" className="hover:text-zinc-900 transition-colors">Home</Link>
                             <ChevronRight className="w-4 h-4" />
-                            <Link href="/businesses" className="hover:text-zinc-900 transition-colors">Directory</Link>
+                            {business.state && business.suburb && business.trade_category ? (
+                                <Link
+                                    href={`/local/${business.state.toLowerCase()}/${business.suburb.toLowerCase().replace(/\s+/g, '-')}/${business.suburb.toLowerCase().replace(/\s+/g, '-')}/${business.trade_category.toLowerCase().replace(/\s+/g, '-')}`}
+                                    className="hover:text-zinc-900 transition-colors"
+                                >
+                                    {business.trade_category} in {business.suburb}
+                                </Link>
+                            ) : (
+                                <Link href="/businesses" className="hover:text-zinc-900 transition-colors">Directory</Link>
+                            )}
                             <ChevronRight className="w-4 h-4" />
                             <span className="text-[#FF6600]">{business.business_name}</span>
                         </nav>
