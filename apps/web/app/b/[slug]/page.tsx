@@ -257,22 +257,54 @@ export default async function PublicProfilePage({
                 {/* ── BREADCRUMBS ── */}
                 <div className="bg-white border-b border-zinc-100 pt-20 md:pt-28 pb-3">
                     <div className="container mx-auto px-4">
-                        <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>
-                            <Link href="/" className="hover:text-zinc-900 transition-colors">Home</Link>
-                            <ChevronRight className="w-4 h-4" />
+                        <nav className="flex items-center gap-1.5 text-sm text-zinc-500">
+                            <Link href="/" className="hover:text-zinc-800 transition-colors">Home</Link>
+                            <ChevronRight className="w-3.5 h-3.5 text-zinc-300" />
                             {business.state && business.suburb && business.trade_category ? (
                                 <Link
                                     href={`/local/${business.state.toLowerCase()}/${business.suburb.toLowerCase().replace(/\s+/g, '-')}/${business.suburb.toLowerCase().replace(/\s+/g, '-')}/${business.trade_category.toLowerCase().replace(/\s+/g, '-')}`}
-                                    className="hover:text-zinc-900 transition-colors"
+                                    className="hover:text-zinc-800 transition-colors"
                                 >
                                     {business.trade_category} in {business.suburb}
                                 </Link>
                             ) : (
-                                <Link href="/businesses" className="hover:text-zinc-900 transition-colors">Directory</Link>
+                                <Link href="/businesses" className="hover:text-zinc-800 transition-colors">Directory</Link>
                             )}
-                            <ChevronRight className="w-4 h-4" />
-                            <span className="text-[#FF6600]">{business.business_name}</span>
+                            <ChevronRight className="w-3.5 h-3.5 text-zinc-300" />
+                            <span className="text-zinc-900 font-semibold">{business.business_name}</span>
                         </nav>
+                    </div>
+                </div>
+
+                {/* ── HERO ── */}
+                <div className="bg-white py-5 border-b border-zinc-100">
+                    <div className="container mx-auto px-4">
+                        <h1 className="text-3xl font-black text-zinc-900 leading-tight">{business.business_name}</h1>
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                            {business.trade_category && (
+                                <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-full text-sm font-semibold border border-zinc-200">{business.trade_category}</span>
+                            )}
+                            {business.is_verified && (
+                                <span className="flex items-center gap-1.5 px-3 py-1 bg-orange-500 text-white rounded-full text-sm font-semibold">
+                                    <ShieldCheck className="w-3 h-3" /> Verified
+                                </span>
+                            )}
+                            {hasValidRating && (
+                                <div className="flex items-center gap-1.5">
+                                    <div className="flex items-center gap-0.5">
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(parsedRating) ? 'fill-orange-400 text-orange-400' : 'fill-zinc-200 text-zinc-200'}`} />
+                                        ))}
+                                    </div>
+                                    <span className="text-sm font-bold text-zinc-700">{parsedRating.toFixed(1)} <span className="font-medium text-zinc-400">({parsedReviewCount})</span></span>
+                                </div>
+                            )}
+                            {business.suburb && (
+                                <span className="flex items-center gap-1 text-sm text-zinc-500 font-medium">
+                                    <MapPin className="w-3.5 h-3.5 text-orange-500" /> {business.suburb}{business.state ? `, ${business.state}` : ''}
+                                </span>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -294,9 +326,7 @@ export default async function PublicProfilePage({
                                             alt={`${business.business_name} cover`}
                                             className="w-full h-full object-cover"
                                             empty={
-                                                business.photo_urls?.[0]
-                                                    ? <img src={business.photo_urls[0]} alt={`${business.business_name} cover`} className="w-full h-full object-cover" />
-                                                    : <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-zinc-50 to-zinc-200" />
+                                                <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-700 to-zinc-900" />
                                             }
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
@@ -350,7 +380,7 @@ export default async function PublicProfilePage({
                                     <EditableText
                                         field="business_name"
                                         initialValue={business.business_name}
-                                        as="h1"
+                                        as="h2"
                                         className="text-xl font-black text-zinc-900 leading-tight"
                                     />
 
@@ -382,7 +412,7 @@ export default async function PublicProfilePage({
                                         </div>
                                     )}
 
-                                    <EditableConditionalSection showWhenPublic={!!business.years_experience}>
+                                    <EditableConditionalSection showWhenPublic={!!(business.years_experience && String(business.years_experience).trim() && Number(business.years_experience) > 0)}>
                                         <div className="flex items-center gap-2 font-medium text-zinc-500" style={{ fontSize: '16px' }}>
                                             <Award className="w-4 h-4 text-[#FF6600] shrink-0" />
                                             <EditableText
@@ -411,7 +441,7 @@ export default async function PublicProfilePage({
 
                             {/* Contact details */}
                             <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-4">
-                                <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100" style={{ fontSize: '16px' }}>Contact &amp; Location</h3>
+                                <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest pb-2 mb-1 border-b border-zinc-100">Contact &amp; Location</h3>
                                 <EditableContactField
                                     field="business_phone"
                                     initialValue={business.business_phone}
@@ -425,7 +455,7 @@ export default async function PublicProfilePage({
                                             <MapPin className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>Address</p>
+                                            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Address</p>
                                             <EditableText
                                                 field="address"
                                                 initialValue={business.address}
@@ -463,7 +493,7 @@ export default async function PublicProfilePage({
                             {/* Licence Number */}
                             {business.licence_number && (
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
-                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2" style={{ fontSize: '16px' }}>
+                                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest pb-2 mb-1 border-b border-zinc-100 flex items-center gap-2">
                                         <BadgeCheck className="w-4 h-4 text-orange-500" /> Licences
                                     </h3>
                                     <div className="flex items-start gap-3">
@@ -471,7 +501,7 @@ export default async function PublicProfilePage({
                                             <BadgeCheck className="w-4 h-4" />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-zinc-400 uppercase tracking-widest leading-none mb-0.5" style={{ fontSize: '16px' }}>Trade Licence</p>
+                                            <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest leading-none mb-0.5">Trade Licence</p>
                                             <p className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>{business.licence_number}</p>
                                         </div>
                                     </div>
@@ -481,7 +511,7 @@ export default async function PublicProfilePage({
                             {/* Ways to Pay */}
                             {business.payment_methods?.length > 0 && (
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
-                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2" style={{ fontSize: '16px' }}>
+                                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest pb-2 mb-1 border-b border-zinc-100 flex items-center gap-2">
                                         <CreditCard className="w-4 h-4 text-orange-500" /> Ways to Pay
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
@@ -497,7 +527,7 @@ export default async function PublicProfilePage({
                             {/* Social Links */}
                             {(business.facebook_url || business.instagram_url || business.linkedin_url) && (
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
-                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100" style={{ fontSize: '16px' }}>Follow Us</h3>
+                                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest pb-2 mb-1 border-b border-zinc-100">Follow Us</h3>
                                     <div className="flex items-center gap-3">
                                         {business.facebook_url && (
                                             <a href={business.facebook_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-zinc-50 border border-zinc-200 rounded-xl flex items-center justify-center text-zinc-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all">
@@ -521,7 +551,7 @@ export default async function PublicProfilePage({
                             {/* Location Map */}
                             {(business.address || business.suburb) && (
                                 <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm">
-                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest px-5 pt-5 pb-3" style={{ fontSize: '16px' }}>Location</h3>
+                                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest px-5 pt-5 pb-2">Location</h3>
                                     <iframe
                                         title={`${business.business_name} location`}
                                         width="100%"
@@ -552,7 +582,7 @@ export default async function PublicProfilePage({
                             {/* Active Deals */}
                             {deals.length > 0 && (
                                 <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm space-y-3">
-                                    <h3 className="font-black text-zinc-400 uppercase tracking-widest pb-3 border-b border-zinc-100 flex items-center gap-2" style={{ fontSize: '16px' }}>
+                                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest pb-2 mb-1 border-b border-zinc-100 flex items-center gap-2">
                                         <Tag className="w-4 h-4 text-[#FF6600]" /> Special Offers
                                     </h3>
                                     {deals.map((deal: any) => (
@@ -578,22 +608,22 @@ export default async function PublicProfilePage({
                         <div className="space-y-6 min-w-0">
 
                             {/* Pay Only When You Win Banner */}
-                            <div className="flex flex-wrap items-center gap-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-100 rounded-2xl px-5 py-3.5">
+                            <div className="flex flex-wrap items-center gap-4 bg-orange-50 border border-orange-200 rounded-2xl px-5 py-3.5">
                                 <div className="flex items-center gap-2">
-                                    <Zap className="w-4 h-4 text-green-600" />
-                                    <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>No lead fees</span>
+                                    <Zap className="w-5 h-5 text-orange-600" />
+                                    <span className="font-semibold text-orange-800 text-sm">No lead fees</span>
                                 </div>
-                                <div className="w-1 h-1 bg-zinc-300 rounded-full" />
+                                <div className="w-1 h-1 bg-orange-300 rounded-full" />
                                 <div className="flex items-center gap-2">
-                                    <ShieldCheck className="w-4 h-4 text-blue-600" />
-                                    <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>Pay only when you win</span>
+                                    <ShieldCheck className="w-5 h-5 text-orange-600" />
+                                    <span className="font-semibold text-orange-800 text-sm">Pay only when you win</span>
                                 </div>
                                 {business.is_verified && (
                                     <>
-                                        <div className="w-1 h-1 bg-zinc-300 rounded-full" />
+                                        <div className="w-1 h-1 bg-orange-300 rounded-full" />
                                         <div className="flex items-center gap-2">
-                                            <CheckCircle2 className="w-4 h-4 text-orange-600" />
-                                            <span className="font-black text-zinc-800" style={{ fontSize: '14px' }}>ABN verified</span>
+                                            <CheckCircle2 className="w-5 h-5 text-orange-600" />
+                                            <span className="font-semibold text-orange-800 text-sm">ABN verified</span>
                                         </div>
                                     </>
                                 )}
@@ -608,8 +638,8 @@ export default async function PublicProfilePage({
 
                             {/* About */}
                             <section id="about" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3" style={{ fontSize: '16px' }}>
-                                    <div className="w-6 h-px bg-zinc-200" /> About the Business
+                                <h2 className="text-sm font-bold text-zinc-700 uppercase tracking-wider mb-5 pl-3 border-l-2 border-orange-500">
+                                    About the Business
                                 </h2>
                                 <EditableText
                                     field="description"
@@ -618,8 +648,8 @@ export default async function PublicProfilePage({
                                     as="p"
                                     multiline
                                     rows={6}
-                                    className="text-zinc-700 font-medium"
-                                    style={{ fontSize: '18px', lineHeight: 1.7 }}
+                                    className="text-zinc-700 font-medium whitespace-pre-line leading-relaxed"
+                                    style={{ fontSize: '17px', lineHeight: 1.75 }}
                                 />
                                 {allFeatures.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mt-5">
@@ -636,8 +666,8 @@ export default async function PublicProfilePage({
                             {/* Services & Expertise */}
                             <EditableConditionalSection showWhenPublic={!!(business.services?.length > 0 || business.specialties?.length > 0)}>
                                 <section id="services" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                    <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3" style={{ fontSize: '16px' }}>
-                                        <div className="w-6 h-px bg-zinc-200" /> Expertise &amp; Services
+                                    <h2 className="text-sm font-bold text-zinc-700 uppercase tracking-wider mb-5 pl-3 border-l-2 border-orange-500">
+                                        Expertise &amp; Services
                                     </h2>
                                     <EditableServices initialServices={business.services || []} initialSpecialties={business.specialties || []} />
                                 </section>
@@ -646,9 +676,9 @@ export default async function PublicProfilePage({
                             {/* Project Gallery */}
                             <EditableConditionalSection showWhenPublic={!!(business.photo_urls?.length > 0)}>
                                 <section id="gallery" className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm scroll-mt-24">
-                                    <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center justify-between" style={{ fontSize: '16px' }}>
-                                        <span className="flex items-center gap-3"><div className="w-6 h-px bg-zinc-200" /> Project Gallery</span>
-                                        <span className="font-bold text-zinc-300 normal-case tracking-normal" style={{ fontSize: '16px' }}>{business.trade_category}</span>
+                                    <h2 className="text-sm font-bold text-zinc-700 uppercase tracking-wider mb-5 pl-3 border-l-2 border-orange-500 flex items-center justify-between">
+                                        <span>Project Gallery</span>
+                                        <span className="font-medium text-zinc-400 normal-case tracking-normal text-xs">{business.trade_category}</span>
                                     </h2>
                                     <EditableGallery initialImages={business.photo_urls || []} businessName={business.business_name} />
                                 </section>
@@ -656,13 +686,13 @@ export default async function PublicProfilePage({
 
                             {/* Trust & Reliability */}
                             <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
-                                <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3" style={{ fontSize: '16px' }}>
-                                    <div className="w-6 h-px bg-zinc-200" /> Trust &amp; Reliability
+                                <h2 className="text-sm font-bold text-zinc-700 uppercase tracking-wider mb-5 pl-3 border-l-2 border-orange-500">
+                                    Trust &amp; Reliability
                                 </h2>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100">
                                         <p className="text-3xl font-black text-zinc-900">{trustScore}</p>
-                                        <p className="font-black text-zinc-400 uppercase tracking-widest mt-1" style={{ fontSize: '16px' }}>TradeRefer Score</p>
+                                        <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-1">TradeRefer Score</p>
                                     </div>
                                     <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100 flex flex-col items-center justify-center">
                                         <div className="flex items-center text-orange-400 mb-1">
@@ -670,12 +700,14 @@ export default async function PublicProfilePage({
                                                 <Star key={i} className={`w-4 h-4 ${i < Math.floor(googleRating || 5) ? 'fill-current' : 'opacity-30'}`} />
                                             ))}
                                         </div>
-                                        <p className="font-black text-zinc-400 uppercase tracking-widest" style={{ fontSize: '16px' }}>Rating</p>
-                                        <p className="text-zinc-400 mt-0.5" style={{ fontSize: '16px' }}>{reviewCount} reviews</p>
+                                        <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-1">Rating</p>
+                                        {reviewCount > 0 && <p className="text-zinc-400 mt-0.5 text-sm">{reviewCount} reviews</p>}
                                     </div>
                                     <div className="text-center p-5 bg-zinc-50 rounded-xl border border-zinc-100">
-                                        <p className="text-3xl font-black text-zinc-900">{jobsCompleted}</p>
-                                        <p className="font-black text-zinc-400 uppercase tracking-widest mt-1" style={{ fontSize: '16px' }}>Connections</p>
+                                        {jobsCompleted > 0
+                                            ? <p className="text-3xl font-black text-zinc-900">{jobsCompleted}</p>
+                                            : <p className="text-sm font-medium text-zinc-400 mt-1">New</p>}
+                                        <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mt-1">Connections</p>
                                     </div>
                                 </div>
                             </section>
@@ -694,9 +726,10 @@ export default async function PublicProfilePage({
                             {/* Trade FAQs */}
                             {TRADE_FAQ_BANK[business.trade_category]?.length > 0 && (
                                 <section className="bg-white rounded-2xl border border-zinc-200 p-7 shadow-sm">
-                                    <h2 className="font-black text-zinc-400 uppercase tracking-[0.2em] mb-5 flex items-center gap-3" style={{ fontSize: '16px' }}>
-                                        <div className="w-6 h-px bg-zinc-200" /> Frequently Asked Questions
+                                    <h2 className="text-sm font-bold text-zinc-700 uppercase tracking-wider mb-3 pl-3 border-l-2 border-orange-500">
+                                        Frequently Asked Questions
                                     </h2>
+                                    <p className="text-xs text-zinc-400 mb-5">General {business.trade_category} questions for {business.suburb || 'your area'}</p>
                                     <div className="space-y-4">
                                         {TRADE_FAQ_BANK[business.trade_category].slice(0, 5).map((faq: { q: string; a: string }, i: number) => (
                                             <details key={i} className="group rounded-xl border border-zinc-100 bg-zinc-50 hover:bg-white hover:border-zinc-200 transition-all">

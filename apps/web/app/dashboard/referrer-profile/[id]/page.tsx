@@ -109,10 +109,10 @@ export default function ReferrerProfileViewPage() {
                 <div className="w-full px-12 pt-8 pb-10 bg-zinc-900">
                     {/* Back nav */}
                     <Link
-                        href="/dashboard/referrer/manage"
+                        href="/dashboard/referrer/profile"
                         className="inline-flex items-center gap-1.5 text-zinc-500 hover:text-zinc-200 font-semibold transition-colors mb-8 group text-sm"
                     >
-                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Manage
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to My Profile
                     </Link>
 
                     <div className="flex items-center gap-8 flex-wrap">
