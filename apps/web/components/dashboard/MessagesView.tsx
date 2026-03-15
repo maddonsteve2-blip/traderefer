@@ -537,18 +537,15 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
         <div className="flex w-full h-full bg-white overflow-hidden text-zinc-900 border-none shadow-none">
             {/* ── LEFT PANEL (Sidebar) ── */}
             <div className={`${activeContactId ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-[320px] lg:w-[380px] border-r border-zinc-100 bg-white flex-shrink-0`}>
-                <div className="px-6 py-6 border-b border-zinc-50 space-y-4">
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-3xl font-black text-zinc-900 tracking-tight">Messages</h1>
-                    </div>
+                <div className="px-4 py-3 border-b border-zinc-100">
                     <div className="relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                         <input
                             type="text"
-                            placeholder="Search chats..."
+                            placeholder="Search"
                             value={searchQuery}
                             onChange={e => setSearchQuery(e.target.value)}
-                            className="w-full pl-11 pr-4 h-[48px] bg-zinc-100 border-none rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:bg-white outline-none placeholder:text-zinc-400 text-zinc-900 font-bold text-[15px] transition-all"
+                            className="w-full pl-9 pr-4 h-[36px] bg-zinc-100 border-none rounded-full focus:ring-1 focus:ring-orange-500/30 focus:bg-white outline-none placeholder:text-zinc-400 text-zinc-800 font-medium text-[15px] transition-all"
                         />
                     </div>
                 </div>
@@ -557,23 +554,23 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                 <div className="flex-1 overflow-y-auto">
                     {filteredContacts.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-full text-center p-8 gap-4">
-                            <div className="w-20 h-20 bg-zinc-50 rounded-3xl flex items-center justify-center">
-                                <Users className="w-10 h-10 text-zinc-300" />
+                            <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center">
+                                <Users className="w-8 h-8 text-zinc-300" />
                             </div>
                             <div>
-                                <p className="font-extrabold text-zinc-800 text-xl tracking-tight">No conversations</p>
-                                <p className="text-zinc-400 font-medium mt-1 leading-snug">
+                                <p className="font-bold text-zinc-700 text-lg">No conversations</p>
+                                <p className="text-zinc-400 font-medium mt-1 text-sm leading-snug">
                                     {myType === 'business' ? 'Referrers will appear here once linked.' : 'Find businesses to start messaging.'}
                                 </p>
                                 {myType !== 'business' && (
-                                    <Link href="/dashboard/referrer/businesses" className="mt-4 inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-xl transition-all text-sm">
+                                    <Link href="/dashboard/referrer/businesses" className="mt-4 inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 rounded-full transition-all text-sm">
                                         <Building2 className="w-4 h-4" /> Browse Businesses
                                     </Link>
                                 )}
                             </div>
                         </div>
                     ) : (
-                        <div className="py-2 px-2">
+                        <div>
                             {filteredContacts.map(contact => {
                                 const isActive = activeContactId === contact.contact_id;
                                 const hasUnread = contact.unread_count > 0;
@@ -581,30 +578,32 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                     <button
                                         key={contact.contact_id}
                                         onClick={() => openContact(contact)}
-                                        className={`w-full flex items-center gap-4 px-4 py-4 text-left transition-all duration-200 rounded-2xl mb-1 ${
-                                            isActive 
-                                                ? 'bg-orange-50/50' 
-                                                : 'hover:bg-zinc-50'
+                                        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors border-b border-zinc-50 ${
+                                            isActive ? 'bg-orange-50/60' : 'hover:bg-zinc-50 active:bg-zinc-100'
                                         }`}
                                     >
-                                        <div className="relative flex-shrink-0">
-                                            <Avatar name={contact.contact_name} logo={contact.contact_logo} size={14} />
-                                            {hasUnread && (
-                                                <span className="absolute bottom-0 right-0 w-4 h-4 bg-orange-500 rounded-full border-2 border-white" />
-                                            )}
+                                        <div className="flex-shrink-0">
+                                            <Avatar name={contact.contact_name} logo={contact.contact_logo} size={12} />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-2">
-                                                <span className={`truncate font-extrabold text-[17px] ${isActive ? 'text-orange-600' : 'text-zinc-900'}`}>
+                                                <span className={`truncate font-semibold text-[16px] ${hasUnread ? 'text-zinc-900 font-bold' : 'text-zinc-800'}`}>
                                                     {contact.contact_name}
                                                 </span>
-                                                <span className="text-zinc-400 flex-shrink-0 font-bold text-[11px] uppercase tracking-wide">
+                                                <span className={`flex-shrink-0 text-[12px] ${hasUnread ? 'text-orange-500 font-semibold' : 'text-zinc-400'}`}>
                                                     {contact.last_message_at ? formatListTime(contact.last_message_at) : ''}
                                                 </span>
                                             </div>
-                                            <p className={`truncate text-[15px] font-medium mt-0.5 ${hasUnread ? 'text-orange-600 font-bold' : 'text-zinc-500'}`}>
-                                                {contact.last_message || 'Start the conversation'}
-                                            </p>
+                                            <div className="flex items-center justify-between gap-2 mt-0.5">
+                                                <p className={`truncate text-[14px] ${hasUnread ? 'text-zinc-700 font-medium' : 'text-zinc-400'}`}>
+                                                    {contact.last_message || 'Start the conversation'}
+                                                </p>
+                                                {hasUnread && (
+                                                    <span className="flex-shrink-0 min-w-[20px] h-[20px] bg-orange-500 text-white text-[11px] font-bold rounded-full flex items-center justify-center px-1.5">
+                                                        {contact.unread_count}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </button>
                                 );
@@ -621,26 +620,26 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
             >
                 {/* Mobile/Desktop Header */}
                 {activeContactId && activeContact ? (
-                    <div className="flex items-center gap-4 px-5 py-4 bg-white/80 backdrop-blur-md border-b border-zinc-100 flex-shrink-0 sticky top-0 z-20">
+                    <div className="flex items-center gap-3 px-3 py-2.5 bg-white border-b border-zinc-100 flex-shrink-0 sticky top-0 z-20">
                         <button
                             onClick={() => { setActiveContactId(null); setActiveConvId(null); setMessages([]); }}
-                            className="md:hidden p-2 -ml-2 hover:bg-zinc-100 rounded-full transition-colors"
+                            className="md:hidden p-1.5 -ml-1 hover:bg-zinc-100 rounded-full transition-colors"
                         >
-                            <ArrowLeft className="w-6 h-6 text-zinc-900" />
+                            <ArrowLeft className="w-5 h-5 text-zinc-600" />
                         </button>
-                        <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <Avatar name={partnerName} logo={partnerLogo || activeContact.contact_logo} size={10} />
+                        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                            <Avatar name={partnerName} logo={partnerLogo || activeContact.contact_logo} size={9} />
                             <div className="truncate">
-                                <p className="font-black text-zinc-900 truncate text-xl tracking-tight leading-none">{partnerName}</p>
-                                <p className="text-green-600 font-bold text-[13px] flex items-center gap-1 mt-1">
-                                    <ShieldCheck className="w-3.5 h-3.5" /> Verified Partner
+                                <p className="font-bold text-zinc-900 truncate text-[16px] leading-tight">{partnerName}</p>
+                                <p className="text-green-600 font-medium text-[12px] flex items-center gap-1 mt-0.5">
+                                    <ShieldCheck className="w-3 h-3" /> Verified
                                 </p>
                             </div>
                         </div>
                         {myType !== 'business' && (
                             <Link
                                 href={`/b/${activeContact.contact_id}`}
-                                className="p-2 hover:bg-zinc-50 rounded-full text-zinc-400 hover:text-orange-500 transition-colors"
+                                className="p-2 hover:bg-zinc-100 rounded-full text-zinc-400 hover:text-orange-500 transition-colors"
                             >
                                 <ExternalLink className="w-5 h-5" />
                             </Link>
@@ -667,11 +666,11 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                     style={{ overflowAnchor: 'none', WebkitOverflowScrolling: 'touch' }}
                 >
                     {activeContactId && (
-                        <div className="px-5 py-8 max-w-4xl mx-auto w-full">
+                        <div className="px-3 py-4 md:px-5 md:py-6 max-w-4xl mx-auto w-full">
                             {messages.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center text-center py-20 opacity-40">
-                                    <MessageSquare className="w-16 h-16 text-zinc-200 mb-4" />
-                                    <p className="font-bold text-zinc-400 text-lg">No messages between you yet</p>
+                                    <MessageSquare className="w-12 h-12 text-zinc-200 mb-3" />
+                                    <p className="font-medium text-zinc-400 text-base">No messages yet</p>
                                 </div>
                             ) : (() => {
                                 const grouped: ReactElement[] = [];
@@ -691,45 +690,36 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                     grouped.push(
                                         <div
                                             key={msg.id}
-                                            className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} ${isGroupStart ? 'mt-6' : 'mt-1'}`}
+                                            className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} ${isGroupStart ? 'mt-4' : 'mt-0.5'}`}
                                         >
-                                            <div className={`flex items-end gap-2 max-w-[85%] sm:max-w-[70%] ${!isMine && !isGroupStart ? 'ml-10' : ''}`}>
-                                                {!isMine && isGroupStart && (
-                                                    <div className="flex flex-col mb-1 mr-1">
-                                                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter ml-1 mb-0.5">{partnerName}</span>
-                                                        <Avatar name={partnerName} logo={partnerLogo} size={8} />
-                                                    </div>
-                                                )}
-                                                <div className={`relative px-4 py-3 text-[17px] leading-snug transition-all ${
+                                            <div className={`max-w-[85%] sm:max-w-[70%]`}>
+                                                <div className={`relative px-3.5 py-2 text-[15px] leading-relaxed ${
                                                     isMine
-                                                        ? `bg-orange-600 text-white shadow-premium ${isGroupStart ? 'rounded-t-[22px] rounded-bl-[22px]' : 'rounded-l-[22px]'} ${isGroupEnd ? 'rounded-br-[8px]' : ''}`
-                                                        : `bg-zinc-100 text-zinc-900 ${isGroupStart ? 'rounded-t-[22px] rounded-br-[22px]' : 'rounded-r-[22px]'} ${isGroupEnd ? 'rounded-bl-[8px]' : ''}`
-                                                } ${isOptimistic ? 'scale-95 opacity-50' : ''} ${!isGroupStart && !isGroupEnd ? 'rounded-[22px]' : ''}`}>
+                                                        ? `bg-orange-500 text-white ${isGroupStart && isGroupEnd ? 'rounded-2xl rounded-br-md' : isGroupStart ? 'rounded-2xl rounded-br-md' : isGroupEnd ? 'rounded-2xl rounded-tr-md' : 'rounded-2xl rounded-r-md'}`
+                                                        : `bg-zinc-100 text-zinc-900 ${isGroupStart && isGroupEnd ? 'rounded-2xl rounded-bl-md' : isGroupStart ? 'rounded-2xl rounded-bl-md' : isGroupEnd ? 'rounded-2xl rounded-tl-md' : 'rounded-2xl rounded-l-md'}`
+                                                } ${isOptimistic ? 'opacity-50' : ''}`}>
                                                     {msg.image_url && (
-                                                        <div className="mb-2 -mx-2 -mt-1 overflow-hidden rounded-xl border border-white/10 shadow-sm">
+                                                        <div className="mb-1.5 -mx-1.5 -mt-0.5 overflow-hidden rounded-lg">
                                                             <a href={msg.image_url} target="_blank" rel="noopener noreferrer">
                                                                 <img 
                                                                     src={msg.image_url} 
                                                                     alt="Attachment" 
                                                                     onLoad={() => scrollToBottom(false)}
-                                                                    className="max-w-full max-h-[300px] object-cover hover:brightness-95 transition-all" 
+                                                                    className="max-w-full max-h-[260px] object-cover hover:brightness-95 transition-all" 
                                                                 />
                                                             </a>
                                                         </div>
                                                     )}
-                                                    {msg.body && <p className="whitespace-pre-wrap font-bold tracking-tight">{msg.body}</p>}
-                                                </div>
-                                            </div>
-                                            <div className={`flex items-center gap-1.5 mt-1 px-1 ${isMine ? 'flex-row-reverse text-right' : 'text-left'} ${!isMine ? 'ml-10' : ''}`}>
-                                                <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-tight">{formatMsgTime(msg.created_at)}</span>
-                                                {isMine && (
-                                                    <span className="flex-shrink-0 opacity-50 scale-75 origin-right">
-                                                        {msg.is_read 
-                                                            ? <div className="w-3.5 h-3.5 rounded-full bg-orange-50 flex items-center justify-center"><CheckCheck className="w-2.5 h-2.5 text-orange-500" /></div>
-                                                            : <Check className="w-3 h-3 text-zinc-300" />
-                                                        }
+                                                    {msg.body && <span className="whitespace-pre-wrap">{msg.body}</span>}
+                                                    <span className={`inline-flex items-center gap-1 ml-2 align-bottom text-[10px] translate-y-[2px] ${isMine ? 'text-white/60' : 'text-zinc-400'}`}>
+                                                        {formatMsgTime(msg.created_at)}
+                                                        {isMine && (
+                                                            msg.is_read 
+                                                                ? <CheckCheck className="w-3.5 h-3.5 text-white/70" />
+                                                                : <Check className="w-3 h-3" />
+                                                        )}
                                                     </span>
-                                                )}
+                                                </div>
                                             </div>
                                         </div>
                                     );
@@ -737,83 +727,76 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                                 return grouped;
                             })()}
                              {partnerTyping && (
-                                <div className="flex flex-col items-start mt-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                    <div className="flex items-center gap-2 mb-1 ml-1">
-                                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-tighter">{partnerName} is typing</span>
-                                    </div>
-                                    <div className="flex items-end gap-2">
-                                        <Avatar name={partnerName} logo={partnerLogo} size={8} />
-                                        <div className="bg-zinc-100 px-4 py-3 rounded-[22px] rounded-bl-[8px] flex items-center gap-1">
-                                            <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                                            <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                                            <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" />
-                                        </div>
+                                <div className="flex flex-col items-start mt-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                    <div className="bg-zinc-100 px-3.5 py-2.5 rounded-2xl rounded-bl-md flex items-center gap-1">
+                                        <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                        <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                        <div className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce" />
                                     </div>
                                 </div>
                             )}
-                            <div className="h-8" />
+                            <div className="h-4" />
                         </div>
                     )}
                 </div>
 
-                {/* ── Input bar ── */}
+                {/* ── Input bar (Telegram-style) ── */}
                 {activeContactId && (
                     <div className="flex flex-col bg-white border-t border-zinc-100 safe-bottom">
                         {imagePreview && (
-                            <div className="px-5 py-4 border-b border-zinc-50 overflow-x-auto">
+                            <div className="px-4 py-3 border-b border-zinc-50 overflow-x-auto">
                                 <div className="relative inline-block group">
-                                    <img src={imagePreview} alt="Preview" className="h-24 w-24 rounded-2xl object-cover border-2 border-zinc-100 shadow-premium" />
+                                    <img src={imagePreview} alt="Preview" className="h-20 w-20 rounded-xl object-cover border border-zinc-200" />
                                     {uploading ? (
-                                        <div className="absolute inset-0 bg-white/60 rounded-2xl flex items-center justify-center">
-                                            <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+                                        <div className="absolute inset-0 bg-white/60 rounded-xl flex items-center justify-center">
+                                            <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
                                         </div>
                                     ) : (
-                                        <button onClick={clearImage} className="absolute -top-2 -right-2 w-7 h-7 bg-zinc-900 text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-all shadow-lg active:scale-95">
-                                            <X className="w-4 h-4" />
+                                        <button onClick={clearImage} className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-zinc-800 text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-all active:scale-95">
+                                            <X className="w-3.5 h-3.5" />
                                         </button>
                                     )}
                                 </div>
                             </div>
                         )}
-                        <div className="p-4 md:p-6 bg-white">
-                            <div className="flex items-end gap-3 bg-white border-2 border-zinc-100 rounded-[32px] px-3 py-2 focus-within:border-zinc-900 focus-within:ring-4 focus-within:ring-zinc-900/5 transition-all duration-300 shadow-sm">
-                                <button
-                                    onClick={() => fileInputRef.current?.click()}
-                                    disabled={uploading}
-                                    className="p-3 text-zinc-400 hover:text-orange-500 hover:bg-white rounded-full transition-all flex-shrink-0 mb-1"
-                                >
-                                    <Paperclip className="w-6 h-6" />
-                                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
-                                </button>
+                        <div className="flex items-end gap-1.5 px-2 py-2 md:px-4 md:py-3">
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={uploading}
+                                className="p-2 text-zinc-400 hover:text-orange-500 rounded-full transition-colors flex-shrink-0"
+                            >
+                                <Paperclip className="w-5 h-5" />
+                                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+                            </button>
+                            <div className="flex-1 flex items-end bg-zinc-100 rounded-[20px] px-3 py-1.5 min-h-[40px] focus-within:bg-zinc-50 focus-within:ring-1 focus-within:ring-orange-500/20 transition-all">
                                 <textarea
                                     ref={inputRef}
                                     value={newMessage}
                                     onChange={e => {
                                         setNewMessage(e.target.value);
                                         e.target.style.height = 'auto';
-                                        e.target.style.height = Math.min(e.target.scrollHeight, 180) + 'px';
+                                        e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
                                     }}
                                     onKeyDown={handleKeyDown}
                                     onFocus={() => {
-                                        // Scroll to bottom after a short delay to account for keyboard popup
                                         setTimeout(() => scrollToBottom(false), 200);
                                     }}
-                                    placeholder="Type a message..."
+                                    placeholder="Message"
                                     rows={1}
-                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed py-3 max-h-[180px] text-lg font-bold border-none ring-0 focus:ring-0"
+                                    className="flex-1 bg-transparent text-zinc-900 placeholder:text-zinc-400 focus:outline-none resize-none leading-relaxed py-1 max-h-[120px] text-[15px] font-medium border-none ring-0 focus:ring-0"
                                 />
-                                <button
-                                    onClick={handleSend}
-                                    disabled={(!newMessage.trim() && !imageUrl) || sending || uploading}
-                                    className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all active:scale-90 mb-1 shadow-lg ${
-                                        (!newMessage.trim() && !imageUrl) || sending || uploading
-                                            ? 'bg-zinc-200 text-zinc-400 shadow-none'
-                                            : 'bg-orange-600 text-white hover:bg-orange-700 shadow-orange-500/20'
-                                    }`}
-                                >
-                                    {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 translate-x-0.5" />}
-                                </button>
                             </div>
+                            <button
+                                onClick={handleSend}
+                                disabled={(!newMessage.trim() && !imageUrl) || sending || uploading}
+                                className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all active:scale-90 ${
+                                    (!newMessage.trim() && !imageUrl) || sending || uploading
+                                        ? 'text-zinc-300'
+                                        : 'bg-orange-500 text-white shadow-sm'
+                                }`}
+                            >
+                                {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                            </button>
                         </div>
                     </div>
                 )}

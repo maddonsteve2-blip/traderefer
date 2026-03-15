@@ -366,7 +366,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <main
                 className={`flex-1 min-w-0 transition-all duration-300 ease-in-out ${
                     expanded ? "lg:ml-60" : "lg:ml-16"
-                } pt-[60px] lg:pt-0 ${pathname?.endsWith("/messages") ? "pb-0" : "pb-32"} lg:pb-0`}
+                } pt-[60px] lg:pt-0 ${pathname?.endsWith("/messages") ? "pb-0" : "pb-16"} lg:pb-0`}
             >
                 {children}
             </main>
