@@ -270,7 +270,7 @@ function ClaimPageContent({ slug }: { slug: string }) {
                                                         type="button"
                                                         onClick={() => startVerification(method)}
                                                         disabled={sending}
-                                                        className="h-14 px-6 rounded-2xl bg-zinc-900 hover:bg-black text-white font-black"
+                                                        className="h-14 px-6 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black"
                                                     >
                                                         {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : "Send verification code"}
                                                     </Button>
@@ -320,7 +320,7 @@ function ClaimPageContent({ slug }: { slug: string }) {
                                                 placeholder="6-digit code"
                                                 className="flex-1 h-16 px-6 rounded-2xl border border-zinc-200 bg-zinc-50 text-lg font-black tracking-[0.35em] placeholder:tracking-normal focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500"
                                             />
-                                            <Button onClick={handleVerify} disabled={verifying || code.length < 6} className="h-16 px-8 rounded-2xl bg-zinc-900 hover:bg-black text-white font-black">
+                                            <Button onClick={handleVerify} disabled={verifying || code.length < 6} className="h-16 px-8 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black">
                                                 {verifying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Verify"}
                                             </Button>
                                         </div>
