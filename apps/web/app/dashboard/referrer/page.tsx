@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { Search, TrendingUp } from "lucide-react";
+import { Building2, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { HotCampaigns } from "@/components/referrer/HotCampaigns";
 import { EarningsDashboard } from "@/components/referrer/EarningsDashboard";
@@ -76,7 +76,7 @@ export default async function ReferrerDashboardPage() {
                                 <Link href="/dashboard/referrer/businesses"
                                     className="flex items-center justify-center gap-2.5 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black transition-all shadow-lg shadow-orange-200 active:scale-95 w-full sm:w-auto text-xl"
                                     >
-                                    <Search className="w-6 h-6" /> Find Businesses
+                                    <Building2 className="w-6 h-6" /> Find Businesses
                                 </Link>
                             </div>
 

@@ -111,7 +111,7 @@ export default async function BusinessDashboardPage() {
                                             <Pencil className="w-5 h-5" />
                                         </Link>
                                     </div>
-                                    <p className="text-zinc-500 font-black uppercase tracking-[0.15em] mt-1 text-lg">
+                                    <p className="text-zinc-500 font-bold mt-1 text-lg">
                                         Business Dashboard
                                     </p>
                                 </div>
