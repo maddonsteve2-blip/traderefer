@@ -99,19 +99,19 @@ export default function AnalyticsPage() {
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                        <div className="text-lg font-bold text-zinc-400 uppercase tracking-wider mb-1">Total Leads</div>
+                        <div className="text-sm font-bold text-zinc-400 mb-1">Total Leads</div>
                         <div className="text-5xl font-black text-zinc-900">{data.summary.total_leads}</div>
                     </div>
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                        <div className="text-lg font-bold text-zinc-400 uppercase tracking-wider mb-1">Confirmed</div>
+                        <div className="text-sm font-bold text-zinc-400 mb-1">Confirmed</div>
                         <div className="text-5xl font-black text-green-600">{data.summary.confirmed_leads}</div>
                     </div>
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                        <div className="text-lg font-bold text-zinc-400 uppercase tracking-wider mb-1">Total Spent</div>
+                        <div className="text-sm font-bold text-zinc-400 mb-1">Total Spent</div>
                         <div className="text-5xl font-black text-zinc-900">{cents(data.summary.total_spent_cents)}</div>
                     </div>
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6">
-                        <div className="text-lg font-bold text-zinc-400 uppercase tracking-wider mb-1">Cost / Customer</div>
+                        <div className="text-sm font-bold text-zinc-400 mb-1">Cost / Customer</div>
                         <div className="text-5xl font-black text-orange-600">{data.summary.confirmed_leads === 0 ? "—" : cents(data.summary.cost_per_customer_cents)}</div>
                     </div>
                 </div>
@@ -149,7 +149,15 @@ export default function AnalyticsPage() {
                                 })}
                             </div>
                         ) : (
-                            <p className="text-base text-zinc-400 text-center py-10">No referrer data yet</p>
+                            <div className="space-y-3 py-4">
+                                <p className="text-sm font-medium text-zinc-400 text-center mb-5">Partner up with referrers to see performance data here.</p>
+                                {[60, 45, 75, 30, 55].map((w, i) => (
+                                    <div key={i} className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-zinc-100 shrink-0" />
+                                        <div className="flex-1 h-3 bg-zinc-100 rounded-full" style={{ maxWidth: `${w}%` }} />
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
 
@@ -180,7 +188,15 @@ export default function AnalyticsPage() {
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-base text-zinc-400 text-center py-10">No campaigns yet</p>
+                            <div className="space-y-3 py-4">
+                                <p className="text-sm font-medium text-zinc-400 text-center mb-5">Create a campaign to boost referrer activity and track results here.</p>
+                                {[80, 50, 65, 40, 70].map((w, i) => (
+                                    <div key={i} className="h-10 bg-zinc-50 border border-zinc-100 rounded-xl flex items-center px-4 gap-3">
+                                        <div className="h-2.5 bg-zinc-200 rounded-full flex-1" style={{ maxWidth: `${w}%` }} />
+                                        <div className="h-2.5 w-10 bg-zinc-100 rounded-full shrink-0" />
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
                 </div>

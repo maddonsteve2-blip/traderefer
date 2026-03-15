@@ -201,9 +201,11 @@ export function SalesLeadsPane() {
             <div className={`${selected ? "flex" : "hidden md:flex"} flex-1 min-h-0 flex-col overflow-y-auto bg-zinc-50`}>
                 {!selected ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                        <ChevronRight className="w-16 h-16 text-zinc-200 mb-4" />
-                        <p className="font-black text-zinc-400 text-2xl">Select a lead</p>
-                        <p className="text-zinc-400 font-medium mt-1 text-xl">Click a lead on the left to view details</p>
+                        <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-sm border border-zinc-100 mb-6">
+                            <Target className="w-12 h-12 text-zinc-200" />
+                        </div>
+                        <p className="text-2xl font-black text-zinc-900 tracking-tight">Select a lead</p>
+                        <p className="text-zinc-400 font-medium text-lg mt-3 max-w-sm">Click a lead on the left to view details.</p>
                     </div>
                 ) : (
                     <div className="max-w-lg mx-auto px-6 py-6 space-y-4">

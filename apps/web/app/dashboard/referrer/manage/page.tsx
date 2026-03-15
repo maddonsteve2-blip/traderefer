@@ -499,7 +499,7 @@ export default function ReferrerManagePage() {
                             <div className="w-16 h-16 bg-orange-50 rounded-3xl flex items-center justify-center mx-auto mb-4">
                                 <Users className="w-8 h-8 text-orange-300" />
                             </div>
-                            <h2 className="text-xl font-black text-zinc-900">Build your team</h2>
+                            <h2 className="text-xl font-black text-zinc-900">My Team</h2>
                             <p className="mt-2 text-sm font-medium text-zinc-500">Apply to your first business to start building your partnerships.</p>
                         </div>
                     )}

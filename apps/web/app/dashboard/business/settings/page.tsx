@@ -447,15 +447,15 @@ export default function BusinessSettingsPage() {
 
                                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
                                     <DashboardMutedCard className="rounded-2xl p-6">
-                                        <p className="text-base font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Referrer Reward</p>
+                                        <p className="text-base font-bold text-zinc-400 mb-2">Referrer Reward</p>
                                         <p className="font-bold text-zinc-900 text-4xl">${(formData.referral_fee_cents / 100).toFixed(2)}</p>
                                     </DashboardMutedCard>
                                     <DashboardMutedCard className="rounded-2xl p-6">
-                                        <p className="text-base font-extrabold uppercase tracking-[0.14em] text-zinc-400 mb-2">Platform Fee</p>
+                                        <p className="text-base font-bold text-zinc-400 mb-2">Platform Fee</p>
                                         <p className="font-bold text-zinc-900 text-4xl">${(formData.referral_fee_cents * 0.2 / 100).toFixed(2)}</p>
                                     </DashboardMutedCard>
                                     <DashboardDarkCard className="rounded-2xl p-6 shadow-lg shadow-zinc-900/10">
-                                        <p className="text-base font-extrabold uppercase tracking-[0.16em] text-white/60 mb-3">Total Unlock Price</p>
+                                        <p className="text-base font-bold text-white/60 mb-3">Total Unlock Price</p>
                                         <p className="font-bold text-white text-4xl">${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
                                     </DashboardDarkCard>
                                 </div>
@@ -531,7 +531,7 @@ export default function BusinessSettingsPage() {
                     <div className="w-full h-full flex flex-col px-4 md:px-6 xl:px-8 py-4 md:py-6">
                         <div className="flex items-center gap-2 mb-4 shrink-0">
                             <Eye className="w-4 h-4 text-zinc-400" />
-                            <span className="font-black text-zinc-400 uppercase tracking-widest text-sm">Partner&rsquo;s View</span>
+                            <span className="font-bold text-zinc-400 text-sm">Partner&rsquo;s View</span>
                         </div>
 
                         <div className="flex-1 min-h-0 flex items-center justify-center overflow-hidden">
@@ -566,7 +566,7 @@ export default function BusinessSettingsPage() {
                                         </div>
 
                                         <div className="w-full lg:w-[210px] shrink-0 rounded-[24px] bg-zinc-900 text-white p-5">
-                                            <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-white/60 mb-3">Referral Fee</p>
+                                                        <p className="text-sm font-bold text-white/60 mb-3">Referral Fee</p>
                                             <p className="font-black text-white leading-none text-3xl">${(formData.referral_fee_cents / 100).toFixed(0)}</p>
                                             <p className="text-base text-white/70 font-medium mt-3">What referrers see before they unlock and promote your business.</p>
                                         </div>
@@ -577,17 +577,17 @@ export default function BusinessSettingsPage() {
                                     <div className="px-7 py-5 bg-white border-b md:border-b-0 md:border-r border-gray-100">
                                         <Clock className="w-4 h-4 text-emerald-400 mb-4" />
                                         <p className="font-black text-zinc-900 leading-none text-3xl">{responseTimeLabel}</p>
-                                        <p className="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">Response Promise</p>
+                                        <p className="mt-3 text-sm font-bold text-zinc-400">Response Promise</p>
                                     </div>
                                     <div className="px-7 py-5 bg-gray-50 border-b md:border-b-0 md:border-r border-gray-100">
                                         <TrendingUp className="w-4 h-4 text-orange-400 mb-4" />
                                         <p className="font-black text-zinc-900 leading-none text-3xl">${(formData.referral_fee_cents * 1.2 / 100).toFixed(2)}</p>
-                                        <p className="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">Lead Unlock Price</p>
+                                        <p className="mt-3 text-sm font-bold text-zinc-400">Lead Unlock Price</p>
                                     </div>
                                     <div className="px-7 py-5 bg-white">
                                         <Shield className="w-4 h-4 text-blue-400 mb-4" />
                                         <p className="font-black text-zinc-900 leading-none text-3xl">{biz?.is_verified ? "Verified" : "Pending"}</p>
-                                        <p className="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-zinc-400">ABN Status</p>
+                                        <p className="mt-3 text-sm font-bold text-zinc-400">ABN Status</p>
                                     </div>
                                 </div>
 
@@ -602,18 +602,18 @@ export default function BusinessSettingsPage() {
                                     <DashboardCard className="rounded-none border-x-0 border-b-0 border-t border-gray-100 px-7 py-6 shadow-none">
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                                             <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-4">
-                                                <div className="flex items-center gap-2 text-zinc-400 text-sm font-black uppercase tracking-[0.14em]">
-                                                    <Mail className="w-4 h-4" /> Contact
-                                                </div>
+                                                <div className="flex items-center gap-2 text-zinc-400 text-sm font-bold">
+                                    <Mail className="w-4 h-4" /> Contact
+                                </div>
                                                 <div className="space-y-3 text-base text-zinc-600 font-medium">
                                                     <div className="inline-flex items-center gap-2 w-full"><Phone className="w-4 h-4 text-zinc-400" /> {formData.business_phone || "Add phone number"}</div>
                                                     <div className="inline-flex items-center gap-2 w-full"><Mail className="w-4 h-4 text-zinc-400" /> {formData.business_email || "Add email address"}</div>
                                                 </div>
                                             </div>
                                             <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-4">
-                                                <div className="flex items-center gap-2 text-zinc-400 text-sm font-black uppercase tracking-[0.14em]">
-                                                    <MapPin className="w-4 h-4" /> Coverage
-                                                </div>
+                                                <div className="flex items-center gap-2 text-zinc-400 text-sm font-bold">
+                                    <MapPin className="w-4 h-4" /> Coverage
+                                </div>
                                                 <div className="space-y-3 text-base text-zinc-600 font-medium">
                                                     <div className="inline-flex items-center gap-2 w-full"><MapPin className="w-4 h-4 text-zinc-400" /> {formData.suburb || "Add service suburb"}</div>
                                                     <div className="inline-flex items-center gap-2 w-full"><Building2 className="w-4 h-4 text-zinc-400" /> {formData.address || "Add business address"}</div>

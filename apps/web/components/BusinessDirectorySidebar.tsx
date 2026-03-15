@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { MapPin, Wrench, Clock, ChevronDown, ChevronUp, X, Search } from "lucide-react";
 import { TRADE_CATEGORIES, AUSTRALIA_LOCATIONS, JOB_TYPES } from "@/lib/constants";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 const STATE_LABELS: Record<string, string> = {
     VIC: "Victoria", NSW: "New South Wales", QLD: "Queensland",
@@ -73,6 +73,7 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
     const searchParams = useSearchParams();
     const [showAllCategories, setShowAllCategories] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isPending, startTransition] = useTransition();
 
     const currentCategory = searchParams.get("category") || "";
     const currentSuburb = searchParams.get("suburb") || "";
@@ -94,7 +95,9 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
             else params.delete(key);
         }
         params.delete("page");
-        router.push(`/businesses?${params.toString()}`);
+        startTransition(() => {
+            router.push(`/businesses?${params.toString()}`);
+        });
     };
 
     const handleStateChange = (state: string) => {
@@ -123,14 +126,16 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
 
     const clearAll = () => router.push("/businesses");
 
-    const hasFilters = currentCategory || currentSuburb || currentState || currentCity || currentSearch;
+    const currentOpenNow = searchParams.get("openNow") === "true";
+    const currentIs24h = searchParams.get("is24h") === "true";
+    const hasFilters = currentCategory || currentSuburb || currentState || currentCity || currentSearch || currentOpenNow || currentIs24h;
 
     const visibleCategories = showAllCategories
         ? TRADE_CATEGORIES
         : TRADE_CATEGORIES.slice(0, 10);
 
     return (
-        <div className="space-y-5">
+        <div className={`space-y-5 transition-opacity duration-150 ${isPending ? 'opacity-60 pointer-events-none' : ''}`}>
             {/* Search */}
             <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4 pointer-events-none" />
@@ -149,11 +154,21 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
             </div>
 
             {/* Active Filters Summary */}
-            {hasFilters && (
-                <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
-                    <p className="font-black text-zinc-900 text-sm mb-2">
-                        {total.toLocaleString()} {total === 1 ? 'business' : 'businesses'} match
+            <div className={`border rounded-xl p-4 ${hasFilters ? 'bg-orange-50 border-orange-100' : 'bg-zinc-50 border-zinc-100'}`}>
+                <div className="flex items-center justify-between mb-2">
+                    <p className={`font-black text-sm ${hasFilters ? 'text-zinc-900' : 'text-zinc-400'}`}>
+                        {hasFilters ? `${total.toLocaleString()} ${total === 1 ? 'business' : 'businesses'} match` : 'No filters active'}
+                        {isPending && <span className="ml-2 inline-block w-3 h-3 border-2 border-orange-500 border-t-transparent rounded-full animate-spin align-middle" />}
                     </p>
+                    <button
+                        onClick={() => { setSearchQuery(""); clearAll(); }}
+                        disabled={!hasFilters}
+                        className={`text-xs font-bold transition-colors ${hasFilters ? 'text-orange-600 hover:text-orange-700' : 'text-zinc-300 cursor-default'}`}
+                    >
+                        Clear all
+                    </button>
+                </div>
+                {hasFilters && (
                     <div className="flex flex-wrap gap-1.5">
                         {currentState && (
                             <button onClick={() => handleStateChange("")}
@@ -185,12 +200,21 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
                                 &quot;{currentSearch}&quot; <X className="w-3 h-3" />
                             </button>
                         )}
+                        {currentOpenNow && (
+                            <button onClick={() => push({ openNow: "" })}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-orange-200 rounded-full text-xs font-bold text-orange-700 hover:bg-orange-100 transition-colors">
+                                Open Now <X className="w-3 h-3" />
+                            </button>
+                        )}
+                        {currentIs24h && (
+                            <button onClick={() => push({ is24h: "" })}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-orange-200 rounded-full text-xs font-bold text-orange-700 hover:bg-orange-100 transition-colors">
+                                Open 24h <X className="w-3 h-3" />
+                            </button>
+                        )}
                     </div>
-                    <button onClick={clearAll} className="text-xs font-bold text-orange-600 hover:text-orange-700 mt-2">
-                        Clear all filters
-                    </button>
-                </div>
-            )}
+                )}
+            </div>
 
             {/* Location Drill-Down (replaces view at each level) */}
             <CollapsibleSection title="Location" icon={MapPin}>
@@ -295,14 +319,17 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
                 <div className="space-y-0.5">
                     <FilterCheckbox
                         label="Open Now"
-                        checked={searchParams.get("openNow") === "true"}
-                        onChange={() => push({ openNow: searchParams.get("openNow") === "true" ? "" : "true" })}
+                        checked={currentOpenNow}
+                        onChange={() => push({ openNow: currentOpenNow ? "" : "true" })}
                     />
-                    <FilterCheckbox
-                        label="Open 24 Hours"
-                        checked={searchParams.get("is24h") === "true"}
-                        onChange={() => push({ is24h: searchParams.get("is24h") === "true" ? "" : "true" })}
-                    />
+                    <div>
+                        <FilterCheckbox
+                            label="Open 24 Hours"
+                            checked={currentIs24h}
+                            onChange={() => push({ is24h: currentIs24h ? "" : "true" })}
+                        />
+                        <p className="text-[11px] text-zinc-400 font-medium ml-9 -mt-0.5">Always open — included in Open Now</p>
+                    </div>
                 </div>
             </CollapsibleSection>
         </div>

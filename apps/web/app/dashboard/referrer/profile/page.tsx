@@ -256,6 +256,7 @@ export default function ReferrerProfilePage() {
                             onChange={e => setTagline(e.target.value)}
                             className="w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-[15px] font-medium text-zinc-900 outline-none"
                         />
+                        <p className="text-right text-[12px] font-medium text-zinc-400 mt-1">{tagline.length}/120</p>
                     </div>
 
                     <div>
@@ -268,6 +269,7 @@ export default function ReferrerProfilePage() {
                             onChange={e => setBio(e.target.value)}
                             className="w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-[15px] font-medium leading-relaxed text-zinc-900 outline-none"
                         />
+                        <p className="text-right text-[12px] font-medium text-zinc-400 mt-1">{bio.length}/500</p>
                     </div>
 
                     <div>
