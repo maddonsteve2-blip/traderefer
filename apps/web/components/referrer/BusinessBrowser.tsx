@@ -285,13 +285,13 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
 
                 {/* Results meta */}
                 <div className="flex items-center justify-between mb-5 px-1">
-                    <p className="font-black text-zinc-500 uppercase tracking-widest text-base">
+                    <p className="font-black text-zinc-500 tracking-wide text-base">
                         {loading && businesses.length === 0
                             ? "Loading…"
                             : `${businesses.length} business${businesses.length !== 1 ? "es" : ""}${locationLabel ? ` near ${locationLabel}` : ""}`}
                     </p>
                     {locationLabel && (
-                        <span className="text-zinc-400 font-bold uppercase tracking-widest flex items-center gap-2 text-sm">
+                        <span className="text-zinc-400 font-bold flex items-center gap-2 text-sm">
                             <SlidersHorizontal className="w-4 h-4" /> Sorted by distance
                         </span>
                     )}
