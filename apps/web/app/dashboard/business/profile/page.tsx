@@ -393,23 +393,23 @@ export default function BusinessProfileManagementPage() {
                             )}
                         </div>
 
-                    <div className="space-y-5 max-w-3xl">
+                    <div className="space-y-4">
                         {/* Identity Section */}
-                        <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
-                            <div className="flex items-center gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
-                                <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600">
-                                    <User className="w-5 h-5 md:w-6 md:h-6" />
+                        <section className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+                            <div className="flex items-center gap-4 mb-4 border-b border-zinc-100 pb-4">
+                                <div className="size-9 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
+                                    <User className="w-5 h-5" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h2 className="text-xl md:text-4xl font-bold text-zinc-900 truncate">Identity</h2>
-                                    <p className="text-sm md:text-xl text-zinc-500 font-medium truncate">Your business name and brand logo</p>
+                                    <h2 className="text-base font-bold text-zinc-900 truncate">Identity</h2>
+                                    <p className="text-xs text-zinc-500 font-medium truncate">Your business name and brand logo</p>
                                 </div>
                             </div>
 
                             <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
                                 <div {...getLogoProps()} className="relative group cursor-pointer shrink-0">
                                     <input {...getLogoInputProps()} />
-                                    <div className="w-28 h-28 md:w-40 md:h-40 bg-zinc-50 rounded-[32px] md:rounded-[40px] border-2 border-dashed border-zinc-200 flex items-center justify-center overflow-hidden relative transition-colors group-hover:border-orange-500 group-hover:bg-orange-50">
+                                    <div className="w-24 h-24 bg-zinc-50 rounded-2xl border-2 border-dashed border-zinc-200 flex items-center justify-center overflow-hidden relative transition-colors group-hover:border-orange-500 group-hover:bg-orange-50">
                                         {uploadingLogo ? (
                                             <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                                         ) : formData.logo_url ? (
@@ -419,29 +419,29 @@ export default function BusinessProfileManagementPage() {
                                             <ImageIcon className="w-10 h-10 text-zinc-300 group-hover:text-orange-400" />
                                         )}
                                     </div>
-                                    <div className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-[32px] md:rounded-[40px] font-bold text-xs md:text-base pointer-events-none">
+                                    <div className="absolute inset-0 bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl font-bold text-xs pointer-events-none">
                                         {uploadingLogo ? "Uploading..." : "Change Logo"}
                                     </div>
                                 </div>
                                 <div className="flex-1 space-y-5 w-full">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div className="space-y-1.5">
-                                            <label className="text-xs md:text-sm font-bold text-zinc-600 ml-1 block">Business Name</label>
+                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Business Name</label>
                                             <input
                                                 type="text"
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-lg md:text-xl"
+                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
                                                 value={formData.business_name}
                                                 onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs md:text-sm font-bold text-zinc-600 ml-1 block">Profile URL</label>
+                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Profile URL</label>
                                             <p className="text-xs text-zinc-400 font-medium ml-1 mb-1">Your public address: traderefer.au/b/[your-handle]</p>
                                             <div className="flex items-center bg-zinc-50 rounded-xl px-4 py-3.5">
-                                                <span className="text-zinc-400 mr-1 text-base md:text-lg">/b/</span>
+                                                <span className="text-zinc-400 mr-1 text-sm">/b/</span>
                                                 <input
                                                     type="text"
-                                                    className="bg-transparent border-none p-0 text-zinc-900 font-bold focus:ring-0 w-full text-lg md:text-xl"
+                                                    className="bg-transparent border-none p-0 text-zinc-900 font-bold focus:ring-0 w-full text-sm"
                                                     value={formData.slug}
                                                     onChange={(e) => {
                                                         const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-');
@@ -455,9 +455,9 @@ export default function BusinessProfileManagementPage() {
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs md:text-sm font-bold text-zinc-600 ml-1 block">Trade Category</label>
+                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Trade Category</label>
                                             <select
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-lg md:text-xl"
+                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-sm"
                                                 value={formData.trade_category}
                                                 onChange={(e) => setFormData({ ...formData, trade_category: e.target.value })}
                                             >
@@ -467,20 +467,20 @@ export default function BusinessProfileManagementPage() {
                                             </select>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs md:text-sm font-bold text-zinc-600 ml-1 block">Website URL</label>
+                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Website URL</label>
                                             <input
                                                 type="url"
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-lg md:text-xl"
+                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
                                                 value={formData.website}
                                                 onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                                                 placeholder="https://yourbusiness.com"
                                             />
                                         </div>
                                         <div className="space-y-1.5 sm:col-span-2 md:col-span-1">
-                                            <label className="text-xs md:text-sm font-bold text-zinc-600 ml-1 block">Business Phone</label>
+                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Business Phone</label>
                                             <input
                                                 type="tel"
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-lg md:text-xl"
+                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
                                                 value={formData.business_phone}
                                                 onChange={(e) => setFormData({ ...formData, business_phone: e.target.value })}
                                                 placeholder="0400 000 000"
@@ -492,19 +492,19 @@ export default function BusinessProfileManagementPage() {
                         </section>
 
                         {/* Service Area Section */}
-                        <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
-                            <div className="flex items-center gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
-                                <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-zinc-50 flex items-center justify-center text-zinc-600">
-                                    <MapPin className="w-5 h-5 md:w-6 md:h-6" />
+                        <section className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+                            <div className="flex items-center gap-4 mb-4 border-b border-zinc-100 pb-4">
+                                <div className="size-9 rounded-xl bg-zinc-50 flex items-center justify-center text-zinc-600">
+                                    <MapPin className="w-5 h-5" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h2 className="text-xl md:text-4xl font-bold text-zinc-900 truncate">Service Area</h2>
-                                    <p className="text-sm md:text-xl text-zinc-500 font-medium truncate">Where do you provide your services?</p>
+                                    <h2 className="text-base font-bold text-zinc-900 truncate">Service Area</h2>
+                                    <p className="text-xs text-zinc-500 font-medium truncate">Where do you provide your services?</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2 space-y-1.5">
-                                    <label className="text-xs md:text-sm font-bold text-zinc-600 ml-1 block">Address & Location</label>
+                                    <label className="text-xs font-bold text-zinc-500 ml-1 block">Address & Location</label>
                                     <AddressAutocomplete
                                         addressValue={formData.address}
                                         suburbValue={formData.suburb}
@@ -516,17 +516,17 @@ export default function BusinessProfileManagementPage() {
                                         className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-lg md:text-xl transition-all"
                                     />
                                     {formData.address && formData.suburb && (
-                                        <p className="text-xs md:text-base font-bold text-zinc-400 ml-1">
+                                        <p className="text-xs font-bold text-zinc-400 ml-1">
                                             Currently: <span className="text-zinc-600 font-black">{formData.address}, {formData.suburb} {formData.state}</span>
                                         </p>
                                     )}
                                 </div>
                                 <div className="md:col-span-2 space-y-1.5">
-                                    <label className="text-xs md:text-sm font-bold text-zinc-600 ml-1 block">Service Radius</label>
+                                    <label className="text-xs font-bold text-zinc-500 ml-1 block">Service Radius</label>
                                     <div className="relative flex items-center">
                                         <input
                                             type="number"
-                                            className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-lg md:text-xl"
+                                            className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-sm"
                                             value={formData.service_radius_km}
                                             onChange={(e) => setFormData({ ...formData, service_radius_km: parseInt(e.target.value) || 0 })}
                                         />
@@ -537,20 +537,20 @@ export default function BusinessProfileManagementPage() {
                         </section>
 
                         {/* About Section */}
-                        <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
-                            <div className="flex items-center gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
-                                <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
-                                    <Shield className="w-5 h-5 md:w-6 md:h-6" />
+                        <section className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+                            <div className="flex items-center gap-4 mb-4 border-b border-zinc-100 pb-4">
+                                <div className="size-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                                    <Shield className="w-5 h-5" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h2 className="text-xl md:text-4xl font-bold text-zinc-900 truncate">About Business</h2>
-                                    <p className="text-sm md:text-xl text-zinc-500 font-medium truncate">Describe your services and expertise</p>
+                                    <h2 className="text-base font-bold text-zinc-900 truncate">About Business</h2>
+                                    <p className="text-xs text-zinc-500 font-medium truncate">Describe your services and expertise</p>
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-xs md:text-sm font-bold text-zinc-600 ml-1 block">Description</label>
+                                <label className="text-xs font-bold text-zinc-500 ml-1 block">Description</label>
                                 <textarea
-                                    className="w-full bg-zinc-50 border-none rounded-2xl p-6 md:p-8 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 min-h-[180px] md:min-h-[220px] text-lg md:text-2xl leading-relaxed resize-none"
+                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 min-h-[120px] text-sm leading-relaxed resize-none"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder="Tell potential referrers and customers about your trade business..."
@@ -559,20 +559,20 @@ export default function BusinessProfileManagementPage() {
                         </section>
 
                         {/* Work Gallery Section (photo_urls from onboarding) */}
-                        <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
+                        <section className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 border-b border-zinc-100 pb-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
-                                        <ImageIcon className="w-5 h-5 md:w-6 md:h-6" />
+                                    <div className="size-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+                                        <ImageIcon className="w-5 h-5" />
                                     </div>
                                     <div className="min-w-0">
-                                        <h2 className="text-xl md:text-4xl font-bold text-zinc-900 truncate">Work Gallery</h2>
-                                        <p className="text-sm md:text-xl text-zinc-500 font-medium truncate">Showcase your best completed jobs</p>
+                                        <h2 className="text-base font-bold text-zinc-900 truncate">Work Gallery</h2>
+                                        <p className="text-xs text-zinc-500 font-medium truncate">Showcase your best completed jobs</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div {...getGalleryProps()} className="mb-6 border-2 border-dashed border-zinc-200 rounded-2xl p-6 md:p-10 text-center cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-all">
+                            <div {...getGalleryProps()} className="mb-4 border-2 border-dashed border-zinc-200 rounded-2xl p-5 text-center cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-all">
                                 <input {...getGalleryInputProps()} />
                                 {uploadingGallery ? (
                                     <div className="flex items-center justify-center gap-2 text-orange-500">
@@ -581,9 +581,9 @@ export default function BusinessProfileManagementPage() {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center gap-2">
-                                        <FileUp className="w-8 h-8 md:w-10 md:h-10 text-zinc-200" />
-                                        <span className="text-base md:text-lg font-black text-zinc-500">Add Photos</span>
-                                        <span className="text-xs md:text-sm text-zinc-400 font-medium">PNG, JPG or WEBP (Max 10MB)</span>
+                                        <FileUp className="w-8 h-8 text-zinc-200" />
+                                        <span className="text-sm font-bold text-zinc-500">Add Photos</span>
+                                        <span className="text-xs text-zinc-400 font-medium">PNG, JPG or WEBP (Max 10MB)</span>
                                     </div>
                                 )}
                             </div>
@@ -613,15 +613,15 @@ export default function BusinessProfileManagementPage() {
                         </section>
 
                         {/* Finished Projects Section */}
-                        <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
+                        <section className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 border-b border-zinc-100 pb-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="size-10 md:size-14 rounded-xl md:rounded-2xl bg-purple-100 flex items-center justify-center text-purple-600">
-                                        <ImageIcon className="w-5 h-5 md:w-7 md:h-7" />
+                                    <div className="size-9 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                                        <ImageIcon className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <h2 className="text-xl md:text-4xl font-bold text-zinc-900">Finished Projects</h2>
-                                        <p className="text-sm md:text-xl text-zinc-500 font-medium">Showcase complete jobs with titles and descriptions</p>
+                                        <h2 className="text-base font-bold text-zinc-900">Finished Projects</h2>
+                                        <p className="text-xs text-zinc-500 font-medium">Showcase complete jobs with titles and descriptions</p>
                                     </div>
                                 </div>
                                 <Button
@@ -629,7 +629,7 @@ export default function BusinessProfileManagementPage() {
                                         setEditingProject(null);
                                         setIsProjectDialogOpen(true);
                                     }}
-                                    className="rounded-full bg-orange-600 text-white hover:bg-orange-700 font-bold h-12 md:h-14 px-6 md:px-8 flex items-center gap-2 text-base md:text-xl w-full sm:w-auto"
+                                    className="rounded-xl bg-orange-600 text-white hover:bg-orange-700 font-bold h-9 px-4 flex items-center gap-2 text-sm w-full sm:w-auto"
                                 >
                                     <Plus className="w-5 h-5" /> Add Project
                                 </Button>
@@ -677,9 +677,9 @@ export default function BusinessProfileManagementPage() {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div className="p-6 space-y-2">
-                                                <h4 className="font-bold text-zinc-900 line-clamp-1 text-xl">{project.title}</h4>
-                                                <p className="text-base text-zinc-500 line-clamp-2">{project.description || "No description provided."}</p>
+                                            <div className="p-4 space-y-1">
+                                                <h4 className="font-bold text-zinc-900 line-clamp-1 text-sm">{project.title}</h4>
+                                                <p className="text-xs text-zinc-500 line-clamp-2">{project.description || "No description provided."}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -688,21 +688,21 @@ export default function BusinessProfileManagementPage() {
                         </section>
 
                         {/* Service Features Section */}
-                        <section className="bg-white border border-zinc-200 rounded-[24px] md:rounded-[32px] p-6 md:p-10 shadow-sm">
-                            <div className="flex items-center gap-4 mb-6 md:mb-8 border-b border-zinc-100 pb-6">
-                                <div className="size-10 md:size-14 rounded-xl md:rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600">
-                                    <CheckCircle2 className="w-5 h-5 md:w-7 md:h-7" />
+                        <section className="bg-white border border-zinc-200 rounded-2xl p-5 shadow-sm">
+                            <div className="flex items-center gap-4 mb-4 border-b border-zinc-100 pb-4">
+                                <div className="size-9 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
+                                    <CheckCircle2 className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl md:text-4xl font-bold text-zinc-900">Service Highlights</h2>
-                                    <p className="text-sm md:text-xl text-zinc-500 font-medium">Select features that help you stand out</p>
+                                    <h2 className="text-base font-bold text-zinc-900">Service Highlights</h2>
+                                    <p className="text-xs text-zinc-500 font-medium">Select features that help you stand out</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                                 {AVAILABLE_FEATURES.map((feature) => (
                                     <label
                                         key={feature}
-                                        className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${formData.features.includes(feature)
+                                        className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer ${formData.features.includes(feature)
                                             ? 'bg-orange-50 border-orange-500 text-orange-900 shadow-sm'
                                             : 'bg-zinc-50 border-transparent text-zinc-600 hover:bg-zinc-100'
                                             }`}
@@ -727,18 +727,18 @@ export default function BusinessProfileManagementPage() {
                                             }`}>
                                             {formData.features.includes(feature) && <CheckCircle2 className="w-4 h-4" />}
                                         </div>
-                                        <span className="font-bold text-base md:text-lg">{feature}</span>
+                                        <span className="font-bold text-sm">{feature}</span>
                                     </label>
                                 ))}
                             </div>
                         </section>
 
                         {/* Tips Sidebar/Footer */}
-                        <div className="p-6 md:p-8 bg-zinc-900 rounded-[28px] md:rounded-[40px] text-white relative overflow-hidden group">
+                        <div className="p-5 bg-zinc-900 rounded-2xl text-white relative overflow-hidden group">
                             <div className="absolute -right-10 -bottom-10 size-40 bg-orange-500/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
                             <div className="relative z-10">
-                                <h3 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 font-display">Pro Tip: Complete Profiles Convert Better</h3>
-                                <p className="text-zinc-400 text-base md:text-2xl leading-relaxed max-w-2xl">
+                                <h3 className="text-base font-bold mb-2">Pro Tip: Complete Profiles Convert Better</h3>
+                                <p className="text-zinc-400 text-sm leading-relaxed">
                                     Businesses with a high-quality logo, at least 5 job photos, and a detailed description receive <span className="text-orange-400 font-bold">250% more enquiries</span> through TradeRefer.
                                 </p>
                             </div>
