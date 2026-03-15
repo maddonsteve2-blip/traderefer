@@ -8,6 +8,7 @@ import {
     Briefcase, TrendingUp, User, MessageSquare, AlertTriangle
 } from "lucide-react";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface Application {
     id: string;
@@ -63,9 +64,10 @@ export function ForceApplicationsPane() {
     const [apps, setApps] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
-    const [filter, setFilter] = useState<"pending" | "declined" | "all">("pending");
+    const [filter, setFilter] = useState<"pending" | "archived" | "approved" | "all">("pending");
     const [pendingCount, setPendingCount] = useState(0);
     const [rejectedCount, setRejectedCount] = useState(0);
+    const [approvedCount, setApprovedCount] = useState(0);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [detail, setDetail] = useState<ApplicationDetail | null>(null);
     const [detailLoading, setDetailLoading] = useState(false);
@@ -82,6 +84,7 @@ export function ForceApplicationsPane() {
             setApps(data.applications ?? []);
             setPendingCount(data.pending_count ?? 0);
             setRejectedCount(data.rejected_count ?? 0);
+            setApprovedCount(data.approved_count ?? 0);
         }
         setLoading(false);
     }, [getToken, apiUrl]);
@@ -164,7 +167,8 @@ export function ForceApplicationsPane() {
 
     const PENDING_STATUSES = ["pending", "applied", "new", "submitted", "under_review"];
     const displayed = filter === "pending" ? apps.filter(a => PENDING_STATUSES.includes((a.status ?? "").toLowerCase()))
-        : filter === "declined" ? apps.filter(a => a.status === "rejected")
+        : filter === "archived" ? apps.filter(a => a.status === "rejected")
+        : filter === "approved" ? apps.filter(a => a.status === "approved")
         : apps;
 
     const handleReconsider = async () => {
@@ -201,13 +205,13 @@ export function ForceApplicationsPane() {
             <div className="w-full md:w-[400px] shrink-0 border-r border-zinc-200 overflow-y-auto bg-white flex flex-col">
                 {/* Filter bar */}
                 <div className="sticky top-0 bg-white border-b border-zinc-100 px-4 py-3 flex gap-2 z-10">
-                    {(["pending", "declined", "all"] as const).map(f => (
+                    {(["pending", "archived", "approved", "all"] as const).map(f => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
                             className={`px-3 py-1.5 rounded-full border font-semibold transition-all text-sm ${filter === f ? "bg-orange-500 text-white border-orange-500 shadow-sm" : "bg-white text-zinc-600 border-zinc-200 hover:border-zinc-300"}`}
                         >
-                            {f === "pending" ? `pending (${pendingCount})` : f === "declined" ? `declined (${rejectedCount})` : f}
+                            {f === "pending" ? `pending (${pendingCount})` : f === "archived" ? `archived (${rejectedCount})` : f === "approved" ? `approved (${approvedCount})` : "all"}
                         </button>
                     ))}
                 </div>
@@ -220,7 +224,7 @@ export function ForceApplicationsPane() {
                     <div className="px-4 py-12 text-center">
                         <CheckCircle className="w-10 h-10 text-zinc-200 mx-auto mb-3" />
                         <p className="font-bold text-zinc-500 text-base">
-                            {filter === "pending" ? "No pending applications" : "No applications yet"}
+                            {filter === "pending" ? "No pending applications" : filter === "archived" ? "No archived applications" : filter === "approved" ? "No approved partners yet" : "No applications yet"}
                         </p>
                     </div>
                 ) : (
@@ -262,15 +266,18 @@ export function ForceApplicationsPane() {
             {/* RIGHT PANE — detail / resume */}
             <div className="hidden md:flex flex-1 overflow-y-auto bg-zinc-50">
                 {!selectedId ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                        <div className="w-16 h-16 bg-amber-50 border border-amber-100 rounded-2xl flex items-center justify-center mb-5">
-                            <User className="w-8 h-8 text-amber-400" />
-                        </div>
-                        <p className="font-black text-zinc-900 text-2xl mb-2">Review Applications</p>
-                        <p className="text-zinc-400 font-medium text-base max-w-xs leading-relaxed">
-                            When someone applies to join your referral network, they appear here. Approve them to give them access to your referral links and fees.
-                        </p>
-                    </div>
+                    <EmptyState
+                        icon={User}
+                        iconColor="text-orange-400"
+                        iconBg="bg-orange-50"
+                        title="Select an application to review"
+                        description="When someone applies to join your referral network, you can review their profile, approve them, and set their referral fee — all from here."
+                        ghostRows={[
+                            { widths: ['w-36', 'w-24'] },
+                            { widths: ['w-28', 'w-32'] },
+                        ]}
+                        className="flex-1 items-center justify-center h-full"
+                    />
                 ) : detailLoading || !detail ? (
                     <div className="flex items-center justify-center h-64 w-full">
                         <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />

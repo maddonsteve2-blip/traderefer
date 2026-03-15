@@ -8,6 +8,7 @@ import {
     Loader2, Clock, CheckCircle, TrendingUp, Inbox
 } from "lucide-react";
 import { useLiveEvent } from "@/hooks/useLiveEvents";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface PendingApp {
     id: string;
@@ -284,33 +285,19 @@ export function PartnerLeaderboard() {
                         <Loader2 className="w-6 h-6 text-orange-400 animate-spin" />
                     </div>
                 ) : referrers.length === 0 || referrers.every(r => r.leads_created === 0 && r.total_earned_cents === 0) ? (
-                    <div className="p-8 flex flex-col items-center text-center">
-                        <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-4">
-                            <Trophy className="w-7 h-7 text-amber-400" />
-                        </div>
-                        <p className="font-black text-zinc-800 mb-1" style={{ fontSize: 20 }}>Your Partner Leaderboard</p>
-                        <p className="text-zinc-400 font-medium max-w-[300px] mb-4" style={{ fontSize: 16 }}>
-                            Once your referrers start sending leads, they&apos;ll rank here by performance.
-                            {referrers.length === 0 ? " Approve your pending applications to get started." : ""}
-                        </p>
-                        {pendingCount > 0 ? (
-                            <button
-                                onClick={() => router.push("/dashboard/business/force?tab=applications")}
-                                className="bg-amber-500 hover:bg-amber-600 text-white rounded-full font-bold px-5 h-10 transition-colors"
-                                style={{ fontSize: 16 }}
-                            >
-                                Review {pendingCount} Application{pendingCount > 1 ? "s" : ""} →
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => router.push("/dashboard/business/force?tab=partners")}
-                                className="bg-orange-500 hover:bg-orange-600 text-white rounded-full font-bold px-5 h-10 transition-colors"
-                                style={{ fontSize: 16 }}
-                            >
-                                View Partner Network
-                            </button>
-                        )}
-                    </div>
+                    <EmptyState
+                        icon={Trophy}
+                        iconColor="text-orange-400"
+                        iconBg="bg-orange-50"
+                        title="Your leaderboard starts here"
+                        description="Once your referrers send leads, they'll rank here by performance. Approve pending applications to get the board moving."
+                        primaryCTA={{ label: 'Review applications', href: '/dashboard/business/force?tab=applications' }}
+                        ghostRows={[
+                            { widths: ['w-28', 'w-16'] },
+                            { widths: ['w-36', 'w-20'] },
+                            { widths: ['w-24', 'w-12'] },
+                        ]}
+                    />
                 ) : (
                     <div className="divide-y divide-zinc-50">
                         {referrers.map((ref, idx) => {

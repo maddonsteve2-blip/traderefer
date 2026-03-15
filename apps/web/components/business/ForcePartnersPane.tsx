@@ -10,6 +10,7 @@ import {
     Phone, Mail, ExternalLink, Loader2, CheckCircle, Clock, BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface Referrer {
     referrer_id: string;
@@ -251,15 +252,20 @@ export function ForcePartnersPane() {
             {/* ── RIGHT PANE — full detail ── */}
             <div className="hidden md:flex flex-1 overflow-y-auto bg-zinc-50">
                 {!selectedId ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                        <div className="w-16 h-16 bg-green-50 border border-green-100 rounded-2xl flex items-center justify-center mb-5">
-                            <UserCheck className="w-8 h-8 text-green-400" />
-                        </div>
-                        <p className="text-2xl font-black text-zinc-900 tracking-tight mb-2">Your Partner Network</p>
-                        <p className="text-zinc-400 font-medium text-base mt-1 max-w-xs leading-relaxed">
-                            Click a partner on the left to view their stats, customise their referral fee, or message them directly.
-                        </p>
-                    </div>
+                    <EmptyState
+                        icon={UserCheck}
+                        iconColor="text-orange-400"
+                        iconBg="bg-orange-50"
+                        title="Select a partner to view their stats"
+                        description="Click a partner on the left to see their leads, conversion rate, custom referral fee, and message them directly."
+                        ghostRows={[
+                            { widths: ['w-32', 'w-20'] },
+                            { widths: ['w-24', 'w-28'] },
+                            { widths: ['w-36', 'w-16'] },
+                        ]}
+                        tip="You can set a custom referral fee per partner from this panel."
+                        className="flex-1 items-center justify-center h-full"
+                    />
                 ) : detailLoading || !detail ? (
                     <div className="flex items-center justify-center w-full h-full">
                         <Loader2 className="w-8 h-8 text-orange-400 animate-spin" />

@@ -366,7 +366,8 @@ async def list_pending_applications(
         })
     pending_count = sum(1 for a in apps if a["status"] == "pending")
     rejected_count = sum(1 for a in apps if a["status"] == "rejected")
-    return {"applications": apps, "pending_count": pending_count, "rejected_count": rejected_count}
+    approved_count = sum(1 for a in apps if a["status"] == "approved")
+    return {"applications": apps, "pending_count": pending_count, "rejected_count": rejected_count, "approved_count": approved_count}
 
 
 @router.get("/business/{application_id}")

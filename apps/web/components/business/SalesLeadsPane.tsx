@@ -10,6 +10,7 @@ import {
 import { PinConfirmationModal } from "@/components/dashboard/PinConfirmationModal";
 import { toast } from "sonner";
 import { useLiveEvent } from "@/hooks/useLiveEvents";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface Lead {
     id: string;
@@ -205,18 +206,21 @@ export function SalesLeadsPane() {
             {/* RIGHT — quick view */}
             <div className={`${selected ? "flex" : "hidden md:flex"} flex-1 min-h-0 flex-col overflow-y-auto bg-zinc-50`}>
                 {!selected ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                        <div className="w-16 h-16 bg-orange-50 border border-orange-100 rounded-2xl flex items-center justify-center mb-5">
-                            <Target className="w-8 h-8 text-orange-400" />
-                        </div>
-                        <p className="text-2xl font-black text-zinc-900 tracking-tight mb-2">How Leads Work</p>
-                        <p className="text-zinc-400 font-medium text-base mt-1 max-w-xs leading-relaxed">
-                            Referrers in your network send leads your way. Leads marked &ldquo;Ready to Unlock&rdquo; can be claimed &mdash; top up your wallet to reveal the customer&apos;s contact details.
-                        </p>
-                        {leads.length > 0 && (
-                            <p className="text-zinc-300 font-medium text-sm mt-5">← Select a lead on the left to view details</p>
-                        )}
-                    </div>
+                    <EmptyState
+                        icon={LockIcon}
+                        iconColor="text-zinc-400"
+                        iconBg="bg-zinc-100"
+                        title="Select a lead to view details"
+                        description="Leads marked 'Ready to Unlock' contain a customer's contact details. Top up your wallet to claim them — you only pay when you unlock."
+                        primaryCTA={{ label: 'Top up wallet', href: '/dashboard/business/wallet' }}
+                        secondaryCTA={{ label: 'Invite a referrer', href: '/dashboard/business/force?tab=partners' }}
+                        tip="Leads expire after 7 days — unlock them before they're gone."
+                        ghostRows={[
+                            { widths: ['w-32', 'w-48'] },
+                            { widths: ['w-24', 'w-36'] },
+                        ]}
+                        className="flex-1 items-center justify-center h-full"
+                    />
                 ) : (
                     <div className="max-w-lg mx-auto px-6 py-6 space-y-4">
                         <button

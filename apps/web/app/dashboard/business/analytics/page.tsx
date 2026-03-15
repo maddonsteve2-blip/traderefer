@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileBusinessAnalytics } from "@/components/business/MobileBusinessAnalytics";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { toast } from "sonner";
 
 interface Analytics {
@@ -147,20 +148,21 @@ export default function AnalyticsPage() {
                                 })}
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-10 text-center">
-                                <div className="w-14 h-14 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center mb-4">
-                                    <Users className="w-7 h-7 text-orange-400" />
-                                </div>
-                                <p className="font-black text-zinc-800 text-lg mb-1">No referrer data yet</p>
-                                <p className="text-sm text-zinc-400 font-medium max-w-[280px] mb-5">Once approved referrers start sending leads, their performance will rank here.</p>
-                                <Button
-                                    onClick={() => window.location.href = '/dashboard/business/force?tab=applications'}
-                                    size="sm"
-                                    className="bg-orange-500 hover:bg-orange-600 text-white rounded-full font-bold px-5"
-                                >
-                                    Review Applications
-                                </Button>
-                            </div>
+                            <EmptyState
+                                icon={Users}
+                                iconColor="text-orange-400"
+                                iconBg="bg-orange-50"
+                                title="No referrer data yet"
+                                description="Approve referrers and they'll appear here ranked by leads sent, conversion rate, and total earned."
+                                primaryCTA={{ label: 'Invite a referrer', href: '/dashboard/business/force?tab=partners' }}
+                                ghostRows={[
+                                    { widths: ['w-28', 'w-16', 'w-12'] },
+                                    { widths: ['w-36', 'w-20', 'w-10'] },
+                                    { widths: ['w-24', 'w-14', 'w-16'] },
+                                    { widths: ['w-32', 'w-18', 'w-14'] },
+                                    { widths: ['w-20', 'w-24', 'w-12'] },
+                                ]}
+                            />
                         )}
                     </div>
 
@@ -191,20 +193,19 @@ export default function AnalyticsPage() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center py-10 text-center">
-                                <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
-                                    <BarChart3 className="w-7 h-7 text-blue-400" />
-                                </div>
-                                <p className="font-black text-zinc-800 text-lg mb-1">No campaign data yet</p>
-                                <p className="text-sm text-zinc-400 font-medium max-w-[280px] mb-5">Launch a time-limited bonus to motivate your referrers and track results here.</p>
-                                <Button
-                                    onClick={() => window.location.href = '/dashboard/business/sales?tab=promotions'}
-                                    size="sm"
-                                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full font-bold px-5"
-                                >
-                                    Create a Campaign
-                                </Button>
-                            </div>
+                            <EmptyState
+                                icon={BarChart3}
+                                iconColor="text-orange-400"
+                                iconBg="bg-orange-50"
+                                title="No campaign data yet"
+                                description="Launch a time-limited bonus to motivate your referrers — results, ROI, and click-through rates will appear here."
+                                primaryCTA={{ label: 'Create a campaign', href: '/dashboard/business/sales?tab=promotions' }}
+                                ghostRows={[
+                                    { widths: ['w-40', 'w-20'] },
+                                    { widths: ['w-32', 'w-16'] },
+                                    { widths: ['w-28', 'w-24'] },
+                                ]}
+                            />
                         )}
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 import Link from 'next/link';
 import { MessageSquare, Send, ArrowLeft, Building2, Search, X, Loader2, Check, CheckCheck, ShieldCheck, Paperclip, ExternalLink, Users, ChevronRight } from 'lucide-react';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 interface Contact {
     contact_id: string;
@@ -641,17 +642,16 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                         )}
                     </div>
                 ) : (
-                    <div className="hidden md:flex flex-col items-center justify-center flex-1 text-center p-12 bg-zinc-50/30">
-                        <div className="w-16 h-16 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-center mb-5">
-                            <MessageSquare className="w-8 h-8 text-blue-400" />
-                        </div>
-                        <h3 className="text-2xl font-black text-zinc-900 tracking-tight mb-2">Select a conversation</h3>
-                        <p className="text-zinc-400 font-medium text-base mt-1 max-w-xs leading-relaxed">
-                            Chat directly with your referrers to keep them motivated, share deals, or answer questions.
-                        </p>
-                        <p className="text-zinc-300 font-medium text-sm mt-4 max-w-xs">
-                            ← Pick a conversation on the left to get started
-                        </p>
+                    <div className="hidden md:flex flex-1 bg-zinc-50/30">
+                        <EmptyState
+                            icon={MessageSquare}
+                            iconColor="text-zinc-400"
+                            iconBg="bg-zinc-100"
+                            title="Select a conversation"
+                            description="Chat directly with your referrers to keep them engaged, share campaign updates, or answer their questions."
+                            tip="Use 'Broadcast to all referrers' (top right) to message your whole network at once."
+                            className="flex-1 items-center justify-center"
+                        />
                     </div>
                 )}
 
