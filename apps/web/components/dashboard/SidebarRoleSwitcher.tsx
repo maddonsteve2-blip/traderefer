@@ -77,7 +77,7 @@ export function SidebarRoleSwitcher({ currentRole }: Props) {
             )}
             <button
                 onClick={handleSwitch}
-                className="w-full flex items-center gap-3 p-4 bg-zinc-900 hover:bg-zinc-800 text-white rounded-2xl font-bold transition-all group"
+                className="w-full flex items-center gap-3 p-4 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-bold transition-all group"
             >
                 <div className="w-9 h-9 bg-orange-500/20 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-orange-500/30 transition-colors">
                     <TargetIcon className="w-5 h-5 text-orange-400" />

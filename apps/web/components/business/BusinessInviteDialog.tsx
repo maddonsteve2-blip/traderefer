@@ -173,7 +173,7 @@ export function BusinessInviteDialog({ open, onOpenChange }: BusinessInviteDialo
                     <Button
                         onClick={sendInvitations}
                         disabled={sending || sent || invitees.length === 0}
-                        className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 font-bold shadow-lg shadow-zinc-200 flex items-center justify-center gap-2 text-2xl"
+                        className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-16 font-bold shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 text-2xl"
                     >
                         {sent ? (
                             <><CheckCircle className="w-5 h-5" /> Sent!</>

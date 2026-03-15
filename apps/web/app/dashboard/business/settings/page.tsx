@@ -572,7 +572,7 @@ export default function BusinessSettingsPage() {
                                                 </div>
                                             </div>
                                             <p className="max-w-2xl text-zinc-600 font-medium leading-7 text-lg">
-                                                {formData.why_refer_us || formData.description || "Add your business pitch on the left and it will render here as your live storefront summary."}
+                                                {formData.why_refer_us || formData.description || "Add your business pitch on the left and it will render here as your live profile summary."}
                                             </p>
                                         </div>
 
