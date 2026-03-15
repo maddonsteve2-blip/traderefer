@@ -35,11 +35,6 @@ function SalesHubInner() {
                 {tab === "leads" && <MobileBusinessLeads />}
                 {tab === "offers" && <MobileBusinessDeals />}
                 {tab === "promotions" && <MobileBusinessCampaigns />}
-                {tab !== "leads" && tab !== "offers" && tab !== "promotions" && (
-                    <>
-                        <HubTabBar tabs={TABS} active={tab} onChange={setTab} />
-                    </>
-                )}
             </div>
 
             <div className="hidden md:block flex-1 overflow-hidden">

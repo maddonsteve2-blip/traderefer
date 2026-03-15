@@ -549,7 +549,7 @@ export default function ReferrerManagePage() {
                             {link.is_verified && <BadgeCheck className="w-4 h-4 text-orange-500 shrink-0" />}
                         </div>
                         <p className="font-bold text-zinc-500 truncate mt-0.5 text-base">{link.trade_category}</p>
-                        <span className="inline-block mt-2 px-3 py-1.5 bg-zinc-900 text-white font-black rounded-lg text-xs">
+                        <span className="inline-block mt-2 px-3 py-1.5 bg-orange-100 text-orange-700 font-black rounded-lg text-xs">
                             ${((link.referral_fee_cents * 0.8) / 100).toFixed(2)} per lead
                         </span>
                     </div>

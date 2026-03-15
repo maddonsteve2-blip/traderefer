@@ -206,7 +206,7 @@ export default function ReferrerProfilePage() {
                             href={publicUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex h-10 items-center justify-center gap-1.5 rounded-2xl bg-zinc-900 px-3 text-[11px] font-black uppercase tracking-wider text-white"
+                            className="inline-flex h-10 items-center justify-center gap-1.5 rounded-2xl bg-orange-600 hover:bg-orange-700 px-3 text-[11px] font-black uppercase tracking-wider text-white transition-colors"
                         >
                             <ExternalLink className="w-3.5 h-3.5" /> View
                         </a>
@@ -296,7 +296,7 @@ export default function ReferrerProfilePage() {
                                 type="button"
                                 onClick={openWebcam}
                                 disabled={uploading}
-                                className="flex h-12 items-center justify-center gap-2 rounded-2xl bg-zinc-900 text-[14px] font-black text-white"
+                                className="flex h-12 items-center justify-center gap-2 rounded-2xl bg-orange-600 hover:bg-orange-700 text-[14px] font-black text-white transition-colors"
                             >
                                 <Video className="w-4 h-4" /> Take Photo
                             </button>
@@ -331,7 +331,7 @@ export default function ReferrerProfilePage() {
                             href={publicUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-black rounded-xl transition-all text-xs md:text-sm"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl transition-all text-xs md:text-sm"
                         >
                             <ExternalLink className="w-4 h-4" /> View Live Resume
                         </a>
@@ -423,7 +423,7 @@ export default function ReferrerProfilePage() {
                                                 type="button"
                                                 onClick={openWebcam}
                                                 disabled={uploading}
-                                                className="flex items-center justify-center gap-2 h-12 px-4 bg-zinc-900 hover:bg-zinc-700 text-white rounded-xl font-black transition-all text-sm"
+                                                className="flex items-center justify-center gap-2 h-12 px-4 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-black transition-all text-sm"
                                             >
                                                 <Video className="w-5 h-5" /> Take Photo
                                             </button>

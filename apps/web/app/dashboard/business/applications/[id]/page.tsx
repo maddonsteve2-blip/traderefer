@@ -204,9 +204,9 @@ export default function BusinessApplicationDetailPage() {
                             {/* Stats strip */}
                             <div className="grid grid-cols-3 gap-3 mb-5">
                                 {[
-                                    { label: "Quality Score", value: ref.quality_score, icon: Star, bg: "bg-amber-50", text: "text-amber-500" },
+                                    { label: "Quality Score", value: `${ref.quality_score}/100`, icon: Star, bg: "bg-amber-50", text: "text-amber-500" },
                                     { label: "Confirmed Leads", value: ref.confirmed_referrals, icon: TrendingUp, bg: "bg-emerald-50", text: "text-emerald-600" },
-                                    { label: "Businesses", value: ref.businesses_linked, icon: Briefcase, bg: "bg-blue-50", text: "text-blue-600" },
+                                    { label: "Businesses", value: ref.businesses_linked, icon: Briefcase, bg: "bg-orange-50", text: "text-orange-500" },
                                 ].map(s => (
                                     <div key={s.label} className={`${s.bg} rounded-xl p-4 text-center`}>
                                         <s.icon className={`w-6 h-6 ${s.text} mx-auto mb-1`} />
@@ -248,13 +248,13 @@ export default function BusinessApplicationDetailPage() {
                     {/* ── STICKY ACTION PANEL ── */}
                     <div className="lg:sticky lg:top-24 self-start space-y-4">
                         <div className="bg-white rounded-2xl border-2 border-zinc-200 overflow-hidden shadow-xl">
-                            <div className="bg-zinc-900 px-6 py-5">
-                                <p className="font-black text-zinc-400 uppercase tracking-widest text-xs md:text-base">Application</p>
+                            <div className="bg-orange-600 px-6 py-5">
+                                <p className="font-black text-orange-200 uppercase tracking-widest text-xs md:text-base">Application</p>
                                 <p className="font-bold text-white mt-0.5 text-sm md:text-xl">Applied {fmtDate(app.applied_at)}</p>
                                 {isPending && (
                                     <div className="flex items-center gap-1.5 mt-2">
-                                        <Clock className="w-5 h-5 text-amber-400" />
-                                        <span className="font-bold text-amber-400 text-sm md:text-lg">Awaiting your decision</span>
+                                        <Clock className="w-5 h-5 text-white/70" />
+                                        <span className="font-bold text-white/90 text-sm md:text-lg">Awaiting your decision</span>
                                     </div>
                                 )}
                             </div>

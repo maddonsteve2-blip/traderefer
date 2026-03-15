@@ -222,7 +222,7 @@ export default async function ReferrerRewardsPage() {
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link
                                 href="/dashboard/referrer"
-                                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-zinc-900 text-white font-bold hover:bg-zinc-800 transition-colors text-lg"
+                                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-zinc-100 text-zinc-700 font-bold hover:bg-zinc-200 transition-colors text-lg"
                             >
                                 <LayoutDashboard className="w-5 h-5" /> Back to Dashboard
                             </Link>
