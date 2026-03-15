@@ -133,7 +133,7 @@ export function EarningsDashboard() {
     return (
         <div className="space-y-3 mb-0">
             {/* Tier Card — white card matching rest of dashboard */}
-            <div className="bg-white border border-zinc-200 rounded-2xl p-3">
+            <div id="tour-overview-tier-card" className="bg-white border border-zinc-200 rounded-2xl p-3">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3 mb-3">
@@ -219,7 +219,7 @@ export function EarningsDashboard() {
             {/* Earnings Cards + Monthly Goal — side by side */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-2">
                 {/* Left 3/5: 2×2 earnings cards */}
-                <div className="lg:col-span-3 grid grid-cols-2 gap-2">
+                <div id="tour-overview-earnings" className="lg:col-span-3 grid grid-cols-2 gap-2">
                     <div className="bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex items-center justify-between">
                         <span className="text-[19px] font-bold text-zinc-500">This Week</span>
                         <span className={`text-[36px] font-black ${stats.earnings.this_week > 0 ? 'text-green-600' : 'text-zinc-900'}`}>{centsLabel(stats.earnings.this_week)}</span>
@@ -253,7 +253,7 @@ export function EarningsDashboard() {
                 </div>
 
                 {/* Right 2/5: Monthly Goal */}
-                <div className="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex flex-col">
+                <div id="tour-overview-monthly-goal" className="lg:col-span-2 bg-white rounded-2xl border border-zinc-200 px-4 py-3 flex flex-col">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                             <Target className="w-5 h-5 text-orange-500" />

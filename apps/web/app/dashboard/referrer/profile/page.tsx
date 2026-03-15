@@ -395,7 +395,7 @@ export default function ReferrerProfilePage() {
                             </div>
 
                             {/* Profile Photo Upload */}
-                            <div className="space-y-4">
+                            <div id="tour-profile-photo" className="space-y-4">
                                 <label className="block font-bold text-zinc-600 text-xs">
                                     Profile Photo
                                 </label>

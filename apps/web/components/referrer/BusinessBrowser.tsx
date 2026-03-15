@@ -48,7 +48,7 @@ function servicePills(biz: Business): string[] {
     return raw.slice(0, 3);
 }
 
-function BizCard({ biz }: { biz: Business }) {
+function BizCard({ biz, isFirst }: { biz: Business; isFirst?: boolean }) {
     const feeCents = biz.referral_fee_cents || 0;
     const referrerEarns = feeCents > 0 ? (feeCents / 100) * 0.8 : null;
     const feeDisplay = referrerEarns
@@ -119,6 +119,7 @@ function BizCard({ biz }: { biz: Business }) {
             <div className="px-5 pb-5">
                 <Link
                     href={`/dashboard/referrer/refer/${biz.slug}`}
+                    id={isFirst ? "tour-network-referral-link" : undefined}
                     className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all py-4 active:scale-95 shadow-md shadow-orange-500/20 text-[21px]"
                 >
                     Get Referral Link <ChevronRight className="w-5 h-5" />
@@ -248,7 +249,7 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
 
                 {/* Search + location filter */}
                 <div className="flex gap-3 mb-4">
-                    <div className="relative flex-1">
+                    <div id="tour-network-search" className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
                         <input
                             value={q}
@@ -266,7 +267,7 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                 </div>
 
                 {/* Trade tabs */}
-                <div className="overflow-x-auto scrollbar-hide mb-6">
+                <div id="tour-network-categories" className="overflow-x-auto scrollbar-hide mb-6">
                     <div className="flex gap-2.5 flex-nowrap w-max pb-1">
                         {TRADE_TABS.map(t => (
                             <button
@@ -312,14 +313,14 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                         animate="visible"
                         variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05, delayChildren: 0.05 } } }}
                     >
-                        {businesses.map(biz => (
+                        {businesses.map((biz, idx) => (
                             <motion.div
                                 key={biz.id}
                                 variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } } }}
                                 whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', transition: { duration: 0.2 } }}
                                 whileTap={{ scale: 0.98 }}
                             >
-                                <BizCard biz={biz} />
+                                <BizCard biz={biz} isFirst={idx === 0} />
                             </motion.div>
                         ))}
                         {loading && businesses.length === 0 && Array.from({ length: 8 }).map((_, i) => (

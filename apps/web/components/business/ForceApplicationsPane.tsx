@@ -201,7 +201,7 @@ export function ForceApplicationsPane() {
     };
 
     return (
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div id="tour-biz-partners-pending" className="flex flex-1 min-h-0 overflow-hidden">
             {/* LEFT PANE — list */}
             <div className="w-full md:w-[400px] shrink-0 border-r border-zinc-200 overflow-y-auto bg-white flex flex-col">
                 {/* Filter bar */}

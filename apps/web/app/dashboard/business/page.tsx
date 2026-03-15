@@ -135,7 +135,9 @@ export default async function BusinessDashboardPage() {
                         )}
 
                         {/* Command Strip — recruit + invite wide buttons */}
-                        <CommandStrip slug={business.slug} />
+                        <div id="tour-biz-share-link">
+                            <CommandStrip slug={business.slug} />
+                        </div>
 
                         {/* Power Metrics — full-width row, 48px bold values */}
                         <AnimatedStatGrid>
@@ -158,7 +160,7 @@ export default async function BusinessDashboardPage() {
                         </AnimatedStatGrid>
 
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start">
-                            <div>
+                            <div id="tour-biz-action-queue">
                                 <CommandActionQueue recentLeads={recent_leads} />
                             </div>
 

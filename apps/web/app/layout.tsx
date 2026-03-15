@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
+import { NextStepWrapper } from "@/components/tour/NextStepWrapper";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -83,9 +84,11 @@ export default function RootLayout({
         >
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
-          <ConditionalLayout footer={<DirectoryFooter />}>
-            {children}
-          </ConditionalLayout>
+          <NextStepWrapper>
+            <ConditionalLayout footer={<DirectoryFooter />}>
+              {children}
+            </ConditionalLayout>
+          </NextStepWrapper>
           <Toaster position="top-center" richColors />
         </body>
       </html>

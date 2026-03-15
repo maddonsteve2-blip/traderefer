@@ -74,7 +74,7 @@ export default async function ReferrerRewardsPage() {
                     <div className="lg:col-span-8 space-y-5">
 
                         {/* HERO: Balance Card */}
-                        <div className="bg-zinc-900 rounded-[32px] p-5 md:p-8 text-white relative overflow-hidden shadow-2xl">
+                        <div id="tour-rewards-balance" className="bg-zinc-900 rounded-[32px] p-5 md:p-8 text-white relative overflow-hidden shadow-2xl">
                             {/* Powered by Prezzee badge */}
                             <div className="static md:absolute md:top-6 md:right-7 inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl px-3 py-1.5 mb-5 md:mb-0">
                                 <span className="font-black text-white text-base">Powered by</span>
@@ -131,10 +131,12 @@ export default async function ReferrerRewardsPage() {
                         </div>
 
                         {/* CLAIM BUTTON FORM */}
-                        <WithdrawalForm 
-                            totalPendingCents={referrer.wallet_balance_cents || 0} 
-                            maxClaimCents={30000} 
-                        />
+                        <div id="tour-rewards-withdraw">
+                            <WithdrawalForm 
+                                totalPendingCents={referrer.wallet_balance_cents || 0} 
+                                maxClaimCents={30000} 
+                            />
+                        </div>
 
                         {/* CATALOG STRIP */}
                         <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">

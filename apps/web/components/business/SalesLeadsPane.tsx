@@ -132,7 +132,7 @@ export function SalesLeadsPane() {
         ["UNLOCKED", "ON_THE_WAY", "CONFIRMED", "MEETING_VERIFIED", "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS"].includes(status.toUpperCase());
 
     return (
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div id="tour-biz-leads-table" className="flex flex-1 min-h-0 overflow-hidden">
             {/* LEFT — leads list */}
             <div className={`${selected ? "hidden md:flex" : "flex"} w-full md:w-[340px] shrink-0 border-r border-zinc-200 overflow-y-auto bg-white flex-col`}>
                 <div className="sticky top-0 bg-white border-b border-zinc-100 z-10">
@@ -248,7 +248,7 @@ export function SalesLeadsPane() {
                                     <MapPin className="w-5 h-5" />{selected.suburb}
                                 </p>
                             </div>
-                            <span className={`px-4 py-2 rounded-xl font-bold ${STATUS_COLORS[selected.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"} text-xl`}>
+                            <span id="tour-biz-leads-status" className={`px-4 py-2 rounded-xl font-bold ${STATUS_COLORS[selected.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"} text-xl`}>
                                 {formatStatus(selected.status)}
                             </span>
                         </div>

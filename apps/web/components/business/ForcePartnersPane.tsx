@@ -179,7 +179,7 @@ export function ForcePartnersPane() {
     };
 
     return (
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div id="tour-biz-partners-list" className="flex flex-1 min-h-0 overflow-hidden">
             {/* ── LEFT PANE (wider: 400px) ── */}
             <div className="w-full md:w-[400px] shrink-0 border-r border-zinc-200 overflow-y-auto bg-white flex flex-col">
                 {/* Search */}

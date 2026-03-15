@@ -331,7 +331,7 @@ export default function BusinessProfileManagementPage() {
                 <div className="flex flex-1 overflow-hidden">
 
                     {/* ── LEFT SIDEBAR — profile preview (desktop only) ── */}
-                    <div className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 border-r border-zinc-200 bg-white overflow-y-auto">
+                    <div id="tour-biz-profile-preview" className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 border-r border-zinc-200 bg-white overflow-y-auto">
                         <div className="p-5 border-b border-zinc-100">
                             <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Profile Preview</p>
                             <div className="flex flex-col items-center text-center">

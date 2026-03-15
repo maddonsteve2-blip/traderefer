@@ -147,7 +147,7 @@ export default function ReferrerApplicationsPage() {
             </div>
 
             {/* ── CONTENT ── */}
-            <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4">
+            <div id="tour-applications-list" className="flex-1 overflow-y-auto px-4 lg:px-6 py-4">
                 {loading ? (
                     <div className="space-y-3 max-w-3xl">
                         {[1,2,3].map(i => (

@@ -676,7 +676,7 @@ export default function ReferrerManagePage() {
                             )}
                         </div>
 
-                        <div className="p-4 border-t border-zinc-100">
+                        <div id="tour-team-invite" className="p-4 border-t border-zinc-100">
                             <Link href="/dashboard/referrer/businesses" className="flex items-center justify-center gap-2 w-full py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-2xl transition-all active:scale-95 shadow-lg shadow-orange-200 text-base">
                                 <Plus className="w-5 h-5" /> Join a New Trade Team
                             </Link>

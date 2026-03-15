@@ -430,7 +430,7 @@ export default function BusinessSettingsPage() {
                             </DashboardSection>
 
                             <DashboardSection>
-                                <DashboardSectionHeader>
+                                <DashboardSectionHeader id="tour-biz-settings-commission">
                                     <DashboardSectionTitle>Referral Fee Settings</DashboardSectionTitle>
                                     <DashboardSectionDescription>Set the commercial signal that makes your profile feel premium to referrers.</DashboardSectionDescription>
                                 </DashboardSectionHeader>
@@ -471,7 +471,7 @@ export default function BusinessSettingsPage() {
                             </DashboardSection>
 
                             <DashboardSection>
-                                <DashboardSectionHeader>
+                                <DashboardSectionHeader id="tour-biz-settings-notifications">
                                     <DashboardSectionTitle>How You Operate</DashboardSectionTitle>
                                     <DashboardSectionDescription>These cues tell referrers how quickly and confidently you operate.</DashboardSectionDescription>
                                 </DashboardSectionHeader>
