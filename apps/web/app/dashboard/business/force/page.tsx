@@ -50,8 +50,9 @@ function ForceHubInner() {
 
             <div className="flex-1 overflow-hidden">
                 {isDesktop === null && (
-                    <div className="flex items-center justify-center h-full">
-                        <div className="w-8 h-8 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="p-6 space-y-4">
+                        <div className="flex gap-2">{[1,2,3].map(i => <div key={i} className="h-9 w-24 bg-zinc-100 rounded-xl animate-pulse" />)}</div>
+                        <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-zinc-200 animate-pulse" />)}</div>
                     </div>
                 )}
                 {isDesktop === false && (
@@ -76,8 +77,12 @@ function ForceHubInner() {
 export default function ForceHubPage() {
     return (
         <Suspense fallback={
-            <div className="flex items-center justify-center h-screen bg-zinc-50">
-                <div className="w-12 h-12 border-[4px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-screen bg-zinc-50 p-6">
+                <div className="space-y-4 max-w-5xl mx-auto pt-6">
+                    <div className="h-7 w-32 bg-zinc-200 rounded-xl animate-pulse" />
+                    <div className="flex gap-2">{[1,2,3].map(i => <div key={i} className="h-9 w-24 bg-zinc-100 rounded-xl animate-pulse" />)}</div>
+                    <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-zinc-200 animate-pulse" />)}</div>
+                </div>
             </div>
         }>
             <ForceHubInner />

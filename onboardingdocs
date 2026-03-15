@@ -1,0 +1,815 @@
+# TradeRefer â€” Guided Product Tour Implementation Spec
+
+**Library:** NextStep (`nextstepjs`)
+**Date:** March 2026
+**Version:** 1.0
+
+> This document contains everything you need to implement guided product tours for both the Referrer Dashboard and Business Dashboard on TradeRefer. All code is copy-paste ready.
+
+---
+
+## 1. Install
+
+```bash
+npm install nextstepjs motion
+```
+
+No changes to `tailwind.config.ts` or `next.config.ts` are required.
+
+---
+
+## 2. Files to Create
+
+| File | Purpose |
+|------|---------|
+| `components/tour/TourCard.tsx` | Custom branded tour popover card |
+| `components/tour/HelpButton.tsx` | Floating `?` button fixed to bottom-right |
+| `tours/referrer-tours.ts` | All tour steps for the Referrer Dashboard |
+| `tours/business-tours.ts` | All tour steps for the Business Dashboard |
+
+**Existing files to modify:**
+- `app/layout.tsx` â€” wrap with `NextStepProvider` + `NextStep`
+- `app/dashboard/referrer/layout.tsx` â€” add `<HelpButton tourName="referrer-main" />`
+- `app/dashboard/business/layout.tsx` â€” add `<HelpButton tourName="business-main" />`
+- Multiple page/component files â€” add `id` attributes to target elements (see Section 5)
+
+---
+
+## 3. Update app/layout.tsx
+
+```tsx
+// app/layout.tsx
+import { NextStepProvider, NextStep } from 'nextstepjs';
+import { referrerTours } from '@/tours/referrer-tours';
+import { businessTours } from '@/tours/business-tours';
+import { TourCard } from '@/components/tour/TourCard';
+
+const allTours = [...referrerTours, ...businessTours];
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <NextStepProvider>
+          <NextStep
+            steps={allTours}
+            cardComponent={TourCard}
+            showNextStepBackdrop={true}
+          >
+            {children}
+          </NextStep>
+        </NextStepProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+> **Note:** If the app already has `ClerkProvider`, `ThemeProvider`, or other providers in `layout.tsx`, keep them. Nest `NextStepProvider` inside those existing providers, just wrapping `children`.
+
+---
+
+## 4. Component Code
+
+### 4.1 components/tour/TourCard.tsx
+
+```tsx
+'use client';
+import type { CardComponentProps } from 'nextstepjs';
+
+export const TourCard = ({
+  step,
+  currentStep,
+  totalSteps,
+  nextStep,
+  prevStep,
+  skipTour,
+  arrow,
+}: CardComponentProps) => {
+  const progress = Math.round(((currentStep + 1) / totalSteps) * 100);
+
+  return (
+    <div
+      style={{
+        background: '#1A1A1A',
+        border: '2px solid #E8620A',
+        borderRadius: '12px',
+        padding: '20px',
+        maxWidth: '340px',
+        minWidth: '280px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        fontFamily: 'inherit',
+        color: '#FFFFFF',
+      }}
+    >
+      {/* Arrow rendered by NextStep */}
+      {arrow}
+
+      {/* Header: icon + step counter */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {step.icon && (
+            <span style={{ fontSize: '20px' }}>{step.icon}</span>
+          )}
+          <span style={{ fontSize: '12px', color: '#E8620A', fontWeight: 600, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+            Step {currentStep + 1} of {totalSteps}
+          </span>
+        </div>
+        <button
+          onClick={skipTour}
+          style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '18px', lineHeight: 1, padding: '0 2px' }}
+          aria-label="Close tour"
+        >
+          Ã—
+        </button>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{ background: '#333', borderRadius: '4px', height: '4px', marginBottom: '16px' }}>
+        <div
+          style={{
+            background: '#E8620A',
+            borderRadius: '4px',
+            height: '100%',
+            width: `${progress}%`,
+            transition: 'width 0.3s ease',
+          }}
+        />
+      </div>
+
+      {/* Title */}
+      <h3 style={{ margin: '0 0 8px', fontSize: '16px', fontWeight: 700, color: '#FFFFFF' }}>
+        {step.title}
+      </h3>
+
+      {/* Content */}
+      <p style={{ margin: '0 0 20px', fontSize: '14px', lineHeight: '1.5', color: '#CCCCCC' }}>
+        {step.content}
+      </p>
+
+      {/* Controls */}
+      {step.showControls && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <button
+            onClick={prevStep}
+            disabled={currentStep === 0}
+            style={{
+              background: 'transparent',
+              border: '1px solid #444',
+              borderRadius: '6px',
+              color: currentStep === 0 ? '#555' : '#CCC',
+              cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
+              padding: '8px 16px',
+              fontSize: '13px',
+              fontWeight: 500,
+            }}
+          >
+            â† Back
+          </button>
+          {step.showSkip && (
+            <button
+              onClick={skipTour}
+              style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '12px' }}
+            >
+              Skip tour
+            </button>
+          )}
+          <button
+            onClick={nextStep}
+            style={{
+              background: '#E8620A',
+              border: 'none',
+              borderRadius: '6px',
+              color: '#FFFFFF',
+              cursor: 'pointer',
+              padding: '8px 20px',
+              fontSize: '13px',
+              fontWeight: 600,
+            }}
+          >
+            {currentStep === totalSteps - 1 ? 'Finish âœ“' : 'Next â†’'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+```
+
+---
+
+### 4.2 components/tour/HelpButton.tsx
+
+```tsx
+'use client';
+import { useNextStep } from 'nextstepjs';
+
+type HelpButtonProps = {
+  tourName: 'referrer-main' | 'business-main';
+};
+
+export const HelpButton = ({ tourName }: HelpButtonProps) => {
+  const { startNextStep } = useNextStep();
+
+  return (
+    <button
+      onClick={() => startNextStep(tourName)}
+      aria-label="Start guided tour"
+      title="Take a guided tour"
+      style={{
+        position: 'fixed',
+        bottom: '24px',
+        right: '24px',
+        zIndex: 9999,
+        width: '48px',
+        height: '48px',
+        borderRadius: '50%',
+        background: '#E8620A',
+        color: '#FFFFFF',
+        border: 'none',
+        cursor: 'pointer',
+        fontSize: '22px',
+        fontWeight: 700,
+        boxShadow: '0 4px 16px rgba(232, 98, 10, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.1)';
+        (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 24px rgba(232, 98, 10, 0.7)';
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+        (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 16px rgba(232, 98, 10, 0.5)';
+      }}
+    >
+      ?
+    </button>
+  );
+};
+```
+
+### 4.3 Add HelpButton to layouts
+
+```tsx
+// app/dashboard/referrer/layout.tsx
+import { HelpButton } from '@/components/tour/HelpButton';
+
+export default function ReferrerLayout({ children }) {
+  return (
+    <div>
+      {children}
+      <HelpButton tourName="referrer-main" />
+    </div>
+  );
+}
+```
+
+```tsx
+// app/dashboard/business/layout.tsx
+import { HelpButton } from '@/components/tour/HelpButton';
+
+export default function BusinessLayout({ children }) {
+  return (
+    <div>
+      {children}
+      <HelpButton tourName="business-main" />
+    </div>
+  );
+}
+```
+
+---
+
+## 5. Required id Attributes
+
+Add these `id` attributes to the corresponding JSX elements. Use the prefix `tour-` on all of them.
+
+> **If a scrollable container causes the highlight overlay to mis-position, wrap that container with `<NextStepViewport>...</NextStepViewport>`.**
+
+### Referrer â€” Sidebar Navigation component
+
+| id | Element |
+|----|---------|
+| `tour-nav-overview` | Overview / Dashboard nav link |
+| `tour-nav-businesses` | Network / Find Businesses nav link |
+| `tour-nav-applications` | My Applications nav link |
+| `tour-nav-rewards` | Rewards / Withdraw nav link |
+| `tour-nav-profile` | My Profile nav link |
+| `tour-nav-messages` | Messages nav link |
+| `tour-nav-team` | My Team nav link |
+
+### Referrer â€” Overview page
+
+| id | Element |
+|----|---------|
+| `tour-overview-tier-card` | Partner Tier card |
+| `tour-overview-earnings` | Earnings stats section (This Week / Month / Pending / Lifetime) |
+| `tour-overview-monthly-goal` | Monthly Goal progress section |
+| `tour-overview-find-businesses` | Find Businesses CTA button/card |
+| `tour-overview-my-team` | My Team quick-add section |
+
+### Referrer â€” Network / Businesses page
+
+| id | Element |
+|----|---------|
+| `tour-network-search` | Business search bar input |
+| `tour-network-categories` | Category filter pills row |
+| `tour-network-business-card` | First business card in the grid |
+| `tour-network-referral-link` | Get Referral Link button on a business card |
+| `tour-network-opportunities` | High-Value Opportunities sidebar |
+
+### Referrer â€” Applications page
+
+| id | Element |
+|----|---------|
+| `tour-applications-list` | Applications list/table container |
+| `tour-applications-status` | Status badge / filter (pending/approved/rejected) |
+
+### Referrer â€” Rewards / Withdraw page
+
+| id | Element |
+|----|---------|
+| `tour-rewards-balance` | Current balance display |
+| `tour-rewards-withdraw` | Withdraw button |
+| `tour-rewards-history` | Transaction / earnings history section |
+
+### Referrer â€” Profile page
+
+| id | Element |
+|----|---------|
+| `tour-profile-photo` | Profile photo / avatar upload area |
+| `tour-profile-bio` | Bio / about me text field |
+| `tour-profile-specialties` | Specialties / skills section |
+
+### Referrer â€” My Team page
+
+| id | Element |
+|----|---------|
+| `tour-team-invite` | Invite team member button/input |
+| `tour-team-members` | Team member list/grid |
+
+### Business â€” Sidebar Navigation component
+
+| id | Element |
+|----|---------|
+| `tour-biz-nav-overview` | Overview / Dashboard nav link |
+| `tour-biz-nav-leads` | Leads nav link |
+| `tour-biz-nav-partners` | Growth / Partners nav link |
+| `tour-biz-nav-analytics` | Analytics nav link |
+| `tour-biz-nav-profile` | Public Profile nav link |
+| `tour-biz-nav-settings` | Settings nav link |
+
+### Business â€” Overview page
+
+| id | Element |
+|----|---------|
+| `tour-biz-action-queue` | Action Queue section |
+| `tour-biz-wallet-banner` | Wallet / payment warning banner |
+| `tour-biz-recent-leads` | Recent Leads list section |
+| `tour-biz-leaderboard` | Partner Leaderboard section |
+| `tour-biz-share-link` | Referral Network share link input/button |
+
+### Business â€” Leads page
+
+| id | Element |
+|----|---------|
+| `tour-biz-leads-table` | Leads table/list container |
+| `tour-biz-leads-status` | Lead status badge / filter tabs |
+| `tour-biz-leads-contact` | Contact lead action button |
+
+### Business â€” Growth / Partners page
+
+| id | Element |
+|----|---------|
+| `tour-biz-partners-list` | Approved partners list |
+| `tour-biz-partners-pending` | Pending partner applications section |
+| `tour-biz-partners-approve` | Approve button on an application card |
+
+### Business â€” Analytics page
+
+| id | Element |
+|----|---------|
+| `tour-biz-analytics-chart` | Main analytics chart/graph area |
+| `tour-biz-analytics-stats` | Key stats summary row |
+
+### Business â€” Public Profile page
+
+| id | Element |
+|----|---------|
+| `tour-biz-profile-preview` | Public profile preview section |
+| `tour-biz-profile-edit` | Edit profile / save changes button |
+
+### Business â€” Settings page
+
+| id | Element |
+|----|---------|
+| `tour-biz-settings-commission` | Commission rate / referrer reward rate field |
+| `tour-biz-settings-notifications` | Notification preferences section |
+| `tour-biz-settings-payment` | Payment / payout settings section |
+
+---
+
+## 6. tours/referrer-tours.ts
+
+```ts
+// tours/referrer-tours.ts
+import type { Tour } from 'nextstepjs';
+
+export const referrerTours: Tour[] = [
+  {
+    tour: 'referrer-main',
+    steps: [
+      // â”€â”€ Step 1: Welcome â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ‘‹',
+        title: 'Welcome to Your Referrer Dashboard',
+        content: 'This short tour will show you everything you need to start earning by referring businesses to people in your network. Press Next to continue, or skip at any time.',
+        selector: undefined,
+        side: 'center',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 0,
+      },
+
+      // â”€â”€ Step 2: Partner Tier â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ†',
+        title: 'Your Partner Tier',
+        content: 'This card shows your current earning tier. The higher your tier, the higher your commission â€” from Partner (80%) up to Ambassador (90%). Complete more referrals to level up.',
+        selector: '#tour-overview-tier-card',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+      },
+
+      // â”€â”€ Step 3: Earnings Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ’°',
+        title: 'Your Earnings at a Glance',
+        content: 'Track your This Week, This Month, Pending, and Lifetime earnings here. Pending earnings are released once the business confirms the lead has converted.',
+        selector: '#tour-overview-earnings',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+      },
+
+      // â”€â”€ Step 4: Monthly Goal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸŽ¯',
+        title: 'Your Monthly Referral Goal',
+        content: 'Set a personal monthly goal to stay on track. The progress bar updates as your referrals convert. Hitting your goal consistently helps you level up your tier faster.',
+        selector: '#tour-overview-monthly-goal',
+        side: 'top',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        nextRoute: '/dashboard/referrer/businesses',
+      },
+
+      // â”€â”€ Step 5: Search (Businesses page) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ”',
+        title: 'Browse Businesses to Refer',
+        content: 'This is where you find businesses to refer. Search by name or filter by trade category to quickly find the right business for your contact.',
+        selector: '#tour-network-search',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/referrer',
+      },
+
+      // â”€â”€ Step 6: Category Filters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ·ï¸',
+        title: 'Filter by Trade Category',
+        content: 'Tap any category pill to filter businesses by trade â€” plumbing, electrical, landscaping, and more. This helps you quickly match businesses with your referral contacts.',
+        selector: '#tour-network-categories',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+      },
+
+      // â”€â”€ Step 7: Get Referral Link â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ”—',
+        title: 'Get Your Personal Referral Link',
+        content: 'Click "Get Referral Link" to copy your unique tracking link for this business. Share it anywhere â€” text, email, social media. When someone books through your link, you earn a commission.',
+        selector: '#tour-network-referral-link',
+        side: 'left',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        nextRoute: '/dashboard/referrer/applications',
+      },
+
+      // â”€â”€ Step 8: Applications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ“‹',
+        title: 'Track Your Referral Applications',
+        content: 'Every referral you send appears here as an application. Check the status â€” Pending, Approved, or Completed â€” and follow up if needed. Approved applications earn you commission.',
+        selector: '#tour-applications-list',
+        side: 'right',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/referrer/businesses',
+        nextRoute: '/dashboard/referrer/rewards',
+      },
+
+      // â”€â”€ Step 9: Rewards Balance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ’³',
+        title: 'Your Rewards Balance',
+        content: 'Your available balance lives here. Once a business approves your referral and the job is completed, your commission appears in this balance ready to withdraw.',
+        selector: '#tour-rewards-balance',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/referrer/applications',
+      },
+
+      // â”€â”€ Step 10: Withdraw â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ¦',
+        title: 'Withdraw to Your Bank',
+        content: 'When you have enough balance, tap Withdraw to transfer your earnings to your linked bank account. Withdrawals are typically processed within 2 business days.',
+        selector: '#tour-rewards-withdraw',
+        side: 'top',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        nextRoute: '/dashboard/referrer/profile',
+      },
+
+      // â”€â”€ Step 11: Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ‘¤',
+        title: 'Complete Your Referrer Profile',
+        content: 'Businesses check your profile before approving referrals. Add your photo, a short bio, and your areas of expertise to increase your approval rate and build trust.',
+        selector: '#tour-profile-photo',
+        side: 'right',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/referrer/rewards',
+        nextRoute: '/dashboard/referrer/team',
+      },
+
+      // â”€â”€ Step 12: My Team â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ‘¥',
+        title: 'Grow Your Team of Referrers',
+        content: 'Invite others to join TradeRefer under your team. When your team members earn commissions, you receive a bonus on top of their earnings â€” accelerating your passive income.',
+        selector: '#tour-team-invite',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/referrer/profile',
+      },
+
+      // â”€â”€ Step 13: Complete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸŽ‰',
+        title: "You're All Set!",
+        content: 'You now know how to find businesses, share your referral link, track your applications, withdraw earnings, and grow your team. Start by browsing businesses to make your first referral!',
+        selector: undefined,
+        side: 'center',
+        showControls: true,
+        showSkip: false,
+        pointerPadding: 0,
+      },
+    ],
+  },
+];
+```
+
+---
+
+## 7. tours/business-tours.ts
+
+```ts
+// tours/business-tours.ts
+import type { Tour } from 'nextstepjs';
+
+export const businessTours: Tour[] = [
+  {
+    tour: 'business-main',
+    steps: [
+      // â”€â”€ Step 1: Welcome â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ‘‹',
+        title: 'Welcome to Your Business Dashboard',
+        content: "Let's walk through how to manage your leads, build a referrer network, track performance, and get the most out of TradeRefer. Press Next to begin.",
+        selector: undefined,
+        side: 'center',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 0,
+      },
+
+      // â”€â”€ Step 2: Action Queue â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'âš¡',
+        title: 'Your Action Queue',
+        content: "This is your daily priority list â€” partner applications from referrers wanting to promote your business, and fresh leads needing a response. Clear this every day for best results.",
+        selector: '#tour-biz-action-queue',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+      },
+
+      // â”€â”€ Step 3: Share Link â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ“¢',
+        title: 'Share Your Referral Network Link',
+        content: 'This unique link is how referrers find and join your program. Share it on your website, socials, or with trusted contacts to grow your referrer network faster.',
+        selector: '#tour-biz-share-link',
+        side: 'top',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        nextRoute: '/dashboard/business/sales?tab=leads',
+      },
+
+      // â”€â”€ Step 4: Leads Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ“¥',
+        title: 'Manage Your Incoming Leads',
+        content: 'Every referral sent by a referrer appears here. You can see the customer name, contact info, and the referrer who sent them. Contact them promptly â€” speed improves conversion.',
+        selector: '#tour-biz-leads-table',
+        side: 'right',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/business',
+      },
+
+      // â”€â”€ Step 5: Lead Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ”„',
+        title: 'Update Lead Status',
+        content: 'Update each lead as you work through it â€” New, Contacted, In Progress, Won, or Lost. Keeping statuses current helps your referrers stay motivated and shows you value their effort.',
+        selector: '#tour-biz-leads-status',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        nextRoute: '/dashboard/business/force?tab=partners',
+      },
+
+      // â”€â”€ Step 6: Partners List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ¤',
+        title: 'Your Approved Referrer Partners',
+        content: 'These referrers are actively promoting your business. A larger, more motivated partner network means more leads. Engage with your top referrers and acknowledge great performance.',
+        selector: '#tour-biz-partners-list',
+        side: 'right',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/business/sales?tab=leads',
+      },
+
+      // â”€â”€ Step 7: Pending Partners â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'âœ…',
+        title: 'Approve or Decline Partner Applications',
+        content: 'When a referrer applies to promote your business, they appear here. Review their profile and approve quality referrers quickly â€” the faster you respond, the more motivated they stay.',
+        selector: '#tour-biz-partners-pending',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        nextRoute: '/dashboard/business/analytics',
+      },
+
+      // â”€â”€ Step 8: Analytics Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ“Š',
+        title: 'Track Your Performance',
+        content: 'See how many referrals you received, how many converted, and what revenue your partner network has generated. Use these numbers to decide where to invest more effort.',
+        selector: '#tour-biz-analytics-stats',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/business/force?tab=partners',
+        nextRoute: '/dashboard/business/profile',
+      },
+
+      // â”€â”€ Step 9: Public Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ¢',
+        title: 'Your Public Business Profile',
+        content: 'This is what referrers see before deciding to promote you. A strong profile with a clear description, good photos, and your service area builds credibility and attracts better referrers.',
+        selector: '#tour-biz-profile-preview',
+        side: 'right',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/business/analytics',
+        nextRoute: '/dashboard/business/settings',
+      },
+
+      // â”€â”€ Step 10: Commission Rate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ’²',
+        title: 'Set Your Referrer Commission Rate',
+        content: 'This is the percentage of a job value you pay referrers for each successful lead. Higher commissions attract more active referrers. Review competitor rates and set competitively.',
+        selector: '#tour-biz-settings-commission',
+        side: 'right',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+        prevRoute: '/dashboard/business/profile',
+      },
+
+      // â”€â”€ Step 11: Notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸ””',
+        title: 'Stay Notified',
+        content: 'Set up email and push notifications for new leads, partner applications, and payments. Responding to leads within the hour dramatically improves your conversion rate.',
+        selector: '#tour-biz-settings-notifications',
+        side: 'top',
+        showControls: true,
+        showSkip: true,
+        pointerPadding: 8,
+        pointerRadius: 8,
+      },
+
+      // â”€â”€ Step 12: Complete â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      {
+        icon: 'ðŸš€',
+        title: "You're Ready to Grow!",
+        content: 'You now know how to manage leads, approve partners, read your analytics, and configure your settings. Go back to your Overview and start clearing that Action Queue!',
+        selector: undefined,
+        side: 'center',
+        showControls: true,
+        showSkip: false,
+        pointerPadding: 0,
+      },
+    ],
+  },
+];
+```
+
+---
+
+## 8. Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| Highlight does not appear on an element | Verify the `id` attribute was added to the JSX element and the `selector` in the step matches exactly (e.g. `#tour-network-search`) |
+| Tour does not navigate to the next page | Confirm `nextRoute` is set on the correct step, and the route string matches the actual Next.js path exactly |
+| TourCard does not appear | Confirm `cardComponent={TourCard}` is passed to `<NextStep>` in `layout.tsx` |
+| `useNextStep must be used within NextStepProvider` error | Ensure `NextStepProvider` is in `app/layout.tsx` above any component using `useNextStep()` |
+| Highlight mis-positioned in scrollable container | Wrap the scrollable container with `<NextStepViewport>...</NextStepViewport>` |
+| Animation not working | Run `npm list motion` â€” reinstall with `npm install motion` if missing |
+| TypeScript error on `Tour` type | Use `import type { Tour } from 'nextstepjs';` |
+
+---
+
+## 9. Testing Checklist
+
+- [ ] `npm install nextstepjs motion` completes without errors
+- [ ] Orange `?` button appears at bottom-right on Referrer Dashboard
+- [ ] Clicking `?` opens the welcome card overlay
+- [ ] All 13 Referrer steps highlight the correct element
+- [ ] Page navigation works (Overview â†’ Businesses â†’ Applications â†’ Rewards â†’ Profile â†’ Team)
+- [ ] Back button navigates back to previous page and step
+- [ ] Skip Tour closes the tour cleanly
+- [ ] Orange `?` button appears at bottom-right on Business Dashboard
+- [ ] All 12 Business steps highlight the correct element
+- [ ] Page navigation works (Overview â†’ Leads â†’ Partners â†’ Analytics â†’ Profile â†’ Settings)
+- [ ] Test on mobile viewport (375px) â€” card is readable and does not overflow
+- [ ] `?` button does not overlap critical UI at bottom-right

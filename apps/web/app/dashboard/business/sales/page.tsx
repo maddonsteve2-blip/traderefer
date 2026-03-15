@@ -56,8 +56,12 @@ function SalesHubInner() {
 export default function SalesHubPage() {
     return (
         <Suspense fallback={
-            <div className="flex items-center justify-center h-screen bg-zinc-50">
-                <div className="w-12 h-12 border-[4px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-screen bg-zinc-50 p-6">
+                <div className="space-y-4 max-w-5xl mx-auto pt-6">
+                    <div className="h-7 w-28 bg-zinc-200 rounded-xl animate-pulse" />
+                    <div className="flex gap-2">{[1,2,3].map(i => <div key={i} className="h-9 w-24 bg-zinc-100 rounded-xl animate-pulse" />)}</div>
+                    <div className="space-y-3">{[1,2,3,4].map(i => <div key={i} className="h-20 bg-white rounded-2xl border border-zinc-200 animate-pulse" />)}</div>
+                </div>
             </div>
         }>
             <SalesHubInner />

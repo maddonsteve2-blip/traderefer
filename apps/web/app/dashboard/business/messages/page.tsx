@@ -96,8 +96,13 @@ export default function BusinessMessagesPage() {
 
     if (isDesktop === null) {
         return (
-            <div className="flex items-center justify-center h-screen bg-zinc-50">
-                <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-screen bg-zinc-50 p-6">
+                <div className="space-y-3 max-w-3xl mx-auto pt-6">
+                    <div className="h-7 w-32 bg-zinc-200 rounded-xl animate-pulse" />
+                    <div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" />
+                    <div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" />
+                    <div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" />
+                </div>
             </div>
         );
     }
@@ -110,7 +115,7 @@ export default function BusinessMessagesPage() {
         <PageTransition className="flex flex-col bg-zinc-50 h-screen overflow-hidden">
             <BroadcastBar />
             <div className="flex flex-1 min-h-0">
-                <Suspense fallback={<div className="flex items-center justify-center h-[600px] w-full"><div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" /></div>}>
+                <Suspense fallback={<div className="flex-1 p-6 space-y-3"><div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" /><div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" /><div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" /></div>}>
                     <MessagesView role="business" />
                 </Suspense>
             </div>

@@ -19,7 +19,7 @@ export default function ReferrerMessagesPage() {
                     </div>
                 </div>
                 <div className="flex flex-1 min-h-0">
-                    <Suspense fallback={<div className="flex items-center justify-center h-[600px] w-full"><div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" /></div>}>
+                    <Suspense fallback={<div className="flex-1 p-6 space-y-3"><div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" /><div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" /><div className="h-14 bg-white rounded-2xl border border-zinc-200 animate-pulse" /></div>}>
                         <MessagesView role="referrer" />
                     </Suspense>
                 </div>

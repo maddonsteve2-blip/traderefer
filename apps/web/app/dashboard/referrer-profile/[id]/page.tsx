@@ -8,6 +8,7 @@ import {
     MapPin, Award, TrendingUp, Briefcase, ArrowLeft, CheckCircle,
     CalendarDays, ShieldCheck, Star, Zap, Trophy, Crown, Target, Users,
 } from "lucide-react";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 interface ReferrerProfile {
     id: string;
@@ -67,9 +68,20 @@ export default function ReferrerProfileViewPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="w-12 h-12 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
-            </div>
+            <PageTransition className="min-h-[60vh] bg-zinc-50">
+                <div className="p-6 space-y-5 max-w-2xl mx-auto pt-10">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 bg-zinc-200 rounded-full animate-pulse" />
+                        <div className="space-y-2 flex-1">
+                            <div className="h-5 w-40 bg-zinc-200 rounded-lg animate-pulse" />
+                            <div className="h-3 w-28 bg-zinc-100 rounded animate-pulse" />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        {[1,2,3,4].map(i => <div key={i} className="h-16 bg-white rounded-2xl border border-zinc-200 animate-pulse" />)}
+                    </div>
+                </div>
+            </PageTransition>
         );
     }
 

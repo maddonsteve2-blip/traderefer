@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { MobileNetworkDashboard } from "@/components/business/MobileNetworkDashboard";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 interface Recommendation {
     business_name: string;
@@ -128,14 +129,20 @@ export default function BusinessNetworkPage() {
 
     if (loading) {
         return (
-            <div className="min-h-[100dvh] bg-zinc-50">
+            <PageTransition className="min-h-[100dvh] bg-zinc-50">
                 <div className="max-w-4xl mx-auto py-10 md:py-16 px-4">
-                <div className="animate-pulse space-y-6">
-                    <div className="h-8 bg-zinc-100 rounded w-64" />
-                    <div className="h-40 bg-zinc-50 rounded-2xl" />
+                    <div className="space-y-6">
+                        <div className="h-8 bg-zinc-200 rounded-xl w-64 animate-pulse" />
+                        <div className="h-4 w-80 bg-zinc-100 rounded-lg animate-pulse" />
+                        <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
+                            <div className="h-10 bg-zinc-50 rounded-xl animate-pulse" />
+                            <div className="h-10 bg-zinc-50 rounded-xl animate-pulse" />
+                            <div className="h-12 w-40 bg-zinc-100 rounded-xl animate-pulse" />
+                        </div>
+                        <div className="h-40 bg-white rounded-2xl border border-zinc-200 animate-pulse" />
+                    </div>
                 </div>
-                </div>
-            </div>
+            </PageTransition>
         );
     }
 

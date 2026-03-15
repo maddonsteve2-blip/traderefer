@@ -80,9 +80,15 @@ export default function AnalyticsPage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-            </div>
+            <PageTransition className="min-h-[100dvh] bg-zinc-50 p-6">
+                <div className="space-y-5 max-w-5xl mx-auto pt-6">
+                    <div className="h-7 w-36 bg-zinc-200 rounded-xl animate-pulse" />
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[1,2,3,4].map(i => <div key={i} className="h-24 bg-white rounded-2xl border border-zinc-200 animate-pulse" />)}
+                    </div>
+                    <div className="h-64 bg-white rounded-2xl border border-zinc-200 animate-pulse" />
+                </div>
+            </PageTransition>
         );
     }
 

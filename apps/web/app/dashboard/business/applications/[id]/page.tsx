@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 interface Referrer {
     id: string;
@@ -110,11 +111,23 @@ export default function BusinessApplicationDetailPage() {
 
     if (loading || !app) {
         return (
-            <div className="min-h-[100dvh] bg-zinc-50">
-                <div className="min-h-screen flex items-center justify-center">
-                    <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+            <PageTransition className="min-h-[100dvh] bg-zinc-50">
+                <div className="p-6 space-y-5 max-w-3xl mx-auto pt-10">
+                    <div className="h-5 w-24 bg-zinc-200 rounded-lg animate-pulse" />
+                    <div className="bg-white rounded-2xl border border-zinc-200 p-6">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-14 h-14 bg-zinc-100 rounded-2xl animate-pulse" />
+                            <div className="space-y-2 flex-1">
+                                <div className="h-5 w-44 bg-zinc-100 rounded-lg animate-pulse" />
+                                <div className="h-3 w-28 bg-zinc-50 rounded animate-pulse" />
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            {[1,2,3].map(i => <div key={i} className="h-12 bg-zinc-50 rounded-xl animate-pulse" />)}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </PageTransition>
         );
     }
 
