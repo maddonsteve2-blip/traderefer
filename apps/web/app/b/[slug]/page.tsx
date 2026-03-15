@@ -25,6 +25,7 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
+import type { Metadata } from "next";
 import { LeadForm } from "@/components/LeadForm";
 import { EditableConditionalSection, EditableContactField, EditableFee, EditableGallery, EditableImage, EditableProfile, EditableServices, EditableText } from "@/components/EditableProfile";
 import { BusinessDelistDialog } from "@/components/BusinessDelistDialog";
@@ -71,6 +72,49 @@ async function getDeals(slug: string) {
     return res.json();
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const business = await getBusiness(slug);
+    if (!business) return { title: 'Business Not Found | TradeRefer' };
+
+    const rating = parseFloat(String(business.avg_rating));
+    const reviewCount = parseInt(String(business.total_reviews), 10);
+    const hasRating = !isNaN(rating) && rating > 0 && reviewCount > 0;
+    const suburb = business.suburb || '';
+    const state = business.state || '';
+    const trade = business.trade_category || 'Tradie';
+
+    const title = `${business.business_name} | ${trade} in ${suburb}${state ? ', ' + state : ''} | TradeRefer`;
+    const description = [
+        `Get a free quote from ${business.business_name}, a ${trade} in ${suburb}.`,
+        hasRating ? `${rating.toFixed(1)}\u2605 from ${reviewCount} reviews.` : '',
+        business.is_verified ? 'ABN verified.' : '',
+        'No obligation, 100% free.',
+    ].filter(Boolean).join(' ');
+    const url = `https://traderefer.au/b/${slug}`;
+    const imageUrl = business.logo_url || business.cover_photo_url || (Array.isArray(business.photo_urls) ? business.photo_urls[0] : null) || null;
+
+    return {
+        title,
+        description,
+        alternates: { canonical: url },
+        openGraph: {
+            title,
+            description,
+            url,
+            type: 'website',
+            siteName: 'TradeRefer',
+            ...(imageUrl ? { images: [{ url: imageUrl, width: 1200, height: 630, alt: business.business_name }] } : {}),
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            ...(imageUrl ? { images: [imageUrl] } : {}),
+        },
+    };
+}
+
 export default async function PublicProfilePage({
     params,
     searchParams
@@ -110,12 +154,17 @@ export default async function PublicProfilePage({
     const trustScore = business.trust_score ? (business.trust_score / 20).toFixed(1) : "5.0";
     const googleRating = business.avg_rating || null;
     const reviewCount = business.total_reviews || 0;
-    const aboutFallback = `${business.business_name} is a highly-rated ${business.trade_category} specialist serving ${business.suburb} and the wider ${business.city || 'region'}.${googleRating ? ` With a ${googleRating} star rating from ${reviewCount} local reviews,` : ''} they are recognized for their reliability, quality craftsmanship, and exceptional customer service.`;
 
     // Schema Markup
     const parsedRating = parseFloat(String(googleRating));
     const parsedReviewCount = parseInt(String(reviewCount), 10);
     const hasValidRating = !isNaN(parsedRating) && parsedRating > 0 && parsedReviewCount > 0;
+
+    const ratingQualifier = (hasValidRating && parsedRating >= 4.0) ? "highly-rated" : "local";
+    const cityContext = (business.city && business.city.toLowerCase() !== (business.suburb || '').toLowerCase())
+        ? `the wider ${business.city} region`
+        : 'the local area';
+    const aboutFallback = `${business.business_name} is a ${ratingQualifier} ${business.trade_category} specialist serving ${business.suburb} and ${cityContext}.${hasValidRating ? ` With a ${parsedRating.toFixed(1)} star rating from ${parsedReviewCount} local reviews,` : ''} They are recognized for their reliability, quality craftsmanship, and exceptional customer service.`;
 
     // Map trade category to specific Schema.org type for richer SERP treatment
     const tradeCategory = (business.trade_category || "").toLowerCase();
@@ -471,7 +520,7 @@ export default async function PublicProfilePage({
                                         style={{ border: 0 }}
                                         loading="lazy"
                                         referrerPolicy="no-referrer-when-downgrade"
-                                        src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyCCRQCqPgWr0WAUszGQtutWXm2KDQBEfbk&q=${encodeURIComponent((business.address ? business.address + ', ' : '') + (business.suburb || '') + (business.state ? ', ' + business.state : '') + ', Australia')}`}
+                                        src={`https://maps.google.com/maps?q=${encodeURIComponent((business.address ? business.address + ', ' : '') + (business.suburb || '') + (business.state ? ', ' + business.state : '') + ', Australia')}&output=embed`}
                                     />
                                 </div>
                             )}
@@ -672,7 +721,7 @@ export default async function PublicProfilePage({
                                     <div className="mb-5">
                                         <EditableFee
                                             initialValue={business.referral_fee_cents || 1000}
-                                            helperText="This reward updates live behind the modal so you can tune the offer with full context."
+                                            helperText="Referral reward is visible to referrers on your public profile."
                                         />
                                     </div>
                                     <Link href={`/b/${slug}/refer`} className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '18px' }}>Get Referral Link <Share2 className="w-5 h-5" /></Link>

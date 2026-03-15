@@ -244,7 +244,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                     <div className="grid grid-cols-3 gap-3">
                         {[
                             { value: "hot", label: "Urgent", icon: Zap, color: "border-orange-500 bg-orange-500 text-white shadow-orange-500/20" },
-                            { value: "warm", label: "Soon", icon: Clock, color: "border-zinc-900 bg-zinc-900 text-white shadow-zinc-900/10" },
+                            { value: "warm", label: "Soon", icon: Clock, color: "border-orange-500 bg-orange-500 text-white shadow-orange-500/20" },
                             { value: "cold", label: "Later", icon: MessageSquare, color: "border-zinc-200 bg-zinc-100 text-zinc-900 shadow-transparent" },
                         ].map(opt => (
                             <button
@@ -273,7 +273,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
 
                 <Button
                     disabled={isLoading}
-                    className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-[24px] h-16 md:h-20 text-lg md:text-2xl font-black shadow-2xl shadow-zinc-900/20 transition-all active:scale-95 group mt-4"
+                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-[24px] h-16 md:h-20 text-lg md:text-2xl font-black shadow-2xl shadow-orange-500/20 transition-all active:scale-95 group mt-4"
                 >
                     {isLoading ? (
                         <div className="flex items-center gap-3">

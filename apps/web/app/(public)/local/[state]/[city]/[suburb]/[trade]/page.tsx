@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const topBiz = businesses[0];
     const postcode = businesses.map((b: any) => extractPostcode(b.address)).find(Boolean) || null;
     const suburbWithPostcode = postcode ? `${suburbName} ${postcode}` : suburbName;
+    const cityDisplay = suburbName.toLowerCase() === cityName.toLowerCase() ? '' : `, ${cityName}`;
     const avgRating = count > 0
         ? (businesses.reduce((acc: number, biz: any) => acc + (parseFloat(biz.avg_rating) || 0), 0) / count).toFixed(1)
         : "4.8";
@@ -56,12 +57,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const topBizStr = topBiz && topBiz.avg_rating ? ` Top rated: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}\u2605).` : "";
 
     return {
-        title: `${tradeName} in ${suburbWithPostcode}, ${cityName}${priceStr} | TradeRefer`,
-        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbWithPostcode}, ${cityName} ${stateUpper}.${priceStr ? ` Average cost: $${cost.low}–$${cost.high}${cost.unit}.` : ''}${topBizStr} ${totalReviews > 0 ? totalReviews + ' reviews.' : ''} Get free quotes from ABN-verified locals.`,
+        title: `${tradeName} in ${suburbWithPostcode}${cityDisplay}${priceStr} | TradeRefer`,
+        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbWithPostcode}${cityDisplay} ${stateUpper}.${priceStr ? ` Average cost: $${cost.low}–$${cost.high}${cost.unit}.` : ''}${topBizStr} ${totalReviews > 0 ? totalReviews + ' reviews.' : ''} Get free quotes from ABN-verified locals.`,
         robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
+        alternates: { canonical: `https://traderefer.au/local/${state}/${city}/${suburb}/${trade}` },
         openGraph: {
-            title: `${tradeName} in ${suburbWithPostcode}, ${cityName} | TradeRefer`,
+            title: `${tradeName} in ${suburbWithPostcode}${cityDisplay} | TradeRefer`,
             description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbWithPostcode}. Compare ratings, pricing and referrals.`,
+            images: [{ url: 'https://traderefer.au/og-default.jpg', width: 1200, height: 630, alt: `${tradeName} in ${suburbName}` }],
         },
     };
 }
@@ -177,6 +180,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
     // Use postcode from URL first, then extract from business addresses, then lookup
     const postcode = urlPostcode || businesses.map((b: any) => extractPostcode(b.address)).find(Boolean) || getPostcode(bareSuburb, state);
     const suburbWithPostcode = postcode ? `${suburbName} ${postcode}` : suburbName;
+    const cityDisplay = suburbName.toLowerCase() === cityName.toLowerCase() ? '' : ', ' + cityName;
 
     const tradeKey = normalizeTradeName(tradeName);
     const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
@@ -346,7 +350,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl">
                         <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
-                            <span className="text-[#FF6600]">{tradeName}</span> in {suburbWithPostcode}, {cityName}
+                            <span className="text-[#FF6600]">{tradeName}</span> in {suburbWithPostcode}{cityDisplay}
                         </h1>
                         <p className="text-base sm:text-lg font-bold text-zinc-600 mb-4">Find trusted {tradeName.toLowerCase()} near {suburbName} — ABN-verified, community-ranked</p>
                         <p className="text-gray-700 mb-6 max-w-2xl text-base sm:text-lg md:text-xl" style={{ lineHeight: 1.7 }}>
@@ -392,7 +396,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                         </div>
                         <div className="hidden sm:block w-px h-8 bg-zinc-100" />
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
+                            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 shrink-0">
                                 <FileText className="w-5 h-5" />
                             </div>
                             <div>
@@ -402,7 +406,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                         </div>
                         <div className="hidden sm:block w-px h-8 bg-zinc-100" />
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-green-600 shrink-0">
+                            <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 shrink-0">
                                 <Users className="w-5 h-5" />
                             </div>
                             <div>
@@ -419,15 +423,15 @@ export default async function TradeLocationPage({ params }: PageProps) {
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
                         <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                <Zap className="w-4 h-4 text-green-600" />
+                            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <Zap className="w-4 h-4 text-orange-600" />
                             </div>
                             <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>No lead fees — ever</p>
                         </div>
                         <div className="hidden sm:block w-1.5 h-1.5 bg-zinc-300 rounded-full" />
                         <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <Shield className="w-4 h-4 text-blue-600" />
+                            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <Shield className="w-4 h-4 text-orange-600" />
                             </div>
                             <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Pay only when you win the job</p>
                         </div>
@@ -457,7 +461,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         <input
                                             type="text"
                                             readOnly
-                                            value={`${tradeName} in ${suburbName}, ${cityName}`}
+                                            value={`${tradeName} in ${suburbName}${cityDisplay}`}
                                             className="w-full h-12 pl-12 pr-4 rounded-xl bg-zinc-50 border border-zinc-200 font-bold text-zinc-700 cursor-default"
                                             style={{ fontSize: '16px' }}
                                         />

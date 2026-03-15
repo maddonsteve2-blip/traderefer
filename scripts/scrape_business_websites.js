@@ -32,6 +32,14 @@ const LIMIT = limitIdx !== -1 ? parseInt(args[limitIdx + 1]) : null;
 
 const db = new Pool({ connectionString: process.env.DATABASE_URL, max: 5 });
 
+// Error logging
+const ERROR_LOG_FILE = path.join(__dirname, 'scrape_errors.log');
+const errorStream = fs.createWriteStream(ERROR_LOG_FILE, { flags: 'a' });
+function logError(bizName, website, error) {
+    const timestamp = new Date().toISOString();
+    errorStream.write(`[${timestamp}] ${bizName} | ${website} | ${error}\n`);
+}
+
 // ── Logo detection patterns ──
 // Regex patterns to find logo URLs in HTML
 const LOGO_PATTERNS = [
@@ -239,15 +247,18 @@ async function fetchPage(url) {
         });
         clearTimeout(timeout);
 
-        if (!res.ok) return null;
+        if (!res.ok) return { error: `HTTP ${res.status}` };
         const ct = res.headers.get('content-type') || '';
-        if (!ct.includes('text/html') && !ct.includes('application/xhtml')) return null;
+        if (!ct.includes('text/html') && !ct.includes('application/xhtml')) {
+            return { error: `Non-HTML content: ${ct}` };
+        }
 
         const text = await res.text();
         // Only read first 200KB to avoid huge pages
-        return text.substring(0, 200_000);
-    } catch {
-        return null;
+        return { html: text.substring(0, 200_000) };
+    } catch (err) {
+        if (err.name === 'AbortError') return { error: 'Timeout' };
+        return { error: err.message || 'Fetch failed' };
     }
 }
 
@@ -269,11 +280,14 @@ async function processBatch(businesses) {
 
         if (!needDesc && !needLogo && !needEmail && !needPhone) return;
 
-        const html = await fetchPage(biz.website);
-        if (!html) {
+        const response = await fetchPage(biz.website);
+        if (response.error) {
             results.errors++;
+            logError(biz.business_name, biz.website, response.error);
             return;
         }
+        
+        const html = response.html;
 
         const desc = needDesc ? extractMetaDescription(html) : null;
         const logoUrl = needLogo ? extractLogo(html, biz.website) : null;
@@ -347,15 +361,21 @@ async function main() {
     console.log(`Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}${logosOnly ? ' (logos only)' : ''}${descOnly ? ' (descriptions only)' : ''}`);
     if (LIMIT) console.log(`Limit: ${LIMIT}`);
 
-    // Find businesses with websites but missing description or logo
-    let whereConditions = [`status = 'active'`, `website IS NOT NULL`, `website != ''`, `(website_scraped IS NULL OR website_scraped = false)`];
+    // Find businesses with websites but missing ANY of: description, logo, email, or phone
+    let whereConditions = [`status = 'active'`, `website IS NOT NULL`, `website != ''`];
 
     if (logosOnly) {
         whereConditions.push(`(logo_url IS NULL OR logo_url = '')`);
     } else if (descOnly) {
         whereConditions.push(`(description IS NULL OR description = '')`);
     } else {
-        whereConditions.push(`((description IS NULL OR description = '') OR (logo_url IS NULL OR logo_url = ''))`);
+        // Process if missing ANY field (not just description/logo)
+        whereConditions.push(`(
+            (description IS NULL OR description = '') OR 
+            (logo_url IS NULL OR logo_url = '') OR 
+            (business_email IS NULL OR business_email = '') OR 
+            (business_phone IS NULL OR business_phone = '')
+        )`);
     }
 
     const limitClause = LIMIT ? `LIMIT ${LIMIT}` : '';
@@ -406,7 +426,30 @@ async function main() {
     console.log(`Emails saved: ${totalEmails}`);
     console.log(`Phones saved: ${totalPhones}`);
     console.log(`Fetch errors: ${totalErrors}`);
+    
+    if (totalErrors > 0) {
+        console.log(`\nError details logged to: ${ERROR_LOG_FILE}`);
+        console.log('Run again to retry failed businesses.');
+    }
 
+    // Check what's still missing
+    const stillMissing = await db.query(`
+        SELECT 
+            COUNT(*) FILTER (WHERE (description IS NULL OR description = '')) as missing_desc,
+            COUNT(*) FILTER (WHERE (logo_url IS NULL OR logo_url = '')) as missing_logo,
+            COUNT(*) FILTER (WHERE (business_email IS NULL OR business_email = '')) as missing_email,
+            COUNT(*) FILTER (WHERE (business_phone IS NULL OR business_phone = '')) as missing_phone
+        FROM businesses 
+        WHERE status = 'active' AND website IS NOT NULL AND website != ''
+    `);
+    
+    console.log('\n=== REMAINING GAPS ===');
+    console.log(`Businesses still missing description: ${stillMissing.rows[0].missing_desc}`);
+    console.log(`Businesses still missing logo: ${stillMissing.rows[0].missing_logo}`);
+    console.log(`Businesses still missing email: ${stillMissing.rows[0].missing_email}`);
+    console.log(`Businesses still missing phone: ${stillMissing.rows[0].missing_phone}`);
+
+    errorStream.end();
     await db.end();
 }
 
