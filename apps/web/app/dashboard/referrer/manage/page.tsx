@@ -389,9 +389,23 @@ export default function ReferrerManagePage() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
-            </div>
+            <PageTransition className="min-h-screen bg-zinc-50">
+                <div className="p-6 space-y-4 max-w-4xl mx-auto pt-10">
+                    <div className="h-7 w-32 bg-zinc-200 rounded-xl animate-pulse" />
+                    <div className="h-4 w-56 bg-zinc-100 rounded-lg animate-pulse" />
+                    <div className="space-y-3 pt-2">
+                        {[1,2,3].map(i => (
+                            <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-4 flex items-center gap-4">
+                                <div className="w-12 h-12 bg-zinc-100 rounded-2xl animate-pulse shrink-0" />
+                                <div className="flex-1 space-y-2">
+                                    <div className="h-5 w-40 bg-zinc-100 rounded-lg animate-pulse" />
+                                    <div className="h-3 w-28 bg-zinc-50 rounded animate-pulse" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </PageTransition>
         );
     }
 

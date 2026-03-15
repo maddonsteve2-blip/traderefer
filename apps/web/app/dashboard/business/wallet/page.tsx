@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Loader2, Wallet, CreditCard, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import Link from "next/link";
 import { WalletWidget } from "@/components/dashboard/WalletWidget";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 interface Transaction {
     id: string;
@@ -62,9 +63,18 @@ export default function BusinessWalletPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-50">
-                <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
-            </div>
+            <PageTransition className="min-h-screen bg-zinc-50">
+                <div className="p-6 space-y-5 max-w-3xl mx-auto pt-10">
+                    <div className="h-7 w-28 bg-zinc-200 rounded-xl animate-pulse" />
+                    <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
+                        <div className="h-10 w-48 bg-zinc-100 rounded-xl animate-pulse" />
+                        <div className="h-4 w-32 bg-zinc-50 rounded-lg animate-pulse" />
+                    </div>
+                    <div className="space-y-3">
+                        {[1,2,3].map(i => <div key={i} className="h-16 bg-white rounded-2xl border border-zinc-200 animate-pulse" />)}
+                    </div>
+                </div>
+            </PageTransition>
         );
     }
 

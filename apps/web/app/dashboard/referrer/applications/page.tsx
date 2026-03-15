@@ -149,8 +149,17 @@ export default function ReferrerApplicationsPage() {
             {/* ── CONTENT ── */}
             <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4">
                 {loading ? (
-                    <div className="flex items-center justify-center h-48">
-                        <div className="w-10 h-10 border-[3px] border-orange-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="space-y-3 max-w-3xl">
+                        {[1,2,3].map(i => (
+                            <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-5 flex items-start gap-4">
+                                <div className="w-14 h-14 bg-zinc-100 rounded-2xl animate-pulse shrink-0" />
+                                <div className="flex-1 space-y-2">
+                                    <div className="h-5 w-44 bg-zinc-100 rounded-lg animate-pulse" />
+                                    <div className="h-3 w-32 bg-zinc-50 rounded animate-pulse" />
+                                    <div className="h-8 w-28 bg-zinc-50 rounded-xl animate-pulse mt-3" />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 ) : apps.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center px-8 py-16">

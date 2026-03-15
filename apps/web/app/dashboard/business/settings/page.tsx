@@ -40,6 +40,7 @@ import {
     DashboardStickyFooter,
 } from "@/components/dashboard/RedesignPrimitives";
 import { MobileBusinessSettings } from "@/components/business/MobileBusinessSettings";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 export default function BusinessSettingsPage() {
     const { getToken, isLoaded } = useAuth();
@@ -216,11 +217,19 @@ export default function BusinessSettingsPage() {
 
     if (loading) {
         return (
-            <DashboardPage className="bg-zinc-50">
-                <div className="min-h-screen flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+            <PageTransition className="min-h-screen bg-zinc-50">
+                <div className="p-6 space-y-5 max-w-3xl mx-auto pt-10">
+                    <div className="h-7 w-32 bg-zinc-200 rounded-xl animate-pulse" />
+                    <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
+                        {[1,2,3,4].map(i => (
+                            <div key={i} className="space-y-2">
+                                <div className="h-3 w-20 bg-zinc-100 rounded animate-pulse" />
+                                <div className="h-10 bg-zinc-50 rounded-xl animate-pulse" />
+                            </div>
+                        ))}
+                    </div>
                 </div>
-            </DashboardPage>
+            </PageTransition>
         );
     }
 

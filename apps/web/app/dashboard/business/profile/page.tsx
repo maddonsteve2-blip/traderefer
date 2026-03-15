@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { ImageUpload } from "@/components/ImageUpload";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { TRADE_CATEGORIES } from "@/lib/constants";
+import { PageTransition } from "@/components/ui/PageTransition";
 import { ConfirmationDialog } from "@/components/shared/ConfirmationDialog";
 import {
     Dialog,
@@ -278,11 +279,28 @@ export default function BusinessProfileManagementPage() {
 
     if (loading) {
         return (
-            <div className="min-h-[100dvh] bg-zinc-50">
-                <div className="min-h-screen flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+            <PageTransition className="min-h-[100dvh] bg-zinc-50">
+                <div className="p-6 space-y-5 max-w-3xl mx-auto pt-10">
+                    <div className="h-7 w-40 bg-zinc-200 rounded-xl animate-pulse" />
+                    <div className="bg-white rounded-2xl border border-zinc-200 p-6">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-20 h-20 bg-zinc-100 rounded-2xl animate-pulse" />
+                            <div className="space-y-2 flex-1">
+                                <div className="h-5 w-48 bg-zinc-100 rounded-lg animate-pulse" />
+                                <div className="h-4 w-32 bg-zinc-50 rounded-lg animate-pulse" />
+                            </div>
+                        </div>
+                        <div className="space-y-4">
+                            {[1,2,3].map(i => (
+                                <div key={i} className="space-y-2">
+                                    <div className="h-3 w-20 bg-zinc-100 rounded animate-pulse" />
+                                    <div className="h-10 bg-zinc-50 rounded-xl animate-pulse" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </PageTransition>
         );
     }
 
