@@ -238,7 +238,7 @@ export default function ReferrerProfilePage() {
                             { label: "Since", value: memberYear ?? "—" },
                         ].map((item) => (
                             <div key={item.label} className="rounded-2xl bg-zinc-50 p-3">
-                                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-zinc-400">{item.label}</p>
+                                <p className="text-[10px] font-bold text-zinc-400">{item.label}</p>
                                 <p className="mt-1 text-[18px] font-black text-zinc-900">{item.value}</p>
                             </div>
                         ))}
@@ -509,10 +509,10 @@ export default function ReferrerProfilePage() {
                                 {/* Grid stats row */}
                                 <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-gray-50">
                                     {([
-                                        { label: "QUALITY SCORE",       value: profile.quality_score,       suffix: "/100", numClass: "text-green-600",  highlight: true,  Icon: CheckCircle },
-                                        { label: "CONFIRMED LEADS",     value: profile.confirmed_referrals,  suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: TrendingUp },
-                                        { label: "PARTNERSHIPS",        value: profile.businesses_linked,   suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: Briefcase },
-                                        { label: "MEMBER SINCE",        value: memberYear ?? "—",            suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: CalendarDays },
+                                        { label: "Quality Score",       value: profile.quality_score,       suffix: "/100", numClass: "text-green-600",  highlight: true,  Icon: CheckCircle },
+                                        { label: "Confirmed Leads",     value: profile.confirmed_referrals,  suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: TrendingUp },
+                                        { label: "Partnerships",        value: profile.businesses_linked,   suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: Briefcase },
+                                        { label: "Member Since",        value: memberYear ?? "—",            suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: CalendarDays },
                                     ] as const).map((t, i) => (
                                         <div key={t.label} className={`px-4 py-6 flex flex-col items-center text-center border-b md:border-b-0 last:border-b-0 ${i % 2 === 0 ? "border-r" : "lg:border-r"} ${t.highlight ? "bg-green-50/20" : "bg-white"}`}>
                                             <t.Icon className={`w-4 h-4 mb-3 ${t.highlight ? "text-green-500" : "text-gray-400"}`} />
@@ -520,14 +520,14 @@ export default function ReferrerProfilePage() {
                                                 {t.value}
                                                 {t.suffix && <span className={`font-black ${t.highlight ? "text-green-300" : "text-gray-300"} text-sm`}>{t.suffix}</span>}
                                             </p>
-                                            <p className="font-black text-gray-400 tracking-widest uppercase text-[9px] md:text-[10px] leading-tight">{t.label}</p>
+                                            <p className="font-bold text-gray-400 text-[10px] md:text-[11px] leading-tight">{t.label}</p>
                                         </div>
                                     ))}
                                 </div>
 
                                 {/* Professional Summary */}
                                 <div className="px-6 md:px-10 py-8">
-                                    <p className="font-black text-zinc-900 mb-4 uppercase tracking-widest text-xs md:text-sm">Professional Summary</p>
+                                    <p className="font-bold text-zinc-600 mb-4 text-xs md:text-sm">Professional Summary</p>
                                     {(bio || profile.profile_bio) ? (
                                         <p className="font-bold text-zinc-500 leading-relaxed text-lg md:text-xl">
                                             {bio || profile.profile_bio}
