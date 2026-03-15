@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Application {
     id: string;
@@ -289,7 +290,13 @@ export function ForceApplicationsPane() {
                     const memberYear = ref.member_since ? new Date(ref.member_since).getFullYear() : null;
 
                     return (
-                        <div className="w-full px-6 py-6">
+                        <motion.div
+                            key={selectedId}
+                            className="w-full px-6 py-6"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                        >
                             {/* Sticky action bar */}
                             {isPending && (
                                 <div className="sticky top-0 z-10 bg-orange-600 rounded-2xl px-5 py-3 mb-5 flex items-center justify-between gap-3">
@@ -421,7 +428,7 @@ export function ForceApplicationsPane() {
                                     </p>
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
                     );
                 })()}
             </div>

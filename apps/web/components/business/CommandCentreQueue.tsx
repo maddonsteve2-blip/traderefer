@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useLiveEvent } from "@/hooks/useLiveEvents";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { motion } from "framer-motion";
 
 interface PendingApp {
     id: string;
@@ -191,9 +192,22 @@ export function CommandActionQueue({ recentLeads }: { recentLeads: RecentLead[] 
                     <p className="text-zinc-400 font-medium" style={{ fontSize: 19 }}>No pending actions right now.</p>
                 </div>
             ) : (
-                <div className="space-y-3">
-                    {queueItems.map(item => <div key={item.key}>{item.node}</div>)}
-                </div>
+                <motion.div
+                    className="space-y-3"
+                    initial="hidden"
+                    animate="visible"
+                    variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.1 } } }}
+                >
+                    {queueItems.map(item => (
+                        <motion.div
+                            key={item.key}
+                            variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } } }}
+                            whileHover={{ x: 3, transition: { duration: 0.15 } }}
+                        >
+                            {item.node}
+                        </motion.div>
+                    ))}
+                </motion.div>
             )}
 
             {!loading && safeRecentLeads.length > 0 && (

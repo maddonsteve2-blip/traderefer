@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { motion } from "framer-motion";
 
 interface Referrer {
     referrer_id: string;
@@ -271,7 +272,13 @@ export function ForcePartnersPane() {
                         <Loader2 className="w-8 h-8 text-orange-400 animate-spin" />
                     </div>
                 ) : (
-                    <div className="w-full px-6 py-6 space-y-4">
+                    <motion.div
+                        key={selectedId}
+                        className="w-full px-6 py-6 space-y-4"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
 
                         {/* ── Hero card ── */}
                         <div className="bg-white rounded-2xl border border-zinc-100 p-6">
@@ -412,7 +419,7 @@ export function ForcePartnersPane() {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 )}
             </div>
         </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { ShieldCheck, TrendingUp, Briefcase, Star, Target, Users, Trophy, Crown, Award, ChevronRight, Medal } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const ICON_MAP: Record<string, React.ElementType> = {
     verified: ShieldCheck, first_link: TrendingUp, lead_generator: TrendingUp,
@@ -80,9 +81,11 @@ export function AchievementsWidget() {
                     <span className="text-xs font-black text-orange-500">{pct}%</span>
                 </div>
                 <div className="h-2 bg-zinc-100 rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full transition-all duration-700"
-                        style={{ width: `${pct}%` }}
+                    <motion.div
+                        className="h-full bg-gradient-to-r from-orange-500 to-amber-400 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pct}%` }}
+                        transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
                     />
                 </div>
             </div>

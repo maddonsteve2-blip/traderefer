@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import { CheckCircle, Circle, Rocket } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Step {
     label: string;
@@ -55,7 +56,12 @@ export function GettingStartedCard() {
     const doneCount = steps.filter(s => s.done).length;
 
     return (
-        <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-white border border-orange-200 rounded-2xl p-6 shadow-sm">
+        <motion.div
+            className="bg-gradient-to-br from-orange-50 via-amber-50 to-white border border-orange-200 rounded-2xl p-6 shadow-sm"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-orange-100 border border-orange-200 rounded-xl flex items-center justify-center">
@@ -76,8 +82,17 @@ export function GettingStartedCard() {
                     Dismiss
                 </button>
             </div>
-            <div className="space-y-3">
+            <motion.div
+                className="space-y-3"
+                initial="hidden"
+                animate="visible"
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.15 } } }}
+            >
                 {steps.map((step, i) => (
+                    <motion.div
+                        key={`motion-${i}`}
+                        variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } } }}
+                    >
                     <Link
                         key={i}
                         href={step.href}
@@ -96,8 +111,9 @@ export function GettingStartedCard() {
                             {step.label}
                         </span>
                     </Link>
+                    </motion.div>
                 ))}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }

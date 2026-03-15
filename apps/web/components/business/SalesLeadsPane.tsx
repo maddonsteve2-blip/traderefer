@@ -11,6 +11,7 @@ import { PinConfirmationModal } from "@/components/dashboard/PinConfirmationModa
 import { toast } from "sonner";
 import { useLiveEvent } from "@/hooks/useLiveEvents";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { motion } from "framer-motion";
 
 interface Lead {
     id: string;
@@ -222,7 +223,13 @@ export function SalesLeadsPane() {
                         className="flex-1 items-center justify-center h-full"
                     />
                 ) : (
-                    <div className="max-w-lg mx-auto px-6 py-6 space-y-4">
+                    <motion.div
+                        key={selectedId}
+                        className="max-w-lg mx-auto px-6 py-6 space-y-4"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                    >
                         <button
                             onClick={() => setSelectedId(null)}
                             className="md:hidden inline-flex items-center gap-2 text-zinc-500 hover:text-zinc-900 font-bold text-lg"
@@ -308,7 +315,7 @@ export function SalesLeadsPane() {
                         <p className="text-zinc-400 font-medium text-center text-base">
                             Received {fmt(selected.created_at)}
                         </p>
-                    </div>
+                    </motion.div>
                 )}
             </div>
 

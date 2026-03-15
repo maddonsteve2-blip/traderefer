@@ -6,6 +6,7 @@ import {
     DollarSign, Loader2, SlidersHorizontal, TrendingUp, Zap
 } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const TRADE_TABS = [
     "All", "Plumbing", "Electrical", "Carpentry", "Painting",
@@ -305,8 +306,22 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                         <p className="font-bold text-zinc-400 mt-2 text-[19px]">Try a different trade or clear your search</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
-                        {businesses.map(biz => <BizCard key={biz.id} biz={biz} />)}
+                    <motion.div
+                        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5"
+                        initial="hidden"
+                        animate="visible"
+                        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.05, delayChildren: 0.05 } } }}
+                    >
+                        {businesses.map(biz => (
+                            <motion.div
+                                key={biz.id}
+                                variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } } }}
+                                whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', transition: { duration: 0.2 } }}
+                                whileTap={{ scale: 0.98 }}
+                            >
+                                <BizCard biz={biz} />
+                            </motion.div>
+                        ))}
                         {loading && businesses.length === 0 && Array.from({ length: 8 }).map((_, i) => (
                             <div key={i} className="bg-white rounded-2xl border border-zinc-100 p-4 animate-pulse">
                                 <div className="flex gap-3 mb-3">
@@ -324,7 +339,7 @@ export function BusinessBrowser({ initialSuburb, initialState }: Props) {
                                 <div className="h-11 bg-zinc-100 rounded-xl" />
                             </div>
                         ))}
-                    </div>
+                    </motion.div>
                 )}
 
                 {/* Load more */}

@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { motion } from "framer-motion";
 
 const BUSINESS_NAV = [
     { label: "Overview",        href: "/dashboard/business",                        matchPath: "/dashboard/business",                 icon: LayoutDashboard, exact: true },
@@ -104,39 +105,48 @@ function SidebarContent({
 
             {/* Nav links */}
             <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
-                {navLinks.map((item) => {
+                {navLinks.map((item, i) => {
                     const active = isActive(item);
                     const Icon = item.icon;
                     return (
-                        <Link
+                        <motion.div
                             key={item.matchPath}
-                            href={item.href}
-                            title={!expanded ? item.label : undefined}
-                            aria-label={item.label}
-                            onClick={onClose}
-                            className={`relative flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-all duration-150 group ${
-                                active
-                                    ? "bg-white/10 text-white"
-                                    : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100"
-                            }`}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.04, duration: 0.25 }}
                         >
-                            {/* Active indicator bar */}
-                            {active && (
-                                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-orange-400 rounded-full" />
-                            )}
-                            <Icon
-                                className={`shrink-0 w-[18px] h-[18px] transition-colors ${
-                                    active ? "text-orange-400" : "text-zinc-500 group-hover:text-zinc-200"
+                            <Link
+                                href={item.href}
+                                title={!expanded ? item.label : undefined}
+                                aria-label={item.label}
+                                onClick={onClose}
+                                className={`relative flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-all duration-150 group ${
+                                    active
+                                        ? "bg-white/10 text-white"
+                                        : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100"
                                 }`}
-                            />
-                            {expanded && (
-                                <span className={`text-lg font-bold whitespace-nowrap truncate ${
-                                    active ? "text-white" : "text-zinc-300 group-hover:text-white"
-                                }`}>
-                                    {item.label}
-                                </span>
-                            )}
-                        </Link>
+                            >
+                                {active && (
+                                    <motion.span
+                                        layoutId="sidebar-active"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-orange-400 rounded-full"
+                                        transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
+                                    />
+                                )}
+                                <Icon
+                                    className={`shrink-0 w-[18px] h-[18px] transition-colors ${
+                                        active ? "text-orange-400" : "text-zinc-500 group-hover:text-zinc-200"
+                                    }`}
+                                />
+                                {expanded && (
+                                    <span className={`text-lg font-bold whitespace-nowrap truncate ${
+                                        active ? "text-white" : "text-zinc-300 group-hover:text-white"
+                                    }`}>
+                                        {item.label}
+                                    </span>
+                                )}
+                            </Link>
+                        </motion.div>
                     );
                 })}
             </nav>

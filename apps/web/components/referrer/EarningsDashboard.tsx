@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLiveEvent } from "@/hooks/useLiveEvents";
+import { motion } from "framer-motion";
 
 interface Stats {
     tier: string;
@@ -197,9 +198,11 @@ export function EarningsDashboard() {
                         </div>
                         <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden">
                             {tierProgress > 0 && (
-                                <div
-                                    className="h-full rounded-full bg-orange-500 transition-all duration-500"
-                                    style={{ width: `${tierProgress}%` }}
+                                <motion.div
+                                    className="h-full rounded-full bg-orange-500"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${tierProgress}%` }}
+                                    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
                                 />
                             )}
                         </div>
@@ -291,7 +294,7 @@ export function EarningsDashboard() {
                                     <span className="text-[19px] font-bold text-zinc-400">/ {centsLabel(goalCents)}</span>
                                 </div>
                                 <div className="w-full bg-zinc-100 rounded-full h-4 overflow-hidden">
-                                    <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${pct}%` }} />
+                                    <motion.div className={`h-full rounded-full ${barColor}`} initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1, ease: 'easeOut', delay: 0.4 }} />
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-[19px] font-bold text-zinc-500">{pct}% of goal</span>
