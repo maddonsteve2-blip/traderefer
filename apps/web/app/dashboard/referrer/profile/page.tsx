@@ -5,7 +5,8 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
     MapPin, Briefcase, CheckCircle, Edit3,
-    Save, Eye, TrendingUp, ExternalLink, Award, Camera, Video, CalendarDays
+    Save, Eye, TrendingUp, ExternalLink, Award, Camera, Video, CalendarDays,
+    ShieldCheck, Zap, Crown, Trophy, Star,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -312,16 +313,17 @@ export default function ReferrerProfilePage() {
 
             <div className="hidden md:flex md:flex-col bg-zinc-100 min-h-screen">
                 {/* ── TOP BAR ── */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between px-4 md:px-8 py-4 bg-white border-b border-gray-200 shrink-0 gap-4">
-                    <div className="flex items-center gap-3">
-                        <span className="text-zinc-900 font-black text-lg">My Profile</span>
+                <div className="flex items-center justify-between px-6 pt-5 pb-4 bg-white border-b border-zinc-100 shrink-0">
+                    <div>
+                        <h1 className="text-xl font-black text-zinc-900">My Profile</h1>
+                        <p className="text-sm font-medium text-zinc-500 mt-0.5">Your referral resume — businesses see this when you apply to their network.</p>
                     </div>
                     {publicUrl && (
                         <a
                             href={publicUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl transition-all text-xs md:text-sm"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl transition-all text-sm shrink-0"
                         >
                             <ExternalLink className="w-4 h-4" /> View Live Resume
                         </a>
@@ -444,88 +446,98 @@ export default function ReferrerProfilePage() {
                         </div>
                     </div>
 
-                    {/* ── RIGHT: PREVIEW PANE (Stacked below on Mobile) ── */}
-                    <div className="flex-1 h-auto md:h-full bg-gray-50 overflow-y-visible md:overflow-y-auto flex items-start justify-center p-6 md:p-16 order-2">
-                        <div className="w-full max-w-2xl space-y-4">
-                            <div className="flex items-center gap-2.5 mb-4 px-2">
-                                <Eye className="w-5 h-5 text-zinc-400" />
-                                <span className="font-bold text-zinc-400 text-xs md:text-sm">Business View — how businesses see your profile</span>
+                    {/* ── RIGHT: PREVIEW PANE ── */}
+                    <div className="flex-1 h-auto md:h-full bg-zinc-50 overflow-y-visible md:overflow-y-auto flex items-start justify-center p-6 md:p-8 order-2">
+                        <div className="w-full max-w-xl space-y-3">
+                            <div className="flex items-center gap-2 mb-3 px-1">
+                                <Eye className="w-4 h-4 text-zinc-400" />
+                                <span className="font-semibold text-zinc-400 text-xs">Business View — how businesses see your profile</span>
                             </div>
 
-                            <div className="bg-white border md:border-2 border-gray-100 rounded-[24px] md:rounded-[32px] overflow-hidden shadow-xl md:shadow-2xl">
-
-                                {/* Header row */}
-                                <div className="px-6 md:px-10 pt-8 md:pt-10 pb-6 md:pb-8 border-b md:border-b-2 border-gray-50">
-                                    <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 md:gap-8">
-                                        {/* Avatar */}
-                                        <div
-                                            className="w-20 h-24 rounded-[20px] md:rounded-3xl bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden text-2xl shadow-lg border-4 border-white"
-                                        >
+                            {/* Hero card */}
+                            <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
+                                <div className="h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-amber-400" />
+                                <div className="p-5">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center font-black text-white shrink-0 overflow-hidden text-xl ring-2 ring-orange-100">
                                             {(photoUrl || profile.profile_photo_url) ? (
                                                 // eslint-disable-next-line @next/next/no-img-element
                                                 <img src={photoUrl || profile.profile_photo_url!} alt="" className="w-full h-full object-cover" />
                                             ) : initials}
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex flex-col sm:flex-row items-center gap-2 md:gap-3 mb-3">
-                                                <h3 className="font-black text-zinc-900 leading-none text-2xl md:text-3xl lg:text-4xl">{profile.full_name}</h3>
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 border border-green-200 bg-green-50 text-green-700 rounded-full font-black uppercase tracking-widest text-[10px] md:text-[10px]">
-                                                    <CheckCircle className="w-3 h-3" /> Verified
-                                                </span>
+                                            <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                                                <p className="font-black text-zinc-900 text-base">{profile.full_name}</p>
+                                                {(() => { const s = profile.quality_score; const ql = s >= 96 ? {l:'Elite',c:'bg-amber-50 border-amber-200 text-amber-700'} : s >= 80 ? {l:'Expert',c:'bg-orange-50 border-orange-200 text-orange-700'} : s >= 60 ? {l:'Active',c:'bg-blue-50 border-blue-200 text-blue-700'} : {l:'Growing',c:'bg-green-50 border-green-200 text-green-700'}; return <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold border ${ql.c}`}><Zap className="w-2.5 h-2.5" /> {ql.l}</span>; })()}
+                                                <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700"><ShieldCheck className="w-2.5 h-2.5" /> Verified</span>
                                             </div>
-                                            <div className="flex items-center justify-center sm:justify-start gap-4 md:gap-6 flex-wrap mb-4">
-                                                {(profile.suburb || profile.state) && (
-                                                    <span className="flex items-center gap-1.5 text-zinc-400 font-bold text-sm md:text-base">
-                                                        <MapPin className="w-4 h-4 text-orange-400" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}
-                                                    </span>
-                                                )}
-                                                {memberYear && (
-                                                    <span className="flex items-center gap-1.5 text-zinc-400 font-bold text-sm md:text-base">
-                                                        <Award className="w-4 h-4 text-amber-400" />Since {memberYear}
-                                                    </span>
-                                                )}
+                                            {(profile.suburb || profile.state) && <p className="flex items-center gap-1 text-xs text-zinc-500 font-medium mb-1"><MapPin className="w-3 h-3 text-orange-400" />{profile.suburb}{profile.state ? `, ${profile.state}` : ""}</p>}
+                                            {(tagline || profile.tagline) && <p className="text-xs italic font-semibold text-orange-600 truncate">&ldquo;{tagline || profile.tagline}&rdquo;</p>}
+                                        </div>
+                                        <div className="shrink-0 bg-zinc-50 border border-zinc-200 rounded-xl p-2.5 text-center min-w-[72px]">
+                                            <p className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wide">Score</p>
+                                            <p className="text-2xl font-black text-zinc-900 leading-tight">{profile.quality_score}<span className="text-xs text-zinc-300">/100</span></p>
+                                            <div className="mt-1 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                                                <div className={`h-full rounded-full ${profile.quality_score >= 96 ? 'bg-amber-400' : profile.quality_score >= 80 ? 'bg-orange-400' : profile.quality_score >= 60 ? 'bg-blue-400' : 'bg-green-400'}`} style={{ width: `${profile.quality_score}%` }} />
                                             </div>
-                                            {(tagline || profile.tagline) && (
-                                                <p className="font-bold text-zinc-600 leading-relaxed text-base md:text-lg">
-                                                    {tagline || profile.tagline}
-                                                </p>
-                                            )}
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Grid stats row */}
-                                <div className="grid grid-cols-2 lg:grid-cols-4 border-b border-gray-50">
+                                    {/* Earned badges */}
+                                    {(() => {
+                                        const earned = [
+                                            { label: 'Verified',       show: true,                              cls: 'bg-emerald-50 border-emerald-200 text-emerald-700', icon: ShieldCheck, ic: 'text-emerald-500' },
+                                            { label: 'Elite Referrer', show: profile.quality_score >= 96,       cls: 'bg-amber-50 border-amber-200 text-amber-700',       icon: Crown,       ic: 'text-amber-500' },
+                                            { label: 'Top Performer',  show: profile.quality_score >= 80,       cls: 'bg-orange-50 border-orange-200 text-orange-700',     icon: Trophy,      ic: 'text-orange-500' },
+                                            { label: 'Rising Star',    show: profile.quality_score >= 60,       cls: 'bg-blue-50 border-blue-200 text-blue-700',           icon: Star,        ic: 'text-blue-400' },
+                                            { label: 'Lead Generator', show: profile.confirmed_referrals >= 1,  cls: 'bg-sky-50 border-sky-200 text-sky-700',              icon: TrendingUp,  ic: 'text-sky-500' },
+                                            { label: 'Networker',      show: profile.businesses_linked >= 1,    cls: 'bg-teal-50 border-teal-200 text-teal-700',           icon: Briefcase,   ic: 'text-teal-500' },
+                                        ].filter(b => b.show);
+                                        return earned.length > 0 ? (
+                                            <div className="flex flex-wrap gap-1.5 mt-4">
+                                                {earned.map(b => (
+                                                    <span key={b.label} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border ${b.cls}`}>
+                                                        <b.icon className={`w-3 h-3 ${b.ic}`} /> {b.label}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        ) : null;
+                                    })()}
+                                </div>
+                            </div>
+
+                            {/* Track record */}
+                            <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
+                                <div className="divide-y divide-zinc-50">
                                     {([
-                                        { label: "Quality Score",       value: profile.quality_score,       suffix: "/100", numClass: "text-green-600",  highlight: true,  Icon: CheckCircle },
-                                        { label: "Confirmed Leads",     value: profile.confirmed_referrals,  suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: TrendingUp },
-                                        { label: "Partnerships",        value: profile.businesses_linked,   suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: Briefcase },
-                                        { label: "Member Since",        value: memberYear ?? "—",            suffix: "",     numClass: "text-zinc-800",  highlight: false, Icon: CalendarDays },
-                                    ] as const).map((t, i) => (
-                                        <div key={t.label} className={`px-4 py-6 flex flex-col items-center text-center border-b md:border-b-0 last:border-b-0 ${i % 2 === 0 ? "border-r" : "lg:border-r"} ${t.highlight ? "bg-green-50/20" : "bg-white"}`}>
-                                            <t.Icon className={`w-4 h-4 mb-3 ${t.highlight ? "text-green-500" : "text-gray-400"}`} />
-                                            <p className={`font-black leading-none ${t.numClass} mb-1.5 text-2xl md:text-3xl`}>
-                                                {t.value}
-                                                {t.suffix && <span className={`font-black ${t.highlight ? "text-green-300" : "text-gray-300"} text-sm`}>{t.suffix}</span>}
-                                            </p>
-                                            <p className="font-bold text-gray-400 text-[10px] md:text-[11px] leading-tight">{t.label}</p>
+                                        { label: 'Confirmed Leads',     value: profile.confirmed_referrals,    icon: TrendingUp,   color: 'text-blue-500',   bg: 'bg-blue-50' },
+                                        { label: 'Active Partnerships', value: profile.businesses_linked,      icon: Briefcase,    color: 'text-green-500',  bg: 'bg-green-50' },
+                                        { label: 'Member Since',        value: memberYear ?? '—',              icon: CalendarDays, color: 'text-zinc-500',   bg: 'bg-zinc-100' },
+                                    ] as const).map(stat => (
+                                        <div key={stat.label} className="flex items-center gap-3 px-4 py-3">
+                                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${stat.bg}`}>
+                                                <stat.icon className={`w-3.5 h-3.5 ${stat.color}`} />
+                                            </div>
+                                            <p className="flex-1 text-xs font-medium text-zinc-600">{stat.label}</p>
+                                            <p className="text-sm font-black text-zinc-900">{stat.value}</p>
                                         </div>
                                     ))}
                                 </div>
-
-                                {/* Professional Summary */}
-                                <div className="px-6 md:px-10 py-8">
-                                    <p className="font-bold text-zinc-600 mb-4 text-xs md:text-sm">Professional Summary</p>
-                                    {(bio || profile.profile_bio) ? (
-                                        <p className="font-bold text-zinc-500 leading-relaxed text-lg md:text-xl">
-                                            {bio || profile.profile_bio}
-                                        </p>
-                                    ) : (
-                                        <p className="font-bold text-gray-300 italic text-base md:text-lg">Add a bio above — this becomes your professional summary…</p>
-                                    )}
-                                </div>
-
                             </div>
+
+                            {/* Bio preview */}
+                            {(bio || profile.profile_bio) ? (
+                                <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm p-4">
+                                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2 pl-3 border-l-2 border-orange-500">About</p>
+                                    <p className="text-sm font-medium text-zinc-700 leading-relaxed line-clamp-4">{bio || profile.profile_bio}</p>
+                                </div>
+                            ) : (
+                                <div className="bg-white border border-dashed border-zinc-200 rounded-2xl p-4 text-center">
+                                    <p className="text-xs font-medium text-zinc-400 italic">Add a bio on the left to fill this section…</p>
+                                </div>
+                            )}
+
+                            <p className="text-center text-[11px] text-zinc-400 font-medium pt-1">Full profile also shows Badges &amp; Achievements section</p>
                         </div>
                     </div>
                 </div>
