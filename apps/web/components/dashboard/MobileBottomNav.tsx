@@ -27,6 +27,10 @@ export function MobileBottomNav() {
     const isReferrer = pathname?.startsWith("/dashboard/referrer");
     const TABS = isReferrer ? REFERRER_TABS : BUSINESS_TABS;
 
+    // Hide bottom nav on messages pages — keyboard + fixed nav conflict on iOS
+    const isMessagesPage = pathname?.endsWith("/messages");
+    if (isMessagesPage) return null;
+
     function isActive(href: string, exact?: boolean, matchPrefixes?: string[]) {
         if (exact) return pathname === href;
         if (matchPrefixes?.length) return matchPrefixes.some(prefix => pathname?.startsWith(prefix));

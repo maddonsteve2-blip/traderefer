@@ -616,8 +616,8 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
 
             {/* ── RIGHT PANEL (Chat View) ── */}
             <div 
-                className={`${activeContactId ? 'flex fixed top-0 left-0 right-0 z-[70] md:relative md:z-0' : contacts.length === 0 ? 'hidden' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
-                style={{ height: viewportHeight }}
+                className={`${activeContactId ? 'flex fixed inset-0 z-[70] md:relative md:inset-auto md:z-0' : contacts.length === 0 ? 'hidden' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
+                style={{ height: typeof window !== 'undefined' && window.innerWidth < 768 ? viewportHeight : undefined }}
             >
                 {/* Mobile/Desktop Header */}
                 {activeContactId && activeContact ? (
