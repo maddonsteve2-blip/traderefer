@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Loader2, Wallet, ArrowLeft, CreditCard, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Loader2, Wallet, CreditCard, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import Link from "next/link";
 import { WalletWidget } from "@/components/dashboard/WalletWidget";
 
@@ -72,9 +72,11 @@ export default function BusinessWalletPage() {
         <div className="min-h-screen bg-zinc-50">
             <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
                 <div className="space-y-3">
-                    <Link href="/dashboard/business" className="flex items-center gap-1.5 text-base font-semibold text-zinc-400 hover:text-zinc-800 transition-colors group w-fit">
-                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" /> Back to Dashboard
-                    </Link>
+                    <div className="flex items-center gap-2 text-base font-semibold text-zinc-400">
+                        <Link href="/dashboard/business" className="hover:text-zinc-800 transition-colors">Dashboard</Link>
+                        <span>/</span>
+                        <span className="text-zinc-700">Wallet</span>
+                    </div>
                     <h1 className="text-4xl font-black text-zinc-900 tracking-tight">Wallet</h1>
                     <p className="text-xl text-zinc-500 font-medium">Manage your balance and view transaction history.</p>
                 </div>
