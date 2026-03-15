@@ -315,7 +315,7 @@ export default function BusinessProfileManagementPage() {
                     {/* ── LEFT SIDEBAR — profile preview (desktop only) ── */}
                     <div className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 border-r border-zinc-200 bg-white overflow-y-auto">
                         <div className="p-5 border-b border-zinc-100">
-                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Profile Preview</p>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Profile Preview</p>
                             <div className="flex flex-col items-center text-center">
                                 <div className="w-20 h-20 rounded-2xl bg-zinc-100 flex items-center justify-center overflow-hidden mb-3 border border-zinc-200 shrink-0">
                                     {formData.logo_url
@@ -336,7 +336,7 @@ export default function BusinessProfileManagementPage() {
 
                         {formData.features.length > 0 && (
                             <div className="p-5 border-b border-zinc-100">
-                                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Highlights</p>
+                                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Highlights</p>
                                 <div className="flex flex-wrap gap-1.5">
                                     {formData.features.map(f => (
                                         <span key={f} className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 text-[11px] font-bold px-2 py-1 rounded-lg border border-orange-100">{f}</span>
@@ -346,7 +346,7 @@ export default function BusinessProfileManagementPage() {
                         )}
 
                         <div className="p-5">
-                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3">Profile Strength</p>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Profile Strength</p>
                             <div className="space-y-2.5">
                                 {[
                                     { label: "Logo uploaded", done: !!formData.logo_url },
@@ -402,7 +402,7 @@ export default function BusinessProfileManagementPage() {
                                 </div>
                                 <div className="min-w-0">
                                     <h2 className="text-base font-bold text-zinc-900 truncate">Identity</h2>
-                                    <p className="text-xs text-zinc-500 font-medium truncate">Your business name and brand logo</p>
+                                    <p className="text-sm text-zinc-600 font-medium truncate">Your business name and brand logo</p>
                                 </div>
                             </div>
 
@@ -426,7 +426,7 @@ export default function BusinessProfileManagementPage() {
                                 <div className="flex-1 space-y-5 w-full">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div className="space-y-1.5">
-                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Business Name</label>
+                                            <label className="text-sm font-medium text-zinc-700 ml-1 block">Business Name</label>
                                             <input
                                                 type="text"
                                                 className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
@@ -435,8 +435,8 @@ export default function BusinessProfileManagementPage() {
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Profile URL</label>
-                                            <p className="text-xs text-zinc-400 font-medium ml-1 mb-1">Your public address: traderefer.au/b/[your-handle]</p>
+                                            <label className="text-sm font-medium text-zinc-700 ml-1 block">Profile URL</label>
+                                            <p className="text-xs text-zinc-500 font-medium ml-1 mb-1">Your public address: traderefer.au/b/[your-handle]</p>
                                             <div className="flex items-center bg-zinc-50 rounded-xl px-4 py-3.5">
                                                 <span className="text-zinc-400 mr-1 text-sm">/b/</span>
                                                 <input
@@ -455,7 +455,7 @@ export default function BusinessProfileManagementPage() {
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Trade Category</label>
+                                            <label className="text-sm font-medium text-zinc-700 ml-1 block">Trade Category</label>
                                             <select
                                                 className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-sm"
                                                 value={formData.trade_category}
@@ -467,7 +467,7 @@ export default function BusinessProfileManagementPage() {
                                             </select>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Website URL</label>
+                                            <label className="text-sm font-medium text-zinc-700 ml-1 block">Website URL</label>
                                             <input
                                                 type="url"
                                                 className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
@@ -477,7 +477,7 @@ export default function BusinessProfileManagementPage() {
                                             />
                                         </div>
                                         <div className="space-y-1.5 sm:col-span-2 md:col-span-1">
-                                            <label className="text-xs font-bold text-zinc-500 ml-1 block">Business Phone</label>
+                                            <label className="text-sm font-medium text-zinc-700 ml-1 block">Business Phone</label>
                                             <input
                                                 type="tel"
                                                 className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
@@ -499,12 +499,12 @@ export default function BusinessProfileManagementPage() {
                                 </div>
                                 <div className="min-w-0">
                                     <h2 className="text-base font-bold text-zinc-900 truncate">Service Area</h2>
-                                    <p className="text-xs text-zinc-500 font-medium truncate">Where do you provide your services?</p>
+                                    <p className="text-sm text-zinc-600 font-medium truncate">Where do you provide your services?</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="md:col-span-2 space-y-1.5">
-                                    <label className="text-xs font-bold text-zinc-500 ml-1 block">Address & Location</label>
+                                    <label className="text-sm font-medium text-zinc-700 ml-1 block">Address & Location</label>
                                     <AddressAutocomplete
                                         addressValue={formData.address}
                                         suburbValue={formData.suburb}
@@ -516,13 +516,13 @@ export default function BusinessProfileManagementPage() {
                                         className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-lg md:text-xl transition-all"
                                     />
                                     {formData.address && formData.suburb && (
-                                        <p className="text-xs font-bold text-zinc-400 ml-1">
+                                        <p className="text-xs font-medium text-zinc-600 ml-1">
                                             Currently: <span className="text-zinc-600 font-black">{formData.address}, {formData.suburb} {formData.state}</span>
                                         </p>
                                     )}
                                 </div>
                                 <div className="md:col-span-2 space-y-1.5">
-                                    <label className="text-xs font-bold text-zinc-500 ml-1 block">Service Radius</label>
+                                    <label className="text-sm font-medium text-zinc-700 ml-1 block">Service Radius</label>
                                     <div className="relative flex items-center">
                                         <input
                                             type="number"
@@ -544,11 +544,11 @@ export default function BusinessProfileManagementPage() {
                                 </div>
                                 <div className="min-w-0">
                                     <h2 className="text-base font-bold text-zinc-900 truncate">About Business</h2>
-                                    <p className="text-xs text-zinc-500 font-medium truncate">Describe your services and expertise</p>
+                                    <p className="text-sm text-zinc-600 font-medium truncate">Describe your services and expertise</p>
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-zinc-500 ml-1 block">Description</label>
+                                <label className="text-sm font-medium text-zinc-700 ml-1 block">Description</label>
                                 <textarea
                                     className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 min-h-[120px] text-sm leading-relaxed resize-none"
                                     value={formData.description}
@@ -567,7 +567,7 @@ export default function BusinessProfileManagementPage() {
                                     </div>
                                     <div className="min-w-0">
                                         <h2 className="text-base font-bold text-zinc-900 truncate">Work Gallery</h2>
-                                        <p className="text-xs text-zinc-500 font-medium truncate">Showcase your best completed jobs</p>
+                                        <p className="text-sm text-zinc-600 font-medium truncate">Showcase your best completed jobs</p>
                                     </div>
                                 </div>
                             </div>
@@ -621,7 +621,7 @@ export default function BusinessProfileManagementPage() {
                                     </div>
                                     <div>
                                         <h2 className="text-base font-bold text-zinc-900">Finished Projects</h2>
-                                        <p className="text-xs text-zinc-500 font-medium">Showcase complete jobs with titles and descriptions</p>
+                                        <p className="text-sm text-zinc-600 font-medium">Showcase complete jobs with titles and descriptions</p>
                                     </div>
                                 </div>
                                 <Button
@@ -695,7 +695,7 @@ export default function BusinessProfileManagementPage() {
                                 </div>
                                 <div>
                                     <h2 className="text-base font-bold text-zinc-900">Service Highlights</h2>
-                                    <p className="text-xs text-zinc-500 font-medium">Select features that help you stand out</p>
+                                    <p className="text-sm text-zinc-600 font-medium">Select features that help you stand out</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -738,7 +738,7 @@ export default function BusinessProfileManagementPage() {
                             <div className="absolute -right-10 -bottom-10 size-40 bg-orange-500/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
                             <div className="relative z-10">
                                 <h3 className="text-base font-bold mb-2">Pro Tip: Complete Profiles Convert Better</h3>
-                                <p className="text-zinc-400 text-sm leading-relaxed">
+                                <p className="text-zinc-300 text-sm leading-relaxed">
                                     Businesses with a high-quality logo, at least 5 job photos, and a detailed description receive <span className="text-orange-400 font-bold">250% more enquiries</span> through TradeRefer.
                                 </p>
                             </div>

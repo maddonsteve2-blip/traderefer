@@ -20,10 +20,10 @@ export function HubTabBar({ tabs, active, onChange }: HubTabBarProps) {
                     <button
                         key={tab.key}
                         onClick={() => onChange(tab.key)}
-                        className={`relative shrink-0 py-3.5 px-4 md:px-6 font-black transition-colors flex items-center gap-2 text-[13px] uppercase tracking-[0.16em] md:text-2xl md:tracking-normal md:normal-case ${
+                        className={`relative shrink-0 py-3.5 px-4 md:px-5 font-semibold transition-colors flex items-center gap-2 text-sm ${
                             active === tab.key
-                                ? "text-orange-600 border-b-[4px] border-orange-500"
-                                : "text-zinc-500 hover:text-zinc-900 border-b-[4px] border-transparent"
+                                ? "text-orange-600 border-b-[3px] border-orange-500"
+                                : "text-zinc-500 hover:text-zinc-800 border-b-[3px] border-transparent"
                         }`}
                     >
                         {tab.label}

@@ -75,7 +75,7 @@ export function ForceConfigPane() {
             {/* Header */}
             <div className="mb-6">
                 <h2 className="font-black text-zinc-900 mb-1 text-2xl">Referral Program</h2>
-                <p className="text-zinc-500 font-medium text-sm">
+                <p className="text-zinc-600 font-medium text-sm">
                     Configure your default lead fee, invite link, and Prezzee reward triggers.
                 </p>
             </div>
@@ -91,7 +91,7 @@ export function ForceConfigPane() {
                         </div>
                         <div>
                             <h3 className="font-bold text-zinc-900 text-base">Default Lead Fee</h3>
-                            <p className="text-zinc-400 font-medium text-xs">Paid per unlocked lead. Min $3.00.</p>
+                            <p className="text-zinc-600 font-medium text-sm">Paid per unlocked lead. Min $3.00.</p>
                         </div>
                     </div>
                     <div className="relative max-w-[220px]">
@@ -106,7 +106,7 @@ export function ForceConfigPane() {
                             className="w-full pl-8 pr-4 h-11 border border-zinc-200 rounded-xl font-bold text-zinc-900 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 text-base"
                         />
                     </div>
-                    <p className="text-zinc-400 font-medium mt-3 text-xs">
+                    <p className="text-zinc-600 font-medium mt-3 text-sm">
                         Each approved referrer can have a custom fee set in the Partners tab.
                     </p>
                 </div>
@@ -114,7 +114,7 @@ export function ForceConfigPane() {
                 {/* Storefront link */}
                 <div className="bg-white rounded-2xl border border-zinc-200 p-6 flex flex-col">
                     <h3 className="font-bold text-zinc-900 mb-1 text-base">Your Referrer Invite Link</h3>
-                    <p className="text-zinc-400 font-medium mb-3 text-xs">
+                    <p className="text-zinc-600 font-medium mb-3 text-sm">
                         Share this with anyone you want to invite to apply as a referrer.
                     </p>
                     <div className="bg-zinc-50 rounded-xl px-4 py-3 font-mono text-zinc-600 break-all flex-1 flex items-center text-sm">
@@ -148,11 +148,11 @@ export function ForceConfigPane() {
                         <div className="md:col-span-2 flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
                             <div>
                                 <p className="font-black text-white text-sm">Milestone</p>
-                                <p className="text-zinc-400 font-medium text-xs">Every 5 confirmed leads</p>
+                                <p className="text-zinc-400 font-medium text-sm">Every 5 confirmed leads</p>
                             </div>
                             <div className="text-right">
                                 <p className="font-black text-orange-400 text-2xl">$25</p>
-                                <p className="text-zinc-400 font-medium text-xs">Prezzee Smart Card</p>
+                                <p className="text-zinc-400 font-medium text-sm">Prezzee Smart Card</p>
                             </div>
                         </div>
                         <div className="flex flex-col justify-center bg-white/5 rounded-xl px-4 py-3 gap-1">
@@ -160,12 +160,12 @@ export function ForceConfigPane() {
                                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                                 <p className="text-zinc-300 font-medium text-sm">Auto-fulfilled</p>
                             </div>
-                            <p className="text-zinc-500 font-medium text-xs">No manual action required</p>
+                            <p className="text-zinc-400 font-medium text-sm">No manual action required</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <span className="text-zinc-400 font-medium text-xs">Powered by</span>
+                        <span className="text-zinc-500 font-medium text-xs">Powered by</span>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={PREZZEE_LOGO} alt="Prezzee" className="h-4 w-auto brightness-0 invert" />
                     </div>
