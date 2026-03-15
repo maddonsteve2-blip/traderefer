@@ -3,15 +3,23 @@
  * Fetches each business's website homepage and extracts:
  * 1. Meta description → saves to `description` column
  * 2. Logo image URL → saves to `logo_url` column (regex-based detection)
+ * 3. Email → saves to `business_email` column
+ * 4. Phone → saves to `business_phone` column
  * 
- * Skips businesses that already have descriptions/logos.
- * Resume-safe: only processes businesses missing data.
+ * Skips businesses already marked website_scraped = true (add --retry-failed to override).
+ * Social media URLs (Facebook, Instagram, etc.) are immediately skipped & marked scraped.
+ * Permanent HTTP failures (400, 403, 404, 500) are marked scraped to avoid retrying.
+ * SSL errors are retried with rejectUnauthorized: false fallback.
  * 
  * Usage:
  *   node scripts/scrape_business_websites.js [--dry-run] [--logos-only] [--desc-only] [--limit 100]
+ *   node scripts/scrape_business_websites.js --retry-failed   # retry scraped=true that still missing data
+ *   node scripts/scrape_business_websites.js --retry-ssl      # same as retry-failed, alias
  */
 
 const { Pool } = require('pg');
+const https = require('https');
+const http = require('http');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config({ path: path.join(__dirname, '..', 'apps', 'web', '.env.local') });
@@ -27,8 +35,12 @@ const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
 const logosOnly = args.includes('--logos-only');
 const descOnly = args.includes('--desc-only');
+const retryFailed = args.includes('--retry-failed') || args.includes('--retry-ssl');
 const limitIdx = args.indexOf('--limit');
 const LIMIT = limitIdx !== -1 ? parseInt(args[limitIdx + 1]) : null;
+
+// Social media domains that can never be scraped for business data
+const SOCIAL_DOMAINS = /\/\/(www\.)?(facebook\.com|instagram\.com|twitter\.com|x\.com|linkedin\.com|youtube\.com|tiktok\.com|m\.facebook\.com)/i;
 
 const db = new Pool({ connectionString: process.env.DATABASE_URL, max: 5 });
 
@@ -88,10 +100,13 @@ function extractEmails(html) {
     const unique = [...new Set(matches.map(e => e.toLowerCase()))];
     return unique.filter(email => {
         if (email.length > 80) return false;
+        // Reject file extensions mistaken for TLDs (e.g., asset-9@3x-1024x198.png)
+        if (/\.(png|jpg|jpeg|gif|svg|webp|ico|css|js|php|html|htm|asp|aspx|pdf|zip|map)$/i.test(email)) return false;
+        // Reject domains that look like image dimensions (e.g., 3x-1024x198)
+        if (/@\d/.test(email)) return false;
         for (const bl of EMAIL_BLACKLIST) {
             if (bl.test(email)) return false;
         }
-        // Prefer business emails, not generic info@ as last resort
         return true;
     });
 }
@@ -228,42 +243,112 @@ function extractMetaDescription(html) {
     return null;
 }
 
-async function fetchPage(url) {
-    try {
-        // Normalize URL
-        if (!url.startsWith('http')) url = 'https://' + url;
+const FETCH_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-AU,en;q=0.9',
+    'Cache-Control': 'no-cache',
+    // No Accept-Encoding: fetchWithNode doesn't decompress; omitting causes servers to send plain UTF-8
+};
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-        const res = await fetch(url, {
-            signal: controller.signal,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml',
-                'Accept-Language': 'en-AU,en;q=0.9',
-            },
-            redirect: 'follow',
-        });
-        clearTimeout(timeout);
-
-        if (!res.ok) return { error: `HTTP ${res.status}` };
-        const ct = res.headers.get('content-type') || '';
-        if (!ct.includes('text/html') && !ct.includes('application/xhtml')) {
-            return { error: `Non-HTML content: ${ct}` };
+// Fetch using Node's https/http module with optional SSL bypass
+function fetchWithNode(url, allowInsecure = false) {
+    return new Promise((resolve) => {
+        const parsed = new URL(url);
+        const isHttps = parsed.protocol === 'https:';
+        const lib = isHttps ? https : http;
+        const options = {
+            hostname: parsed.hostname,
+            port: parsed.port || (isHttps ? 443 : 80),
+            path: parsed.pathname + parsed.search,
+            method: 'GET',
+            headers: FETCH_HEADERS,
+            timeout: TIMEOUT_MS,
+            maxHeaderSize: 32768,  // 32KB (default 8KB causes Header overflow on some sites)
+        };
+        if (isHttps && allowInsecure) {
+            options.rejectUnauthorized = false;
         }
+        let resolved = false;
+        const done = (result) => { if (!resolved) { resolved = true; resolve(result); } };
 
-        const text = await res.text();
-        // Only read first 200KB to avoid huge pages
-        return { html: text.substring(0, 200_000) };
-    } catch (err) {
-        if (err.name === 'AbortError') return { error: 'Timeout' };
-        return { error: err.message || 'Fetch failed' };
+        const req = lib.request(options, (res) => {
+            // Follow redirects (up to 5)
+            if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location) {
+                try {
+                    const redirectUrl = new URL(res.headers.location, url).href;
+                    res.destroy();
+                    fetchWithNode(redirectUrl, allowInsecure).then(done);
+                } catch { done({ error: `Bad redirect` }); }
+                return;
+            }
+            if (res.statusCode && res.statusCode >= 400) {
+                res.destroy();
+                // Permanent = codes where retrying will never help for our purposes
+                const isPerm = [400, 403, 404, 409, 410, 451, 500, 526].includes(res.statusCode);
+                done({ error: `HTTP ${res.statusCode}`, permanent: isPerm });
+                return;
+            }
+            const ct = res.headers['content-type'] || '';
+            if (!ct.includes('text/html') && !ct.includes('application/xhtml')) {
+                res.destroy();
+                done({ error: `Non-HTML: ${ct}` });
+                return;
+            }
+            const chunks = [];
+            let size = 0;
+            res.on('data', (chunk) => {
+                size += chunk.length;
+                chunks.push(chunk);
+                if (size > 250_000) {
+                    // Resolve with what we have BEFORE destroying (destroy won't emit 'end')
+                    done({ html: Buffer.concat(chunks).toString('utf-8', 0, 200_000) });
+                    res.destroy();
+                }
+            });
+            res.on('end', () => done({ html: Buffer.concat(chunks).toString('utf-8', 0, 200_000) }));
+            res.on('error', () => done({ error: 'Read error' }));
+            res.on('close', () => done({ html: chunks.length ? Buffer.concat(chunks).toString('utf-8', 0, 200_000) : '' }));
+        });
+        req.on('timeout', () => { req.destroy(); done({ error: 'Timeout' }); });
+        req.on('error', (err) => {
+            // SSL error → signal caller to retry with insecure
+            const isSslError = /certificate|ssl|tls|CERT|HANDSHAKE|self.signed/i.test(err.message);
+            // DNS/connection failures are permanent (dead domain)
+            const isPermanent = /ENOTFOUND|ECONNREFUSED|EAI_AGAIN|EAI_NONAME/.test(err.code || err.message);
+            done({ error: err.message || 'fetch failed', sslError: isSslError, permanent: isPermanent });
+        });
+        req.end();
+    });
+}
+
+async function fetchPage(url) {
+    // Normalize URL
+    if (!url.startsWith('http')) url = 'https://' + url;
+
+    // First attempt
+    let result = await fetchWithNode(url, false);
+
+    // SSL error → retry with rejectUnauthorized: false
+    if (result.sslError) {
+        result = await fetchWithNode(url, true);
+        if (result.error) {
+            // Also try plain HTTP fallback
+            const httpUrl = url.replace(/^https:\/\//, 'http://');
+            result = await fetchWithNode(httpUrl, false);
+        }
     }
+
+    return result;
 }
 
 function delay(ms) {
     return new Promise(r => setTimeout(r, ms));
+}
+
+async function markScraped(bizId) {
+    if (dryRun) return;
+    await db.query(`UPDATE businesses SET website_scraped = true WHERE id = $1`, [bizId]);
 }
 
 async function processBatch(businesses) {
@@ -272,18 +357,31 @@ async function processBatch(businesses) {
     const promises = businesses.map(async (biz) => {
         await delay(Math.random() * DELAY_BETWEEN_MS);
 
+        // Skip social media URLs — they never return scrapeable HTML
+        if (SOCIAL_DOMAINS.test(biz.website)) {
+            await markScraped(biz.id);
+            return;
+        }
+
         // Skip fields that already exist — only scrape what's missing
         const needDesc = !biz.has_description && !logosOnly;
         const needLogo = !biz.has_logo && !descOnly;
         const needEmail = !biz.has_email;
         const needPhone = !biz.has_phone;
 
-        if (!needDesc && !needLogo && !needEmail && !needPhone) return;
+        if (!needDesc && !needLogo && !needEmail && !needPhone) {
+            await markScraped(biz.id);
+            return;
+        }
 
         const response = await fetchPage(biz.website);
         if (response.error) {
             results.errors++;
             logError(biz.business_name, biz.website, response.error);
+            // Mark ALL errors as scraped — timeouts and transient failures on business
+            // websites are effectively permanent (site is down/unreachable).
+            // Use --retry-failed to re-attempt these if needed.
+            await markScraped(biz.id);
             return;
         }
         
@@ -343,7 +441,7 @@ async function processBatch(businesses) {
         }
 
         // Always mark as scraped so we don't re-fetch on next run
-        updates.push(`website_scraped = true`);
+        updates.push('website_scraped = true');
 
         params.push(biz.id);
         await db.query(
@@ -358,11 +456,17 @@ async function processBatch(businesses) {
 
 async function main() {
     console.log('=== Business Website Scraper ===');
-    console.log(`Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}${logosOnly ? ' (logos only)' : ''}${descOnly ? ' (descriptions only)' : ''}`);
+    console.log(`Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}${logosOnly ? ' (logos only)' : ''}${descOnly ? ' (descriptions only)' : ''}${retryFailed ? ' (retry-failed: including website_scraped=true)' : ''}`);
     if (LIMIT) console.log(`Limit: ${LIMIT}`);
 
     // Find businesses with websites but missing ANY of: description, logo, email, or phone
     let whereConditions = [`status = 'active'`, `website IS NOT NULL`, `website != ''`];
+
+    if (!retryFailed) {
+        // Default: skip already-scraped businesses (successes that had no extractable data
+        // or permanent failures — both are marked website_scraped = true)
+        whereConditions.push(`(website_scraped IS NOT TRUE)`);
+    }
 
     if (logosOnly) {
         whereConditions.push(`(logo_url IS NULL OR logo_url = '')`);
