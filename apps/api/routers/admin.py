@@ -33,6 +33,7 @@ async def trigger_lifecycle_tasks(
     d14_followups = await jobs.send_d14_survey_followups(db)
     closed_unconfirmed = await jobs.close_unconfirmed_leads(db)
     auto_passed = await jobs.auto_pass_stalled_screening(db)
+    reengagement_sent = await jobs.send_reengagement_nudges(db)
 
     await db.commit()
 
@@ -47,6 +48,7 @@ async def trigger_lifecycle_tasks(
             "d14_survey_followups": d14_followups,
             "closed_unconfirmed": closed_unconfirmed,
             "auto_passed_screening": auto_passed,
+            "reengagement_nudges_sent": reengagement_sent,
         }
     }
 

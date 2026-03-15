@@ -7,6 +7,9 @@ import { EarningsDashboard } from "@/components/referrer/EarningsDashboard";
 import { MyTradesTeam } from "@/components/referrer/MyTradesTeam";
 import { WelcomeDialog } from "@/components/dashboard/WelcomeDialog";
 import { ReferralProgress } from "@/components/referrer/ReferralProgress";
+import { BadgeUnlockModal } from "@/components/dashboard/BadgeUnlockModal";
+import { AchievementsWidget } from "@/components/referrer/AchievementsWidget";
+import { SocialProofTicker } from "@/components/dashboard/SocialProofTicker";
 
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
@@ -57,6 +60,8 @@ export default async function ReferrerDashboardPage() {
     return (
         <>
             <MobileReferrerDashboard />
+            {/* Badge unlock celebration modal — client-side, checks for new badges on load */}
+            <BadgeUnlockModal />
             <div className="hidden lg:block min-h-screen bg-zinc-50 pb-8">
                 <WelcomeDialog />
 
@@ -68,7 +73,7 @@ export default async function ReferrerDashboardPage() {
                         <div className="lg:col-span-9 space-y-4">
 
                             {/* Page header */}
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
                                 <div>
                                     <h1 className="font-black text-zinc-900 leading-tight text-4xl">Your Earnings</h1>
                                     <p className="font-bold text-zinc-500 mt-1 text-lg">Track referrals · collect Prezzee rewards</p>
@@ -80,6 +85,9 @@ export default async function ReferrerDashboardPage() {
                                 </Link>
                             </div>
 
+                            {/* Social proof ticker */}
+                            <SocialProofTicker />
+
                             {/* Tier + Earnings cards + Monthly Goal inline */}
                             <EarningsDashboard />
 
@@ -87,11 +95,14 @@ export default async function ReferrerDashboardPage() {
                             <MyTradesTeam />
                         </div>
 
-                        {/* ══ RIGHT SIDEBAR (3/12 = 25%) — Rewards · Goal · Invite · Tips ══ */}
+                        {/* ══ RIGHT SIDEBAR (3/12 = 25%) — Rewards · Achievements · Invite · Tips ══ */}
                         <aside className="lg:col-span-3 space-y-4 lg:sticky lg:top-28">
 
                             {/* Prezzee Rewards — shared card */}
                             <PrezzeeRewardsCard rewardsHref="/dashboard/referrer/withdraw" />
+
+                            {/* Achievements / Badge progress */}
+                            <AchievementsWidget />
 
                             {/* Friend Rewards / Invite */}
                             <div id="invite">

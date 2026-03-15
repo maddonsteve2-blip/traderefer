@@ -497,6 +497,14 @@ async def approve_application(
     except Exception as e:
         error_logger.warning(f"Approval notification error (non-fatal): {e}")
 
+    # Badge check — networker / power_networker
+    if app["referrer_user_id"]:
+        try:
+            from services.badge_service import check_and_award_badges
+            await check_and_award_badges(str(app["referrer_user_id"]), "referrer", db)
+        except Exception as badge_err:
+            error_logger.warning(f"Badge check after approval (non-fatal): {badge_err}")
+
     return {"status": "approved"}
 
 

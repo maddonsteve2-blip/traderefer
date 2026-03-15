@@ -328,3 +328,20 @@ async def send_sms_referrer_paused(phone: str, full_name: str):
         f"Contact support to review. TradeRefer"
     )
     await _send_sms(phone, body)
+
+
+async def send_sms_badge_unlock(phone: str, full_name: str, badge_label: str):
+    """Sent for meaningful badge milestones only (lead_generator, lead_champion, top_performer, elite)."""
+    first = full_name.split()[0] if full_name else "there"
+    body = f"🎖️ {first}, you just unlocked '{badge_label}' on TradeRefer! View your profile: {FRONTEND_URL}/dashboard/referrer/profile"
+    await _send_sms(phone, body)
+
+
+async def send_sms_reengagement(phone: str, full_name: str, next_badge_label: str | None):
+    """Re-engagement nudge for users offline 14+ days. Max once per 2 weeks (enforced by caller)."""
+    first = full_name.split()[0] if full_name else "there"
+    if next_badge_label:
+        body = f"Hey {first}, you're close to unlocking '{next_badge_label}' on TradeRefer 💪 {FRONTEND_URL}/dashboard/referrer"
+    else:
+        body = f"Hey {first}, businesses in your area are looking for referrers right now. Log in: {FRONTEND_URL}/dashboard/referrer"
+    await _send_sms(phone, body)

@@ -244,6 +244,16 @@ async def create_referral_link(
                 except Exception as reward_err:
                     error_logger.warning(f"Reward check on first link (non-fatal): {reward_err}")
 
+        # Badge check — first_link
+        try:
+            uid_res = await db.execute(text("SELECT user_id FROM referrers WHERE id = :rid"), {"rid": referrer_id})
+            uid_row = uid_res.mappings().first()
+            if uid_row and uid_row["user_id"]:
+                from services.badge_service import check_and_award_badges
+                await check_and_award_badges(str(uid_row["user_id"]), "referrer", db)
+        except Exception as badge_err:
+            error_logger.warning(f"Badge check after link creation (non-fatal): {badge_err}")
+
         return {"link_code": link_code}
     except Exception as e:
         await db.rollback()

@@ -701,3 +701,60 @@ async def send_referrer_prezzee_issued_email(email: str, full_name: str, amount_
       </div>
     """
     await _send(email, f"🎉 Your ${amount_dollars:.2f} Prezzee gift card has been issued!", _wrap(body, "You're receiving this as a referrer on traderefer.au."))
+
+
+async def send_badge_unlock_email(email: str, full_name: str, badge_label: str, badge_desc: str, next_badge_label: str | None = None):
+    next_section = ""
+    if next_badge_label:
+        next_section = f"""
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:16px 20px;margin:20px 0">
+        <p style="margin:0;font-size:13px;font-weight:700;color:#9a3412;text-transform:uppercase;letter-spacing:0.05em">Next badge to unlock</p>
+        <p style="margin:6px 0 0;font-size:15px;font-weight:600;color:#c2410c">{next_badge_label}</p>
+      </div>
+    """
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">🎖️ Badge Unlocked: {badge_label}!</h1>
+      <p>Congrats {full_name} — you just earned a new badge on TradeRefer.</p>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:20px 24px;margin:20px 0;text-align:center">
+        <p style="font-size:28px;font-weight:900;color:#16a34a;margin:0">🎖️ {badge_label}</p>
+        <p style="color:#15803d;font-weight:600;margin:8px 0 0;font-size:15px">{badge_desc}</p>
+      </div>
+      <p style="color:#555">This badge is now displayed on your public referrer profile — businesses can see it when reviewing your application.</p>
+      {next_section}
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer/profile"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          View My Profile →
+        </a>
+      </div>
+    """
+    await _send(email, f"🎖️ You just unlocked: {badge_label}!", _wrap(body))
+
+
+async def send_reengagement_email(email: str, full_name: str, next_badge_label: str | None, days_inactive: int):
+    """Re-engagement nudge for users who have been offline 7/14/30 days."""
+    if next_badge_label:
+        subject = f"You're close to unlocking your next badge, {full_name.split()[0]}"
+        headline = f"Don't stop now, {full_name.split()[0]}!"
+        body_text = f"You're on your way to unlocking <strong>{next_badge_label}</strong> on TradeRefer. Log back in and keep the momentum going."
+    elif days_inactive >= 30:
+        subject = f"We miss you, {full_name.split()[0]} — here's what you've missed"
+        headline = f"Come back, {full_name.split()[0]}"
+        body_text = "Businesses in your area are looking for referrers right now. Your profile is live and ready to attract new partnerships."
+    else:
+        subject = f"New opportunities on TradeRefer, {full_name.split()[0]}"
+        headline = f"New opportunities waiting, {full_name.split()[0]}"
+        body_text = "There are new businesses in your area accepting referrer applications. Log in to grow your network."
+
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">{headline}</h1>
+      <p>{body_text}</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer"
+           style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          Open My Dashboard →
+        </a>
+      </div>
+      <p style="color:#888;font-size:13px">You're receiving this because you're a referrer on TradeRefer. <a href="{FRONTEND_URL}/dashboard/referrer" style="color:#888">Manage notifications</a></p>
+    """
+    await _send(email, subject, _wrap(body))

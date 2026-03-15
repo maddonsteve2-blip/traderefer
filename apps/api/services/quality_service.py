@@ -61,6 +61,17 @@ async def update_referrer_quality_score(referrer_id: str, db: AsyncSession) -> i
 
         # Check accountability thresholds
         await check_and_apply_accountability(referrer_id, score, total, db)
+
+        # Check badge unlocks for quality score milestones
+        try:
+            uid_res = await db.execute(text("SELECT user_id FROM referrers WHERE id = :rid"), {"rid": referrer_id})
+            uid_row = uid_res.mappings().first()
+            if uid_row and uid_row["user_id"]:
+                from services.badge_service import check_and_award_badges
+                await check_and_award_badges(str(uid_row["user_id"]), "referrer", db)
+        except Exception as badge_err:
+            error_logger.warning(f"Badge check after quality score update (non-fatal): {badge_err}")
+
         return score
 
     except Exception as e:

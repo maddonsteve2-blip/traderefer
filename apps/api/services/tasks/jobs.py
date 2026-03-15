@@ -6,6 +6,118 @@ import os
 from utils.logging_config import cron_logger, error_logger
 from services.sms import send_sms_business_survey_followup, send_sms_customer_survey_followup
 
+
+async def send_reengagement_nudges(db: AsyncSession):
+    """
+    Daily cron: nudge referrers who have been inactive for 7, 14, or 30 days.
+    Rules:
+    - Max 1 nudge per user per 7 days (checked via engagement_nudges table)
+    - 7-day lapse → email only
+    - 14-day lapse → email + SMS (if phone available)
+    - 30-day lapse → email only (different copy, gentler tone)
+    """
+    # Find referrers inactive for 7+ days (last_seen tracked via in_app_notifications read activity
+    # or we fall back to created_at of most recent notification)
+    res = await db.execute(text("""
+        SELECT
+            r.user_id,
+            r.full_name,
+            r.email,
+            r.phone,
+            r.quality_score,
+            r.businesses_linked,
+            COUNT(DISTINCT CASE WHEN l.status IN ('CONFIRMED','CONFIRMED_SUCCESS') THEN l.id END) AS confirmed_referrals,
+            COUNT(DISTINCT rl.id) AS total_links,
+            COALESCE(
+                (SELECT MAX(n.created_at) FROM in_app_notifications n WHERE n.user_id = r.user_id::uuid),
+                r.created_at
+            ) AS last_active_at
+        FROM referrers r
+        LEFT JOIN referral_links rl ON rl.referrer_id = r.id
+        LEFT JOIN leads l ON l.referrer_id = r.id
+        WHERE r.email IS NOT NULL
+          AND COALESCE(r.accountability_stage, 'none') NOT IN ('paused', 'banned')
+        GROUP BY r.user_id, r.full_name, r.email, r.phone, r.quality_score, r.businesses_linked, r.created_at
+        HAVING COALESCE(
+            (SELECT MAX(n.created_at) FROM in_app_notifications n WHERE n.user_id = r.user_id::uuid),
+            r.created_at
+        ) < now() - interval '7 days'
+    """))
+    referrers = res.mappings().all()
+
+    sent_count = 0
+    for ref in referrers:
+        user_id = ref["user_id"]
+        if not user_id or not ref["email"]:
+            continue
+
+        # Check if already nudged in the last 7 days
+        recent = await db.execute(text("""
+            SELECT id FROM engagement_nudges
+            WHERE user_id = :uid AND sent_at > now() - interval '7 days'
+            LIMIT 1
+        """), {"uid": str(user_id)})
+        if recent.fetchone():
+            continue
+
+        # Calculate days inactive
+        last_active = ref["last_active_at"]
+        days_inactive = (datetime.utcnow() - last_active.replace(tzinfo=None)).days if last_active else 999
+
+        # Determine next badge for personalised copy
+        score = ref["quality_score"] or 0
+        confirmed = ref["confirmed_referrals"] or 0
+        linked = ref["businesses_linked"] or 0
+        total_links = ref["total_links"] or 0
+
+        earned: set[str] = {"verified"}
+        if total_links >= 1: earned.add("first_link")
+        if score >= 60: earned.add("rising_star")
+        if confirmed >= 1: earned.add("lead_generator")
+        if confirmed >= 5: earned.add("lead_champion")
+        if linked >= 1: earned.add("networker")
+        if linked >= 3: earned.add("power_networker")
+        if score >= 80: earned.add("top_performer")
+        if score >= 96: earned.add("elite")
+
+        from services.badge_service import _next_badge_for
+        next_badge = _next_badge_for(earned, score, confirmed, linked)
+
+        # Send email
+        try:
+            from services.email import send_reengagement_email
+            await send_reengagement_email(
+                email=ref["email"],
+                full_name=ref["full_name"] or "Referrer",
+                next_badge_label=next_badge,
+                days_inactive=days_inactive,
+            )
+            await db.execute(text("""
+                INSERT INTO engagement_nudges (user_id, user_type, channel, nudge_type)
+                VALUES (:uid, 'referrer', 'email', 'reengagement')
+            """), {"uid": str(user_id)})
+            await db.commit()
+            sent_count += 1
+        except Exception as e:
+            error_logger.warning(f"Re-engagement email failed for {user_id}: {e}")
+
+        # SMS: only for 14+ day lapse, only if phone available
+        if days_inactive >= 14 and ref["phone"]:
+            try:
+                from services.sms import send_sms_reengagement
+                await send_sms_reengagement(ref["phone"], ref["full_name"] or "Referrer", next_badge)
+                await db.execute(text("""
+                    INSERT INTO engagement_nudges (user_id, user_type, channel, nudge_type)
+                    VALUES (:uid, 'referrer', 'sms', 'reengagement')
+                """), {"uid": str(user_id)})
+                await db.commit()
+            except Exception as e:
+                error_logger.warning(f"Re-engagement SMS failed for {user_id}: {e}")
+
+    if sent_count:
+        cron_logger.info(f"Sent {sent_count} re-engagement nudges")
+    return sent_count
+
 async def expire_pending_leads(db: AsyncSession):
     """
     Finds leads in PENDING state that have passed their expires_at time
