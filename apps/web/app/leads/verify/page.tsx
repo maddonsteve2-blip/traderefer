@@ -109,7 +109,7 @@ function VerifyForm() {
                 <Button
                     onClick={handleSubmit}
                     disabled={isLoading || otp.join("").length < 6}
-                    className="w-full bg-zinc-900 hover:bg-black text-white rounded-full h-16 md:h-20 text-xl font-black shadow-xl shadow-zinc-200 disabled:opacity-50 transition-all active:scale-95"
+                    className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-16 md:h-20 text-xl font-black shadow-xl shadow-orange-500/20 disabled:opacity-50 transition-all active:scale-95"
                 >
                     {isLoading ? (
                         <div className="flex items-center gap-3">

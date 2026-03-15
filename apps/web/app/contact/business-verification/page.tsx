@@ -267,7 +267,7 @@ function ManualBusinessVerificationContent() {
                             <FilePicker label="Supporting document" hint="Optional extra evidence if you have it, such as a council permit or company extract." file={supportingDocument} onChange={setSupportingDocument} />
                         </div>
 
-                        <Button onClick={handleSubmit} disabled={submitting || loadingBusiness} className="w-full h-16 rounded-full bg-zinc-900 hover:bg-black text-white text-lg font-black shadow-xl shadow-zinc-200">
+                        <Button onClick={handleSubmit} disabled={submitting || loadingBusiness} className="w-full h-16 rounded-full bg-orange-600 hover:bg-orange-700 text-white text-lg font-black shadow-xl shadow-orange-500/20">
                             {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Submit verification for review"}
                         </Button>
                     </div>

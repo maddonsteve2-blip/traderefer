@@ -95,7 +95,7 @@ export default function ContactPage() {
                                     <textarea rows={5} placeholder="How can we help?" className="w-full bg-zinc-50 border border-zinc-100 rounded-3xl p-6 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all resize-none" />
                                 </div>
 
-                                <Button className="w-full h-16 bg-zinc-900 hover:bg-black text-white rounded-full text-lg font-black shadow-xl shadow-zinc-200 flex items-center justify-center gap-3 active:scale-[0.98] transition-all">
+                                <Button className="w-full h-16 bg-orange-600 hover:bg-orange-700 text-white rounded-full text-lg font-black shadow-xl shadow-orange-500/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all">
                                     Send Message <Send className="w-5 h-5" />
                                 </Button>
                             </form>

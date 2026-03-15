@@ -50,7 +50,7 @@ export default function LeadSuccessPage() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Button asChild size="lg" className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-[20px] px-10 h-16 md:h-18 text-lg font-black w-full sm:w-auto shadow-2xl shadow-zinc-200 transition-all active:scale-95">
+                        <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700 text-white rounded-[20px] px-10 h-16 md:h-18 text-lg font-black w-full sm:w-auto shadow-2xl shadow-orange-500/20 transition-all active:scale-95">
                             <Link href="/">Back to Home <ChevronRight className="ml-2 w-5 h-5" /></Link>
                         </Button>
                         <Button asChild variant="outline" size="lg" className="rounded-[20px] px-10 h-16 md:h-18 text-lg font-black w-full sm:w-auto border-2 border-zinc-100 hover:bg-zinc-50 text-zinc-500 hover:text-zinc-900 transition-all active:scale-95">

@@ -117,7 +117,7 @@ export default function SupportPage() {
                                     </p>
                                     <Button 
                                         onClick={() => setIsSuccess(false)}
-                                        className="rounded-full px-8 bg-zinc-900 hover:bg-black text-white font-bold"
+                                        className="rounded-full px-8 bg-orange-600 hover:bg-orange-700 text-white font-bold"
                                     >
                                         Send Another Message
                                     </Button>

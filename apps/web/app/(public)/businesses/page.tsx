@@ -655,7 +655,7 @@ export default async function BusinessDirectory({
                                                     )}
                                                 </>
                                             )}
-                                            <Link href={`/b/${biz.slug}`} className="ml-auto px-5 py-3 bg-zinc-900 hover:bg-black text-white font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5">
+                                            <Link href={`/b/${biz.slug}`} className="ml-auto px-5 py-3 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5">
                                                 View Business <ChevronRight className="w-4 h-4" />
                                             </Link>
                                         </div>
