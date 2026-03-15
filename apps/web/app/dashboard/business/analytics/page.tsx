@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import {
-    Users, TrendingUp, DollarSign, Megaphone, Loader2, Award,
-    Send, Crown, Zap, Star, BarChart3
+    Users, TrendingUp, DollarSign, Loader2, Award,
+    Crown, Zap, Star, BarChart3
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileBusinessAnalytics } from "@/components/business/MobileBusinessAnalytics";
@@ -58,9 +58,6 @@ export default function AnalyticsPage() {
     const { getToken } = useAuth();
     const [data, setData] = useState<Analytics | null>(null);
     const [loading, setLoading] = useState(true);
-    const [broadcastMsg, setBroadcastMsg] = useState("");
-    const [sending, setSending] = useState(false);
-
     const apiUrl = "/api/backend";
 
     const fetchData = useCallback(async () => {
@@ -78,29 +75,6 @@ export default function AnalyticsPage() {
     }, [getToken, apiUrl]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
-
-    const handleBroadcast = async () => {
-        if (!broadcastMsg.trim()) { toast.error("Enter a message"); return; }
-        setSending(true);
-        try {
-            const token = await getToken();
-            const res = await fetch(`${apiUrl}/business/broadcast`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ message: broadcastMsg }),
-            });
-            if (res.ok) {
-                toast.success("Broadcast sent to all connected referrers!");
-                setBroadcastMsg("");
-            } else {
-                toast.error("Failed to send broadcast");
-            }
-        } catch {
-            toast.error("Error sending broadcast");
-        } finally {
-            setSending(false);
-        }
-    };
 
     if (loading) {
         return (
@@ -211,30 +185,6 @@ export default function AnalyticsPage() {
                     </div>
                 </div>
 
-                {/* Broadcast to Referrers */}
-                <div className="bg-white rounded-2xl border border-zinc-200 p-8">
-                    <h2 className="font-bold text-zinc-900 text-2xl flex items-center gap-2 mb-4">
-                        <Megaphone className="w-6 h-6 text-orange-500" /> Broadcast to All Referrers
-                    </h2>
-                    <p className="text-lg text-zinc-500 mb-5 leading-relaxed">
-                        Send an update to everyone referring your business. Great for holiday hours, new certifications, or special announcements.
-                    </p>
-                    <textarea
-                        rows={3}
-                        className="w-full bg-zinc-50 border-none rounded-2xl px-5 py-4 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 resize-none mb-4 text-xl"
-                        placeholder="e.g. We just got certified for gas fitting — let your network know!"
-                        value={broadcastMsg}
-                        onChange={e => setBroadcastMsg(e.target.value)}
-                    />
-                    <Button
-                        onClick={handleBroadcast}
-                        disabled={sending || !broadcastMsg.trim()}
-                        className="bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black text-xl py-4 px-8 h-auto shadow-lg shadow-orange-500/20 active:scale-95 transition-all"
-                    >
-                        {sending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
-                        Send Broadcast
-                    </Button>
-                </div>
             </div>
         </div>
     );

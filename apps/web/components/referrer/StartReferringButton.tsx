@@ -77,7 +77,7 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
     if (!isSignedIn) {
         return (
             <div className="space-y-6">
-                <Button asChild className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-[64px] font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95">
+                <Button asChild className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-[64px] font-black shadow-xl shadow-orange-500/20 transition-all active:scale-95">
                     <Link href="/login" className="flex items-center justify-center gap-3 text-[21px]">
                         <LogIn className="w-6 h-6" /> Sign In to Start Referring
                     </Link>
@@ -109,7 +109,7 @@ export function StartReferringButton({ slug, businessName }: StartReferringButto
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
-                    <Button onClick={handleCopy} className="w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full h-[64px] font-black shadow-xl shadow-zinc-200/50 transition-all active:scale-95 group text-[21px]">
+                    <Button onClick={handleCopy} className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-[64px] font-black shadow-xl shadow-orange-500/20 transition-all active:scale-95 group text-[21px]">
                         {copied ? (
                             <div className="flex items-center gap-3 text-green-400">
                                 <Check className="w-6 h-6" /> Link Copied!

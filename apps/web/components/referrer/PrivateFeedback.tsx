@@ -103,7 +103,7 @@ export function PrivateFeedback({ businessSlug, businessName }: PrivateFeedbackP
                     <button
                         onClick={handleSubmit}
                         disabled={sending || !message.trim()}
-                        className="w-full bg-zinc-900 text-white rounded-2xl h-14 font-black hover:bg-black transition-all disabled:opacity-50 flex items-center justify-center gap-2.5 shadow-xl shadow-zinc-200 active:scale-95"
+                        className="w-full bg-orange-600 text-white rounded-2xl h-14 font-black hover:bg-orange-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2.5 shadow-xl shadow-orange-500/20 active:scale-95"
                         style={{ fontSize: '17px' }}
                     >
                         {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}

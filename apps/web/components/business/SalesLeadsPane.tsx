@@ -4,7 +4,8 @@ import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState, useCallback } from "react";
 import {
     Target, MapPin, Phone, Mail,
-    Unlock, Loader2, ChevronRight, User, ArrowLeft, Search
+    Unlock, Loader2, ChevronRight, User, ArrowLeft, Search,
+    Lock as LockIcon
 } from "lucide-react";
 import { PinConfirmationModal } from "@/components/dashboard/PinConfirmationModal";
 import { toast } from "sonner";
@@ -171,13 +172,13 @@ export function SalesLeadsPane() {
                                     className={`w-full text-left px-4 py-4 rounded-[20px] transition-all ${isSelected ? "bg-orange-50 border border-orange-100" : "hover:bg-zinc-50 border border-transparent"}`}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="w-11 h-11 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-400 font-black text-base uppercase shrink-0">
-                                            {lead.customer_name?.[0] || 'L'}
+                                        <div className={`w-11 h-11 rounded-full flex items-center justify-center font-black text-base uppercase shrink-0 ${unlocked ? 'bg-zinc-100 text-zinc-400' : 'bg-zinc-100 text-zinc-300'}`}>
+                                            {unlocked ? (lead.customer_name?.[0] || 'L') : <LockIcon className="w-4 h-4" />}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center justify-between gap-2">
-                                                <p className="font-bold text-zinc-900 truncate text-[16px]">
-                                                    {lead.customer_name}
+                                                <p className={`font-bold truncate text-[16px] ${unlocked ? 'text-zinc-900' : 'text-zinc-400 italic'}`}>
+                                                    {unlocked ? lead.customer_name : 'Locked Lead'}
                                                 </p>
                                                 <span className={`px-2 py-0.5 rounded-full font-black text-[9px] uppercase tracking-widest ${STATUS_COLORS[lead.status.toUpperCase()] ?? "bg-zinc-100 text-zinc-600"}`}>
                                                     {formatStatus(lead.status)}
@@ -217,7 +218,11 @@ export function SalesLeadsPane() {
 
                         <div className="flex items-start justify-between">
                             <div>
-                                <h2 className="font-black text-zinc-900 text-3xl">{selected.customer_name}</h2>
+                                <h2 className="font-black text-zinc-900 text-3xl">
+                                    {isUnlocked(selected.status) ? selected.customer_name : (
+                                        <span className="flex items-center gap-2 text-zinc-400 italic"><LockIcon className="w-6 h-6" /> Locked Lead</span>
+                                    )}
+                                </h2>
                                 <p className="flex items-center gap-1.5 text-zinc-400 font-medium mt-1.5 text-xl">
                                     <MapPin className="w-5 h-5" />{selected.suburb}
                                 </p>

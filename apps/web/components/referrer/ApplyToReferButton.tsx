@@ -83,7 +83,7 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
     if (!isSignedIn) {
         return (
             <div className="space-y-4">
-                <Link href="/login" className="flex items-center justify-center gap-3 w-full bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all shadow-xl shadow-zinc-200/50 text-[21px]">
+                <Link href="/login" className="flex items-center justify-center gap-3 w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full min-h-[64px] font-black transition-all shadow-xl shadow-orange-500/20 text-[21px]">
                     <LogIn className="w-6 h-6" /> Sign In to Apply
                 </Link>
             </div>
@@ -114,7 +114,7 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
                                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                             </button>
                         </div>
-                        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all shadow-xl shadow-zinc-200/50 text-[21px]">
+                        <button onClick={handleCopy} className="w-full flex items-center justify-center gap-3 bg-orange-600 hover:bg-orange-700 text-white rounded-full min-h-[64px] font-black transition-all shadow-xl shadow-orange-500/20 text-[21px]">
                             {copied ? <><Check className="w-6 h-6" /> Link Copied!</> : <><Copy className="w-6 h-6" /> Copy Referral Link</>}
                         </button>
                     </>
@@ -189,7 +189,7 @@ export function ApplyToReferButton({ slug, businessName }: Props) {
             ) : (
                 <button
                     onClick={() => setShowIntro(true)}
-                    className="w-full flex items-center justify-center gap-3 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full min-h-[64px] font-black transition-all active:scale-95 shadow-xl shadow-zinc-200/50 text-[21px]"
+                    className="w-full flex items-center justify-center gap-3 bg-orange-600 hover:bg-orange-700 text-white rounded-full min-h-[64px] font-black transition-all active:scale-95 shadow-xl shadow-orange-500/20 text-[21px]"
                 >
                     Apply to Refer {businessName}
                     <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
