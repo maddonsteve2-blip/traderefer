@@ -97,11 +97,11 @@ export function DashboardSectionHeader({ className, ...props }: React.HTMLAttrib
 }
 
 export function DashboardSectionTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-    return <h2 className={cn("text-3xl font-black tracking-[-0.03em] text-zinc-900", className)} {...props} />;
+    return <h2 className={cn("text-lg font-bold text-zinc-900", className)} {...props} />;
 }
 
 export function DashboardSectionDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-    return <p className={cn("text-lg font-medium text-zinc-500", className)} {...props} />;
+    return <p className={cn("text-sm font-medium text-zinc-500", className)} {...props} />;
 }
 
 export function DashboardCard({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {

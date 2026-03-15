@@ -123,7 +123,7 @@ export function ForceConfigPane() {
                     <button
                         onClick={copyInviteLink}
                         disabled={!slug}
-                        className="mt-3 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:opacity-40 text-white rounded-xl px-4 py-2.5 font-bold transition-all text-sm"
+                        className="mt-3 self-start flex items-center gap-2 border border-zinc-300 text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 rounded-xl px-4 py-2 font-semibold transition-all text-sm"
                     >
                         {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         {copied ? "Copied!" : "Copy Link"}
@@ -175,7 +175,7 @@ export function ForceConfigPane() {
             <button
                 onClick={save}
                 disabled={saving}
-                className="mt-5 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-black transition-all disabled:opacity-60 flex items-center justify-center gap-2 text-base h-12"
+                className="mt-5 ml-auto flex w-auto px-8 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold transition-all disabled:opacity-60 flex items-center justify-center gap-2 text-sm h-10"
             >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                 {saving ? "Saving…" : "Save Changes"}

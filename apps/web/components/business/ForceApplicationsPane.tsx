@@ -182,7 +182,7 @@ export function ForceApplicationsPane() {
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-4 py-2 rounded-xl font-black transition-all text-sm ${filter === f ? "bg-orange-500 text-white shadow-sm" : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"}`}
+                            className={`px-3 py-1.5 rounded-full border font-semibold transition-all text-sm ${filter === f ? "bg-orange-500 text-white border-orange-500 shadow-sm" : "bg-white text-zinc-600 border-zinc-200 hover:border-zinc-300"}`}
                         >
                             {f === "pending" ? `${f} (${pendingCount})` : f}
                         </button>
@@ -213,7 +213,7 @@ export function ForceApplicationsPane() {
                                     className={`w-full text-left px-4 py-4 transition-colors ${isSelected ? "bg-orange-50 border-l-4 border-orange-500" : "hover:bg-zinc-50 border-l-4 border-transparent"}`}
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden text-2xl">
+                                        <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden text-sm">
                                             {app.profile_photo_url ? (
                                                 // eslint-disable-next-line @next/next/no-img-element
                                                 <img src={app.profile_photo_url} alt="" className="w-full h-full object-cover" />
@@ -225,7 +225,7 @@ export function ForceApplicationsPane() {
                                                 {app.referrer_suburb}{app.referrer_state ? `, ${app.referrer_state}` : ""} · ⭐ {app.quality_score}
                                             </p>
                                         </div>
-                                        <span className={`shrink-0 px-2 py-1 rounded-lg font-bold ${cfg.bg} ${cfg.text} text-[10px] uppercase tracking-wide`}>
+                                        <span className={`shrink-0 px-2.5 py-1 rounded-full font-semibold ${cfg.bg} ${cfg.text} text-xs`}>
                                             {cfg.label}
                                         </span>
                                     </div>

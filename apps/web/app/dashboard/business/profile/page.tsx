@@ -315,7 +315,7 @@ export default function BusinessProfileManagementPage() {
                     {/* ── LEFT SIDEBAR — profile preview (desktop only) ── */}
                     <div className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 border-r border-zinc-200 bg-white overflow-y-auto">
                         <div className="p-5 border-b border-zinc-100">
-                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4">Profile Preview</p>
+                            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Profile Preview</p>
                             <div className="flex flex-col items-center text-center">
                                 <div className="w-20 h-20 rounded-2xl bg-zinc-100 flex items-center justify-center overflow-hidden mb-3 border border-zinc-200 shrink-0">
                                     {formData.logo_url
@@ -336,7 +336,7 @@ export default function BusinessProfileManagementPage() {
 
                         {formData.features.length > 0 && (
                             <div className="p-5 border-b border-zinc-100">
-                                <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Highlights</p>
+                                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Highlights</p>
                                 <div className="flex flex-wrap gap-1.5">
                                     {formData.features.map(f => (
                                         <span key={f} className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 text-[11px] font-bold px-2 py-1 rounded-lg border border-orange-100">{f}</span>
@@ -346,7 +346,7 @@ export default function BusinessProfileManagementPage() {
                         )}
 
                         <div className="p-5">
-                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-3">Profile Strength</p>
+                            <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Profile Strength</p>
                             <div className="space-y-2.5">
                                 {[
                                     { label: "Logo uploaded", done: !!formData.logo_url },
@@ -429,7 +429,7 @@ export default function BusinessProfileManagementPage() {
                                             <label className="text-sm font-medium text-zinc-700 ml-1 block">Business Name</label>
                                             <input
                                                 type="text"
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
+                                                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 placeholder-zinc-300 text-sm"
                                                 value={formData.business_name}
                                                 onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
                                             />
@@ -441,7 +441,7 @@ export default function BusinessProfileManagementPage() {
                                                 <span className="text-zinc-400 mr-1 text-sm">/b/</span>
                                                 <input
                                                     type="text"
-                                                    className="bg-transparent border-none p-0 text-zinc-900 font-bold focus:ring-0 w-full text-sm"
+                                                    className="bg-transparent border-none p-0 text-zinc-900 font-medium focus:ring-0 w-full text-sm"
                                                     value={formData.slug}
                                                     onChange={(e) => {
                                                         const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-');
@@ -457,7 +457,7 @@ export default function BusinessProfileManagementPage() {
                                         <div className="space-y-1.5">
                                             <label className="text-sm font-medium text-zinc-700 ml-1 block">Trade Category</label>
                                             <select
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-sm"
+                                                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-sm"
                                                 value={formData.trade_category}
                                                 onChange={(e) => setFormData({ ...formData, trade_category: e.target.value })}
                                             >
@@ -470,7 +470,7 @@ export default function BusinessProfileManagementPage() {
                                             <label className="text-sm font-medium text-zinc-700 ml-1 block">Website URL</label>
                                             <input
                                                 type="url"
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
+                                                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 placeholder-zinc-300 text-sm"
                                                 value={formData.website}
                                                 onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                                                 placeholder="https://yourbusiness.com"
@@ -480,7 +480,7 @@ export default function BusinessProfileManagementPage() {
                                             <label className="text-sm font-medium text-zinc-700 ml-1 block">Business Phone</label>
                                             <input
                                                 type="tel"
-                                                className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 text-sm"
+                                                className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 placeholder-zinc-300 text-sm"
                                                 value={formData.business_phone}
                                                 onChange={(e) => setFormData({ ...formData, business_phone: e.target.value })}
                                                 placeholder="0400 000 000"
@@ -513,7 +513,7 @@ export default function BusinessProfileManagementPage() {
                                             setFormData(prev => ({ ...prev, address, suburb, state, postcode: postcode || prev.postcode }));
                                         }}
                                         placeholder="Search for your address..."
-                                        className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-lg md:text-xl transition-all"
+                                        className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-sm transition-all"
                                     />
                                     {formData.address && formData.suburb && (
                                         <p className="text-xs font-medium text-zinc-600 ml-1">
@@ -526,7 +526,7 @@ export default function BusinessProfileManagementPage() {
                                     <div className="relative flex items-center">
                                         <input
                                             type="number"
-                                            className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-bold focus:ring-2 focus:ring-orange-500/20 text-sm"
+                                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-sm"
                                             value={formData.service_radius_km}
                                             onChange={(e) => setFormData({ ...formData, service_radius_km: parseInt(e.target.value) || 0 })}
                                         />
@@ -550,7 +550,7 @@ export default function BusinessProfileManagementPage() {
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-zinc-700 ml-1 block">Description</label>
                                 <textarea
-                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 placeholder-zinc-300 min-h-[120px] text-sm leading-relaxed resize-none"
+                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 placeholder-zinc-300 text-sm min-h-[120px] leading-relaxed resize-none"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder="Tell potential referrers and customers about your trade business..."
@@ -802,27 +802,27 @@ export default function BusinessProfileManagementPage() {
                     }} className="p-8 space-y-6">
                         <div className="space-y-4">
                             <div>
-                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Project Title</label>
+                                <label className="text-sm font-semibold text-zinc-700 ml-1 block mb-1.5">Project Title</label>
                                 <input
                                     name="title"
                                     defaultValue={editingProject?.title}
                                     required
-                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 text-xl"
+                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-sm"
                                     placeholder="e.g. Victorian House Rewire"
                                 />
                             </div>
                             <div>
-                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block mb-2">Description</label>
+                                <label className="text-sm font-semibold text-zinc-700 ml-1 block mb-1.5">Description</label>
                                 <textarea
                                     name="description"
                                     defaultValue={editingProject?.description}
-                                    className="w-full bg-zinc-50 border-none rounded-xl px-4 py-3.5 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 min-h-[100px] text-xl"
+                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-zinc-900 font-medium focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 min-h-[100px] text-sm"
                                     placeholder="Briefly describe the scope of work..."
                                 />
                             </div>
 
                             <div className="space-y-4">
-                                <label className="text-base font-bold uppercase tracking-wider text-zinc-400 ml-1 block">Project Photos</label>
+                                <label className="text-sm font-semibold text-zinc-700 ml-1 block">Project Photos</label>
                                 <ImageUpload
                                     defaultValue={editingProject?.photo_urls || []}
                                     maxFiles={10}
