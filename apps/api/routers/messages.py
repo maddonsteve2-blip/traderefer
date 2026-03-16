@@ -6,6 +6,7 @@ from sqlalchemy import text
 from services.database import get_db, AsyncSessionLocal
 from services.auth import get_current_user, AuthenticatedUser, get_jwks
 from services.email import send_new_message_notification
+from services.push import send_push_to_user
 from jose import jwt
 import uuid
 import os
@@ -497,6 +498,9 @@ async def send_message(
             )
             row = ref_info.mappings().first()
             if row and body_text:
+                push_title = f"New message from {row['business_name']}"
+                push_body = body_text[:100] + "..." if len(body_text) > 100 else body_text
+
                 # In-app notification (always send this)
                 if row["user_id"]:
                     await db.execute(
@@ -506,14 +510,17 @@ async def send_message(
                         """),
                         {
                             "uid": row["user_id"],
-                            "title": f"New message from {row['business_name']}",
-                            "body": body_text[:100] + "..." if len(body_text) > 100 else body_text,
+                            "title": push_title,
+                            "body": push_body,
                             "link": "/dashboard/referrer/messages",
                         }
                     )
                     await db.commit()
+
+                    # Web Push (always — browser may be in background)
+                    await send_push_to_user(db, str(row["user_id"]), push_title, push_body, "/dashboard/referrer/messages")
                 
-                # Heavily skip if they are active
+                # Skip email/SMS if they are active on the conversation
                 if not is_active:
                     # Email notification
                     if row["email"]:
@@ -539,6 +546,9 @@ async def send_message(
             )
             row = biz_info.mappings().first()
             if row and body_text:
+                push_title = f"New message from {row['ref_name'] or 'a referrer'}"
+                push_body = body_text[:100] + "..." if len(body_text) > 100 else body_text
+
                 # In-app notification
                 if row["user_id"]:
                     await db.execute(
@@ -548,12 +558,15 @@ async def send_message(
                         """),
                         {
                             "uid": row["user_id"],
-                            "title": f"New message from {row['ref_name'] or 'a referrer'}",
-                            "body": body_text[:100] + "..." if len(body_text) > 100 else body_text,
+                            "title": push_title,
+                            "body": push_body,
                             "link": "/dashboard/business/messages",
                         }
                     )
                     await db.commit()
+
+                    # Web Push (always — browser may be in background)
+                    await send_push_to_user(db, str(row["user_id"]), push_title, push_body, "/dashboard/business/messages")
                 
                 if not is_active:
                     # Email notification

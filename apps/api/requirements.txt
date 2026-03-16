@@ -14,3 +14,4 @@ boto3
 resend
 twilio
 sentry-sdk[fastapi]
+pywebpush

@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
+from services.push import save_subscription
 import uuid
 
 router = APIRouter()
@@ -115,3 +116,18 @@ async def mark_all_read(
     )
     await db.commit()
     return {"message": "All marked as read"}
+
+
+@router.post("/push/subscribe")
+async def push_subscribe(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
+):
+    """Store a Web Push subscription for the authenticated user."""
+    body = await request.json()
+    user_uuid = uuid.UUID(user.id)
+    ok = await save_subscription(db, str(user_uuid), body)
+    if not ok:
+        raise HTTPException(status_code=400, detail="Invalid subscription data")
+    return {"ok": True}

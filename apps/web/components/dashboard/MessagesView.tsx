@@ -246,11 +246,12 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
                         return [...prev, finalMsg];
                     });
                     
-                    // Play notification sound for incoming partner messages if allowed
+                    // Play notification sound + vibrate for incoming partner messages
                     if (!finalIsMine) {
                         try {
                             const audio = new Audio('/sounds/message.mp3');
-                            audio.play().catch(() => {}); // Browsers might block if no interaction
+                            audio.play().catch(() => {});
+                            if (navigator.vibrate) navigator.vibrate(200);
                         } catch {}
                     }
 

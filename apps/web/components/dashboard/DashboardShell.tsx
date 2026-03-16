@@ -28,6 +28,9 @@ import {
 } from "lucide-react";
 import { NotificationBell } from "@/components/NotificationBell";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { PushNotificationPrompt } from "./PushNotificationPrompt";
+import { useAuth } from "@clerk/nextjs";
+import { isPushSupported, registerServiceWorker, subscribeToPush, savePushSubscription } from "@/lib/push-notifications";
 import { motion } from "framer-motion";
 
 const BUSINESS_NAV = [
@@ -212,6 +215,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const [currentSearch, setCurrentSearch] = useState("");
     const overlayRef = useRef<HTMLDivElement>(null);
+    const { getToken } = useAuth();
 
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
     const navLinks = isBusinessDashboard ? BUSINESS_NAV : REFERRER_NAV;
@@ -220,6 +224,22 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         if (typeof window === "undefined") return;
         setCurrentSearch(window.location.search);
     }, [pathname]);
+
+    // Auto-register push subscription for users who already granted permission
+    useEffect(() => {
+        if (!isPushSupported()) return;
+        if (typeof window === "undefined") return;
+        if (Notification.permission !== "granted") return;
+
+        (async () => {
+            const reg = await registerServiceWorker();
+            if (!reg) return;
+            const sub = await subscribeToPush(reg);
+            if (!sub) return;
+            const token = await getToken();
+            if (token) await savePushSubscription(sub, token);
+        })();
+    }, [getToken]);
 
     const currentParams = new URLSearchParams(currentSearch);
     const salesTab = currentParams.get("tab") ?? "leads";
@@ -368,6 +388,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                     expanded ? "lg:ml-60" : "lg:ml-16"
                 } pt-[60px] lg:pt-0 ${pathname?.endsWith("/messages") ? "pb-0" : "pb-16"} lg:pb-0`}
             >
+                <PushNotificationPrompt />
                 {children}
             </main>
 
