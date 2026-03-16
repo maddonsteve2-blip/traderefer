@@ -19,9 +19,14 @@ export default function HomePage() {
       {/* ── HERO ── */}
       <section className="relative bg-[#FCFCFC] pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-36 lg:pb-28 overflow-hidden border-b border-gray-200">
         {/* Construction site bg with 30% light overlay - optimized for LCP */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero-construction.webp')" }}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/hero-construction.webp"
+          alt="Australian construction site"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          fetchPriority="high"
+          width="1920"
+          height="1080"
         />
         <div className="absolute inset-0 z-0 bg-[#FCFCFC]/75" />
 
