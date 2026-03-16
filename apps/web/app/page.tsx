@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { useState } from "react";
 import {
