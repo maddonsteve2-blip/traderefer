@@ -25,9 +25,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { state } = await params;
     const stateName = STATE_NAMES[state.toLowerCase()];
     if (!stateName) return {};
+    const year = new Date().getFullYear();
+    const count = await getBusinessCountForState(state);
     return {
-        title: `Verified Trade Services in ${stateName} | TradeRefer`,
-        description: `Browse ${stateName}'s top ABN-verified local trade businesses. Find plumbers, electricians, builders and more in your city or suburb.`,
+        title: `${count > 0 ? count.toLocaleString() + ' ' : ''}Verified Tradies in ${stateName} (${year}) | TradeRefer`,
+        description: `Browse ${count > 0 ? count.toLocaleString() : ''} ABN-verified trade businesses across ${stateName}. Find plumbers, electricians, builders & more in your city or suburb. Free quotes.`,
+        alternates: { canonical: `https://traderefer.au/local/${state.toLowerCase()}` },
     };
 }
 

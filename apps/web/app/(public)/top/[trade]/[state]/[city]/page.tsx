@@ -94,8 +94,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const topBizStr = topBiz ? ` #1: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}★).` : "";
 
     return {
-        title: `Top 10 ${tradeName} in ${cityName}, ${stateName} (${year})${priceStr} | TradeRefer`,
-        description: `The ${count} highest-rated ${tradeName.toLowerCase()} in ${cityName}, ${stateName} ranked by ${totalReviews.toLocaleString()} Google reviews.${topBizStr} Free quotes from verified local tradies.`,
+        title: `Top ${count > 0 ? count : 10} ${tradeName} in ${cityName}, ${stateName} (${year})${priceStr} | TradeRefer`,
+        description: `The ${count > 0 ? count : ''} highest-rated ${tradeName.toLowerCase()} in ${cityName}, ${stateName} ranked by ${totalReviews > 0 ? totalReviews.toLocaleString() + ' ' : ''}Google reviews.${topBizStr} Free quotes from verified local tradies.`,
+        robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
+        alternates: { canonical: `https://traderefer.au/top/${trade}/${state}/${city}` },
         openGraph: {
             title: `Top 10 ${tradeName} in ${cityName} ${year} | TradeRefer`,
             description: `Ranked by real Google reviews. Find the best ${tradeName.toLowerCase()} in ${cityName}, ${stateName}.`,

@@ -609,6 +609,46 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Popular Local Searches — SEO internal linking */}
+      <section className="py-16 bg-zinc-50 border-t border-zinc-200">
+        <div className="container mx-auto px-6">
+          <h2 className="text-2xl font-black text-zinc-900 mb-8 text-center font-display">Popular Local Searches</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 max-w-6xl mx-auto text-sm">
+            {[
+              { label: "Plumbers in Sydney", href: "/local/nsw/sydney" },
+              { label: "Electricians in Melbourne", href: "/local/vic/melbourne" },
+              { label: "Painters in Brisbane", href: "/local/qld/brisbane" },
+              { label: "Builders in Perth", href: "/local/wa/perth" },
+              { label: "Plumbers in Adelaide", href: "/local/sa/adelaide" },
+              { label: "Carpenters in Hobart", href: "/local/tas/hobart" },
+              { label: "Plumbers in Geelong", href: "/local/vic/geelong" },
+              { label: "Electricians in Gold Coast", href: "/local/qld/gold-coast" },
+              { label: "Landscapers in Sydney", href: "/local/nsw/sydney" },
+              { label: "Roofers in Newcastle", href: "/local/nsw/newcastle" },
+              { label: "Concreters in Brisbane", href: "/local/qld/brisbane" },
+              { label: "Fencing in Melbourne", href: "/local/vic/melbourne" },
+              { label: "Air Conditioning in Darwin", href: "/local/nt/darwin" },
+              { label: "Pest Control in Canberra", href: "/local/act/canberra" },
+              { label: "Cleaners in Wollongong", href: "/local/nsw/wollongong" },
+              { label: "Handyman in Sunshine Coast", href: "/local/qld/sunshine-coast" },
+              { label: "Tilers in Adelaide", href: "/local/sa/adelaide" },
+              { label: "Locksmiths in Perth", href: "/local/wa/perth" },
+              { label: "Tree Services in Launceston", href: "/local/tas/launceston" },
+              { label: "Demolition in Ballarat", href: "/local/vic/ballarat" },
+            ].map(({ label, href }) => (
+              <Link key={label} href={href} className="px-3 py-2 bg-white border border-zinc-200 rounded-lg font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors text-center">
+                {label}
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/local" className="inline-flex items-center gap-2 font-bold text-orange-600 hover:text-orange-700 transition-colors">
+              View Full Directory <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
     </main>
   );
 }

@@ -100,8 +100,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const topBizStr = topBiz ? ` #1: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}★).` : "";
 
     return {
-        title: `Top 10 ${tradeName} in ${suburbName}, ${cityName} (${year})${priceStr} | TradeRefer`,
-        description: `The ${businesses.length} highest-rated ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateName} ranked by ${totalReviews.toLocaleString()} verified reviews.${topBizStr} Get free quotes today.`,
+        title: `Top ${businesses.length > 0 ? businesses.length : 10} ${tradeName} in ${suburbName}, ${cityName} (${year})${priceStr} | TradeRefer`,
+        description: `The ${businesses.length > 0 ? businesses.length : ''} highest-rated ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateName} ranked by ${totalReviews > 0 ? totalReviews.toLocaleString() + ' ' : ''}verified reviews.${topBizStr} Get free quotes today.`,
+        robots: businesses.length === 0 ? { index: false, follow: true } : { index: true, follow: true },
+        alternates: { canonical: `https://traderefer.au/top/${trade}/${state}/${city}/${suburb}` },
         openGraph: {
             title: `Top 10 ${tradeName} in ${suburbName}, ${cityName} ${year} | TradeRefer`,
             description: `Ranked by verified Google reviews. Best ${tradeName.toLowerCase()} in ${suburbName}.`,

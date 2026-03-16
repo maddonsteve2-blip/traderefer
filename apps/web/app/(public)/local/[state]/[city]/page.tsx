@@ -19,9 +19,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { state, city } = await params;
     const cityName = formatSlug(city);
     const stateUpper = state.toUpperCase();
+    const year = new Date().getFullYear();
     return {
-        title: `Top ${cityName} Tradies — 100% ABN Verified | TradeRefer`,
-        description: `Find verified local trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to discover top-rated plumbers, electricians, painters and more in your area.`,
+        title: `Trusted Tradies in ${cityName} ${stateUpper} (${year}) | TradeRefer`,
+        description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to discover top-rated plumbers, electricians, painters & more. Free quotes.`,
+        alternates: { canonical: `https://traderefer.au/local/${state}/${city}` },
     };
 }
 
