@@ -22,7 +22,7 @@ const outfit = Outfit({
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
   weight: ["400", "600", "700", "800", "900"],
 });
 
