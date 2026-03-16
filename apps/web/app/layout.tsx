@@ -84,6 +84,14 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en-AU" suppressHydrationWarning>
+        <head>
+          <link
+            rel="preload"
+            as="image"
+            href="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop"
+            fetchPriority="high"
+          />
+        </head>
         <body
           className={`${inter.variable} ${outfit.variable} ${montserrat.variable} ${oswald.variable} font-sans antialiased`}
         >
