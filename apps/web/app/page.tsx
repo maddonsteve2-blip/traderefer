@@ -37,7 +37,7 @@ export default function HomePage() {
         {/* Construction site bg with 30% light overlay - optimized for LCP */}
         <div
           className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero-construction.jpg')" }}
+          style={{ backgroundImage: "url('/images/hero-construction.webp')" }}
         />
         <div className="absolute inset-0 z-0 bg-[#FCFCFC]/75" />
 
@@ -485,31 +485,31 @@ export default function HomePage() {
               }}
             >
               {[
-                { name: "Prezzee Smart Card", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif", desc: "One card. Swap into 400+ brands. The ultimate gift." },
-                { name: "Groceries", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e1ffa9be-102f-427c-b96d-4bcfe883f1e3/AU_Prezzee_Groceries_SKU_452_280.png", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
-                { name: "Foodie", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/18ceb08f-a6ea-4676-80e0-a4044a0647c0/AU_Prezzee_Foodie_452_280.png", desc: "DoorDash, Menulog and restaurant gift cards for nights off." },
-                { name: "Entertainment", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/91f8ddc2-9f41-47dd-b657-aef3dadb89f6/Prezzee_Entertainment_SKU_452_280.png", desc: "Netflix, Spotify, Xbox, Hoyts and more — pick your favourite." },
-                { name: "Fuel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8375906a-b45f-4acc-8c1e-019a2df55842/Prezzee_Fuel_Category_452_280.png", desc: "Ampol, Shell and fuel cards — save at the bowser." },
-                { name: "Travel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/0517fd0a-e366-41f1-9a10-567eb7b4e698/Prezzee_Travel_SKU_452_280.png", desc: "Flights, hotels and experiences — your next getaway covered." },
-                { name: "Luxury", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/9513c78c-2e6e-48a3-8db4-8f18fe3541ad/Prezzee_Luxury_Category_SKU_Updated_29725_452_280.png", desc: "Myer, David Jones and premium brands for a treat." },
-                { name: "Bunnings", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/c587b0fd-e805-4640-aa0a-770928a2f2c0/Bunnings_Warehouse_Updated_452_280.jpg", desc: "Tools, hardware and garden — everything for the home." },
-                { name: "Chemist Warehouse", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/6b25c485-1b86-4ae4-9be6-5c83a843fbc2/CHEMIST_WAREHOUSE_AUD_452_280.jpg", desc: "Health, beauty and vitamins — stocked up for less." },
-                { name: "Coles", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/b3ff6a24-1cc8-4e46-8bf3-cc45e2d9c9c6/coles_gc_452_280.jpg", desc: "Weekly groceries covered at Coles supermarkets." },
-                { name: "Aesop", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e2e08a45-a21b-4559-9265-df2225e65813/Aesop_452_280.png", desc: "Premium skincare and fragrance — a luxurious treat." },
-                { name: "ASOS", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/d51836b2-4416-4840-b9ff-5baacbb0dcbd/ASOS_452_280.png", desc: "Fashion, beauty and accessories — thousands of styles." },
+                { name: "Prezzee Smart Card", url: "/images/prezzee/prezzee-smart-card.webp", desc: "One card. Swap into 400+ brands. The ultimate gift." },
+                { name: "Groceries", url: "/images/prezzee/groceries.webp", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
+                { name: "Foodie", url: "/images/prezzee/foodie.webp", desc: "DoorDash, Menulog and restaurant gift cards for nights off." },
+                { name: "Entertainment", url: "/images/prezzee/entertainment.webp", desc: "Netflix, Spotify, Xbox, Hoyts and more — pick your favourite." },
+                { name: "Fuel", url: "/images/prezzee/fuel.webp", desc: "Ampol, Shell and fuel cards — save at the bowser." },
+                { name: "Travel", url: "/images/prezzee/travel.webp", desc: "Flights, hotels and experiences — your next getaway covered." },
+                { name: "Luxury", url: "/images/prezzee/luxury.webp", desc: "Myer, David Jones and premium brands for a treat." },
+                { name: "Bunnings", url: "/images/prezzee/bunnings.webp", desc: "Tools, hardware and garden — everything for the home." },
+                { name: "Chemist Warehouse", url: "/images/prezzee/chemist-warehouse.webp", desc: "Health, beauty and vitamins — stocked up for less." },
+                { name: "Coles", url: "/images/prezzee/coles.webp", desc: "Weekly groceries covered at Coles supermarkets." },
+                { name: "Aesop", url: "/images/prezzee/aesop.webp", desc: "Premium skincare and fragrance — a luxurious treat." },
+                { name: "ASOS", url: "/images/prezzee/asos.webp", desc: "Fashion, beauty and accessories — thousands of styles." },
                 // ── duplicate set for seamless loop ──
-                { name: "Prezzee Smart Card", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif", desc: "One card. Swap into 400+ brands. The ultimate gift." },
-                { name: "Groceries", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e1ffa9be-102f-427c-b96d-4bcfe883f1e3/AU_Prezzee_Groceries_SKU_452_280.png", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
-                { name: "Foodie", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/18ceb08f-a6ea-4676-80e0-a4044a0647c0/AU_Prezzee_Foodie_452_280.png", desc: "DoorDash, Menulog and restaurant gift cards for nights off." },
-                { name: "Entertainment", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/91f8ddc2-9f41-47dd-b657-aef3dadb89f6/Prezzee_Entertainment_SKU_452_280.png", desc: "Netflix, Spotify, Xbox, Hoyts and more — pick your favourite." },
-                { name: "Fuel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8375906a-b45f-4acc-8c1e-019a2df55842/Prezzee_Fuel_Category_452_280.png", desc: "Ampol, Shell and fuel cards — save at the bowser." },
-                { name: "Travel", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/0517fd0a-e366-41f1-9a10-567eb7b4e698/Prezzee_Travel_SKU_452_280.png", desc: "Flights, hotels and experiences — your next getaway covered." },
-                { name: "Luxury", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/9513c78c-2e6e-48a3-8db4-8f18fe3541ad/Prezzee_Luxury_Category_SKU_Updated_29725_452_280.png", desc: "Myer, David Jones and premium brands for a treat." },
-                { name: "Bunnings", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/c587b0fd-e805-4640-aa0a-770928a2f2c0/Bunnings_Warehouse_Updated_452_280.jpg", desc: "Tools, hardware and garden — everything for the home." },
-                { name: "Chemist Warehouse", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/6b25c485-1b86-4ae4-9be6-5c83a843fbc2/CHEMIST_WAREHOUSE_AUD_452_280.jpg", desc: "Health, beauty and vitamins — stocked up for less." },
-                { name: "Coles", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/b3ff6a24-1cc8-4e46-8bf3-cc45e2d9c9c6/coles_gc_452_280.jpg", desc: "Weekly groceries covered at Coles supermarkets." },
-                { name: "Aesop", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/e2e08a45-a21b-4559-9265-df2225e65813/Aesop_452_280.png", desc: "Premium skincare and fragrance — a luxurious treat." },
-                { name: "ASOS", url: "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/d51836b2-4416-4840-b9ff-5baacbb0dcbd/ASOS_452_280.png", desc: "Fashion, beauty and accessories — thousands of styles." },
+                { name: "Prezzee Smart Card", url: "/images/prezzee/prezzee-smart-card.webp", desc: "One card. Swap into 400+ brands. The ultimate gift." },
+                { name: "Groceries", url: "/images/prezzee/groceries.webp", desc: "Woolworths, Coles and more — stock up on the weekly shop." },
+                { name: "Foodie", url: "/images/prezzee/foodie.webp", desc: "DoorDash, Menulog and restaurant gift cards for nights off." },
+                { name: "Entertainment", url: "/images/prezzee/entertainment.webp", desc: "Netflix, Spotify, Xbox, Hoyts and more — pick your favourite." },
+                { name: "Fuel", url: "/images/prezzee/fuel.webp", desc: "Ampol, Shell and fuel cards — save at the bowser." },
+                { name: "Travel", url: "/images/prezzee/travel.webp", desc: "Flights, hotels and experiences — your next getaway covered." },
+                { name: "Luxury", url: "/images/prezzee/luxury.webp", desc: "Myer, David Jones and premium brands for a treat." },
+                { name: "Bunnings", url: "/images/prezzee/bunnings.webp", desc: "Tools, hardware and garden — everything for the home." },
+                { name: "Chemist Warehouse", url: "/images/prezzee/chemist-warehouse.webp", desc: "Health, beauty and vitamins — stocked up for less." },
+                { name: "Coles", url: "/images/prezzee/coles.webp", desc: "Weekly groceries covered at Coles supermarkets." },
+                { name: "Aesop", url: "/images/prezzee/aesop.webp", desc: "Premium skincare and fragrance — a luxurious treat." },
+                { name: "ASOS", url: "/images/prezzee/asos.webp", desc: "Fashion, beauty and accessories — thousands of styles." },
               ].map((card, i) => (
                 <Link
                   key={i}
