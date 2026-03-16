@@ -126,7 +126,9 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
     const [uploading, setUploading] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
-    const [viewportHeight, setViewportHeight] = useState('100dvh');
+    const [viewportHeight, setViewportHeight] = useState<number>(0);
+    const [viewportOffset, setViewportOffset] = useState<number>(0);
+    const [keyboardOpen, setKeyboardOpen] = useState(false);
     const wsRef = useRef<WebSocket | null>(null);
     const pingRef = useRef<NodeJS.Timeout | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -170,22 +172,25 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
     // Derived viewport height for mobile keyboard handling
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        const handler = () => {
-            if (window.visualViewport) {
-                setViewportHeight(`${window.visualViewport.height}px`);
-                // Scroll to bottom when keyboard pops up or viewport changes
+        const update = () => {
+            const vv = window.visualViewport;
+            if (vv) {
+                setViewportHeight(vv.height);
+                setViewportOffset(vv.offsetTop);
+                // Keyboard is open when visual viewport is significantly smaller than window
+                setKeyboardOpen(vv.height < window.innerHeight - 100);
                 if (activeConvId) {
-                    setTimeout(() => scrollToBottom(false), 100);
+                    setTimeout(() => scrollToBottom(false), 60);
                 }
             }
         };
         const vv = window.visualViewport;
-        vv?.addEventListener('resize', handler);
-        vv?.addEventListener('scroll', handler);
-        handler();
+        vv?.addEventListener('resize', update);
+        vv?.addEventListener('scroll', update);
+        update();
         return () => {
-            vv?.removeEventListener('resize', handler);
-            vv?.removeEventListener('scroll', handler);
+            vv?.removeEventListener('resize', update);
+            vv?.removeEventListener('scroll', update);
         };
     }, [activeConvId, scrollToBottom]);
 
@@ -616,8 +621,12 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
 
             {/* ── RIGHT PANEL (Chat View) ── */}
             <div 
-                className={`${activeContactId ? 'flex fixed inset-0 z-[70] md:relative md:inset-auto md:z-0' : contacts.length === 0 ? 'hidden' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
-                style={{ height: typeof window !== 'undefined' && window.innerWidth < 768 ? viewportHeight : undefined }}
+                className={`${activeContactId ? 'flex fixed top-0 left-0 right-0 z-[70] md:relative md:inset-auto md:z-0' : contacts.length === 0 ? 'hidden' : 'hidden md:flex'} flex-col flex-1 bg-white min-h-0`}
+                style={
+                    typeof window !== 'undefined' && window.innerWidth < 768 && activeContactId && viewportHeight > 0
+                        ? { height: viewportHeight, top: viewportOffset }
+                        : undefined
+                }
             >
                 {/* Mobile/Desktop Header */}
                 {activeContactId && activeContact ? (
@@ -743,7 +752,7 @@ export function MessagesView({ role }: { role?: 'business' | 'referrer' }) {
 
                 {/* ── Input bar (Telegram-style) ── */}
                 {activeContactId && (
-                    <div className="flex flex-col bg-white border-t border-zinc-100 safe-bottom">
+                    <div className={`flex flex-col flex-shrink-0 bg-white border-t border-zinc-100 ${keyboardOpen ? '' : 'safe-bottom'}`}>
                         {imagePreview && (
                             <div className="px-4 py-3 border-b border-zinc-50 overflow-x-auto">
                                 <div className="relative inline-block group">
