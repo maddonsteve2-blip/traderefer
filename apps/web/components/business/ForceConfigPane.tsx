@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { DollarSign, Gift, Save, Loader2, CheckCircle2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
-const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";
+const PREZZEE_LOGO = "/images/prezzee/prezzee-logo.svg";
 
 export function ForceConfigPane() {
     const { getToken, isLoaded } = useAuth();

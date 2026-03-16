@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     alternates: { canonical: "https://traderefer.au/rewards" },
 };
 
-const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";
+const PREZZEE_LOGO = "/images/prezzee/prezzee-logo.svg";
 
 const BASE = "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7";
 

@@ -288,7 +288,7 @@ export default function HomePage() {
                 <span className="text-sm font-bold text-gray-400">Rewards powered by</span>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg"
+                  src="/images/prezzee/prezzee-logo.svg"
                   alt="Prezzee"
                   width="80"
                   height="20"

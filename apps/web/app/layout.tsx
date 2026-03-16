@@ -5,29 +5,32 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
-import { NextStepWrapper } from "@/components/tour/NextStepWrapper";
 import { PostHogPageView } from "@/components/PostHogPageView";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+  weight: ["400", "600", "700", "800", "900"],
 });
 
 const oswald = Oswald({
   variable: "--font-oswald",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -88,6 +91,7 @@ export default function RootLayout({
           <link
             rel="preload"
             as="image"
+            type="image/webp"
             href="/images/hero-construction.webp"
             fetchPriority="high"
           />
@@ -98,11 +102,9 @@ export default function RootLayout({
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
           <PostHogPageView />
-          <NextStepWrapper>
-            <ConditionalLayout footer={<DirectoryFooter />}>
-              {children}
-            </ConditionalLayout>
-          </NextStepWrapper>
+          <ConditionalLayout footer={<DirectoryFooter />}>
+            {children}
+          </ConditionalLayout>
           <Toaster position="top-center" richColors />
         </body>
       </html>

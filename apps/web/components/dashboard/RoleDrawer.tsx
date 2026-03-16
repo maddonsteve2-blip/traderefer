@@ -7,8 +7,8 @@ import { useAuth, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { X, ArrowRight, Target, DollarSign, Gift, Network, Zap, ArrowLeftRight } from "lucide-react";
 
-const PREZZEE_CARD = "https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif";
-const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";
+const PREZZEE_CARD = "/images/prezzee/prezzee-smart-card.webp";
+const PREZZEE_LOGO = "/images/prezzee/prezzee-logo.svg";
 
 const CASES = {
     /** On referrer dash → pitch Business */
