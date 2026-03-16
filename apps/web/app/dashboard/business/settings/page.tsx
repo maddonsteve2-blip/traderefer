@@ -479,19 +479,22 @@ export default function BusinessSettingsPage() {
                                 <div className="space-y-3">
                                     <label className={labelClass}>Response Time Target</label>
                                     <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-                                        {responseTimeOptions.map((opt) => (
-                                            <button
-                                                key={opt.value}
-                                                type="button"
-                                                onClick={() => setFormData({ ...formData, response_sla_minutes: opt.value })}
-                                                className={`h-10 rounded-xl border-2 text-center font-semibold transition-all text-sm ${formData.response_sla_minutes === opt.value
-                                                    ? "border-orange-500 bg-orange-50 text-orange-700 shadow-md"
-                                                    : "border-zinc-200 bg-white text-zinc-600 hover:border-orange-300"
-                                                }`}
-                                            >
-                                                {opt.label}
-                                            </button>
-                                        ))}
+                                        {responseTimeOptions.map((opt) => {
+                                            const isSelected = Number(formData.response_sla_minutes) === opt.value;
+                                            return (
+                                                <button
+                                                    key={opt.value}
+                                                    type="button"
+                                                    onClick={() => setFormData({ ...formData, response_sla_minutes: opt.value })}
+                                                    className={`h-10 rounded-xl border-2 text-center font-semibold transition-all text-sm ${isSelected
+                                                        ? "border-orange-500 bg-orange-50 text-orange-700 shadow-md ring-2 ring-orange-500/30 scale-[1.02]"
+                                                        : "border-zinc-200 bg-white text-zinc-600 hover:border-orange-300"
+                                                    }`}
+                                                >
+                                                    {isSelected && "✓ "}{opt.label}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 </div>
 
@@ -503,13 +506,14 @@ export default function BusinessSettingsPage() {
                                             placeholder="11 222 333 444"
                                             className={`${inputClass} font-mono tracking-widest`}
                                             value={formData.abn}
-                                            onChange={(e) => setFormData({ ...formData, abn: e.target.value.replace(/\s/g, "") })}
+                                            maxLength={14}
+                                            onChange={(e) => setFormData({ ...formData, abn: e.target.value.replace(/[^0-9]/g, "") })}
                                         />
                                         {!biz?.is_verified && (
                                             <Button
                                                 onClick={handleVerifyABN}
-                                                disabled={verifying || !formData.abn || formData.abn.length < 11}
-                                                className="h-10 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm disabled:opacity-50"
+                                                disabled={verifying || !formData.abn || formData.abn.replace(/\s/g, "").length < 11}
+                                                className="h-10 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
                                             >
                                                 {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
                                                 {verifying ? "Checking..." : "Verify ABN"}
@@ -520,8 +524,10 @@ export default function BusinessSettingsPage() {
                                         <div className="flex items-center gap-2 text-emerald-600 font-semibold text-sm ml-1">
                                             <BadgeCheck className="w-4 h-4" /> Verified business identity on file
                                         </div>
-                                    ) : formData.abn && formData.abn.length >= 11 ? (
-                                        <p className="text-amber-600 font-medium text-sm ml-1">ABN entered but not yet verified — click Verify ABN to check.</p>
+                                    ) : formData.abn && formData.abn.replace(/\s/g, "").length >= 11 ? (
+                                        <p className="text-amber-600 font-medium text-sm ml-1">ABN entered but not yet verified — click <strong>Verify ABN</strong> to check.</p>
+                                    ) : formData.abn ? (
+                                        <p className="text-zinc-400 font-medium text-sm ml-1">Enter all 11 digits ({formData.abn.replace(/\s/g, "").length}/11 entered).</p>
                                     ) : (
                                         <p className="text-zinc-400 font-medium text-sm ml-1">Enter your 11-digit ABN above to get verified.</p>
                                     )}

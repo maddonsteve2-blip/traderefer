@@ -228,7 +228,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                             <Users className="w-5 h-5 text-zinc-500" />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-zinc-400" style={{ fontSize: 17 }}>Sent by</p>
+                                            <p className="font-bold text-zinc-400" style={{ fontSize: 17 }}>Referred by</p>
                                             <p className="font-black text-zinc-900" style={{ fontSize: 20 }}>{lead.referrer_name || 'Anonymous Referrer'}</p>
                                         </div>
                                     </div>

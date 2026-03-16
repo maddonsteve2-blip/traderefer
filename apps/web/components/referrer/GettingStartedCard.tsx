@@ -42,7 +42,7 @@ export function GettingStartedCard() {
                 setSteps([
                     { label: "Complete your profile", done: hasProfile, href: "/dashboard/referrer/profile" },
                     { label: "Apply to a business's network", done: hasPartner, href: "/dashboard/referrer/businesses" },
-                    { label: "Send your first referral", done: hasReferral, href: "/dashboard/referrer/businesses" },
+                    { label: "Send your first referral", done: hasReferral, href: "/dashboard/referrer/applications" },
                 ]);
             } catch {}
         })();

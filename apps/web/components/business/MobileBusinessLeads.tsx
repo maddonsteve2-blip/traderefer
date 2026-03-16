@@ -260,7 +260,7 @@ export function MobileBusinessLeads() {
                                                 <Users className="w-5 h-5 text-zinc-400" />
                                             </div>
                                             <div>
-                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Sent by</p>
+                                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Referred by</p>
                                                 <p className="text-base font-bold text-zinc-900">{lead.referrer_name || 'Anonymous'}</p>
                                             </div>
                                         </div>

@@ -328,7 +328,7 @@ export function SalesLeadsPane() {
                                     <User className="w-6 h-6 text-zinc-500" />
                                 </div>
                                 <div>
-                                    <p className="font-bold text-zinc-400 text-base">Sent by</p>
+                                    <p className="font-bold text-zinc-400 text-base">Referred by</p>
                                     <p className="font-black text-zinc-900 text-xl">{selected.referrer_name}</p>
                                 </div>
                             </div>
