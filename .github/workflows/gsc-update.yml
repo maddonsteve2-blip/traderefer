@@ -1,4 +1,5 @@
 name: Update GSC Data
+# Updated with write permissions fix
 
 on:
   schedule:
