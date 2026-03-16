@@ -1,5 +1,6 @@
 'use client';
 import { useNextStep } from 'nextstepjs';
+import { HelpCircle } from 'lucide-react';
 
 type HelpButtonProps = {
   tourName: 'referrer-main' | 'business-main';
@@ -13,9 +14,10 @@ export const HelpButton = ({ tourName }: HelpButtonProps) => {
       onClick={() => startNextStep(tourName)}
       aria-label="Start guided tour"
       title="Take a guided tour"
-      className="hidden lg:flex fixed bottom-6 right-6 z-[9999] w-12 h-12 rounded-full bg-orange-600 text-white border-none cursor-pointer text-[22px] font-bold shadow-[0_4px_16px_rgba(232,98,10,0.5)] items-center justify-center transition-all hover:scale-110 hover:shadow-[0_6px_24px_rgba(232,98,10,0.7)] active:scale-95"
+      className="hidden lg:flex fixed top-4 right-5 z-[60] items-center gap-2 h-10 px-4 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm shadow-lg shadow-orange-200 transition-all active:scale-95 cursor-pointer"
     >
-      ?
+      <HelpCircle className="w-4 h-4" />
+      Take a Tour
     </button>
   );
 };
