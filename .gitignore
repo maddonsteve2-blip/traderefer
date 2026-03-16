@@ -34,3 +34,7 @@ env/
 
 # Logo cache - stored in Vercel Blob, not Git
 logos-cache/
+
+# Google OAuth credentials & tokens
+client_secret_*.json
+gsc_token.json

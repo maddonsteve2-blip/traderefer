@@ -48,9 +48,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { postcode } = parseSuburbSlug(suburb);
     const pc = postcode || getPostcode(parseSuburbSlug(suburb).suburb, state);
     const pcLabel = pc ? ` ${stateUpper} ${pc}` : ` ${stateUpper}`;
+    const year = new Date().getFullYear();
     return {
-        title: `Best Trades in ${suburbName}, ${cityName}${pcLabel} | TradeRefer`,
-        description: `Find verified local trade businesses in ${suburbName}, ${cityName}${pcLabel}. Browse by trade category to connect with ABN-checked experts near you.`,
+        title: `Trusted Tradies in ${suburbName}${pcLabel} (${year}) | TradeRefer`,
+        description: `Compare verified local tradespeople in ${suburbName}, ${cityName}${pcLabel}. Browse plumbers, electricians, builders & more — ABN-checked with real community referrals. Free quotes.`,
         alternates: { canonical: `https://traderefer.au/local/${state}/${city}/${suburb}` },
     };
 }

@@ -27,14 +27,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const jobName = formatSlug(job);
     const tradeKey = normalizeTradeName(tradeName);
     const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
-    const priceStr = cost ? ` | Est. $${cost.low}–$${cost.high}${cost.unit}` : "";
+    const priceSnippet = cost ? ` | From $${cost.low}` : "";
+    const year = new Date().getFullYear();
+    const businesses = await getBusinesses(trade, suburb);
+    const count = businesses.length;
 
     return {
-        title: `${jobName} in ${suburbName}, ${cityName} ${stateUpper}${priceStr} | TradeRefer`,
-        description: `Find verified ${jobName.toLowerCase()} specialists in ${suburbName}, ${cityName}. ABN-checked local ${tradeName.toLowerCase()} with real community referrals. Get free quotes today.`,
+        title: `${jobName} in ${suburbName} ${stateUpper} ${year}${priceSnippet} | TradeRefer`,
+        description: `Compare ${count > 0 ? count : 'verified'} ${jobName.toLowerCase()} specialists in ${suburbName}, ${cityName} ${stateUpper}.${cost ? ` Typical cost $${cost.low}–$${cost.high}${cost.unit}.` : ''} ABN-checked, community-referred. Get free quotes today.`,
+        robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
+        alternates: { canonical: `https://traderefer.au/local/${state}/${city}/${suburb}/${trade}/${job}` },
         openGraph: {
-            title: `${jobName} in ${suburbName}, ${cityName} | TradeRefer`,
-            description: `Local ${jobName.toLowerCase()} specialists in ${suburbName}. Compare verified ${tradeName.toLowerCase()} with pricing and community referrals.`,
+            title: `${jobName} in ${suburbName}, ${cityName} ${stateUpper} | TradeRefer`,
+            description: `${count > 0 ? count : 'Verified'} local ${jobName.toLowerCase()} specialists in ${suburbName}. Compare ratings, pricing and referrals.`,
         },
     };
 }

@@ -57,9 +57,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const totalReviews = businesses.reduce((acc: number, biz: any) => acc + (parseInt(biz.total_reviews) || 0), 0);
     const topBizStr = topBiz && topBiz.avg_rating ? ` Top rated: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}\u2605).` : "";
 
+    const year = new Date().getFullYear();
     return {
-        title: `${tradeName} in ${suburbWithPostcode}${cityDisplay}${priceStr} | TradeRefer`,
-        description: `Find ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbWithPostcode}${cityDisplay} ${stateUpper}.${priceStr ? ` Average cost: $${cost.low}–$${cost.high}${cost.unit}.` : ''}${topBizStr} ${totalReviews > 0 ? totalReviews + ' reviews.' : ''} Get free quotes from ABN-verified locals.`,
+        title: `${count > 0 ? count + ' ' : ''}Best ${tradeNamePlural} in ${suburbWithPostcode} ${stateUpper} (${year})${priceStr} | TradeRefer`,
+        description: `Compare ${count > 0 ? count : 'verified'} ${tradeName.toLowerCase()} in ${suburbWithPostcode}${cityDisplay} ${stateUpper}.${priceStr ? ` Avg cost $${cost.low}–$${cost.high}${cost.unit}.` : ''}${topBizStr} ${totalReviews > 0 ? ' ' + totalReviews + ' reviews.' : ''} ABN-verified, community-referred. Free quotes.`,
         robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
         alternates: { canonical: `https://traderefer.au/local/${state}/${city}/${suburb}/${trade}` },
         openGraph: {

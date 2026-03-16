@@ -14,14 +14,21 @@
         "packages/*"
     ],
     "devDependencies": {
-        "turbo": "latest",
-        "prettier": "latest"
+        "prettier": "latest",
+        "turbo": "latest"
     },
     "pnpm": {
         "overrides": {},
         "neverBuiltDependencies": [],
         "peerDependencyRules": {
-            "allowAny": ["react", "react-dom"]
+            "allowAny": [
+                "react",
+                "react-dom"
+            ]
         }
+    },
+    "dependencies": {
+        "googleapis": "^171.4.0",
+        "open": "^11.0.0"
     }
 }
