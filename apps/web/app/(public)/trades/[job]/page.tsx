@@ -42,6 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
         title: `${jobName} Cost Guide Australia ${year}${priceStr} | TradeRefer`,
         description: `How much does ${jobName.toLowerCase()} cost in Australia? Compare prices by state, understand licensing requirements, and find verified local specialists across Australia.`,
+        alternates: { canonical: `https://traderefer.au/trades/${job}` },
         openGraph: {
             title: `${jobName} Cost Guide Australia ${year} | TradeRefer`,
             description: `National pricing guide for ${jobName.toLowerCase()} in Australia. State-by-state costs, licensing requirements, and how to find the right tradie.`,

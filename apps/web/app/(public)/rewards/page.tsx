@@ -7,6 +7,7 @@ import { ArrowRight, CheckCircle2, Gift, Mail, Smartphone, Clock3, Star, Users, 
 export const metadata: Metadata = {
     title: "Earn Prezzee Gift Cards | TradeRefer Rewards",
     description: "Invite 5 people to TradeRefer and automatically earn a $25 Prezzee Smart Card — spend it at Woolworths, Bunnings, Uber, Netflix, Coles and 400+ more brands.",
+    alternates: { canonical: "https://traderefer.au/rewards" },
 };
 
 const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";

@@ -7,8 +7,9 @@ import { ChevronRight, Wrench, Users, ArrowRight, Search } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "All Trade Categories | Find Local Tradies in Australia | TradeRefer",
-    description: "Browse all trade categories on TradeRefer. Find verified local electricians, plumbers, painters, builders and 50+ more trades across Australia. Free quotes from ABN-verified tradies.",
+    title: "50+ Trade Categories | Find Verified Tradies in Australia | TradeRefer",
+    description: "Browse 50+ trade categories on TradeRefer. Find verified electricians, plumbers, painters, builders & more across Australia. ABN-verified, community-ranked. Free quotes.",
+    alternates: { canonical: "https://traderefer.au/categories" },
     openGraph: {
         title: "All Trade Categories | TradeRefer Australia",
         description: "50+ trade categories. Find verified local tradies across all Australian states and cities.",

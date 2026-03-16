@@ -47,6 +47,10 @@ export const metadata: Metadata = {
     images: ["https://traderefer.au/og-default.jpg"],
   },
   alternates: { canonical: "https://traderefer.au" },
+  other: {
+    "geo.region": "AU",
+    "geo.placename": "Australia",
+  },
 };
 
 const organizationJsonLd = {
@@ -78,7 +82,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en-AU" suppressHydrationWarning>
         <body
           className={`${inter.variable} ${outfit.variable} ${montserrat.variable} ${oswald.variable} font-sans antialiased`}
         >

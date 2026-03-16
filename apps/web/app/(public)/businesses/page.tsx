@@ -289,6 +289,7 @@ export async function generateMetadata({
     return {
         title,
         description,
+        alternates: { canonical: "https://traderefer.au/businesses" },
         openGraph: { title, description },
     };
 }

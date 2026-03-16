@@ -6,8 +6,9 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Local Trade Directory | Find Trusted Trades in Australia | TradeRefer",
-    description: "Browse verified local tradies across all Australian states and cities. Find electricians, plumbers, painters and more in your suburb. ABN-verified, community-ranked."
+    title: "Local Trade Directory | Find Trusted Tradies in Australia | TradeRefer",
+    description: "Browse verified local tradies across all Australian states and cities. Find electricians, plumbers, painters & more in your suburb. ABN-verified, community-ranked. Free quotes.",
+    alternates: { canonical: "https://traderefer.au/local" },
 };
 
 const STATE_NAMES: Record<string, string> = {

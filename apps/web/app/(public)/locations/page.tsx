@@ -6,8 +6,9 @@ import { ChevronRight, MapPin, Users, Building2, ArrowRight } from "lucide-react
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Find Local Tradies by Location | All Australian States & Cities | TradeRefer",
-    description: "Browse verified local tradies by location across all Australian states and cities. Find electricians, plumbers, painters and more in your suburb. ABN-verified, community-ranked.",
+    title: "Find Tradies by Location | All Australian States & Cities | TradeRefer",
+    description: "Browse verified tradies by location across all Australian states and cities. Find electricians, plumbers, painters & more in your suburb. ABN-verified, community-ranked. Free quotes.",
+    alternates: { canonical: "https://traderefer.au/locations" },
     openGraph: {
         title: "Find Local Tradies by Location | TradeRefer Australia",
         description: "All 8 Australian states, 89 cities, 997 suburbs. Find verified local tradies near you.",
