@@ -764,7 +764,7 @@ export default async function PublicProfilePage({
                                             helperText="Referral reward is visible to referrers on your public profile."
                                         />
                                     </div>
-                                    <Link href={`/b/${slug}/refer`} className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '18px' }}>Get Referral Link <Share2 className="w-5 h-5" /></Link>
+                                    <Link href={`/b/${slug}/refer`} className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '18px' }}>Apply to Refer <ArrowRight className="w-5 h-5" /></Link>
                                 </div>
                             </div>
                         </div>

@@ -1500,6 +1500,40 @@ async def wallet_topup_confirm(
     return {"new_balance_cents": new_balance}
 
 
+@router.get("/transactions")
+async def list_transactions(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
+    limit: int = 50,
+):
+    """List wallet transactions for the authenticated business."""
+    biz = await _get_business_id(db, user)
+    result = await db.execute(
+        text("""
+            SELECT id, amount_cents, type, lead_id, payment_ref, notes, balance_after_cents, created_at
+            FROM wallet_transactions
+            WHERE business_id = :biz_id
+            ORDER BY created_at DESC
+            LIMIT :lim
+        """),
+        {"biz_id": biz["id"], "lim": limit},
+    )
+    rows = result.mappings().all()
+    return [
+        {
+            "id": str(r["id"]),
+            "amount_cents": r["amount_cents"],
+            "type": r["type"],
+            "lead_id": str(r["lead_id"]) if r["lead_id"] else None,
+            "payment_ref": r["payment_ref"],
+            "notes": r["notes"],
+            "balance_after_cents": r["balance_after_cents"],
+            "created_at": str(r["created_at"]) if r["created_at"] else None,
+        }
+        for r in rows
+    ]
+
+
 @router.get("/analytics/referrers")
 async def referrer_analytics(
     db: AsyncSession = Depends(get_db),

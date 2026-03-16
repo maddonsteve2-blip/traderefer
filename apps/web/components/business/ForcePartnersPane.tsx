@@ -305,7 +305,7 @@ export function ForcePartnersPane() {
                                 </Link>
                             </div>
 
-                            {/* Contact actions */}
+                            {/* Contact actions — all comms through platform */}
                             <div className="flex flex-wrap gap-2">
                                 <button
                                     onClick={() => handleMessage(detail.referrer_id)}
@@ -313,24 +313,8 @@ export function ForcePartnersPane() {
                                     className="flex items-center gap-2 h-12 px-6 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold transition-all disabled:opacity-60 text-xl"
                                 >
                                     <MessageSquare className="w-5 h-5" />
-                                    {messaging ? "Opening…" : "Message"}
+                                    {messaging ? "Opening…" : "Message on TradeRefer"}
                                 </button>
-                                {detail.email && !detail.email.includes('@clerk.com') && (
-                                    <a
-                                        href={`mailto:${detail.email}`}
-                                        className="flex items-center gap-2 h-12 px-6 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold transition-all border border-blue-100 text-xl"
-                                    >
-                                        <Mail className="w-5 h-5" /> {detail.email}
-                                    </a>
-                                )}
-                                {detail.phone && (
-                                    <a
-                                        href={`tel:${detail.phone}`}
-                                        className="flex items-center gap-2 h-12 px-6 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold transition-all border border-emerald-100 text-xl"
-                                    >
-                                        <Phone className="w-5 h-5" /> {detail.phone}
-                                    </a>
-                                )}
                             </div>
                         </div>
 

@@ -215,7 +215,7 @@ export default function ReferrerDetailPage() {
                             </div>
                             <div className="min-w-0">
                                 <p className="text-[20px] font-black text-zinc-900 truncate">{referrer.full_name}</p>
-                                <p className="text-[13px] font-medium text-zinc-500 truncate">{referrer.email}</p>
+                                <p className="text-[13px] font-medium text-zinc-500 truncate">{referrer.email && !referrer.email.includes('@clerk.com') ? referrer.email : 'Partner'}</p>
                             </div>
                         </div>
                         <div className="mt-3 flex items-center gap-2">

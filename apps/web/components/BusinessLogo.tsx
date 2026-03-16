@@ -11,9 +11,11 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls }: { logoUr
         lg: "w-24 h-24 text-5xl"
     };
 
-    const displayUrl = logoUrl?.includes("googleusercontent.com")
-        ? `/api/logo-proxy?url=${encodeURIComponent(logoUrl)}`
-        : logoUrl;
+    // Force HTTPS to avoid mixed-content warnings, proxy Google logos
+    const safeUrl = logoUrl?.replace(/^http:\/\//i, 'https://') ?? null;
+    const displayUrl = safeUrl?.includes("googleusercontent.com")
+        ? `/api/logo-proxy?url=${encodeURIComponent(safeUrl)}`
+        : safeUrl;
 
     if (displayUrl && !failed) {
         return (
