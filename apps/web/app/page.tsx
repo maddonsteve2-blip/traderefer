@@ -24,7 +24,8 @@ export default function HomePage() {
           src="/images/hero-construction.webp"
           alt="Australian construction site"
           className="absolute inset-0 w-full h-full object-cover z-0"
-          fetchPriority="high"
+          fetchpriority="high"
+          loading="eager"
           width="1920"
           height="1080"
         />
