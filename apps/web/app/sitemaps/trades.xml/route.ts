@@ -10,21 +10,24 @@ export async function GET() {
         const today = new Date().toISOString().split('T')[0];
 
         const rows = await sql`
-            SELECT DISTINCT LOWER(state) as state_slug,
+            SELECT LOWER(state) as state_slug,
                    LOWER(REPLACE(city, ' ', '-')) as city_slug,
                    LOWER(REPLACE(suburb, ' ', '-')) as suburb_slug,
-                   trade_category
+                   trade_category,
+                   MAX(COALESCE(updated_at, created_at)) as last_updated
             FROM businesses
             WHERE status = 'active'
               AND state IS NOT NULL AND state != ''
               AND city IS NOT NULL AND city != ''
               AND suburb IS NOT NULL AND suburb != ''
               AND trade_category IS NOT NULL AND trade_category != ''
+            GROUP BY LOWER(state), LOWER(REPLACE(city, ' ', '-')), LOWER(REPLACE(suburb, ' ', '-')), trade_category
         `;
 
         const urlset = rows.map(r => {
             const tradeSlug = (r.trade_category as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-            return `  <url><loc>${BASE_URL}/local/${r.state_slug}/${r.city_slug}/${r.suburb_slug}/${tradeSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`;
+            const lastmod = r.last_updated ? new Date(r.last_updated as string).toISOString().split('T')[0] : today;
+            return `  <url><loc>${BASE_URL}/local/${r.state_slug}/${r.city_slug}/${r.suburb_slug}/${tradeSlug}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`;
         }).join('\n');
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>

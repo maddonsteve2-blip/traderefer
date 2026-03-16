@@ -17,12 +17,14 @@ export async function GET() {
             { loc: `${BASE_URL}/categories`, priority: '0.95', freq: 'weekly' },
             { loc: `${BASE_URL}/locations`, priority: '0.95', freq: 'weekly' },
             { loc: `${BASE_URL}/local`, priority: '0.9', freq: 'weekly' },
-            { loc: `${BASE_URL}/login`, priority: '0.3', freq: 'monthly' },
-            { loc: `${BASE_URL}/register`, priority: '0.3', freq: 'monthly' },
+            { loc: `${BASE_URL}/rewards`, priority: '0.7', freq: 'monthly' },
+            { loc: `${BASE_URL}/join`, priority: '0.6', freq: 'monthly' },
+            { loc: `${BASE_URL}/compare`, priority: '0.6', freq: 'monthly' },
             { loc: `${BASE_URL}/about`, priority: '0.5', freq: 'monthly' },
             { loc: `${BASE_URL}/contact`, priority: '0.5', freq: 'monthly' },
             { loc: `${BASE_URL}/terms`, priority: '0.3', freq: 'monthly' },
             { loc: `${BASE_URL}/privacy`, priority: '0.3', freq: 'monthly' },
+            { loc: `${BASE_URL}/cookies`, priority: '0.2', freq: 'monthly' },
         ];
 
         let urlset = staticUrls.map(u =>
@@ -57,6 +59,24 @@ export async function GET() {
             for (const job of jobs) {
                 urlset += `\n  <url><loc>${BASE_URL}/trades/${jobToSlug(job)}</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`;
             }
+        }
+
+        // Top-10 pages (/top/[trade]/[state]/[city]) — high-value ranking pages
+        const topRows = await sql`
+            SELECT DISTINCT
+                   LOWER(REPLACE(trade_category, ' ', '-')) as trade_slug,
+                   LOWER(state) as state_slug,
+                   LOWER(REPLACE(city, ' ', '-')) as city_slug
+            FROM businesses
+            WHERE status = 'active'
+              AND avg_rating IS NOT NULL
+              AND state IS NOT NULL AND state != ''
+              AND city IS NOT NULL AND city != ''
+              AND trade_category IS NOT NULL AND trade_category != ''
+        `;
+        for (const r of topRows) {
+            const tradeSlug = (r.trade_slug as string).replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '');
+            urlset += `\n  <url><loc>${BASE_URL}/top/${tradeSlug}/${r.state_slug}/${r.city_slug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.75</priority></url>`;
         }
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
