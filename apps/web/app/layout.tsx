@@ -88,7 +88,7 @@ export default function RootLayout({
           <link
             rel="preload"
             as="image"
-            href="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop"
+            href="/images/hero-construction.jpg"
             fetchPriority="high"
           />
         </head>

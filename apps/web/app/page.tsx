@@ -38,7 +38,7 @@ export default function HomePage() {
         {/* Construction site bg with 30% light overlay - optimized for LCP */}
         <div
           className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop')" }}
+          style={{ backgroundImage: "url('/images/hero-construction.jpg')" }}
         />
         <div className="absolute inset-0 z-0 bg-[#FCFCFC]/75" />
 
