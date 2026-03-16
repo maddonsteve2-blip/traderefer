@@ -22,19 +22,18 @@ app.add_middleware(
 
 def load_gsc_data():
     """Load latest GSC data from file"""
-    # Try multiple possible paths for Railway deployment
-    possible_paths = [
-        Path(__file__).parent / "data" / "latest.json",
-        Path("/app/data/latest.json"),
-        Path("/app/apps/gsc-api/data/latest.json"),
-    ]
+    # Railway deploys to /app, so data is at /app/data/latest.json
+    data_file = Path(__file__).parent / "data" / "latest.json"
     
-    for data_file in possible_paths:
-        if data_file.exists():
-            with open(data_file, 'r') as f:
-                return json.load(f)
-    
-    raise HTTPException(status_code=404, detail=f"No GSC data found. Tried paths: {[str(p) for p in possible_paths]}")
+    try:
+        with open(data_file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f"GSC data file not found at {data_file}")
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=500, detail=f"Invalid JSON in data file: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error loading GSC data: {str(e)}")
 
 
 @app.get("/")
