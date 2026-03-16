@@ -7,6 +7,7 @@ import Link from "next/link";
 import { CheckCircle2, AlertCircle, User, Phone, Mail, MapPin, MessageSquare, Clock, Zap, Loader2, ArrowRight } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
+import { trackReferralSubmitted } from "@/lib/posthog-events";
 
 interface LeadFormProps {
     businessName: string;
@@ -106,6 +107,18 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
             }
 
             const data = await response.json();
+
+            // Track referral submission for OpenClaw SEO analysis
+            trackReferralSubmitted({
+                referralId: data.id,
+                tradeCategory: data.trade_type || 'unknown',
+                suburb: formData.consumer_suburb,
+                state: stateValue || 'unknown',
+                jobValueEstimate: undefined, // Could add budget field later
+                matchedBusinesses: 1, // Single business referral
+                urgency: formData.lead_urgency === 'hot' ? 'emergency' : formData.lead_urgency === 'warm' ? 'standard' : 'planning',
+                sourcePage: typeof window !== 'undefined' ? window.location.pathname : '',
+            });
 
             // Show success state briefly before redirect
             setSubmitSuccess(true);

@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { NextStepWrapper } from "@/components/tour/NextStepWrapper";
+import { PostHogPageView } from "@/components/PostHogPageView";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -88,6 +89,7 @@ export default function RootLayout({
         >
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+          <PostHogPageView />
           <NextStepWrapper>
             <ConditionalLayout footer={<DirectoryFooter />}>
               {children}

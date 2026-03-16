@@ -1,0 +1,290 @@
+# PostHog + OpenClaw Integration Setup
+
+## 🎯 What This Gives OpenClaw
+
+OpenClaw can now correlate **GSC rankings** (what happens in Google) with **PostHog data** (what happens after they click) to show you:
+
+1. **SEO Revenue Attribution** - Which rankings actually make money
+2. **Content Quality** - Which pages have good rankings but terrible engagement (bounce)
+3. **Hidden Gems** - Low traffic but high conversion pages to push up rankings
+4. **Content Gaps** - What people search for but you don't have pages for
+
+---
+
+## 📊 Events Now Tracked (Phase 1 - Essential)
+
+### 1. Enhanced Page Views
+Every page view now includes:
+- `page_type`: local | business | home | blog | category
+- `is_google_organic`: true/false (filters out bots)
+- `state`, `suburb`, `trade_category`: for local pages
+- `referrer_domain`: where they came from
+
+**Why:** OpenClaw can correlate GSC clicks to actual sessions and filter out bot traffic.
+
+---
+
+### 2. Business Signup Completed
+Tracks when a trade business creates a profile:
+- `business_id`, `business_name`
+- `trade_category`, `state`, `suburb`
+- `abn_verified`: true/false
+- `signup_duration_seconds`: how long it took
+- `source_page`: which page led to signup
+
+**Why:** Shows which SEO pages convert tradespeople (your supply side).
+
+**Already Implemented:** ✅ `apps/web/app/onboarding/business/page.tsx:543`
+
+---
+
+### 3. Referral Submitted
+Tracks when someone refers a job (your core transaction):
+- `referral_id`
+- `trade_category`, `suburb`, `state`
+- `job_value_estimate`: "$500-$2000"
+- `matched_businesses`: how many businesses got the lead
+- `urgency`: emergency | standard | planning
+- `source_page`: which page they came from
+
+**Why:** This is THE money event. OpenClaw can calculate actual dollar value per SEO ranking.
+
+**Status:** ⚠️ Need to implement in referral submission flow
+
+---
+
+## 🔧 Implementation Status
+
+### ✅ Already Tracking
+- `business_signup_completed` (onboarding)
+- `business_profile_generated` (AI chat)
+- `lead_unlocked` (business dashboard)
+- `lead_on_the_way` (status updates)
+- `referral_message_copied` (share kit)
+- `referral_link_shared` (social sharing)
+
+### ⚠️ Need to Add (Priority Order)
+
+#### 1. Enhanced Page View Tracking (Highest Priority)
+**File:** `apps/web/app/layout.tsx` or create `apps/web/components/PostHogPageView.tsx`
+
+```typescript
+'use client';
+
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { trackPageView, detectPageType, initScrollDepthTracking } from '@/lib/posthog-events';
+
+export function PostHogPageView() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const pageInfo = detectPageType(pathname);
+    
+    trackPageView({
+      pageUrl: pathname,
+      pageTitle: document.title,
+      ...pageInfo,
+    });
+
+    // Init scroll depth tracking
+    const cleanup = initScrollDepthTracking();
+    return cleanup;
+  }, [pathname]);
+
+  return null;
+}
+```
+
+**Add to root layout:**
+```typescript
+import { PostHogPageView } from '@/components/PostHogPageView';
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        <PostHogPageView />
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+---
+
+#### 2. Referral Submission Tracking
+**File:** Wherever referral form is submitted (likely `apps/web/app/refer/` or similar)
+
+```typescript
+import { trackReferralSubmitted } from '@/lib/posthog-events';
+
+// After successful referral submission:
+trackReferralSubmitted({
+  referralId: response.referral_id,
+  tradeCategory: formData.trade_type,
+  suburb: formData.suburb,
+  state: formData.state,
+  jobValueEstimate: formData.budget || undefined,
+  matchedBusinesses: response.matched_count || 0,
+  urgency: formData.urgency,
+  sourcePage: window.location.pathname,
+});
+```
+
+---
+
+#### 3. Business Contact Tracking
+**File:** Business profile page where phone/email/website buttons are
+
+```typescript
+import { trackBusinessContacted } from '@/lib/posthog-events';
+
+// When user clicks phone number:
+trackBusinessContacted({
+  businessId: business.id,
+  businessName: business.business_name,
+  contactMethod: 'phone',
+  isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent),
+});
+```
+
+---
+
+## 🔑 PostHog API Access for OpenClaw
+
+### Option 1: Project API Key (Recommended)
+1. Go to PostHog: https://us.posthog.com
+2. Navigate to **Project Settings** → **Project API Key**
+3. Copy the **Project API Key** (starts with `phc_`)
+4. Share with OpenClaw (read-only access)
+
+### Option 2: Personal API Key
+1. Go to **Personal API Keys** in PostHog settings
+2. Create new key with **read-only** permissions
+3. Scopes needed:
+   - ✅ `event:read`
+   - ✅ `person:read`
+   - ✅ `insight:read`
+   - ❌ `event:write` (not needed)
+
+---
+
+## 📈 What OpenClaw Will Build
+
+### Dashboard 1: SEO Revenue Attribution
+```
+Metric: Revenue generated by organic traffic
+Breakdown: By landing page, by trade category, by suburb
+Goal: "Which rankings actually make money?"
+
+Example Output:
+- /local/vic/melbourne/plumbing → $2,400/month (Position 4.2)
+- /b/emergency-plumber-jim → $1,800/month (Position 2.1)
+- /local/qld/brisbane/electrician → $950/month (Position 6.8)
+```
+
+### Dashboard 2: Content Quality by Page Type
+```
+- /local/ pages: Avg scroll depth 45%, conversion rate 2.1%
+- /b/ pages: Contact rate 8%, quote request rate 3.5%
+- Home: Signup rate 1.2%, calculator usage 15%
+
+Goal: "Which page types are working?"
+```
+
+### Dashboard 3: The Zero-Click Investigation
+```
+Filter: Sessions from organic, 0 engagement events
+Metric: Bounce rate by landing page, by GSC position
+
+Example:
+- /b/bathroom-renovations-perth → 295 impressions, 0 clicks, Position 81
+  → IF we get it to page 1, estimated 10-30 clicks/month
+```
+
+### Dashboard 4: Content Gap Finder
+```
+Metric: Searches with 0 results (sorted by frequency)
+
+Example Output:
+- "solar installation geelong" → 12 searches, 0 results → BUILD THIS PAGE
+- "after hours locksmith sydney" → 8 searches, 0 results → BUILD THIS PAGE
+```
+
+### Dashboard 5: Local Page Performance Matrix
+```
+X-axis: GSC position (1-10, 11-20, 21-30, etc.)
+Y-axis: Conversion rate
+Bubble size: Organic traffic volume
+Color: Revenue per session
+
+Goal: "Find the sweet spot pages to optimize"
+```
+
+---
+
+## 🚀 Next Steps
+
+### This Week (You)
+1. ✅ Created `lib/posthog-events.ts` with all tracking functions
+2. ⚠️ Add `PostHogPageView` component to root layout
+3. ⚠️ Add `trackReferralSubmitted` to referral form
+4. ⚠️ Get PostHog Project API Key
+5. ⚠️ Share API key with OpenClaw
+
+### This Week (OpenClaw)
+1. Connect to PostHog API
+2. Build initial correlation between GSC + PostHog data
+3. Generate first "SEO Revenue Attribution" report
+4. Identify top 5 "high conversion, low position" pages
+
+### Week 2
+1. Implement Phase 2 events (search, filters, business contacts)
+2. Build automated weekly report
+3. Set up alerts for content gaps
+
+---
+
+## 📊 Expected Insights (Week 1)
+
+Once OpenClaw has access, you'll see:
+
+1. **Which of your 131 clicks are actually valuable**
+   - Example: "50 clicks from /local/vic/melbourne/plumbing generated 2 signups ($200 value)"
+   - vs "30 clicks from /b/bathroom-renos generated 0 signups ($0 value)"
+
+2. **Why your 5 zero-click pages are failing**
+   - Position 81 = nobody scrolls that far
+   - But IF they did click, would they convert?
+   - OpenClaw will estimate conversion potential
+
+3. **Your hidden gems**
+   - Pages with 5 clicks but 20% conversion rate
+   - Push these up the rankings = instant ROI
+
+4. **Content gaps**
+   - "People search for X but you have no page"
+   - Build those pages = new traffic
+
+---
+
+## 🎯 Success Metrics
+
+### Month 1
+- **Baseline established:** Revenue per organic click
+- **Quick wins identified:** 3-5 high-conversion pages to optimize
+- **Content gaps found:** 5-10 missing pages to build
+
+### Month 3
+- **Revenue attribution working:** Track every dollar from SEO
+- **Automated reports:** Weekly email with top opportunities
+- **Conversion rate improved:** From 0.27% CTR to 1.5%+
+
+---
+
+**Last Updated:** March 16, 2026  
+**PostHog Project:** TradeRefer (https://us.posthog.com)  
+**GSC API:** https://disciplined-truth-production-5cd7.up.railway.app  
+**Next Review:** March 23, 2026
