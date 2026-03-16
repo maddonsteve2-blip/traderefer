@@ -530,18 +530,22 @@ async def get_top_opportunities():
 
 async def _load_latest_data():
     """Load latest GSC data from static file"""
-    # Try multiple possible paths for Vercel deployment
-    possible_paths = [
-        Path(__file__).parent.parent / "data" / "latest.json",  # Local dev
-        Path("/var/task/data/latest.json"),  # Vercel serverless
-        Path("/var/task/apps/gsc-api/data/latest.json"),  # Vercel with full path
-    ]
+    import os
     
-    for data_file in possible_paths:
-        if data_file.exists():
-            return json.loads(data_file.read_text())
+    # Check if running on Vercel
+    if os.getenv("VERCEL"):
+        # On Vercel, fetch from static file endpoint
+        import httpx
+        async with httpx.AsyncClient() as client:
+            response = await client.get("https://gsc-api-hazel.vercel.app/data/latest.json")
+            if response.status_code == 200:
+                return response.json()
     
-    # If no file found, return the existing data we already have
+    # Local development - read from filesystem
+    data_file = Path(__file__).parent.parent / "data" / "latest.json"
+    if data_file.exists():
+        return json.loads(data_file.read_text())
+    
     raise HTTPException(
         status_code=404, 
         detail="No GSC data found. Run 'scripts/update_gsc_api.bat' to update."
