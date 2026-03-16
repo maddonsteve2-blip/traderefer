@@ -6,12 +6,7 @@ import { Toaster } from "sonner";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
 import { NextStepWrapper } from "@/components/tour/NextStepWrapper";
-import dynamic from "next/dynamic";
-
-const PostHogPageView = dynamic(
-  () => import("@/components/PostHogPageView").then((mod) => mod.PostHogPageView),
-  { ssr: false }
-);
+import { PostHogPageView } from "@/components/PostHogPageView";
 
 const inter = Inter({
   variable: "--font-inter",
