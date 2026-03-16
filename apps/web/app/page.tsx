@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { useState } from "react";
 import {
@@ -34,10 +35,15 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section className="relative bg-[#FCFCFC] pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-36 lg:pb-28 overflow-hidden border-b border-gray-200">
-        {/* Construction site bg with 30% light overlay */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2670&auto=format&fit=crop')" }}
+        {/* Construction site bg with 30% light overlay - optimized for LCP */}
+        <Image
+          src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2670&auto=format&fit=crop"
+          alt="Construction site background"
+          fill
+          priority
+          className="object-cover z-0"
+          sizes="100vw"
+          quality={75}
         />
         <div className="absolute inset-0 z-0 bg-[#FCFCFC]/75" />
 
@@ -445,6 +451,8 @@ export default function HomePage() {
                 <img
                   src="https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg"
                   alt="Prezzee"
+                  width="80"
+                  height="20"
                   className="h-5 w-auto"
                 />
               </div>
@@ -518,6 +526,8 @@ export default function HomePage() {
                   <img
                     src={card.url}
                     alt={card.name}
+                    width="452"
+                    height="280"
                     className="w-full aspect-[452/280] object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
