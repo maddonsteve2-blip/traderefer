@@ -42,6 +42,7 @@ import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 import { completeOnboarding } from "@/app/onboarding/_actions";
 import posthog from "posthog-js";
+import { trackBusinessSignup } from "@/lib/posthog-events";
 
 type ChatMessage = {
     role: "user" | "assistant";
@@ -62,6 +63,7 @@ function BusinessOnboardingContent() {
     const [showTour, setShowTour] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [signupStartTime] = useState(Date.now());
     const { getToken } = useAuth();
     const { user } = useUser();
     const router = useRouter();
@@ -540,6 +542,19 @@ Respond with ONLY a JSON object (no markdown, no code fences):
                     throw new Error(clerkRes.error);
                 }
 
+                // Track business signup for OpenClaw SEO analysis
+                trackBusinessSignup({
+                    businessId: resData.id || resData.slug || 'unknown',
+                    businessName: formData.business_name,
+                    tradeCategory: formData.trade_category,
+                    state: formData.state,
+                    suburb: formData.suburb,
+                    abnVerified: !!formData.abn,
+                    signupDurationSeconds: Math.round((Date.now() - signupStartTime) / 1000),
+                    sourcePage: typeof window !== 'undefined' ? window.location.pathname : '',
+                });
+
+                // Also keep the old event for backwards compatibility
                 posthog.capture(isClaiming ? 'business_claimed' : 'business_onboarding_completed', {
                     trade_category: formData.trade_category,
                     suburb: formData.suburb,
