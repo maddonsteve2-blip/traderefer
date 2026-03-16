@@ -1,0 +1,48 @@
+name: Update GSC Data
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC (1 PM AEDT)
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  update-gsc:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install googleapis
+      
+      - name: Restore GSC token
+        run: |
+          echo '${{ secrets.GSC_TOKEN }}' > gsc_token.json
+      
+      - name: Restore Google OAuth credentials
+        run: |
+          echo '${{ secrets.GOOGLE_CLIENT_SECRET }}' > client_secret_643902729199-qn7nntblms4brtb7ddtji1jfpuri1pgh.apps.googleusercontent.com.json
+      
+      - name: Run GSC pull
+        run: node scripts/gsc_pull.js
+      
+      - name: Copy latest report
+        run: |
+          mkdir -p apps/gsc-api/data
+          cp gsc-data/gsc_report_*.json apps/gsc-api/data/latest.json || echo "No report generated"
+      
+      - name: Commit and push if changed
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add apps/gsc-api/data/latest.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update GSC data [skip ci]" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
