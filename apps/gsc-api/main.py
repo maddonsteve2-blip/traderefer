@@ -46,9 +46,33 @@ def root():
             "/api/gsc/latest": "Get latest GSC report summary",
             "/api/gsc/pages": "Get page performance",
             "/api/gsc/queries": "Get top queries",
-            "/api/gsc/top-opportunities": "Get SEO improvement opportunities"
+            "/api/gsc/top-opportunities": "Get SEO improvement opportunities",
+            "/debug/files": "Debug: List available files"
         }
     }
+
+
+@app.get("/debug/files")
+def debug_files():
+    """Debug endpoint to see what files are available"""
+    import os
+    current_dir = Path(__file__).parent
+    files_found = []
+    
+    # Check current directory
+    if current_dir.exists():
+        files_found.append(f"Current dir: {current_dir}")
+        files_found.extend([f"  - {f}" for f in os.listdir(current_dir)])
+    
+    # Check for data directory
+    data_dir = current_dir / "data"
+    if data_dir.exists():
+        files_found.append(f"Data dir exists: {data_dir}")
+        files_found.extend([f"  - {f}" for f in os.listdir(data_dir)])
+    else:
+        files_found.append(f"Data dir NOT found: {data_dir}")
+    
+    return {"files": files_found}
 
 
 @app.get("/api/gsc/latest")
