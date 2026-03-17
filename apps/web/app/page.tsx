@@ -7,12 +7,54 @@ import {
   Wrench, ChevronRight
 } from "lucide-react";
 import { TRADE_CATEGORIES } from "@/lib/constants";
+import { sql } from "@/lib/db";
 
 import { SmartSearch } from "@/components/SmartSearch";
 import { ROICalculators } from "@/components/home/ROICalculators";
 import { PrezzeeCarousel } from "@/components/home/PrezzeeCarousel";
 
-export default function HomePage() {
+// Fetch popular city+trade combinations from database
+async function getPopularSearches() {
+  try {
+    const result = await sql`
+      SELECT 
+        state,
+        city,
+        trade_category,
+        COUNT(*) as business_count
+      FROM businesses
+      WHERE status = 'active'
+        AND city IN ('Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Hobart', 'Geelong', 'Gold Coast', 'Newcastle', 'Wollongong', 'Canberra', 'Darwin', 'Sunshine Coast', 'Launceston', 'Ballarat')
+        AND trade_category IN ('Plumbing', 'Electrical', 'Painting', 'Building', 'Carpentry', 'Landscaping', 'Roofing', 'Concreting', 'Fencing', 'Air Conditioning & Heating', 'Pest Control', 'Cleaning', 'Handyman', 'Tiling', 'Locksmith', 'Tree Lopping & Removal', 'Demolition')
+      GROUP BY state, city, trade_category
+      ORDER BY business_count DESC
+      LIMIT 20
+    `;
+
+    return result.map((row: any) => {
+      const citySlug = row.city.toLowerCase().replace(/\s+/g, '-');
+      const tradeSlug = row.trade_category.toLowerCase().replace(/\s+&?\s*/g, '-');
+      const stateSlug = row.state.toLowerCase();
+      
+      return {
+        label: `${row.trade_category} in ${row.city}`,
+        href: `/local/${stateSlug}/${citySlug}/${citySlug}/${tradeSlug}`,
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching popular searches:', error);
+    // Fallback to a few hardcoded ones if database fails
+    return [
+      { label: "Plumbers in Sydney", href: "/local/nsw/sydney/sydney/plumbing" },
+      { label: "Electricians in Melbourne", href: "/local/vic/melbourne/melbourne/electrical" },
+      { label: "Painters in Brisbane", href: "/local/qld/brisbane/brisbane/painting" },
+      { label: "Builders in Perth", href: "/local/wa/perth/perth/building" },
+    ];
+  }
+}
+
+export default async function HomePage() {
+  const popularSearches = await getPopularSearches();
   return (
     <main className="bg-[#FCFCFC] text-[#1A1A1A] antialiased">
 
@@ -395,28 +437,7 @@ export default function HomePage() {
         <div className="container mx-auto px-6">
           <h2 className="text-2xl font-black text-zinc-900 mb-8 text-center font-display">Popular Local Searches</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 max-w-6xl mx-auto text-sm">
-            {[
-              { label: "Plumbers in Sydney", href: "/local/nsw/sydney" },
-              { label: "Electricians in Melbourne", href: "/local/vic/melbourne" },
-              { label: "Painters in Brisbane", href: "/local/qld/brisbane" },
-              { label: "Builders in Perth", href: "/local/wa/perth" },
-              { label: "Plumbers in Adelaide", href: "/local/sa/adelaide" },
-              { label: "Carpenters in Hobart", href: "/local/tas/hobart" },
-              { label: "Plumbers in Geelong", href: "/local/vic/geelong" },
-              { label: "Electricians in Gold Coast", href: "/local/qld/gold-coast" },
-              { label: "Landscapers in Sydney", href: "/local/nsw/sydney" },
-              { label: "Roofers in Newcastle", href: "/local/nsw/newcastle" },
-              { label: "Concreters in Brisbane", href: "/local/qld/brisbane" },
-              { label: "Fencing in Melbourne", href: "/local/vic/melbourne" },
-              { label: "Air Conditioning in Darwin", href: "/local/nt/darwin" },
-              { label: "Pest Control in Canberra", href: "/local/act/canberra" },
-              { label: "Cleaners in Wollongong", href: "/local/nsw/wollongong" },
-              { label: "Handyman in Sunshine Coast", href: "/local/qld/sunshine-coast" },
-              { label: "Tilers in Adelaide", href: "/local/sa/adelaide" },
-              { label: "Locksmiths in Perth", href: "/local/wa/perth" },
-              { label: "Tree Services in Launceston", href: "/local/tas/launceston" },
-              { label: "Demolition in Ballarat", href: "/local/vic/ballarat" },
-            ].map(({ label, href }) => (
+            {popularSearches.map(({ label, href }) => (
               <Link key={label} href={href} className="px-3 py-2 bg-white border border-zinc-200 rounded-lg font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors text-center">
                 {label}
               </Link>
