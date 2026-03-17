@@ -16,6 +16,126 @@ router = APIRouter()
 async def get_stats(user: AuthenticatedUser = Depends(require_admin)):
     return {"message": "Admin stats"}
 
+@router.get("/overview")
+async def get_overview(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Full admin overview with live DB stats."""
+    result = await db.execute(text("""
+        SELECT
+            (SELECT COUNT(*) FROM businesses WHERE status = 'active') as total_businesses,
+            (SELECT COUNT(*) FROM referrers) as total_referrers,
+            (SELECT COUNT(*) FROM leads) as total_leads,
+            (SELECT COUNT(*) FROM disputes WHERE status != 'RESOLVED') as open_disputes,
+            (SELECT COUNT(*) FROM businesses WHERE status = 'active' AND clerk_user_id IS NOT NULL) as claimed_businesses,
+            (SELECT COUNT(*) FROM businesses WHERE status = 'active' AND photo_urls IS NOT NULL AND photo_urls::text != '{}' AND photo_urls::text != '') as businesses_with_photos
+    """))
+    row = result.mappings().first()
+    stats = dict(row) if row else {}
+
+    # Recent activity: last 10 new businesses + leads
+    activity_result = await db.execute(text("""
+        (
+            SELECT 'New business: ' || business_name as message, created_at
+            FROM businesses
+            WHERE status = 'active'
+            ORDER BY created_at DESC
+            LIMIT 5
+        )
+        UNION ALL
+        (
+            SELECT 'New lead from ' || COALESCE(customer_name, 'unknown') as message, created_at
+            FROM leads
+            ORDER BY created_at DESC
+            LIMIT 5
+        )
+        ORDER BY created_at DESC
+        LIMIT 10
+    """))
+    activity_rows = activity_result.mappings().all()
+    recent_activity = []
+    for r in activity_rows:
+        from datetime import datetime, timezone
+        created = r["created_at"]
+        if created:
+            now = datetime.now(timezone.utc)
+            if hasattr(created, 'tzinfo') and created.tzinfo is None:
+                from datetime import timezone as tz
+                created = created.replace(tzinfo=tz.utc)
+            diff = now - created
+            if diff.days > 0:
+                time_str = f"{diff.days}d ago"
+            elif diff.seconds > 3600:
+                time_str = f"{diff.seconds // 3600}h ago"
+            elif diff.seconds > 60:
+                time_str = f"{diff.seconds // 60}m ago"
+            else:
+                time_str = "just now"
+        else:
+            time_str = ""
+        recent_activity.append({"message": r["message"], "time": time_str})
+
+    stats["recent_activity"] = recent_activity
+    return stats
+
+@router.get("/businesses")
+async def list_businesses(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+    page: int = 1,
+    search: Optional[str] = None,
+    state: Optional[str] = None,
+    trade: Optional[str] = None,
+):
+    """List businesses with search, filter, pagination."""
+    per_page = 50
+    offset = (page - 1) * per_page
+
+    where_clauses = ["status = 'active'"]
+    params = {}
+
+    if search:
+        where_clauses.append("(business_name ILIKE :search OR suburb ILIKE :search OR slug ILIKE :search)")
+        params["search"] = f"%{search}%"
+    if state:
+        where_clauses.append("state = :state")
+        params["state"] = state
+    if trade:
+        where_clauses.append("trade_category ILIKE :trade")
+        params["trade"] = f"%{trade}%"
+
+    where_sql = " AND ".join(where_clauses)
+
+    count_result = await db.execute(text(f"SELECT COUNT(*) as cnt FROM businesses WHERE {where_sql}"), params)
+    total = count_result.scalar() or 0
+    pages = max(1, (total + per_page - 1) // per_page)
+
+    result = await db.execute(text(f"""
+        SELECT id, business_name, slug, trade_category, suburb, city, state,
+               avg_rating, review_count, logo_url, photo_urls, status, clerk_user_id,
+               business_phone, business_email, website, data_source, created_at
+        FROM businesses
+        WHERE {where_sql}
+        ORDER BY created_at DESC
+        LIMIT :limit OFFSET :offset
+    """), {**params, "limit": per_page, "offset": offset})
+
+    businesses = []
+    for r in result.mappings().all():
+        row = dict(r)
+        if row.get("created_at"):
+            row["created_at"] = str(row["created_at"])
+        if row.get("avg_rating"):
+            row["avg_rating"] = float(row["avg_rating"])
+        # Convert photo_urls to list for easier frontend handling
+        if row.get("photo_urls") and isinstance(row["photo_urls"], str):
+            cleaned = row["photo_urls"].strip("{}")
+            row["photo_urls"] = [u.strip() for u in cleaned.split(",") if u.strip()] if cleaned else []
+        businesses.append(row)
+
+    return {"businesses": businesses, "total": total, "page": page, "pages": pages}
+
 @router.post("/cron/process-lifecycle")
 async def trigger_lifecycle_tasks(
     db: AsyncSession = Depends(get_db),
@@ -55,6 +175,127 @@ async def trigger_lifecycle_tasks(
 class DisputeResolve(BaseModel):
     outcome: str # 'confirm' or 'reject'
     admin_notes: Optional[str] = None
+
+@router.get("/users")
+async def list_users(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+    tab: str = "businesses",
+    page: int = 1,
+    search: Optional[str] = None,
+):
+    """List businesses or referrers for user management."""
+    per_page = 50
+    offset = (page - 1) * per_page
+    params: dict = {"limit": per_page, "offset": offset}
+
+    if tab == "referrers":
+        where_clauses = ["1=1"]
+        if search:
+            where_clauses.append("(full_name ILIKE :search OR email ILIKE :search)")
+            params["search"] = f"%{search}%"
+        where_sql = " AND ".join(where_clauses)
+
+        count_res = await db.execute(text(f"SELECT COUNT(*) FROM referrers WHERE {where_sql}"), params)
+        total = count_res.scalar() or 0
+
+        result = await db.execute(text(f"""
+            SELECT id, full_name, email, suburb, state, postcode, phone_verified,
+                   wallet_balance_cents, pending_cents, clerk_user_id, created_at
+            FROM referrers WHERE {where_sql}
+            ORDER BY created_at DESC LIMIT :limit OFFSET :offset
+        """), params)
+    else:
+        where_clauses = ["status = 'active'", "clerk_user_id IS NOT NULL"]
+        if search:
+            where_clauses.append("(business_name ILIKE :search OR business_email ILIKE :search OR suburb ILIKE :search)")
+            params["search"] = f"%{search}%"
+        where_sql = " AND ".join(where_clauses)
+
+        count_res = await db.execute(text(f"SELECT COUNT(*) FROM businesses WHERE {where_sql}"), params)
+        total = count_res.scalar() or 0
+
+        result = await db.execute(text(f"""
+            SELECT id, business_name, slug, business_email, owner_name, suburb, city, state,
+                   avg_rating, review_count, clerk_user_id, created_at
+            FROM businesses WHERE {where_sql}
+            ORDER BY created_at DESC LIMIT :limit OFFSET :offset
+        """), params)
+
+    pages = max(1, (total + per_page - 1) // per_page)
+    users = []
+    for r in result.mappings().all():
+        row = dict(r)
+        if row.get("created_at"):
+            row["created_at"] = str(row["created_at"])
+        if row.get("avg_rating"):
+            row["avg_rating"] = float(row["avg_rating"])
+        users.append(row)
+
+    return {"users": users, "total": total, "page": page, "pages": pages}
+
+@router.get("/leads")
+async def list_leads(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+    tab: str = "leads",
+    page: int = 1,
+    search: Optional[str] = None,
+    status: Optional[str] = None,
+):
+    """List leads or disputes for admin management."""
+    per_page = 50
+    offset = (page - 1) * per_page
+    params: dict = {"limit": per_page, "offset": offset}
+
+    where_clauses = ["1=1"]
+    if tab == "disputes":
+        where_clauses.append("l.status = 'DISPUTED'")
+    if status:
+        where_clauses.append("l.status = :status")
+        params["status"] = status
+    if search:
+        where_clauses.append("(l.customer_name ILIKE :search OR b.business_name ILIKE :search)")
+        params["search"] = f"%{search}%"
+
+    where_sql = " AND ".join(where_clauses)
+
+    count_res = await db.execute(text(f"""
+        SELECT COUNT(*) FROM leads l
+        LEFT JOIN businesses b ON b.id = l.business_id
+        WHERE {where_sql}
+    """), params)
+    total = count_res.scalar() or 0
+    pages = max(1, (total + per_page - 1) // per_page)
+
+    result = await db.execute(text(f"""
+        SELECT l.id, l.customer_name, l.customer_phone, l.status, l.lead_price_cents,
+               l.referrer_payout_amount_cents, l.created_at,
+               b.business_name, r.full_name as referrer_name,
+               d.reason
+        FROM leads l
+        LEFT JOIN businesses b ON b.id = l.business_id
+        LEFT JOIN referrers r ON r.id = l.referrer_id
+        LEFT JOIN disputes d ON d.lead_id = l.id
+        WHERE {where_sql}
+        ORDER BY l.created_at DESC
+        LIMIT :limit OFFSET :offset
+    """), params)
+
+    items = []
+    for r in result.mappings().all():
+        row = dict(r)
+        if row.get("created_at"):
+            row["created_at"] = str(row["created_at"])
+        items.append(row)
+
+    # Status breakdown stats
+    stats_result = await db.execute(text("""
+        SELECT status, COUNT(*) as cnt FROM leads GROUP BY status ORDER BY cnt DESC
+    """))
+    stats = {str(r["status"]): int(r["cnt"]) for r in stats_result.mappings().all()}
+
+    return {"items": items, "total": total, "page": page, "pages": pages, "stats": stats}
 
 @router.get("/fill-queue")
 async def get_fill_queue(

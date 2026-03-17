@@ -53,8 +53,8 @@ export default async function FillQueuePage({
     const topTrades = Object.entries(byTrade).sort((a, b) => b[1] - a[1]).slice(0, 6);
 
     return (
-        <div className="min-h-screen bg-zinc-50 pt-16">
-            <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="min-h-screen bg-zinc-50">
+            <div className="px-4 lg:px-8 py-6 lg:py-8 max-w-5xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
                     <Link href="/admin" className="text-zinc-400 hover:text-zinc-600">
