@@ -6,8 +6,8 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls }: { logoUr
     const [failed, setFailed] = useState(false);
 
     const sizeClasses = {
-        sm: "w-12 h-12 text-xl",
-        md: "w-20 h-20 text-3xl",
+        sm: "w-16 h-10 text-xl",
+        md: "w-24 h-16 text-3xl",
         lg: "w-full h-full text-5xl"
     };
 
