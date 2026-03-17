@@ -198,17 +198,25 @@ async function processCombo(pool, job) {
             const logoUrl = photoUrls[0] || null;
             if (logoUrl) logos++;
 
-            // Extract data - try editorialSummary first, then build from reviews
+            // Extract data - try editorialSummary first, then reviews, then generate
             let description = place.editorialSummary?.text || null;
             if (!description && place.reviews && place.reviews.length > 0) {
-                // Build description from longest review that's at least 4 stars
+                // Try: longest review with 3+ stars and 30+ chars
                 const goodReviews = place.reviews
-                    .filter(r => r.rating >= 4 && r.text?.text && r.text.text.length > 50)
+                    .filter(r => r.rating >= 3 && r.text?.text && r.text.text.length > 30)
                     .sort((a, b) => (b.text?.text?.length || 0) - (a.text?.text?.length || 0));
                 if (goodReviews.length > 0) {
                     const best = goodReviews[0].text.text;
-                    // Take first 300 chars as description, clean up
                     description = best.length > 300 ? best.substring(0, 297) + '...' : best;
+                }
+            }
+            // Last resort: generate from business info
+            if (!description) {
+                const location = suburb || city || '';
+                const ratingStr = place.rating ? `${place.rating}-star rated` : '';
+                const reviewStr = place.userRatingCount ? `with ${place.userRatingCount} reviews` : '';
+                if (ratingStr || location) {
+                    description = `${name} is a ${ratingStr} ${tradeName.toLowerCase()} business${location ? ` serving ${location}` : ''}${place.location?.latitude ? `, ${state}` : ''} ${reviewStr}.`.replace(/\s+/g, ' ').trim();
                 }
             }
             const openingHours = extractOpeningHours(place);
