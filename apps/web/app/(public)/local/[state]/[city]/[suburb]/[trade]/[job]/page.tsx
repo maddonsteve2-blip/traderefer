@@ -46,6 +46,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 async function getBusinesses(trade: string, suburb: string) {
     try {
+        // For job-type pages, search by the parent trade category, not the specific job type
+        // e.g., search for "Drainage" businesses, not "Surface Drainage Systems"
         const tradeName = formatSlug(trade);
         const suburbName = formatSlug(suburb);
         const results = await sql`
