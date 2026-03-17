@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Copy, Check, QrCode, ExternalLink, Users, Building2, Store, X } from "lucide-react";
 import { toast } from "sonner";
 
-const PREZZEE_LOGO = "/images/prezzee/prezzee-logo.svg";
+const PREZZEE_LOGO = "https://cdn.prod.website-files.com/67e0cab92cc4f35b3b006055/6808567053b358df8bfa79c3_Logo%20Consumer_Web.svg";
 
 interface SharingStripProps {
     slug: string;

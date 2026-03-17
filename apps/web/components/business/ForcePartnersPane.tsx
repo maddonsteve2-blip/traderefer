@@ -179,7 +179,7 @@ export function ForcePartnersPane() {
     };
 
     return (
-        <div id="tour-biz-partners-list" className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="flex flex-1 min-h-0 overflow-hidden">
             {/* ── LEFT PANE (wider: 400px) ── */}
             <div className="w-full md:w-[400px] shrink-0 border-r border-zinc-200 overflow-y-auto bg-white flex flex-col">
                 {/* Search */}
@@ -239,8 +239,8 @@ export function ForcePartnersPane() {
                                             <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${r.is_active ? "bg-emerald-500" : "bg-zinc-300"}`} />
                                         </div>
                                         <div>
+                                            <p className="font-bold text-zinc-400 text-lg">Sent by</p>
                                             <p className="font-black text-zinc-900 text-[22px]">{r.full_name}</p>
-                                            <p className="font-bold text-zinc-400 text-lg">Partner</p>
                                         </div>
                                     </div>
                                 </button>
@@ -305,7 +305,7 @@ export function ForcePartnersPane() {
                                 </Link>
                             </div>
 
-                            {/* Contact actions — all comms through platform */}
+                            {/* Contact actions */}
                             <div className="flex flex-wrap gap-2">
                                 <button
                                     onClick={() => handleMessage(detail.referrer_id)}
@@ -313,8 +313,24 @@ export function ForcePartnersPane() {
                                     className="flex items-center gap-2 h-12 px-6 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold transition-all disabled:opacity-60 text-xl"
                                 >
                                     <MessageSquare className="w-5 h-5" />
-                                    {messaging ? "Opening…" : "Message on TradeRefer"}
+                                    {messaging ? "Opening…" : "Message"}
                                 </button>
+                                {detail.email && (
+                                    <a
+                                        href={`mailto:${detail.email}`}
+                                        className="flex items-center gap-2 h-12 px-6 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-bold transition-all border border-blue-100 text-xl"
+                                    >
+                                        <Mail className="w-5 h-5" /> {detail.email}
+                                    </a>
+                                )}
+                                {detail.phone && (
+                                    <a
+                                        href={`tel:${detail.phone}`}
+                                        className="flex items-center gap-2 h-12 px-6 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-bold transition-all border border-emerald-100 text-xl"
+                                    >
+                                        <Phone className="w-5 h-5" /> {detail.phone}
+                                    </a>
+                                )}
                             </div>
                         </div>
 

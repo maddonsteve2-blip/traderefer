@@ -108,7 +108,7 @@ export default function AnalyticsPage() {
                 <div className="flex-1 overflow-y-auto px-6 py-4">
 
                 {/* Summary Cards */}
-                <div id="tour-biz-analytics-stats" className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     {[
                         { label: "Total Leads", value: data.summary.total_leads, color: "text-zinc-900" },
                         { label: "Confirmed", value: data.summary.confirmed_leads, color: "text-green-600" },
@@ -159,8 +159,8 @@ export default function AnalyticsPage() {
                                 icon={Users}
                                 iconColor="text-orange-400"
                                 iconBg="bg-orange-50"
-                                title="No leads sent yet"
-                                description="Your referrers haven't sent any leads yet. Once they do, they'll appear here ranked by leads sent, conversion rate, and total earned."
+                                title="No referrer data yet"
+                                description="Approve referrers and they'll appear here ranked by leads sent, conversion rate, and total earned."
                                 primaryCTA={{ label: 'Invite a referrer', href: '/dashboard/business/force?tab=partners' }}
                                 ghostRows={[
                                     { widths: ['w-28', 'w-16', 'w-12'] },
