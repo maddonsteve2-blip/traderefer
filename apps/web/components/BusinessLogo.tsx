@@ -6,9 +6,9 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls }: { logoUr
     const [failed, setFailed] = useState(false);
 
     const sizeClasses = {
-        sm: "w-10 h-10 text-xl",
-        md: "w-16 h-16 text-3xl",
-        lg: "w-24 h-24 text-5xl"
+        sm: "w-12 h-12 text-xl",
+        md: "w-20 h-20 text-3xl",
+        lg: "w-full h-full text-5xl"
     };
 
     // Force HTTPS to avoid mixed-content warnings, proxy Google logos
@@ -19,13 +19,14 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls }: { logoUr
 
     if (displayUrl && !failed) {
         return (
-            <div className={`${sizeClasses[size]} rounded-2xl overflow-hidden border-2 border-white shadow-sm ring-1 ring-zinc-200 relative bg-white`}>
+            <div className={`${sizeClasses[size]} rounded-2xl overflow-hidden shadow-sm relative bg-[#f0f0f0] border border-zinc-200`}>
                 <img
                     src={displayUrl}
                     alt={name}
-                    width={200}
-                    height={200}
-                    className="w-full h-full object-contain p-1"
+                    width={400}
+                    height={400}
+                    className="w-full h-full object-contain p-2"
+                    style={{ mixBlendMode: 'multiply' }}
                     onError={() => setFailed(true)}
                 />
             </div>
@@ -33,8 +34,8 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls }: { logoUr
     }
 
     return (
-        <div className={`${sizeClasses[size]} rounded-2xl bg-gradient-to-br from-zinc-100 to-zinc-50 flex items-center justify-center font-black text-zinc-900 overflow-hidden shadow-inner border-2 border-white ring-1 ring-zinc-200`}>
-            <span className="transform drop-shadow-sm select-none uppercase">{name?.[0]}</span>
+        <div className={`${sizeClasses[size]} rounded-2xl bg-gradient-to-br from-zinc-200 to-zinc-100 flex items-center justify-center font-black text-zinc-600 overflow-hidden border border-zinc-200`}>
+            <span className="transform select-none uppercase">{name?.[0]}</span>
         </div>
     );
 }

@@ -574,84 +574,84 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                     Top Rated
                                                 </div>
                                             )}
-                                            <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start">
-                                                <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-zinc-100 shadow-xl shrink-0">
-                                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} />
-                                                </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex flex-wrap items-center gap-2 mb-3">
-                                                        <span className="px-3 py-1.5 bg-zinc-100 text-zinc-600 rounded-full font-black uppercase tracking-wider" style={{ fontSize: '16px' }}>{biz.trade_category}</span>
-                                                        {biz.is_verified && (
-                                                            <span className="verified-pulse flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-full font-black uppercase" style={{ fontSize: '16px' }}>
-                                                                <ShieldCheck className="w-4 h-4" /> Verified
-                                                            </span>
-                                                        )}
+                                            <div className="p-6 md:p-8">
+                                                {/* Logo + Header row */}
+                                                <div className="flex gap-5 md:gap-6 items-start mb-5">
+                                                    <div className="w-[100px] h-[100px] md:w-[120px] md:h-[120px] shrink-0">
+                                                        <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="lg" />
                                                     </div>
-                                                    <h3 className="text-2xl md:text-3xl font-black text-zinc-900 mb-2 group-hover:text-orange-600 transition-colors">
-                                                        {biz.business_name}
-                                                    </h3>
-                                                    <p className="text-zinc-500 text-lg mb-4 line-clamp-2" style={{lineHeight: '1.6'}}>
-                                                        {biz.description || generateFallbackDescription(biz)}
-                                                    </p>
-
-                                                    {/* Photo thumbnails */}
-                                                    {biz.photo_urls?.length > 0 && (
-                                                        <div className="flex items-center gap-2 mb-5">
-                                                            {biz.photo_urls.slice(0, 4).map((url: string, i: number) => (
-                                                                <Link key={i} href={`/b/${biz.slug}`} className="relative w-20 h-20 rounded-xl overflow-hidden border border-zinc-100 shrink-0 hover:border-orange-300 transition-colors">
-                                                                    <img src={url} alt={`${biz.business_name} work ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
-                                                                </Link>
-                                                            ))}
-                                                            {biz.photo_urls.length > 4 && (
-                                                                <Link href={`/b/${biz.slug}`} className="w-20 h-20 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col items-center justify-center shrink-0 hover:border-orange-300 transition-colors">
-                                                                    <Camera className="w-4 h-4 text-zinc-400 mb-0.5" />
-                                                                    <span className="text-xs font-bold text-zinc-500">+{biz.photo_urls.length - 4}</span>
-                                                                </Link>
+                                                    <div className="flex-1 min-w-0 pt-1">
+                                                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                                                            <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-full font-black uppercase tracking-wider" style={{ fontSize: '14px' }}>{biz.trade_category}</span>
+                                                            {biz.is_verified && (
+                                                                <span className="verified-pulse flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full font-black uppercase" style={{ fontSize: '14px' }}>
+                                                                    <ShieldCheck className="w-3.5 h-3.5" /> Verified
+                                                                </span>
                                                             )}
                                                         </div>
-                                                    )}
+                                                        <h3 className="text-2xl md:text-3xl font-black text-zinc-900 mb-1.5 group-hover:text-orange-600 transition-colors leading-tight">
+                                                            {biz.business_name}
+                                                        </h3>
+                                                        {/* Rating + location inline with header */}
+                                                        <div className="flex flex-wrap items-center gap-4 text-zinc-500 font-bold" style={{ fontSize: '15px' }}>
+                                                            {parseFloat(biz.avg_rating) > 0 && (
+                                                                <span className="flex items-center gap-1.5">
+                                                                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                                                    {parseFloat(biz.avg_rating).toFixed(1)}{parseInt(biz.total_reviews) > 0 ? ` (${biz.total_reviews} reviews)` : ''}
+                                                                </span>
+                                                            )}
+                                                            <span className="flex items-center gap-1.5">
+                                                                <MapPin className="w-4 h-4 text-zinc-400" />
+                                                                {biz.suburb}
+                                                            </span>
+                                                            {biz.business_phone && (
+                                                                <a href={`tel:${biz.business_phone}`} className="flex items-center gap-1.5 hover:text-[#FF6600] transition-colors">
+                                                                    <Phone className="w-4 h-4 text-zinc-400" />
+                                                                    {biz.business_phone}
+                                                                </a>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                                    <div className="flex flex-wrap items-center gap-6 text-zinc-600 font-bold mb-8" style={{ fontSize: '16px' }}>
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
-                                                                <MapPin className="w-3.5 h-3.5" />
-                                                            </div>
-                                                            {biz.suburb}
-                                                        </div>
-                                                        {biz.business_phone && (
-                                                            <div className="flex items-center gap-2">
-                                                                <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
-                                                                    <Phone className="w-3.5 h-3.5" />
-                                                                </div>
-                                                                <a href={`tel:${biz.business_phone}`} className="hover:text-[#FF6600] transition-colors">{biz.business_phone}</a>
-                                                            </div>
-                                                        )}
-                                                        {parseFloat(biz.avg_rating) > 0 && (
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
-                                                                <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                                                            </div>
-                                                            {parseFloat(biz.avg_rating).toFixed(1)} ★{parseInt(biz.total_reviews) > 0 ? ` (${biz.total_reviews} reviews)` : ''}
-                                                        </div>
-                                                        )}
-                                                        {parseInt(biz.trusted_count) > 0 && (
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-6 h-6 bg-zinc-100 rounded flex items-center justify-center text-zinc-400">
-                                                                <Users className="w-3.5 h-3.5" />
-                                                            </div>
-                                                            {biz.trusted_count} Trusted Links
-                                                        </div>
+                                                {/* Description */}
+                                                <p className="text-zinc-500 text-base mb-4 line-clamp-2" style={{lineHeight: '1.7'}}>
+                                                    {biz.description || generateFallbackDescription(biz)}
+                                                </p>
+
+                                                {/* Photo thumbnails */}
+                                                {biz.photo_urls?.length > 0 && (
+                                                    <div className="flex items-center gap-2 mb-5">
+                                                        {biz.photo_urls.slice(0, 4).map((url: string, i: number) => (
+                                                            <Link key={i} href={`/b/${biz.slug}`} className="relative w-[72px] h-[72px] md:w-20 md:h-20 rounded-xl overflow-hidden border border-zinc-200 shrink-0 hover:border-orange-300 transition-colors">
+                                                                <img src={url} alt={`${biz.business_name} work ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+                                                            </Link>
+                                                        ))}
+                                                        {biz.photo_urls.length > 4 && (
+                                                            <Link href={`/b/${biz.slug}`} className="w-[72px] h-[72px] md:w-20 md:h-20 rounded-xl bg-zinc-100 border border-zinc-200 flex flex-col items-center justify-center shrink-0 hover:border-orange-300 transition-colors">
+                                                                <Camera className="w-4 h-4 text-zinc-400 mb-0.5" />
+                                                                <span className="text-xs font-bold text-zinc-500">+{biz.photo_urls.length - 4}</span>
+                                                            </Link>
                                                         )}
                                                     </div>
+                                                )}
 
-                                                    <div className="flex flex-wrap items-center gap-3">
-                                                        <Button asChild size="lg" className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-bold h-14 px-6 border-none">
-                                                            <Link href={`/b/${biz.slug}`}>View Profile</Link>
-                                                        </Button>
-                                                        <Button asChild variant="outline" size="lg" className="border-2 border-zinc-300 hover:bg-zinc-50 hover:border-zinc-400 rounded-xl font-bold h-14 px-6">
-                                                            <Link href={`/b/${biz.slug}#enquiry-form`}>Request Quote</Link>
-                                                        </Button>
+                                                {/* Trusted links badge */}
+                                                {parseInt(biz.trusted_count) > 0 && (
+                                                    <div className="flex items-center gap-2 text-zinc-500 font-bold mb-5" style={{ fontSize: '15px' }}>
+                                                        <Users className="w-4 h-4 text-zinc-400" />
+                                                        {biz.trusted_count} Trusted Links
                                                     </div>
+                                                )}
+
+                                                {/* CTA buttons */}
+                                                <div className="flex flex-wrap items-center gap-3">
+                                                    <Button asChild size="lg" className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-bold h-12 px-6 border-none">
+                                                        <Link href={`/b/${biz.slug}`}>View Profile</Link>
+                                                    </Button>
+                                                    <Button asChild variant="outline" size="lg" className="border-2 border-zinc-300 hover:bg-zinc-50 hover:border-zinc-400 rounded-xl font-bold h-12 px-6">
+                                                        <Link href={`/b/${biz.slug}#enquiry-form`}>Request Quote</Link>
+                                                    </Button>
                                                 </div>
                                             </div>
                                         </div>
