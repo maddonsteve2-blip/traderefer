@@ -14,19 +14,24 @@ import { ROICalculators } from "@/components/home/ROICalculators";
 import { PrezzeeCarousel } from "@/components/home/PrezzeeCarousel";
 
 // Fetch popular city+trade combinations from database
+// Uses ROW_NUMBER to pick max 2 trades per city for diversity across Australia
 async function getPopularSearches() {
   try {
     const result = await sql`
-      SELECT 
-        state,
-        city,
-        trade_category,
-        COUNT(*) as business_count
-      FROM businesses
-      WHERE status = 'active'
-        AND city IN ('Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Hobart', 'Geelong', 'Gold Coast', 'Newcastle', 'Wollongong', 'Canberra', 'Darwin', 'Sunshine Coast', 'Launceston', 'Ballarat')
-        AND trade_category IN ('Plumbing', 'Electrical', 'Painting', 'Building', 'Carpentry', 'Landscaping', 'Roofing', 'Concreting', 'Fencing', 'Air Conditioning & Heating', 'Pest Control', 'Cleaning', 'Handyman', 'Tiling', 'Locksmith', 'Tree Lopping & Removal', 'Demolition')
-      GROUP BY state, city, trade_category
+      SELECT state, city, trade_category, business_count FROM (
+        SELECT 
+          state,
+          city,
+          trade_category,
+          COUNT(*) as business_count,
+          ROW_NUMBER() OVER (PARTITION BY city ORDER BY COUNT(*) DESC) as rn
+        FROM businesses
+        WHERE status = 'active'
+          AND city IN ('Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Hobart', 'Geelong', 'Gold Coast', 'Newcastle', 'Wollongong', 'Canberra', 'Darwin', 'Sunshine Coast', 'Launceston', 'Ballarat')
+          AND trade_category IN ('Plumbing', 'Electrical', 'Painting', 'Building', 'Carpentry', 'Landscaping', 'Roofing', 'Concreting', 'Fencing', 'Air Conditioning & Heating', 'Pest Control', 'Cleaning', 'Handyman', 'Tiling', 'Locksmith', 'Tree Lopping & Removal', 'Demolition')
+        GROUP BY state, city, trade_category
+      ) ranked
+      WHERE rn <= 2
       ORDER BY business_count DESC
       LIMIT 20
     `;
@@ -43,12 +48,15 @@ async function getPopularSearches() {
     });
   } catch (error) {
     console.error('Error fetching popular searches:', error);
-    // Fallback to a few hardcoded ones if database fails
     return [
       { label: "Plumbers in Sydney", href: "/local/nsw/sydney/sydney/plumbing" },
       { label: "Electricians in Melbourne", href: "/local/vic/melbourne/melbourne/electrical" },
       { label: "Painters in Brisbane", href: "/local/qld/brisbane/brisbane/painting" },
       { label: "Builders in Perth", href: "/local/wa/perth/perth/building" },
+      { label: "Electricians in Adelaide", href: "/local/sa/adelaide/adelaide/electrical" },
+      { label: "Plumbers in Canberra", href: "/local/act/canberra/canberra/plumbing" },
+      { label: "Roofers in Gold Coast", href: "/local/qld/gold-coast/gold-coast/roofing" },
+      { label: "Builders in Hobart", href: "/local/tas/hobart/hobart/building" },
     ];
   }
 }
