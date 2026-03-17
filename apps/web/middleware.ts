@@ -40,18 +40,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     // (Users reach /local/ pages via direct links, SEO, and internal linking)
     const pathname = req.nextUrl.pathname;
 
-    // 0b. Postcode suffix redirects (e.g., /arundel-4214/ → /arundel/)
-    // Fixes "Duplicate without user-selected canonical" in Google Search Console
-    if (pathname.startsWith("/local/")) {
-        const postcodePattern = /-\d{4}(\/|$)/;
-        if (postcodePattern.test(pathname)) {
-            const url = req.nextUrl.clone();
-            url.pathname = pathname.replace(postcodePattern, '$1');
-            return NextResponse.redirect(url, 301);
-        }
-    }
-
-    // 0c. Location 301 redirects (old → corrected URLs)
+    // 0b. Location 301 redirects (old → corrected URLs)
     if (pathname.startsWith("/local/")) {
         // Check exact path match first
         const redirectTo = LOCATION_REDIRECTS[pathname];

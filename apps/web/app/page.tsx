@@ -11,6 +11,7 @@ import { sql } from "@/lib/db";
 
 import { SmartSearch } from "@/components/SmartSearch";
 import { ROICalculators } from "@/components/home/ROICalculators";
+import { PrezzeeCarousel } from "@/components/home/PrezzeeCarousel";
 
 // Fetch popular city+trade combinations from database
 async function getPopularSearches() {
@@ -352,6 +353,8 @@ export default async function HomePage() {
               See all 335 brands <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
+
+          <PrezzeeCarousel />
         </div>
       </section>
 
