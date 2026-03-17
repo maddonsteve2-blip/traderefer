@@ -667,9 +667,9 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                         <table className="w-full" style={{ fontSize: '16px' }}>
                                             <thead>
                                                 <tr className="border-b border-white/10">
-                                                    <th className="text-left py-3 pr-6 font-black text-zinc-400 uppercase tracking-wider" style={{ fontSize: '16px' }}>Feature</th>
+                                                    <th className="text-left py-3 pr-6 font-black text-white/80 uppercase tracking-wider" style={{ fontSize: '16px' }}>Feature</th>
                                                     <th className="text-center py-3 px-4 font-black text-orange-400 uppercase tracking-wider" style={{ fontSize: '16px' }}>TradeRefer</th>
-                                                    <th className="text-center py-3 pl-4 font-black text-zinc-400 uppercase tracking-wider" style={{ fontSize: '16px' }}>Lead Sites</th>
+                                                    <th className="text-center py-3 pl-4 font-black text-white/80 uppercase tracking-wider" style={{ fontSize: '16px' }}>Lead Sites</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-white/5">
@@ -680,11 +680,11 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                                     ["Risk", "Zero upfront cost", "High waste if job not won"],
                                                 ].map(([feature, ours, theirs]) => (
                                                     <tr key={feature}>
-                                                        <td className="py-3 pr-6 text-zinc-400 font-medium">{feature}</td>
+                                                        <td className="py-3 pr-6 text-white/70 font-medium">{feature}</td>
                                                         <td className="py-3 px-4 text-center">
                                                             <span className="inline-flex items-center gap-1.5 text-green-400 font-bold"><CheckCircle2 className="w-4 h-4" />{ours}</span>
                                                         </td>
-                                                        <td className="py-3 pl-4 text-center text-zinc-500">{theirs}</td>
+                                                        <td className="py-3 pl-4 text-center text-white/60">{theirs}</td>
                                                     </tr>
                                                 ))}
                                             </tbody>
