@@ -13,6 +13,7 @@ interface Recommendation {
     trade_category: string;
     suburb: string;
     logo_url: string | null;
+    logo_bg_color?: string | null;
     is_verified: boolean;
 }
 
