@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "www.traderefer.au" }],
+      "destination": "https://traderefer.au/:path",
+      "permanent": true
+    }
+  ]
+}

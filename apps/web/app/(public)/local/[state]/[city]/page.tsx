@@ -24,6 +24,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: `Trusted Tradies in ${cityName} ${stateUpper} (${year}) | TradeRefer`,
         description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to discover top-rated plumbers, electricians, painters & more. Free quotes.`,
         alternates: { canonical: `https://traderefer.au/local/${state}/${city}` },
+        openGraph: {
+            title: `Trusted Tradies in ${cityName} ${stateUpper} (${year}) | TradeRefer`,
+            description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
+        },
     };
 }
 

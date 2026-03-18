@@ -9,29 +9,9 @@ const CHUNK_SIZE = 5000;
 
 export async function GET() {
     try {
-        // Count job-level pages to determine chunk count
-        const rows = await sql`
-            SELECT trade_category,
-                   COUNT(DISTINCT (state || '|' || city || '|' || suburb)) as combo_count
-            FROM businesses
-            WHERE status = 'active'
-              AND state IS NOT NULL AND state != ''
-              AND city IS NOT NULL AND city != ''
-              AND suburb IS NOT NULL AND suburb != ''
-              AND trade_category IS NOT NULL AND trade_category != ''
-            GROUP BY trade_category
-        `;
-        let totalJobPages = 0;
-        for (const row of rows) {
-            const jobs = JOB_TYPES[row.trade_category as string] || [];
-            totalJobPages += Number(row.combo_count) * jobs.length;
-        }
-        const jobChunks = Math.max(1, Math.ceil(totalJobPages / CHUNK_SIZE));
-
-        let jobSitemaps = '';
-        for (let i = 0; i < jobChunks; i++) {
-            jobSitemaps += `  <sitemap><loc>${BASE_URL}/sitemaps/jobs/${i}</loc></sitemap>\n`;
-        }
+        // NOTE: Jobs sitemaps removed to preserve crawl budget for a new site.
+        // ~220k job-type URLs were consuming crawl quota before core pages got indexed.
+        // Re-enable once domain authority is established and core pages are indexed.
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -39,7 +19,7 @@ export async function GET() {
   <sitemap><loc>${BASE_URL}/sitemaps/profiles.xml</loc></sitemap>
   <sitemap><loc>${BASE_URL}/sitemaps/suburbs.xml</loc></sitemap>
   <sitemap><loc>${BASE_URL}/sitemaps/trades.xml</loc></sitemap>
-${jobSitemaps}</sitemapindex>`;
+</sitemapindex>`;
 
         return new NextResponse(xml, {
             headers: {
