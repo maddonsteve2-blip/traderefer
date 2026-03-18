@@ -636,15 +636,15 @@ export default async function BusinessDirectory({
 
                                         {/* Photo Thumbnails */}
                                         {photos.length > 0 && (
-                                            <div className="flex gap-2 mb-3 overflow-hidden">
-                                                {photos.slice(0, 5).map((url: string, i: number) => (
-                                                    <div key={i} className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden border border-zinc-100 shrink-0">
+                                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-3">
+                                                {photos.slice(0, 3).map((url: string, i: number) => (
+                                                    <div key={i} className="aspect-square rounded-lg overflow-hidden border border-zinc-100">
                                                         <img src={url} alt={`${biz.business_name} photo ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
                                                     </div>
                                                 ))}
-                                                {photos.length > 5 && (
-                                                    <Link href={`/b/${biz.slug}`} className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0 hover:bg-zinc-200 transition-colors">
-                                                        <span className="text-xs font-bold text-zinc-500">+{photos.length - 5}</span>
+                                                {photos.length > 3 && (
+                                                    <Link href={`/b/${biz.slug}`} className="aspect-square rounded-lg bg-zinc-100 border border-zinc-200 flex items-center justify-center hover:bg-zinc-200 transition-colors">
+                                                        <span className="text-xs font-bold text-zinc-500">+{photos.length - 3}</span>
                                                     </Link>
                                                 )}
                                             </div>
