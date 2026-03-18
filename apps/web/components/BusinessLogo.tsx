@@ -121,9 +121,10 @@ function analyzeImage(img: HTMLImageElement): PixelStats {
     if (hasTransparency) {
         bg = avgLuminance > 200 ? "#1c1c1e" : avgLuminance > 128 ? "#2c2c2e" : "#ffffff";
     } else {
-        if (dominantEdge === "dark") bg = "#f8f8f8";
-        else if (dominantEdge === "light") bg = "#1c1c1e";
-        else bg = avgLuminance > 128 ? "#1c1c1e" : "#f8f8f8";
+        // Solid logos: edges reveal the logo's own background — match it
+        if (dominantEdge === "light") bg = "#f8f8f8";
+        else if (dominantEdge === "dark") bg = "#1c1c1e";
+        else bg = avgLuminance > 128 ? "#f8f8f8" : "#1c1c1e";
     }
 
     // ── Pass 2: find tight bounding box of content pixels ──
@@ -244,8 +245,11 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
     // Use pre-computed bg (instant) or analyzed bg or neutral fallback
     const bg = precomputedBg || stats?.bg || "#e8e8e8";
     const isLight = bg === "#ffffff" || bg === "#f8f8f8" || bg === "#e8e8e8";
-    const displaySrc = stats?.croppedSrc ?? proxyUrl;
     const needsAnalysis = !precomputedBg;
+    // When bg is pre-computed, load the original URL directly (faster, no proxy hop)
+    // Only use proxy URL when we need CORS access for canvas analysis
+    const directUrl = logoUrl?.replace(/^http:\/\//i, "https://") || proxyUrl;
+    const displaySrc = stats?.croppedSrc ?? (needsAnalysis ? proxyUrl : directUrl);
 
     return (
         <div
@@ -275,6 +279,7 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
             <img
                 src={displaySrc}
                 alt={name}
+                loading="lazy"
                 style={{
                     maxWidth: "100%",
                     maxHeight: "100%",

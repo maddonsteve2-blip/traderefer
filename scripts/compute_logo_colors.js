@@ -54,9 +54,10 @@ function analyzePixels(data) {
     if (hasTransparency) {
         bg = avgLuminance > 200 ? '#1c1c1e' : avgLuminance > 128 ? '#2c2c2e' : '#ffffff';
     } else {
-        if (dominantEdge === 'dark') bg = '#f8f8f8';
-        else if (dominantEdge === 'light') bg = '#1c1c1e';
-        else bg = avgLuminance > 128 ? '#1c1c1e' : '#f8f8f8';
+        // Solid logos: edges reveal the logo's own background — match it
+        if (dominantEdge === 'light') bg = '#f8f8f8';
+        else if (dominantEdge === 'dark') bg = '#1c1c1e';
+        else bg = avgLuminance > 128 ? '#f8f8f8' : '#1c1c1e';
     }
 
     return bg;
