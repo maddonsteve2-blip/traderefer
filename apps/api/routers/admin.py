@@ -12,6 +12,7 @@ import uuid
 import httpx
 import re
 import asyncio
+import os
 
 router = APIRouter()
 
@@ -743,3 +744,369 @@ async def run_scrape_batch(
         "remaining": remaining,
         "log": log_entries[:20],
     }
+
+
+# ── Photo Filler endpoints ──
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_PLACES_API_KEY") or os.getenv("NEXT_PUBLIC_GOOGLE_MAPS_API_KEY") or ""
+
+@router.get("/photos/stats")
+async def get_photo_stats(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Stats for business photo coverage."""
+    result = await db.execute(text("""
+        SELECT
+            COUNT(*) FILTER (WHERE status = 'active') as total_active,
+            COUNT(*) FILTER (WHERE status = 'active' AND photo_urls IS NOT NULL AND photo_urls::text != '{}' AND photo_urls::text != '') as has_photos,
+            COUNT(*) FILTER (WHERE status = 'active' AND (photo_urls IS NULL OR photo_urls::text = '{}' OR photo_urls::text = '')) as missing_photos,
+            COUNT(*) FILTER (WHERE status = 'active' AND logo_url IS NOT NULL AND logo_url != '') as has_logo,
+            COUNT(*) FILTER (WHERE status = 'active' AND (logo_url IS NULL OR logo_url = '')) as missing_logo,
+            COUNT(*) FILTER (WHERE status = 'active' AND photo_urls::text LIKE '%places.googleapis.com%') as google_photo_urls,
+            COUNT(*) FILTER (WHERE status = 'active' AND photo_urls::text LIKE '%blob.vercel-storage.com%') as blob_photo_urls,
+            COUNT(*) FILTER (WHERE status = 'active' AND source_url IS NOT NULL AND source_url LIKE '%places.googleapis.com%') as has_place_id
+        FROM businesses
+    """))
+    row = result.mappings().first()
+    return dict(row) if row else {}
+
+
+class PhotoFillRequest(BaseModel):
+    limit: int = 50
+    state: Optional[str] = None
+    min_photos: int = 6
+
+
+@router.post("/photos/run")
+async def run_photo_fill(
+    req: PhotoFillRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Fetch photos from Google Places for businesses missing them."""
+    if not GOOGLE_API_KEY:
+        raise HTTPException(status_code=500, detail="GOOGLE_PLACES_API_KEY not configured on Railway")
+
+    batch_size = min(req.limit, 50)
+    state_filter = "AND state = :state" if req.state else ""
+    params = {"limit": batch_size, "min_photos": req.min_photos}
+    if req.state:
+        params["state"] = req.state
+
+    result = await db.execute(text(f"""
+        SELECT id, business_name, slug, suburb, state, source_url, logo_url, photo_urls
+        FROM businesses
+        WHERE status = 'active'
+          AND data_source = 'Google Places'
+          {state_filter}
+          AND (
+            photo_urls IS NULL
+            OR photo_urls::text = '{{}}'
+            OR photo_urls::text = ''
+            OR array_length(string_to_array(trim(both '{{}}' from photo_urls::text), ','), 1) < :min_photos
+          )
+        ORDER BY total_reviews DESC NULLS LAST
+        LIMIT :limit
+    """), params)
+    businesses = [dict(r) for r in result.mappings().all()]
+
+    if not businesses:
+        return {"status": "complete", "message": "All businesses have enough photos", "processed": 0, "remaining": 0}
+
+    stats = {"processed": 0, "updated": 0, "photos_added": 0, "not_found": 0, "errors": 0}
+    log_entries = []
+
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        for biz in businesses:
+            try:
+                place_id = None
+                src = biz.get("source_url") or ""
+                m = re.search(r'ChIJ[A-Za-z0-9_-]+', src)
+                if m:
+                    place_id = m.group(0)
+
+                photos = None
+                if place_id:
+                    resp = await client.get(
+                        f"https://places.googleapis.com/v1/places/{place_id}",
+                        headers={"X-Goog-Api-Key": GOOGLE_API_KEY, "X-Goog-FieldMask": "photos"}
+                    )
+                    if resp.status_code == 200:
+                        photos = resp.json().get("photos")
+
+                if not photos:
+                    query = f"{biz['business_name']} {biz.get('suburb','')} {biz.get('state','')} Australia"
+                    resp = await client.post(
+                        "https://places.googleapis.com/v1/places:searchText",
+                        headers={"X-Goog-Api-Key": GOOGLE_API_KEY, "X-Goog-FieldMask": "places.photos", "Content-Type": "application/json"},
+                        json={"textQuery": query, "maxResultCount": 1}
+                    )
+                    if resp.status_code == 200:
+                        places = resp.json().get("places", [])
+                        if places:
+                            photos = places[0].get("photos")
+
+                if not photos:
+                    stats["not_found"] += 1
+                    stats["processed"] += 1
+                    log_entries.append({"name": biz["business_name"], "status": "not_found"})
+                    continue
+
+                new_urls = [f"https://places.googleapis.com/v1/{p['name']}/media?key={GOOGLE_API_KEY}&maxWidthPx=800&maxHeightPx=800" for p in photos[:10]]
+                existing = []
+                if biz.get("photo_urls"):
+                    raw = str(biz["photo_urls"]).strip("{}")
+                    existing = [u.strip() for u in raw.split(",") if u.strip() and len(u.strip()) > 5]
+
+                blob_urls = [u for u in existing if "blob.vercel-storage.com" in u]
+                all_urls = list(blob_urls)
+                for u in new_urls:
+                    if u not in all_urls:
+                        all_urls.append(u)
+                final = all_urls[:10]
+
+                photo_str = "{" + ",".join(final) + "}"
+                logo = final[0] if final else biz.get("logo_url")
+                cover = final[1] if len(final) > 1 else (final[0] if final else None)
+
+                await db.execute(text("""
+                    UPDATE businesses
+                    SET photo_urls = :photos,
+                        logo_url = COALESCE(NULLIF(:logo, ''), logo_url),
+                        cover_photo_url = COALESCE(NULLIF(:cover, ''), cover_photo_url)
+                    WHERE id = :bid
+                """), {"photos": photo_str, "logo": logo, "cover": cover, "bid": biz["id"]})
+
+                added = len(final) - len(blob_urls)
+                stats["updated"] += 1
+                stats["photos_added"] += added
+                log_entries.append({"name": biz["business_name"], "status": "ok", "found": [f"{len(final)} photos"]})
+            except Exception as e:
+                stats["errors"] += 1
+                log_entries.append({"name": biz["business_name"], "status": "error", "detail": str(e)[:80]})
+            stats["processed"] += 1
+
+    await db.commit()
+
+    remaining_result = await db.execute(text(f"""
+        SELECT COUNT(*) FROM businesses
+        WHERE status = 'active' AND data_source = 'Google Places'
+          {state_filter}
+          AND (photo_urls IS NULL OR photo_urls::text = '{{}}' OR photo_urls::text = ''
+               OR array_length(string_to_array(trim(both '{{}}' from photo_urls::text), ','), 1) < :min_photos)
+    """), params)
+    remaining = remaining_result.scalar() or 0
+
+    return {"status": "done", "stats": stats, "remaining": remaining, "log": log_entries[:20]}
+
+
+# ── Blob Converter endpoints ──
+
+BLOB_TOKEN = os.getenv("BLOB_READ_WRITE_TOKEN") or ""
+
+@router.get("/blob/stats")
+async def get_blob_stats(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Stats for Google → Blob URL conversion."""
+    result = await db.execute(text("""
+        SELECT
+            COUNT(*) FILTER (WHERE photo_urls::text LIKE '%places.googleapis.com%') as needs_conversion,
+            COUNT(*) FILTER (WHERE photo_urls::text LIKE '%blob.vercel-storage.com%' AND photo_urls::text NOT LIKE '%places.googleapis.com%') as fully_converted,
+            COUNT(*) FILTER (WHERE logo_url LIKE '%places.googleapis.com%') as logos_need_conversion,
+            COUNT(*) FILTER (WHERE logo_url LIKE '%blob.vercel-storage.com%') as logos_converted
+        FROM businesses WHERE status = 'active'
+    """))
+    row = result.mappings().first()
+    return dict(row) if row else {}
+
+
+class BlobConvertRequest(BaseModel):
+    limit: int = 20
+    concurrency: int = 5
+
+
+@router.post("/blob/run")
+async def run_blob_convert(
+    req: BlobConvertRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Convert Google Places photo URLs to Vercel Blob storage."""
+    if not BLOB_TOKEN:
+        raise HTTPException(status_code=500, detail="BLOB_READ_WRITE_TOKEN not configured on Railway")
+
+    batch_size = min(req.limit, 30)
+
+    result = await db.execute(text("""
+        SELECT id, slug, logo_url, cover_photo_url, photo_urls
+        FROM businesses
+        WHERE status = 'active'
+          AND (
+            logo_url LIKE '%places.googleapis.com%'
+            OR photo_urls::text LIKE '%places.googleapis.com%'
+          )
+        ORDER BY created_at DESC
+        LIMIT :limit
+    """), {"limit": batch_size})
+    businesses = [dict(r) for r in result.mappings().all()]
+
+    if not businesses:
+        return {"status": "complete", "message": "No Google Places URLs to convert", "processed": 0, "remaining": 0}
+
+    stats = {"processed": 0, "logos_converted": 0, "photos_converted": 0, "errors": 0}
+    log_entries = []
+
+    async def download_and_upload(client: httpx.AsyncClient, url: str, slug: str, idx) -> Optional[str]:
+        try:
+            resp = await client.get(url, timeout=15.0, follow_redirects=True)
+            if resp.status_code != 200 or len(resp.content) < 2000:
+                return None
+            ct = resp.headers.get("content-type", "image/jpeg")
+            ext = "png" if "png" in ct else "webp" if "webp" in ct else "jpg"
+            filename = f"{slug}-{idx}.{ext}"
+            blob_resp = await client.put(
+                f"https://blob.vercel-storage.com/{filename}",
+                headers={"Authorization": f"Bearer {BLOB_TOKEN}", "x-content-type": ct, "x-cache-control-max-age": "31536000"},
+                content=resp.content,
+                timeout=30.0,
+            )
+            if blob_resp.status_code == 200:
+                return blob_resp.json().get("url")
+        except:
+            pass
+        return None
+
+    async with httpx.AsyncClient() as client:
+        for biz in businesses:
+            try:
+                slug = biz.get("slug") or str(biz["id"])
+                updates = {}
+
+                if biz.get("logo_url") and "places.googleapis.com" in str(biz["logo_url"]):
+                    blob_url = await download_and_upload(client, biz["logo_url"], slug, "logo")
+                    if blob_url:
+                        updates["logo_url"] = blob_url
+                        stats["logos_converted"] += 1
+
+                photo_urls = []
+                raw = str(biz.get("photo_urls") or "").strip("{}")
+                if raw:
+                    photo_urls = [u.strip() for u in raw.split(",") if u.strip()]
+
+                google_urls = [u for u in photo_urls if "places.googleapis.com" in u]
+                if google_urls:
+                    new_urls = []
+                    for i, url in enumerate(photo_urls):
+                        if "places.googleapis.com" in url:
+                            blob_url = await download_and_upload(client, url, slug, i)
+                            new_urls.append(blob_url or url)
+                            if blob_url:
+                                stats["photos_converted"] += 1
+                        else:
+                            new_urls.append(url)
+                    updates["photo_urls"] = "{" + ",".join(new_urls) + "}"
+
+                if updates:
+                    sets = []
+                    params = {"bid": biz["id"]}
+                    for col, val in updates.items():
+                        sets.append(f"{col} = :{col}")
+                        params[col] = val
+                    await db.execute(text(f"UPDATE businesses SET {', '.join(sets)} WHERE id = :bid"), params)
+                    log_entries.append({"name": slug, "status": "ok", "found": [f"{stats['logos_converted']}L {stats['photos_converted']}P"]})
+                else:
+                    log_entries.append({"name": slug, "status": "skip"})
+
+                stats["processed"] += 1
+            except Exception as e:
+                stats["errors"] += 1
+                stats["processed"] += 1
+                log_entries.append({"name": str(biz.get("slug", "")), "status": "error", "detail": str(e)[:80]})
+
+    await db.commit()
+
+    remaining_result = await db.execute(text("""
+        SELECT COUNT(*) FROM businesses
+        WHERE status = 'active'
+          AND (logo_url LIKE '%places.googleapis.com%' OR photo_urls::text LIKE '%places.googleapis.com%')
+    """))
+    remaining = remaining_result.scalar() or 0
+
+    return {"status": "done", "stats": stats, "remaining": remaining, "log": log_entries[:20]}
+
+
+# ── Admin Campaigns & Deals ──
+
+@router.get("/campaigns")
+async def admin_list_campaigns(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """List all campaigns across all businesses."""
+    result = await db.execute(text("""
+        SELECT c.*, b.business_name, b.slug as business_slug
+        FROM campaigns c
+        JOIN businesses b ON b.id = c.business_id
+        ORDER BY c.created_at DESC
+        LIMIT 100
+    """))
+    rows = result.mappings().all()
+    campaigns = []
+    for r in rows:
+        d = dict(r)
+        for k in d:
+            if hasattr(d[k], 'isoformat'):
+                d[k] = d[k].isoformat()
+            elif isinstance(d[k], uuid.UUID):
+                d[k] = str(d[k])
+        campaigns.append(d)
+
+    stats_result = await db.execute(text("""
+        SELECT
+            COUNT(*) as total,
+            COUNT(*) FILTER (WHERE is_active = true AND (ends_at IS NULL OR ends_at > NOW())) as active,
+            COUNT(*) FILTER (WHERE is_active = false OR ends_at <= NOW()) as inactive
+        FROM campaigns
+    """))
+    stats_row = stats_result.mappings().first()
+
+    return {"campaigns": campaigns, "stats": dict(stats_row) if stats_row else {}}
+
+
+@router.get("/deals")
+async def admin_list_deals(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """List all deals across all businesses."""
+    result = await db.execute(text("""
+        SELECT d.*, b.business_name, b.slug as business_slug
+        FROM deals d
+        JOIN businesses b ON b.id = d.business_id
+        ORDER BY d.created_at DESC
+        LIMIT 100
+    """))
+    rows = result.mappings().all()
+    deals = []
+    for r in rows:
+        d = dict(r)
+        for k in d:
+            if hasattr(d[k], 'isoformat'):
+                d[k] = d[k].isoformat()
+            elif isinstance(d[k], uuid.UUID):
+                d[k] = str(d[k])
+        deals.append(d)
+
+    stats_result = await db.execute(text("""
+        SELECT
+            COUNT(*) as total,
+            COUNT(*) FILTER (WHERE is_active = true) as active,
+            COUNT(*) FILTER (WHERE is_active = false) as inactive
+        FROM deals
+    """))
+    stats_row = stats_result.mappings().first()
+
+    return {"deals": deals, "stats": dict(stats_row) if stats_row else {}}
