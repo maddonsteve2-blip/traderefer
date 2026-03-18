@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedInOut } from "@/components/SignedInOut";
 import {
   MapPin, ArrowRight,
   Megaphone, CheckCircle2, XCircle, ShieldCheck,
@@ -110,22 +110,24 @@ export default async function HomePage() {
               <p className="text-gray-600 mb-8 text-center text-xl leading-relaxed flex-grow">
                 Monetize your network. Earn gift cards for every trade job you refer — no selling, just connecting.
               </p>
-              <SignedOut>
-                <Link
-                  href="/register?type=referrer"
-                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
-                >
-                  Earn Gift Card Rewards <ArrowRight className="w-6 h-6" />
-                </Link>
-              </SignedOut>
-              <SignedIn>
-                <Link
-                  href="/dashboard/referrer"
-                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
-                >
-                  My Dashboard <ArrowRight className="w-6 h-6" />
-                </Link>
-              </SignedIn>
+              <SignedInOut
+                signedOut={
+                  <Link
+                    href="/register?type=referrer"
+                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                  >
+                    Earn Gift Card Rewards <ArrowRight className="w-6 h-6" />
+                  </Link>
+                }
+                signedIn={
+                  <Link
+                    href="/dashboard/referrer"
+                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                  >
+                    My Dashboard <ArrowRight className="w-6 h-6" />
+                  </Link>
+                }
+              />
             </div>
 
             {/* Trades card */}
@@ -140,24 +142,26 @@ export default async function HomePage() {
               <p className="text-gray-300 mb-8 text-center text-xl leading-relaxed flex-grow z-10">
                 Get exclusive, verified leads. Zero upfront cost — only pay a 20% fee when you win the job.
               </p>
-              <SignedOut>
-                <Link
-                  href="/register?type=business"
-                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
-                  style={{ minHeight: "64px" }}
-                >
-                  Grow Your Network <TrendingUp className="w-6 h-6" />
-                </Link>
-              </SignedOut>
-              <SignedIn>
-                <Link
-                  href="/dashboard/business"
-                  className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
-                  style={{ minHeight: "64px" }}
-                >
-                  View My Leads <TrendingUp className="w-6 h-6" />
-                </Link>
-              </SignedIn>
+              <SignedInOut
+                signedOut={
+                  <Link
+                    href="/register?type=business"
+                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
+                    style={{ minHeight: "64px" }}
+                  >
+                    Grow Your Network <TrendingUp className="w-6 h-6" />
+                  </Link>
+                }
+                signedIn={
+                  <Link
+                    href="/dashboard/business"
+                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
+                    style={{ minHeight: "64px" }}
+                  >
+                    View My Leads <TrendingUp className="w-6 h-6" />
+                  </Link>
+                }
+              />
             </div>
           </div>
         </div>
