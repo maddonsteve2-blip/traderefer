@@ -35,13 +35,9 @@ const isOnboardingRoute = createRouteMatcher(["/onboarding(.*)"]);
 const isOnboardingRootOnly = createRouteMatcher(["/onboarding"]);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
-    const { userId, sessionClaims, redirectToSignIn } = await auth();
-
-    // 0a. /businesses directory page — no redirect, filters stay on this page
-    // (Users reach /local/ pages via direct links, SEO, and internal linking)
     const pathname = req.nextUrl.pathname;
 
-    // 0b. Location 301 redirects (old → corrected URLs)
+    // 0a. Location 301 redirects (old → corrected URLs) - handle before auth
     if (pathname.startsWith("/local/")) {
         // Check exact path match first
         const redirectTo = LOCATION_REDIRECTS[pathname];
@@ -64,10 +60,13 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
         }
     }
 
-    // 1. Public routes: always accessible
+    // 1. Public routes: always accessible, no auth needed
     if (isPublicRoute(req)) {
         return NextResponse.next();
     }
+
+    // 2. Private routes: call auth() only when needed
+    const { userId, sessionClaims, redirectToSignIn } = await auth();
 
     // 2. Not signed in on a private route → redirect to sign-in
     if (!userId) {
