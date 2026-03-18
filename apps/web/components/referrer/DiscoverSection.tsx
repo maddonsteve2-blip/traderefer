@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Flame, Trophy, Sparkles, Star, Zap, Award, Crown, ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 interface Business {
     id: string;
@@ -33,13 +34,7 @@ function BusinessCard({ biz }: { biz: Business }) {
         <Link href={`/dashboard/referrer/refer/${biz.slug}`} className="block">
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:border-orange-200 transition-all group">
                 <div className="flex items-center gap-3 mb-3">
-                    {biz.logo_url ? (
-                        <img src={biz.logo_url} alt="" className="w-12 h-12 rounded-xl object-cover shrink-0" />
-                    ) : (
-                        <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400 font-black text-lg shrink-0">
-                            {biz.business_name.charAt(0)}
-                        </div>
-                    )}
+                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="sm" className="shrink-0" />
                     <div className="flex-1 min-w-0">
                         <div className="font-bold text-zinc-900 text-[19px] truncate group-hover:text-orange-600 transition-colors leading-tight">
                             {biz.business_name}

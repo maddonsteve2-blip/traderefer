@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowRight, DollarSign, ShieldCheck, Star } from "lucide-react";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 export const metadata: Metadata = {
     robots: { index: false, follow: false },
@@ -38,16 +39,9 @@ export default async function ReferPublicPage({
     return (
         <main className="min-h-screen bg-zinc-50 flex items-center justify-center p-6 md:p-8">
             <div className="max-w-md w-full bg-white rounded-[24px] md:rounded-[32px] border border-zinc-200 shadow-2xl p-8 md:p-12 text-center">
-                {business.logo_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <div className="w-20 h-20 md:w-24 md:h-24 mx-auto mb-6 p-1 bg-white border border-zinc-100 rounded-[20px] md:rounded-[24px] shadow-sm">
-                        <img src={business.logo_url} alt="" className="w-full h-full rounded-[18px] md:rounded-[22px] object-cover" />
-                    </div>
-                ) : (
-                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-[20px] md:rounded-[24px] bg-orange-100 flex items-center justify-center text-orange-600 font-black text-3xl md:text-4xl mx-auto mb-6">
-                        {business.business_name?.charAt(0)}
-                    </div>
-                )}
+                <div className="mx-auto mb-6">
+                    <BusinessLogo logoUrl={business.logo_url} name={business.business_name || ""} size="xl" />
+                </div>
 
                 <div className="flex items-center justify-center gap-2 mb-2">
                     <ShieldCheck className="w-5 h-5 text-blue-500" />

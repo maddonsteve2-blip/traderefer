@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { BusinessLogo } from "@/components/BusinessLogo";
 import { toast } from "sonner";
 import { MobileNetworkDashboard } from "@/components/business/MobileNetworkDashboard";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -308,13 +309,7 @@ function BizCard({ biz, badge, badgeColor }: { biz: Recommendation; badge: strin
         <Link href={`/b/${biz.slug}`} className="block group">
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-md hover:border-orange-200 transition-all">
                 <div className="flex items-center gap-4">
-                    {biz.logo_url ? (
-                        <img src={biz.logo_url} alt="" className="w-12 h-12 rounded-xl object-cover" />
-                    ) : (
-                        <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400 font-black text-lg">
-                            {biz.business_name.charAt(0)}
-                        </div>
-                    )}
+                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="sm" className="shrink-0" />
                     <div className="flex-1 min-w-0">
                         <div className="font-bold text-zinc-900 text-lg truncate group-hover:text-orange-600 transition-colors">
                             {biz.business_name}

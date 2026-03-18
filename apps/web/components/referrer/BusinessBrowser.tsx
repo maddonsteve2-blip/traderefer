@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 const TRADE_TABS = [
     "All", "Plumbing", "Electrical", "Carpentry", "Painting",
@@ -63,14 +64,7 @@ function BizCard({ biz, isFirst }: { biz: Business; isFirst?: boolean }) {
 
                 {/* Logo + name + trust score */}
                 <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-xl overflow-hidden bg-zinc-100 flex items-center justify-center shrink-0">
-                        {biz.logo_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                            <span className="text-2xl font-black text-zinc-400">{biz.business_name.charAt(0)}</span>
-                        )}
-                    </div>
+                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="md" className="shrink-0" />
                     <div className="flex-1 min-w-0">
                         <div className="font-black text-zinc-900 leading-tight truncate group-hover:text-orange-600 transition-colors text-[21px]">
                             {biz.business_name}

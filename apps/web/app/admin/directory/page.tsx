@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { auth } from "@clerk/nextjs/server";
 import { Building2, Search, Plus, ChevronLeft, ChevronRight, Filter, MoreHorizontal, ExternalLink, MapPin, Star, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -127,13 +128,7 @@ export default async function DirectoryPage({
                                             <tr key={biz.id} className="border-b border-zinc-50 hover:bg-zinc-50 transition-colors">
                                                 <td className="p-3 pl-4">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-9 h-9 rounded-lg bg-zinc-100 overflow-hidden shrink-0 flex items-center justify-center">
-                                                            {biz.logo_url ? (
-                                                                <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
-                                                            ) : (
-                                                                <Building2 className="w-4 h-4 text-zinc-300" />
-                                                            )}
-                                                        </div>
+                                                        <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="xs" />
                                                         <div className="min-w-0">
                                                             <p className="font-bold text-zinc-900 truncate max-w-[200px]">{biz.business_name}</p>
                                                             <p className="text-xs text-zinc-400 truncate max-w-[200px]">{biz.slug}</p>

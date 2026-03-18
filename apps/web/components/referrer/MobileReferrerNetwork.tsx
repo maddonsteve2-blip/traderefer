@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, Loader2, Info, UserPlus, ChevronRight, Clock } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 interface Business {
     id: string;
@@ -234,13 +235,7 @@ export function MobileReferrerNetwork({
                                         href={`/dashboard/referrer/refer/${b.slug ?? b.id}`}
                                         className="bg-white border border-[#E4E4E7] rounded-[20px] p-4 flex items-center gap-4 transition-all active:scale-[0.99]"
                                     >
-                                        <div className="w-14 h-14 rounded-full bg-[#F4F4F5] flex items-center justify-center shrink-0 overflow-hidden border border-[#E4E4E7]">
-                                            {b.logo_url ? (
-                                                <img src={b.logo_url} alt="" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <span className="text-zinc-300 font-black text-2xl">{b.name[0]}</span>
-                                            )}
-                                        </div>
+                                        <BusinessLogo logoUrl={b.logo_url} name={b.name} size="round-lg" />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-base font-black text-[#18181B] truncate tracking-tight">{b.name}</p>
                                             <p className="text-[13px] font-medium text-zinc-500">
@@ -276,13 +271,7 @@ export function MobileReferrerNetwork({
                                             href="/dashboard/referrer/applications"
                                             className="bg-white border border-[#E4E4E7] rounded-[20px] p-4 flex items-center gap-4 transition-all active:scale-[0.99]"
                                         >
-                                            <div className="w-14 h-14 rounded-full bg-[#F4F4F5] flex items-center justify-center shrink-0 overflow-hidden border border-[#E4E4E7]">
-                                                {app.business_logo ? (
-                                                    <img src={app.business_logo} alt="" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <span className="text-zinc-300 font-black text-2xl">{app.business_name[0]}</span>
-                                                )}
-                                            </div>
+                                            <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="round-lg" />
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-base font-black text-[#18181B] truncate tracking-tight">{app.business_name}</p>
                                                 <p className="text-[13px] font-medium text-zinc-500">

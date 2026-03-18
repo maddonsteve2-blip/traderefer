@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Flame, Gift, TrendingUp, Users, Zap, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 interface Campaign {
     id: string;
@@ -80,14 +81,7 @@ export function HotCampaigns() {
                             href={`/dashboard/referrer/refer/${c.slug}`}
                             className="flex items-center gap-4 p-4 bg-orange-50 border border-orange-100 rounded-2xl hover:border-orange-300 hover:bg-orange-100/60 transition-all group shadow-sm"
                         >
-                            <div className="w-11 h-11 bg-white border border-orange-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
-                                {c.logo_url ? (
-                                    /* eslint-disable-next-line @next/next/no-img-element */
-                                    <img src={c.logo_url} alt="" className="w-full h-full object-cover" />
-                                ) : (
-                                    <Icon className="w-5 h-5 text-orange-500" />
-                                )}
-                            </div>
+                            <BusinessLogo logoUrl={c.logo_url} name={c.business_name} size="sm" />
                             <div className="flex-1 min-w-0">
                                 <div className="text-lg font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors leading-tight">{c.business_name}</div>
                                 <div className="text-base text-zinc-500 font-bold truncate mt-0.5">{c.trade_category} · {daysLeft(c.ends_at)}</div>

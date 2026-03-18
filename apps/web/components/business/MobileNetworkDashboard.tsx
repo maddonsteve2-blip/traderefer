@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Users, UserPlus, ChevronRight, Shield, ArrowRight, Mail, Plus, Loader2, Check, Send, Copy } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 interface Recommendation {
     business_name: string;
@@ -121,12 +122,7 @@ export function MobileNetworkDashboard({ given, received, invites, onRefresh }: 
                                 href={`/b/${r.slug}`}
                                 className="bg-white border border-zinc-100 rounded-2xl p-3.5 flex items-center gap-3"
                             >
-                                <div className="w-10 h-10 bg-zinc-100 rounded-full flex items-center justify-center font-black text-zinc-500 uppercase text-sm shrink-0">
-                                    {r.logo_url
-                                        ? <img src={r.logo_url} className="w-full h-full rounded-full object-cover" alt="" />
-                                        : r.business_name?.[0]
-                                    }
-                                </div>
+                                <BusinessLogo logoUrl={r.logo_url} name={r.business_name} size="round-sm" />
                                 <div className="flex-1 min-w-0">
                                     <p className="font-bold text-zinc-900 text-[14px] truncate">{r.business_name}</p>
                                     <p className="text-[12px] text-zinc-500 truncate">{r.trade_category} · {r.suburb}</p>

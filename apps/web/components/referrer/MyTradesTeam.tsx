@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Users, Plus, Shield, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 const TRADE_SLOTS = [
     "Plumber", "Electrician", "Carpenter", "Painter",
@@ -118,14 +119,7 @@ export function MyTradesTeam() {
                                 href={`/dashboard/referrer/refer/${biz.slug}`}
                                 className="inline-flex items-center gap-3 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-full pl-1.5 pr-4 py-1.5 group transition-all shrink-0"
                             >
-                                <div className="w-12 h-12 rounded-full overflow-hidden bg-zinc-200 flex items-center justify-center shrink-0">
-                                    {biz.logo_url ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={biz.logo_url} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <span className="text-lg font-black text-zinc-500 group-hover:text-orange-500">{biz.name.charAt(0)}</span>
-                                    )}
-                                </div>
+                                <BusinessLogo logoUrl={biz.logo_url} name={biz.name} size="round-md" />
                                 <div className="flex flex-col leading-tight">
                                     <span className="text-[19px] font-bold text-zinc-700 group-hover:text-orange-600 transition-colors whitespace-nowrap">{cat}</span>
                                     {biz.earned > 0 && (

@@ -8,6 +8,7 @@ import {
     Loader2, Clock, AlertCircle
 } from "lucide-react";
 import Link from "next/link";
+import { BusinessLogo } from "@/components/BusinessLogo";
 import { toast } from "sonner";
 import { PageTransition } from "@/components/ui/PageTransition";
 
@@ -450,9 +451,7 @@ export default function ReferrerManagePage() {
                                     className="rounded-[24px] border border-zinc-200 bg-white p-4 shadow-sm"
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center overflow-hidden shrink-0 font-black text-orange-600 text-lg">
-                                            {link.logo_url ? <img src={link.logo_url} alt="" className="w-full h-full object-cover" /> : link.name.charAt(0)}
-                                        </div>
+                                        <BusinessLogo logoUrl={link.logo_url} name={link.name} size="md" />
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-1.5">
                                                 <p className="text-base font-black text-zinc-900 truncate">{link.name}</p>
@@ -493,9 +492,7 @@ export default function ReferrerManagePage() {
                                     className="rounded-[24px] border border-amber-200 bg-white p-4 shadow-sm"
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center overflow-hidden shrink-0 font-black text-amber-600 text-lg">
-                                            {app.business_logo ? <img src={app.business_logo} alt="" className="w-full h-full object-cover" /> : app.business_name.charAt(0)}
-                                        </div>
+                                        <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="md" />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-base font-black text-zinc-900 truncate">{app.business_name}</p>
                                             <p className="mt-1 text-[13px] font-medium text-zinc-500">{app.trade_category} · {app.suburb}</p>
@@ -555,9 +552,7 @@ export default function ReferrerManagePage() {
                 className={`w-full text-left p-4 rounded-2xl transition-all ${isActive ? "bg-white shadow-lg shadow-zinc-100 ring-2 ring-orange-500/20" : "hover:bg-white hover:shadow-md hover:shadow-zinc-100"}`}
             >
                 <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center font-black text-orange-600 shrink-0 overflow-hidden text-lg">
-                        {link.logo_url ? <img src={link.logo_url} alt="" className="w-full h-full object-cover" /> : initials}
-                    </div>
+                    <BusinessLogo logoUrl={link.logo_url} name={link.name} size="sm" />
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                             <p className="font-black text-zinc-900 truncate leading-tight text-xl">{link.name}</p>
@@ -594,9 +589,7 @@ export default function ReferrerManagePage() {
                 className={`w-full text-left p-4 rounded-2xl transition-all ${isActive ? "bg-white shadow-lg shadow-zinc-100 ring-2 ring-amber-400/30" : "hover:bg-white hover:shadow-md hover:shadow-zinc-100"}`}
             >
                 <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center font-black text-amber-600 shrink-0 overflow-hidden text-lg">
-                        {app.business_logo ? <img src={app.business_logo} alt="" className="w-full h-full object-cover" /> : initials}
-                    </div>
+                    <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="sm" />
                     <div className="flex-1 min-w-0">
                         <p className="font-black text-zinc-900 truncate leading-tight text-xl">{app.business_name}</p>
                         <p className="font-bold text-zinc-500 truncate mt-0.5 text-base">{app.trade_category}</p>
@@ -627,7 +620,7 @@ export default function ReferrerManagePage() {
                             onClick={() => setSelected({ type: "approved", link })}
                             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl shrink-0 font-bold transition-all ${selected?.type === "approved" && selected.link.slug === link.slug ? "bg-orange-600 text-white" : "bg-white border border-zinc-200 text-zinc-700"} text-sm`}
                         >
-                            {link.logo_url ? <img src={link.logo_url} alt="" className="w-5 h-5 rounded-md object-cover" /> : <Building2 className="w-4 h-4 opacity-50" />}
+                            <BusinessLogo logoUrl={link.logo_url} name={link.name} size="xs" />
                             {link.name}
                         </button>
                     ))}

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { PageTransition } from "@/components/ui/PageTransition";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 interface Application {
     id: string;
@@ -39,11 +40,7 @@ function AppCard({ app, mobile }: { app: Application; mobile?: boolean }) {
     return (
         <div className={`bg-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md transition-all ${mobile ? "p-4" : "p-5"}`}>
             <div className={`flex items-start ${mobile ? "gap-3" : "gap-4"}`}>
-                <div className={`shrink-0 flex items-center justify-center overflow-hidden rounded-2xl bg-zinc-100 font-black text-zinc-400 text-lg ${mobile ? "w-12 h-12" : "w-14 h-14"}`}>
-                    {app.business_logo
-                        ? <img src={app.business_logo} alt="" className="w-full h-full object-cover" />
-                        : app.business_name.charAt(0)}
-                </div>
+                <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size={mobile ? "sm" : "md"} />
                 <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="min-w-0">

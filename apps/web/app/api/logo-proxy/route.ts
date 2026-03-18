@@ -4,9 +4,9 @@ export async function GET(request: NextRequest) {
     const url = request.nextUrl.searchParams.get("url");
     if (!url) return new NextResponse("Missing url", { status: 400 });
 
-    // Only proxy known-safe Google profile photo URLs
-    if (!url.startsWith("https://lh") || !url.includes("googleusercontent.com")) {
-        return new NextResponse("Forbidden", { status: 403 });
+    // Must be HTTPS
+    if (!url.startsWith("https://")) {
+        return new NextResponse("Only HTTPS URLs allowed", { status: 403 });
     }
 
     try {
@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
             headers: {
                 "Content-Type": contentType,
                 "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
+                "Access-Control-Allow-Origin": "*",
             },
         });
     } catch {

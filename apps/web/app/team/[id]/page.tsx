@@ -1,6 +1,7 @@
 import { Shield, Star, MapPin, Users, Award, Zap, Crown, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { BusinessLogo } from "@/components/BusinessLogo";
 import { notFound } from "next/navigation";
 
 const TIER_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -78,13 +79,7 @@ export default async function MyTeamPage({ params }: { params: Promise<{ id: str
                                         <Link key={biz.slug} href={`/b/${biz.slug}?ref=${biz.link_code}`} className="block group">
                                             <div className="bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:border-orange-200 transition-all">
                                                 <div className="flex items-center gap-3 mb-3">
-                                                    {biz.logo_url ? (
-                                                        <img src={biz.logo_url} alt="" className="w-12 h-12 rounded-xl object-cover" />
-                                                    ) : (
-                                                        <div className="w-12 h-12 rounded-xl bg-zinc-100 flex items-center justify-center text-zinc-400 font-black">
-                                                            {biz.business_name.charAt(0)}
-                                                        </div>
-                                                    )}
+                                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="sm" className="shrink-0" />
                                                     <div className="flex-1 min-w-0">
                                                         <div className="font-bold text-zinc-900 group-hover:text-orange-600 transition-colors truncate">
                                                             {biz.business_name}

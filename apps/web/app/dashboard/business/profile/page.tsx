@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+import { BusinessLogo } from "@/components/BusinessLogo";
 import {
     User,
     Save,
@@ -335,11 +336,7 @@ export default function BusinessProfileManagementPage() {
                         <div className="p-5 border-b border-zinc-100">
                             <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">Profile Preview</p>
                             <div className="flex flex-col items-center text-center">
-                                <div className="w-20 h-20 rounded-2xl bg-zinc-100 flex items-center justify-center overflow-hidden mb-3 border border-zinc-200 shrink-0">
-                                    {formData.logo_url
-                                        ? <img src={formData.logo_url} alt="Logo" className="w-full h-full object-cover" />
-                                        : <User className="w-8 h-8 text-zinc-300" />}
-                                </div>
+                                <BusinessLogo logoUrl={formData.logo_url} name={formData.business_name || "B"} size="lg" className="mb-3" />
                                 <h3 className="font-black text-zinc-900 text-sm leading-tight">{formData.business_name || "Your Business Name"}</h3>
                                 {formData.trade_category && (
                                     <span className="mt-1.5 inline-block bg-orange-50 text-orange-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-orange-100">{formData.trade_category}</span>
