@@ -19,6 +19,7 @@ export async function GET() {
   <sitemap><loc>${BASE_URL}/sitemaps/profiles.xml</loc></sitemap>
   <sitemap><loc>${BASE_URL}/sitemaps/suburbs.xml</loc></sitemap>
   <sitemap><loc>${BASE_URL}/sitemaps/trades.xml</loc></sitemap>
+  <sitemap><loc>${BASE_URL}/sitemaps/top.xml</loc></sitemap>
 </sitemapindex>`;
 
         return new NextResponse(xml, {

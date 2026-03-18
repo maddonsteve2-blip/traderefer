@@ -123,6 +123,8 @@ async function getNearbySuburbs(city: string, suburb: string, currentTrade: stri
           AND suburb != ${suburbName}
           AND trade_category ILIKE ${'%' + currentTrade + '%'}
           AND status = 'active'
+          AND suburb IS NOT NULL
+          AND suburb != ''
         LIMIT 12
     `;
     return suburbs;

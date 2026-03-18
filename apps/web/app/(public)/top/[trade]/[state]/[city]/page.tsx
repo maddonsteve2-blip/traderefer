@@ -103,11 +103,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         openGraph: {
             title: `Top 10 ${tradeNoun} in ${cityName} ${year} | TradeRefer`,
             description: `Ranked by real Google reviews. Find the best ${tradeNoun.toLowerCase()} in ${cityName}, ${stateName}.`,
+            images: ['https://traderefer.au/og-default.jpg'],
         },
         twitter: {
             card: 'summary_large_image',
-            title: `Top 10 ${tradeNoun} in ${cityName} ${year} | TradeRefer`,
-            description: `Ranked by real Google reviews. Find the best ${tradeNoun.toLowerCase()} in ${cityName}, ${stateName}.`,
+            title: `Top 10 ${tradeNoun} in ${cityName} ${year}`,
+            images: ['https://traderefer.au/og-default.jpg'],
         },
     };
 }

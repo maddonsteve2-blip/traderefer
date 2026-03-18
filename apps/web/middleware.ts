@@ -98,7 +98,16 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
 export const config = {
     matcher: [
-        "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|xml|txt)).*)",
-        "/(api|trpc)(.*)",
+        // Only run Clerk middleware on authenticated routes
+        // Exclude all public routes so they can be cached by Vercel ISR
+        '/dashboard(.*)',
+        '/settings(.*)',
+        '/admin(.*)',
+        '/onboarding(.*)',
+        '/claim(.*)',
+        '/api/backend(.*)',
+        '/api/stripe(.*)',
+        // Exclude: /, /b/*, /local/*, /top/*, /businesses*, /categories*, etc.
+        // These routes have export const revalidate = 3600 and must not be touched by Clerk
     ],
 };

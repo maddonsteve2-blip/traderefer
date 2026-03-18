@@ -34,6 +34,7 @@ import { BusinessLogo } from "@/components/BusinessLogo";
 import Script from "next/script";
 import { proxyLogoUrl } from "@/lib/logo";
 import { TRADE_FAQ_BANK } from "@/lib/constants";
+import { getPostcode } from "@/lib/postcodes";
 import { ReviewSection } from "@/components/ReviewSection";
 import { EnrichTrigger } from "@/components/EnrichTrigger";
 
@@ -777,22 +778,31 @@ export default async function PublicProfilePage({
                             </div>
 
                             {/* Browse More — internal linking for SEO */}
-                            {business.suburb && business.trade_category && (
-                                <nav className="bg-zinc-50 rounded-2xl border border-zinc-100 p-6">
-                                    <h3 className="font-bold text-zinc-500 text-xs uppercase tracking-widest mb-3">Browse More</h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        <Link href={`/local/${(business.state || 'nsw').toLowerCase()}/${(business.city || business.suburb).toLowerCase().replace(/\s+/g, '-')}/${business.suburb.toLowerCase().replace(/\s+/g, '-')}/${business.trade_category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
-                                            <MapPin className="w-3 h-3" /> {business.trade_category} in {business.suburb}
-                                        </Link>
-                                        <Link href={`/local/${(business.state || 'nsw').toLowerCase()}/${(business.city || business.suburb).toLowerCase().replace(/\s+/g, '-')}/${business.suburb.toLowerCase().replace(/\s+/g, '-')}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
-                                            <MapPin className="w-3 h-3" /> All Trades in {business.suburb}
-                                        </Link>
-                                        <Link href={`/local/${(business.state || 'nsw').toLowerCase()}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
-                                            <MapPin className="w-3 h-3" /> {(business.state || 'NSW').toUpperCase()} Directory
-                                        </Link>
-                                    </div>
-                                </nav>
-                            )}
+                            {business.suburb && business.trade_category && (() => {
+                                const stateSlug = (business.state || 'nsw').toLowerCase();
+                                const suburbSlug = business.suburb.toLowerCase().replace(/\s+/g, '-');
+                                const citySlug = (business.city || business.suburb).toLowerCase().replace(/\s+/g, '-');
+                                const tradeSlug = business.trade_category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                                const postcode = getPostcode(suburbSlug, stateSlug);
+                                const suburbWithPostcode = postcode ? `${suburbSlug}-${postcode}` : suburbSlug;
+                                
+                                return (
+                                    <nav className="bg-zinc-50 rounded-2xl border border-zinc-100 p-6">
+                                        <h3 className="font-bold text-zinc-500 text-xs uppercase tracking-widest mb-3">Browse More</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            <Link href={`/local/${stateSlug}/${citySlug}/${suburbWithPostcode}/${tradeSlug}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
+                                                <MapPin className="w-3 h-3" /> {business.trade_category} in {business.suburb}
+                                            </Link>
+                                            <Link href={`/local/${stateSlug}/${citySlug}/${suburbWithPostcode}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
+                                                <MapPin className="w-3 h-3" /> All Trades in {business.suburb}
+                                            </Link>
+                                            <Link href={`/local/${stateSlug}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
+                                                <MapPin className="w-3 h-3" /> {(business.state || 'NSW').toUpperCase()} Directory
+                                            </Link>
+                                        </div>
+                                    </nav>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
