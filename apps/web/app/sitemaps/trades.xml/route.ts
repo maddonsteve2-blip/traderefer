@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { getPostcode } from '@/lib/postcodes';
 
 export const revalidate = 86400;
 
@@ -8,6 +7,12 @@ const BASE_URL = 'https://traderefer.au';
 
 function formatSlug(text: string) {
     return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function extractPostcode(address: string): string | null {
+    if (!address) return null;
+    const match = address.match(/\b(\d{4})\b/);
+    return match ? match[1] : null;
 }
 
 export async function GET() {
@@ -18,23 +23,22 @@ export async function GET() {
             SELECT LOWER(state) as state_slug,
                    LOWER(REPLACE(city, ' ', '-')) as city_slug,
                    LOWER(REPLACE(suburb, ' ', '-')) as suburb_slug,
-                   suburb,
-                   state,
                    trade_category,
-                   MAX(COALESCE(updated_at, created_at)) as last_updated
+                   MAX(COALESCE(updated_at, created_at)) as last_updated,
+                   MAX(address) as sample_address
             FROM businesses
             WHERE status = 'active'
               AND state IS NOT NULL AND state != ''
               AND city IS NOT NULL AND city != ''
               AND suburb IS NOT NULL AND suburb != ''
               AND trade_category IS NOT NULL AND trade_category != ''
-            GROUP BY LOWER(state), LOWER(REPLACE(city, ' ', '-')), LOWER(REPLACE(suburb, ' ', '-')), suburb, state, trade_category
+            GROUP BY LOWER(state), LOWER(REPLACE(city, ' ', '-')), LOWER(REPLACE(suburb, ' ', '-')), trade_category
         `;
 
         const urlset = rows.map(r => {
             const tradeSlug = formatSlug(r.trade_category as string);
             const suburbSlug = r.suburb_slug as string;
-            const postcode = getPostcode(r.suburb as string, (r.state as string).toLowerCase());
+            const postcode = extractPostcode(r.sample_address as string);
             const suburbWithPostcode = postcode ? `${suburbSlug}-${postcode}` : suburbSlug;
             const lastmod = r.last_updated ? new Date(r.last_updated as string).toISOString().split('T')[0] : today;
             return `  <url><loc>${BASE_URL}/local/${r.state_slug}/${r.city_slug}/${suburbWithPostcode}/${tradeSlug}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`;
