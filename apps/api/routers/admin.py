@@ -1110,3 +1110,505 @@ async def admin_list_deals(
     stats_row = stats_result.mappings().first()
 
     return {"deals": deals, "stats": dict(stats_row) if stats_row else {}}
+
+
+# ── Google Places Fill endpoints ──
+
+@router.get("/places/stats")
+async def get_places_fill_stats(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Stats for Google Places fill coverage."""
+    result = await db.execute(text("""
+        SELECT
+            COUNT(*) FILTER (WHERE status = 'active') as total_active,
+            COUNT(*) FILTER (WHERE status = 'active' AND data_source = 'Google Places') as from_google,
+            COUNT(*) FILTER (WHERE status = 'active' AND data_source IS NULL OR data_source = '') as no_source,
+            COUNT(*) FILTER (WHERE status = 'active' AND google_place_id IS NOT NULL) as has_place_id,
+            COUNT(DISTINCT state) FILTER (WHERE status = 'active') as states_covered,
+            COUNT(DISTINCT trade_category) FILTER (WHERE status = 'active') as trades_covered
+        FROM businesses
+    """))
+    row = result.mappings().first()
+    return dict(row) if row else {}
+
+
+class PlacesFillRequest(BaseModel):
+    trade: str
+    state: str
+    suburb: Optional[str] = None
+    limit: int = 20
+
+
+def slugify(name: str) -> str:
+    import re as _re
+    s = name.lower().strip()
+    s = _re.sub(r'[^a-z0-9\s-]', '', s)
+    s = _re.sub(r'[\s-]+', '-', s)
+    return s.strip('-')[:80]
+
+
+@router.post("/places/run")
+async def run_places_fill(
+    req: PlacesFillRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Search Google Places for businesses and add new ones to the directory."""
+    if not GOOGLE_API_KEY:
+        raise HTTPException(status_code=500, detail="GOOGLE_PLACES_API_KEY not configured")
+
+    batch_size = min(req.limit, 60)
+    location = f"{req.suburb}, {req.state}" if req.suburb else req.state
+    query = f"{req.trade} in {location}, Australia"
+
+    stats = {"searched": 0, "created": 0, "skipped_duplicate": 0, "skipped_no_name": 0, "errors": 0}
+    log_entries = []
+
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        next_page_token = None
+        fetched = 0
+
+        while fetched < batch_size:
+            params = {"key": GOOGLE_API_KEY}
+            if next_page_token:
+                params["pagetoken"] = next_page_token
+                await asyncio.sleep(2)  # Required delay for page tokens
+            else:
+                params["query"] = query
+
+            resp = await client.get(
+                "https://maps.googleapis.com/maps/api/place/textsearch/json",
+                params=params
+            )
+            data = resp.json()
+
+            if data.get("status") not in ("OK", "ZERO_RESULTS"):
+                log_entries.append(f"API error: {data.get('status')} — {data.get('error_message', '')}")
+                break
+
+            results = data.get("results", [])
+            if not results:
+                break
+
+            for place in results:
+                if fetched >= batch_size:
+                    break
+                fetched += 1
+                stats["searched"] += 1
+
+                name = place.get("name", "").strip()
+                if not name:
+                    stats["skipped_no_name"] += 1
+                    continue
+
+                place_id = place.get("place_id", "")
+                lat = place.get("geometry", {}).get("location", {}).get("lat")
+                lng = place.get("geometry", {}).get("location", {}).get("lng")
+                address = place.get("formatted_address", "")
+                rating = place.get("rating")
+                total_reviews = place.get("user_ratings_total", 0)
+
+                # Parse suburb/city/state from address
+                parts = [p.strip() for p in address.split(",")]
+                biz_suburb = parts[1].strip().split(" ")[0] if len(parts) > 1 else (req.suburb or "")
+                biz_state = req.state
+                biz_city = biz_suburb
+
+                # Check for duplicate by place_id or name+suburb
+                dup_check = await db.execute(text("""
+                    SELECT id FROM businesses
+                    WHERE google_place_id = :pid
+                       OR (LOWER(business_name) = LOWER(:name) AND LOWER(suburb) = LOWER(:suburb))
+                    LIMIT 1
+                """), {"pid": place_id, "name": name, "suburb": biz_suburb})
+                if dup_check.first():
+                    stats["skipped_duplicate"] += 1
+                    log_entries.append(f"⏭ {name} — duplicate")
+                    continue
+
+                # Get logo from first photo
+                logo_url = None
+                photos = place.get("photos", [])
+                if photos:
+                    ref = photos[0].get("photo_reference")
+                    if ref:
+                        logo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={ref}&key={GOOGLE_API_KEY}"
+
+                slug = slugify(name)
+                # Ensure unique slug
+                slug_check = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
+                if slug_check.first():
+                    slug = f"{slug}-{biz_suburb.lower()[:10]}"
+                    slug_check2 = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
+                    if slug_check2.first():
+                        slug = f"{slug}-{str(uuid.uuid4())[:6]}"
+
+                try:
+                    new_id = str(uuid.uuid4())
+                    await db.execute(text("""
+                        INSERT INTO businesses (id, business_name, slug, trade_category, suburb, city, state,
+                            lat, lng, avg_rating, total_reviews, review_count, logo_url, status, data_source,
+                            google_place_id, listing_visibility, created_at, updated_at)
+                        VALUES (:id, :name, :slug, :trade, :suburb, :city, :state,
+                            :lat, :lng, :rating, :reviews, :reviews, :logo, 'active', 'Google Places',
+                            :pid, 'public', NOW(), NOW())
+                    """), {
+                        "id": new_id, "name": name, "slug": slug, "trade": req.trade,
+                        "suburb": biz_suburb, "city": biz_city, "state": biz_state,
+                        "lat": lat, "lng": lng, "rating": rating, "reviews": total_reviews,
+                        "logo": logo_url, "pid": place_id,
+                    })
+                    await db.commit()
+                    stats["created"] += 1
+                    log_entries.append(f"✅ {name} — created ({biz_suburb}, {biz_state})")
+                except Exception as e:
+                    await db.rollback()
+                    stats["errors"] += 1
+                    log_entries.append(f"❌ {name} — {str(e)[:80]}")
+
+            next_page_token = data.get("next_page_token")
+            if not next_page_token:
+                break
+
+    # Count remaining unfilled
+    remaining = await db.execute(text("""
+        SELECT COUNT(*) FROM fill_queue WHERE filled_at IS NULL
+    """))
+    stats["remaining_queue"] = remaining.scalar() or 0
+
+    return {"status": "complete", "stats": stats, "log": log_entries}
+
+
+# ── Business CRUD endpoints ──
+
+class BusinessUpdateRequest(BaseModel):
+    business_name: Optional[str] = None
+    trade_category: Optional[str] = None
+    suburb: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    status: Optional[str] = None
+    business_phone: Optional[str] = None
+    business_email: Optional[str] = None
+    website: Optional[str] = None
+    description: Optional[str] = None
+    abn: Optional[str] = None
+    listing_visibility: Optional[str] = None
+
+
+@router.get("/businesses/{business_id}")
+async def get_business_detail(
+    business_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Get full business details for admin editing."""
+    result = await db.execute(text("""
+        SELECT b.*,
+            (SELECT COUNT(*) FROM leads l WHERE l.business_id = b.id) as lead_count,
+            (SELECT COUNT(*) FROM deals d WHERE d.business_id = b.id) as deal_count,
+            (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id) as campaign_count
+        FROM businesses b WHERE b.id = :id
+    """), {"id": business_id})
+    row = result.mappings().first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Business not found")
+    biz = dict(row)
+    # Serialize dates/uuids
+    for k in biz:
+        if hasattr(biz[k], 'isoformat'):
+            biz[k] = biz[k].isoformat()
+        elif isinstance(biz[k], uuid.UUID):
+            biz[k] = str(biz[k])
+    return biz
+
+
+@router.patch("/businesses/{business_id}")
+async def update_business(
+    business_id: str,
+    req: BusinessUpdateRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Update business fields from admin panel."""
+    updates = {k: v for k, v in req.dict().items() if v is not None}
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    set_clauses = ", ".join([f"{k} = :{k}" for k in updates])
+    updates["id"] = business_id
+    updates["now"] = datetime.utcnow()
+
+    await db.execute(text(f"""
+        UPDATE businesses SET {set_clauses}, updated_at = :now WHERE id = :id
+    """), updates)
+    await db.commit()
+    return {"status": "updated", "fields": list(updates.keys())}
+
+
+class BusinessCreateRequest(BaseModel):
+    business_name: str
+    trade_category: str
+    suburb: str
+    city: Optional[str] = None
+    state: str
+    business_phone: Optional[str] = None
+    business_email: Optional[str] = None
+    website: Optional[str] = None
+    description: Optional[str] = None
+    abn: Optional[str] = None
+
+
+@router.post("/businesses/create")
+async def create_business(
+    req: BusinessCreateRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Manually create a business from admin panel."""
+    slug = slugify(req.business_name)
+    slug_check = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
+    if slug_check.first():
+        slug = f"{slug}-{req.suburb.lower()[:10]}"
+        slug_check2 = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
+        if slug_check2.first():
+            slug = f"{slug}-{str(uuid.uuid4())[:6]}"
+
+    new_id = str(uuid.uuid4())
+    await db.execute(text("""
+        INSERT INTO businesses (id, business_name, slug, trade_category, suburb, city, state,
+            business_phone, business_email, website, description, abn,
+            status, listing_visibility, data_source, created_at, updated_at)
+        VALUES (:id, :name, :slug, :trade, :suburb, :city, :state,
+            :phone, :email, :website, :desc, :abn,
+            'active', 'public', 'Admin', NOW(), NOW())
+    """), {
+        "id": new_id, "name": req.business_name, "slug": slug, "trade": req.trade_category,
+        "suburb": req.suburb, "city": req.city or req.suburb, "state": req.state,
+        "phone": req.business_phone, "email": req.business_email,
+        "website": req.website, "desc": req.description, "abn": req.abn,
+    })
+    await db.commit()
+    return {"status": "created", "id": new_id, "slug": slug}
+
+
+# ── User Actions ──
+
+class UserActionRequest(BaseModel):
+    action: str  # 'suspend', 'activate', 'verify', 'unverify'
+
+
+@router.post("/businesses/{business_id}/action")
+async def business_action(
+    business_id: str,
+    req: UserActionRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Perform admin action on a business."""
+    if req.action == "suspend":
+        await db.execute(text("UPDATE businesses SET status = 'suspended', updated_at = NOW() WHERE id = :id"), {"id": business_id})
+    elif req.action == "activate":
+        await db.execute(text("UPDATE businesses SET status = 'active', updated_at = NOW() WHERE id = :id"), {"id": business_id})
+    elif req.action == "verify":
+        await db.execute(text("UPDATE businesses SET is_verified = true, updated_at = NOW() WHERE id = :id"), {"id": business_id})
+    elif req.action == "unverify":
+        await db.execute(text("UPDATE businesses SET is_verified = false, updated_at = NOW() WHERE id = :id"), {"id": business_id})
+    else:
+        raise HTTPException(status_code=400, detail=f"Unknown action: {req.action}")
+    await db.commit()
+    return {"status": "ok", "action": req.action, "business_id": business_id}
+
+
+# ── Notifications ──
+
+class BroadcastRequest(BaseModel):
+    title: str
+    message: str
+    audience: str = "all"  # 'all', 'businesses', 'referrers'
+    link: Optional[str] = None
+
+
+@router.get("/notifications")
+async def list_notifications(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+    page: int = 1,
+):
+    """List all admin-sent notifications."""
+    per_page = 50
+    offset = (page - 1) * per_page
+
+    count_result = await db.execute(text("SELECT COUNT(*) FROM notifications WHERE sender_type = 'admin'"))
+    total = count_result.scalar() or 0
+    pages = max(1, (total + per_page - 1) // per_page)
+
+    result = await db.execute(text("""
+        SELECT id, title, message, audience, link, created_at, recipient_count
+        FROM notifications
+        WHERE sender_type = 'admin'
+        ORDER BY created_at DESC
+        LIMIT :limit OFFSET :offset
+    """), {"limit": per_page, "offset": offset})
+    items = []
+    for r in result.mappings().all():
+        row = dict(r)
+        if row.get("created_at"):
+            row["created_at"] = row["created_at"].isoformat()
+        if isinstance(row.get("id"), uuid.UUID):
+            row["id"] = str(row["id"])
+        items.append(row)
+
+    return {"items": items, "total": total, "page": page, "pages": pages}
+
+
+@router.post("/notifications/broadcast")
+async def send_broadcast(
+    req: BroadcastRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Send a broadcast notification to users."""
+    # Count target audience
+    if req.audience == "businesses":
+        count_res = await db.execute(text("SELECT COUNT(*) FROM businesses WHERE clerk_user_id IS NOT NULL AND status = 'active'"))
+    elif req.audience == "referrers":
+        count_res = await db.execute(text("SELECT COUNT(DISTINCT clerk_user_id) FROM referrers WHERE clerk_user_id IS NOT NULL"))
+    else:
+        count_res = await db.execute(text("""
+            SELECT (SELECT COUNT(*) FROM businesses WHERE clerk_user_id IS NOT NULL AND status = 'active')
+                 + (SELECT COUNT(DISTINCT clerk_user_id) FROM referrers WHERE clerk_user_id IS NOT NULL)
+        """))
+    recipient_count = count_res.scalar() or 0
+
+    # Store the notification record
+    notif_id = str(uuid.uuid4())
+    try:
+        await db.execute(text("""
+            INSERT INTO notifications (id, title, message, audience, link, sender_type, recipient_count, created_at)
+            VALUES (:id, :title, :message, :audience, :link, 'admin', :count, NOW())
+        """), {
+            "id": notif_id, "title": req.title, "message": req.message,
+            "audience": req.audience, "link": req.link, "count": recipient_count,
+        })
+        await db.commit()
+    except Exception:
+        await db.rollback()
+        # Table might not exist yet — create it
+        await db.execute(text("""
+            CREATE TABLE IF NOT EXISTS notifications (
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                title TEXT NOT NULL,
+                message TEXT NOT NULL,
+                audience TEXT DEFAULT 'all',
+                link TEXT,
+                sender_type TEXT DEFAULT 'admin',
+                recipient_count INT DEFAULT 0,
+                created_at TIMESTAMPTZ DEFAULT NOW()
+            )
+        """))
+        await db.commit()
+        await db.execute(text("""
+            INSERT INTO notifications (id, title, message, audience, link, sender_type, recipient_count, created_at)
+            VALUES (:id, :title, :message, :audience, :link, 'admin', :count, NOW())
+        """), {
+            "id": notif_id, "title": req.title, "message": req.message,
+            "audience": req.audience, "link": req.link, "count": recipient_count,
+        })
+        await db.commit()
+
+    return {"status": "sent", "id": notif_id, "recipient_count": recipient_count}
+
+
+# ── Settings / Health Check ──
+
+@router.get("/health")
+async def health_check(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Real health check for all services."""
+    checks = {}
+
+    # DB check
+    try:
+        result = await db.execute(text("SELECT 1"))
+        checks["database"] = {"status": "online", "detail": "Neon PostgreSQL"}
+    except Exception as e:
+        checks["database"] = {"status": "offline", "detail": str(e)[:60]}
+
+    # GSC API check
+    gsc_url = os.getenv("GSC_API_URL", "https://traderefer-gsc-api-production.up.railway.app")
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            r = await client.get(f"{gsc_url}/api/gsc/latest")
+            checks["gsc_api"] = {"status": "online" if r.status_code == 200 else "degraded", "detail": f"HTTP {r.status_code}"}
+    except Exception as e:
+        checks["gsc_api"] = {"status": "offline", "detail": str(e)[:60]}
+
+    # Blob storage check
+    checks["blob_storage"] = {
+        "status": "online" if os.getenv("BLOB_READ_WRITE_TOKEN") else "not_configured",
+        "detail": "Vercel Blob"
+    }
+
+    # Google API check
+    checks["google_api"] = {
+        "status": "online" if GOOGLE_API_KEY else "not_configured",
+        "detail": "Google Places API"
+    }
+
+    # DB stats
+    try:
+        stats = await db.execute(text("""
+            SELECT
+                (SELECT COUNT(*) FROM businesses WHERE status = 'active') as businesses,
+                (SELECT COUNT(*) FROM leads) as leads,
+                (SELECT pg_database_size(current_database())) as db_size_bytes
+        """))
+        row = stats.mappings().first()
+        checks["db_stats"] = dict(row) if row else {}
+    except:
+        checks["db_stats"] = {}
+
+    return checks
+
+
+# ── Trade Categories CRUD ──
+
+@router.get("/trade-categories")
+async def list_trade_categories(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """List all unique trade categories with counts."""
+    result = await db.execute(text("""
+        SELECT trade_category, COUNT(*) as count
+        FROM businesses
+        WHERE status = 'active' AND trade_category IS NOT NULL AND trade_category != ''
+        GROUP BY trade_category
+        ORDER BY count DESC
+    """))
+    return [dict(r) for r in result.mappings().all()]
+
+
+class RenameCategoryRequest(BaseModel):
+    old_name: str
+    new_name: str
+
+
+@router.post("/trade-categories/rename")
+async def rename_trade_category(
+    req: RenameCategoryRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin)
+):
+    """Rename a trade category across all businesses."""
+    result = await db.execute(text("""
+        UPDATE businesses SET trade_category = :new, updated_at = NOW()
+        WHERE trade_category = :old
+    """), {"old": req.old_name, "new": req.new_name})
+    await db.commit()
+    return {"status": "renamed", "from": req.old_name, "to": req.new_name, "affected": result.rowcount}

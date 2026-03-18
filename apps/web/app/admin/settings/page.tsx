@@ -1,17 +1,58 @@
 export const dynamic = "force-dynamic";
 
 import { auth } from "@clerk/nextjs/server";
-import { Settings, Play, CheckCircle2, Database, Globe, Key, Clock, Wrench } from "lucide-react";
+import { Settings, Play, CheckCircle2, Database, Globe, Key, Clock, Wrench, AlertTriangle, XCircle } from "lucide-react";
 import Link from "next/link";
+import { TradeCategories } from "@/components/admin/TradeCategories";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-async function triggerCron(token: string) {
-    // This is a display-only page; cron trigger is a client action
-    return null;
+async function getHealth(token: string) {
+    try {
+        const res = await fetch(`${API}/admin/health`, {
+            headers: { Authorization: `Bearer ${token}` },
+            cache: "no-store",
+        });
+        if (!res.ok) return null;
+        return res.json();
+    } catch { return null; }
+}
+
+async function getCategories(token: string) {
+    try {
+        const res = await fetch(`${API}/admin/trade-categories`, {
+            headers: { Authorization: `Bearer ${token}` },
+            cache: "no-store",
+        });
+        if (!res.ok) return [];
+        return res.json();
+    } catch { return []; }
+}
+
+function StatusDot({ status }: { status: string }) {
+    const color = status === "online" ? "bg-green-500" : status === "degraded" ? "bg-amber-500" : status === "not_configured" ? "bg-zinc-300" : "bg-red-500";
+    const label = status === "online" ? "Online" : status === "degraded" ? "Degraded" : status === "not_configured" ? "N/A" : "Offline";
+    const textColor = status === "online" ? "text-green-600" : status === "degraded" ? "text-amber-600" : status === "not_configured" ? "text-zinc-400" : "text-red-600";
+    return (
+        <div className="flex items-center gap-1.5">
+            <div className={`w-2 h-2 rounded-full ${color} ${status === "online" ? "animate-pulse" : ""}`} />
+            <span className={`text-xs font-bold ${textColor}`}>{label}</span>
+        </div>
+    );
 }
 
 export default async function SettingsPage() {
+    const { getToken } = await auth();
+    const token = await getToken();
+    const [health, categories] = await Promise.all([
+        token ? getHealth(token) : null,
+        token ? getCategories(token) : [],
+    ]);
+
+    const dbSize = health?.db_stats?.db_size_bytes
+        ? `${(health.db_stats.db_size_bytes / 1024 / 1024).toFixed(0)} MB`
+        : "—";
+
     return (
         <div className="min-h-screen bg-zinc-50">
             <div className="px-4 lg:px-8 py-6 lg:py-8 max-w-7xl mx-auto">
@@ -23,30 +64,46 @@ export default async function SettingsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* System Status */}
+                    {/* System Status — Real Health Checks */}
                     <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
                         <h3 className="font-bold text-zinc-900 mb-4 flex items-center gap-2">
                             <Database className="w-4 h-4 text-blue-500" /> System Status
                         </h3>
                         <div className="space-y-3">
                             {[
-                                { label: "API (Railway)", status: "online", url: process.env.NEXT_PUBLIC_API_URL || "localhost:8000" },
-                                { label: "GSC API (Railway)", status: "online", url: "traderefer-gsc-api-production.up.railway.app" },
-                                { label: "Database (Neon)", status: "online", url: "neon.tech" },
-                                { label: "Blob Storage (Vercel)", status: "online", url: "blob.vercel-storage.com" },
-                            ].map((svc) => (
-                                <div key={svc.label} className="flex items-center justify-between py-2 border-b border-zinc-50 last:border-0">
-                                    <div>
-                                        <p className="text-sm font-bold text-zinc-800">{svc.label}</p>
-                                        <p className="text-[11px] text-zinc-400">{svc.url}</p>
+                                { label: "Database (Neon)", key: "database" },
+                                { label: "GSC API (Railway)", key: "gsc_api" },
+                                { label: "Blob Storage (Vercel)", key: "blob_storage" },
+                                { label: "Google Places API", key: "google_api" },
+                            ].map((svc) => {
+                                const check = health?.[svc.key];
+                                return (
+                                    <div key={svc.label} className="flex items-center justify-between py-2 border-b border-zinc-50 last:border-0">
+                                        <div>
+                                            <p className="text-sm font-bold text-zinc-800">{svc.label}</p>
+                                            <p className="text-[11px] text-zinc-400">{check?.detail || "checking..."}</p>
+                                        </div>
+                                        <StatusDot status={check?.status || "offline"} />
                                     </div>
-                                    <div className="flex items-center gap-1.5">
-                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                        <span className="text-xs font-bold text-green-600">Online</span>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
+                        {health?.db_stats && (
+                            <div className="mt-4 pt-3 border-t border-zinc-100 grid grid-cols-3 gap-2 text-center">
+                                <div>
+                                    <div className="text-lg font-black text-zinc-900">{health.db_stats.businesses?.toLocaleString() ?? "—"}</div>
+                                    <div className="text-[10px] font-bold text-zinc-400 uppercase">Businesses</div>
+                                </div>
+                                <div>
+                                    <div className="text-lg font-black text-zinc-900">{health.db_stats.leads?.toLocaleString() ?? "—"}</div>
+                                    <div className="text-[10px] font-bold text-zinc-400 uppercase">Leads</div>
+                                </div>
+                                <div>
+                                    <div className="text-lg font-black text-zinc-900">{dbSize}</div>
+                                    <div className="text-[10px] font-bold text-zinc-400 uppercase">DB Size</div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Cron Jobs */}
@@ -128,6 +185,8 @@ export default async function SettingsPage() {
                             ))}
                         </div>
                     </div>
+                    {/* Trade Categories */}
+                    <TradeCategories initialCategories={categories} />
                 </div>
             </div>
         </div>

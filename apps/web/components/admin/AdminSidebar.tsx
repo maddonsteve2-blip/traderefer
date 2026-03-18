@@ -72,6 +72,7 @@ const ADMIN_NAV: NavGroup[] = [
         title: "Config",
         items: [
             { label: "Campaigns", href: "/admin/campaigns", matchPath: "/admin/campaigns", icon: Megaphone },
+            { label: "Notifications", href: "/admin/notifications", matchPath: "/admin/notifications", icon: Megaphone },
             { label: "Settings", href: "/admin/settings", matchPath: "/admin/settings", icon: Settings },
         ],
     },

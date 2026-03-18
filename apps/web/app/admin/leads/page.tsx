@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { auth } from "@clerk/nextjs/server";
 import { Target, ShieldAlert, Search, ChevronLeft, ChevronRight, Clock, CheckCircle2, XCircle, AlertTriangle, Calendar, Building2, User } from "lucide-react";
 import Link from "next/link";
+import { DisputeResolver } from "@/components/admin/DisputeResolver";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -127,6 +128,7 @@ export default async function LeadsPage({
                                         <th className="text-left p-3">Value</th>
                                         <th className="text-left p-3">Created</th>
                                         {tab === "disputes" && <th className="text-left p-3">Reason</th>}
+                                        <th className="text-right p-3 pr-4">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -162,6 +164,14 @@ export default async function LeadsPage({
                                             {tab === "disputes" && (
                                                 <td className="p-3 text-xs text-red-600 font-medium">{item.reason || "—"}</td>
                                             )}
+                                            <td className="p-3 pr-4 text-right">
+                                                <DisputeResolver
+                                                    leadId={item.id}
+                                                    customerName={item.customer_name || "Unknown"}
+                                                    businessName={item.business_name || "Unknown"}
+                                                    status={item.status}
+                                                />
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
