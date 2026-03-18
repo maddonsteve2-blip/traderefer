@@ -15,15 +15,22 @@ import { PrezzeeCarousel } from "@/components/home/PrezzeeCarousel";
 
 // Fetch popular city+trade combinations from database
 // Uses ROW_NUMBER to pick max 2 trades per city for diversity across Australia
+function extractPostcode(address: string): string | null {
+  if (!address) return null;
+  const match = address.match(/\b(\d{4})\b/);
+  return match ? match[1] : null;
+}
+
 async function getPopularSearches() {
   try {
     const result = await sql`
-      SELECT state, city, trade_category, business_count FROM (
+      SELECT state, city, trade_category, business_count, sample_address FROM (
         SELECT 
           state,
           city,
           trade_category,
           COUNT(*) as business_count,
+          MAX(address) as sample_address,
           ROW_NUMBER() OVER (PARTITION BY city ORDER BY COUNT(*) DESC) as rn
         FROM businesses
         WHERE status = 'active'
@@ -40,23 +47,25 @@ async function getPopularSearches() {
       const citySlug = row.city.toLowerCase().replace(/\s+/g, '-');
       const tradeSlug = row.trade_category.toLowerCase().replace(/\s+&?\s*/g, '-');
       const stateSlug = row.state.toLowerCase();
+      const postcode = extractPostcode(row.sample_address);
+      const cityWithPostcode = postcode ? `${citySlug}-${postcode}` : citySlug;
       
       return {
         label: `${row.trade_category} in ${row.city}`,
-        href: `/local/${stateSlug}/${citySlug}/${citySlug}/${tradeSlug}`,
+        href: `/local/${stateSlug}/${citySlug}/${cityWithPostcode}/${tradeSlug}`,
       };
     });
   } catch (error) {
     console.error('Error fetching popular searches:', error);
     return [
-      { label: "Plumbers in Sydney", href: "/local/nsw/sydney/sydney/plumbing" },
-      { label: "Electricians in Melbourne", href: "/local/vic/melbourne/melbourne/electrical" },
-      { label: "Painters in Brisbane", href: "/local/qld/brisbane/brisbane/painting" },
-      { label: "Builders in Perth", href: "/local/wa/perth/perth/building" },
-      { label: "Electricians in Adelaide", href: "/local/sa/adelaide/adelaide/electrical" },
-      { label: "Plumbers in Canberra", href: "/local/act/canberra/canberra/plumbing" },
-      { label: "Roofers in Gold Coast", href: "/local/qld/gold-coast/gold-coast/roofing" },
-      { label: "Builders in Hobart", href: "/local/tas/hobart/hobart/building" },
+      { label: "Plumbers in Sydney", href: "/local/nsw/sydney/sydney-2000/plumbing" },
+      { label: "Electricians in Melbourne", href: "/local/vic/melbourne/melbourne-3000/electrical" },
+      { label: "Painters in Brisbane", href: "/local/qld/brisbane/brisbane-4000/painting" },
+      { label: "Builders in Perth", href: "/local/wa/perth/perth-6000/building" },
+      { label: "Electricians in Adelaide", href: "/local/sa/adelaide/adelaide-5000/electrical" },
+      { label: "Plumbers in Canberra", href: "/local/act/canberra/canberra-2601/plumbing" },
+      { label: "Roofers in Gold Coast", href: "/local/qld/gold-coast/gold-coast-4217/roofing" },
+      { label: "Builders in Hobart", href: "/local/tas/hobart/hobart-7000/building" },
     ];
   }
 }

@@ -1,8 +1,13 @@
-"use client";
-
 import { SignUp } from "@clerk/nextjs";
 import { Rocket } from "lucide-react";
 import { Suspense } from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Join TradeRefer | Referrer Invitation",
+    description: "Create your free TradeRefer account to start referring quality tradies and earning commissions on every lead.",
+    robots: { index: false, follow: false },
+};
 
 export default function JoinPage() {
     return (

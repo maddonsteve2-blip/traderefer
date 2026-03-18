@@ -10,17 +10,13 @@ export async function GET() {
     try {
         const today = new Date().toISOString().split('T')[0];
 
-        // Static pages
+        // Static pages (auth-gated pages removed: /about, /compare, /rewards, /join)
         const staticUrls = [
             { loc: BASE_URL, priority: '1.0', freq: 'daily' },
             { loc: `${BASE_URL}/businesses`, priority: '0.9', freq: 'daily' },
             { loc: `${BASE_URL}/categories`, priority: '0.95', freq: 'weekly' },
             { loc: `${BASE_URL}/locations`, priority: '0.95', freq: 'weekly' },
             { loc: `${BASE_URL}/local`, priority: '0.9', freq: 'weekly' },
-            { loc: `${BASE_URL}/rewards`, priority: '0.7', freq: 'monthly' },
-            { loc: `${BASE_URL}/join`, priority: '0.6', freq: 'monthly' },
-            { loc: `${BASE_URL}/compare`, priority: '0.6', freq: 'monthly' },
-            { loc: `${BASE_URL}/about`, priority: '0.5', freq: 'monthly' },
             { loc: `${BASE_URL}/contact`, priority: '0.5', freq: 'monthly' },
             { loc: `${BASE_URL}/terms`, priority: '0.3', freq: 'monthly' },
             { loc: `${BASE_URL}/privacy`, priority: '0.3', freq: 'monthly' },
