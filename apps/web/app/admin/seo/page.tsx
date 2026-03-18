@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { auth } from "@clerk/nextjs/server";
 import { Search, TrendingUp, TrendingDown, Eye, MousePointer, BarChart3, AlertTriangle, ExternalLink, ArrowUp, ArrowDown } from "lucide-react";
 
-const GSC_API = process.env.GSC_API_URL || "https://traderefer-gsc-api-production.up.railway.app";
+const GSC_API = process.env.GSC_API_URL || "https://disciplined-truth-production-5cd7.up.railway.app";
 
 async function fetchGSC(endpoint: string) {
     try {

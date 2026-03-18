@@ -1,0 +1,129 @@
+# OpenClaw Configuration for TradeRefer SEO Bot
+agent:
+  name: "TradeRefer SEO Analyst"
+  model: "claude-3-5-sonnet-20241022"  # or "gpt-4o" if using OpenAI
+  temperature: 0.7
+
+tools:
+  # Your GSC API on Railway
+  - name: gsc_api
+    type: http
+    base_url: "https://disciplined-truth-production-5cd7.up.railway.app"
+    endpoints:
+      - path: /api/gsc/latest
+        method: GET
+        description: "Get latest GSC report summary (clicks, impressions, CTR, avg position)"
+
+      - path: /api/gsc/top-opportunities
+        method: GET
+        description: "Get AI-scored SEO improvement opportunities"
+
+      - path: /api/gsc/pages
+        method: GET
+        description: "Get page performance with filters"
+        parameters:
+          - name: min_clicks
+            required: false
+            type: integer
+          - name: limit
+            required: false
+            type: integer
+            default: 100
+          - name: period
+            required: false
+            type: string
+            default: "28"
+
+      - path: /api/gsc/queries
+        method: GET
+        description: "Get top search queries driving traffic"
+        parameters:
+          - name: min_clicks
+            required: false
+            type: integer
+          - name: limit
+            required: false
+            type: integer
+            default: 100
+
+      - path: /api/gsc/pages-by-pattern
+        method: GET
+        description: "Filter pages by URL pattern (e.g., /local/, /b/, /businesses/)"
+        parameters:
+          - name: pattern
+            required: true
+            type: string
+          - name: period
+            required: false
+            type: string
+            default: "28"
+
+      - path: /api/gsc/query-intent
+        method: GET
+        description: "Analyze query intent (local/info/transactional)"
+
+      - path: /api/gsc/ctr-analysis
+        method: GET
+        description: "Analyze CTR by position ranges"
+
+      - path: /api/gsc/position-changes
+        method: GET
+        description: "Find pages with ranking changes (28d vs 90d)"
+
+      - path: /api/gsc/zero-click
+        method: GET
+        description: "Find pages with impressions but no clicks"
+        parameters:
+          - name: min_impressions
+            required: false
+            type: integer
+            default: 100
+
+      - path: /api/gsc/crawl-issues
+        method: GET
+        description: "Analyze crawl and indexing issues"
+
+# System prompt for the LLM
+prompts:
+  system: |
+    You are an expert SEO analyst for TradeRefer.au, an Australian trades referral platform.
+    
+    Your goal is to analyze Google Search Console data and provide actionable SEO recommendations.
+    
+    Focus areas:
+    - Programmatic pages (/local/[state]/[city]/[suburb]/[trade])
+    - Business profiles (/b/[slug])
+    - CTR optimization (titles, meta descriptions)
+    - Position improvements (content, internal linking)
+    - Technical SEO (crawl issues, sitemaps)
+    
+    Always prioritize high-impact, low-effort improvements first.
+
+  daily_analysis: |
+    Analyze the latest GSC data and provide:
+    
+    1. **Top 5 Opportunities** (from /api/gsc/top-opportunities)
+       - What pages to optimize
+       - Why they're high-priority
+       - Specific actions to take
+    
+    2. **Crawl Issues** (from /api/gsc/crawl-issues)
+       - Poor CTR pages
+       - Low position pages
+       - Sitemap errors
+    
+    3. **Query Intent Analysis** (from /api/gsc/query-intent)
+       - What types of queries drive traffic
+       - Content gaps to fill
+    
+    4. **Position Changes** (from /api/gsc/position-changes)
+       - Pages improving (what's working)
+       - Pages declining (what to fix)
+    
+    Format as a concise executive summary with actionable next steps.
+
+# Scheduled tasks (optional)
+schedule:
+  - name: daily_seo_report
+    cron: "0 9 * * *"
+    prompt: daily_analysis

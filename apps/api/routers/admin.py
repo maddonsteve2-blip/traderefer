@@ -1540,7 +1540,7 @@ async def health_check(
         checks["database"] = {"status": "offline", "detail": str(e)[:60]}
 
     # GSC API check
-    gsc_url = os.getenv("GSC_API_URL", "https://traderefer-gsc-api-production.up.railway.app")
+    gsc_url = os.getenv("GSC_API_URL", "https://disciplined-truth-production-5cd7.up.railway.app")
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
             r = await client.get(f"{gsc_url}/api/gsc/latest")
