@@ -136,6 +136,26 @@ export default async function PublicProfilePage({
         notFound();
     }
 
+    // Fire-and-forget: enrich business with Google Places photos/description if needed
+    const photoCount = Array.isArray(business.photo_urls) ? business.photo_urls.length : 0;
+    const hasEditorialDesc = business.description && !business.description.includes('specialist serving') && !business.description.includes('top-rated') && !business.description.includes('provides expert') && !business.description.includes('offers ') && !business.description.includes('for a free quote');
+    if (photoCount < 3 || !hasEditorialDesc) {
+        const enrichUrl = `${process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'}/api/enrich-business`;
+        fetch(enrichUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                businessId: business.id,
+                businessName: business.business_name,
+                suburb: business.suburb,
+                state: business.state,
+                slug: slug,
+                currentPhotoCount: photoCount,
+                hasEditorialDescription: !!hasEditorialDesc,
+            }),
+        }).catch(() => {});  // Fire and forget — don't block page render
+    }
+
     const safeProjects = Array.isArray(projects) ? projects : [];
     const featuredProject = safeProjects.find((p: any) => p.is_featured);
     const otherProjects = safeProjects.filter((p: any) => p !== featuredProject);
