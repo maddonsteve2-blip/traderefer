@@ -37,6 +37,8 @@ import { TRADE_FAQ_BANK } from "@/lib/constants";
 import { ReviewSection } from "@/components/ReviewSection";
 import { EnrichTrigger } from "@/components/EnrichTrigger";
 
+export const revalidate = 3600; // Cache for 1 hour, ISR revalidation
+
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     const res = await fetch(`${apiUrl}/businesses/${slug}`, {
@@ -251,14 +253,12 @@ export default async function PublicProfilePage({
         {needsEnrich.length > 0 && <EnrichTrigger businesses={needsEnrich} />}
         <EditableProfile businessSlug={slug}>
             <main className="min-h-screen bg-zinc-50">
-                <Script
-                    id="business-jsonld"
+                <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
                 />
                 {faqJsonLd && (
-                    <Script
-                        id="faq-jsonld"
+                    <script
                         type="application/ld+json"
                         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
                     />

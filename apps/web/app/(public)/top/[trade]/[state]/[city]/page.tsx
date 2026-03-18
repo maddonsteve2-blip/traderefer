@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 3600; // Cache for 1 hour, ISR revalidation
 
 interface PageProps {
     params: Promise<{ trade: string; state: string; city: string }>;

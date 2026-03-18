@@ -10,6 +10,7 @@ import { parseSuburbSlug, getPostcode } from "@/lib/postcodes";
 import { generateFallbackDescription } from "@/lib/business-utils";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 3600; // Cache for 1 hour, ISR revalidation
 
 interface PageProps {
     params: Promise<{ state: string; city: string; suburb: string; trade: string }>;
