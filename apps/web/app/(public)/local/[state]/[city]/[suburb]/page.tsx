@@ -2,7 +2,7 @@ import { sql } from "@/lib/db";
 import { ChevronRight, Hammer, Lightbulb, Pipette as Pipe, Paintbrush, Wrench, Home, Truck, Trash2, Shovel, Scissors, Lock, Wind, Bug, PenTool, HardHat, Construction, LayoutGrid, Fence, MapPin, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import { SUBURB_CONTEXT } from "@/lib/constants";
 import { parseSuburbSlug, getPostcode } from "@/lib/postcodes";
 
@@ -56,6 +56,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         robots: stats.total === 0 ? { index: false, follow: true } : { index: true, follow: true },
         alternates: { canonical: `https://traderefer.au/local/${state}/${city}/${suburb}` },
         openGraph: {
+            title: `${stats.total > 0 ? stats.total + ' ' : ''}Trusted Tradies in ${suburbName}${pcLabel} (${year}) | TradeRefer`,
+            description: `Compare ${stats.total > 0 ? stats.total : 'verified'} local tradespeople in ${suburbName}${pcLabel}. ABN-checked, community-ranked.`,
+        },
+        twitter: {
+            card: 'summary_large_image',
             title: `${stats.total > 0 ? stats.total + ' ' : ''}Trusted Tradies in ${suburbName}${pcLabel} (${year}) | TradeRefer`,
             description: `Compare ${stats.total > 0 ? stats.total : 'verified'} local tradespeople in ${suburbName}${pcLabel}. ABN-checked, community-ranked.`,
         },
@@ -114,12 +119,12 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
     const suburbName = formatSlug(suburb);
     const stateUpper = state.toUpperCase();
 
-    // If URL has no postcode but we know it, 301 redirect to postcode URL
+    // If URL has no postcode but we know it, 308 permanent redirect to postcode URL
     const { postcode: urlPostcode, suburb: bareSuburb } = parseSuburbSlug(suburb);
     if (!urlPostcode) {
         const knownPostcode = getPostcode(bareSuburb, state);
         if (knownPostcode) {
-            redirect(`/local/${state}/${city}/${bareSuburb}-${knownPostcode}`);
+            permanentRedirect(`/local/${state}/${city}/${bareSuburb}-${knownPostcode}`);
         }
     }
     const postcode = urlPostcode || getPostcode(bareSuburb, state);

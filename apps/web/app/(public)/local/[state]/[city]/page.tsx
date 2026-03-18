@@ -28,6 +28,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title: `Trusted Tradies in ${cityName} ${stateUpper} (${year}) | TradeRefer`,
             description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
         },
+        twitter: {
+            card: 'summary_large_image',
+            title: `Trusted Tradies in ${cityName} ${stateUpper} (${year}) | TradeRefer`,
+            description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
+        },
     };
 }
 

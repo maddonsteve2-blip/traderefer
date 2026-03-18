@@ -4,7 +4,7 @@ import { MapPin, Star, ShieldCheck, ChevronRight, CheckCircle2, Award, Users, Ar
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, STATE_AUTHORITY_LINKS, SUBURB_CONTEXT, JOB_TYPES, jobToSlug, generateLocalizedIntro, normalizeTradeName } from "@/lib/constants";
 import { parseSuburbSlug, getPostcode } from "@/lib/postcodes";
 import { generateFallbackDescription } from "@/lib/business-utils";
@@ -67,6 +67,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title: `${tradeName} in ${suburbWithPostcode}${cityDisplay} | TradeRefer`,
             description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbWithPostcode}. Compare ratings, pricing and referrals.`,
             images: [{ url: 'https://traderefer.au/og-default.jpg', width: 1200, height: 630, alt: `${tradeName} in ${suburbName}` }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${tradeName} in ${suburbWithPostcode}${cityDisplay} | TradeRefer`,
+            description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbWithPostcode}. Compare ratings, pricing and referrals.`,
         },
     };
 }
@@ -155,12 +160,12 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const cityName = formatSlug(city);
     const stateName = state.toUpperCase();
 
-    // If URL has no postcode but we know it, 301 redirect to postcode URL
+    // If URL has no postcode but we know it, 308 permanent redirect to postcode URL
     const { postcode: urlPostcode, suburb: bareSuburb } = parseSuburbSlug(suburb);
     if (!urlPostcode) {
         const knownPostcode = getPostcode(bareSuburb, state);
         if (knownPostcode) {
-            redirect(`/local/${state}/${city}/${bareSuburb}-${knownPostcode}/${trade}`);
+            permanentRedirect(`/local/${state}/${city}/${bareSuburb}-${knownPostcode}/${trade}`);
         }
     }
 
