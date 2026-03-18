@@ -192,7 +192,7 @@ export default async function JobTypePage({ params }: PageProps) {
                             <Wrench className="w-3 h-3" />
                             {tradeName} Specialist Service
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight text-white">
                             <span className="text-orange-500">{jobName}</span> in {suburbName}, {cityName}
                         </h1>
                         <p className="text-xl text-zinc-400 mb-6 leading-relaxed">

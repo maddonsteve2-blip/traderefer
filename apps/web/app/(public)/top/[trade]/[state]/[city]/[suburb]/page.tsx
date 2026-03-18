@@ -226,7 +226,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                             <Trophy className="w-5 h-5 text-orange-500" />
                             <span className="text-orange-500 font-black text-sm uppercase tracking-widest">Ranked by Google Reviews</span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight text-white">
                             Top 10 <span className="text-orange-500">{tradeName}</span><br />in {suburbName}, {cityName}
                         </h1>
                         <p className="text-lg text-zinc-400 mb-4 leading-relaxed max-w-2xl">
@@ -448,7 +448,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                         {/* CTA */}
                         <section className="bg-zinc-900 rounded-3xl p-8 text-white text-center">
                             <Award className="w-10 h-10 text-orange-500 mx-auto mb-4" />
-                            <h3 className="text-2xl font-black mb-2">Are You a {tradeName} in {suburbName}?</h3>
+                            <h3 className="text-2xl font-black mb-2 text-white">Are You a {tradeName} in {suburbName}?</h3>
                             <p className="text-zinc-400 text-sm mb-6 max-w-md mx-auto">
                                 Get listed on TradeRefer and rank in the top {tradeName.toLowerCase()} for {suburbName}. Free to join.
                             </p>

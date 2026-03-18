@@ -138,7 +138,7 @@ export default async function HomePage() {
               <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-6 text-white ring-4 ring-gray-700 z-10">
                 <ShieldCheck className="w-12 h-12" />
               </div>
-              <h3 className="text-3xl font-extrabold mb-3 font-display z-10">Trade Businesses</h3>
+              <h3 className="text-3xl font-extrabold mb-3 font-display z-10 text-white">Trade Businesses</h3>
               <p className="text-gray-300 mb-8 text-center text-xl leading-relaxed flex-grow z-10">
                 Get exclusive, verified leads. Zero upfront cost — only pay a 20% fee when you win the job.
               </p>
@@ -239,7 +239,7 @@ export default async function HomePage() {
         />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-5xl font-extrabold font-display mb-3">
+            <h2 className="text-3xl md:text-5xl font-extrabold font-display mb-3 text-white">
               Find <span className="text-[#FF6600]">Verified Trades</span>
             </h2>
             <p className="text-gray-400 text-lg">

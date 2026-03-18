@@ -226,7 +226,7 @@ export default async function Top10CityPage({ params }: PageProps) {
                             <Trophy className="w-6 h-6 text-[#FF6600]" />
                             <span className="text-[#FF6600] font-black uppercase tracking-widest" style={{ fontSize: '16px' }}>Ranked by Real Reviews</span>
                         </div>
-                        <h1 className="font-black mb-6 leading-[1.1] font-display" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
+                        <h1 className="font-black mb-6 leading-[1.1] font-display text-white" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
                             Top {businesses.length} <span className="text-[#FF6600]">{TRADE_NOUNS[tradeName] || tradeName}</span> in {cityName}, {stateName}
                         </h1>
                         <p className="text-zinc-400 mb-4 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
@@ -444,7 +444,7 @@ export default async function Top10CityPage({ params }: PageProps) {
                         {/* CTA */}
                         <section className="bg-[#1A1A1A] rounded-3xl p-8 text-white text-center">
                             <Award className="w-10 h-10 text-[#FF6600] mx-auto mb-4" />
-                            <h3 className="font-black mb-2" style={{ fontSize: '32px' }}>Are You a {tradeName} in {cityName}?</h3>
+                            <h3 className="font-black mb-2 text-white" style={{ fontSize: '32px' }}>Are You a {tradeName} in {cityName}?</h3>
                             <p className="text-zinc-400 mb-6 max-w-md mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                                 Join {businesses.length}+ verified {tradeName.toLowerCase()} already listed on TradeRefer. Build your trust score and rank higher for free.
                             </p>

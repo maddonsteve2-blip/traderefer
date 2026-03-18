@@ -63,7 +63,7 @@ export default function SupportPage() {
                         <LifeBuoy className="w-5 h-5" />
                         Help Centre
                     </div>
-                    <h1 className="font-black mb-4 font-display leading-tight text-4xl md:text-5xl lg:text-7xl">
+                    <h1 className="font-black mb-4 font-display leading-tight text-4xl md:text-5xl lg:text-7xl text-white">
                         How can we help?
                     </h1>
                     <p className="text-zinc-300 max-w-2xl text-xl leading-relaxed">
@@ -94,7 +94,7 @@ export default function SupportPage() {
                                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
                                     <MessageSquare className="w-6 h-6 text-white" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-2 font-display">FAQ & Guides</h3>
+                                <h3 className="text-xl font-bold mb-2 font-display text-white">FAQ & Guides</h3>
                                 <p className="text-zinc-400 mb-6 leading-relaxed">Check out our help center for quick answers to common questions about payouts, lead verification, and more.</p>
                                 <Button variant="outline" disabled className="w-full rounded-full bg-transparent border-zinc-700 text-zinc-500 cursor-not-allowed">
                                     Help Center — Coming Soon

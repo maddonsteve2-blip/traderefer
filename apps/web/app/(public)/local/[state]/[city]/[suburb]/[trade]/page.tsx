@@ -669,7 +669,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                             {/* ── COMPARISON BLOCK ── */}
                             {businesses.length > 0 && (
                                 <section className="bg-zinc-900 rounded-3xl p-8 md:p-10 text-white">
-                                    <h2 className="font-black mb-6 text-center" style={{ fontSize: '28px' }}>Why TradeRefer vs. Traditional Lead Sites?</h2>
+                                    <h2 className="font-black mb-6 text-center text-white" style={{ fontSize: '28px' }}>Why TradeRefer vs. Traditional Lead Sites?</h2>
                                     <div className="overflow-x-auto">
                                         <table className="w-full" style={{ fontSize: '16px' }}>
                                             <thead>
@@ -956,7 +956,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                             <div className="bg-zinc-900 rounded-3xl p-8 text-white relative overflow-hidden">
                                 <Shield className="absolute -top-12 -right-12 w-48 h-48 text-white/5 rotate-12" />
                                 <div className="relative z-10">
-                                    <h3 className="text-2xl font-black mb-4">The Promise</h3>
+                                    <h3 className="text-2xl font-black mb-4 text-white">The Promise</h3>
                                     <ul className="space-y-4 mb-8">
                                         <li className="flex gap-3 text-sm">
                                             <CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0" />

@@ -189,7 +189,7 @@ export default async function TradeHubPage({ params }: PageProps) {
                             <Wrench className="w-4 h-4" />
                             Australia-Wide Cost Guide · {year}
                         </div>
-                        <h1 className="font-black mb-6 leading-[1.1] font-display" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
+                        <h1 className="font-black mb-6 leading-[1.1] font-display text-white" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
                             How Much Does <span className="text-[#FF6600]">{jobName}</span> Cost in Australia?
                         </h1>
                         <p className="text-zinc-400 mb-6" style={{ fontSize: '20px', lineHeight: 1.7 }}>
@@ -356,7 +356,7 @@ export default async function TradeHubPage({ params }: PageProps) {
 
                     {/* CTA */}
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
-                        <h2 className="font-black mb-4" style={{ fontSize: '40px' }}>Find a {tradeName} Near You</h2>
+                        <h2 className="font-black mb-4 text-white" style={{ fontSize: '40px' }}>Find a {tradeName} Near You</h2>
                         <p className="text-zinc-400 mb-8 max-w-xl mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             TradeRefer lists verified, ABN-checked {tradeName!.toLowerCase()} across Australia, ranked by real community referrals — not paid placement.
                         </p>

@@ -72,7 +72,7 @@ export default async function CategoriesPage() {
                         <Wrench className="w-5 h-5" />
                         Trade Directory
                     </div>
-                    <h1 className="font-black mb-6 leading-[1.1] font-display" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
+                    <h1 className="font-black mb-6 leading-[1.1] font-display text-white" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
                         All Trade <span className="text-[#FF6600]">Categories</span>
                     </h1>
                     <p className="text-zinc-400 max-w-2xl mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>
@@ -173,7 +173,7 @@ export default async function CategoriesPage() {
 
                     {/* Browse by Location CTA */}
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-10 text-white text-center">
-                        <h2 className="font-black mb-4" style={{ fontSize: '32px' }}>Browse by Location</h2>
+                        <h2 className="font-black mb-4 text-white" style={{ fontSize: '32px' }}>Browse by Location</h2>
                         <p className="text-zinc-400 mb-8 max-w-lg mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find trades specifically in your suburb, city or state. All businesses are ABN-verified and ranked by real community referrals.</p>
                         <div className="flex flex-wrap gap-4 justify-center">
                             <Link href="/locations" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>
