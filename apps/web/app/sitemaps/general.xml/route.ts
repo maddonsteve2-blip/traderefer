@@ -6,6 +6,15 @@ export const revalidate = 86400;
 
 const BASE_URL = 'https://traderefer.au';
 
+function tradeToSlug(trade: string): string {
+    return trade
+        .toLowerCase()
+        .replace(/\s*&\s*/g, '-and-')
+        .replace(/\s*\/\s*/g, '-or-')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+}
+
 export async function GET() {
     try {
         const today = new Date().toISOString().split('T')[0];
@@ -71,7 +80,7 @@ export async function GET() {
               AND trade_category IS NOT NULL AND trade_category != ''
         `;
         for (const r of topRows) {
-            const tradeSlug = (r.trade_slug as string).replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '');
+            const tradeSlug = tradeToSlug(r.trade_category as string);
             urlset += `\n  <url><loc>${BASE_URL}/top/${tradeSlug}/${r.state_slug}/${r.city_slug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.75</priority></url>`;
         }
 

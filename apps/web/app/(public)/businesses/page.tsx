@@ -268,7 +268,7 @@ export async function generateMetadata({
     searchParams: Promise<{ category?: string; suburb?: string; q?: string; state?: string; city?: string; page?: string }>;
 }): Promise<Metadata> {
     const params = await searchParams;
-    const { category, suburb, state, city } = params;
+    const { category, suburb, state, city, page } = params;
 
     const tradeNoun = category ? (TRADE_NOUNS[category] || category) : null;
     const parts: string[] = [];
@@ -288,12 +288,16 @@ export async function generateMetadata({
         ? `Compare top rated ${(tradeNoun || 'tradespeople').toLowerCase()}${suburb ? ` in ${suburb}` : city ? ` in ${city}` : ''}${state ? `, ${STATE_LABELS[state] || state}` : ''}. ABN-verified, Google-reviewed local businesses. Get free quotes today on TradeRefer.`
         : "Browse 14,000+ verified Australian tradespeople. Compare ratings, reviews, and prices. Get free quotes from local businesses on TradeRefer.";
 
+    // Add noindex to paginated pages to prevent duplicate content
+    const isPaginated = page && parseInt(page) > 1;
+
     return {
         title,
         description,
         alternates: { canonical: "https://traderefer.au/businesses" },
         openGraph: { title, description },
         twitter: { card: 'summary_large_image', title, description },
+        robots: isPaginated ? { index: false, follow: true } : { index: true, follow: true },
     };
 }
 
@@ -566,9 +570,9 @@ export default async function BusinessDirectory({
                                         <div className="flex items-start justify-between mb-1">
                                             <div className="flex-1 min-w-0">
                                                 <Link href={`/b/${biz.slug}`} className="hover:underline">
-                                                    <h2 className="text-2xl font-black text-zinc-900 group-hover:text-[#FF6600] transition-colors line-clamp-2">
+                                                    <h3 className="text-2xl font-black text-zinc-900 group-hover:text-[#FF6600] transition-colors line-clamp-2">
                                                         {biz.business_name}
-                                                    </h2>
+                                                    </h3>
                                                 </Link>
                                                 <div className="flex flex-wrap items-center gap-2 mt-0.5">
                                                     <span className="font-bold text-[#FF6600] text-base">{biz.trade_category}</span>
