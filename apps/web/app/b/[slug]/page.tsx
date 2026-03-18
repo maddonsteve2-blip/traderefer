@@ -40,7 +40,7 @@ import { EnrichTrigger } from "@/components/EnrichTrigger";
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     const res = await fetch(`${apiUrl}/businesses/${slug}`, {
-        next: { revalidate: 3600 }
+        next: { revalidate: 60 }
     });
     if (!res.ok) return null;
     return res.json();
