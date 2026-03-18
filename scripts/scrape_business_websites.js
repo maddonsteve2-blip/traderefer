@@ -326,20 +326,29 @@ async function fetchPage(url) {
     // Normalize URL
     if (!url.startsWith('http')) url = 'https://' + url;
 
-    // First attempt
-    let result = await fetchWithNode(url, false);
+    // Hard outer timeout — kills the entire fetch chain if it exceeds 15s
+    const hardTimeout = new Promise((resolve) =>
+        setTimeout(() => resolve({ error: 'Hard timeout (15s)', permanent: false }), 15000)
+    );
 
-    // SSL error → retry with rejectUnauthorized: false
-    if (result.sslError) {
-        result = await fetchWithNode(url, true);
-        if (result.error) {
-            // Also try plain HTTP fallback
-            const httpUrl = url.replace(/^https:\/\//, 'http://');
-            result = await fetchWithNode(httpUrl, false);
+    const innerFetch = async () => {
+        // First attempt
+        let result = await fetchWithNode(url, false);
+
+        // SSL error → retry with rejectUnauthorized: false
+        if (result.sslError) {
+            result = await fetchWithNode(url, true);
+            if (result.error) {
+                // Also try plain HTTP fallback
+                const httpUrl = url.replace(/^https:\/\//, 'http://');
+                result = await fetchWithNode(httpUrl, false);
+            }
         }
-    }
 
-    return result;
+        return result;
+    };
+
+    return Promise.race([innerFetch(), hardTimeout]);
 }
 
 function delay(ms) {
@@ -364,7 +373,7 @@ async function processBatch(businesses) {
         }
 
         // Skip fields that already exist — only scrape what's missing
-        const needDesc = !biz.has_description && !logosOnly;
+        const needDesc = !logosOnly; // Always overwrite with real meta descriptions for SEO
         const needLogo = !biz.has_logo && !descOnly;
         const needEmail = !biz.has_email;
         const needPhone = !biz.has_phone;
