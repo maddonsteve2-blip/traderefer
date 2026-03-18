@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { Button } from "@/components/ui/button";
-import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, HOW_TO_CHOOSE, jobToSlug } from "@/lib/constants";
+import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, HOW_TO_CHOOSE, jobToSlug, TRADE_NOUNS } from "@/lib/constants";
 import {
     Star, ShieldCheck, MapPin, ChevronRight, Users, Award,
     DollarSign, FileText, CheckCircle2, ArrowRight, Trophy
@@ -81,6 +81,7 @@ async function getNearbyTradeCities(trade: string, state: string, currentCity: s
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { trade, state, city } = await params;
     const tradeName = formatSlug(trade);
+    const tradeNoun = TRADE_NOUNS[tradeName] || tradeName;
     const cityName = formatSlug(city);
     const stateName = STATE_NAMES[state] || state.toUpperCase();
     const cost = TRADE_COST_GUIDE[tradeName];
@@ -94,13 +95,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const topBizStr = topBiz ? ` #1: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}★).` : "";
 
     return {
-        title: `Top ${count > 0 ? count : 10} ${tradeName} in ${cityName}, ${stateName} (${year})${priceStr} | TradeRefer`,
-        description: `The ${count > 0 ? count : ''} highest-rated ${tradeName.toLowerCase()} in ${cityName}, ${stateName} ranked by ${totalReviews > 0 ? totalReviews.toLocaleString() + ' ' : ''}Google reviews.${topBizStr} Free quotes from verified local tradies.`,
+        title: `Top ${count > 0 ? count : 10} ${tradeNoun} in ${cityName}, ${stateName} (${year})${priceStr} | TradeRefer`,
+        description: `The ${count > 0 ? count : ''} highest-rated ${tradeNoun.toLowerCase()} in ${cityName}, ${stateName} ranked by ${totalReviews > 0 ? totalReviews.toLocaleString() + ' ' : ''}Google reviews.${topBizStr} Free quotes from verified local tradies.`,
         robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
         alternates: { canonical: `https://traderefer.au/top/${trade}/${state}/${city}` },
         openGraph: {
-            title: `Top 10 ${tradeName} in ${cityName} ${year} | TradeRefer`,
-            description: `Ranked by real Google reviews. Find the best ${tradeName.toLowerCase()} in ${cityName}, ${stateName}.`,
+            title: `Top 10 ${tradeNoun} in ${cityName} ${year} | TradeRefer`,
+            description: `Ranked by real Google reviews. Find the best ${tradeNoun.toLowerCase()} in ${cityName}, ${stateName}.`,
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `Top 10 ${tradeNoun} in ${cityName} ${year} | TradeRefer`,
+            description: `Ranked by real Google reviews. Find the best ${tradeNoun.toLowerCase()} in ${cityName}, ${stateName}.`,
         },
     };
 }
@@ -219,7 +225,7 @@ export default async function Top10CityPage({ params }: PageProps) {
                             <span className="text-[#FF6600] font-black uppercase tracking-widest" style={{ fontSize: '16px' }}>Ranked by Real Reviews</span>
                         </div>
                         <h1 className="font-black mb-6 leading-[1.1] font-display" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
-                            Top 10 <span className="text-[#FF6600]">{tradeName}</span><br />in {cityName}, {stateName}
+                            Top 10 <span className="text-[#FF6600]">{TRADE_NOUNS[tradeName] || tradeName}</span><br />in {cityName}, {stateName}
                         </h1>
                         <p className="text-zinc-400 mb-4 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             There are currently <strong className="text-white">{businesses.length} highly-rated {tradeName.toLowerCase()} businesses</strong> in {cityName}, {stateName} listed on TradeRefer, with an average Google rating of <strong className="text-white">{avgRating}★</strong> across <strong className="text-white">{totalReviews.toLocaleString()} verified reviews</strong>. The {businesses.length} listed below are ranked from highest to lowest rating, all ABN-verified and community-recommended.

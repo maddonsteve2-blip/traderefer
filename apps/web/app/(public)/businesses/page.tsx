@@ -10,7 +10,7 @@ import { BackToDashboard } from "@/components/BackToDashboard";
 import { generateFallbackDescription } from "@/lib/business-utils";
 import { getBusinessHoursStatus, toOpeningHoursSchema } from "@/lib/business-hours";
 import { Metadata } from "next";
-import { TRADE_COST_GUIDE } from "@/lib/constants";
+import { TRADE_COST_GUIDE, TRADE_NOUNS } from "@/lib/constants";
 import { EnrichTrigger } from "@/components/EnrichTrigger";
 
 export const dynamic = "force-dynamic";
@@ -270,8 +270,9 @@ export async function generateMetadata({
     const params = await searchParams;
     const { category, suburb, state, city } = params;
 
+    const tradeNoun = category ? (TRADE_NOUNS[category] || category) : null;
     const parts: string[] = [];
-    if (category) parts.push(category);
+    if (tradeNoun) parts.push(tradeNoun);
     if (suburb) parts.push(`in ${suburb}`);
     else if (city) parts.push(`in ${city}`);
     if (state) parts.push(STATE_LABELS[state] || state);
@@ -284,7 +285,7 @@ export async function generateMetadata({
         : "Find Verified Trades Near You | Business Directory | TradeRefer";
 
     const description = parts.length > 0
-        ? `Compare top rated ${category || 'tradespeople'} ${suburb ? `in ${suburb}` : city ? `in ${city}` : ''}${state ? `, ${STATE_LABELS[state] || state}` : ''}. ABN-verified, Google-reviewed local businesses. Get free quotes today on TradeRefer.`
+        ? `Compare top rated ${(tradeNoun || 'tradespeople').toLowerCase()} ${suburb ? `in ${suburb}` : city ? `in ${city}` : ''}${state ? `, ${STATE_LABELS[state] || state}` : ''}. ABN-verified, Google-reviewed local businesses. Get free quotes today on TradeRefer.`
         : "Browse 14,000+ verified Australian tradespeople. Compare ratings, reviews, and prices. Get free quotes from local businesses on TradeRefer.";
 
     return {
@@ -292,6 +293,7 @@ export async function generateMetadata({
         description,
         alternates: { canonical: "https://traderefer.au/businesses" },
         openGraph: { title, description },
+        twitter: { card: 'summary_large_image', title, description },
     };
 }
 

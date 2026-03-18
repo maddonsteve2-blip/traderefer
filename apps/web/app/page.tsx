@@ -381,11 +381,10 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
             {TRADE_CATEGORIES.filter(t => t !== "Other").slice(0, 30).map((trade) => {
-              const slug = trade.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
               return (
                 <Link
                   key={trade}
-                  href={`/top/${slug}`}
+                  href="/categories"
                   className="group flex items-center gap-2.5 bg-white border border-zinc-200 rounded-2xl px-4 py-3.5 font-bold text-zinc-700 hover:border-orange-500 hover:text-orange-600 hover:shadow-md transition-all duration-200 text-base"
                 >
                   <Wrench className="w-3.5 h-3.5 text-zinc-400 group-hover:text-orange-500 shrink-0 transition-colors" />
