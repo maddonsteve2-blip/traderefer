@@ -356,16 +356,14 @@ export default async function PublicProfilePage({
 
                                     {/* Logo overlapping bottom-left of cover */}
                                     <div className="absolute bottom-0 left-4 translate-y-1/2 z-10">
-                                        <div className="w-16 h-16 rounded-xl bg-white border-4 border-white shadow-lg overflow-hidden flex items-center justify-center">
-                                            <EditableImage
-                                                field="logo_url"
-                                                initialValue={business.logo_url}
-                                                alt={business.business_name}
-                                                className="w-full h-full object-cover"
-                                                photoUrls={business.photo_urls}
-                                                empty={<BusinessLogo logoUrl={business.logo_url} name={business.business_name} photoUrls={business.photo_urls} />}
-                                            />
-                                        </div>
+                                        <EditableImage
+                                            field="logo_url"
+                                            initialValue={business.logo_url}
+                                            alt={business.business_name}
+                                            className="w-full h-full object-cover"
+                                            photoUrls={business.photo_urls}
+                                            empty={<BusinessLogo logoUrl={business.logo_url} name={business.business_name} photoUrls={business.photo_urls} size="sm" />}
+                                        />
                                     </div>
                                 </div>
 

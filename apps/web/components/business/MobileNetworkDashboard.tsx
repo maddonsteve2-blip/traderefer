@@ -122,7 +122,7 @@ export function MobileNetworkDashboard({ given, received, invites, onRefresh }: 
                                 href={`/b/${r.slug}`}
                                 className="bg-white border border-zinc-100 rounded-2xl p-3.5 flex items-center gap-3"
                             >
-                                <BusinessLogo logoUrl={r.logo_url} name={r.business_name} size="round-sm" />
+                                <BusinessLogo logoUrl={r.logo_url} name={r.business_name} size="xs" />
                                 <div className="flex-1 min-w-0">
                                     <p className="font-bold text-zinc-900 text-[14px] truncate">{r.business_name}</p>
                                     <p className="text-[12px] text-zinc-500 truncate">{r.trade_category} · {r.suburb}</p>

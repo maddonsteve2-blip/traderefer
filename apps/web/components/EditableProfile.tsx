@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Camera, ExternalLink, Loader2, Pencil, Save, Trash2, X } from "lucide-react";
+import { BusinessLogo } from "@/components/BusinessLogo";
 
 interface EditableProfileProps {
     businessSlug: string;
@@ -285,6 +286,9 @@ export function EditableImage({
     const value = context?.isOwner ? context.fields?.[field] || "" : (initialValue || "");
 
     if (!context?.isOwner || !context.editMode) {
+        if (value && field === "logo_url") {
+            return <BusinessLogo logoUrl={value} name={alt} size="sm" />;
+        }
         if (value) {
             return <img src={value} alt={alt} className={className} />;
         }

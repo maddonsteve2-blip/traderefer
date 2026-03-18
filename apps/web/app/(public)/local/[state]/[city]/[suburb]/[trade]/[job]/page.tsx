@@ -237,9 +237,7 @@ export default async function JobTypePage({ params }: PageProps) {
                                         <Link key={biz.id} href={`/b/${biz.slug}`} className="group block">
                                             <div className="bg-white rounded-2xl border border-zinc-200 hover:border-orange-500 hover:shadow-lg transition-all duration-300 p-6">
                                                 <div className="flex items-start gap-4">
-                                                    <div className="w-14 h-14 shrink-0">
-                                                        <BusinessLogo logoUrl={biz.logo_url || null} name={biz.business_name || "?"} size="sm" photoUrls={biz.photo_urls} />
-                                                    </div>
+                                                    <BusinessLogo logoUrl={biz.logo_url || null} name={biz.business_name || "?"} size="sm" photoUrls={biz.photo_urls} />
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-start justify-between gap-2">
                                                             <div>

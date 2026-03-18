@@ -14,7 +14,7 @@ import { useState, useRef, useEffect } from "react";
  * - Auto-crop: isEmpty() function, 10% padding threshold, 5% crop padding
  */
 
-type LogoSize = "xs" | "sm" | "md" | "lg" | "xl" | "full" | "round-sm" | "round-md" | "round-lg";
+type LogoSize = "xs" | "sm" | "md" | "lg" | "xl" | "full";
 
 interface BusinessLogoProps {
     logoUrl: string | null;
@@ -24,16 +24,17 @@ interface BusinessLogoProps {
     className?: string;
 }
 
-const SIZE_CONFIG: Record<LogoSize, { container: string; fallbackText: string }> = {
-    "xs":       { container: "w-8 h-8 rounded-lg",      fallbackText: "text-xs" },
-    "sm":       { container: "w-10 h-10 rounded-xl",     fallbackText: "text-sm" },
-    "md":       { container: "w-14 h-14 rounded-xl",     fallbackText: "text-xl" },
-    "lg":       { container: "w-20 h-20 rounded-2xl",    fallbackText: "text-3xl" },
-    "xl":       { container: "w-28 h-28 rounded-2xl",    fallbackText: "text-4xl" },
-    "full":     { container: "w-full h-full rounded-2xl", fallbackText: "text-5xl" },
-    "round-sm": { container: "w-10 h-10 rounded-full",   fallbackText: "text-sm" },
-    "round-md": { container: "w-12 h-12 rounded-full",   fallbackText: "text-lg" },
-    "round-lg": { container: "w-16 h-16 rounded-full",   fallbackText: "text-2xl" },
+interface SizeSpec {
+    w: number; h: number; radius: number; padding: number; fallbackText: string;
+}
+
+const SIZE_CONFIG: Record<LogoSize, SizeSpec> = {
+    xs:   { w: 56,  h: 36,  radius: 8,  padding: 4,  fallbackText: "text-xs" },
+    sm:   { w: 96,  h: 56,  radius: 10, padding: 6,  fallbackText: "text-sm" },
+    md:   { w: 152, h: 84,  radius: 12, padding: 8,  fallbackText: "text-lg" },
+    lg:   { w: 192, h: 108, radius: 14, padding: 8,  fallbackText: "text-2xl" },
+    xl:   { w: 240, h: 136, radius: 16, padding: 10, fallbackText: "text-3xl" },
+    full: { w: 0,   h: 0,   radius: 16, padding: 8,  fallbackText: "text-4xl" },
 };
 
 function getProxyUrl(url: string | null): string | null {
@@ -196,10 +197,18 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
         }
     }
 
+    const isFull = size === "full";
+    const containerStyle: React.CSSProperties = isFull
+        ? { width: "100%", height: "100%", borderRadius: config.radius }
+        : { width: config.w, height: config.h, borderRadius: config.radius };
+
     // Fallback: letter avatar
     if (!proxyUrl || error) {
         return (
-            <div className={`${config.container} bg-gradient-to-br from-zinc-200 to-zinc-100 flex items-center justify-center font-black text-zinc-500 overflow-hidden border border-zinc-200/60 ${className}`}>
+            <div
+                className={`bg-gradient-to-br from-zinc-200 to-zinc-100 flex items-center justify-center font-black text-zinc-500 overflow-hidden shrink-0 ${className}`}
+                style={{ ...containerStyle, border: "1px solid rgba(0,0,0,0.06)" }}
+            >
                 <span className={`${config.fallbackText} select-none uppercase`}>{name?.[0] || "?"}</span>
             </div>
         );
@@ -211,12 +220,14 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
 
     return (
         <div
-            className={`${config.container} flex items-center justify-center overflow-hidden transition-all duration-300 ${className}`}
+            className={`flex items-center justify-center overflow-hidden shrink-0 transition-all duration-300 ${className}`}
             style={{
+                ...containerStyle,
                 backgroundColor: bg,
                 boxShadow: isLight ? "0 1px 4px rgba(0,0,0,0.12)" : "0 1px 4px rgba(0,0,0,0.4)",
                 border: isLight ? "1px solid rgba(0,0,0,0.08)" : "none",
-                padding: 2,
+                padding: config.padding,
+                boxSizing: "border-box",
             }}
         >
             {/* Hidden image for pixel analysis */}

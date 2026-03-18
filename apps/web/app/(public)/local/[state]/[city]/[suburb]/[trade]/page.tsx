@@ -577,9 +577,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                             <div className="p-6 md:p-8">
                                                 {/* Logo + Header row */}
                                                 <div className="flex gap-5 md:gap-6 items-start mb-5">
-                                                    <div className="w-[140px] h-[90px] md:w-[160px] md:h-[100px] shrink-0">
-                                                        <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="lg" />
-                                                    </div>
+                                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="lg" />
                                                     <div className="flex-1 min-w-0 pt-1">
                                                         <div className="flex flex-wrap items-center gap-2 mb-2">
                                                             <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-full font-black uppercase tracking-wider" style={{ fontSize: '14px' }}>{biz.trade_category}</span>
