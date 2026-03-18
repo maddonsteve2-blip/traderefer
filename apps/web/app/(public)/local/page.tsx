@@ -48,7 +48,13 @@ async function getStatesWithCities() {
     }
 }
 
-export default async function LocalDirectoryPage() {
+export default async function LocalDirectoryPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ category?: string }>;
+}) {
+    const { category } = await searchParams;
+    const catParam = category ? `?category=${encodeURIComponent(category)}` : '';
     const states = await getStatesWithCities();
     const totalBusinesses = states.reduce((sum, s) => sum + s.total, 0);
 
@@ -77,7 +83,7 @@ export default async function LocalDirectoryPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {states.map((state) => (
-                            <Link key={state.slug} href={`/local/${state.slug}`} className="group">
+                            <Link key={state.slug} href={`/local/${state.slug}${catParam}`} className="group">
                                 <div className="bg-white p-8 rounded-[32px] border-2 border-zinc-100 hover:border-orange-500 hover:shadow-2xl hover:shadow-orange-500/5 transition-all duration-500 relative overflow-hidden">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-orange-500/10 transition-colors" />
                                     <div className="flex items-center justify-between mb-4 relative z-10">

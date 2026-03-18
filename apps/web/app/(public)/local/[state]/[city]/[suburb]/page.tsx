@@ -2,12 +2,13 @@ import { sql } from "@/lib/db";
 import { ChevronRight, Hammer, Lightbulb, Pipette as Pipe, Paintbrush, Wrench, Home, Truck, Trash2, Shovel, Scissors, Lock, Wind, Bug, PenTool, HardHat, Construction, LayoutGrid, Fence, MapPin, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
-import { permanentRedirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
 import { SUBURB_CONTEXT } from "@/lib/constants";
 import { parseSuburbSlug, getPostcode } from "@/lib/postcodes";
 
 interface PageProps {
     params: Promise<{ state: string; city: string; suburb: string }>;
+    searchParams: Promise<{ category?: string }>;
 }
 
 const TRADE_ICONS: Record<string, any> = {
@@ -113,8 +114,9 @@ async function getNearbySuburbs(city: string, currentSuburb: string): Promise<st
     } catch { return []; }
 }
 
-export default async function SuburbDirectoryPage({ params }: PageProps) {
+export default async function SuburbDirectoryPage({ params, searchParams }: PageProps) {
     const { state, city, suburb } = await params;
+    const { category } = await searchParams;
     const cityName = formatSlug(city);
     const suburbName = formatSlug(suburb);
     const stateUpper = state.toUpperCase();
@@ -128,6 +130,12 @@ export default async function SuburbDirectoryPage({ params }: PageProps) {
         }
     }
     const postcode = urlPostcode || getPostcode(bareSuburb, state);
+
+    // If user already selected a trade (via ?category param), skip trade selection and go directly
+    if (category) {
+        const tradeSlug = category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        redirect(`/local/${state}/${city}/${suburb}/${tradeSlug}`);
+    }
 
     const [suburbStats, tradesWithCounts, nearbySuburbs] = await Promise.all([
         getSuburbStats(suburb),

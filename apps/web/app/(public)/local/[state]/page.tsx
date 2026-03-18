@@ -16,6 +16,8 @@ interface PageProps {
 
     params: Promise<{ state: string }>;
 
+    searchParams: Promise<{ category?: string }>;
+
 }
 
 
@@ -144,9 +146,13 @@ async function getTopTradesForState(state: string): Promise<{ trade: string; cou
 
 
 
-export default async function StateDirectoryPage({ params }: PageProps) {
+export default async function StateDirectoryPage({ params, searchParams }: PageProps) {
 
     const { state } = await params;
+
+    const { category } = await searchParams;
+
+    const catParam = category ? `?category=${encodeURIComponent(category)}` : '';
 
     const stateName = STATE_NAMES[state.toLowerCase()];
 
@@ -338,7 +344,7 @@ export default async function StateDirectoryPage({ params }: PageProps) {
 
                                 {cities.map(({ city, count }) => (
 
-                                    <Link key={city} href={`/local/${state}/${city.toLowerCase().replace(/ /g, '-')}`} className="group">
+                                    <Link key={city} href={`/local/${state}/${city.toLowerCase().replace(/ /g, '-')}${catParam}`} className="group">
 
                                         <div className="bg-white rounded-2xl border-2 border-zinc-200 hover:border-[#FF6600] hover:shadow-xl transition-all duration-300 p-6 flex items-center justify-between">
 

@@ -105,7 +105,7 @@ export default async function CategoriesPage() {
                                             id={slug}
                                             className="bg-white rounded-2xl border-2 border-zinc-200 hover:border-[#FF6600] hover:shadow-lg transition-all duration-300 overflow-hidden group"
                                         >
-                                            <Link href={`/local?category=${encodeURIComponent(trade)}`} className="block p-6">
+                                            <Link href={`/businesses?category=${encodeURIComponent(trade)}`} className="block p-6">
                                                 <div className="flex items-start justify-between mb-3">
                                                     <h3 className="font-black text-[#1A1A1A] group-hover:text-[#FF6600] transition-colors leading-tight" style={{ fontSize: '20px' }}>
                                                         {trade}

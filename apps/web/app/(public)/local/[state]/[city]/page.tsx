@@ -7,6 +7,7 @@ import { Metadata } from "next";
 
 interface PageProps {
     params: Promise<{ state: string; city: string }>;
+    searchParams: Promise<{ category?: string }>;
 }
 
 function formatSlug(slug: string) {
@@ -84,8 +85,10 @@ async function getCityReferralCount(city: string): Promise<number> {
     } catch { return 0; }
 }
 
-export default async function CityDirectoryPage({ params }: PageProps) {
+export default async function CityDirectoryPage({ params, searchParams }: PageProps) {
     const { state, city } = await params;
+    const { category } = await searchParams;
+    const catParam = category ? `?category=${encodeURIComponent(category)}` : '';
     const cityName = formatSlug(city);
     const stateUpper = state.toUpperCase();
 
@@ -210,7 +213,7 @@ export default async function CityDirectoryPage({ params }: PageProps) {
                                     const count = businessCounts[suburb] || 0;
                                     const suburbSlug = suburb.toLowerCase().replace(/ /g, '-');
                                     return (
-                                        <Link key={suburb} href={`/local/${state}/${city}/${suburbSlug}`} className="group">
+                                        <Link key={suburb} href={`/local/${state}/${city}/${suburbSlug}${catParam}`} className="group">
                                             <div className="bg-white rounded-2xl border-2 border-zinc-200 hover:border-[#FF6600] hover:shadow-lg transition-all duration-300 p-5">
                                                 <div className="flex items-center justify-between mb-2">
                                                     <span className="font-black text-[#1A1A1A] group-hover:text-[#FF6600] transition-colors" style={{ fontSize: '22px' }}>
