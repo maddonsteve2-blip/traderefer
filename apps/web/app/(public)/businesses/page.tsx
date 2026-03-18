@@ -556,7 +556,7 @@ export default async function BusinessDirectory({
                             <div key={biz.id} className="bg-white rounded-2xl border border-zinc-200 p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
                                 <div className="flex gap-6">
                                     {/* Logo */}
-                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="md" />
+                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="md" bgColor={biz.logo_bg_color} />
 
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">

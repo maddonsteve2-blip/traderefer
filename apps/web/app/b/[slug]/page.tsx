@@ -362,7 +362,7 @@ export default async function PublicProfilePage({
                                             alt={business.business_name}
                                             className="w-full h-full object-cover"
                                             photoUrls={business.photo_urls}
-                                            empty={<BusinessLogo logoUrl={business.logo_url} name={business.business_name} photoUrls={business.photo_urls} size="sm" />}
+                                            empty={<BusinessLogo logoUrl={business.logo_url} name={business.business_name} photoUrls={business.photo_urls} size="sm" bgColor={business.logo_bg_color} />}
                                         />
                                     </div>
                                 </div>

@@ -25,6 +25,7 @@ interface Business {
     state: string;
     referral_fee_cents: number;
     logo_url: string | null;
+    logo_bg_color?: string | null;
     trust_score: number;
     is_verified: boolean;
     avg_rating: string | number;
@@ -64,7 +65,7 @@ function BizCard({ biz, isFirst }: { biz: Business; isFirst?: boolean }) {
 
                 {/* Logo + name + trust score */}
                 <div className="flex items-start gap-4">
-                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="md" className="shrink-0" />
+                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="md" className="shrink-0" bgColor={biz.logo_bg_color} />
                     <div className="flex-1 min-w-0">
                         <div className="font-black text-zinc-900 leading-tight truncate group-hover:text-orange-600 transition-colors text-[21px]">
                             {biz.business_name}

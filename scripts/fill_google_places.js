@@ -19,6 +19,7 @@ require('dotenv').config({ path: 'apps/web/.env.local' });
 
 const GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const BLOB_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_URL_FROM_DOTENV;
 const LOGOS_DIR = path.join(__dirname, '..', 'logos-cache');
 const RESULTS_PER_TRADE = 5;
 const MIN_PER_TRADE = 3;
@@ -235,7 +236,7 @@ async function run() {
 
     if (!GOOGLE_API_KEY) { console.error('ERROR: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY not found'); process.exit(1); }
 
-    const db = new pg.Client(process.env.DATABASE_URL);
+    const db = new pg.Client(DATABASE_URL);
     await db.connect();
 
     // Build suburb list
@@ -304,7 +305,7 @@ async function run() {
         const j = totalJobs[i];
         const stateFull = STATE_FULL[j.state] || j.state;
 
-        if (i % 50 === 0) {
+        if (i % 10 === 0 || i === 0) {
             console.log(`\n--- Progress: ${i}/${totalJobs.length} | added: ${totalAdded} | logos: ${totalLogos} | reviews: ${totalReviews} | API: ${totalApiCalls} ---`);
         }
 
@@ -360,6 +361,11 @@ async function run() {
                     const googleMapsUrl = place.googleMapsUri || null;
                     const coverPhoto = photoUrls.length > 1 ? photoUrls[1] : (photoUrls[0] || null);
 
+                    // Convert arrays to PostgreSQL format
+                    const paymentOptsStr = paymentOpts.length > 0 ? `{${paymentOpts.join(',')}}` : '{}';
+                    const servicesStr = services.length > 0 ? `{${services.join(',')}}` : null;
+                    const photoUrlsStr = photoUrls.length > 0 ? `{${photoUrls.join(',')}}` : '{}';
+
                     const placeLat = place.location?.latitude || null;
                     const placeLng = place.location?.longitude || null;
 
@@ -400,10 +406,10 @@ async function run() {
                         placeLat, placeLng,
                         description,
                         openingHours ? JSON.stringify(openingHours) : null,
-                        paymentOpts,
-                        services.length > 0 ? services : null,
+                        paymentOptsStr,
+                        servicesStr,
                         googleMapsUrl,
-                        photoUrls,
+                        photoUrlsStr,
                         coverPhoto,
                     ]);
                     added++;
@@ -415,13 +421,26 @@ async function run() {
                         totalReviews += revCount;
                     }
                 } catch (e) {
-                    if (!e.message.includes('duplicate')) { /* skip */ }
+                    if (e.message.includes('duplicate')) { 
+                        console.log(`  ⚠️  Skipped (duplicate): ${place.displayName?.text}`);
+                    } else if (e.message.includes('column')) {
+                        console.log(`  ❌ Schema error: ${e.message.substring(0, 80)}`);
+                    } else {
+                        console.log(`  ❌ Error: ${e.message.substring(0, 80)}`);
+                    }
                 }
             }
 
             totalAdded += added;
             totalLogos += logos;
-            console.log(`+${added} (${logos} logos${noPhone ? ', ' + noPhone + ' skipped-no-phone' : ''})`);
+            
+            // Update progress display immediately when businesses are added
+            if (added > 0) {
+                console.log(`+${added} (${logos} logos${noPhone ? ', ' + noPhone + ' skipped-no-phone' : ''}) [total: ${totalAdded}]`);
+                console.log(`\n--- Progress: ${i + 1}/${totalJobs.length} | added: ${totalAdded} | logos: ${totalLogos} | reviews: ${totalReviews} | API: ${totalApiCalls} ---`);
+            } else {
+                console.log(`+${added} (${logos} logos${noPhone ? ', ' + noPhone + ' skipped-no-phone' : ''})`);
+            }
         } catch (e) {
             console.log(`ERR: ${e.message.substring(0, 100)}`);
         }

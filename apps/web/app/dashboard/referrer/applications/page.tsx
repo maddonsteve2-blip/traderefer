@@ -19,6 +19,7 @@ interface Application {
     business_name: string;
     business_slug: string;
     business_logo: string | null;
+    business_logo_bg_color?: string | null;
     trade_category: string;
     suburb: string;
 }
@@ -40,7 +41,7 @@ function AppCard({ app, mobile }: { app: Application; mobile?: boolean }) {
     return (
         <div className={`bg-white rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md transition-all ${mobile ? "p-4" : "p-5"}`}>
             <div className={`flex items-start ${mobile ? "gap-3" : "gap-4"}`}>
-                <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size={mobile ? "sm" : "md"} />
+                <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size={mobile ? "sm" : "md"} bgColor={app.business_logo_bg_color} />
                 <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="min-w-0">

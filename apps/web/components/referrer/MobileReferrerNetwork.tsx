@@ -13,6 +13,7 @@ interface Business {
     trade_category: string;
     suburb: string;
     logo_url: string | null;
+    logo_bg_color?: string | null;
     referral_fee_cents: number;
     is_partner?: boolean;
     leads_count?: number;
@@ -27,6 +28,7 @@ function normalizeBusiness(raw: any): Business {
         trade_category: raw?.trade_category ?? "",
         suburb: raw?.suburb ?? raw?.city ?? "",
         logo_url: raw?.logo_url ?? null,
+        logo_bg_color: raw?.logo_bg_color ?? null,
         referral_fee_cents: Number(raw?.referral_fee_cents ?? 0),
         is_partner: raw?.is_partner,
         leads_count: typeof raw?.leads_count === "number" ? raw.leads_count : undefined,
@@ -48,6 +50,7 @@ interface PendingApplication {
     business_name: string;
     business_slug: string;
     business_logo: string | null;
+    business_logo_bg_color?: string | null;
     trade_category: string;
     suburb: string;
 }
@@ -235,7 +238,7 @@ export function MobileReferrerNetwork({
                                         href={`/dashboard/referrer/refer/${b.slug ?? b.id}`}
                                         className="bg-white border border-[#E4E4E7] rounded-[20px] p-4 flex items-center gap-4 transition-all active:scale-[0.99]"
                                     >
-                                        <BusinessLogo logoUrl={b.logo_url} name={b.name} size="sm" />
+                                        <BusinessLogo logoUrl={b.logo_url} name={b.name} size="sm" bgColor={b.logo_bg_color} />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-base font-black text-[#18181B] truncate tracking-tight">{b.name}</p>
                                             <p className="text-[13px] font-medium text-zinc-500">
@@ -271,7 +274,7 @@ export function MobileReferrerNetwork({
                                             href="/dashboard/referrer/applications"
                                             className="bg-white border border-[#E4E4E7] rounded-[20px] p-4 flex items-center gap-4 transition-all active:scale-[0.99]"
                                         >
-                                            <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="sm" />
+                                            <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="sm" bgColor={app.business_logo_bg_color} />
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-base font-black text-[#18181B] truncate tracking-tight">{app.business_name}</p>
                                                 <p className="text-[13px] font-medium text-zinc-500">

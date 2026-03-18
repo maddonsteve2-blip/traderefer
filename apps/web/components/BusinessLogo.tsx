@@ -22,6 +22,7 @@ interface BusinessLogoProps {
     size?: LogoSize;
     photoUrls?: string[];
     className?: string;
+    bgColor?: string | null;
 }
 
 interface SizeSpec {
@@ -173,13 +174,34 @@ function analyzeImage(img: HTMLImageElement): PixelStats {
     return { bg, luminance: avgLuminance, hasTransparency, dominantEdge, croppedSrc };
 }
 
-export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className = "" }: BusinessLogoProps) {
+// ── localStorage bg color cache ──
+const BG_CACHE_PREFIX = "tr_lbg_";
+
+function cacheKey(url: string): string {
+    // Simple hash of URL for compact localStorage keys
+    let h = 0;
+    for (let i = 0; i < url.length; i++) h = ((h << 5) - h + url.charCodeAt(i)) | 0;
+    return BG_CACHE_PREFIX + (h >>> 0).toString(36);
+}
+
+function getCachedBg(url: string): string | null {
+    try { return localStorage.getItem(cacheKey(url)); } catch { return null; }
+}
+
+function setCachedBg(url: string, bg: string) {
+    try { localStorage.setItem(cacheKey(url), bg); } catch { /* quota exceeded */ }
+}
+
+export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className = "", bgColor }: BusinessLogoProps) {
     const imgRef = useRef<HTMLImageElement>(null);
     const [stats, setStats] = useState<PixelStats | null>(null);
     const [error, setError] = useState(false);
 
     const config = SIZE_CONFIG[size] || SIZE_CONFIG.md;
     const proxyUrl = getProxyUrl(logoUrl);
+
+    // Pre-computed bg: from DB prop → localStorage cache → null (needs analysis)
+    const precomputedBg = bgColor || (logoUrl ? getCachedBg(logoUrl) : null);
 
     // Reset state when src changes
     useEffect(() => {
@@ -188,10 +210,15 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
     }, [logoUrl]);
 
     function handleLoad() {
+        // Skip analysis entirely if we already have a bg color
+        if (precomputedBg) return;
         const img = imgRef.current;
         if (!img) return;
         try {
-            setStats(analyzeImage(img));
+            const result = analyzeImage(img);
+            setStats(result);
+            // Cache in localStorage for next visit
+            if (logoUrl) setCachedBg(logoUrl, result.bg);
         } catch {
             setStats({ bg: "#e8e8e8", luminance: 128, hasTransparency: false, dominantEdge: "mixed", croppedSrc: null });
         }
@@ -214,9 +241,11 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
         );
     }
 
-    const bg = stats?.bg ?? "#e8e8e8";
+    // Use pre-computed bg (instant) or analyzed bg or neutral fallback
+    const bg = precomputedBg || stats?.bg || "#e8e8e8";
     const isLight = bg === "#ffffff" || bg === "#f8f8f8" || bg === "#e8e8e8";
     const displaySrc = stats?.croppedSrc ?? proxyUrl;
+    const needsAnalysis = !precomputedBg;
 
     return (
         <div
@@ -230,17 +259,19 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
                 boxSizing: "border-box",
             }}
         >
-            {/* Hidden image for pixel analysis */}
-            <img
-                ref={imgRef}
-                src={proxyUrl}
-                alt=""
-                crossOrigin="anonymous"
-                onLoad={handleLoad}
-                onError={() => setError(true)}
-                style={{ display: "none" }}
-            />
-            {/* Visible: cropped version once ready, original while loading */}
+            {/* Hidden image for pixel analysis — only needed when no pre-computed bg */}
+            {needsAnalysis && (
+                <img
+                    ref={imgRef}
+                    src={proxyUrl}
+                    alt=""
+                    crossOrigin="anonymous"
+                    onLoad={handleLoad}
+                    onError={() => setError(true)}
+                    style={{ display: "none" }}
+                />
+            )}
+            {/* Visible logo */}
             <img
                 src={displaySrc}
                 alt={name}

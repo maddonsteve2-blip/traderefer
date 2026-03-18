@@ -47,6 +47,7 @@ const stats = {
 };
 
 // Extract place ID from source_url (Google Maps URI contains ChIJ... place IDs)
+// For CID URLs, we'll need to resolve via text search
 function extractPlaceId(sourceUrl) {
     if (!sourceUrl) return null;
     if (sourceUrl.startsWith('ChIJ')) return sourceUrl.trim();
@@ -96,22 +97,44 @@ async function getPlaceDetails(placeId, retries = 0) {
     }
 }
 
-// Fallback: search by name + location
-async function searchPlaceDetails(businessName, suburb, state) {
+// Fallback: search by phone first (most accurate), then name + location
+async function searchPlaceDetails(businessName, suburb, state, phone) {
     try {
-        const query = `${businessName} ${suburb || ''} ${state || ''} Australia`;
+        let query = businessName;
+        let maxResults = 1;
+        
+        // If we have a phone number, search by phone first (most accurate)
+        if (phone) {
+            query = phone.replace(/\s+/g, '');
+            maxResults = 3; // Get multiple results to find the right one by name
+        }
+        
         const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-Goog-Api-Key': GOOGLE_API_KEY,
-                'X-Goog-FieldMask': 'places.photos,places.editorialSummary,places.reviews,places.rating,places.userRatingCount',
+                'X-Goog-FieldMask': 'places.photos,places.editorialSummary,places.reviews,places.rating,places.userRatingCount,places.displayName,places.internationalPhoneNumber',
             },
-            body: JSON.stringify({ textQuery: query, maxResultCount: 1 }),
+            body: JSON.stringify({ textQuery: query, maxResultCount: maxResults }),
         });
         if (!res.ok) return null;
         const data = await res.json();
-        return data.places?.[0] || null;
+        const places = data.places || [];
+        
+        if (places.length === 0) return null;
+        
+        // If we searched by phone, find the one with matching business name
+        if (phone && places.length > 1) {
+            for (const p of places) {
+                if (p.displayName?.text && p.displayName.text.toLowerCase().includes(businessName.toLowerCase())) {
+                    return p;
+                }
+            }
+        }
+        
+        // Return first result (or the only result)
+        return places[0];
     } catch {
         return null;
     }
@@ -151,17 +174,26 @@ function buildDescription(place, biz) {
 async function processBatch(pool, businesses) {
     await Promise.all(businesses.map(async (biz) => {
         try {
-            // Try Place Details API first
-            const placeId = extractPlaceId(biz.source_url);
+            // Try Place Details API first (fast + reliable)
+            let placeId = extractPlaceId(biz.source_url);
             let place = null;
             
             if (placeId) {
                 place = await getPlaceDetails(placeId);
             }
             
-            // Fallback to text search
+            // If we have a CID URL but no Place ID, resolve it via text search
+            if (!place && biz.source_url && biz.source_url.includes('maps.google.com/cid=')) {
+                const searchResult = await searchPlaceDetails(biz.business_name, biz.suburb, biz.state, biz.business_phone);
+                if (searchResult && searchResult.id) {
+                    placeId = searchResult.id.replace('places/', '');
+                    place = await getPlaceDetails(placeId);
+                }
+            }
+            
+            // Final fallback to text search
             if (!place) {
-                place = await searchPlaceDetails(biz.business_name, biz.suburb, biz.state);
+                place = await searchPlaceDetails(biz.business_name, biz.suburb, biz.state, biz.business_phone);
             }
             
             if (!place) {
@@ -191,6 +223,11 @@ async function processBatch(pool, businesses) {
             if (!PHOTOS_ONLY || !DESC_ONLY) {
                 const existingUrls = parsePhotoUrls(biz.photo_urls);
                 const existingCount = existingUrls.length;
+                
+                // Debug logging
+                if (existingCount === 0 && place.photos && place.photos.length > 0) {
+                    console.log(`  [DEBUG] ${biz.business_name}: DB has 0 photos, Google has ${place.photos.length} photos`);
+                }
                 
                 if (existingCount < MIN_PHOTOS_THRESHOLD && place.photos && place.photos.length > 0) {
                     const newPhotoUrls = place.photos
@@ -227,6 +264,10 @@ async function processBatch(pool, businesses) {
             }
 
             if (updates.length === 0) {
+                const existingUrls = parsePhotoUrls(biz.photo_urls);
+                const existingCount = existingUrls.length;
+                const hasDesc = biz.description ? 'yes' : 'no';
+                console.log(`  [SKIP] ${biz.business_name} | Photos: ${existingCount} | Desc: ${hasDesc} | Place photos: ${place.photos?.length || 0}`);
                 stats.skipped++;
                 stats.processed++;
                 return;
@@ -282,7 +323,7 @@ async function run() {
     const result = await pool.query(`
         SELECT id, business_name, slug, trade_category, suburb, city, state,
                source_url, description, photo_urls, logo_url, cover_photo_url,
-               avg_rating, total_reviews
+               avg_rating, total_reviews, business_phone
         FROM businesses
         WHERE ${where}
         ORDER BY created_at DESC

@@ -126,7 +126,7 @@ export default async function DashboardReferPage({
                             </div>
 
                             <div className="flex items-center gap-5 mb-6">
-                                <BusinessLogo logoUrl={business.logo_url} name={business.business_name} size="lg" />
+                                <BusinessLogo logoUrl={business.logo_url} name={business.business_name} size="lg" bgColor={business.logo_bg_color} />
                                 <div>
                                     <h1 className="font-black text-zinc-900 leading-tight tracking-tight text-3xl">
                                         {business.business_name}

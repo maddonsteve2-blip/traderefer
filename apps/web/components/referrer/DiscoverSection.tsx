@@ -15,6 +15,7 @@ interface Business {
     state: string;
     referral_fee_cents: number;
     logo_url: string | null;
+    logo_bg_color?: string | null;
     trust_score: number;
     is_verified: boolean;
 }
@@ -34,7 +35,7 @@ function BusinessCard({ biz }: { biz: Business }) {
         <Link href={`/dashboard/referrer/refer/${biz.slug}`} className="block">
             <div className="bg-white rounded-2xl border border-zinc-200 p-5 hover:shadow-lg hover:border-orange-200 transition-all group">
                 <div className="flex items-center gap-3 mb-3">
-                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="sm" className="shrink-0" />
+                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="sm" className="shrink-0" bgColor={biz.logo_bg_color} />
                     <div className="flex-1 min-w-0">
                         <div className="font-bold text-zinc-900 text-[19px] truncate group-hover:text-orange-600 transition-colors leading-tight">
                             {biz.business_name}

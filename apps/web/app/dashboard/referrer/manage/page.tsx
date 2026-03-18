@@ -21,6 +21,7 @@ interface TeamLink {
     slug: string;
     code: string;
     logo_url: string | null;
+    logo_bg_color?: string | null;
     referral_fee_cents: number;
     is_verified: boolean;
     business_id: string;
@@ -35,6 +36,7 @@ interface PendingApp {
     business_name: string;
     business_slug: string;
     business_logo: string | null;
+    business_logo_bg_color?: string | null;
     trade_category: string;
     suburb: string;
     referral_fee_cents: number;
@@ -451,7 +453,7 @@ export default function ReferrerManagePage() {
                                     className="rounded-[24px] border border-zinc-200 bg-white p-4 shadow-sm"
                                 >
                                     <div className="flex items-start gap-4">
-                                        <BusinessLogo logoUrl={link.logo_url} name={link.name} size="md" />
+                                        <BusinessLogo logoUrl={link.logo_url} name={link.name} size="md" bgColor={link.logo_bg_color} />
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-1.5">
                                                 <p className="text-base font-black text-zinc-900 truncate">{link.name}</p>
@@ -492,7 +494,7 @@ export default function ReferrerManagePage() {
                                     className="rounded-[24px] border border-amber-200 bg-white p-4 shadow-sm"
                                 >
                                     <div className="flex items-start gap-4">
-                                        <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="md" />
+                                        <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="md" bgColor={app.business_logo_bg_color} />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-base font-black text-zinc-900 truncate">{app.business_name}</p>
                                             <p className="mt-1 text-[13px] font-medium text-zinc-500">{app.trade_category} · {app.suburb}</p>
@@ -552,7 +554,7 @@ export default function ReferrerManagePage() {
                 className={`w-full text-left p-4 rounded-2xl transition-all ${isActive ? "bg-white shadow-lg shadow-zinc-100 ring-2 ring-orange-500/20" : "hover:bg-white hover:shadow-md hover:shadow-zinc-100"}`}
             >
                 <div className="flex items-start gap-3">
-                    <BusinessLogo logoUrl={link.logo_url} name={link.name} size="sm" />
+                    <BusinessLogo logoUrl={link.logo_url} name={link.name} size="sm" bgColor={link.logo_bg_color} />
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                             <p className="font-black text-zinc-900 truncate leading-tight text-xl">{link.name}</p>
@@ -589,7 +591,7 @@ export default function ReferrerManagePage() {
                 className={`w-full text-left p-4 rounded-2xl transition-all ${isActive ? "bg-white shadow-lg shadow-zinc-100 ring-2 ring-amber-400/30" : "hover:bg-white hover:shadow-md hover:shadow-zinc-100"}`}
             >
                 <div className="flex items-start gap-3">
-                    <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="sm" />
+                    <BusinessLogo logoUrl={app.business_logo} name={app.business_name} size="sm" bgColor={app.business_logo_bg_color} />
                     <div className="flex-1 min-w-0">
                         <p className="font-black text-zinc-900 truncate leading-tight text-xl">{app.business_name}</p>
                         <p className="font-bold text-zinc-500 truncate mt-0.5 text-base">{app.trade_category}</p>
@@ -620,7 +622,7 @@ export default function ReferrerManagePage() {
                             onClick={() => setSelected({ type: "approved", link })}
                             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl shrink-0 font-bold transition-all ${selected?.type === "approved" && selected.link.slug === link.slug ? "bg-orange-600 text-white" : "bg-white border border-zinc-200 text-zinc-700"} text-sm`}
                         >
-                            <BusinessLogo logoUrl={link.logo_url} name={link.name} size="xs" />
+                            <BusinessLogo logoUrl={link.logo_url} name={link.name} size="xs" bgColor={link.logo_bg_color} />
                             {link.name}
                         </button>
                     ))}

@@ -511,7 +511,7 @@ export function Navbar() {
 
     const apiUrl = "/api/backend";
 
-    const isDashboard = pathname?.startsWith("/dashboard") || pathname?.startsWith("/b/");
+    const isDashboard = pathname?.startsWith("/dashboard");
 
     const isBusinessDashboard = pathname?.startsWith("/dashboard/business");
 

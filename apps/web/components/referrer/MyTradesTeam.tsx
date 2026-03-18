@@ -18,6 +18,7 @@ interface TeamBusiness {
     trade_category: string;
     slug: string;
     logo_url: string | null;
+    logo_bg_color?: string | null;
     earned: number;
     leads: number;
     clicks: number;
@@ -119,7 +120,7 @@ export function MyTradesTeam() {
                                 href={`/dashboard/referrer/refer/${biz.slug}`}
                                 className="inline-flex items-center gap-3 bg-zinc-50 hover:bg-orange-50 border border-zinc-200 hover:border-orange-300 rounded-full pl-1.5 pr-4 py-1.5 group transition-all shrink-0"
                             >
-                                <BusinessLogo logoUrl={biz.logo_url} name={biz.name} size="xs" />
+                                <BusinessLogo logoUrl={biz.logo_url} name={biz.name} size="xs" bgColor={biz.logo_bg_color} />
                                 <div className="flex flex-col leading-tight">
                                     <span className="text-[19px] font-bold text-zinc-700 group-hover:text-orange-600 transition-colors whitespace-nowrap">{cat}</span>
                                     {biz.earned > 0 && (

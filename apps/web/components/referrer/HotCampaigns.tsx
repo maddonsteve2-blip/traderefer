@@ -20,6 +20,7 @@ interface Campaign {
     trade_category: string;
     suburb: string;
     logo_url: string | null;
+    logo_bg_color?: string | null;
 }
 
 function badgeText(c: Campaign) {
@@ -81,7 +82,7 @@ export function HotCampaigns() {
                             href={`/dashboard/referrer/refer/${c.slug}`}
                             className="flex items-center gap-4 p-4 bg-orange-50 border border-orange-100 rounded-2xl hover:border-orange-300 hover:bg-orange-100/60 transition-all group shadow-sm"
                         >
-                            <BusinessLogo logoUrl={c.logo_url} name={c.business_name} size="sm" />
+                            <BusinessLogo logoUrl={c.logo_url} name={c.business_name} size="sm" bgColor={c.logo_bg_color} />
                             <div className="flex-1 min-w-0">
                                 <div className="text-lg font-black text-zinc-900 truncate group-hover:text-orange-600 transition-colors leading-tight">{c.business_name}</div>
                                 <div className="text-base text-zinc-500 font-bold truncate mt-0.5">{c.trade_category} · {daysLeft(c.ends_at)}</div>
