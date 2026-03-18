@@ -1,6 +1,13 @@
 import { Shield, Lock, Eye, FileText, ChevronRight, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { BackButton } from "@/components/BackButton";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Privacy Policy | TradeRefer",
+    description: "TradeRefer's privacy policy. How we collect, use, and protect your data across the platform. Australian Privacy Principles compliant.",
+    alternates: { canonical: "https://traderefer.au/privacy" },
+};
 
 export default function PrivacyPage() {
     return (

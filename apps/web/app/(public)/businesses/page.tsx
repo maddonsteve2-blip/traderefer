@@ -285,7 +285,7 @@ export async function generateMetadata({
         : "Find Verified Trades Near You | Business Directory | TradeRefer";
 
     const description = parts.length > 0
-        ? `Compare top rated ${(tradeNoun || 'tradespeople').toLowerCase()} ${suburb ? `in ${suburb}` : city ? `in ${city}` : ''}${state ? `, ${STATE_LABELS[state] || state}` : ''}. ABN-verified, Google-reviewed local businesses. Get free quotes today on TradeRefer.`
+        ? `Compare top rated ${(tradeNoun || 'tradespeople').toLowerCase()}${suburb ? ` in ${suburb}` : city ? ` in ${city}` : ''}${state ? `, ${STATE_LABELS[state] || state}` : ''}. ABN-verified, Google-reviewed local businesses. Get free quotes today on TradeRefer.`
         : "Browse 14,000+ verified Australian tradespeople. Compare ratings, reviews, and prices. Get free quotes from local businesses on TradeRefer.";
 
     return {

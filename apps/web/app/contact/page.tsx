@@ -1,5 +1,12 @@
 import { Mail, MapPin, Clock, MessageSquare, Send, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Contact Us | TradeRefer — Australia's Trade Referral Marketplace",
+    description: "Get in touch with TradeRefer. Support for referrers, businesses, and marketplace inquiries. Mon-Fri 9AM-5PM AEST.",
+    alternates: { canonical: "https://traderefer.au/contact" },
+};
 
 export default function ContactPage() {
     return (

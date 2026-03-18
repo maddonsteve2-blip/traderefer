@@ -225,7 +225,7 @@ export default async function Top10CityPage({ params }: PageProps) {
                             <span className="text-[#FF6600] font-black uppercase tracking-widest" style={{ fontSize: '16px' }}>Ranked by Real Reviews</span>
                         </div>
                         <h1 className="font-black mb-6 leading-[1.1] font-display" style={{ fontSize: 'clamp(48px, 8vw, 80px)' }}>
-                            Top 10 <span className="text-[#FF6600]">{TRADE_NOUNS[tradeName] || tradeName}</span><br />in {cityName}, {stateName}
+                            Top {businesses.length} <span className="text-[#FF6600]">{TRADE_NOUNS[tradeName] || tradeName}</span> in {cityName}, {stateName}
                         </h1>
                         <p className="text-zinc-400 mb-4 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             There are currently <strong className="text-white">{businesses.length} highly-rated {tradeName.toLowerCase()} businesses</strong> in {cityName}, {stateName} listed on TradeRefer, with an average Google rating of <strong className="text-white">{avgRating}★</strong> across <strong className="text-white">{totalReviews.toLocaleString()} verified reviews</strong>. The {businesses.length} listed below are ranked from highest to lowest rating, all ABN-verified and community-recommended.

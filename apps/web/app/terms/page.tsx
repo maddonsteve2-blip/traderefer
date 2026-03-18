@@ -1,6 +1,13 @@
 import { Gavel, CheckCircle2, ShieldAlert, CreditCard, Scale, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { BackButton } from "@/components/BackButton";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Terms of Service | TradeRefer",
+    description: "TradeRefer's terms of service for referrers and businesses. Lead verification, PIN-based dispute resolution, and marketplace rules.",
+    alternates: { canonical: "https://traderefer.au/terms" },
+};
 
 export default function TermsPage() {
     const sections = [
