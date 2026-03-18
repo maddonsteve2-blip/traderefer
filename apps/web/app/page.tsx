@@ -397,7 +397,7 @@ export default async function HomePage() {
               return (
                 <Link
                   key={trade}
-                  href="/categories"
+                  href={`/businesses?category=${encodeURIComponent(trade)}`}
                   className="group flex items-center gap-2.5 bg-white border border-zinc-200 rounded-2xl px-4 py-3.5 font-bold text-zinc-700 hover:border-orange-500 hover:text-orange-600 hover:shadow-md transition-all duration-200 text-base"
                 >
                   <Wrench className="w-3.5 h-3.5 text-zinc-400 group-hover:text-orange-500 shrink-0 transition-colors" />
