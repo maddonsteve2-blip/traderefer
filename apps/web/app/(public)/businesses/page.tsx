@@ -137,7 +137,7 @@ async function getBusinesses(
                             END as distance_km
                         FROM businesses b
                         ${suburbWhere}
-                        ORDER BY distance_km ASC, b.listing_rank DESC, b.avg_rating DESC
+                        ORDER BY distance_km ASC, b.avg_rating DESC, b.created_at DESC
                         LIMIT ${PAGE_SIZE} OFFSET ${offset}
                     `;
                 } else {
@@ -147,7 +147,7 @@ async function getBusinesses(
                             (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count
                         FROM businesses b
                         ${suburbWhere}
-                        ORDER BY b.listing_rank DESC, b.avg_rating DESC, b.created_at DESC
+                        ORDER BY b.avg_rating DESC, b.created_at DESC
                         LIMIT ${PAGE_SIZE} OFFSET ${offset}
                     `;
                 }
@@ -169,7 +169,7 @@ async function getBusinesses(
                         ${baseWhere}
                           AND b.lat IS NOT NULL AND b.lng IS NOT NULL
                           AND ${distExpr} < ${radiusKm}
-                        ORDER BY distance_km ASC, b.listing_rank DESC, b.avg_rating DESC
+                        ORDER BY distance_km ASC, b.avg_rating DESC, b.created_at DESC
                         LIMIT ${PAGE_SIZE} OFFSET ${offset}
                     `;
                     if (radiusResults.length > 0) {
@@ -202,7 +202,7 @@ async function getBusinesses(
                     (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count
                 FROM businesses b
                 ${cityWhere}
-                ORDER BY b.listing_rank DESC, b.avg_rating DESC
+                ORDER BY b.created_at DESC
                 LIMIT ${PAGE_SIZE} OFFSET ${offset}
             `;
             return {
@@ -225,7 +225,7 @@ async function getBusinesses(
                     (SELECT COUNT(*) FROM campaigns c WHERE c.business_id = b.id AND c.is_active = true AND c.starts_at <= now() AND c.ends_at > now()) as campaign_count
                 FROM businesses b
                 ${whereClause}
-                ORDER BY b.listing_rank DESC, b.avg_rating DESC, b.created_at DESC
+                ORDER BY b.avg_rating DESC, b.created_at DESC
                 LIMIT ${PAGE_SIZE} OFFSET ${offset}
             `,
             sql`SELECT COUNT(*) as total FROM businesses b ${whereClause}`,
@@ -320,6 +320,28 @@ export default async function BusinessDirectory({
     ]);
 
     const hasFilters = category || suburb || q || state || city || openNow || is24h;
+
+    // Fire-and-forget: enrich up to 3 businesses per page load that lack photos
+    const enrichUrl = `${process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/api/enrich-business`;
+    const needsEnrichment = businesses.filter((b: any) => {
+        const photoCount = Array.isArray(b.photo_urls) ? b.photo_urls.length : 0;
+        return photoCount < 1 && !b.enriched_at;
+    }).slice(0, 3);
+    for (const biz of needsEnrichment) {
+        fetch(enrichUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                businessId: biz.id,
+                businessName: biz.business_name,
+                suburb: biz.suburb,
+                state: biz.state,
+                slug: biz.slug,
+                currentPhotoCount: 0,
+                hasEditorialDescription: false,
+            }),
+        }).catch(() => {});
+    }
 
     // Dynamic H1
     const h1Parts: string[] = [];
