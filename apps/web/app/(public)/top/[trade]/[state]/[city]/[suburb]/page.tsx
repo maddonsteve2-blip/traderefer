@@ -294,8 +294,9 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                                 <Trophy className="w-3 h-3" /> Top Rated {year}
                                             </div>
                                         )}
-                                        <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start pl-16">
-                                            <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="md" bgColor={biz.logo_bg_color} />
+                                        <div className="p-6 md:p-8 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start pl-16">
+                                            <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="sm" bgColor={biz.logo_bg_color} className="sm:hidden" />
+                                            <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="md" bgColor={biz.logo_bg_color} className="hidden sm:flex" />
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex flex-wrap items-center gap-2 mb-2">
                                                     <span className="px-2.5 py-1 bg-zinc-100 text-zinc-600 rounded-full text-[10px] font-black uppercase tracking-wider">{biz.trade_category}</span>

@@ -526,8 +526,9 @@ export default async function BusinessDirectory({
                 {/* ── MOBILE FILTER TOGGLE ── */}
                 <details className="lg:hidden mb-6 bg-white rounded-xl border border-zinc-200">
                     <summary className="flex items-center gap-2 px-4 py-3 font-black text-zinc-900 cursor-pointer select-none">
-                        <Filter className="w-4 h-4 text-orange-500" /> Filters
+                        <Filter className="w-4 h-4 text-orange-500" /> Filter by Location & Trade
                     </summary>
+                    <p className="px-4 text-zinc-500 text-sm font-medium -mt-1 mb-2">Use the filters below to narrow results to your state, city or suburb.</p>
                     <div className="px-4 pb-4">
                         <Suspense fallback={null}><BusinessDirectorySidebar counts={counts} total={total} /></Suspense>
                     </div>
@@ -559,10 +560,11 @@ export default async function BusinessDirectory({
                             const hoursStatus = getBusinessHoursStatus(biz.opening_hours);
                             const photos = Array.isArray(biz.photo_urls) ? biz.photo_urls : [];
                             return (
-                            <div key={biz.id} className="bg-white rounded-2xl border border-zinc-200 p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
-                                <div className="flex gap-6">
+                            <div key={biz.id} className="bg-white rounded-2xl border border-zinc-200 p-5 sm:p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
+                                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                                     {/* Logo */}
-                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="md" bgColor={biz.logo_bg_color} />
+                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="sm" bgColor={biz.logo_bg_color} className="sm:hidden" />
+                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="md" bgColor={biz.logo_bg_color} className="hidden sm:flex" />
 
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">

@@ -64,8 +64,8 @@ function BizCard({ biz, isFirst }: { biz: Business; isFirst?: boolean }) {
             <div className="p-5 flex-1 flex flex-col gap-4">
 
                 {/* Logo + name + trust score */}
-                <div className="flex items-start gap-4">
-                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="md" className="shrink-0" bgColor={biz.logo_bg_color} />
+                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} size="sm" className="shrink-0" bgColor={biz.logo_bg_color} />
                     <div className="flex-1 min-w-0">
                         <div className="font-black text-zinc-900 leading-tight truncate group-hover:text-orange-600 transition-colors text-[21px]">
                             {biz.business_name}
