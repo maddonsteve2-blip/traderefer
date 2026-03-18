@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 
 /**
  * Adaptive Logo Display System
  *
- * Automatically makes any logo look polished regardless of whether it's
- * dark, light, transparent, or padded — no manual configuration required.
+ * Pixel-perfect port of the reference implementation at upload-image/logo-test.
+ * Automatically makes any logo look polished — no manual configuration required.
  *
  * - Proxy layer: all external URLs fetched server-side via /api/logo-proxy
- * - Pixel analysis: canvas samples 64×64 to measure luminance, transparency, edge brightness
- * - Adaptive background: white / off-white / dark charcoal per logo
- * - Auto-crop: strips built-in padding so every logo fills its container uniformly
+ * - Pixel analysis at 64×64: luminance (0-255), transparency (5%), edge dark/light ratio
+ * - Adaptive background: 3-tier for transparent logos, dominantEdge for solid logos
+ * - Auto-crop: isEmpty() function, 10% padding threshold, 5% crop padding
  */
 
 type LogoSize = "xs" | "sm" | "md" | "lg" | "xl" | "full" | "round-sm" | "round-md" | "round-lg";
@@ -39,174 +39,165 @@ const SIZE_CONFIG: Record<LogoSize, { container: string; fallbackText: string }>
 function getProxyUrl(url: string | null): string | null {
     if (!url) return null;
     const safe = url.replace(/^http:\/\//i, "https://");
-    // Already a local/relative URL — no proxy needed
-    if (safe.startsWith("/")) return safe;
-    // Proxy all external URLs to bypass CORS
+    if (safe.startsWith("/") || safe.startsWith("data:")) return safe;
     return `/api/logo-proxy?url=${encodeURIComponent(safe)}`;
 }
 
-interface AnalysisResult {
-    bg: string;          // tailwind-style bg class or inline style
-    bgColor: string;     // actual hex colour
-    cropBox: { sx: number; sy: number; sw: number; sh: number } | null;
+// ── Pixel analysis types ──
+
+interface PixelStats {
+    bg: string;
+    luminance: number;
+    hasTransparency: boolean;
+    dominantEdge: "dark" | "light" | "mixed";
+    croppedSrc: string | null;
 }
 
-function analyzeImage(img: HTMLImageElement): AnalysisResult {
-    // ── Step 1: Sample at 64×64 for luminance / transparency ──
-    const SAMPLE = 64;
-    const sCanvas = document.createElement("canvas");
-    sCanvas.width = SAMPLE;
-    sCanvas.height = SAMPLE;
-    const sCtx = sCanvas.getContext("2d", { willReadFrequently: true })!;
-    sCtx.drawImage(img, 0, 0, SAMPLE, SAMPLE);
-    const sData = sCtx.getImageData(0, 0, SAMPLE, SAMPLE).data;
+/** Returns true if a pixel is considered "empty" — transparent or matching solid bg */
+function isEmpty(r: number, g: number, b: number, a: number, solidBg: boolean, bgIsLight: boolean): boolean {
+    if (a < 20) return true;
+    if (!solidBg) return false;
+    const lum = (r * 299 + g * 587 + b * 114) / 1000;
+    if (bgIsLight && lum > 240) return true;
+    if (!bgIsLight && lum < 15) return true;
+    return false;
+}
 
-    let totalLum = 0;
-    let transparentPx = 0;
-    let edgeLum = 0;
-    let edgeCount = 0;
-    const total = SAMPLE * SAMPLE;
+function analyzeImage(img: HTMLImageElement): PixelStats {
+    // Draw at capped resolution for crop pass (max 400px)
+    const scale = Math.min(1, 400 / Math.max(img.naturalWidth || 400, img.naturalHeight || 400));
+    const w = Math.round((img.naturalWidth || 300) * scale);
+    const h = Math.round((img.naturalHeight || 100) * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+    ctx.drawImage(img, 0, 0, w, h);
+    const { data } = ctx.getImageData(0, 0, w, h);
+
+    // ── Pass 1: background / luminance analysis (sample at 64×64) ──
+    const size = 64;
+    const sCanvas = document.createElement("canvas");
+    sCanvas.width = sCanvas.height = size;
+    const sCtx = sCanvas.getContext("2d", { willReadFrequently: true })!;
+    sCtx.drawImage(img, 0, 0, size, size);
+    const sData = sCtx.getImageData(0, 0, size, size).data;
+
+    let totalLuminance = 0, opaquePixels = 0, transparentPixels = 0;
+    let edgeDark = 0, edgeLight = 0;
+
+    // Build edge pixel index set (outer 3px ring)
+    const edgeIndices = new Set<number>();
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < 3; y++) edgeIndices.add(y * size + x);
+        for (let y = size - 3; y < size; y++) edgeIndices.add(y * size + x);
+    }
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < 3; x++) edgeIndices.add(y * size + x);
+        for (let x = size - 3; x < size; x++) edgeIndices.add(y * size + x);
+    }
 
     for (let i = 0; i < sData.length; i += 4) {
         const r = sData[i], g = sData[i + 1], b = sData[i + 2], a = sData[i + 3];
-        const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-        if (a < 20) {
-            transparentPx++;
-        } else {
-            totalLum += lum * (a / 255);
-        }
-
-        // Edge pixels (outer 4px ring)
-        const px = (i / 4) % SAMPLE;
-        const py = Math.floor((i / 4) / SAMPLE);
-        if (px < 4 || px >= SAMPLE - 4 || py < 4 || py >= SAMPLE - 4) {
-            edgeLum += lum * (a / 255);
-            edgeCount++;
-        }
+        if (a < 30) { transparentPixels++; continue; }
+        opaquePixels++;
+        const lum = (r * 299 + g * 587 + b * 114) / 1000;
+        totalLuminance += lum;
+        const pi = i / 4;
+        if (edgeIndices.has(pi)) lum < 128 ? edgeDark++ : edgeLight++;
     }
 
-    const opaquePx = total - transparentPx;
-    const avgLum = opaquePx > 0 ? totalLum / opaquePx : 0.5;
-    const avgEdgeLum = edgeCount > 0 ? edgeLum / edgeCount : 0.5;
-    const transparencyRatio = transparentPx / total;
+    const hasTransparency = transparentPixels > size * size * 0.05;
+    const avgLuminance = opaquePixels > 0 ? totalLuminance / opaquePixels : 128;
+    const dominantEdge: "dark" | "light" | "mixed" =
+        edgeDark > edgeLight * 2 ? "dark" :
+        edgeLight > edgeDark * 2 ? "light" : "mixed";
 
-    // ── Step 2: Pick adaptive background ──
-    let bgColor: string;
-    if (transparencyRatio > 0.15) {
-        // Transparent logo — pick based on content brightness
-        if (avgLum > 0.75 || avgEdgeLum > 0.8) {
-            bgColor = "#1c1c1e"; // dark charcoal for light/white logos
-        } else if (avgLum < 0.3) {
-            bgColor = "#ffffff"; // white for dark logos
-        } else {
-            bgColor = "#f5f5f4"; // off-white (stone-100) for mid-tones
-        }
+    // ── Background selection ──
+    let bg: string;
+    if (hasTransparency) {
+        bg = avgLuminance > 200 ? "#1c1c1e" : avgLuminance > 128 ? "#2c2c2e" : "#ffffff";
     } else {
-        // Solid background logo
-        if (avgEdgeLum > 0.85) {
-            bgColor = "#ffffff"; // already light bg, keep white
-        } else if (avgEdgeLum < 0.2) {
-            bgColor = "#1c1c1e"; // dark bg logo
-        } else {
-            bgColor = "#f5f5f4"; // neutral
-        }
+        if (dominantEdge === "dark") bg = "#f8f8f8";
+        else if (dominantEdge === "light") bg = "#1c1c1e";
+        else bg = avgLuminance > 128 ? "#1c1c1e" : "#f8f8f8";
     }
 
-    // ── Step 3: Auto-crop at full resolution ──
-    let cropBox: AnalysisResult["cropBox"] = null;
-    const fw = img.naturalWidth;
-    const fh = img.naturalHeight;
+    // ── Pass 2: find tight bounding box of content pixels ──
+    const solidBg = !hasTransparency;
+    const bgIsLight = bg === "#f8f8f8" || bg === "#ffffff" || bg === "#e8e8e8";
 
-    if (fw > 0 && fh > 0 && fw <= 4096 && fh <= 4096) {
-        const fCanvas = document.createElement("canvas");
-        fCanvas.width = fw;
-        fCanvas.height = fh;
-        const fCtx = fCanvas.getContext("2d", { willReadFrequently: true })!;
-        fCtx.drawImage(img, 0, 0);
-        const fData = fCtx.getImageData(0, 0, fw, fh).data;
+    let minX = w, maxX = 0, minY = h, maxY = 0;
 
-        let minX = fw, minY = fh, maxX = 0, maxY = 0;
-        const threshold = 10; // alpha threshold for content pixels
-
-        for (let y = 0; y < fh; y++) {
-            for (let x = 0; x < fw; x++) {
-                const idx = (y * fw + x) * 4;
-                const a = fData[idx + 3];
-                if (a > threshold) {
-                    // For solid bg logos, also check if pixel differs from corner
-                    if (transparencyRatio < 0.15) {
-                        const r = fData[idx], g = fData[idx + 1], b = fData[idx + 2];
-                        const cr = fData[0], cg = fData[1], cb = fData[2];
-                        const diff = Math.abs(r - cr) + Math.abs(g - cg) + Math.abs(b - cb);
-                        if (diff < 30) continue; // same as corner bg — skip
-                    }
-                    if (x < minX) minX = x;
-                    if (x > maxX) maxX = x;
-                    if (y < minY) minY = y;
-                    if (y > maxY) maxY = y;
-                }
-            }
-        }
-
-        if (maxX > minX && maxY > minY) {
-            const cw = maxX - minX + 1;
-            const ch = maxY - minY + 1;
-            // Only crop if we'd remove at least 15% of the image (meaningful padding)
-            if (cw * ch < fw * fh * 0.85) {
-                // Add 4% padding around the crop
-                const padX = Math.round(cw * 0.04);
-                const padY = Math.round(ch * 0.04);
-                cropBox = {
-                    sx: Math.max(0, minX - padX),
-                    sy: Math.max(0, minY - padY),
-                    sw: Math.min(fw - Math.max(0, minX - padX), cw + padX * 2),
-                    sh: Math.min(fh - Math.max(0, minY - padY), ch + padY * 2),
-                };
+    for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+            const i = (y * w + x) * 4;
+            const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+            if (!isEmpty(r, g, b, a, solidBg, bgIsLight)) {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
             }
         }
     }
 
-    return { bg: "", bgColor, cropBox };
+    let croppedSrc: string | null = null;
+
+    if (minX < maxX && minY < maxY) {
+        const cropW = maxX - minX + 1;
+        const cropH = maxY - minY + 1;
+        const totalPixels = w * h;
+        const contentPixels = cropW * cropH;
+        const paddingRatio = 1 - contentPixels / totalPixels;
+
+        // Only crop if there's meaningful padding (>10% wasted space)
+        if (paddingRatio > 0.10) {
+            const padding = Math.round(Math.min(cropW, cropH) * 0.05);
+            const srcX = Math.max(0, minX - padding);
+            const srcY = Math.max(0, minY - padding);
+            const srcW = Math.min(w, maxX + padding + 1) - srcX;
+            const srcH = Math.min(h, maxY + padding + 1) - srcY;
+
+            const cropCanvas = document.createElement("canvas");
+            cropCanvas.width = srcW;
+            cropCanvas.height = srcH;
+            const cropCtx = cropCanvas.getContext("2d")!;
+            cropCtx.drawImage(canvas, srcX, srcY, srcW, srcH, 0, 0, srcW, srcH);
+            croppedSrc = cropCanvas.toDataURL("image/png");
+        }
+    }
+
+    return { bg, luminance: avgLuminance, hasTransparency, dominantEdge, croppedSrc };
 }
 
 export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className = "" }: BusinessLogoProps) {
-    const [failed, setFailed] = useState(false);
-    const [bgColor, setBgColor] = useState<string>("#f0f0f0");
-    const [croppedSrc, setCroppedSrc] = useState<string | null>(null);
-    const [analyzed, setAnalyzed] = useState(false);
     const imgRef = useRef<HTMLImageElement>(null);
+    const [stats, setStats] = useState<PixelStats | null>(null);
+    const [error, setError] = useState(false);
+
     const config = SIZE_CONFIG[size] || SIZE_CONFIG.md;
     const proxyUrl = getProxyUrl(logoUrl);
 
-    const onLoad = useCallback(() => {
+    // Reset state when src changes
+    useEffect(() => {
+        setStats(null);
+        setError(false);
+    }, [logoUrl]);
+
+    function handleLoad() {
         const img = imgRef.current;
-        if (!img || analyzed) return;
-
+        if (!img) return;
         try {
-            const result = analyzeImage(img);
-            setBgColor(result.bgColor);
-
-            // Render cropped version if needed
-            if (result.cropBox) {
-                const { sx, sy, sw, sh } = result.cropBox;
-                const canvas = document.createElement("canvas");
-                canvas.width = sw;
-                canvas.height = sh;
-                const ctx = canvas.getContext("2d")!;
-                ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
-                setCroppedSrc(canvas.toDataURL("image/png"));
-            }
-
-            setAnalyzed(true);
+            setStats(analyzeImage(img));
         } catch {
-            // Canvas analysis failed (rare) — keep defaults
-            setAnalyzed(true);
+            setStats({ bg: "#e8e8e8", luminance: 128, hasTransparency: false, dominantEdge: "mixed", croppedSrc: null });
         }
-    }, [analyzed]);
+    }
 
     // Fallback: letter avatar
-    if (!proxyUrl || failed) {
+    if (!proxyUrl || error) {
         return (
             <div className={`${config.container} bg-gradient-to-br from-zinc-200 to-zinc-100 flex items-center justify-center font-black text-zinc-500 overflow-hidden border border-zinc-200/60 ${className}`}>
                 <span className={`${config.fallbackText} select-none uppercase`}>{name?.[0] || "?"}</span>
@@ -214,27 +205,42 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
         );
     }
 
+    const bg = stats?.bg ?? "#e8e8e8";
+    const isLight = bg === "#ffffff" || bg === "#f8f8f8" || bg === "#e8e8e8";
+    const displaySrc = stats?.croppedSrc ?? proxyUrl;
+
     return (
         <div
-            className={`${config.container} overflow-hidden border border-zinc-200/40 shadow-sm flex items-center justify-center transition-colors duration-300 ${className}`}
-            style={{ backgroundColor: bgColor }}
+            className={`${config.container} flex items-center justify-center overflow-hidden transition-all duration-300 ${className}`}
+            style={{
+                backgroundColor: bg,
+                boxShadow: isLight ? "0 1px 4px rgba(0,0,0,0.12)" : "0 1px 4px rgba(0,0,0,0.4)",
+                border: isLight ? "1px solid rgba(0,0,0,0.08)" : "none",
+                padding: 2,
+            }}
         >
-            {/* Hidden image for analysis (always loads original) */}
+            {/* Hidden image for pixel analysis */}
             <img
                 ref={imgRef}
                 src={proxyUrl}
                 alt=""
                 crossOrigin="anonymous"
-                onLoad={onLoad}
-                onError={() => setFailed(true)}
-                className="hidden"
+                onLoad={handleLoad}
+                onError={() => setError(true)}
+                style={{ display: "none" }}
             />
-            {/* Visible: cropped or original */}
+            {/* Visible: cropped version once ready, original while loading */}
             <img
-                src={croppedSrc || proxyUrl}
+                src={displaySrc}
                 alt={name}
-                className={`max-w-[85%] max-h-[85%] object-contain transition-opacity duration-300 ${analyzed ? "opacity-100" : "opacity-0"}`}
-                onError={() => setFailed(true)}
+                style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    display: "block",
+                    transition: "opacity 0.2s ease",
+                }}
+                onError={() => setError(true)}
             />
         </div>
     );
