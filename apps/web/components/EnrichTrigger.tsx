@@ -19,23 +19,20 @@ export function EnrichTrigger({ businesses }: { businesses: BusinessToEnrich[] }
     useEffect(() => {
         if (!businesses.length) return;
 
-        // Stagger requests to avoid hammering the API
-        businesses.forEach((biz, i) => {
-            setTimeout(() => {
-                fetch("/api/enrich-business", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        businessId: biz.id,
-                        businessName: biz.business_name,
-                        suburb: biz.suburb,
-                        state: biz.state,
-                        slug: biz.slug,
-                        currentPhotoCount: 0,
-                        hasEditorialDescription: false,
-                    }),
-                }).catch(() => {});
-            }, i * 2000); // 2 second gap between each
+        businesses.forEach((biz) => {
+            fetch("/api/enrich-business", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    businessId: biz.id,
+                    businessName: biz.business_name,
+                    suburb: biz.suburb,
+                    state: biz.state,
+                    slug: biz.slug,
+                    currentPhotoCount: 0,
+                    hasEditorialDescription: false,
+                }),
+            }).catch(() => {});
         });
     }, [businesses]);
 

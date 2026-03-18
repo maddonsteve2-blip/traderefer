@@ -326,7 +326,7 @@ export default async function BusinessDirectory({
     const needsEnrichment = businesses.filter((b: any) => {
         const photoCount = Array.isArray(b.photo_urls) ? b.photo_urls.length : 0;
         return photoCount < 1 && !b.enriched_at;
-    }).slice(0, 3).map((b: any) => ({
+    }).map((b: any) => ({
         id: b.id, business_name: b.business_name, suburb: b.suburb, state: b.state, slug: b.slug,
     }));
 
