@@ -11,6 +11,7 @@ import { generateFallbackDescription } from "@/lib/business-utils";
 import { getBusinessHoursStatus, toOpeningHoursSchema } from "@/lib/business-hours";
 import { Metadata } from "next";
 import { TRADE_COST_GUIDE } from "@/lib/constants";
+import { EnrichTrigger } from "@/components/EnrichTrigger";
 
 export const dynamic = "force-dynamic";
 
@@ -321,27 +322,13 @@ export default async function BusinessDirectory({
 
     const hasFilters = category || suburb || q || state || city || openNow || is24h;
 
-    // Fire-and-forget: enrich up to 3 businesses per page load that lack photos
-    const enrichUrl = `${process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')}/api/enrich-business`;
+    // Collect businesses needing enrichment (no photos, not yet enriched) — max 3 per page
     const needsEnrichment = businesses.filter((b: any) => {
         const photoCount = Array.isArray(b.photo_urls) ? b.photo_urls.length : 0;
         return photoCount < 1 && !b.enriched_at;
-    }).slice(0, 3);
-    for (const biz of needsEnrichment) {
-        fetch(enrichUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                businessId: biz.id,
-                businessName: biz.business_name,
-                suburb: biz.suburb,
-                state: biz.state,
-                slug: biz.slug,
-                currentPhotoCount: 0,
-                hasEditorialDescription: false,
-            }),
-        }).catch(() => {});
-    }
+    }).slice(0, 3).map((b: any) => ({
+        id: b.id, business_name: b.business_name, suburb: b.suburb, state: b.state, slug: b.slug,
+    }));
 
     // Dynamic H1
     const h1Parts: string[] = [];
@@ -484,6 +471,7 @@ export default async function BusinessDirectory({
 
     return (
         <>
+        {needsEnrichment.length > 0 && <EnrichTrigger businesses={needsEnrichment} />}
         <main className="flex-1 pt-20 md:pt-28 pb-12 bg-zinc-50 min-h-screen">
             {/* ── JSON-LD SCHEMA (7 types) ── */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />

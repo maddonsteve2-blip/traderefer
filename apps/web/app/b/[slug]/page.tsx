@@ -35,6 +35,7 @@ import Script from "next/script";
 import { proxyLogoUrl } from "@/lib/logo";
 import { TRADE_FAQ_BANK } from "@/lib/constants";
 import { ReviewSection } from "@/components/ReviewSection";
+import { EnrichTrigger } from "@/components/EnrichTrigger";
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -136,25 +137,12 @@ export default async function PublicProfilePage({
         notFound();
     }
 
-    // Fire-and-forget: enrich business with Google Places photos/description if needed
+    // Enrich this business with Google Places photos if needed (client-side trigger)
     const photoCount = Array.isArray(business.photo_urls) ? business.photo_urls.length : 0;
-    const hasEditorialDesc = business.description && !business.description.includes('specialist serving') && !business.description.includes('top-rated') && !business.description.includes('provides expert') && !business.description.includes('offers ') && !business.description.includes('for a free quote');
-    if (photoCount < 3 || !hasEditorialDesc) {
-        const enrichUrl = `${process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'}/api/enrich-business`;
-        fetch(enrichUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                businessId: business.id,
-                businessName: business.business_name,
-                suburb: business.suburb,
-                state: business.state,
-                slug: slug,
-                currentPhotoCount: photoCount,
-                hasEditorialDescription: !!hasEditorialDesc,
-            }),
-        }).catch(() => {});  // Fire and forget — don't block page render
-    }
+    const needsEnrich = photoCount < 3 && !business.enriched_at ? [{
+        id: business.id, business_name: business.business_name,
+        suburb: business.suburb, state: business.state, slug: slug,
+    }] : [];
 
     const safeProjects = Array.isArray(projects) ? projects : [];
     const featuredProject = safeProjects.find((p: any) => p.is_featured);
@@ -259,6 +247,8 @@ export default async function PublicProfilePage({
     } : null;
 
     return (
+        <>
+        {needsEnrich.length > 0 && <EnrichTrigger businesses={needsEnrich} />}
         <EditableProfile businessSlug={slug}>
             <main className="min-h-screen bg-zinc-50">
                 <Script
@@ -810,6 +800,7 @@ export default async function PublicProfilePage({
                 </div>
             </main>
         </EditableProfile>
+        </>
     );
 }
 
