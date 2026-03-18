@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
+import { notFound } from "next/navigation";
 import { ArrowRight, DollarSign, ShieldCheck, Star } from "lucide-react";
 import { BusinessLogo } from "@/components/BusinessLogo";
 
@@ -22,13 +21,6 @@ export default async function ReferPublicPage({
     params: Promise<{ slug: string }>;
 }) {
     const { slug } = await params;
-
-    // Signed-in users go straight to their referral dashboard
-    const { userId } = await auth();
-    if (userId) {
-        redirect(`/dashboard/referrer/refer/${slug}`);
-    }
-
     const business = await getBusiness(slug);
     if (!business) notFound();
 

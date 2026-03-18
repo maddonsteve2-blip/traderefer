@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import { LeadForm } from "@/components/LeadForm";
 import { EditableConditionalSection, EditableContactField, EditableFee, EditableGallery, EditableImage, EditableProfile, EditableServices, EditableText } from "@/components/EditableProfile";
@@ -128,7 +127,7 @@ export default async function PublicProfilePage({
 }) {
     const { slug } = await params;
     const { ref: referralCode } = await searchParams;
-    const { userId } = await auth();
+    const userId = null; // Public page - no auth on this route
     const [business, projects, googleReviews, deals] = await Promise.all([
         getBusiness(slug),
         getProjects(slug),
