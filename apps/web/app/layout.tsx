@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit, Montserrat, Oswald } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
@@ -95,6 +96,18 @@ export default function RootLayout({
             href="/images/hero-construction.webp"
             fetchPriority="high"
           />
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-YQ1SSL3MQF"
+            strategy="afterInteractive"
+          />
+          <Script id="gtag-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-YQ1SSL3MQF');
+            `}
+          </Script>
         </head>
         <body
           className={`${inter.variable} ${outfit.variable} ${montserrat.variable} ${oswald.variable} font-sans antialiased`}
