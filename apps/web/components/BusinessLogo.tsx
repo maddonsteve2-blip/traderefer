@@ -230,14 +230,18 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
         ? { width: "100%", height: "100%", borderRadius: config.radius }
         : { width: config.w, height: config.h, borderRadius: config.radius };
 
-    // Fallback: letter avatar
+    // Fallback: TradeRefer logo icon
     if (!proxyUrl || error) {
         return (
             <div
-                className={`bg-gradient-to-br from-zinc-200 to-zinc-100 flex items-center justify-center font-black text-zinc-500 overflow-hidden shrink-0 ${className}`}
-                style={{ ...containerStyle, border: "1px solid rgba(0,0,0,0.06)" }}
+                className={`bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center overflow-hidden shrink-0 ${className}`}
+                style={{ ...containerStyle, border: "none", padding: config.padding * 1.5 }}
             >
-                <span className={`${config.fallbackText} select-none uppercase`}>{name?.[0] || "?"}</span>
+                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" style={{ maxWidth: "100%", maxHeight: "100%" }}>
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white" fillOpacity="0.95"/>
+                    <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fillOpacity="0.95"/>
+                    <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fillOpacity="0.95"/>
+                </svg>
             </div>
         );
     }
