@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { PageTransition } from "@/components/ui/PageTransition";
+import { TaxDetailsSection } from "@/components/dashboard/TaxDetailsSection";
 
 interface Profile {
     full_name: string;
@@ -393,6 +394,9 @@ export default function ReferrerProfilePage() {
                                 />
                                 <p className="text-zinc-400 font-bold text-xs">{bio.length}/500 characters</p>
                             </div>
+
+                            {/* Tax Details */}
+                            <TaxDetailsSection />
 
                             {/* Profile Photo Upload */}
                             <div id="tour-profile-photo" className="space-y-4">

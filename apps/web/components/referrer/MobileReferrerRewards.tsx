@@ -12,12 +12,19 @@ interface Payout {
     method?: string;
 }
 
+interface ComplianceStatus {
+    has_abn: boolean;
+    has_supplier_statement: boolean;
+    can_claim_over_75: boolean;
+}
+
 interface MobileReferrerRewardsProps {
     referrer: any;
     payouts: Payout[];
+    compliance?: ComplianceStatus;
 }
 
-export function MobileReferrerRewards({ referrer, payouts }: MobileReferrerRewardsProps) {
+export function MobileReferrerRewards({ referrer, payouts, compliance }: MobileReferrerRewardsProps) {
     if (!referrer) return null;
     const pendingBalance = (referrer.wallet_balance_cents || 0) / 100;
     const totalEarned = (referrer.total_earned_cents || 0) / 100;
@@ -47,7 +54,15 @@ export function MobileReferrerRewards({ referrer, payouts }: MobileReferrerRewar
                 <div className="flex flex-col gap-2">
                     <WithdrawalForm 
                         totalPendingCents={referrer.wallet_balance_cents || 0} 
-                        maxClaimCents={30000} 
+                        maxClaimCents={compliance?.can_claim_over_75 ? 30000 : 7499}
+                        compliance={compliance}
+                        referrerName={referrer.full_name}
+                        referrerAddress={{
+                            street: referrer.street_address,
+                            suburb: referrer.suburb,
+                            state: referrer.state,
+                            postcode: referrer.postcode,
+                        }}
                     />
                 </div>
 

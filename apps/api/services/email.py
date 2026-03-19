@@ -666,8 +666,8 @@ async def send_referrer_reward_claimable_email(email: str, full_name: str, balan
         <p style="font-size:40px;font-weight:900;color:#16a34a;margin:0">${balance_dollars:.2f}</p>
         <p style="color:#15803d;font-weight:700;margin:8px 0 0;font-size:16px">Ready to claim as a Prezzee gift card</p>
       </div>
-      <p style="color:#555;font-size:15px">You can claim anywhere from <strong>$25 up to $300</strong> at a time. Spend it at 400+ stores including Woolworths, Bunnings, JB Hi-Fi and more.</p>
-      <p style="color:#555;font-size:15px">Your balance will <strong>auto-pay at $250</strong>, or you can claim it manually anytime.</p>
+      <p style="color:#555;font-size:15px">You can claim anywhere from <strong>$25 up to $74.99</strong> at a time. Spend it at 400+ stores including Woolworths, Bunnings, JB Hi-Fi and more.</p>
+      <p style="color:#555;font-size:15px">Your balance will <strong>auto-pay at $74.99</strong>, or you can claim it manually anytime. Add an ABN to unlock claims up to $300.</p>
       <div style="text-align:center;margin:28px 0">
         <a href="{FRONTEND_URL}/dashboard/referrer/withdraw"
            style="background:#ea580c;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
@@ -678,8 +678,34 @@ async def send_referrer_reward_claimable_email(email: str, full_name: str, balan
     await _send(email, f"🎁 ${balance_dollars:.2f} in Prezzee credit is ready to claim!", _wrap(body, "You're receiving this as a referrer on traderefer.au."))
 
 
+async def send_referrer_declaration_needed_email(email: str, full_name: str, balance_dollars: float):
+    """Notify referrer that their balance exceeds $75 and a tax declaration is needed."""
+    first = full_name.split()[0] if full_name else "there"
+    body = f"""
+      <div style="background:#2563eb;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
+        <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">📋 Quick declaration needed</h1>
+        <p style="color:#bfdbfe;margin:8px 0 0;font-size:15px">Unlock your ${balance_dollars:.2f} reward balance</p>
+      </div>
+      <p style="font-size:16px;color:#333">Hi {first},</p>
+      <p style="font-size:16px;color:#333">Your TradeRefer reward balance is <strong>${balance_dollars:.2f}</strong> — great work!</p>
+      <p style="font-size:16px;color:#333">Australian tax law requires a quick declaration (or ABN) for payouts over $75. It takes about <strong>10 seconds</strong> and most fields are pre-filled.</p>
+      <div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:12px;padding:24px;text-align:center;margin:24px 0">
+        <p style="font-size:40px;font-weight:900;color:#2563eb;margin:0">${balance_dollars:.2f}</p>
+        <p style="color:#1d4ed8;font-weight:700;margin:8px 0 0;font-size:16px">Complete declaration to claim</p>
+      </div>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/referrer/withdraw"
+           style="background:#2563eb;color:#fff;font-weight:900;font-size:16px;padding:14px 32px;border-radius:999px;text-decoration:none;display:inline-block">
+          Complete Declaration & Claim →
+        </a>
+      </div>
+      <p style="color:#888;font-size:13px">Alternatively, if you have an ABN, you can enter it on the claim page to skip the declaration entirely.</p>
+    """
+    await _send(email, f"📋 Quick declaration needed to claim ${balance_dollars:.2f}", _wrap(body, "You're receiving this as a referrer on traderefer.au."))
+
+
 async def send_referrer_prezzee_issued_email(email: str, full_name: str, amount_dollars: float):
-    """Notify referrer that their Prezzee gift card was automatically issued at $250."""
+    """Notify referrer that their Prezzee gift card was automatically issued at $74.99."""
     body = f"""
       <div style="background:#16a34a;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
         <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">🎉 Your Prezzee gift card is on its way!</h1>

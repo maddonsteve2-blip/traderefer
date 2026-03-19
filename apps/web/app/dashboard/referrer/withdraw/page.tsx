@@ -12,13 +12,15 @@ import { redirect } from "next/navigation";
 
 async function getRewardsData(token: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    const [meRes, payoutsRes] = await Promise.all([
+    const [meRes, payoutsRes, complianceRes] = await Promise.all([
         fetch(`${apiUrl}/referrer/me`, { headers: { 'Authorization': `Bearer ${token}` }, cache: 'no-store' }),
-        fetch(`${apiUrl}/referrer/payouts`, { headers: { 'Authorization': `Bearer ${token}` }, cache: 'no-store' })
+        fetch(`${apiUrl}/referrer/payouts`, { headers: { 'Authorization': `Bearer ${token}` }, cache: 'no-store' }),
+        fetch(`${apiUrl}/referrer/compliance-status`, { headers: { 'Authorization': `Bearer ${token}` }, cache: 'no-store' }),
     ]);
     const referrer = meRes.ok ? await meRes.json() : null;
     const payouts = payoutsRes.ok ? await payoutsRes.json() : [];
-    return { referrer, payouts };
+    const compliance = complianceRes.ok ? await complianceRes.json() : { has_abn: false, has_supplier_statement: false, can_claim_over_75: false };
+    return { referrer, payouts, compliance };
 }
 
 const CATALOG_BRANDS = [
@@ -42,7 +44,7 @@ export default async function ReferrerRewardsPage() {
     const token = await getToken();
     if (!token) redirect("/login");
 
-    const { referrer, payouts } = await getRewardsData(token);
+    const { referrer, payouts, compliance } = await getRewardsData(token);
     if (!referrer) redirect("/onboarding/referrer");
 
     const pendingBalance = (referrer.wallet_balance_cents || 0) / 100;
@@ -57,7 +59,7 @@ export default async function ReferrerRewardsPage() {
 
     return (
         <PageTransition className="min-h-screen bg-zinc-50">
-            <MobileReferrerRewards referrer={referrer} payouts={payouts} />
+            <MobileReferrerRewards referrer={referrer} payouts={payouts} compliance={compliance} />
             
             <div className="hidden lg:flex flex-col bg-zinc-50 h-screen overflow-hidden">
                 <div className="flex items-center justify-between px-6 pt-5 pb-0 shrink-0">
@@ -96,7 +98,7 @@ export default async function ReferrerRewardsPage() {
                                 </p>
                                 <p className={`font-black mb-6 ${isReady ? 'text-green-400' : 'text-zinc-400'} text-xl`}>
                                     {isReady
-                                        ? "✅ Ready to claim — you can claim up to $300 per transaction."
+                                        ? `✅ Ready to claim — you can claim up to $${compliance.can_claim_over_75 ? "300" : "74.99"} per transaction.`
                                         : `Accumulating — gift cards can be claimed once balance reaches $25.00`}
                                 </p>
 
@@ -134,7 +136,15 @@ export default async function ReferrerRewardsPage() {
                         <div id="tour-rewards-withdraw">
                             <WithdrawalForm 
                                 totalPendingCents={referrer.wallet_balance_cents || 0} 
-                                maxClaimCents={30000} 
+                                maxClaimCents={compliance.can_claim_over_75 ? 30000 : 7499}
+                                compliance={compliance}
+                                referrerName={referrer.full_name}
+                                referrerAddress={{
+                                    street: referrer.street_address,
+                                    suburb: referrer.suburb,
+                                    state: referrer.state,
+                                    postcode: referrer.postcode,
+                                }}
                             />
                         </div>
 
@@ -170,9 +180,9 @@ export default async function ReferrerRewardsPage() {
                             <div className="space-y-4">
                                 {[
                                     { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-50", title: "Job confirmed", desc: "Business confirms the job was won and completed." },
-                                    { icon: Gift, color: "text-orange-500", bg: "bg-orange-50", title: "Claim Prezzee gift card", desc: "You receive 80% of the unlock fee as credit. Claim from $25 up to $300 at a time." },
+                                    { icon: Gift, color: "text-orange-500", bg: "bg-orange-50", title: "Claim Prezzee gift card", desc: `You receive 80% of the unlock fee as credit. Claim from $25 up to $${compliance.can_claim_over_75 ? "300" : "74.99"} at a time.` },
                                     { icon: Mail, color: "text-blue-500", bg: "bg-blue-50", title: "Delivered to your email", desc: "Your Prezzee Swap gift card link arrives in your inbox instantly." },
-                                    { icon: ShieldCheck, color: "text-zinc-500", bg: "bg-zinc-50", title: "Platform limits", desc: "Maximum claim is $300 per transaction per platform rules." },
+                                    { icon: ShieldCheck, color: "text-zinc-500", bg: "bg-zinc-50", title: "Platform limits", desc: `Maximum claim is $${compliance.can_claim_over_75 ? "300" : "74.99"} per transaction.${!compliance.can_claim_over_75 ? " Add an ABN to unlock $300." : ""}` },
                                 ].map(({ icon: Icon, color, bg, title, desc }) => (
                                     <div key={title} className="flex items-start gap-4">
                                         <div className={`w-9 h-9 ${bg} rounded-xl flex items-center justify-center shrink-0 mt-0.5`}>
@@ -301,7 +311,7 @@ export default async function ReferrerRewardsPage() {
                         {/* TRUST BADGES */}
                         <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
                             {[
-                                { icon: ShieldCheck, text: "Platform standard $300 limit per claim", color: "text-green-500" },
+                                { icon: ShieldCheck, text: `Claim limit: $${compliance.can_claim_over_75 ? "300" : "74.99"} per transaction`, color: "text-green-500" },
                                 { icon: Star, text: "Instant email delivery", color: "text-orange-500" },
                                 { icon: Gift, text: "Accepted at 400+ stores nationwide", color: "text-blue-500" },
                             ].map(({ icon: Icon, text, color }) => (

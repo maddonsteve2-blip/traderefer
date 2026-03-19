@@ -205,7 +205,8 @@ async def list_users(
 
         result = await db.execute(text(f"""
             SELECT id, full_name, email, suburb, state, postcode, phone_verified,
-                   wallet_balance_cents, pending_cents, clerk_user_id, created_at
+                   wallet_balance_cents, pending_cents, clerk_user_id, created_at,
+                   abn, supplier_statement_declared_at
             FROM referrers WHERE {where_sql}
             ORDER BY created_at DESC LIMIT :limit OFFSET :offset
         """), params)
@@ -232,11 +233,61 @@ async def list_users(
         row = dict(r)
         if row.get("created_at"):
             row["created_at"] = str(row["created_at"])
+        if row.get("supplier_statement_declared_at"):
+            row["supplier_statement_declared_at"] = str(row["supplier_statement_declared_at"])
         if row.get("avg_rating"):
             row["avg_rating"] = float(row["avg_rating"])
         users.append(row)
 
     return {"users": users, "total": total, "page": page, "pages": pages}
+
+
+@router.get("/referrers/tax-export")
+async def referrer_tax_export(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """CSV export of referrer tax data for BAS/accountant handoff."""
+    from fastapi.responses import StreamingResponse
+    import csv
+    import io
+
+    result = await db.execute(text("""
+        SELECT r.full_name, r.email, r.phone, r.street_address, r.suburb, r.state, r.postcode,
+               r.abn, r.date_of_birth, r.supplier_statement_reason, r.supplier_statement_declared_at,
+               COALESCE(SUM(p.amount_cents), 0) as total_paid_cents
+        FROM referrers r
+        LEFT JOIN payout_requests p ON p.referrer_id = r.id
+            AND p.status = 'completed'
+            AND p.created_at >= date_trunc('year', now())
+        GROUP BY r.id
+        ORDER BY r.full_name
+    """))
+    rows = result.mappings().all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "Full Name", "Email", "Phone", "Street Address", "Suburb", "State", "Postcode",
+        "ABN", "Date of Birth", "Statement Reason", "Declaration Date", "YTD Paid ($)"
+    ])
+    for r in rows:
+        writer.writerow([
+            r["full_name"], r["email"], r["phone"],
+            r["street_address"] or "", r["suburb"] or "", r["state"] or "", r["postcode"] or "",
+            r["abn"] or "", str(r["date_of_birth"] or ""),
+            r["supplier_statement_reason"] or "",
+            str(r["supplier_statement_declared_at"] or ""),
+            f"{(r['total_paid_cents'] or 0) / 100:.2f}",
+        ])
+
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=referrer-tax-export.csv"}
+    )
+
 
 @router.get("/leads")
 async def list_leads(

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -609,7 +609,12 @@ async def update_monthly_goal(
 
 
 class WithdrawalRequest(BaseModel):
-    method: str
+    method: str = "PREZZEE_SWAP"
+    amount_cents: Optional[int] = None  # If not provided, uses full balance up to cap
+
+ATO_MAX_NO_ABN_CENTS = 7499   # $74.99 — ATO threshold for no-ABN suppliers
+MAX_CLAIM_COMPLIANT_CENTS = 30000  # $300 — cap for ABN/declaration holders
+MIN_CLAIM_CENTS = 2500  # $25 minimum
 
 @router.post("/withdraw")
 async def withdraw_funds(
@@ -617,71 +622,95 @@ async def withdraw_funds(
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user)
 ):
-    """Processes a withdrawal request for a referrer."""
+    """Issue a Prezzee gift card claim. Capped at $74.99 unless referrer has ABN/declaration."""
     user_uuid = uuid.UUID(user.id)
-    
-    # 1. Get referrer and balance
-    ref_query = text("SELECT id, wallet_balance_cents, stripe_account_id FROM referrers WHERE user_id = :user_id")
+
+    # 1. Get referrer, balance, and compliance status
+    ref_query = text("""
+        SELECT id, wallet_balance_cents, email, full_name, phone, abn, supplier_statement_declared_at
+        FROM referrers WHERE user_id = :user_id
+    """)
     result = await db.execute(ref_query, {"user_id": user_uuid})
     ref = result.mappings().first()
-    
+
     if not ref:
         raise HTTPException(status_code=404, detail="Referrer profile not found")
-    
-    if not ref["stripe_account_id"]:
-        raise HTTPException(status_code=400, detail="Please connect your Stripe account first")
-        
-    amount = ref["wallet_balance_cents"]
-    if amount <= 0:
-        raise HTTPException(status_code=400, detail="No funds available for withdrawal")
 
-    # 2. Process Stripe Transfer
-    # For instant payouts, Stripe handles the timing if the account supports it.
-    # Here we just move funds from platform to connected account.
-    try:
-        transfer_id = await StripeService.create_transfer(
-            amount=amount,
-            destination_account_id=ref["stripe_account_id"],
-            description=f"TradeRefer {request.method.capitalize()} Withdrawal"
+    balance = ref["wallet_balance_cents"]
+    if balance < MIN_CLAIM_CENTS:
+        raise HTTPException(status_code=400, detail="Minimum balance of $25 required to claim")
+
+    # 2. Determine max claim based on ATO compliance
+    is_compliant = bool(ref["abn"]) or bool(ref["supplier_statement_declared_at"])
+    max_claim = MAX_CLAIM_COMPLIANT_CENTS if is_compliant else ATO_MAX_NO_ABN_CENTS
+
+    # 3. Calculate actual claim amount
+    requested = request.amount_cents if request.amount_cents else balance
+    amount_cents = min(requested, balance, max_claim)
+
+    if amount_cents < MIN_CLAIM_CENTS:
+        raise HTTPException(status_code=400, detail="Claim amount too low (minimum $25)")
+
+    # 4. If requested amount exceeds their compliance cap, reject with info
+    if request.amount_cents and request.amount_cents > max_claim and not is_compliant:
+        raise HTTPException(
+            status_code=403,
+            detail="declaration_required",
+            headers={"X-Max-Claim-Cents": str(max_claim)}
         )
-        
-        # 3. Update DB: zero out balance, log request
+
+    # 5. Issue Prezzee gift card
+    try:
+        from services.prezzee_service import create_gift_card
+        reference = f"tr-claim-{str(ref['id'])[:8]}-{uuid.uuid4().hex[:8]}"
+        amount_dollars = amount_cents / 100
+
+        order = await create_gift_card(
+            reference=reference,
+            amount_dollars=amount_dollars,
+            recipient_name=ref["full_name"] or "TradeRefer User",
+            recipient_email=ref["email"],
+        )
+        order_uuid = order.get("uuid") or order.get("id") or ""
+
+        # 6. Deduct from wallet and log
         await db.execute(text("""
-            UPDATE referrers 
-            SET wallet_balance_cents = 0,
+            UPDATE referrers
+            SET wallet_balance_cents = GREATEST(0, wallet_balance_cents - :claimed),
                 updated_at = now()
             WHERE id = :id
-        """), {"id": ref["id"]})
-        
-        # Log Payout Request
+        """), {"claimed": amount_cents, "id": ref["id"]})
+
         await db.execute(text("""
-            INSERT INTO payout_requests (referrer_id, amount_cents, method, destination, status, processed_at, payment_ref)
-            VALUES (:rid, :amount, :method, :dest, 'COMPLETED', now(), :ref)
+            INSERT INTO payout_requests
+                (referrer_id, amount_cents, status, method, prezzee_order_uuid, destination_email, created_at)
+            VALUES (:rid, :amt, 'completed', 'PREZZEE_SWAP', :uuid, :email, now())
         """), {
-            "rid": ref["id"],
-            "amount": amount,
-            "method": request.method,
-            "dest": ref["stripe_account_id"],
-            "ref": transfer_id
+            "rid": ref["id"], "amt": amount_cents,
+            "uuid": order_uuid, "email": ref["email"],
         })
 
-        # Log internal transaction record if a wallet_transactions table for referrers or general exists.
-        # Currently the schema only has wallet_transactions for businesses. 
-        # I will skip the wallet_transactions insert for referrers to avoid foreign key errors 
-        # but ensure the payout_requests record is solid.
-        
         await db.commit()
+
         send_referrer_payout_processed(
             email=ref["email"],
             full_name=ref["full_name"] or ref["email"],
-            amount_dollars=amount / 100,
-            method=request.method,
+            amount_dollars=amount_dollars,
+            method="PREZZEE_SWAP",
         )
-        return {"status": "success", "amount": amount / 100}
-        
+
+        return {
+            "status": "success",
+            "amount": amount_dollars,
+            "amount_cents": amount_cents,
+            "max_claim_cents": max_claim,
+            "is_compliant": is_compliant,
+        }
+
     except Exception as e:
         await db.rollback()
-        raise HTTPException(status_code=500, detail=f"Withdrawal failed: {str(e)}")
+        error_logger.error(f"Prezzee claim failed for referrer {ref['id']}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Gift card claim failed: {str(e)}")
 
 
 @router.get("/is-linked/{slug}")
@@ -801,3 +830,149 @@ async def submit_private_feedback(
         "/dashboard/business"
     )
     return {"message": "Feedback sent privately to the business"}
+
+
+# ── ATO Supplier Statement / Compliance ──────────────────────────────────────
+
+class SupplierStatementRequest(BaseModel):
+    date_of_birth: Optional[str] = None       # YYYY-MM-DD
+    reason: Optional[str] = None              # 'hobby' | 'private' | 'not_enterprise'
+    declaration_accepted: bool = False
+    abn: Optional[str] = None                 # 11-digit ABN (if provided, skip statement)
+
+VALID_STATEMENT_REASONS = {"hobby", "private", "not_enterprise"}
+
+
+@router.get("/compliance-status")
+async def get_compliance_status(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Returns the referrer's ATO compliance status for payout gating."""
+    user_uuid = uuid.UUID(user.id)
+    result = await db.execute(
+        text("SELECT abn, supplier_statement_declared_at FROM referrers WHERE user_id = :uid"),
+        {"uid": user_uuid}
+    )
+    ref = result.mappings().first()
+    if not ref:
+        raise HTTPException(status_code=404, detail="Referrer not found")
+
+    has_abn = bool(ref["abn"])
+    has_statement = bool(ref["supplier_statement_declared_at"])
+    return {
+        "has_abn": has_abn,
+        "has_supplier_statement": has_statement,
+        "can_claim_over_75": has_abn or has_statement,
+        "abn": ref["abn"],
+        "declared_at": str(ref["supplier_statement_declared_at"]) if ref["supplier_statement_declared_at"] else None,
+    }
+
+
+@router.post("/supplier-statement")
+async def submit_supplier_statement(
+    data: SupplierStatementRequest,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Submit ABN or ATO Statement by a Supplier (NAT 3346 electronic equivalent)."""
+    user_uuid = uuid.UUID(user.id)
+
+    # Validate ABN format if provided
+    if data.abn:
+        abn_clean = data.abn.replace(" ", "")
+        if not abn_clean.isdigit() or len(abn_clean) != 11:
+            raise HTTPException(status_code=400, detail="ABN must be exactly 11 digits")
+        await db.execute(
+            text("UPDATE referrers SET abn = :abn WHERE user_id = :uid"),
+            {"abn": abn_clean, "uid": user_uuid}
+        )
+        await db.commit()
+        return {"message": "ABN saved successfully", "abn": abn_clean}
+
+    # Otherwise, validate and store supplier statement
+    if not data.declaration_accepted:
+        raise HTTPException(status_code=400, detail="You must accept the declaration")
+    if not data.date_of_birth:
+        raise HTTPException(status_code=400, detail="Date of birth is required")
+    if not data.reason or data.reason not in VALID_STATEMENT_REASONS:
+        raise HTTPException(status_code=400, detail=f"Reason must be one of: {', '.join(VALID_STATEMENT_REASONS)}")
+
+    client_ip = request.client.host if request.client else "unknown"
+
+    await db.execute(
+        text("""
+            UPDATE referrers SET
+                date_of_birth = :dob,
+                supplier_statement_reason = :reason,
+                supplier_statement_declared_at = now(),
+                supplier_statement_ip = :ip
+            WHERE user_id = :uid
+        """),
+        {"dob": data.date_of_birth, "reason": data.reason, "ip": client_ip, "uid": user_uuid}
+    )
+    await db.commit()
+    return {"message": "Supplier declaration saved successfully"}
+
+
+@router.patch("/supplier-statement")
+async def update_supplier_statement(
+    data: SupplierStatementRequest,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Update existing ABN or supplier statement fields."""
+    user_uuid = uuid.UUID(user.id)
+    updates = []
+    params: dict = {"uid": user_uuid}
+
+    if data.abn is not None:
+        abn_clean = data.abn.replace(" ", "") if data.abn else None
+        if abn_clean and (not abn_clean.isdigit() or len(abn_clean) != 11):
+            raise HTTPException(status_code=400, detail="ABN must be exactly 11 digits")
+        updates.append("abn = :abn")
+        params["abn"] = abn_clean
+
+    if data.date_of_birth is not None:
+        updates.append("date_of_birth = :dob")
+        params["dob"] = data.date_of_birth
+
+    if data.reason is not None:
+        if data.reason not in VALID_STATEMENT_REASONS:
+            raise HTTPException(status_code=400, detail=f"Reason must be one of: {', '.join(VALID_STATEMENT_REASONS)}")
+        updates.append("supplier_statement_reason = :reason")
+        params["reason"] = data.reason
+
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    await db.execute(
+        text(f"UPDATE referrers SET {', '.join(updates)} WHERE user_id = :uid"),
+        params
+    )
+    await db.commit()
+    return {"message": "Updated successfully"}
+
+
+@router.delete("/supplier-statement")
+async def delete_supplier_statement(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user)
+):
+    """Clear supplier statement fields. Re-triggers declaration on next >$75 claim."""
+    user_uuid = uuid.UUID(user.id)
+    await db.execute(
+        text("""
+            UPDATE referrers SET
+                date_of_birth = NULL,
+                supplier_statement_reason = NULL,
+                supplier_statement_declared_at = NULL,
+                supplier_statement_ip = NULL
+            WHERE user_id = :uid
+        """),
+        {"uid": user_uuid}
+    )
+    await db.commit()
+    return {"message": "Supplier declaration removed"}

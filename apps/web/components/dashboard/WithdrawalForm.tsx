@@ -2,21 +2,42 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Gift, ChevronRight, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Gift, ChevronRight, CheckCircle2, AlertTriangle, ShieldCheck, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
+import { SupplierDeclarationModal } from "./SupplierDeclarationModal";
 
-export function WithdrawalForm({ maxClaimCents, totalPendingCents }: { maxClaimCents: number, totalPendingCents: number }) {
+interface ComplianceStatus {
+    has_abn: boolean;
+    has_supplier_statement: boolean;
+    can_claim_over_75: boolean;
+}
+
+interface WithdrawalFormProps {
+    maxClaimCents: number;
+    totalPendingCents: number;
+    compliance?: ComplianceStatus;
+    referrerName?: string;
+    referrerAddress?: { street?: string; suburb?: string; state?: string; postcode?: string };
+}
+
+export function WithdrawalForm({ maxClaimCents, totalPendingCents, compliance, referrerName, referrerAddress }: WithdrawalFormProps) {
     const [status, setStatus] = useState<"idle" | "processing" | "success">("idle");
+    const [showDeclaration, setShowDeclaration] = useState(false);
+    const [complianceState, setComplianceState] = useState(compliance);
     const { getToken } = useAuth();
     const router = useRouter();
 
-    const amountToClaim = Math.min(maxClaimCents, totalPendingCents);
+    // ATO compliance: cap at $74.99 unless they have ABN/declaration
+    const canClaimOver75 = complianceState?.can_claim_over_75 ?? false;
+    const effectiveMax = canClaimOver75 ? maxClaimCents : Math.min(maxClaimCents, 7499);
+
+    const amountToClaim = Math.min(effectiveMax, totalPendingCents);
     const amountDollars = (amountToClaim / 100).toFixed(2);
     
-    // We disable if there's less than $25, OR if status is processing
     const isReady = totalPendingCents >= 2500;
+    const hasExcessBalance = totalPendingCents > 7499 && !canClaimOver75;
 
     const handleClaim = async () => {
         if (status === "processing" || !isReady) return;
@@ -26,7 +47,6 @@ export function WithdrawalForm({ maxClaimCents, totalPendingCents }: { maxClaimC
         try {
             const token = await getToken();
             const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api/backend";
-            // Make a call to claim reward. The backend should handle the logic to cap at $300
             const res = await fetch(`${apiUrl}/referrer/withdraw`, {
                 method: "POST",
                 headers: {
@@ -38,6 +58,11 @@ export function WithdrawalForm({ maxClaimCents, totalPendingCents }: { maxClaimC
 
             if (!res.ok) {
                 const err = await res.json();
+                if (err.detail === "declaration_required") {
+                    setShowDeclaration(true);
+                    setStatus("idle");
+                    return;
+                }
                 throw new Error(err.detail || "Claim failed");
             }
 
@@ -48,6 +73,23 @@ export function WithdrawalForm({ maxClaimCents, totalPendingCents }: { maxClaimC
             toast.error(err.message || "Connection error. Please try again.");
             setStatus("idle");
         }
+    };
+
+    const handleDeclarationComplete = async () => {
+        setShowDeclaration(false);
+        // Re-fetch compliance status
+        try {
+            const token = await getToken();
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api/backend";
+            const res = await fetch(`${apiUrl}/referrer/compliance-status`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setComplianceState(data);
+            }
+        } catch {}
+        toast.success("Declaration saved! You can now claim your full balance.");
     };
 
     if (status === "success") {
@@ -68,7 +110,34 @@ export function WithdrawalForm({ maxClaimCents, totalPendingCents }: { maxClaimC
     }
 
     return (
-        <div className="mt-8">
+        <div className="mt-8 space-y-4">
+            {/* ATO compliance info banner */}
+            {hasExcessBalance && (
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex items-start gap-4">
+                    <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
+                        <Info className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                        <h4 className="font-black text-blue-900 text-lg mb-1">Unlock your full balance</h4>
+                        <p className="text-blue-700 font-medium text-base">
+                            Your balance is ${(totalPendingCents / 100).toFixed(2)} but claims are capped at $74.99 without an ABN or tax declaration.{" "}
+                            <button onClick={() => setShowDeclaration(true)} className="underline font-bold hover:text-blue-900 transition-colors">
+                                Complete a quick declaration
+                            </button>{" "}
+                            to claim up to $300 per transaction.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Compliance badge */}
+            {canClaimOver75 && (
+                <div className="flex items-center gap-2 text-sm font-bold text-green-600">
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>{complianceState?.has_abn ? "ABN on file" : "Tax declaration on file"} — claims up to $300</span>
+                </div>
+            )}
+
             {!isReady ? (
                 <div className="bg-orange-50 border-2 border-orange-100 rounded-[32px] p-8 flex items-center gap-6">
                     <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center shrink-0">
@@ -92,7 +161,9 @@ export function WithdrawalForm({ maxClaimCents, totalPendingCents }: { maxClaimC
                             </div>
                             <div>
                                 <h3 className="text-2xl font-black text-white mb-1">Claim ${amountDollars} Gift Card</h3>
-                                <p className="text-lg text-orange-100 font-medium">Instantly claim your available balance (max $300 per transaction)</p>
+                                <p className="text-lg text-orange-100 font-medium">
+                                    Instantly claim your available balance (max ${canClaimOver75 ? "300" : "74.99"} per transaction)
+                                </p>
                             </div>
                         </div>
                         <div className="bg-white text-orange-600 font-black px-6 py-4 rounded-2xl text-xl flex items-center gap-2 shrink-0 shadow-sm border border-orange-400 group-hover:-translate-y-1 transition-all">
@@ -100,6 +171,16 @@ export function WithdrawalForm({ maxClaimCents, totalPendingCents }: { maxClaimC
                         </div>
                     </div>
                 </button>
+            )}
+
+            {/* Declaration Modal */}
+            {showDeclaration && (
+                <SupplierDeclarationModal
+                    onClose={() => setShowDeclaration(false)}
+                    onComplete={handleDeclarationComplete}
+                    referrerName={referrerName}
+                    referrerAddress={referrerAddress}
+                />
             )}
         </div>
     );

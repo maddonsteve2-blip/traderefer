@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { auth } from "@clerk/nextjs/server";
-import { Users, Building2, UserCheck, Search, ChevronLeft, ChevronRight, Star, MapPin, DollarSign, Calendar } from "lucide-react";
+import { Users, Building2, UserCheck, Search, ChevronLeft, ChevronRight, Star, MapPin, DollarSign, Calendar, ShieldCheck, Download } from "lucide-react";
 import Link from "next/link";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -62,6 +62,18 @@ export default async function UsersPage({
                         </Link>
                     ))}
                 </div>
+
+                {/* Export button for referrers */}
+                {tab === "referrers" && (
+                    <div className="flex justify-end mb-3">
+                        <a
+                            href={`${API}/admin/referrers/tax-export`}
+                            className="flex items-center gap-2 px-4 py-2 bg-zinc-900 text-white rounded-xl text-sm font-bold hover:bg-zinc-800 transition-colors"
+                        >
+                            <Download className="w-4 h-4" /> Export Tax CSV
+                        </a>
+                    </div>
+                )}
 
                 {/* Search */}
                 <div className="bg-white rounded-2xl border border-zinc-200 p-4 mb-6 shadow-sm">
@@ -149,6 +161,7 @@ export default async function UsersPage({
                                         <th className="text-left p-3">Email</th>
                                         <th className="text-left p-3">Location</th>
                                         <th className="text-left p-3">Balance</th>
+                                        <th className="text-left p-3">Tax</th>
                                         <th className="text-left p-3">Joined</th>
                                         <th className="text-left p-3">Verified</th>
                                     </tr>
@@ -166,6 +179,19 @@ export default async function UsersPage({
                                                     <DollarSign className="w-3 h-3" />
                                                     {u.wallet_balance_cents ? (u.wallet_balance_cents / 100).toFixed(2) : "0.00"}
                                                 </span>
+                                            </td>
+                                            <td className="p-3">
+                                                {u.abn ? (
+                                                    <span className="flex items-center gap-1 text-[10px] font-black text-blue-600">
+                                                        <ShieldCheck className="w-3 h-3" /> ABN
+                                                    </span>
+                                                ) : u.supplier_statement_declared_at ? (
+                                                    <span className="flex items-center gap-1 text-[10px] font-black text-green-600">
+                                                        <ShieldCheck className="w-3 h-3" /> Dec
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-[10px] text-zinc-300">—</span>
+                                                )}
                                             </td>
                                             <td className="p-3 text-xs text-zinc-400">
                                                 {u.created_at ? new Date(u.created_at).toLocaleDateString("en-AU") : "—"}

@@ -9,7 +9,8 @@ from utils.logging_config import payment_logger, error_logger
 from services.sms import (
     send_sms_business_survey, send_sms_customer_survey,
     send_sms_referrer_prezzee_issued, send_sms_referrer_reward_accumulating,
-    send_sms_business_lead_refunded,
+    send_sms_referrer_reward_claimable, send_sms_business_lead_refunded,
+    send_sms_referrer_declaration_needed,
 )
 
 
@@ -209,13 +210,13 @@ async def _issue_prezzee_or_accumulate(
     """
     Smart payout logic after each confirmed lead:
 
-    - Balance < $25    → Accumulate silently (no notification sent yet)
-    - Balance $25–$249 → Send SMS + Email: "You have $XX claimable — log in to claim"
-    - Balance >= $250  → Auto-issue Prezzee gift card, zero out wallet, notify via SMS + Email
+    - Balance < $25      → Accumulate silently (no notification sent yet)
+    - Balance $25–$74.98 → Send SMS + Email: "You have $XX claimable — log in to claim"
+    - Balance >= $74.99  → Auto-issue Prezzee gift card, notify via SMS + Email
 
-    The $300 cap per transaction is enforced by capping the amount claimed to $250 
-    for the auto-payout trigger (leaving headroom for manual claims up to $300 total).
-    Manual claims via the dashboard also cap at $300 per transaction.
+    ATO compliance: auto-payout capped at $74.99 to stay under the $75 no-ABN
+    threshold (Section 12-190, Taxation Administration Act 1953). Referrers with
+    an ABN or a completed Supplier Statement can claim up to $300 per transaction.
     """
     # Re-read current wallet balance AFTER this lead's payout was added
     bal_res = await db.execute(
@@ -225,7 +226,7 @@ async def _issue_prezzee_or_accumulate(
     current_balance = bal_res.scalar() or 0
 
     MINIMUM_CLAIM_CENTS = 2500   # $25.00 — minimum to claim manually
-    AUTO_PAYOUT_CENTS   = 25000  # $250.00 — triggers automatic payout
+    AUTO_PAYOUT_CENTS   = 7499   # $74.99 — ATO compliance: stay under $75 no-ABN threshold
 
     # ── CASE 1: Balance too low to even notify ──────────────────────────────
     if current_balance < MINIMUM_CLAIM_CENTS:
@@ -234,8 +235,31 @@ async def _issue_prezzee_or_accumulate(
         )
         return
 
-    # ── CASE 2: Balance >= $250 → Auto-payout ──────────────────────────────
+    # ── CASE 2: Balance >= $74.99 → Auto-payout ─────────────────────────────
     if current_balance >= AUTO_PAYOUT_CENTS:
+        # Check ATO compliance: if balance > $75 and referrer lacks ABN/declaration, hold and notify
+        ATO_THRESHOLD_CENTS = 7500  # $75.00
+        if current_balance > ATO_THRESHOLD_CENTS:
+            comp_res = await db.execute(
+                text("SELECT abn, supplier_statement_declared_at FROM referrers WHERE id = :rid"),
+                {"rid": referrer_id}
+            )
+            comp = comp_res.mappings().first()
+            if comp and not comp["abn"] and not comp["supplier_statement_declared_at"]:
+                # Not compliant — hold funds, notify referrer to complete declaration
+                payment_logger.info(
+                    f"Referrer {referrer_id}: balance ${current_balance/100:.2f} exceeds $75 but no ABN/declaration — holding for compliance"
+                )
+                if ref_phone:
+                    await send_sms_referrer_declaration_needed(ref_phone, ref_name, current_balance / 100)
+                if ref_email:
+                    try:
+                        from services.email import send_referrer_declaration_needed_email
+                        await send_referrer_declaration_needed_email(ref_email, ref_name, current_balance / 100)
+                    except Exception as e:
+                        error_logger.warning(f"Declaration-needed email failed for referrer {referrer_id}: {e}")
+                return
+
         await _auto_issue_prezzee(
             lead_id=lead_id,
             referrer_id=referrer_id,
@@ -247,7 +271,7 @@ async def _issue_prezzee_or_accumulate(
         )
         return
 
-    # ── CASE 3: Balance $25–$249 → Notify to claim manually ────────────────
+    # ── CASE 3: Balance $25–$74.98 → Notify to claim manually ────────────────
     amount_dollars = current_balance / 100
     payment_logger.info(
         f"Referrer {referrer_id}: balance ${amount_dollars:.2f} — sending claim-available notification"
@@ -270,8 +294,8 @@ async def _auto_issue_prezzee(
     lead_id: str, referrer_id: str, current_balance: int,
     ref_name: str, ref_email: str, ref_phone: str, db: AsyncSession
 ):
-    """Auto-issue a Prezzee gift card when balance hits $250. Caps at $300 per platform rules."""
-    MAX_CLAIM_CENTS = 30000  # $300 hard cap per transaction
+    """Auto-issue a Prezzee gift card when balance hits $74.99. Capped at $74.99 for ATO compliance."""
+    MAX_CLAIM_CENTS = 7499   # $74.99 — ATO compliance cap (no ABN threshold)
     amount_cents = min(current_balance, MAX_CLAIM_CENTS)
     amount_dollars = amount_cents / 100
     reference = f"tr-auto-{referrer_id[:8]}-{lead_id[:8]}"

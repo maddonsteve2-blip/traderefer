@@ -295,10 +295,22 @@ async def send_sms_referrer_reward_accumulating(phone: str, full_name: str, bala
 
 
 async def send_sms_referrer_reward_claimable(phone: str, full_name: str, balance_dollars: float):
-    """Tell the referrer their balance is claimable ($25–$249 range). Drive them to the dashboard."""
+    """Tell the referrer their balance is claimable ($25–$74.98 range). Drive them to the dashboard."""
     body = (
         f"TradeRefer: Hi {full_name}, you have ${balance_dollars:.2f} in claimable Prezzee credit! "
         f"Log in to claim your gift card: {FRONTEND_URL}/dashboard/referrer/withdraw\n"
+        f"Reply STOP to opt out."
+    )
+    await _send_sms(phone, body)
+
+
+async def send_sms_referrer_declaration_needed(phone: str, full_name: str, balance_dollars: float):
+    """Notify referrer that their balance exceeds $75 and a tax declaration is needed to release funds."""
+    first = full_name.split()[0] if full_name else "there"
+    body = (
+        f"TradeRefer: Hi {first}, you have ${balance_dollars:.2f} in rewards ready to claim! "
+        f"To release payouts over $75, complete a quick tax declaration (10 seconds): "
+        f"{FRONTEND_URL}/dashboard/referrer/withdraw\n"
         f"Reply STOP to opt out."
     )
     await _send_sms(phone, body)
