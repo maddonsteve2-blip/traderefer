@@ -230,18 +230,18 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
         ? { width: "100%", height: "100%", borderRadius: config.radius }
         : { width: config.w, height: config.h, borderRadius: config.radius };
 
-    // Fallback: TradeRefer logo icon
+    // Fallback: TradeRefer logo
     if (!proxyUrl || error) {
         return (
             <div
-                className={`bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center overflow-hidden shrink-0 ${className}`}
-                style={{ ...containerStyle, border: "none", padding: config.padding * 1.5 }}
+                className={`bg-white flex items-center justify-center overflow-hidden shrink-0 ${className}`}
+                style={{ ...containerStyle, border: "1px solid rgba(0,0,0,0.08)", padding: config.padding * 1.5, boxShadow: "0 1px 4px rgba(0,0,0,0.12)" }}
             >
-                <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" style={{ maxWidth: "100%", maxHeight: "100%" }}>
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white" fillOpacity="0.95"/>
-                    <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fillOpacity="0.95"/>
-                    <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fillOpacity="0.95"/>
-                </svg>
+                <img 
+                    src="/logo.png" 
+                    alt="TradeRefer" 
+                    style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                />
             </div>
         );
     }
