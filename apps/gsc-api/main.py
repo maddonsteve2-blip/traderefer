@@ -8,6 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import json
 import os
+from typing import Any
+from urllib.parse import urlencode
+from urllib.request import urlopen
+from urllib.error import HTTPError, URLError
 
 app = FastAPI(title="TradeRefer GSC API")
 
@@ -36,6 +40,103 @@ def load_gsc_data():
         raise HTTPException(status_code=500, detail=f"Error loading GSC data: {str(e)}")
 
 
+def fetch_pagespeed_data(url: str, strategy: str, categories: list[str]):
+    params = [("url", url), ("strategy", strategy)] + [("category", category) for category in categories]
+    api_key = os.getenv("PAGESPEED_API_KEY", "").strip() or os.getenv("GOOGLE_API_KEY", "").strip()
+    if api_key:
+        params.append(("key", api_key))
+
+    request_url = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?" + urlencode(params)
+
+    try:
+        with urlopen(request_url, timeout=60) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="ignore")
+        raise HTTPException(status_code=exc.code, detail=f"PageSpeed API error: {detail or exc.reason}")
+    except URLError as exc:
+        raise HTTPException(status_code=502, detail=f"PageSpeed API unavailable: {exc.reason}")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch PageSpeed data: {str(exc)}")
+
+
+def safe_nested(data: dict[str, Any], *keys: str):
+    current: Any = data
+    for key in keys:
+        if not isinstance(current, dict):
+            return None
+        current = current.get(key)
+    return current
+
+
+def audit_summary(lhr: dict[str, Any], audit_id: str):
+    audit = safe_nested(lhr, "audits", audit_id) or {}
+    return {
+        "id": audit_id,
+        "title": audit.get("title"),
+        "score": audit.get("score"),
+        "displayValue": audit.get("displayValue"),
+        "description": audit.get("description"),
+    }
+
+
+def category_score(categories: dict[str, Any], category_id: str):
+    category = categories.get(category_id, {}) if isinstance(categories, dict) else {}
+    score = category.get("score")
+    return None if score is None else round(score * 100)
+
+
+def build_lighthouse_summary(payload: dict[str, Any]):
+    lhr = payload.get("lighthouseResult", {})
+    categories = lhr.get("categories", {})
+    analysis = payload.get("analysisUTCTimestamp")
+    final_url = lhr.get("finalUrl") or payload.get("id")
+    metrics = safe_nested(payload, "loadingExperience", "metrics") or {}
+    origin_metrics = safe_nested(payload, "originLoadingExperience", "metrics") or {}
+
+    return {
+        "requestedUrl": payload.get("id"),
+        "finalUrl": final_url,
+        "analysisUTCTimestamp": analysis,
+        "strategy": safe_nested(payload, "configSettings", "emulatedFormFactor") or lhr.get("requestedUrl"),
+        "scores": {
+            "performance": category_score(categories, "performance"),
+            "accessibility": category_score(categories, "accessibility"),
+            "bestPractices": category_score(categories, "best-practices"),
+            "seo": category_score(categories, "seo"),
+            "pwa": category_score(categories, "pwa"),
+        },
+        "coreWebVitals": {
+            "lab": {
+                "largestContentfulPaint": audit_summary(lhr, "largest-contentful-paint"),
+                "cumulativeLayoutShift": audit_summary(lhr, "cumulative-layout-shift"),
+                "speedIndex": audit_summary(lhr, "speed-index"),
+                "totalBlockingTime": audit_summary(lhr, "total-blocking-time"),
+                "interactive": audit_summary(lhr, "interactive"),
+            },
+            "field": {
+                "loadingExperience": metrics,
+                "originLoadingExperience": origin_metrics,
+            },
+        },
+        "opportunities": [
+            audit_summary(lhr, "render-blocking-resources"),
+            audit_summary(lhr, "unused-css-rules"),
+            audit_summary(lhr, "unused-javascript"),
+            audit_summary(lhr, "modern-image-formats"),
+            audit_summary(lhr, "offscreen-images"),
+            audit_summary(lhr, "uses-text-compression"),
+        ],
+        "diagnostics": [
+            audit_summary(lhr, "server-response-time"),
+            audit_summary(lhr, "dom-size"),
+            audit_summary(lhr, "bootup-time"),
+            audit_summary(lhr, "mainthread-work-breakdown"),
+            audit_summary(lhr, "uses-long-cache-ttl"),
+        ],
+    }
+
+
 @app.get("/")
 def root():
     return {
@@ -52,9 +153,39 @@ def root():
             "/api/gsc/position-changes": "Find pages with ranking changes (28d vs 90d)",
             "/api/gsc/zero-click": "Find pages with impressions but no clicks",
             "/api/gsc/crawl-issues": "Analyze crawl and indexing issues",
+            "/api/lighthouse": "Run a Lighthouse/PageSpeed analysis for a URL",
+            "/api/lighthouse/health": "Check Lighthouse/PageSpeed configuration",
             "/debug/files": "Debug: List available files"
         }
     }
+
+
+@app.get("/api/lighthouse/health")
+def lighthouse_health():
+    api_key = os.getenv("PAGESPEED_API_KEY", "").strip() or os.getenv("GOOGLE_API_KEY", "").strip()
+    return {
+        "service": "TradeRefer Lighthouse API",
+        "status": "online",
+        "provider": "Google PageSpeed Insights API",
+        "apiKeyConfigured": bool(api_key),
+        "notes": "OAuth is not required for basic Lighthouse/PageSpeed runs.",
+    }
+
+
+@app.get("/api/lighthouse")
+def run_lighthouse(
+    url: str = Query(..., description="Full URL to analyze"),
+    strategy: str = Query("mobile", pattern="^(mobile|desktop)$"),
+    categories: str = Query("performance,accessibility,best-practices,seo", description="Comma-separated Lighthouse categories")
+):
+    requested_categories = [part.strip() for part in categories.split(",") if part.strip()]
+    allowed_categories = {"performance", "accessibility", "best-practices", "seo", "pwa"}
+    invalid = [category for category in requested_categories if category not in allowed_categories]
+    if invalid:
+        raise HTTPException(status_code=400, detail=f"Invalid categories: {', '.join(invalid)}")
+
+    payload = fetch_pagespeed_data(url=url, strategy=strategy, categories=requested_categories or ["performance"])
+    return build_lighthouse_summary(payload)
 
 
 @app.get("/debug/files")
