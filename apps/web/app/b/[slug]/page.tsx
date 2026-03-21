@@ -32,12 +32,101 @@ import { ScrollNavButtons } from "@/components/ScrollNavButtons";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import Script from "next/script";
 import { proxyLogoUrl } from "@/lib/logo";
-import { TRADE_FAQ_BANK } from "@/lib/constants";
+import { JOB_TYPES, TRADE_FAQ_BANK } from "@/lib/constants";
 import { getPostcode } from "@/lib/postcodes";
 import { ReviewSection } from "@/components/ReviewSection";
 import { EnrichTrigger } from "@/components/EnrichTrigger";
 
 export const revalidate = 3600; // Cache for 1 hour, ISR revalidation
+
+function toTitleCase(value: string) {
+    return value
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
+
+function uniqueNonEmpty(values: Array<string | null | undefined>) {
+    return Array.from(new Set(values.map((value) => String(value || "").trim()).filter(Boolean)));
+}
+
+function getLocationLabel(business: any) {
+    return uniqueNonEmpty([business.suburb, business.city, business.state]).join(", ");
+}
+
+function deriveServiceLabel(business: any, slug: string) {
+    const locationTokens = uniqueNonEmpty([business.suburb, business.city, business.state])
+        .flatMap((part) => part.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
+    const slugParts = slug.toLowerCase().split("-").filter(Boolean);
+    const trimmedSlugParts = /^[a-z]{5}$/i.test(slugParts[slugParts.length - 1] || "")
+        ? slugParts.slice(0, -1)
+        : slugParts;
+    const serviceTokens = trimmedSlugParts.filter((part) => !locationTokens.includes(part));
+    const slugService = toTitleCase(serviceTokens.join(" ").trim());
+    const businessName = String(business.business_name || "").trim();
+    const tradeCategory = String(business.trade_category || "Tradie").trim();
+
+    if (slugService.length >= 5) return slugService;
+
+    const businessNameTokens = businessName
+        .split(/[^a-z0-9]+/i)
+        .filter(Boolean)
+        .map((token) => token.toLowerCase());
+    const tradeTokens = tradeCategory
+        .split(/[^a-z0-9]+/i)
+        .filter(Boolean)
+        .map((token) => token.toLowerCase());
+    const filteredBusinessName = businessName
+        .split(/\s+/)
+        .filter((token) => {
+            const normalized = token.toLowerCase().replace(/[^a-z0-9]/g, "");
+            return normalized && !locationTokens.includes(normalized);
+        })
+        .join(" ")
+        .trim();
+
+    const businessNameLooksLikeService = businessNameTokens.some((token) => tradeTokens.includes(token));
+    if (businessNameLooksLikeService && filteredBusinessName.length >= 5) return filteredBusinessName;
+
+    return tradeCategory;
+}
+
+function deriveServiceHighlights(business: any) {
+    const explicitServices = Array.isArray(business.services) ? business.services.filter(Boolean) : [];
+    if (explicitServices.length > 0) return explicitServices.slice(0, 3);
+
+    const jobTypes = JOB_TYPES[String(business.trade_category || "")] || [];
+    return jobTypes.slice(0, 3).map((job) => toTitleCase(job));
+}
+
+function buildSeoContent(business: any, slug: string, hasRating: boolean, rating: number, reviewCount: number) {
+    const locationLabel = getLocationLabel(business) || "your area";
+    const suburb = String(business.suburb || business.city || locationLabel || "your area").trim();
+    const serviceLabel = deriveServiceLabel(business, slug);
+    const tradeCategory = String(business.trade_category || "Tradie").trim();
+    const serviceHighlights = deriveServiceHighlights(business);
+    const serviceList = serviceHighlights.length > 0 ? serviceHighlights.join(", ") : tradeCategory.toLowerCase();
+    const ratingSentence = hasRating ? ` With a ${rating.toFixed(1)} star rating from ${reviewCount} reviews,` : "";
+    const title = `${serviceLabel} ${locationLabel} | ${business.business_name} | TradeRefer`;
+    const description = [
+        `Compare ${serviceLabel.toLowerCase()} in ${locationLabel} with ${business.business_name} on TradeRefer.`,
+        `Explore services like ${serviceList.toLowerCase()} and request a free quote.`,
+        hasRating ? `${rating.toFixed(1)}★ from ${reviewCount} reviews.` : "",
+        business.is_verified ? "ABN verified." : "",
+    ].filter(Boolean).join(" ");
+    const heading = `${serviceLabel} in ${suburb} — ${business.business_name}`;
+    const intro = `Looking for ${serviceLabel.toLowerCase()} in ${suburb}? ${business.business_name} helps customers in ${locationLabel} compare options, review completed work, and request free quotes for ${serviceList.toLowerCase()}.`;
+    const aboutFallback = `${business.business_name} is a local ${tradeCategory.toLowerCase()} business serving ${locationLabel}.${ratingSentence} TradeRefer visitors can compare their services, see project examples, and request a free quote for jobs such as ${serviceList.toLowerCase()}.`;
+
+    return {
+        title,
+        description,
+        heading,
+        intro,
+        aboutFallback,
+    };
+}
 
 async function getBusiness(slug: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -83,17 +172,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const rating = parseFloat(String(business.avg_rating));
     const reviewCount = parseInt(String(business.total_reviews), 10);
     const hasRating = !isNaN(rating) && rating > 0 && reviewCount > 0;
-    const suburb = business.suburb || '';
-    const state = business.state || '';
-    const trade = business.trade_category || 'Tradie';
-
-    const title = `${business.business_name} | ${trade} in ${suburb}${state ? ', ' + state : ''} | TradeRefer`;
-    const description = [
-        `Get a free quote from ${business.business_name}, a ${trade} in ${suburb}.`,
-        hasRating ? `${rating.toFixed(1)}\u2605 from ${reviewCount} reviews.` : '',
-        business.is_verified ? 'ABN verified.' : '',
-        'No obligation, 100% free.',
-    ].filter(Boolean).join(' ');
+    const { title, description } = buildSeoContent(business, slug, hasRating, rating, reviewCount);
     const url = `https://traderefer.au/b/${slug}`;
     const imageUrl = business.logo_url || business.cover_photo_url || (Array.isArray(business.photo_urls) ? business.photo_urls[0] : null) || null;
 
@@ -169,12 +248,13 @@ export default async function PublicProfilePage({
     const parsedRating = parseFloat(String(googleRating));
     const parsedReviewCount = parseInt(String(reviewCount), 10);
     const hasValidRating = !isNaN(parsedRating) && parsedRating > 0 && parsedReviewCount > 0;
+    const seoContent = buildSeoContent(business, slug, hasValidRating, parsedRating, parsedReviewCount);
 
     const ratingQualifier = (hasValidRating && parsedRating >= 4.0) ? "highly-rated" : "local";
     const cityContext = (business.city && business.city.toLowerCase() !== (business.suburb || '').toLowerCase())
         ? `the wider ${business.city} region`
         : 'the local area';
-    const aboutFallback = `${business.business_name} is a ${ratingQualifier} ${business.trade_category} specialist serving ${business.suburb} and ${cityContext}.${hasValidRating ? ` With a ${parsedRating.toFixed(1)} star rating from ${parsedReviewCount} local reviews,` : ''} They are recognized for their reliability, quality craftsmanship, and exceptional customer service.`;
+    const aboutFallback = business.description || `${seoContent.aboutFallback} ${business.business_name} is a ${ratingQualifier} ${business.trade_category} specialist serving ${business.suburb} and ${cityContext}.${hasValidRating ? ` With a ${parsedRating.toFixed(1)} star rating from ${parsedReviewCount} local reviews,` : ''} They are recognized for their reliability, quality craftsmanship, and exceptional customer service.`;
 
     // Map trade category to specific Schema.org type for richer SERP treatment
     const tradeCategory = (business.trade_category || "").toLowerCase();
@@ -210,7 +290,7 @@ export default async function PublicProfilePage({
         "@context": "https://schema.org",
         "@type": schemaType,
         "name": business.business_name,
-        "description": business.description || `Specialist ${business.trade_category} in ${business.suburb}.`,
+        "description": aboutFallback,
         "url": `https://traderefer.au/b/${slug}`,
         ...(business.logo_url ? { "image": proxyLogoUrl(business.logo_url) } : {}),
         ...(business.business_phone ? { "telephone": business.business_phone } : {}),
@@ -289,7 +369,7 @@ export default async function PublicProfilePage({
                 {/* ── HERO ── */}
                 <div className="bg-white py-5 border-b border-zinc-100">
                     <div className="container mx-auto px-4">
-                        <h1 className="text-3xl font-black text-zinc-900 leading-tight">{business.business_name}</h1>
+                        <h1 className="text-3xl font-black text-zinc-900 leading-tight">{seoContent.heading}</h1>
                         <div className="flex flex-wrap items-center gap-2 mt-2">
                             {business.trade_category && (
                                 <span className="px-3 py-1 bg-zinc-100 text-zinc-600 rounded-full text-sm font-semibold border border-zinc-200">{business.trade_category}</span>
@@ -649,6 +729,9 @@ export default async function PublicProfilePage({
                                 <h2 className="text-sm font-bold text-zinc-700 uppercase tracking-wider mb-5 pl-3 border-l-2 border-orange-500">
                                     About the Business
                                 </h2>
+                                <p className="text-zinc-700 font-medium whitespace-pre-line leading-relaxed mb-5" style={{ fontSize: '17px', lineHeight: 1.75 }}>
+                                    {seoContent.intro}
+                                </p>
                                 <EditableText
                                     field="description"
                                     initialValue={business.description}
