@@ -72,19 +72,23 @@ async function getCitiesInState(state: string): Promise<{ city: string; count: n
 
         const results = await sql`
 
-            SELECT city, COUNT(*) as count
+            SELECT lr.parent_city_name AS city, COUNT(*) as count
 
-            FROM businesses
+            FROM locations_reference lr
 
-            WHERE status = 'active'
+            WHERE lr.is_active = true
 
-              AND state ILIKE ${state}
+              AND lr.type = 'suburb'
 
-              AND city IS NOT NULL AND city != ''
+              AND UPPER(lr.state_code) = UPPER(${state})
 
-            GROUP BY city
+              AND lr.parent_city_name IS NOT NULL
 
-            ORDER BY count DESC, city ASC
+              AND lr.parent_city_name != ''
+
+            GROUP BY lr.parent_city_name
+
+            ORDER BY lr.parent_city_name ASC
 
         `;
 
@@ -358,7 +362,7 @@ export default async function StateDirectoryPage({ params, searchParams }: PageP
 
                                                 <p className="text-3xl font-black text-[#FF6600]">{count.toLocaleString()}</p>
 
-                                                <p className="text-gray-400 font-bold uppercase tracking-wider" style={{ fontSize: '16px' }}>Verified Pros</p>
+                                                <p className="text-gray-400 font-bold uppercase tracking-wider" style={{ fontSize: '16px' }}>Suburbs</p>
 
                                             </div>
 

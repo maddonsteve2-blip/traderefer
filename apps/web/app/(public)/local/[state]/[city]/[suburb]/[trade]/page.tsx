@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
     const priceStr = cost ? ` | $${cost.low}\u2013$${cost.high}${cost.unit}` : "";
 
-    const businesses = await getBusinesses(trade, suburb);
+    const businesses = await getBusinesses(state, city, trade, suburb);
     const count = businesses.length;
     const topBiz = businesses[0];
     const postcode = businesses.map((b: any) => extractPostcode(b.address)).find(Boolean) || null;
@@ -77,8 +77,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-async function getBusinesses(trade: string, suburb: string) {
+async function getBusinesses(state: string, city: string, trade: string, suburb: string) {
     try {
+        const stateCode = state.toUpperCase();
+        const cityName = formatSlug(city);
         const tradeName = formatSlug(trade);
         const suburbName = formatSlug(suburb);
 
@@ -88,8 +90,10 @@ async function getBusinesses(trade: string, suburb: string) {
             FROM businesses b 
             WHERE b.status = 'active' 
               AND (b.listing_visibility = 'public' OR b.listing_visibility IS NULL)
+              AND UPPER(b.state) = ${stateCode}
+              AND LOWER(b.city) = LOWER(${cityName})
               AND (b.trade_category ILIKE ${'%' + tradeName + '%'} OR b.trade_category ILIKE ${'%' + trade + '%'})
-              AND (b.suburb ILIKE ${'%' + suburbName + '%'} OR b.suburb ILIKE ${'%' + suburb + '%'})
+              AND LOWER(b.suburb) = LOWER(${suburbName})
             ORDER BY b.is_verified DESC, b.listing_rank DESC
             LIMIT 50
         `;
@@ -105,7 +109,7 @@ async function getRelatedTrades(suburb: string, currentTrade: string) {
     const trades = await sql`
         SELECT DISTINCT trade_category 
         FROM businesses 
-        WHERE suburb ILIKE ${'%' + suburbName + '%'} 
+        WHERE LOWER(suburb) = LOWER(${suburbName}) 
           AND trade_category != ${currentTrade}
           AND status = 'active'
         LIMIT 6
@@ -113,14 +117,16 @@ async function getRelatedTrades(suburb: string, currentTrade: string) {
     return trades;
 }
 
-async function getNearbySuburbs(city: string, suburb: string, currentTrade: string) {
+async function getNearbySuburbs(state: string, city: string, suburb: string, currentTrade: string) {
+    const stateCode = state.toUpperCase();
     const cityName = formatSlug(city);
     const suburbName = formatSlug(suburb);
     const suburbs = await sql`
         SELECT DISTINCT suburb 
         FROM businesses 
-        WHERE city ILIKE ${'%' + cityName + '%'} 
-          AND suburb != ${suburbName}
+        WHERE UPPER(state) = ${stateCode}
+          AND LOWER(city) = LOWER(${cityName}) 
+          AND LOWER(suburb) != LOWER(${suburbName})
           AND trade_category ILIKE ${'%' + currentTrade + '%'}
           AND status = 'active'
           AND suburb IS NOT NULL
@@ -146,7 +152,7 @@ async function getCityReferralCount(city: string): Promise<number> {
         const result = await sql`
             SELECT COUNT(*) as count FROM referral_links rl
             JOIN businesses b ON rl.business_id = b.id
-            WHERE b.city ILIKE ${'%' + cityName + '%'}
+            WHERE LOWER(b.city) = LOWER(${cityName})
               AND rl.created_at > NOW() - INTERVAL '30 days'
         `;
         return parseInt(result[0]?.count ?? '0', 10);
@@ -173,9 +179,9 @@ export default async function TradeLocationPage({ params }: PageProps) {
     }
 
     const [businesses, relatedTrades, nearbySuburbs, cityReferralCount] = await Promise.all([
-        getBusinesses(trade, suburb),
+        getBusinesses(state, city, trade, suburb),
         getRelatedTrades(suburb, tradeName),
-        getNearbySuburbs(city, suburb, tradeName),
+        getNearbySuburbs(state, city, suburb, tradeName),
         getCityReferralCount(city),
     ]);
 

@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const pc = postcode || getPostcode(parseSuburbSlug(suburb).suburb, state);
     const pcLabel = pc ? ` ${stateUpper} ${pc}` : ` ${stateUpper}`;
     const year = new Date().getFullYear();
-    const stats = await getSuburbStats(suburb);
+    const stats = await getSuburbStats(state, city, suburb);
     return {
         title: `${stats.total > 0 ? stats.total + ' ' : ''}Trusted Tradies in ${suburbName}${pcLabel} (${year}) | TradeRefer`,
         description: `Compare ${stats.total > 0 ? stats.total : 'verified'} local tradespeople in ${suburbName}, ${cityName}${pcLabel}. Browse ${stats.categories > 0 ? stats.categories + ' trade categories' : 'plumbers, electricians, builders & more'} — ABN-checked with real community referrals. Free quotes.`,
@@ -68,13 +68,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-async function getSuburbStats(suburb: string): Promise<{ total: number; categories: number }> {
+async function getSuburbStats(state: string, city: string, suburb: string): Promise<{ total: number; categories: number }> {
     try {
+        const stateCode = state.toUpperCase();
+        const cityName = formatSlug(city);
         const suburbName = formatSlug(suburb);
         const result = await sql`
             SELECT COUNT(*) as total, COUNT(DISTINCT trade_category) as categories
             FROM businesses
-            WHERE status = 'active' AND suburb ILIKE ${'%' + suburbName + '%'}
+            WHERE status = 'active'
+              AND UPPER(state) = ${stateCode}
+              AND LOWER(city) = LOWER(${cityName})
+              AND LOWER(suburb) = LOWER(${suburbName})
         `;
         return {
             total: parseInt(result[0]?.total ?? '0', 10),
@@ -83,13 +88,18 @@ async function getSuburbStats(suburb: string): Promise<{ total: number; categori
     } catch { return { total: 0, categories: 0 }; }
 }
 
-async function getTradesWithCounts(suburb: string): Promise<{ trade: string; count: number }[]> {
+async function getTradesWithCounts(state: string, city: string, suburb: string): Promise<{ trade: string; count: number }[]> {
     try {
+        const stateCode = state.toUpperCase();
+        const cityName = formatSlug(city);
         const suburbName = formatSlug(suburb);
         const results = await sql`
             SELECT trade_category as trade, COUNT(*) as count
             FROM businesses
-            WHERE status = 'active' AND suburb ILIKE ${'%' + suburbName + '%'}
+            WHERE status = 'active'
+              AND UPPER(state) = ${stateCode}
+              AND LOWER(city) = LOWER(${cityName})
+              AND LOWER(suburb) = LOWER(${suburbName})
             GROUP BY trade_category
             ORDER BY count DESC
         `;
@@ -97,15 +107,17 @@ async function getTradesWithCounts(suburb: string): Promise<{ trade: string; cou
     } catch { return []; }
 }
 
-async function getNearbySuburbs(city: string, currentSuburb: string): Promise<string[]> {
+async function getNearbySuburbs(state: string, city: string, currentSuburb: string): Promise<string[]> {
     try {
+        const stateCode = state.toUpperCase();
         const cityName = formatSlug(city);
         const suburbName = formatSlug(currentSuburb);
         const results = await sql`
             SELECT DISTINCT suburb FROM businesses
             WHERE status = 'active'
-              AND city ILIKE ${'%' + cityName + '%'}
-              AND suburb NOT ILIKE ${'%' + suburbName + '%'}
+              AND UPPER(state) = ${stateCode}
+              AND LOWER(city) = LOWER(${cityName})
+              AND LOWER(suburb) != LOWER(${suburbName})
               AND suburb IS NOT NULL
             ORDER BY suburb ASC
             LIMIT 12
@@ -138,9 +150,9 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
     }
 
     const [suburbStats, tradesWithCounts, nearbySuburbs] = await Promise.all([
-        getSuburbStats(suburb),
-        getTradesWithCounts(suburb),
-        getNearbySuburbs(city, suburb),
+        getSuburbStats(state, city, suburb),
+        getTradesWithCounts(state, city, suburb),
+        getNearbySuburbs(state, city, suburb),
     ]);
 
     const displayTrades = tradesWithCounts.length > 0 ? tradesWithCounts : [

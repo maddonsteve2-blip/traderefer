@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const cost = TRADE_COST_GUIDE[tradeKey] || TRADE_COST_GUIDE[tradeName];
     const priceSnippet = cost ? ` | From $${cost.low}` : "";
     const year = new Date().getFullYear();
-    const businesses = await getBusinesses(trade, suburb);
+    const businesses = await getBusinesses(state, city, trade, suburb);
     const count = businesses.length;
 
     return {
@@ -44,10 +44,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-async function getBusinesses(trade: string, suburb: string) {
+async function getBusinesses(state: string, city: string, trade: string, suburb: string) {
     try {
         // For job-type pages, search by the parent trade category, not the specific job type
         // e.g., search for "Drainage" businesses, not "Surface Drainage Systems"
+        const stateCode = state.toUpperCase();
+        const cityName = formatSlug(city);
         const tradeName = formatSlug(trade);
         const suburbName = formatSlug(suburb);
         const results = await sql`
@@ -57,8 +59,10 @@ async function getBusinesses(trade: string, suburb: string) {
             FROM businesses b
             LEFT JOIN referrals r ON r.business_id = b.id
             WHERE b.status = 'active'
+              AND UPPER(b.state) = ${stateCode}
+              AND LOWER(b.city) = LOWER(${cityName})
               AND b.trade_category ILIKE ${'%' + tradeName + '%'}
-              AND b.suburb ILIKE ${'%' + suburbName + '%'}
+              AND LOWER(b.suburb) = LOWER(${suburbName})
             GROUP BY b.id
             ORDER BY b.trust_score DESC, referral_count DESC
             LIMIT 8
@@ -69,16 +73,18 @@ async function getBusinesses(trade: string, suburb: string) {
     }
 }
 
-async function getNearbySuburbs(city: string, currentSuburb: string, trade: string) {
+async function getNearbySuburbs(state: string, city: string, currentSuburb: string, trade: string) {
     try {
+        const stateCode = state.toUpperCase();
         const tradeName = formatSlug(trade);
         const cityName = formatSlug(city);
         const results = await sql`
             SELECT DISTINCT suburb FROM businesses
             WHERE status = 'active'
-              AND city ILIKE ${'%' + cityName + '%'}
+              AND UPPER(state) = ${stateCode}
+              AND LOWER(city) = LOWER(${cityName})
               AND trade_category ILIKE ${'%' + tradeName + '%'}
-              AND suburb NOT ILIKE ${'%' + formatSlug(currentSuburb) + '%'}
+              AND LOWER(suburb) != LOWER(${formatSlug(currentSuburb)})
             ORDER BY suburb ASC
             LIMIT 6
         `;
@@ -97,8 +103,8 @@ export default async function JobTypePage({ params }: PageProps) {
     const stateName = state.toUpperCase();
 
     const [businesses, nearbySuburbs] = await Promise.all([
-        getBusinesses(trade, suburb),
-        getNearbySuburbs(city, suburb, trade),
+        getBusinesses(state, city, trade, suburb),
+        getNearbySuburbs(state, city, suburb, trade),
     ]);
 
     const avgRating = businesses.length > 0

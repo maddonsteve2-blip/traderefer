@@ -2,7 +2,6 @@ import { sql } from "@/lib/db";
 import { ChevronRight, MapPin, Users, Clock, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AUSTRALIA_LOCATIONS } from "@/lib/constants";
 import { Metadata } from "next";
 
 interface PageProps {
@@ -14,6 +13,15 @@ function formatSlug(slug: string) {
     if (!slug) return "";
     try { slug = decodeURIComponent(slug); } catch { /* already decoded */ }
     return slug.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+}
+
+function slugify(value: string) {
+    return value
+        .toLowerCase()
+        .trim()
+        .replace(/&/g, " and ")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -38,32 +46,45 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 async function getSuburbsInCity(state: string, city: string): Promise<string[]> {
-    const stateKey = state.toUpperCase() as keyof typeof AUSTRALIA_LOCATIONS;
-    const stateData = AUSTRALIA_LOCATIONS[stateKey];
-    if (stateData) {
-        const cityName = formatSlug(city);
-        const cityEntry = Object.keys(stateData).find(k => k.toLowerCase() === cityName.toLowerCase());
-        if (cityEntry) return stateData[cityEntry];
-    }
     try {
         const cityName = formatSlug(city);
         const results = await sql`
-            SELECT DISTINCT suburb
-            FROM businesses
-            WHERE status = 'active' AND city ILIKE ${'%' + cityName + '%'}
-            ORDER BY suburb ASC
+            SELECT DISTINCT b.suburb
+            FROM businesses b
+            WHERE b.status = 'active'
+              AND b.suburb IS NOT NULL
+              AND b.suburb != ''
+              AND UPPER(b.state) = UPPER(${state})
+              AND LOWER(b.city) = LOWER(${cityName})
+            ORDER BY b.suburb ASC
         `;
-        return results.map((r: any) => r.suburb).filter(Boolean);
+        const suburbs = results.map((r: any) => r.suburb).filter(Boolean);
+        if (suburbs.length > 0) return suburbs;
+
+        const fallbackResults = await sql`
+            SELECT DISTINCT lr.name AS suburb
+            FROM locations_reference lr
+            WHERE lr.is_active = true
+              AND lr.type = 'suburb'
+              AND UPPER(lr.state_code) = UPPER(${state})
+              AND LOWER(lr.parent_city_name) = LOWER(${cityName})
+            ORDER BY lr.name ASC
+        `;
+        return fallbackResults.map((r: any) => r.suburb).filter(Boolean);
     } catch { return []; }
 }
 
-async function getBusinessCountsBySuburb(suburbs: string[]): Promise<Record<string, number>> {
+async function getBusinessCountsBySuburb(state: string, city: string, suburbs: string[]): Promise<Record<string, number>> {
     if (suburbs.length === 0) return {};
     try {
+        const cityName = formatSlug(city);
         const results = await sql`
             SELECT suburb, COUNT(*) as count
             FROM businesses
-            WHERE status = 'active' AND suburb = ANY(${suburbs})
+            WHERE status = 'active'
+              AND UPPER(state) = UPPER(${state})
+              AND LOWER(city) = LOWER(${cityName})
+              AND suburb = ANY(${suburbs})
             GROUP BY suburb
         `;
         const map: Record<string, number> = {};
@@ -78,7 +99,7 @@ async function getCityReferralCount(city: string): Promise<number> {
         const result = await sql`
             SELECT COUNT(*) as count FROM referral_links rl
             JOIN businesses b ON rl.business_id = b.id
-            WHERE b.city ILIKE ${'%' + cityName + '%'}
+            WHERE LOWER(b.city) = LOWER(${cityName})
               AND rl.created_at > NOW() - INTERVAL '30 days'
         `;
         return parseInt(result[0]?.count ?? '0', 10);
@@ -96,7 +117,7 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
     if (suburbs.length === 0) notFound();
 
     const [businessCounts, referralCount] = await Promise.all([
-        getBusinessCountsBySuburb(suburbs),
+        getBusinessCountsBySuburb(state, city, suburbs),
         getCityReferralCount(city),
     ]);
     const totalBusinesses = Object.values(businessCounts).reduce((a, b) => a + b, 0);
@@ -211,7 +232,7 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                 {suburbs.map((suburb) => {
                                     const count = businessCounts[suburb] || 0;
-                                    const suburbSlug = suburb.toLowerCase().replace(/ /g, '-');
+                                    const suburbSlug = slugify(suburb);
                                     return (
                                         <Link key={suburb} href={`/local/${state}/${city}/${suburbSlug}${catParam}`} className="group">
                                             <div className="bg-white rounded-2xl border-2 border-zinc-200 hover:border-[#FF6600] hover:shadow-lg transition-all duration-300 p-5">
