@@ -227,7 +227,7 @@ def get_latest():
 def get_pages(
     min_clicks: int = Query(0),
     limit: int = Query(100),
-    period: str = Query("28", regex="^(28|90)$")
+    period: str = Query("28", pattern="^(28|90)$")
 ):
     """Get page performance data"""
     data = load_gsc_data()
@@ -243,7 +243,7 @@ def get_pages(
 def get_queries(
     min_clicks: int = Query(0),
     limit: int = Query(100),
-    period: str = Query("28", regex="^(28|90)$")
+    period: str = Query("28", pattern="^(28|90)$")
 ):
     """Get top queries"""
     data = load_gsc_data()
@@ -302,7 +302,7 @@ def get_opportunities():
 @app.get("/api/gsc/pages-by-pattern")
 def get_pages_by_pattern(
     pattern: str = Query(..., description="URL pattern to filter (e.g., /local/, /b/)"),
-    period: str = Query("28", regex="^(28|90)$")
+    period: str = Query("28", pattern="^(28|90)$")
 ):
     """Filter pages by URL pattern"""
     data = load_gsc_data()
@@ -320,7 +320,7 @@ def get_pages_by_pattern(
 
 
 @app.get("/api/gsc/query-intent")
-def analyze_query_intent(period: str = Query("28", regex="^(28|90)$")):
+def analyze_query_intent(period: str = Query("28", pattern="^(28|90)$")):
     """Analyze query intent (local/info/transactional)"""
     data = load_gsc_data()
     queries = data.get(f"last{period}Days", {}).get("queries", [])
@@ -359,7 +359,7 @@ def analyze_query_intent(period: str = Query("28", regex="^(28|90)$")):
 
 
 @app.get("/api/gsc/ctr-analysis")
-def analyze_ctr(period: str = Query("28", regex="^(28|90)$")):
+def analyze_ctr(period: str = Query("28", pattern="^(28|90)$")):
     """Analyze CTR by position ranges"""
     data = load_gsc_data()
     pages = data.get(f"last{period}Days", {}).get("pages", [])
