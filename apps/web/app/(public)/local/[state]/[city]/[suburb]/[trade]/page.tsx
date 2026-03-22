@@ -206,6 +206,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
     const suburbCtxKey = suburbName.toLowerCase().replace(/\s+/g, "-");
     const suburbCtx = SUBURB_CONTEXT[suburbCtxKey];
     const tradeNote = suburbCtx?.tradeNotes?.[tradeKey] ?? suburbCtx?.tradeNotes?.[tradeName] ?? null;
+    const broaderCityTradeHref = `/local/${state}/${city}`;
 
     const breadcrumbs = [
         { name: stateName, href: `/local/${state}` },
@@ -373,18 +374,21 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                 Typical cost: ${cost.low}–${cost.high}{cost.unit}
                             </div>
                         )}
-                        <div className="flex flex-wrap gap-4">
+                        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
+                            <Link href="/register?type=homeowner"
+                                className="inline-flex items-center justify-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-all hover:scale-105 active:scale-95 font-cta w-full sm:w-auto"
+                                style={{ minHeight: '64px', fontSize: '20px' }}
+                            >
+                                Request a Free {tradeName} Quote
+                            </Link>
                             <Link href="#businesses"
-                                className="inline-flex items-center justify-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-all hover:scale-105 active:scale-95 font-cta"
+                                className="inline-flex items-center justify-center gap-2 bg-white border-2 border-gray-200 hover:border-[#FF6600] text-[#1A1A1A] font-black rounded-xl px-8 transition-all w-full sm:w-auto"
                                 style={{ minHeight: '64px', fontSize: '20px' }}
                             >
                                 View Top {businesses.length > 0 ? businesses.length : ''} Trades
                             </Link>
-                            <Link href="/register?type=business"
-                                className="inline-flex items-center justify-center gap-2 bg-white border-2 border-gray-200 hover:border-[#FF6600] text-[#1A1A1A] font-black rounded-xl px-8 transition-all"
-                                style={{ minHeight: '64px', fontSize: '20px' }}
-                            >
-                                List Your Business
+                            <Link href="/register?type=business" className="inline-flex items-center justify-center text-sm font-bold text-zinc-600 hover:text-[#FF6600] transition-colors px-1 py-1 sm:py-3">
+                                Are you a {tradeName.toLowerCase()}? List your business free →
                             </Link>
                         </div>
                     </div>
@@ -567,11 +571,17 @@ export default async function TradeLocationPage({ params }: PageProps) {
                                     </div>
                                     <h3 className="text-2xl font-black text-zinc-900 mb-2">No {tradeName} listed in {suburbName} yet</h3>
                                     <p className="text-zinc-500 max-w-md mx-auto mb-8 text-lg">
-                                        Be the first local expert to join our network and reach customers in {suburbName}.
+                                        No specialists listed in {suburbName} yet — get quotes from verified {tradeName.toLowerCase()} across {cityName} instead.
                                     </p>
-                                    <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold px-8">
-                                        <Link href="/register?type=business">Create Your Free Profile</Link>
-                                    </Button>
+                                    <p className="text-zinc-400 max-w-md mx-auto mb-6 text-sm">Join 1,200+ homeowners who&apos;ve found their tradie on TradeRefer.</p>
+                                    <div className="flex flex-col sm:flex-row justify-center gap-3">
+                                        <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold px-8">
+                                            <Link href={broaderCityTradeHref}>Browse {cityName} Results</Link>
+                                        </Button>
+                                        <Button asChild size="lg" variant="outline" className="rounded-xl font-bold px-8">
+                                            <Link href="/register?type=homeowner">Request a Free Quote</Link>
+                                        </Button>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 gap-6">

@@ -83,6 +83,22 @@ tools:
         method: GET
         description: "Analyze crawl and indexing issues"
 
+      - path: /api/lighthouse
+        method: GET
+        description: "Run Lighthouse analysis through the TradeRefer Railway API instead of calling Google PageSpeed directly"
+        parameters:
+          - name: url
+            required: true
+            type: string
+          - name: strategy
+            required: false
+            type: string
+            default: "mobile"
+          - name: categories
+            required: false
+            type: string
+            default: "performance,accessibility,best-practices,seo"
+
 # System prompt for the LLM
 prompts:
   system: |
@@ -119,8 +135,15 @@ prompts:
     4. **Position Changes** (from /api/gsc/position-changes)
        - Pages improving (what's working)
        - Pages declining (what to fix)
+
+    5. **Lighthouse Performance Check** (from /api/lighthouse via the Railway API, never direct Google PageSpeed calls)
+       - Audit the most important business profile pages under /b/
+       - Report mobile Performance score, LCP, TBT, CLS, and the biggest audit failures
+       - If multiple /b/ pages have the same issue, call it out as a template-level problem
+       - Recommend fixes that reduce unused JavaScript, main-thread blocking, and render delay first
     
     Format as a concise executive summary with actionable next steps.
+    When including Lighthouse data, clearly state that the source is the TradeRefer Railway Lighthouse API at /api/lighthouse.
 
 # Scheduled tasks (optional)
 schedule:

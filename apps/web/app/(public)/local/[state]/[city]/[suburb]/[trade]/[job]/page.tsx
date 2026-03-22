@@ -112,6 +112,7 @@ export default async function JobTypePage({ params }: PageProps) {
     const relatedJobs = (JOB_TYPES[tradeKey] || JOB_TYPES[tradeName] || [])
         .filter(j => jobToSlug(j) !== job)
         .slice(0, 6);
+    const broaderTradeHref = `/local/${state}/${city}/${suburb}/${trade}`;
 
     const breadcrumbJsonLd = {
         "@context": "https://schema.org",
@@ -205,13 +206,16 @@ export default async function JobTypePage({ params }: PageProps) {
                                 Est. cost: ${cost.low}–${cost.high}{cost.unit}
                             </div>
                         )}
-                        <div className="flex flex-wrap gap-4">
-                            <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold h-14 px-8 text-lg border-none">
-                                <Link href="#businesses">See {businesses.length > 0 ? businesses.length : ''} Local Specialists</Link>
+                        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4">
+                            <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold h-14 px-8 text-lg border-none w-full sm:w-auto">
+                                <Link href="/register?type=homeowner">Request a Free {jobName} Quote</Link>
                             </Button>
-                            <Button asChild variant="outline" size="lg" className="bg-white/5 border-white/10 text-white hover:bg-white/10 rounded-xl font-bold h-14 px-8 text-lg">
-                                <Link href="/register?type=business">List Your Business Free</Link>
+                            <Button asChild variant="outline" size="lg" className="bg-white/5 border-white/10 text-white hover:bg-white/10 rounded-xl font-bold h-14 px-8 text-lg w-full sm:w-auto">
+                                <Link href={businesses.length > 0 ? "#businesses" : broaderTradeHref}>See {businesses.length > 0 ? businesses.length : ''} Local Specialists</Link>
                             </Button>
+                            <Link href="/register?type=business" className="inline-flex items-center justify-center text-sm font-bold text-zinc-300 hover:text-white transition-colors px-1 py-1 sm:py-3">
+                                Are you a {tradeName.toLowerCase()}? List your business free →
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -285,10 +289,16 @@ export default async function JobTypePage({ params }: PageProps) {
                             <div className="bg-zinc-50 rounded-3xl border border-dashed border-zinc-200 p-12 text-center">
                                 <Wrench className="w-10 h-10 text-zinc-300 mx-auto mb-4" />
                                 <h3 className="text-lg font-black text-zinc-600 mb-2">No listings yet in {suburbName}</h3>
-                                <p className="text-zinc-400 text-sm mb-6">Be the first {jobName.toLowerCase()} specialist to list your business and connect with local customers.</p>
-                                <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold border-none">
-                                    <Link href="/register?type=business">List Your Business Free</Link>
-                                </Button>
+                                <p className="text-zinc-500 text-sm mb-3 max-w-xl mx-auto">No specialists listed in {suburbName} yet — get quotes from verified {tradeName.toLowerCase()} across {cityName} instead.</p>
+                                <p className="text-zinc-400 text-sm mb-6">Join 1,200+ homeowners who&apos;ve found their tradie on TradeRefer.</p>
+                                <div className="flex flex-col sm:flex-row justify-center gap-3">
+                                    <Button asChild className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold border-none">
+                                        <Link href={broaderTradeHref}>See {tradeName} Across {cityName}</Link>
+                                    </Button>
+                                    <Button asChild variant="outline" className="rounded-xl font-bold">
+                                        <Link href="/register?type=homeowner">Request a Free Quote</Link>
+                                    </Button>
+                                </div>
                             </div>
                         )}
                     </section>
