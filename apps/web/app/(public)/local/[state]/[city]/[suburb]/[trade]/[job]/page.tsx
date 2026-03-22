@@ -155,15 +155,16 @@ export default async function JobTypePage({ params }: PageProps) {
         } : {})
     };
 
-    const faqJsonLd = {
+    const faqEntries = faqs.slice(0, 5);
+    const faqJsonLd = faqEntries.length > 0 ? {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": faqs.slice(0, 5).map(faq => ({
+        "mainEntity": faqEntries.map(faq => ({
             "@type": "Question",
             "name": faq.q,
             "acceptedAnswer": { "@type": "Answer", "text": faq.a }
         }))
-    };
+    } : null;
 
     return (
         <>
@@ -171,7 +172,7 @@ export default async function JobTypePage({ params }: PageProps) {
             {/* Schema */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
-            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+            {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
 
             {/* Hero */}
             <div className="bg-zinc-900 pt-32 pb-20 relative overflow-hidden text-white">
@@ -372,19 +373,21 @@ export default async function JobTypePage({ params }: PageProps) {
                     )}
 
                     {/* FAQ */}
-                    <section>
-                        <h2 className="text-2xl font-black text-zinc-900 mb-8">
-                            Frequently Asked Questions About {jobName} in {suburbName}
-                        </h2>
-                        <div className="space-y-4">
-                            {faqs.slice(0, 5).map((faq, i) => (
-                                <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
-                                    <h3 className="font-bold text-zinc-900 mb-2">{faq.q}</h3>
-                                    <p className="text-sm text-zinc-500 leading-relaxed">{faq.a}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                    {faqEntries.length > 0 && (
+                        <section>
+                            <h2 className="text-2xl font-black text-zinc-900 mb-8">
+                                Frequently Asked Questions About {jobName} in {suburbName}
+                            </h2>
+                            <div className="space-y-4">
+                                {faqEntries.map((faq, i) => (
+                                    <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
+                                        <h3 className="font-bold text-zinc-900 mb-2">{faq.q}</h3>
+                                        <p className="text-sm text-zinc-500 leading-relaxed">{faq.a}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
                     {/* Nearby Suburbs */}
                     {nearbySuburbs.length > 0 && (

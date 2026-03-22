@@ -261,15 +261,16 @@ export default async function TradeLocationPage({ params }: PageProps) {
         } : {})
     };
 
-    const faqJsonLd = {
+    const faqEntries = faqs.slice(0, 5);
+    const faqJsonLd = faqEntries.length > 0 ? {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": faqs.map(faq => ({
+        "mainEntity": faqEntries.map(faq => ({
             "@type": "Question",
             "name": faq.q,
             "acceptedAnswer": { "@type": "Answer", "text": faq.a }
         }))
-    };
+    } : null;
 
     const localBusinessJsonLd = businesses.length > 0 && totalReviews > 0 ? {
         "@context": "https://schema.org",
@@ -337,7 +338,7 @@ export default async function TradeLocationPage({ params }: PageProps) {
             {/* ── ALL JSON-LD SCHEMA ── */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
-            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+            {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             {localBusinessJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />}
 

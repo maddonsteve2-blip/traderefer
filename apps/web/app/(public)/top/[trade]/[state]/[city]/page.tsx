@@ -181,22 +181,23 @@ export default async function Top10CityPage({ params }: PageProps) {
         } : {})
     };
 
-    const faqJsonLd = {
+    const faqEntries = faqs.slice(0, 5);
+    const faqJsonLd = faqEntries.length > 0 ? {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": faqs.slice(0, 5).map(faq => ({
+        "mainEntity": faqEntries.map(faq => ({
             "@type": "Question",
             "name": faq.q,
             "acceptedAnswer": { "@type": "Answer", "text": faq.a }
         }))
-    };
+    } : null;
 
     return (
         <main className="min-h-screen bg-[#FCFCFC]">
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
-            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+            {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
 
             {/* Breadcrumbs */}
             <div className="bg-[#1A1A1A] pt-32 pb-4">
@@ -400,19 +401,21 @@ export default async function Top10CityPage({ params }: PageProps) {
                         )}
 
                         {/* FAQ Section */}
-                        <section>
-                            <h2 className="font-black text-[#1A1A1A] mb-6 font-display" style={{ fontSize: '32px' }}>
-                                Frequently Asked Questions — {tradeName} in {cityName}
-                            </h2>
-                            <div className="space-y-4">
-                                {faqs.slice(0, 5).map((faq, i) => (
-                                    <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
-                                        <h3 className="font-black text-zinc-900 mb-2" style={{ fontSize: '18px' }}>{faq.q}</h3>
-                                        <p className="text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.6 }}>{faq.a}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
+                        {faqEntries.length > 0 && (
+                            <section>
+                                <h2 className="font-black text-[#1A1A1A] mb-6 font-display" style={{ fontSize: '32px' }}>
+                                    Frequently Asked Questions — {tradeName} in {cityName}
+                                </h2>
+                                <div className="space-y-4">
+                                    {faqEntries.map((faq, i) => (
+                                        <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
+                                            <h3 className="font-black text-zinc-900 mb-2" style={{ fontSize: '18px' }}>{faq.q}</h3>
+                                            <p className="text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.6 }}>{faq.a}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
 
                         {/* Nearby Cities */}
                         {nearbyCities.length > 0 && (

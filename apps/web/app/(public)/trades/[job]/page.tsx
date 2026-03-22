@@ -157,21 +157,22 @@ export default async function TradeHubPage({ params }: PageProps) {
         } : {})
     };
 
-    const faqJsonLd = {
+    const faqEntries = faqs.slice(0, 6);
+    const faqJsonLd = faqEntries.length > 0 ? {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": faqs.slice(0, 6).map(faq => ({
+        "mainEntity": faqEntries.map(faq => ({
             "@type": "Question",
             "name": faq.q,
             "acceptedAnswer": { "@type": "Answer", "text": faq.a }
         }))
-    };
+    } : null;
 
     return (
         <main className="min-h-screen bg-white">
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
-            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+            {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
 
             {/* Hero */}
             <div className="bg-[#1A1A1A] pt-32 pb-20 text-white">
@@ -338,13 +339,13 @@ export default async function TradeHubPage({ params }: PageProps) {
                     )}
 
                     {/* FAQ */}
-                    {faqs.length > 0 && (
+                    {faqEntries.length > 0 && (
                         <section>
                             <h2 className="font-black text-[#1A1A1A] mb-8 font-display" style={{ fontSize: '32px' }}>
                                 {jobName}: Frequently Asked Questions
                             </h2>
                             <div className="space-y-4">
-                                {faqs.map((faq, i) => (
+                                {faqEntries.map((faq, i) => (
                                     <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
                                         <h3 className="font-black text-zinc-900 mb-2" style={{ fontSize: '18px' }}>{faq.q}</h3>
                                         <p className="text-zinc-600" style={{ fontSize: '16px', lineHeight: 1.6 }}>{faq.a}</p>
