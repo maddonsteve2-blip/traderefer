@@ -91,9 +91,19 @@ def _wrap(body_html: str, unsubscribe_note: str = "") -> str:
     </div>"""
 
 
-# ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
+def _lead_first_name(full_name: str) -> str:
+    parts = [part for part in (full_name or "").strip().split() if part]
+    return parts[0] if parts else "A customer"
+
+
+def _lead_summary(job_description: str, max_len: int = 140) -> str:
+    summary = " ".join((job_description or "").strip().split())
+    if not summary:
+        return "No job summary provided."
+    return summary if len(summary) <= max_len else summary[: max_len - 1].rstrip() + "…"
+
+
 # BUSINESS EMAILS
-# ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
 
 async def send_business_welcome(email: str, business_name: str, slug: str):
     body = f"""
@@ -162,22 +172,25 @@ async def send_business_new_lead(email: str, business_name: str, consumer_name: 
         if is_first_lead
         else f'<p>Unlock fee: <strong style="color:#ea580c">${unlock_fee_dollars:.2f}</strong></p>'
     )
+    first_name = _lead_first_name(consumer_name)
+    summary = _lead_summary(job_description)
     body = f"""
       <div style="background:#ea580c;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
         <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">New enquiry for {business_name}</h1>
-        <p style="color:#fed7aa;margin:8px 0 0;font-size:15px">A customer in {suburb} wants to hire you</p>
+        <p style="color:#fed7aa;margin:8px 0 0;font-size:15px">Someone in {suburb} is waiting for your response on TradeRefer</p>
       </div>
       <p style="font-size:16px;color:#333">Hi {business_name},</p>
-      <p style="font-size:16px;color:#333">You have a new customer enquiry waiting on <strong>traderefer.au</strong>. Full details are only revealed once you log in.</p>
+      <p style="font-size:16px;color:#333">You have a new customer enquiry waiting on <strong>traderefer.au</strong>. Review it in your dashboard and reply through the site.</p>
       <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:20px 0">
-        <p style="margin:0;color:#666;font-size:14px">Enquiry from: <strong>{consumer_name[:1]}***</strong> &nbsp;|&nbsp; Location: <strong>{suburb}</strong></p>
+        <p style="margin:0 0 8px;color:#666;font-size:14px">Enquiry from: <strong>{first_name}</strong> &nbsp;|&nbsp; Location: <strong>{suburb}</strong></p>
+        <p style="margin:0;color:#666;font-size:14px">Request summary: <strong>{summary}</strong></p>
       </div>
       {fee_line}
       <div style="text-align:center;margin:28px 0">
         <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:900;font-size:16px">Log In to View Enquiry &rarr;</a>
       </div>
     """
-    await _send(email, f"New enquiry in {suburb} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â log in to view", _wrap(body, "You're receiving this as a registered business on traderefer.au."))
+    await _send(email, f"New enquiry in {suburb} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â log in to respond", _wrap(body, "You're receiving this as a registered business on traderefer.au."))
 
 
 async def send_business_lead_unlocked(email: str, business_name: str, consumer_name: str, consumer_phone: str, consumer_email: str, suburb: str, job_description: str):
@@ -196,8 +209,10 @@ async def send_business_lead_unlocked(email: str, business_name: str, consumer_n
     await _send(email, f"Lead unlocked ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â {consumer_name} in {suburb}", _wrap(body))
 
 
-async def send_business_enquiry_teaser(email: str, business_name: str, business_id: str, slug: str, suburb: str, job_description: str):
+async def send_business_enquiry_teaser(email: str, business_name: str, business_id: str, slug: str, consumer_name: str, suburb: str, job_description: str):
     claim_url = f"{FRONTEND_URL}/claim/{slug}"
+    first_name = _lead_first_name(consumer_name)
+    summary = _lead_summary(job_description)
     body = f"""
       <div style="background:#ea580c;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
         <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">You have a new enquiry!</h1>
@@ -206,9 +221,11 @@ async def send_business_enquiry_teaser(email: str, business_name: str, business_
       <p style="font-size:16px;color:#333">Hi {business_name},</p>
       <p style="font-size:16px;color:#333">Someone in <strong>{suburb}</strong> just submitted an enquiry through your listing on <a href="{FRONTEND_URL}" style="color:#ea580c">traderefer.au</a>.</p>
       <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:20px 0">
-        <p style="margin:0;color:#666;font-size:14px">&#128274; Contact details and message are hidden until you claim your profile.</p>
+        <p style="margin:0 0 8px;color:#666;font-size:14px">Enquiry from: <strong>{first_name}</strong> &nbsp;|&nbsp; Location: <strong>{suburb}</strong></p>
+        <p style="margin:0 0 8px;color:#666;font-size:14px">Request summary: <strong>{summary}</strong></p>
+        <p style="margin:0;color:#666;font-size:14px">&#128274; Full contact details stay hidden until you claim your profile and view the enquiry in TradeRefer.</p>
       </div>
-      <p style="font-size:16px;color:#333">Claim your <strong>free</strong> business profile to see who enquired and respond directly. Takes 2 minutes.</p>
+      <p style="font-size:16px;color:#333">Claim your <strong>free</strong> business profile to review the enquiry and respond through TradeRefer. Takes 2 minutes.</p>
       <div style="text-align:center;margin:28px 0">
         <a href="{claim_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:900;font-size:16px">Claim Your Free Profile &rarr;</a>
       </div>
@@ -216,7 +233,7 @@ async def send_business_enquiry_teaser(email: str, business_name: str, business_
         Your first enquiry is completely free to view. traderefer.au is a free directory ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â claiming your profile takes 2 minutes.
       </p>
     """
-    await _send(email, f"New enquiry in {suburb} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â claim your free profile on traderefer.au", _wrap(body, f"You received this because {business_name} is listed on traderefer.au. To opt out reply to this email."))
+    await _send(email, f"New enquiry in {suburb} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â claim your profile to respond", _wrap(body, f"You received this because {business_name} is listed on traderefer.au. To opt out reply to this email."))
 
 
 async def send_invitation_email(to_email: str, invitee_name: str, inviter_name: str, invitation_type: str, signup_url: str):

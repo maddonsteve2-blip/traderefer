@@ -254,7 +254,9 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
                 await send_sms_claimed_new_lead(
                     phone=row["business_phone"],
                     business_name=row["business_name"],
+                    consumer_name=row["consumer_name"],
                     suburb=row["consumer_suburb"],
+                    job_description=row["job_description"],
                 )
                 lead_logger.info(f"SMS notification sent successfully")
         except Exception as e:
@@ -270,6 +272,7 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
                     business_name=row["business_name"],
                     business_id=str(row["business_id"]),
                     slug=row["slug"],
+                    consumer_name=row["consumer_name"],
                     suburb=row["consumer_suburb"],
                     job_description=row["job_description"]
                 )
@@ -279,8 +282,10 @@ async def _screening_pass(lead_id: str, db: AsyncSession):
                 await send_sms_unclaimed_teaser(
                     phone=row["business_phone"],
                     business_name=row["business_name"],
+                    consumer_name=row["consumer_name"],
                     slug=row["slug"],
                     suburb=row["consumer_suburb"],
+                    job_description=row["job_description"],
                 )
                 lead_logger.info(f"Teaser SMS sent successfully")
         except Exception as e:

@@ -50,14 +50,29 @@ async def _send_sms(to: str, body: str, from_number: Optional[str] = None):
         error_logger.error(f"SMS failed | to={phone} | error={e}", exc_info=True)
 
 
+def _lead_first_name(full_name: str) -> str:
+    parts = [part for part in (full_name or "").strip().split() if part]
+    return parts[0] if parts else "A customer"
+
+
+def _lead_summary(job_description: str, max_len: int = 80) -> str:
+    summary = " ".join((job_description or "").strip().split())
+    if not summary:
+        return "No summary provided."
+    return summary if len(summary) <= max_len else summary[: max_len - 1].rstrip() + "…"
+
+
 # ─────────────────────────────────────────────
 # CLAIMED BUSINESS — new enquiry teaser
 # ─────────────────────────────────────────────
 
-async def send_sms_claimed_new_lead(phone: str, business_name: str, suburb: str):
+async def send_sms_claimed_new_lead(phone: str, business_name: str, consumer_name: str, suburb: str, job_description: str):
     """Notify a claimed business owner that a new enquiry has arrived. No details — drive login."""
+    first_name = _lead_first_name(consumer_name)
+    summary = _lead_summary(job_description)
     body = (
-        f"TradeRefer: New enquiry for {business_name} from a customer in {suburb}. "
+        f"TradeRefer: New enquiry for {business_name} from {first_name} in {suburb}. "
+        f"Summary: {summary} "
         f"Log in to view and respond: {FRONTEND_URL}/dashboard/business/leads\n"
         f"Reply STOP to opt out."
     )
@@ -68,11 +83,14 @@ async def send_sms_claimed_new_lead(phone: str, business_name: str, suburb: str)
 # UNCLAIMED BUSINESS — claim prompt
 # ─────────────────────────────────────────────
 
-async def send_sms_unclaimed_teaser(phone: str, business_name: str, slug: str, suburb: str):
+async def send_sms_unclaimed_teaser(phone: str, business_name: str, consumer_name: str, slug: str, suburb: str, job_description: str):
     """Notify an unclaimed business that they have an enquiry and prompt them to claim."""
     claim_url = f"{FRONTEND_URL}/claim/{slug}"
+    first_name = _lead_first_name(consumer_name)
+    summary = _lead_summary(job_description)
     body = (
-        f"TradeRefer: A customer in {suburb} just enquired about {business_name}. "
+        f"TradeRefer: {first_name} in {suburb} just enquired about {business_name}. "
+        f"Summary: {summary} "
         f"Claim your free profile to view and respond: {claim_url}\n"
         f"Reply STOP to opt out."
     )

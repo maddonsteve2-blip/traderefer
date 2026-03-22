@@ -393,7 +393,9 @@ async def auto_pass_stalled_screening(db: AsyncSession):
                     await send_sms_claimed_new_lead(
                         phone=lead["business_phone"],
                         business_name=lead["business_name"],
+                        consumer_name=lead["consumer_name"],
                         suburb=lead["consumer_suburb"],
+                        job_description=lead["job_description"],
                     )
             except Exception as e:
                 error_logger.warning(f"Auto-pass notify error for lead {lead_id}: {e}")

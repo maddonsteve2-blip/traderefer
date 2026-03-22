@@ -324,7 +324,7 @@ async def onboarding(
             state, lat, lng, logo_url, cover_photo_url, photo_urls, stripe_account_id,
             listing_visibility, years_experience, services, specialties,
             business_highlights, why_refer_us, features, abn,
-            owner_phone, owner_phone_verified, invited_by_id
+            owner_phone, owner_phone_verified, invited_by_id, is_claimed, claim_status
         ) VALUES (
             :user_id, :business_name, :slug, :trade_category,
             :description, :suburb, :address, :business_phone, :business_email,
@@ -332,7 +332,7 @@ async def onboarding(
             :state, :lat, :lng, :logo_url, :cover_photo_url, :photo_urls, :stripe_account_id,
             :listing_visibility, :years_experience, :services, :specialties,
             :business_highlights, :why_refer_us, :features, :abn,
-            :owner_phone, :owner_phone_verified, :invited_by_id
+            :owner_phone, :owner_phone_verified, :invited_by_id, true, 'claimed'
         ) RETURNING id, slug
     """)
 
