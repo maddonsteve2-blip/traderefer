@@ -60,27 +60,20 @@ import { JOB_TYPES, TRADE_FAQ_BANK } from "@/lib/constants";
 import { getPostcode } from "@/lib/postcodes";
 
 const LeadForm = dynamic(() => import("@/components/LeadForm").then((mod) => mod.LeadForm), {
-    ssr: false,
     loading: () => <div className="min-h-[480px] rounded-2xl bg-zinc-50 border border-zinc-100 animate-pulse" />,
 });
 
 const ReviewSection = dynamic(() => import("@/components/ReviewSection").then((mod) => mod.ReviewSection), {
-    ssr: false,
     loading: () => <div className="min-h-[320px] rounded-2xl bg-white border border-zinc-200 animate-pulse" />,
 });
 
-const BusinessDelistDialog = dynamic(() => import("@/components/BusinessDelistDialog").then((mod) => mod.BusinessDelistDialog), {
-    ssr: false,
-});
+const BusinessDelistDialog = dynamic(() => import("@/components/BusinessDelistDialog").then((mod) => mod.BusinessDelistDialog));
 
 const ScrollNavButtons = dynamic(() => import("@/components/ScrollNavButtons").then((mod) => mod.ScrollNavButtons), {
-    ssr: false,
     loading: () => <div className="h-10" />,
 });
 
-const EnrichTrigger = dynamic(() => import("@/components/EnrichTrigger").then((mod) => mod.EnrichTrigger), {
-    ssr: false,
-});
+const EnrichTrigger = dynamic(() => import("@/components/EnrichTrigger").then((mod) => mod.EnrichTrigger));
 
 export const revalidate = 3600; // Cache for 1 hour, ISR revalidation
 

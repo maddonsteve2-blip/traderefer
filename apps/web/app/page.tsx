@@ -13,12 +13,10 @@ import { sql } from "@/lib/db";
 import { SmartSearch } from "@/components/SmartSearch";
 
 const ROICalculators = dynamic(() => import("@/components/home/ROICalculators").then((mod) => mod.ROICalculators), {
-  ssr: false,
   loading: () => <div className="min-h-[720px] rounded-2xl bg-white border border-gray-200 animate-pulse" />,
 });
 
 const PrezzeeCarousel = dynamic(() => import("@/components/home/PrezzeeCarousel").then((mod) => mod.PrezzeeCarousel), {
-  ssr: false,
   loading: () => <div className="min-h-[360px] rounded-2xl bg-[#F8F8F8] border border-gray-200 animate-pulse" />,
 });
 
