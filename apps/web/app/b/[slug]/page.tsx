@@ -123,6 +123,10 @@ function getSecondaryLocation(business: any) {
     return suburb && suburb.toLowerCase() !== city.toLowerCase() ? suburb : "";
 }
 
+function getReviewLabel(reviewCount: number) {
+    return reviewCount === 1 ? "Review" : "Reviews";
+}
+
 function deriveServiceLabel(business: any, slug: string) {
     const locationTokens = uniqueNonEmpty([business.suburb, business.city, business.state])
         .flatMap((part) => part.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
@@ -173,25 +177,27 @@ function buildSeoContent(business: any, slug: string, hasRating: boolean, rating
     const suburb = String(business.suburb || business.city || locationLabel || "your area").trim();
     const primaryLocation = getPrimaryLocation(business);
     const secondaryLocation = getSecondaryLocation(business);
+    const localArea = uniqueNonEmpty([secondaryLocation || suburb, primaryLocation]).join(", ") || locationLabel;
     const serviceLabel = deriveServiceLabel(business, slug);
     const tradeCategory = String(business.trade_category || "Tradie").trim();
     const serviceHighlights = deriveServiceHighlights(business);
     const serviceList = serviceHighlights.length > 0 ? serviceHighlights.join(", ") : tradeCategory.toLowerCase();
-    const ratingSentence = hasRating ? ` With a ${rating.toFixed(1)} star rating from ${reviewCount} reviews,` : "";
+    const reviewLabel = getReviewLabel(reviewCount);
+    const ratingSentence = hasRating ? ` With a ${rating.toFixed(1)} star rating from ${reviewCount} ${reviewLabel.toLowerCase()},` : "";
     const yearsExperience = Number(business.years_experience || 0);
     const rawName = String(business.business_name || "").trim();
     const cleanName = cleanBusinessName(rawName, slug) || rawName;
-    const titleLocation = `${serviceLabel} ${primaryLocation}${secondaryLocation ? ` — ${secondaryLocation}` : ""}`.trim();
-    const titleProof = hasRating ? `${reviewCount} Reviews, ${rating.toFixed(1)}★` : cleanName;
+    const titleLocation = `${cleanName} ${primaryLocation}${secondaryLocation ? ` — ${secondaryLocation}` : ""}`.trim();
+    const titleProof = hasRating ? `${reviewCount} ${reviewLabel}, ${rating.toFixed(1)}★` : tradeCategory;
     const title = `${titleLocation} | ${titleProof} | TradeRefer`;
     const description = [
-        `${cleanName} offers ${serviceLabel.toLowerCase()} in ${secondaryLocation || suburb}, ${primaryLocation}.`,
+        `${cleanName} offers ${tradeCategory.toLowerCase()} services in ${localArea}.`,
         yearsExperience > 0 ? `${yearsExperience} years experience.` : "",
-        hasRating ? `${reviewCount} verified reviews (${rating.toFixed(1)}★).` : "",
+        hasRating ? `${reviewCount} verified ${reviewLabel.toLowerCase()} (${rating.toFixed(1)}★).` : "",
         `See photos, read reviews and request a free quote on TradeRefer.`,
         business.is_verified ? "ABN verified." : "",
     ].filter(Boolean).join(" ");
-    const heading = `${serviceLabel} in ${suburb} — ${cleanName}`;
+    const heading = `${cleanName} in ${suburb}`;
     const intro = `Looking for ${serviceLabel.toLowerCase()} in ${suburb}? ${cleanName} helps customers in ${locationLabel} compare options, review completed work, and request free quotes for ${serviceList.toLowerCase()}.`;
     const aboutFallback = `${cleanName} is a local ${tradeCategory.toLowerCase()} business serving ${locationLabel}.${ratingSentence} TradeRefer visitors can compare their services, see project examples, and request a free quote for jobs such as ${serviceList.toLowerCase()}.`;
 
