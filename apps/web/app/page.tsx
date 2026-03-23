@@ -1,4 +1,5 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { SignedInOut } from "@/components/SignedInOut";
 import {
   MapPin, ArrowRight,
@@ -10,8 +11,16 @@ import { TRADE_CATEGORIES } from "@/lib/constants";
 import { sql } from "@/lib/db";
 
 import { SmartSearch } from "@/components/SmartSearch";
-import { ROICalculators } from "@/components/home/ROICalculators";
-import { PrezzeeCarousel } from "@/components/home/PrezzeeCarousel";
+
+const ROICalculators = dynamic(() => import("@/components/home/ROICalculators").then((mod) => mod.ROICalculators), {
+  ssr: false,
+  loading: () => <div className="min-h-[720px] rounded-2xl bg-white border border-gray-200 animate-pulse" />,
+});
+
+const PrezzeeCarousel = dynamic(() => import("@/components/home/PrezzeeCarousel").then((mod) => mod.PrezzeeCarousel), {
+  ssr: false,
+  loading: () => <div className="min-h-[360px] rounded-2xl bg-[#F8F8F8] border border-gray-200 animate-pulse" />,
+});
 
 // Fetch popular city+trade combinations from database
 // Uses ROW_NUMBER to pick max 2 trades per city for diversity across Australia
