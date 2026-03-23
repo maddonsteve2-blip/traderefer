@@ -3,6 +3,7 @@
 
 
 import { usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
 
 import Link from "next/link";
 
@@ -14,13 +15,13 @@ import { Button } from "@/components/ui/button";
 
 import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, ChevronDown, LayoutDashboard, Search, Menu, X, Gift, MessageSquare, ArrowLeftRight, Rocket, Building2, DollarSign, Users as Users2, Target, ArrowRight } from "lucide-react";
 
-import { SignInButton, SignUpButton, SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
-
-import { TopUpDialog } from "@/components/dashboard/TopUpDialog";
+import { SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
 import { NotificationBell } from "@/components/NotificationBell";
 
 import { Logo } from "@/components/Logo";
+
+const TopUpDialog = dynamic(() => import("@/components/dashboard/TopUpDialog").then((mod) => mod.TopUpDialog));
 
 
 
@@ -692,25 +693,25 @@ export function Navbar() {
 
                                 )}
 
-                                <SignInButton mode="modal">
+                                <Button asChild variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900 ml-2">
 
-                                    <Button variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900 ml-2">
+                                    <Link href="/login">
 
                                         Sign In
 
-                                    </Button>
+                                    </Link>
 
-                                </SignInButton>
+                                </Button>
 
-                                <SignUpButton mode="modal">
+                                <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-6 font-bold shadow-lg shadow-orange-500/20">
 
-                                    <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-6 font-bold shadow-lg shadow-orange-500/20">
+                                    <Link href="/signup">
 
                                         Sign Up
 
-                                    </Button>
+                                    </Link>
 
-                                </SignUpButton>
+                                </Button>
 
                             </SignedOut>
 
@@ -1055,20 +1056,16 @@ export function Navbar() {
                         {/* Bottom CTA */}
                         <div className="p-4 border-t border-zinc-100 space-y-2 shrink-0">
                             <SignedOut>
-                                <SignInButton mode="modal">
-                                    <button onClick={() => setMobileMenuOpen(false)}
-                                        className="w-full border-2 border-zinc-200 text-zinc-700 font-black rounded-xl flex items-center justify-center transition-colors hover:border-zinc-300"
-                                        style={{ minHeight: '52px', fontSize: '17px' }}>
-                                        Sign In
-                                    </button>
-                                </SignInButton>
-                                <SignUpButton mode="modal">
-                                    <button onClick={() => setMobileMenuOpen(false)}
-                                        className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl flex items-center justify-center transition-colors"
-                                        style={{ minHeight: '52px', fontSize: '17px' }}>
-                                        Sign Up Free
-                                    </button>
-                                </SignUpButton>
+                                <Link href="/login" onClick={() => setMobileMenuOpen(false)}
+                                    className="w-full border-2 border-zinc-200 text-zinc-700 font-black rounded-xl flex items-center justify-center transition-colors hover:border-zinc-300"
+                                    style={{ minHeight: '52px', fontSize: '17px' }}>
+                                    Sign In
+                                </Link>
+                                <Link href="/signup" onClick={() => setMobileMenuOpen(false)}
+                                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl flex items-center justify-center transition-colors"
+                                    style={{ minHeight: '52px', fontSize: '17px' }}>
+                                    Sign Up Free
+                                </Link>
                             </SignedOut>
                             <SignedIn>
                                 {!isDashboard && (
