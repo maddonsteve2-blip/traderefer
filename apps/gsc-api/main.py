@@ -695,13 +695,19 @@ async def fetch_keyword_volume_live(keywords: list[str]):
         "keywords": keywords,
         "location_code": DATAFORSEO_LOCATION_CODE,
         "language_code": DATAFORSEO_LANGUAGE_CODE,
+        "search_partners": True,
     }]
     response_payload = await call_dataforseo("POST", "/keywords_data/google_ads/search_volume/live", payload)
     task, results = extract_dataforseo_result(response_payload)
     result = extract_first_dataforseo_result(results)
+    result_items = results if isinstance(results, list) else []
+    if result_items and all(isinstance(item, dict) and item.get("keyword") for item in result_items):
+        source_items = result_items
+    else:
+        source_items = result.get("items") or []
     items = [
         map_keyword_volume_item(item)
-        for item in (result.get("items") or [])
+        for item in source_items
         if item.get("keyword")
     ]
     return items, extract_dataforseo_cost(response_payload, task)
