@@ -222,6 +222,15 @@ def extract_dataforseo_result(payload: dict[str, Any]):
     return task, results
 
 
+def extract_first_dataforseo_result(results: Any):
+    if isinstance(results, list):
+        first = results[0] if results else {}
+        return first if isinstance(first, dict) else {}
+    if isinstance(results, dict):
+        return results
+    return {}
+
+
 def extract_dataforseo_cost(payload: dict[str, Any], task: dict[str, Any] | None = None):
     if task and task.get("cost") is not None:
         return task.get("cost")
@@ -678,7 +687,7 @@ async def fetch_keyword_volume_live(keywords: list[str]):
     }]
     response_payload = await call_dataforseo("POST", "/keywords_data/google_ads/search_volume/live", payload)
     task, results = extract_dataforseo_result(response_payload)
-    result = results[0] if results else {}
+    result = extract_first_dataforseo_result(results)
     items = [
         map_keyword_volume_item(item)
         for item in (result.get("items") or [])
@@ -744,7 +753,7 @@ def find_keyword_opportunities(limit: int, existing_pages: str | None = None):
 async def fetch_account_balance_live():
     response_payload = await call_dataforseo("GET", "/appendix/user_data")
     task, results = extract_dataforseo_result(response_payload)
-    result = results[0] if results else {}
+    result = extract_first_dataforseo_result(results)
     return {
         "login": result.get("login"),
         "balance": result.get("money", {}).get("balance"),
@@ -784,9 +793,10 @@ async def refresh_keyword_gap_cache():
     }]
     response_payload = await call_dataforseo("POST", "/dataforseo_labs/google/domain_intersection/live", payload)
     task, results = extract_dataforseo_result(response_payload)
+    result = extract_first_dataforseo_result(results)
     items = [
         map_keyword_gap_item(item)
-        for item in (results[0].get("items") if results else []) or []
+        for item in (result.get("items") or [])
         if (item.get("keyword_data") or {}).get("keyword")
     ]
     items.sort(key=lambda item: item.get("searchVolume") or 0, reverse=True)
@@ -824,9 +834,10 @@ async def refresh_backlink_gap_cache():
     }]
     response_payload = await call_dataforseo("POST", "/backlinks/domain_intersection/live", payload)
     task, results = extract_dataforseo_result(response_payload)
+    result = extract_first_dataforseo_result(results)
     items = [
         map_backlink_gap_item(item)
-        for item in (results[0].get("items") if results else []) or []
+        for item in (result.get("items") or [])
         if item.get("domain") or item.get("referring_domain") or item.get("target")
     ]
     items.sort(key=lambda item: ((item.get("domainRank") or 0), (item.get("backlinksCount") or 0)), reverse=True)
