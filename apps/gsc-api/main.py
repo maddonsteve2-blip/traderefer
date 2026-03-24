@@ -31,7 +31,7 @@ app.add_middleware(
 SCOPES = ["https://www.googleapis.com/auth/webmasters.readonly"]
 DATA_DIR = Path(__file__).parent / "data"
 DATA_FILE = DATA_DIR / "latest.json"
-ROOT_DIR = Path(__file__).resolve().parents[2]
+ROOT_DIR = Path(__file__).resolve().parent
 TOKEN_FILE = ROOT_DIR / "gsc_token.json"
 CLIENT_SECRET_FILE = ROOT_DIR / "client_secret_643902729199-qn7nntblms4brtb7ddtji1jfpuri1pgh.apps.googleusercontent.com.json"
 DEFAULT_SITE_URL = os.getenv("GSC_SITE_URL", "sc-domain:traderefer.au")
