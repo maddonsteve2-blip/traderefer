@@ -58,6 +58,7 @@ import { BusinessLogo } from "@/components/BusinessLogo";
 import { proxyLogoUrl } from "@/lib/logo";
 import { JOB_TYPES, TRADE_FAQ_BANK } from "@/lib/constants";
 import { getPostcode } from "@/lib/postcodes";
+import { toOpeningHoursSchema } from "@/lib/business-hours";
 
 const LeadForm = dynamic(() => import("@/components/LeadForm").then((mod) => mod.LeadForm), {
     loading: () => <div className="min-h-[480px] rounded-2xl bg-zinc-50 border border-zinc-100 animate-pulse" />,
@@ -87,6 +88,22 @@ function toTitleCase(value: string) {
 
 function uniqueNonEmpty(values: Array<string | null | undefined>) {
     return Array.from(new Set(values.map((value) => String(value || "").trim()).filter(Boolean)));
+}
+
+function slugifySegment(value: string) {
+    return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
+function getLocalSuburbSegment(business: any) {
+    const suburb = String(business.suburb || business.city || "").trim();
+    const state = String(business.state || "").trim();
+    const postcode = suburb && state ? getPostcode(suburb, state) : null;
+    const suburbSlug = slugifySegment(suburb);
+    return postcode && suburbSlug ? `${suburbSlug}-${postcode}` : suburbSlug;
 }
 
 function getLocationLabel(business: any) {
@@ -187,17 +204,19 @@ function buildSeoContent(business: any, slug: string, hasRating: boolean, rating
     const yearsExperience = Number(business.years_experience || 0);
     const rawName = String(business.business_name || "").trim();
     const cleanName = cleanBusinessName(rawName, slug) || rawName;
-    const titleLocation = `${cleanName} ${primaryLocation}${secondaryLocation ? ` — ${secondaryLocation}` : ""}`.trim();
-    const titleProof = hasRating ? `${reviewCount} ${reviewLabel}, ${rating.toFixed(1)}★` : tradeCategory;
-    const title = `${titleLocation} | ${titleProof} | TradeRefer`;
+    const stateLabel = String(business.state || "").trim().toUpperCase();
+    const titleTrade = tradeCategory || serviceLabel || "Tradie";
+    const titleLocationParts = [primaryLocation, stateLabel].filter(Boolean);
+    const titleLocation = titleLocationParts.join(" ").trim() || locationLabel;
+    const title = `${cleanName} | ${titleTrade} in ${titleLocation} | TradeRefer`;
     const description = [
-        `${cleanName} offers ${tradeCategory.toLowerCase()} services in ${localArea}.`,
+        `${cleanName} provides ${titleTrade.toLowerCase()} services in ${localArea}.`,
         yearsExperience > 0 ? `${yearsExperience} years experience.` : "",
         hasRating ? `${reviewCount} verified ${reviewLabel.toLowerCase()} (${rating.toFixed(1)}★).` : "",
-        `See photos, read reviews and request a free quote on TradeRefer.`,
+        `Read reviews, compare quotes and get connected free via TradeRefer.`,
         business.is_verified ? "ABN verified." : "",
     ].filter(Boolean).join(" ");
-    const heading = `${cleanName} in ${suburb}`;
+    const heading = `${cleanName} — ${titleTrade} in ${suburb}`;
     const intro = `Looking for ${serviceLabel.toLowerCase()} in ${suburb}? ${cleanName} helps customers in ${locationLabel} compare options, review completed work, and request free quotes for ${serviceList.toLowerCase()}.`;
     const aboutFallback = `${cleanName} is a local ${tradeCategory.toLowerCase()} business serving ${locationLabel}.${ratingSentence} TradeRefer visitors can compare their services, see project examples, and request a free quote for jobs such as ${serviceList.toLowerCase()}.`;
 
@@ -301,13 +320,18 @@ function PublicServices({ services = [], specialties = [] as string[] }: { servi
     if (items.length === 0) return null;
 
     return (
-        <div className="flex flex-wrap gap-2">
-            {items.map((item) => (
-                <div key={item} className="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-lg font-black text-zinc-700 flex items-center gap-2" style={{ fontSize: '16px' }}>
-                    <div className="w-1.5 h-1.5 bg-orange-500 rounded-full shrink-0" />
-                    {item}
-                </div>
-            ))}
+        <div className="space-y-4">
+            <p className="text-zinc-600 font-medium leading-relaxed" style={{ fontSize: '16px' }}>
+                Services include {items.join(", ")}. Compare quotes, review past work and connect with this business through TradeRefer.
+            </p>
+            <div className="flex flex-wrap gap-2">
+                {items.map((item) => (
+                    <div key={item} className="px-3 py-2 bg-zinc-50 border border-zinc-200 rounded-lg font-black text-zinc-700 flex items-center gap-2" style={{ fontSize: '16px' }}>
+                        <div className="w-1.5 h-1.5 bg-orange-500 rounded-full shrink-0" />
+                        {item}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
@@ -421,6 +445,18 @@ export default async function PublicProfilePage({
     const parsedRating = parseFloat(String(googleRating));
     const parsedReviewCount = parseInt(String(reviewCount), 10);
     const hasValidRating = !isNaN(parsedRating) && parsedRating > 0 && parsedReviewCount > 0;
+    const hasSchemaRating = !isNaN(parsedRating) && parsedRating > 0 && parsedReviewCount >= 3;
+    const openingHoursSchema = toOpeningHoursSchema(business.opening_hours);
+    const latitude = Number(business.lat);
+    const longitude = Number(business.lng);
+    const hasGeo = Number.isFinite(latitude) && Number.isFinite(longitude);
+    const serviceRadiusKm = Number(business.service_radius_km || 0);
+    const areaServed = uniqueNonEmpty([
+        business.suburb,
+        business.city,
+        business.state,
+        serviceRadiusKm > 0 && getPrimaryLocation(business) ? `${getPrimaryLocation(business)} within ${serviceRadiusKm} km` : "",
+    ]);
     const seoContent = buildSeoContent(business, canonicalSlug, hasValidRating, parsedRating, parsedReviewCount);
 
     const ratingQualifier = (hasValidRating && parsedRating >= 4.0) ? "highly-rated" : "local";
@@ -464,9 +500,18 @@ export default async function PublicProfilePage({
         "@type": schemaType,
         "name": business.business_name,
         "description": aboutFallback,
-        "url": `https://traderefer.au/b/${slug}`,
+        "url": `https://traderefer.au/b/${canonicalSlug}`,
         ...(business.logo_url ? { "image": proxyLogoUrl(business.logo_url) } : {}),
         ...(business.business_phone ? { "telephone": business.business_phone } : {}),
+        ...(business.website ? { "sameAs": [business.website].filter(Boolean) } : {}),
+        ...(business.google_maps_url ? { "hasMap": business.google_maps_url } : {}),
+        ...(hasGeo ? {
+            "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": latitude,
+                "longitude": longitude,
+            }
+        } : {}),
         "address": {
             "@type": "PostalAddress",
             "addressLocality": business.suburb,
@@ -474,7 +519,15 @@ export default async function PublicProfilePage({
             ...(business.address?.match(/\b([A-Z]{2,3})\s+(\d{4})\b/)?.[2] ? { "postalCode": business.address.match(/\b([A-Z]{2,3})\s+(\d{4})\b/)[2] } : {}),
             "addressCountry": "AU"
         },
-        ...(hasValidRating ? {
+        ...(areaServed.length > 0 ? {
+            "areaServed": areaServed.map((area) => ({
+                "@type": "Place",
+                "name": area,
+            }))
+        } : {}),
+        ...(openingHoursSchema.length > 0 ? { "openingHoursSpecification": openingHoursSchema } : {}),
+        "priceRange": "$$",
+        ...(hasSchemaRating ? {
             "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": parsedRating,
@@ -483,7 +536,60 @@ export default async function PublicProfilePage({
                 "worstRating": 1,
             }
         } : {}),
-        ...(reviewItems.length > 0 ? { "review": reviewItems } : {}),
+        ...(hasSchemaRating && reviewItems.length > 0 ? { "review": reviewItems } : {}),
+    };
+
+    const localStateSlug = slugifySegment(String(business.state || ""));
+    const localCitySlug = slugifySegment(String(business.city || business.suburb || ""));
+    const localSuburbSlug = getLocalSuburbSegment(business);
+    const localTradeSlug = slugifySegment(String(business.trade_category || ""));
+    const cityLabel = String(business.city || business.suburb || "").trim();
+    const visibleTrustDetails = [
+        hasYearsExperience ? `${business.years_experience} years of experience` : "",
+        business.licence_number ? `licence ${business.licence_number}` : "",
+        serviceRadiusKm > 0 ? `servicing jobs within ${serviceRadiusKm} km` : "",
+    ].filter(Boolean);
+
+    const hasLocalTradeRoute = Boolean(localStateSlug && localCitySlug && localSuburbSlug && localTradeSlug);
+    const cityBreadcrumbLink = localStateSlug && localCitySlug
+        ? `/local/${localStateSlug}/${localCitySlug}`
+        : "/businesses";
+    const breadcrumbLink = hasLocalTradeRoute
+        ? `/local/${localStateSlug}/${localCitySlug}/${localSuburbSlug}/${localTradeSlug}`
+        : "/businesses";
+    const breadcrumbLabel = business.trade_category
+        ? `${business.trade_category} in ${business.suburb || cityLabel}`
+        : "Directory";
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "TradeRefer",
+                "item": "https://traderefer.au/",
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": String(business.trade_category || "Directory"),
+                "item": `https://traderefer.au${breadcrumbLink}`,
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": cityLabel || String(business.suburb || "Local area"),
+                "item": `https://traderefer.au${cityBreadcrumbLink}`,
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "name": business.business_name,
+                "item": `https://traderefer.au/b/${canonicalSlug}`,
+            },
+        ],
     };
 
     // FAQ schema for SEO
@@ -503,11 +609,15 @@ export default async function PublicProfilePage({
 
     return (
         <>
-        {needsEnrich.length > 0 && <EnrichTrigger businesses={needsEnrich} />}
+            {needsEnrich.length > 0 && <EnrichTrigger businesses={needsEnrich} />}
             <main className="min-h-screen bg-zinc-50">
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
                 />
                 {faqJsonLd && (
                     <script
@@ -524,7 +634,7 @@ export default async function PublicProfilePage({
                             <ChevronRight className="w-3.5 h-3.5 text-zinc-300" />
                             {business.state && business.suburb && business.trade_category ? (
                                 <Link
-                                    href={`/local/${business.state.toLowerCase()}/${business.suburb.toLowerCase().replace(/\s+/g, '-')}/${business.suburb.toLowerCase().replace(/\s+/g, '-')}/${business.trade_category.toLowerCase().replace(/\s+/g, '-')}`}
+                                    href={breadcrumbLink}
                                     className="hover:text-zinc-800 transition-colors"
                                 >
                                     {business.trade_category} in {business.suburb}
@@ -860,6 +970,11 @@ export default async function PublicProfilePage({
                                 <p className="text-zinc-700 font-medium whitespace-pre-line leading-relaxed mb-5" style={{ fontSize: '17px', lineHeight: 1.75 }}>
                                     {seoContent.intro}
                                 </p>
+                                {visibleTrustDetails.length > 0 && (
+                                    <p className="text-zinc-700 font-medium whitespace-pre-line leading-relaxed mb-5" style={{ fontSize: '17px', lineHeight: 1.75 }}>
+                                        {`${business.business_name} brings ${visibleTrustDetails.join(", ")} to customers across ${getLocationLabel(business) || "the local area"}.`}
+                                    </p>
+                                )}
                                 <p className="text-zinc-700 font-medium whitespace-pre-line leading-relaxed" style={{ fontSize: '17px', lineHeight: 1.75 }}>
                                     {business.description || aboutFallback}
                                 </p>
