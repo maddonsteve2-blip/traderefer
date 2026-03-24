@@ -651,6 +651,10 @@ def get_keyword_volume_cache_items(cache_payload: dict[str, Any]):
     return items if isinstance(items, dict) else {}
 
 
+def keyword_volume_cache_is_empty(cache_payload: dict[str, Any]):
+    return len(get_keyword_volume_cache_items(cache_payload)) == 0
+
+
 def keyword_volume_entry_is_fresh(entry: dict[str, Any]):
     timestamp = parse_payload_timestamp(entry)
     if timestamp is None:
@@ -890,6 +894,8 @@ async def get_keyword_volume(
         raise HTTPException(status_code=400, detail="A maximum of 1000 keywords is allowed per request")
 
     cache_payload = read_cache_payload(KEYWORDS_VOLUME_FILE)
+    if keyword_volume_cache_is_empty(cache_payload):
+        cache_payload = {}
     cached_items, missing_keywords = collect_keyword_volume_results(cache_payload, keywords)
     fetched_items: list[dict[str, Any]] = []
     cost = 0
@@ -978,9 +984,25 @@ async def get_backlink_gap(
 ):
     cache_payload, is_fresh, freshness = cache_is_fresh(BACKLINK_GAP_FILE, DATAFORSEO_TTLS["backlink_gap"])
     cost = 0
-    if refresh or not is_fresh:
-        cache_payload, cost = await refresh_backlink_gap_cache()
-        freshness = build_cache_freshness(BACKLINK_GAP_FILE, DATAFORSEO_TTLS["backlink_gap"], cache_payload)
+    try:
+        if refresh or not is_fresh:
+            cache_payload, cost = await refresh_backlink_gap_cache()
+            freshness = build_cache_freshness(BACKLINK_GAP_FILE, DATAFORSEO_TTLS["backlink_gap"], cache_payload)
+    except HTTPException as exc:
+        detail = str(exc.detail)
+        if "Access denied" in detail:
+            response.status_code = 200
+            return {
+                "available": False,
+                "reason": "Backlinks API requires a separate DataForSEO subscription",
+                "activateAt": "https://app.dataforseo.com/backlinks-subscription",
+                "targets": DATAFORSEO_BACKLINK_TARGETS,
+                "exclude": DATAFORSEO_BACKLINK_EXCLUDE,
+                "domains": [],
+                "total": 0,
+                "freshness": freshness,
+            }
+        raise
     response.headers["X-DataForSEO-Cost"] = str(cost or 0)
     return {
         "targets": cache_payload.get("targets", DATAFORSEO_BACKLINK_TARGETS),
