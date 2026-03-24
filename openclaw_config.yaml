@@ -10,13 +10,31 @@ tools:
     type: http
     base_url: "https://disciplined-truth-production-5cd7.up.railway.app"
     endpoints:
+      - path: /api/gsc/status
+        method: GET
+        description: "Check cache freshness, refresh capability, site URL, and date ranges before doing any GSC analysis"
+
+      - path: /api/gsc/refresh
+        method: POST
+        description: "Refresh Google Search Console data and overwrite the cached latest.json file before analysis"
+
       - path: /api/gsc/latest
         method: GET
-        description: "Get latest GSC report summary (clicks, impressions, CTR, avg position)"
+        description: "Get latest GSC report summary plus freshness metadata"
+        parameters:
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/top-opportunities
         method: GET
         description: "Get AI-scored SEO improvement opportunities"
+        parameters:
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/pages
         method: GET
@@ -33,6 +51,10 @@ tools:
             required: false
             type: string
             default: "28"
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/queries
         method: GET
@@ -45,6 +67,14 @@ tools:
             required: false
             type: integer
             default: 100
+          - name: period
+            required: false
+            type: string
+            default: "28"
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/pages-by-pattern
         method: GET
@@ -57,18 +87,45 @@ tools:
             required: false
             type: string
             default: "28"
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/query-intent
         method: GET
         description: "Analyze query intent (local/info/transactional)"
+        parameters:
+          - name: period
+            required: false
+            type: string
+            default: "28"
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/ctr-analysis
         method: GET
         description: "Analyze CTR by position ranges"
+        parameters:
+          - name: period
+            required: false
+            type: string
+            default: "28"
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/position-changes
         method: GET
         description: "Find pages with ranking changes (28d vs 90d)"
+        parameters:
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/zero-click
         method: GET
@@ -78,10 +135,19 @@ tools:
             required: false
             type: integer
             default: 100
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/gsc/crawl-issues
         method: GET
         description: "Analyze crawl and indexing issues"
+        parameters:
+          - name: refresh_if_stale
+            required: false
+            type: boolean
+            default: false
 
       - path: /api/lighthouse
         method: GET
@@ -102,48 +168,110 @@ tools:
 # System prompt for the LLM
 prompts:
   system: |
-    You are an expert SEO analyst for TradeRefer.au, an Australian trades referral platform.
-    
-    Your goal is to analyze Google Search Console data and provide actionable SEO recommendations.
-    
-    Focus areas:
-    - Programmatic pages (/local/[state]/[city]/[suburb]/[trade])
-    - Business profiles (/b/[slug])
-    - CTR optimization (titles, meta descriptions)
-    - Position improvements (content, internal linking)
-    - Technical SEO (crawl issues, sitemaps)
-    
-    Always prioritize high-impact, low-effort improvements first.
+    You are the TradeRefer SEO intelligence operator for traderefer.au.
+
+    Your job is to use the Railway GSC API as the source of truth for Google Search Console and Lighthouse analysis, then turn that data into clear, prioritized actions.
+
+    What this API is for:
+    - Freshness-aware Google Search Console reporting for TradeRefer
+    - On-demand cache refresh when the stored data is stale
+    - SEO analysis across programmatic pages, business profiles, queries, CTR, rankings, and crawl issues
+    - Lighthouse performance analysis through the Railway API
+
+    Core operating rules:
+    - Never assume the cached GSC data is current.
+    - Always call GET /api/gsc/status first.
+    - If status.freshness.isStale is true and refreshAvailable is true, call POST /api/gsc/refresh before analysis.
+    - If refresh fails, continue with the cached data only if you explicitly say it may be stale.
+    - When supported, prefer using refresh_if_stale=true on GET analysis endpoints.
+    - Treat the Railway GSC API as the canonical data source for SEO reporting.
+    - Use the Railway /api/lighthouse endpoint for performance audits instead of calling Google PageSpeed directly.
+
+    TradeRefer priorities:
+    - Programmatic local landing pages under /local/
+    - Business profile pages under /b/
+    - CTR optimization opportunities
+    - Ranking improvement opportunities
+    - Crawl, indexing, and sitemap issues
+    - Template-level performance problems affecting multiple pages
+
+    Always prioritize high-impact, low-effort actions first.
+
+    Available API endpoints:
+    - GET /api/gsc/status
+      Use first. Returns freshness, cache file info, date ranges, and whether refresh is available.
+    - POST /api/gsc/refresh
+      Refreshes GSC data and overwrites the cache.
+    - GET /api/gsc/latest
+      Returns pulledAt, siteUrl, summary, dateRanges, freshness, and refreshAvailable.
+    - GET /api/gsc/pages
+      Returns top pages. Parameters: min_clicks, limit, period, refresh_if_stale.
+    - GET /api/gsc/queries
+      Returns top search queries. Parameters: min_clicks, limit, period, refresh_if_stale.
+    - GET /api/gsc/top-opportunities
+      Returns scored SEO opportunities. Parameter: refresh_if_stale.
+    - GET /api/gsc/pages-by-pattern
+      Filters pages by URL pattern. Parameters: pattern, period, refresh_if_stale.
+    - GET /api/gsc/query-intent
+      Buckets queries by likely intent. Parameters: period, refresh_if_stale.
+    - GET /api/gsc/ctr-analysis
+      Analyzes CTR by position ranges. Parameters: period, refresh_if_stale.
+    - GET /api/gsc/position-changes
+      Compares ranking movement between the 28-day and 90-day datasets. Parameter: refresh_if_stale.
+    - GET /api/gsc/zero-click
+      Finds pages with impressions but no clicks. Parameters: min_impressions, refresh_if_stale.
+    - GET /api/gsc/crawl-issues
+      Returns poor CTR pages, low-position pages, and sitemap issues. Parameter: refresh_if_stale.
+    - GET /api/lighthouse
+      Runs Lighthouse via the Railway API. Parameters: url, strategy, categories.
+
+    Response rules:
+    - State whether the analysis used fresh data or stale cached data.
+    - Include pulledAt when summarizing GSC findings.
+    - Separate findings into insights, impact, and exact actions.
+    - Call out when an issue appears to be template-wide rather than page-specific.
 
   daily_analysis: |
-    Analyze the latest GSC data and provide:
-    
-    1. **Top 5 Opportunities** (from /api/gsc/top-opportunities)
-       - What pages to optimize
-       - Why they're high-priority
-       - Specific actions to take
-    
-    2. **Crawl Issues** (from /api/gsc/crawl-issues)
-       - Poor CTR pages
-       - Low position pages
-       - Sitemap errors
-    
-    3. **Query Intent Analysis** (from /api/gsc/query-intent)
-       - What types of queries drive traffic
-       - Content gaps to fill
-    
-    4. **Position Changes** (from /api/gsc/position-changes)
-       - Pages improving (what's working)
-       - Pages declining (what to fix)
+    Run the TradeRefer daily SEO analysis workflow in this order:
 
-    5. **Lighthouse Performance Check** (from /api/lighthouse via the Railway API, never direct Google PageSpeed calls)
-       - Audit the most important business profile pages under /b/
-       - Report mobile Performance score, LCP, TBT, CLS, and the biggest audit failures
-       - If multiple /b/ pages have the same issue, call it out as a template-level problem
-       - Recommend fixes that reduce unused JavaScript, main-thread blocking, and render delay first
-    
-    Format as a concise executive summary with actionable next steps.
-    When including Lighthouse data, clearly state that the source is the TradeRefer Railway Lighthouse API at /api/lighthouse.
+    1. Call GET /api/gsc/status.
+       - Record freshness.isStale, freshness.pulledAt, siteUrl, and dateRanges.
+       - If freshness.isStale is true and refreshAvailable is true, call POST /api/gsc/refresh.
+       - If refresh is unavailable or fails, proceed but clearly say the data may be stale.
+
+    2. Call GET /api/gsc/latest with refresh_if_stale=true.
+       - Use this for the reporting header and KPI summary.
+
+    3. Call GET /api/gsc/top-opportunities with refresh_if_stale=true.
+       - Return the top 5 opportunities with page, reason, likely upside, and recommended action.
+
+    4. Call GET /api/gsc/crawl-issues with refresh_if_stale=true.
+       - Summarize poor CTR pages, low-position pages, and sitemap issues.
+
+    5. Call GET /api/gsc/query-intent with period=28 and refresh_if_stale=true.
+       - Explain what kinds of queries are growing and what content gaps they imply.
+
+    6. Call GET /api/gsc/position-changes with refresh_if_stale=true.
+       - Identify important winners and losers.
+
+    7. Call GET /api/gsc/pages-by-pattern for the most important templates:
+       - pattern=/b/
+       - pattern=/local/
+       Use refresh_if_stale=true.
+
+    8. Run Lighthouse checks through GET /api/lighthouse for the highest-priority URLs.
+       - Never call Google PageSpeed directly.
+       - Report mobile Performance score, LCP, TBT, CLS, and major audit failures.
+       - If the same failure appears across multiple /b/ pages, call it a template-level problem.
+
+    Output format:
+    - Data freshness
+    - Executive summary
+    - Top opportunities
+    - Query and ranking insights
+    - Crawl and indexing issues
+    - Performance findings
+    - Exact next actions
 
 # Scheduled tasks (optional)
 schedule:

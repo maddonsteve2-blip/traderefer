@@ -3,15 +3,20 @@ GSC API for OpenClaw - Railway Deployment
 Provides Google Search Console data analysis endpoints
 """
 
-from fastapi import FastAPI, HTTPException, Query
+from datetime import datetime, timedelta, timezone
+from threading import Lock
+from fastapi import FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
 from pathlib import Path
 import json
 import os
 from typing import Any
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
-from urllib.error import HTTPError, URLError
 
 app = FastAPI(title="TradeRefer GSC API")
 
@@ -23,21 +28,328 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+SCOPES = ["https://www.googleapis.com/auth/webmasters.readonly"]
+DATA_DIR = Path(__file__).parent / "data"
+DATA_FILE = DATA_DIR / "latest.json"
+ROOT_DIR = Path(__file__).resolve().parents[2]
+TOKEN_FILE = ROOT_DIR / "gsc_token.json"
+CLIENT_SECRET_FILE = ROOT_DIR / "client_secret_643902729199-qn7nntblms4brtb7ddtji1jfpuri1pgh.apps.googleusercontent.com.json"
+DEFAULT_SITE_URL = os.getenv("GSC_SITE_URL", "sc-domain:traderefer.au")
+DEFAULT_SITE_URL_ALT = os.getenv("GSC_SITE_URL_ALT", "https://traderefer.au/")
+STALE_AFTER_HOURS = int(os.getenv("GSC_STALE_AFTER_HOURS", "24"))
+AUTO_REFRESH_ON_STALE = os.getenv("GSC_AUTO_REFRESH_ON_STALE", "false").strip().lower() in {"1", "true", "yes", "on"}
+REFRESH_SECRET = os.getenv("GSC_REFRESH_SECRET", "").strip()
+REFRESH_LOCK = Lock()
 
-def load_gsc_data():
-    """Load latest GSC data from file"""
-    # Railway deploys to /app, so data is at /app/data/latest.json
-    data_file = Path(__file__).parent / "data" / "latest.json"
-    
+
+def utc_now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def parse_iso_datetime(value: str | None):
+    if not value:
+        return None
     try:
-        with open(data_file, 'r', encoding='utf-8') as f:
-            return json.load(f)
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def read_json_file(path: Path):
+    with open(path, "r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def write_json_atomic(path: Path, payload: dict[str, Any]):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp_path = path.with_suffix(".tmp")
+    with open(temp_path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2)
+    temp_path.replace(path)
+
+
+def load_json_from_env_or_file(env_names: list[str], file_path: Path | None = None):
+    for env_name in env_names:
+        raw = os.getenv(env_name, "").strip()
+        if raw:
+            return json.loads(raw)
+    if file_path and file_path.exists():
+        return read_json_file(file_path)
+    return None
+
+
+def refresh_is_configured():
+    token_data = load_json_from_env_or_file(["GSC_TOKEN_JSON", "GSC_TOKEN"], TOKEN_FILE)
+    client_secret_data = load_json_from_env_or_file(["GSC_CLIENT_SECRET_JSON", "GOOGLE_CLIENT_SECRET_JSON"], CLIENT_SECRET_FILE)
+    return bool(token_data and client_secret_data)
+
+
+def require_refresh_secret(x_refresh_secret: str | None = None):
+    if REFRESH_SECRET and x_refresh_secret != REFRESH_SECRET:
+        raise HTTPException(status_code=401, detail="Invalid refresh secret")
+
+
+def load_cached_gsc_data():
+    try:
+        return read_json_file(DATA_FILE)
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"GSC data file not found at {data_file}")
-    except json.JSONDecodeError as e:
-        raise HTTPException(status_code=500, detail=f"Invalid JSON in data file: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error loading GSC data: {str(e)}")
+        raise HTTPException(status_code=404, detail=f"GSC data file not found at {DATA_FILE}")
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=500, detail=f"Invalid JSON in data file: {str(exc)}")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Error loading GSC data: {str(exc)}")
+
+
+def build_freshness(data: dict[str, Any]):
+    pulled_at = parse_iso_datetime(data.get("pulledAt"))
+    if not pulled_at:
+        return {
+            "pulledAt": data.get("pulledAt"),
+            "staleAfterHours": STALE_AFTER_HOURS,
+            "ageHours": None,
+            "isStale": True,
+            "reason": "missing_or_invalid_pulled_at",
+        }
+
+    age = utc_now() - pulled_at
+    age_hours = round(age.total_seconds() / 3600, 2)
+    is_stale = age > timedelta(hours=STALE_AFTER_HOURS)
+    return {
+        "pulledAt": pulled_at.isoformat(),
+        "staleAfterHours": STALE_AFTER_HOURS,
+        "ageHours": age_hours,
+        "isStale": is_stale,
+        "reason": "fresh" if not is_stale else "stale_threshold_exceeded",
+    }
+
+
+def enrich_with_service_meta(data: dict[str, Any]):
+    return {
+        "data": data,
+        "freshness": build_freshness(data),
+        "refreshAvailable": refresh_is_configured(),
+        "cacheFile": str(DATA_FILE),
+        "autoRefreshOnStale": AUTO_REFRESH_ON_STALE,
+    }
+
+
+def build_search_console_client():
+    token_data = load_json_from_env_or_file(["GSC_TOKEN_JSON", "GSC_TOKEN"], TOKEN_FILE)
+    client_secret_data = load_json_from_env_or_file(["GSC_CLIENT_SECRET_JSON", "GOOGLE_CLIENT_SECRET_JSON"], CLIENT_SECRET_FILE)
+
+    if not token_data or not client_secret_data:
+        raise HTTPException(status_code=503, detail="GSC refresh is not configured. Provide token and client secret JSON via env vars or files.")
+
+    client_config = client_secret_data.get("web") or client_secret_data.get("installed") or client_secret_data
+    client_id = client_config.get("client_id")
+    client_secret = client_config.get("client_secret")
+    refresh_token = token_data.get("refresh_token")
+
+    if not client_id or not client_secret or not refresh_token:
+        raise HTTPException(status_code=503, detail="GSC credentials are incomplete. client_id, client_secret, and refresh_token are required.")
+
+    credentials = Credentials(
+        token=token_data.get("access_token"),
+        refresh_token=refresh_token,
+        token_uri=token_data.get("token_uri", "https://oauth2.googleapis.com/token"),
+        client_id=client_id,
+        client_secret=client_secret,
+        scopes=SCOPES,
+    )
+    if not credentials.valid:
+        credentials.refresh(Request())
+
+    return build("searchconsole", "v1", credentials=credentials, cache_discovery=False)
+
+
+def detect_site_url(searchconsole):
+    sites = searchconsole.sites().list().execute()
+    site_list = sites.get("siteEntry", [])
+    available = [site.get("siteUrl") for site in site_list if site.get("siteUrl")]
+
+    if DEFAULT_SITE_URL in available:
+        return DEFAULT_SITE_URL
+    if DEFAULT_SITE_URL_ALT in available:
+        return DEFAULT_SITE_URL_ALT
+
+    for site_url in available:
+        if "traderefer" in site_url:
+            return site_url
+
+    raise HTTPException(status_code=503, detail=f"TradeRefer property not found in GSC. Available sites: {available}")
+
+
+def run_search_analytics_query(
+    searchconsole,
+    site_url: str,
+    start_date: str,
+    end_date: str,
+    dimensions: list[str],
+    row_limit: int = 1000,
+    filters: list[dict[str, Any]] | None = None,
+ ):
+    body: dict[str, Any] = {
+        "startDate": start_date,
+        "endDate": end_date,
+        "dimensions": dimensions,
+        "rowLimit": row_limit,
+        "dataState": "all",
+    }
+    if filters:
+        body["dimensionFilterGroups"] = [{"filters": filters}]
+    return searchconsole.searchanalytics().query(siteUrl=site_url, body=body).execute()
+
+
+def map_rows(rows: list[dict[str, Any]] | None, key_name: str):
+    return [
+        {
+            key_name: row.get("keys", [None])[0],
+            "clicks": row.get("clicks", 0),
+            "impressions": row.get("impressions", 0),
+            "ctr": row.get("ctr", 0),
+            "position": row.get("position", 0),
+        }
+        for row in (rows or [])
+    ]
+
+
+def pull_performance_data(searchconsole, site_url: str, start_date: str, end_date: str):
+    queries = run_search_analytics_query(searchconsole, site_url, start_date, end_date, ["query"])
+    pages = run_search_analytics_query(searchconsole, site_url, start_date, end_date, ["page"])
+    devices = run_search_analytics_query(searchconsole, site_url, start_date, end_date, ["device"], row_limit=100)
+    countries = run_search_analytics_query(searchconsole, site_url, start_date, end_date, ["country"], row_limit=25)
+    date_trend = run_search_analytics_query(searchconsole, site_url, start_date, end_date, ["date"], row_limit=120)
+
+    queries_by_page = []
+    for page_row in (pages.get("rows") or [])[:25]:
+        page_url = page_row.get("keys", [None])[0]
+        if not page_url:
+            continue
+        result = run_search_analytics_query(
+            searchconsole,
+            site_url,
+            start_date,
+            end_date,
+            ["query"],
+            row_limit=50,
+            filters=[{"dimension": "page", "expression": page_url}],
+        )
+        queries_by_page.append({
+            "page": page_url,
+            "clicks": page_row.get("clicks", 0),
+            "impressions": page_row.get("impressions", 0),
+            "ctr": page_row.get("ctr", 0),
+            "position": page_row.get("position", 0),
+            "queries": map_rows(result.get("rows"), "query"),
+        })
+
+    return {
+        "queries": map_rows(queries.get("rows"), "query"),
+        "pages": map_rows(pages.get("rows"), "page"),
+        "queriesByPage": queries_by_page,
+        "devices": map_rows(devices.get("rows"), "device"),
+        "countries": map_rows(countries.get("rows"), "country"),
+        "dateTrend": map_rows(date_trend.get("rows"), "date"),
+    }
+
+
+def pull_indexing_data(searchconsole, site_url: str):
+    try:
+        response = searchconsole.sitemaps().list(siteUrl=site_url).execute()
+        return [
+            {
+                "path": sitemap.get("path"),
+                "lastSubmitted": sitemap.get("lastSubmitted"),
+                "lastDownloaded": sitemap.get("lastDownloaded"),
+                "isPending": sitemap.get("isPending"),
+                "warnings": sitemap.get("warnings"),
+                "errors": sitemap.get("errors"),
+                "contents": sitemap.get("contents"),
+            }
+            for sitemap in (response.get("sitemap") or [])
+        ]
+    except Exception:
+        return []
+
+
+def build_summary(perf_28: dict[str, Any], perf_90: dict[str, Any]):
+    clicks_28 = sum(row.get("clicks", 0) for row in perf_28.get("dateTrend", []))
+    impressions_28 = sum(row.get("impressions", 0) for row in perf_28.get("dateTrend", []))
+    clicks_90 = sum(row.get("clicks", 0) for row in perf_90.get("dateTrend", []))
+    impressions_90 = sum(row.get("impressions", 0) for row in perf_90.get("dateTrend", []))
+
+    return {
+        "last28": {
+            "totalClicks": clicks_28,
+            "totalImpressions": impressions_28,
+            "avgPosition": round(sum(row.get("position", 0) for row in perf_28.get("dateTrend", [])) / len(perf_28.get("dateTrend", []) or [1]), 1) if perf_28.get("dateTrend") else None,
+            "uniqueQueries": len(perf_28.get("queries", [])),
+            "uniquePages": len(perf_28.get("pages", [])),
+        },
+        "last90": {
+            "totalClicks": clicks_90,
+            "totalImpressions": impressions_90,
+            "avgPosition": round(sum(row.get("position", 0) for row in perf_90.get("dateTrend", [])) / len(perf_90.get("dateTrend", []) or [1]), 1) if perf_90.get("dateTrend") else None,
+            "uniqueQueries": len(perf_90.get("queries", [])),
+            "uniquePages": len(perf_90.get("pages", [])),
+        },
+        "clicks_28d": clicks_28,
+        "impressions_28d": impressions_28,
+        "ctr_28d": clicks_28 / max(impressions_28, 1),
+        "position_28d": round(sum(row.get("position", 0) for row in perf_28.get("dateTrend", [])) / len(perf_28.get("dateTrend", []) or [1]), 1) if perf_28.get("dateTrend") else None,
+    }
+
+
+def build_gsc_payload():
+    searchconsole = build_search_console_client()
+    site_url = detect_site_url(searchconsole)
+
+    today = utc_now().date()
+    end_date = today - timedelta(days=2)
+    start_date_28 = today - timedelta(days=30)
+    start_date_90 = today - timedelta(days=92)
+
+    perf_28 = pull_performance_data(searchconsole, site_url, start_date_28.isoformat(), end_date.isoformat())
+    perf_90 = pull_performance_data(searchconsole, site_url, start_date_90.isoformat(), end_date.isoformat())
+    sitemaps = pull_indexing_data(searchconsole, site_url)
+
+    return {
+        "pulledAt": utc_now().isoformat(),
+        "siteUrl": site_url,
+        "dateRanges": {
+            "last28": {"start": start_date_28.isoformat(), "end": end_date.isoformat()},
+            "last90": {"start": start_date_90.isoformat(), "end": end_date.isoformat()},
+        },
+        "last28Days": perf_28,
+        "last90Days": perf_90,
+        "sitemaps": sitemaps,
+        "summary": build_summary(perf_28, perf_90),
+    }
+
+
+def refresh_gsc_data():
+    with REFRESH_LOCK:
+        payload = build_gsc_payload()
+        write_json_atomic(DATA_FILE, payload)
+        return payload
+
+
+def load_gsc_data(force_refresh: bool = False, refresh_if_stale: bool = False):
+    data = load_cached_gsc_data()
+    freshness = build_freshness(data)
+    should_refresh = force_refresh or (refresh_if_stale and freshness["isStale"]) or (AUTO_REFRESH_ON_STALE and freshness["isStale"])
+
+    if should_refresh:
+        if not refresh_is_configured():
+            return data
+        try:
+            return refresh_gsc_data()
+        except HTTPException:
+            raise
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Failed to refresh GSC data: {str(exc)}")
+
+    return data
 
 
 def fetch_pagespeed_data(url: str, strategy: str, categories: list[str]):
@@ -142,7 +454,11 @@ def root():
     return {
         "service": "TradeRefer GSC API",
         "status": "online",
+        "freshness": build_freshness(load_cached_gsc_data()),
+        "refreshAvailable": refresh_is_configured(),
         "endpoints": {
+            "/api/gsc/status": "Check cache freshness, refresh capability, and service configuration",
+            "/api/gsc/refresh": "Refresh Google Search Console data and overwrite the cache file",
             "/api/gsc/latest": "Get latest GSC report summary",
             "/api/gsc/pages": "Get page performance with filters",
             "/api/gsc/queries": "Get top queries with filters",
@@ -211,15 +527,47 @@ def debug_files():
     return {"files": files_found}
 
 
+@app.get("/api/gsc/status")
+def get_gsc_status():
+    payload = enrich_with_service_meta(load_cached_gsc_data())
+    return {
+        "service": "TradeRefer GSC API",
+        "status": "online",
+        "freshness": payload["freshness"],
+        "refreshAvailable": payload["refreshAvailable"],
+        "autoRefreshOnStale": payload["autoRefreshOnStale"],
+        "cacheFile": payload["cacheFile"],
+        "siteUrl": payload["data"].get("siteUrl"),
+        "dateRanges": payload["data"].get("dateRanges"),
+    }
+
+
+@app.post("/api/gsc/refresh")
+def refresh_gsc(x_refresh_secret: str | None = Header(default=None)):
+    require_refresh_secret(x_refresh_secret)
+    data = refresh_gsc_data()
+    payload = enrich_with_service_meta(data)
+    return {
+        "ok": True,
+        "message": "GSC cache refreshed successfully",
+        "freshness": payload["freshness"],
+        "siteUrl": data.get("siteUrl"),
+        "dateRanges": data.get("dateRanges"),
+    }
+
+
 @app.get("/api/gsc/latest")
-def get_latest():
+def get_latest(refresh_if_stale: bool = Query(False)):
     """Get latest GSC report summary"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
+    freshness = build_freshness(data)
     return {
         "pulledAt": data.get("pulledAt"),
         "siteUrl": data.get("siteUrl"),
         "summary": data.get("summary"),
-        "dateRanges": data.get("dateRanges")
+        "dateRanges": data.get("dateRanges"),
+        "freshness": freshness,
+        "refreshAvailable": refresh_is_configured(),
     }
 
 
@@ -227,10 +575,11 @@ def get_latest():
 def get_pages(
     min_clicks: int = Query(0),
     limit: int = Query(100),
-    period: str = Query("28", pattern="^(28|90)$")
+    period: str = Query("28", pattern="^(28|90)$"),
+    refresh_if_stale: bool = Query(False),
 ):
     """Get page performance data"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     pages = data.get(f"last{period}Days", {}).get("pages", [])
     
     filtered = [p for p in pages if p.get("clicks", 0) >= min_clicks]
@@ -243,10 +592,11 @@ def get_pages(
 def get_queries(
     min_clicks: int = Query(0),
     limit: int = Query(100),
-    period: str = Query("28", pattern="^(28|90)$")
+    period: str = Query("28", pattern="^(28|90)$"),
+    refresh_if_stale: bool = Query(False),
 ):
     """Get top queries"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     queries = data.get(f"last{period}Days", {}).get("queries", [])
     
     filtered = [q for q in queries if q.get("clicks", 0) >= min_clicks]
@@ -256,9 +606,9 @@ def get_queries(
 
 
 @app.get("/api/gsc/top-opportunities")
-def get_opportunities():
+def get_opportunities(refresh_if_stale: bool = Query(False)):
     """Get top SEO improvement opportunities"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     pages = data.get("last28Days", {}).get("pages", [])
     
     opportunities = []
@@ -302,10 +652,11 @@ def get_opportunities():
 @app.get("/api/gsc/pages-by-pattern")
 def get_pages_by_pattern(
     pattern: str = Query(..., description="URL pattern to filter (e.g., /local/, /b/)"),
-    period: str = Query("28", pattern="^(28|90)$")
+    period: str = Query("28", pattern="^(28|90)$"),
+    refresh_if_stale: bool = Query(False),
 ):
     """Filter pages by URL pattern"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     pages = data.get(f"last{period}Days", {}).get("pages", [])
     
     filtered = [p for p in pages if pattern in p.get("page", "")]
@@ -320,9 +671,9 @@ def get_pages_by_pattern(
 
 
 @app.get("/api/gsc/query-intent")
-def analyze_query_intent(period: str = Query("28", pattern="^(28|90)$")):
+def analyze_query_intent(period: str = Query("28", pattern="^(28|90)$"), refresh_if_stale: bool = Query(False)):
     """Analyze query intent (local/info/transactional)"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     queries = data.get(f"last{period}Days", {}).get("queries", [])
     
     local_keywords = ["near me", "in ", "plumber", "electrician", "builder", "tradie"]
@@ -359,9 +710,9 @@ def analyze_query_intent(period: str = Query("28", pattern="^(28|90)$")):
 
 
 @app.get("/api/gsc/ctr-analysis")
-def analyze_ctr(period: str = Query("28", pattern="^(28|90)$")):
+def analyze_ctr(period: str = Query("28", pattern="^(28|90)$"), refresh_if_stale: bool = Query(False)):
     """Analyze CTR by position ranges"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     pages = data.get(f"last{period}Days", {}).get("pages", [])
     
     position_ranges = {
@@ -393,9 +744,9 @@ def analyze_ctr(period: str = Query("28", pattern="^(28|90)$")):
 
 
 @app.get("/api/gsc/position-changes")
-def get_position_changes():
+def get_position_changes(refresh_if_stale: bool = Query(False)):
     """Find pages with ranking changes (28d vs 90d)"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     pages_28 = {p["page"]: p for p in data.get("last28Days", {}).get("pages", [])}
     pages_90 = {p["page"]: p for p in data.get("last90Days", {}).get("pages", [])}
     
@@ -428,9 +779,9 @@ def get_position_changes():
 
 
 @app.get("/api/gsc/zero-click")
-def get_zero_click_pages(min_impressions: int = Query(100)):
+def get_zero_click_pages(min_impressions: int = Query(100), refresh_if_stale: bool = Query(False)):
     """Find pages with impressions but no clicks"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     pages = data.get("last28Days", {}).get("pages", [])
     
     zero_click = [
@@ -447,9 +798,9 @@ def get_zero_click_pages(min_impressions: int = Query(100)):
 
 
 @app.get("/api/gsc/crawl-issues")
-def analyze_crawl_issues():
+def analyze_crawl_issues(refresh_if_stale: bool = Query(False)):
     """Analyze crawl and indexing issues"""
-    data = load_gsc_data()
+    data = load_gsc_data(refresh_if_stale=refresh_if_stale)
     pages_28 = data.get("last28Days", {}).get("pages", [])
     sitemaps = data.get("sitemaps", [])
     
