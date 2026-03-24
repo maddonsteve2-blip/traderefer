@@ -5,8 +5,11 @@ Provides Google Search Console data analysis endpoints
 
 from datetime import datetime, timedelta, timezone
 from threading import Lock
-from fastapi import FastAPI, Header, HTTPException, Query
+from base64 import b64encode
+from fastapi import Body, FastAPI, Header, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import httpx
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -17,6 +20,8 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
+
+load_dotenv()
 
 app = FastAPI(title="TradeRefer GSC API")
 
@@ -40,6 +45,32 @@ STALE_AFTER_HOURS = int(os.getenv("GSC_STALE_AFTER_HOURS", "24"))
 AUTO_REFRESH_ON_STALE = os.getenv("GSC_AUTO_REFRESH_ON_STALE", "false").strip().lower() in {"1", "true", "yes", "on"}
 REFRESH_SECRET = os.getenv("GSC_REFRESH_SECRET", "").strip()
 REFRESH_LOCK = Lock()
+DATAFORSEO_BASE_URL = os.getenv("DATAFORSEO_BASE_URL", "https://api.dataforseo.com/v3").rstrip("/")
+DATAFORSEO_LOGIN = os.getenv("DATAFORSEO_LOGIN", "").strip()
+DATAFORSEO_PASSWORD = os.getenv("DATAFORSEO_PASSWORD", "").strip()
+DATAFORSEO_LOCATION_CODE = int(os.getenv("DATAFORSEO_LOCATION_CODE", "2036"))
+DATAFORSEO_LANGUAGE_CODE = os.getenv("DATAFORSEO_LANGUAGE_CODE", "en").strip() or "en"
+DATAFORSEO_KEYWORD_GAP_TARGET = os.getenv("DATAFORSEO_KEYWORD_GAP_TARGET", "airtasker.com").strip() or "airtasker.com"
+DATAFORSEO_KEYWORD_GAP_EXCLUDE = os.getenv("DATAFORSEO_KEYWORD_GAP_EXCLUDE", "traderefer.au").strip() or "traderefer.au"
+DATAFORSEO_BACKLINK_TARGETS = [
+    value.strip()
+    for value in os.getenv("DATAFORSEO_BACKLINK_TARGETS", "airtasker.com,hipages.com.au").split(",")
+    if value.strip()
+]
+DATAFORSEO_BACKLINK_EXCLUDE = os.getenv("DATAFORSEO_BACKLINK_EXCLUDE", "traderefer.au").strip() or "traderefer.au"
+KEYWORDS_VOLUME_FILE = DATA_DIR / "keywords_volume.json"
+KEYWORD_GAP_FILE = DATA_DIR / "keyword_gap.json"
+BACKLINK_GAP_FILE = DATA_DIR / "backlink_gap.json"
+SERP_RANKINGS_FILE = DATA_DIR / "serp_rankings.json"
+EXISTING_PAGES_FILE = DATA_DIR / "existing_pages.json"
+API_LOG_FILE = DATA_DIR / "api_log.json"
+DATAFORSEO_LOCK = Lock()
+DATAFORSEO_TTLS = {
+    "keywords_volume": timedelta(days=30),
+    "keyword_gap": timedelta(days=7),
+    "backlink_gap": timedelta(days=7),
+    "serp_rankings": timedelta(days=1),
+}
 
 
 def utc_now() -> datetime:
@@ -76,6 +107,156 @@ def load_json_from_env_or_file(env_names: list[str], file_path: Path | None = No
     if file_path and file_path.exists():
         return read_json_file(file_path)
     return None
+
+
+def dataforseo_is_configured():
+    return bool(DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD)
+
+
+def build_dataforseo_auth_header():
+    if not dataforseo_is_configured():
+        raise HTTPException(status_code=503, detail="DataForSEO is not configured. Provide DATAFORSEO_LOGIN and DATAFORSEO_PASSWORD.")
+    encoded = b64encode(f"{DATAFORSEO_LOGIN}:{DATAFORSEO_PASSWORD}".encode("utf-8")).decode("utf-8")
+    return {"Authorization": f"Basic {encoded}", "Content-Type": "application/json"}
+
+
+def read_json_file_or_default(path: Path, default: Any):
+    if not path.exists():
+        return default
+    try:
+        return read_json_file(path)
+    except json.JSONDecodeError:
+        return default
+
+
+def parse_payload_timestamp(payload: dict[str, Any] | None):
+    if not isinstance(payload, dict):
+        return None
+    for key in ("updatedAt", "pulledAt", "generatedAt"):
+        parsed = parse_iso_datetime(payload.get(key))
+        if parsed:
+            return parsed
+    return None
+
+
+def build_cache_freshness(path: Path, ttl: timedelta, payload: dict[str, Any] | None = None):
+    updated_at = parse_payload_timestamp(payload)
+    if updated_at is None and path.exists():
+        updated_at = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
+    if updated_at is None:
+        return {
+            "cacheFile": str(path),
+            "updatedAt": None,
+            "ttlHours": round(ttl.total_seconds() / 3600, 2),
+            "ageHours": None,
+            "isStale": True,
+            "exists": path.exists(),
+        }
+
+    age = utc_now() - updated_at
+    age_hours = round(age.total_seconds() / 3600, 2)
+    return {
+        "cacheFile": str(path),
+        "updatedAt": updated_at.isoformat(),
+        "ttlHours": round(ttl.total_seconds() / 3600, 2),
+        "ageHours": age_hours,
+        "isStale": age > ttl,
+        "exists": True,
+    }
+
+
+def read_cache_payload(path: Path):
+    return read_json_file_or_default(path, {})
+
+
+def write_dataforseo_cache(path: Path, payload: dict[str, Any]):
+    cache_payload = {
+        **payload,
+        "updatedAt": utc_now().isoformat(),
+    }
+    write_json_atomic(path, cache_payload)
+    return cache_payload
+
+
+def cache_is_fresh(path: Path, ttl: timedelta):
+    payload = read_cache_payload(path)
+    freshness = build_cache_freshness(path, ttl, payload)
+    return payload, not freshness["isStale"] and freshness["exists"], freshness
+
+
+def append_api_log(entry: dict[str, Any]):
+    with DATAFORSEO_LOCK:
+        existing = read_json_file_or_default(API_LOG_FILE, [])
+        if not isinstance(existing, list):
+            existing = []
+        existing.append(entry)
+        write_json_atomic(API_LOG_FILE, existing)
+
+
+def normalise_keyword(keyword: str):
+    return " ".join(keyword.strip().lower().split())
+
+
+def normalise_page_path(value: str):
+    if not value:
+        return ""
+    trimmed = value.strip()
+    if "://" in trimmed:
+        try:
+            after_host = trimmed.split("://", 1)[1]
+            return "/" + after_host.split("/", 1)[1].strip("/") if "/" in after_host else "/"
+        except IndexError:
+            return "/"
+    return trimmed if trimmed.startswith("/") else f"/{trimmed}"
+
+
+def extract_dataforseo_result(payload: dict[str, Any]):
+    tasks = payload.get("tasks") or []
+    if not tasks:
+        raise HTTPException(status_code=502, detail="DataForSEO returned no tasks")
+    task = tasks[0]
+    status_code = task.get("status_code", payload.get("status_code", 50000))
+    if status_code != 20000:
+        raise HTTPException(status_code=502, detail=task.get("status_message") or payload.get("status_message") or "DataForSEO request failed")
+    results = task.get("result") or []
+    return task, results
+
+
+def extract_dataforseo_cost(payload: dict[str, Any], task: dict[str, Any] | None = None):
+    if task and task.get("cost") is not None:
+        return task.get("cost")
+    return payload.get("cost", 0)
+
+
+async def call_dataforseo(method: str, endpoint: str, data: Any = None):
+    headers = build_dataforseo_auth_header()
+    url = f"{DATAFORSEO_BASE_URL}{endpoint}"
+    try:
+        async with httpx.AsyncClient(timeout=60) as client:
+            response = await client.request(method=method, url=url, headers=headers, json=data)
+        response.raise_for_status()
+        payload = response.json()
+    except httpx.HTTPStatusError as exc:
+        detail = exc.response.text
+        raise HTTPException(status_code=exc.response.status_code, detail=f"DataForSEO HTTP error: {detail}")
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Failed to reach DataForSEO: {str(exc)}")
+
+    task = None
+    try:
+        tasks = payload.get("tasks") or []
+        task = tasks[0] if tasks else None
+    except AttributeError:
+        task = None
+
+    append_api_log({
+        "timestamp": utc_now().isoformat(),
+        "endpoint": endpoint,
+        "method": method,
+        "cost": extract_dataforseo_cost(payload, task),
+        "status_code": task.get("status_code") if task else payload.get("status_code"),
+    })
+    return payload
 
 
 def refresh_is_configured():
@@ -449,14 +630,376 @@ def build_lighthouse_summary(payload: dict[str, Any]):
     }
 
 
+def get_keyword_volume_cache_items(cache_payload: dict[str, Any]):
+    items = cache_payload.get("items", {}) if isinstance(cache_payload, dict) else {}
+    return items if isinstance(items, dict) else {}
+
+
+def keyword_volume_entry_is_fresh(entry: dict[str, Any]):
+    timestamp = parse_payload_timestamp(entry)
+    if timestamp is None:
+        return False
+    return utc_now() - timestamp <= DATAFORSEO_TTLS["keywords_volume"]
+
+
+def map_keyword_volume_item(item: dict[str, Any]):
+    return {
+        "keyword": item.get("keyword"),
+        "searchVolume": item.get("search_volume"),
+        "competition": item.get("competition"),
+        "competitionIndex": item.get("competition_index"),
+        "cpc": item.get("cpc"),
+        "lowTopOfPageBid": item.get("low_top_of_page_bid"),
+        "highTopOfPageBid": item.get("high_top_of_page_bid"),
+        "monthlySearches": item.get("monthly_searches"),
+        "updatedAt": utc_now().isoformat(),
+    }
+
+
+def collect_keyword_volume_results(cache_payload: dict[str, Any], keywords: list[str]):
+    cache_items = get_keyword_volume_cache_items(cache_payload)
+    found_items = []
+    missing_keywords = []
+    for keyword in keywords:
+        normalised = normalise_keyword(keyword)
+        cached_item = cache_items.get(normalised)
+        if cached_item and keyword_volume_entry_is_fresh(cached_item):
+            found_items.append(cached_item)
+        else:
+            missing_keywords.append(keyword)
+    return found_items, missing_keywords
+
+
+async def fetch_keyword_volume_live(keywords: list[str]):
+    payload = [{
+        "keywords": keywords,
+        "location_code": DATAFORSEO_LOCATION_CODE,
+        "language_code": DATAFORSEO_LANGUAGE_CODE,
+    }]
+    response_payload = await call_dataforseo("POST", "/keywords_data/google_ads/search_volume/live", payload)
+    task, results = extract_dataforseo_result(response_payload)
+    result = results[0] if results else {}
+    items = [
+        map_keyword_volume_item(item)
+        for item in (result.get("items") or [])
+        if item.get("keyword")
+    ]
+    return items, extract_dataforseo_cost(response_payload, task)
+
+
+def merge_keyword_volume_cache(existing_payload: dict[str, Any], fresh_items: list[dict[str, Any]]):
+    merged_items = get_keyword_volume_cache_items(existing_payload).copy()
+    for item in fresh_items:
+        merged_items[normalise_keyword(item["keyword"])] = item
+    return write_dataforseo_cache(KEYWORDS_VOLUME_FILE, {
+        "items": merged_items,
+        "locationCode": DATAFORSEO_LOCATION_CODE,
+        "languageCode": DATAFORSEO_LANGUAGE_CODE,
+    })
+
+
+def get_existing_pages(existing_pages: str | None = None):
+    page_paths: list[str] = []
+    if existing_pages:
+        page_paths.extend(part.strip() for part in existing_pages.split(",") if part.strip())
+    else:
+        existing_payload = read_json_file_or_default(EXISTING_PAGES_FILE, {})
+        stored_pages = existing_payload.get("pages", []) if isinstance(existing_payload, dict) else []
+        if isinstance(stored_pages, list):
+            page_paths.extend(stored_pages)
+    return {normalise_page_path(page) for page in page_paths if page}
+
+
+def find_keyword_opportunities(limit: int, existing_pages: str | None = None):
+    cache_payload = read_cache_payload(KEYWORDS_VOLUME_FILE)
+    cache_items = list(get_keyword_volume_cache_items(cache_payload).values())
+    current_pages = get_existing_pages(existing_pages)
+    opportunities = []
+    for item in cache_items:
+        keyword = item.get("keyword")
+        if not keyword:
+            continue
+        path = "/local/" + "-".join(keyword.strip().lower().split())
+        if path in current_pages:
+            continue
+        opportunities.append({
+            "keyword": keyword,
+            "suggestedPath": path,
+            "searchVolume": item.get("searchVolume"),
+            "competition": item.get("competition"),
+            "competitionIndex": item.get("competitionIndex"),
+            "cpc": item.get("cpc"),
+            "updatedAt": item.get("updatedAt"),
+        })
+    opportunities.sort(key=lambda item: item.get("searchVolume") or 0, reverse=True)
+    freshness = build_cache_freshness(KEYWORDS_VOLUME_FILE, DATAFORSEO_TTLS["keywords_volume"], cache_payload)
+    return {
+        "items": opportunities[:limit],
+        "freshness": freshness,
+        "existingPagesCount": len(current_pages),
+        "totalCandidates": len(opportunities),
+    }
+
+
+async def fetch_account_balance_live():
+    response_payload = await call_dataforseo("GET", "/appendix/user_data")
+    task, results = extract_dataforseo_result(response_payload)
+    result = results[0] if results else {}
+    return {
+        "login": result.get("login"),
+        "balance": result.get("money", {}).get("balance"),
+        "totalSpent": result.get("money", {}).get("spent") or result.get("money", {}).get("total"),
+        "money": result.get("money"),
+        "updatedAt": utc_now().isoformat(),
+    }, extract_dataforseo_cost(response_payload, task)
+
+
+def map_keyword_gap_item(item: dict[str, Any]):
+    keyword_data = item.get("keyword_data") or {}
+    keyword_info = keyword_data.get("keyword_info") or {}
+    first_domain = item.get("first_domain_serp_element") or {}
+    second_domain = item.get("second_domain_serp_element") or {}
+    return {
+        "keyword": keyword_data.get("keyword"),
+        "searchVolume": keyword_info.get("search_volume"),
+        "competition": keyword_info.get("competition"),
+        "competitionLevel": keyword_info.get("competition_level"),
+        "cpc": keyword_info.get("cpc"),
+        "firstDomainRank": first_domain.get("rank_absolute"),
+        "firstDomainUrl": first_domain.get("url"),
+        "secondDomainRank": second_domain.get("rank_absolute"),
+        "secondDomainUrl": second_domain.get("url"),
+    }
+
+
+async def refresh_keyword_gap_cache():
+    payload = [{
+        "target1": DATAFORSEO_KEYWORD_GAP_TARGET,
+        "target2": DATAFORSEO_KEYWORD_GAP_EXCLUDE,
+        "location_code": DATAFORSEO_LOCATION_CODE,
+        "language_code": DATAFORSEO_LANGUAGE_CODE,
+        "limit": 100,
+        "intersections": False,
+        "item_types": ["organic"],
+    }]
+    response_payload = await call_dataforseo("POST", "/dataforseo_labs/google/domain_intersection/live", payload)
+    task, results = extract_dataforseo_result(response_payload)
+    items = [
+        map_keyword_gap_item(item)
+        for item in (results[0].get("items") if results else []) or []
+        if (item.get("keyword_data") or {}).get("keyword")
+    ]
+    items.sort(key=lambda item: item.get("searchVolume") or 0, reverse=True)
+    cache_payload = write_dataforseo_cache(KEYWORD_GAP_FILE, {
+        "target": DATAFORSEO_KEYWORD_GAP_TARGET,
+        "exclude": DATAFORSEO_KEYWORD_GAP_EXCLUDE,
+        "locationCode": DATAFORSEO_LOCATION_CODE,
+        "languageCode": DATAFORSEO_LANGUAGE_CODE,
+        "items": items,
+    })
+    return cache_payload, extract_dataforseo_cost(response_payload, task)
+
+
+def map_backlink_gap_item(item: dict[str, Any]):
+    return {
+        "domain": item.get("domain") or item.get("referring_domain") or item.get("target"),
+        "domainRank": item.get("domain_from_rank") or item.get("rank") or item.get("domain_rank"),
+        "backlinksCount": item.get("backlinks") or item.get("backlinks_count") or item.get("referring_links"),
+        "firstSeen": item.get("first_seen"),
+    }
+
+
+async def refresh_backlink_gap_cache():
+    targets = {str(index + 1): target for index, target in enumerate(DATAFORSEO_BACKLINK_TARGETS)}
+    payload = [{
+        "targets": targets,
+        "exclude_targets": [DATAFORSEO_BACKLINK_EXCLUDE],
+        "limit": 100,
+        "intersection_mode": "all",
+        "include_subdomains": True,
+        "exclude_internal_backlinks": True,
+        "backlinks_status_type": "live",
+        "rank_scale": "one_hundred",
+        "order_by": ["backlinks,desc", "domain_from_rank,desc"],
+    }]
+    response_payload = await call_dataforseo("POST", "/backlinks/domain_intersection/live", payload)
+    task, results = extract_dataforseo_result(response_payload)
+    items = [
+        map_backlink_gap_item(item)
+        for item in (results[0].get("items") if results else []) or []
+        if item.get("domain") or item.get("referring_domain") or item.get("target")
+    ]
+    items.sort(key=lambda item: ((item.get("domainRank") or 0), (item.get("backlinksCount") or 0)), reverse=True)
+    cache_payload = write_dataforseo_cache(BACKLINK_GAP_FILE, {
+        "targets": DATAFORSEO_BACKLINK_TARGETS,
+        "exclude": DATAFORSEO_BACKLINK_EXCLUDE,
+        "items": items,
+    })
+    return cache_payload, extract_dataforseo_cost(response_payload, task)
+
+
+@app.get("/api/account/balance")
+async def get_account_balance(response: Response):
+    balance, cost = await fetch_account_balance_live()
+    response.headers["X-DataForSEO-Cost"] = str(cost or 0)
+    return balance
+
+
+@app.post("/api/keywords/volume")
+async def get_keyword_volume(
+    response: Response,
+    body: dict[str, Any] = Body(...),
+):
+    keywords = body.get("keywords") or []
+    if not isinstance(keywords, list) or not keywords:
+        raise HTTPException(status_code=400, detail="Body must include a non-empty keywords array")
+    if len(keywords) > 1000:
+        raise HTTPException(status_code=400, detail="A maximum of 1000 keywords is allowed per request")
+
+    cache_payload = read_cache_payload(KEYWORDS_VOLUME_FILE)
+    cached_items, missing_keywords = collect_keyword_volume_results(cache_payload, keywords)
+    fetched_items: list[dict[str, Any]] = []
+    cost = 0
+
+    if missing_keywords:
+        fetched_items, cost = await fetch_keyword_volume_live(missing_keywords)
+        cache_payload = merge_keyword_volume_cache(cache_payload, fetched_items)
+
+    merged_items = {normalise_keyword(item["keyword"]): item for item in cached_items + fetched_items if item.get("keyword")}
+    ordered_items = []
+    for keyword in keywords:
+        cached_item = merged_items.get(normalise_keyword(keyword))
+        if cached_item:
+            ordered_items.append(cached_item)
+
+    response.headers["X-DataForSEO-Cost"] = str(cost or 0)
+    return {
+        "keywords": ordered_items,
+        "requested": len(keywords),
+        "cached": len(cached_items),
+        "fetched": len(fetched_items),
+        "freshness": build_cache_freshness(KEYWORDS_VOLUME_FILE, DATAFORSEO_TTLS["keywords_volume"], cache_payload),
+    }
+
+
+@app.post("/api/keywords/bulk-volume")
+async def get_bulk_keyword_volume(
+    response: Response,
+    body: dict[str, Any] = Body(...),
+):
+    return await get_keyword_volume(response=response, body=body)
+
+
+@app.get("/api/keywords/opportunities")
+def get_keyword_opportunities(
+    limit: int = Query(50, ge=1, le=1000),
+    existing_pages: str | None = Query(default=None),
+):
+    result = find_keyword_opportunities(limit=limit, existing_pages=existing_pages)
+    return {
+        "opportunities": result["items"],
+        "freshness": result["freshness"],
+        "existingPagesCount": result["existingPagesCount"],
+        "totalCandidates": result["totalCandidates"],
+    }
+
+
+@app.post("/api/pages/update")
+def update_existing_pages(body: dict[str, Any] = Body(...)):
+    pages = body.get("pages") or []
+    if not isinstance(pages, list):
+        raise HTTPException(status_code=400, detail="Body must include a pages array")
+    normalised_pages = sorted({normalise_page_path(page) for page in pages if isinstance(page, str) and page.strip()})
+    payload = write_dataforseo_cache(EXISTING_PAGES_FILE, {"pages": normalised_pages})
+    return {
+        "ok": True,
+        "pages": payload.get("pages", []),
+        "count": len(payload.get("pages", [])),
+        "updatedAt": payload.get("updatedAt"),
+    }
+
+
+@app.get("/api/competitors/keyword-gap")
+async def get_keyword_gap(
+    response: Response,
+    refresh: bool = Query(False),
+):
+    cache_payload, is_fresh, freshness = cache_is_fresh(KEYWORD_GAP_FILE, DATAFORSEO_TTLS["keyword_gap"])
+    cost = 0
+    if refresh or not is_fresh:
+        cache_payload, cost = await refresh_keyword_gap_cache()
+        freshness = build_cache_freshness(KEYWORD_GAP_FILE, DATAFORSEO_TTLS["keyword_gap"], cache_payload)
+    response.headers["X-DataForSEO-Cost"] = str(cost or 0)
+    return {
+        "target": cache_payload.get("target", DATAFORSEO_KEYWORD_GAP_TARGET),
+        "exclude": cache_payload.get("exclude", DATAFORSEO_KEYWORD_GAP_EXCLUDE),
+        "keywords": cache_payload.get("items", []),
+        "freshness": freshness,
+    }
+
+
+@app.get("/api/backlinks/gap")
+async def get_backlink_gap(
+    response: Response,
+    refresh: bool = Query(False),
+):
+    cache_payload, is_fresh, freshness = cache_is_fresh(BACKLINK_GAP_FILE, DATAFORSEO_TTLS["backlink_gap"])
+    cost = 0
+    if refresh or not is_fresh:
+        cache_payload, cost = await refresh_backlink_gap_cache()
+        freshness = build_cache_freshness(BACKLINK_GAP_FILE, DATAFORSEO_TTLS["backlink_gap"], cache_payload)
+    response.headers["X-DataForSEO-Cost"] = str(cost or 0)
+    return {
+        "targets": cache_payload.get("targets", DATAFORSEO_BACKLINK_TARGETS),
+        "exclude": cache_payload.get("exclude", DATAFORSEO_BACKLINK_EXCLUDE),
+        "domains": cache_payload.get("items", []),
+        "freshness": freshness,
+    }
+
+
+@app.get("/api/status")
+async def get_dataforseo_status(response: Response):
+    balance, cost = await fetch_account_balance_live()
+    response.headers["X-DataForSEO-Cost"] = str(cost or 0)
+    keyword_cache = read_cache_payload(KEYWORDS_VOLUME_FILE)
+    keyword_gap_cache = read_cache_payload(KEYWORD_GAP_FILE)
+    backlink_gap_cache = read_cache_payload(BACKLINK_GAP_FILE)
+    serp_cache = read_cache_payload(SERP_RANKINGS_FILE)
+    existing_pages_cache = read_cache_payload(EXISTING_PAGES_FILE)
+    api_log = read_json_file_or_default(API_LOG_FILE, [])
+    return {
+        "service": "TradeRefer DataForSEO API",
+        "status": "online",
+        "configured": dataforseo_is_configured(),
+        "account": balance,
+        "cache": {
+            "keywordsVolume": build_cache_freshness(KEYWORDS_VOLUME_FILE, DATAFORSEO_TTLS["keywords_volume"], keyword_cache),
+            "keywordGap": build_cache_freshness(KEYWORD_GAP_FILE, DATAFORSEO_TTLS["keyword_gap"], keyword_gap_cache),
+            "backlinkGap": build_cache_freshness(BACKLINK_GAP_FILE, DATAFORSEO_TTLS["backlink_gap"], backlink_gap_cache),
+            "serpRankings": build_cache_freshness(SERP_RANKINGS_FILE, DATAFORSEO_TTLS["serp_rankings"], serp_cache),
+            "existingPages": build_cache_freshness(EXISTING_PAGES_FILE, DATAFORSEO_TTLS["keywords_volume"], existing_pages_cache),
+        },
+        "apiLogEntries": len(api_log) if isinstance(api_log, list) else 0,
+    }
+
+
 @app.get("/")
 def root():
     return {
-        "service": "TradeRefer GSC API",
+        "service": "TradeRefer SEO API",
         "status": "online",
         "freshness": build_freshness(load_cached_gsc_data()),
         "refreshAvailable": refresh_is_configured(),
+        "dataforseoConfigured": dataforseo_is_configured(),
         "endpoints": {
+            "/api/status": "Check DataForSEO cache freshness and live account balance",
+            "/api/account/balance": "Get DataForSEO account balance and spend",
+            "/api/keywords/volume": "Get cached keyword search volumes and fetch missing keywords live",
+            "/api/keywords/bulk-volume": "Get cached keyword search volumes for bulk batches up to 1000 keywords",
+            "/api/keywords/opportunities": "Get top cached keyword opportunities without matching local pages",
+            "/api/pages/update": "Update the cached list of existing local page paths",
+            "/api/competitors/keyword-gap": "Get cached competitor keyword gap data",
+            "/api/backlinks/gap": "Get cached backlink gap data",
             "/api/gsc/status": "Check cache freshness, refresh capability, and service configuration",
             "/api/gsc/refresh": "Refresh Google Search Console data and overwrite the cache file",
             "/api/gsc/latest": "Get latest GSC report summary",
