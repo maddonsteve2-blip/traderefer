@@ -583,7 +583,14 @@ export default async function PublicProfilePage({
                                     {/* Cover photo */}
                                     <div className="h-36 relative overflow-hidden bg-zinc-200">
                                         {business.cover_photo_url ? (
-                                            <img src={business.cover_photo_url} alt={`${business.business_name} cover`} className="w-full h-full object-cover" loading="lazy" />
+                                            <img
+                                                src={business.cover_photo_url}
+                                                alt={`${business.business_name} cover`}
+                                                className="w-full h-full object-cover"
+                                                loading="eager"
+                                                fetchPriority="high"
+                                                decoding="async"
+                                            />
                                         ) : (
                                             <div className="absolute inset-0 bg-gradient-to-br from-orange-100 via-amber-50 to-zinc-100" />
                                         )}
@@ -604,7 +611,16 @@ export default async function PublicProfilePage({
 
                                     {/* Logo overlapping bottom-left of cover */}
                                     <div className="absolute bottom-0 left-4 translate-y-1/2 z-10">
-                                        <BusinessLogo logoUrl={business.logo_url} name={business.business_name} photoUrls={business.photo_urls} size="sm" bgColor={business.logo_bg_color} />
+                                        <BusinessLogo
+                                            logoUrl={business.logo_url}
+                                            name={business.business_name}
+                                            photoUrls={business.photo_urls}
+                                            size="sm"
+                                            bgColor={business.logo_bg_color}
+                                            imageLoading="eager"
+                                            fetchPriority="high"
+                                            skipAnalysis={true}
+                                        />
                                     </div>
                                 </div>
 

@@ -23,6 +23,9 @@ interface BusinessLogoProps {
     photoUrls?: string[];
     className?: string;
     bgColor?: string | null;
+    imageLoading?: "eager" | "lazy";
+    fetchPriority?: "high" | "low" | "auto";
+    skipAnalysis?: boolean;
 }
 
 interface SizeSpec {
@@ -193,7 +196,17 @@ function setCachedBg(url: string, bg: string) {
     try { localStorage.setItem(cacheKey(url), bg); } catch { /* quota exceeded */ }
 }
 
-export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className = "", bgColor }: BusinessLogoProps) {
+export function BusinessLogo({
+    logoUrl,
+    name,
+    size = "md",
+    photoUrls,
+    className = "",
+    bgColor,
+    imageLoading = "lazy",
+    fetchPriority = "auto",
+    skipAnalysis = false,
+}: BusinessLogoProps) {
     const imgRef = useRef<HTMLImageElement>(null);
     const [stats, setStats] = useState<PixelStats | null>(null);
     const [error, setError] = useState(false);
@@ -212,7 +225,7 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
 
     function handleLoad() {
         // Skip analysis entirely if we already have a bg color
-        if (precomputedBg) return;
+        if (precomputedBg || skipAnalysis) return;
         const img = imgRef.current;
         if (!img) return;
         try {
@@ -240,6 +253,8 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
                 <img 
                     src="/logo.png" 
                     alt="TradeRefer" 
+                    loading={imageLoading}
+                    fetchPriority={fetchPriority}
                     style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
                 />
             </div>
@@ -249,7 +264,7 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
     // Use pre-computed bg (instant) or analyzed bg or neutral fallback
     const bg = precomputedBg || stats?.bg || "#e8e8e8";
     const isLight = bg === "#ffffff" || bg === "#f8f8f8" || bg === "#e8e8e8";
-    const needsAnalysis = !precomputedBg;
+    const needsAnalysis = !precomputedBg && !skipAnalysis;
     // When bg is pre-computed, load the original URL directly (faster, no proxy hop)
     // Only use proxy URL when we need CORS access for canvas analysis
     const directUrl = logoUrl?.replace(/^http:\/\//i, "https://") || proxyUrl;
@@ -283,7 +298,8 @@ export function BusinessLogo({ logoUrl, name, size = "md", photoUrls, className 
             <img
                 src={displaySrc}
                 alt={name}
-                loading="lazy"
+                loading={imageLoading}
+                fetchPriority={fetchPriority}
                 style={{
                     maxWidth: "100%",
                     maxHeight: "100%",
