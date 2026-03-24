@@ -677,6 +677,12 @@ export function Navbar() {
 
                                         </Link>
 
+                                        <Link href="/categories" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+
+                                            Trade Guides
+
+                                        </Link>
+
                                         <Link href="/support" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
 
                                             Support
@@ -926,6 +932,16 @@ export function Navbar() {
 
                                         </Link>
 
+                                        <Link href="/categories" className="hidden sm:block">
+
+                                            <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
+
+                                                Trade Guides
+
+                                            </Button>
+
+                                        </Link>
+
                                         <Link href="/support" className="hidden lg:block">
 
                                             <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
@@ -1001,7 +1017,7 @@ export function Navbar() {
                                     {[
                                         { href: "/businesses", label: "Find Businesses" },
                                         { href: "/local", label: "Directory" },
-                                        { href: "/categories", label: "Browse Trades" },
+                                        { href: "/categories", label: "Trade Guides" },
                                         { href: "/support", label: "Support" },
                                         { href: "/contact", label: "Contact" },
                                     ].map(({ href, label }) => (

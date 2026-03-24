@@ -5,7 +5,7 @@ import { UrgencyTicker } from "@/components/UrgencyTicker";
 
 const TOP_CATEGORIES = [
     { name: "Electrician", category: "Electrical" },
-    { name: "Plumber", category: "Plumbing" },
+    { name: "Plumber", category: "Plumbing", href: "/trades/plumbing" },
     { name: "Painter", category: "Painting" },
     { name: "Fencing", category: "Fencing" },
     { name: "Landscaper", category: "Landscaping" },
@@ -109,7 +109,7 @@ export async function DirectoryFooter() {
                             {TOP_CATEGORIES.slice(0, 8).map((cat) => (
                                 <li key={cat.category}>
                                     <Link
-                                        href={`/businesses?category=${encodeURIComponent(cat.category)}`}
+                                        href={cat.href ?? `/businesses?category=${encodeURIComponent(cat.category)}`}
                                         className="text-zinc-400 hover:text-orange-500 transition-colors flex items-center group" style={{ fontSize: '16px' }}
                                     >
                                         <ArrowRight className="w-3 h-3 mr-2 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all" />
