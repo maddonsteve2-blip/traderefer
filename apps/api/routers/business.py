@@ -9,6 +9,7 @@ from services.stripe_service import StripeService
 from services.email import send_business_welcome, send_business_claim_verification_code, send_business_claim_manual_review_notification
 from services.sms import _send_sms
 from routers.media import s3_client, S3_BUCKET, S3_PUBLIC_URL, S3_REGION
+from utils.business_slugs import business_slug_exists, canonical_business_slug, generate_unique_business_slug
 import re
 import uuid
 import os
@@ -134,7 +135,7 @@ class ReferrerNotesUpdate(BaseModel):
     business_notes: Optional[str] = None
 
 def generate_slug(name: str):
-    return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+    return canonical_business_slug(re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-'))
 
 def _normalize_phone_number(phone: str) -> str:
     value = phone.strip().replace(" ", "")
@@ -268,30 +269,25 @@ async def onboarding(
             )
             await db.commit()
 
-        return {"id": str(existing_biz["id"]), "slug": existing_biz["slug"], "status": "already_exists"}
+        return {"id": str(existing_biz["id"]), "slug": canonical_business_slug(existing_biz["slug"]), "status": "already_exists"}
 
     # Geocoding
     lat, lng = await get_lat_lng(data.suburb, data.state)
 
     # If no slug provided, generate one
     if not data.slug:
-        slug = generate_slug(data.business_name)
-        # Attempt 1: name
-        slug_check = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
-        if slug_check.fetchone():
-            # Attempt 2: name-suburb
-            sub_slug = f"{slug}-{data.suburb.lower().replace(' ', '-')}"
-            sub_check = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": sub_slug})
-            if sub_check.fetchone():
-                # Attempt 3: name-uuid
-                slug = f"{slug}-{str(uuid.uuid4())[:8]}"
-            else:
-                slug = sub_slug
+        slug = await generate_unique_business_slug(
+            db,
+            business_name=data.business_name,
+            suburb=data.suburb,
+            city=None,
+            state=data.state,
+            trade_category=data.trade_category,
+        )
     else:
-        slug = data.slug
+        slug = canonical_business_slug(data.slug)
         # Verify provided slug is unique
-        slug_check = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
-        if slug_check.fetchone():
+        if await business_slug_exists(db, slug):
             raise HTTPException(status_code=400, detail="Slug already in use")
 
     # Resolve invited_by_id from invite_code (can be from a referrer or another business)
@@ -431,13 +427,12 @@ async def get_my_business(
             data[key] = val.isoformat()
         else:
             data[key] = val
+    data["slug"] = canonical_business_slug(data.get("slug"))
     return data
 
 @router.get("/check-slug/{slug}")
 async def check_slug_availability(slug: str, db: AsyncSession = Depends(get_db)):
-    query = text("SELECT id FROM businesses WHERE slug = :slug")
-    result = await db.execute(query, {"slug": slug})
-    exists = result.fetchone() is not None
+    exists = await business_slug_exists(db, slug)
     return {"available": not exists}
 
 @router.patch("/update")
@@ -457,9 +452,8 @@ async def update_business(
 
     # 2. If slug changed, check uniqueness
     if data.slug and data.slug != biz["slug"]:
-        slug_check = text("SELECT id FROM businesses WHERE slug = :slug AND id != :id")
-        check_res = await db.execute(slug_check, {"slug": data.slug, "id": biz["id"]})
-        if check_res.fetchone():
+        data.slug = canonical_business_slug(data.slug)
+        if await business_slug_exists(db, data.slug, exclude_id=str(biz["id"])):
             raise HTTPException(status_code=400, detail="Slug already in use")
 
     # 3. Validate referral_fee_cents minimum ($3.00 = 300 cents)
@@ -559,7 +553,7 @@ async def get_business_dashboard(
                 "category": biz["trade_category"],
                 "suburb": biz["suburb"],
                 "address": biz.get("address"),
-                "slug": biz["slug"],
+                "slug": canonical_business_slug(biz["slug"]),
                 "trust_score": biz["trust_score"],
                 "connection_rate": float(biz["connection_rate"] or 0),
                 "unlocked_count": biz["total_leads_unlocked"],
@@ -1683,12 +1677,11 @@ async def recommend_business(
     if not from_row:
         raise HTTPException(status_code=404, detail="Your business not found")
 
-    to_biz = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": data.to_business_slug})
-    to_row = to_biz.fetchone()
+    to_row = await find_business_by_slug(db, "id, slug", data.to_business_slug)
     if not to_row:
         raise HTTPException(status_code=404, detail="Business to recommend not found")
 
-    if from_row[0] == to_row[0]:
+    if from_row[0] == to_row["id"]:
         raise HTTPException(status_code=400, detail="Cannot recommend yourself")
 
     try:
@@ -1698,7 +1691,7 @@ async def recommend_business(
                 VALUES (:from_id, :to_id, :message)
                 ON CONFLICT (from_business_id, to_business_id) DO NOTHING
             """),
-            {"from_id": from_row[0], "to_id": to_row[0], "message": data.message}
+            {"from_id": from_row[0], "to_id": to_row["id"], "message": data.message}
         )
         await db.commit()
     except Exception as e:
@@ -1750,6 +1743,8 @@ async def get_my_recommendations(
         out = []
         for r in rows.mappings().all():
             d = dict(r)
+            if d.get("slug"):
+                d["slug"] = canonical_business_slug(d["slug"])
             if d.get("created_at"):
                 d["created_at"] = str(d["created_at"])
             out.append(d)
@@ -1848,13 +1843,9 @@ async def claim_and_onboard_business(
      existing_slug = biz_row[1]
      _consume_claim_verification_token(business_id, data.claim_verification_token)
 
-     slug = data.slug or existing_slug
+     slug = canonical_business_slug(data.slug or existing_slug)
      if data.slug and data.slug != existing_slug:
-         slug_check = await db.execute(
-             text("SELECT id FROM businesses WHERE slug = :slug AND id != :id"),
-             {"slug": data.slug, "id": biz_id}
-         )
-         if slug_check.fetchone():
+         if await business_slug_exists(db, slug, exclude_id=str(biz_id)):
              raise HTTPException(status_code=400, detail="That handle is already taken")
 
      lat, lng = await get_lat_lng(data.suburb, data.state)

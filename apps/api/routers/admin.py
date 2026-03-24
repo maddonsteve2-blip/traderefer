@@ -13,6 +13,7 @@ import httpx
 import re
 import asyncio
 import os
+from utils.business_slugs import generate_unique_business_slug
 
 router = APIRouter()
 
@@ -1192,14 +1193,6 @@ class PlacesFillRequest(BaseModel):
     limit: int = 20
 
 
-def slugify(name: str) -> str:
-    import re as _re
-    s = name.lower().strip()
-    s = _re.sub(r'[^a-z0-9\s-]', '', s)
-    s = _re.sub(r'[\s-]+', '-', s)
-    return s.strip('-')[:80]
-
-
 @router.post("/places/run")
 async def run_places_fill(
     req: PlacesFillRequest,
@@ -1287,14 +1280,13 @@ async def run_places_fill(
                     if ref:
                         logo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={ref}&key={GOOGLE_API_KEY}"
 
-                slug = slugify(name)
-                # Ensure unique slug
-                slug_check = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
-                if slug_check.first():
-                    slug = f"{slug}-{biz_suburb.lower()[:10]}"
-                    slug_check2 = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
-                    if slug_check2.first():
-                        slug = f"{slug}-{str(uuid.uuid4())[:6]}"
+                slug = await generate_unique_business_slug(
+                    db,
+                    business_name=name,
+                    suburb=biz_suburb,
+                    city=biz_city,
+                    state=biz_state,
+                )
 
                 try:
                     new_id = str(uuid.uuid4())
@@ -1419,13 +1411,13 @@ async def create_business(
     user: AuthenticatedUser = Depends(require_admin)
 ):
     """Manually create a business from admin panel."""
-    slug = slugify(req.business_name)
-    slug_check = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
-    if slug_check.first():
-        slug = f"{slug}-{req.suburb.lower()[:10]}"
-        slug_check2 = await db.execute(text("SELECT id FROM businesses WHERE slug = :slug"), {"slug": slug})
-        if slug_check2.first():
-            slug = f"{slug}-{str(uuid.uuid4())[:6]}"
+    slug = await generate_unique_business_slug(
+        db,
+        business_name=req.business_name,
+        suburb=req.suburb,
+        city=req.city,
+        state=req.state,
+    )
 
     new_id = str(uuid.uuid4())
     await db.execute(text("""

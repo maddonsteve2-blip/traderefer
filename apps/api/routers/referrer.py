@@ -13,6 +13,7 @@ import random
 import asyncio
 from datetime import datetime, timedelta
 from utils.logging_config import error_logger, general_logger
+from utils.business_slugs import canonical_business_slug, find_business_by_slug
 
 router = APIRouter()
 
@@ -533,7 +534,7 @@ async def get_referrer_stats(
     per_business = [
         {
             "business_name": row["business_name"],
-            "slug": row["slug"],
+            "slug": canonical_business_slug(row["slug"]),
             "trade_category": row["trade_category"],
             "lead_count": row["lead_count"],
             "earned_cents": row["earned_cents"],
@@ -714,22 +715,25 @@ async def withdraw_funds(
 
 
 @router.get("/is-linked/{slug}")
-async def is_linked_to_business(
+async def get_business_link_status(
     slug: str,
     db: AsyncSession = Depends(get_db),
     user: AuthenticatedUser = Depends(get_current_user)
 ):
     """Check whether the authenticated referrer has an active referral link for this business."""
     user_uuid = uuid.UUID(user.id)
+    business = await find_business_by_slug(db, "id", slug)
+    if not business:
+        return {"linked": False}
+
     result = await db.execute(
         text("""
             SELECT rl.id FROM referral_links rl
             JOIN referrers r ON r.id = rl.referrer_id
-            JOIN businesses b ON b.id = rl.business_id
-            WHERE r.user_id = :uid AND b.slug = :slug
+            WHERE r.user_id = :uid AND rl.business_id = :bid
             LIMIT 1
         """),
-        {"uid": user_uuid, "slug": slug}
+        {"uid": user_uuid, "bid": business["id"]}
     )
     return {"linked": result.fetchone() is not None}
 
@@ -755,11 +759,7 @@ async def review_business(
     if not ref:
         raise HTTPException(status_code=404, detail="Referrer profile not found")
 
-    biz_res = await db.execute(
-        text("SELECT id, user_id, business_name, slug, business_email FROM businesses WHERE slug = :slug"),
-        {"slug": data.business_slug}
-    )
-    biz = biz_res.mappings().fetchone()
+    biz = await find_business_by_slug(db, "id, user_id, business_name, slug, business_email", data.business_slug)
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
@@ -783,7 +783,7 @@ async def review_business(
             referrer_name=referrer_name,
             rating=data.rating,
             comment=data.comment,
-            slug=biz["slug"]
+            slug=canonical_business_slug(biz["slug"])
         )
 
     return {"message": "Review sent to business"}
@@ -811,11 +811,7 @@ async def submit_private_feedback(
     if not ref:
         raise HTTPException(status_code=404, detail="Referrer not found")
 
-    biz_res = await db.execute(
-        text("SELECT id, user_id FROM businesses WHERE slug = :slug"),
-        {"slug": data.business_slug}
-    )
-    biz = biz_res.fetchone()
+    biz = await find_business_by_slug(db, "id, user_id", data.business_slug)
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
@@ -823,7 +819,7 @@ async def submit_private_feedback(
     from routers.notifications import create_notification
     await create_notification(
         db,
-        str(biz[1]),  # business user_id
+        str(biz["user_id"]),  # business user_id
         "feedback",
         f"Private feedback from {ref[1]}",
         f"[{data.category.upper()}] {data.message}",

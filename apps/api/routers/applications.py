@@ -13,6 +13,7 @@ from services.sms import _send_sms
 import uuid
 from datetime import datetime, timedelta
 from utils.logging_config import error_logger
+from utils.business_slugs import find_business_by_slug
 
 router = APIRouter()
 
@@ -64,11 +65,7 @@ async def apply_to_business(
     referrer_id = await _get_referrer_id(db, user)
 
     # Lookup business by slug
-    biz_res = await db.execute(
-        text("SELECT id, business_name, slug, business_email, business_phone FROM businesses WHERE slug = :slug"),
-        {"slug": business_slug}
-    )
-    biz = biz_res.mappings().first()
+    biz = await find_business_by_slug(db, "id, business_name, slug, business_email, business_phone", business_slug)
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
@@ -228,11 +225,7 @@ async def check_application_status(
     """Check referrer's status with a specific business (linked/pending/rejected/none)."""
     referrer_id = await _get_referrer_id(db, user)
 
-    biz_res = await db.execute(
-        text("SELECT id FROM businesses WHERE slug = :slug"),
-        {"slug": business_slug}
-    )
-    biz = biz_res.mappings().first()
+    biz = await find_business_by_slug(db, "id", business_slug)
     if not biz:
         return {"status": "not_found"}
 

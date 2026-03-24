@@ -51,7 +51,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { BusinessLogo } from "@/components/BusinessLogo";
@@ -250,6 +250,11 @@ function formatPublicValue(value: unknown) {
     return String(value || "").trim();
 }
 
+function buildBusinessProfilePath(slug: string, referralCode?: string) {
+    const query = referralCode ? `?ref=${encodeURIComponent(referralCode)}` : "";
+    return `/b/${slug}${query}`;
+}
+
 function formatCurrencyFromCents(cents: number) {
     return new Intl.NumberFormat("en-AU", {
         style: "currency",
@@ -327,11 +332,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const business = await getBusiness(slug);
     if (!business) return { title: 'Business Not Found | TradeRefer' };
 
+    const canonicalSlug = String(business.slug || slug).trim() || slug;
     const rating = parseFloat(String(business.avg_rating));
     const reviewCount = parseInt(String(business.total_reviews), 10);
     const hasRating = !isNaN(rating) && rating > 0 && reviewCount > 0;
-    const { title, description } = buildSeoContent(business, slug, hasRating, rating, reviewCount);
-    const url = `https://traderefer.au/b/${slug}`;
+    const { title, description } = buildSeoContent(business, canonicalSlug, hasRating, rating, reviewCount);
+    const url = `https://traderefer.au/b/${canonicalSlug}`;
     const imageUrl = business.logo_url || business.cover_photo_url || (Array.isArray(business.photo_urls) ? business.photo_urls[0] : null) || null;
 
     return {
@@ -365,22 +371,28 @@ export default async function PublicProfilePage({
     const { slug } = await params;
     const { ref: referralCode } = await searchParams;
     const userId = null; // Public page - no auth on this route
-    const [business, projects, googleReviews, deals] = await Promise.all([
-        getBusiness(slug),
-        getProjects(slug),
-        getGoogleReviews(slug),
-        getDeals(slug),
-    ]);
+    const business = await getBusiness(slug);
 
     if (!business) {
         notFound();
     }
 
+    const canonicalSlug = String(business.slug || slug).trim() || slug;
+    if (canonicalSlug !== slug) {
+        redirect(buildBusinessProfilePath(canonicalSlug, referralCode));
+    }
+
+    const [projects, googleReviews, deals] = await Promise.all([
+        getProjects(canonicalSlug),
+        getGoogleReviews(canonicalSlug),
+        getDeals(canonicalSlug),
+    ]);
+
     // Enrich this business with Google Places photos if needed (client-side trigger)
     const photoCount = Array.isArray(business.photo_urls) ? business.photo_urls.length : 0;
     const needsEnrich = photoCount < 3 && !business.enriched_at ? [{
         id: business.id, business_name: business.business_name,
-        suburb: business.suburb, state: business.state, slug: slug,
+        suburb: business.suburb, state: business.state, slug: canonicalSlug,
     }] : [];
 
     const safeProjects = Array.isArray(projects) ? projects : [];
@@ -409,7 +421,7 @@ export default async function PublicProfilePage({
     const parsedRating = parseFloat(String(googleRating));
     const parsedReviewCount = parseInt(String(reviewCount), 10);
     const hasValidRating = !isNaN(parsedRating) && parsedRating > 0 && parsedReviewCount > 0;
-    const seoContent = buildSeoContent(business, slug, hasValidRating, parsedRating, parsedReviewCount);
+    const seoContent = buildSeoContent(business, canonicalSlug, hasValidRating, parsedRating, parsedReviewCount);
 
     const ratingQualifier = (hasValidRating && parsedRating >= 4.0) ? "highly-rated" : "local";
     const cityContext = (business.city && business.city.toLowerCase() !== (business.suburb || '').toLowerCase())

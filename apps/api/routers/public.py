@@ -4,6 +4,7 @@ from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from services.database import get_db
+from utils.business_slugs import canonical_business_slug, find_business_by_slug
 import httpx
 
 router = APIRouter()
@@ -21,6 +22,15 @@ PUBLIC_BUSINESS_COLUMNS = """
     is_claimed, claim_status,
     licence_number, payment_methods, facebook_url, instagram_url, linkedin_url
 """
+
+
+def _serialize_business_row(row: dict):
+    data = dict(row)
+    if data.get("id") is not None:
+        data["id"] = str(data["id"])
+    if data.get("slug"):
+        data["slug"] = canonical_business_slug(data["slug"])
+    return data
 
 @router.get("/businesses")
 async def get_businesses(
@@ -60,7 +70,7 @@ async def get_businesses(
     count_str = text(f"SELECT COUNT(*) FROM businesses {base_where}")
     
     result = await db.execute(query_str, query_params)
-    businesses = [dict(row._mapping) for row in result]
+    businesses = [_serialize_business_row(dict(row._mapping)) for row in result]
     
     count_result = await db.execute(count_str, query_params)
     total = count_result.scalar() or 0
@@ -74,14 +84,12 @@ async def get_businesses(
 
 @router.get("/businesses/{slug}")
 async def get_business(slug: str, db: AsyncSession = Depends(get_db)):
-    query = text(f"SELECT {PUBLIC_BUSINESS_COLUMNS} FROM businesses WHERE slug = :slug")
-    result = await db.execute(query, {"slug": slug})
-    business = result.fetchone()
+    business = await find_business_by_slug(db, PUBLIC_BUSINESS_COLUMNS, slug)
     
     if not business:
         raise HTTPException(status_code=404, detail="Business not found")
 
-    data = dict(business._mapping)
+    data = _serialize_business_row(dict(business))
     bid = data.get("id")
 
     # Trusted By counts
@@ -113,7 +121,7 @@ async def get_business(slug: str, db: AsyncSession = Depends(get_db)):
         """),
         {"bid": bid}
     )
-    data["recommended_businesses"] = [dict(r) for r in recs.mappings().all()]
+    data["recommended_businesses"] = [_serialize_business_row(dict(r)) for r in recs.mappings().all()]
 
     return data
 
@@ -122,11 +130,7 @@ async def get_business(slug: str, db: AsyncSession = Depends(get_db)):
 async def get_business_deals(slug: str, db: AsyncSession = Depends(get_db)):
     """Get active deals for a business (public endpoint)."""
     # First get business ID from slug
-    biz_result = await db.execute(
-        text("SELECT id FROM businesses WHERE slug = :slug"),
-        {"slug": slug}
-    )
-    biz = biz_result.fetchone()
+    biz = await find_business_by_slug(db, "id, slug", slug)
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
@@ -138,7 +142,7 @@ async def get_business_deals(slug: str, db: AsyncSession = Depends(get_db)):
               AND (expires_at IS NULL OR expires_at > now())
             ORDER BY created_at DESC
         """),
-        {"bid": biz[0]}
+        {"bid": biz["id"]}
     )
     deals = []
     for row in result.mappings().all():
@@ -157,11 +161,7 @@ async def get_business_deals(slug: str, db: AsyncSession = Depends(get_db)):
 @router.get("/businesses/{slug}/google-reviews")
 async def get_business_google_reviews(slug: str, db: AsyncSession = Depends(get_db)):
     """Get Google reviews (from DataForSEO) for a business."""
-    biz_result = await db.execute(
-        text("SELECT id FROM businesses WHERE slug = :slug"),
-        {"slug": slug}
-    )
-    biz = biz_result.fetchone()
+    biz = await find_business_by_slug(db, "id, slug", slug)
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
@@ -173,7 +173,7 @@ async def get_business_google_reviews(slug: str, db: AsyncSession = Depends(get_
             ORDER BY rating DESC, created_at DESC
             LIMIT 20
         """),
-        {"bid": biz[0]}
+        {"bid": biz["id"]}
     )
     reviews = []
     for row in result.mappings().all():
@@ -192,11 +192,7 @@ async def get_business_google_reviews(slug: str, db: AsyncSession = Depends(get_
 @router.get("/businesses/{slug}/reviews")
 async def get_business_reviews(slug: str, db: AsyncSession = Depends(get_db)):
     """Get referrer reviews for a business (public endpoint)."""
-    biz_result = await db.execute(
-        text("SELECT id FROM businesses WHERE slug = :slug"),
-        {"slug": slug}
-    )
-    biz = biz_result.fetchone()
+    biz = await find_business_by_slug(db, "id, slug", slug)
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
@@ -210,7 +206,7 @@ async def get_business_reviews(slug: str, db: AsyncSession = Depends(get_db)):
             ORDER BY rr.created_at DESC
             LIMIT 20
         """),
-        {"bid": biz[0]}
+        {"bid": biz["id"]}
     )
     reviews = []
     for row in result.mappings().all():
@@ -227,11 +223,7 @@ async def get_business_reviews(slug: str, db: AsyncSession = Depends(get_db)):
 @router.get("/businesses/{slug}/campaigns")
 async def get_business_campaigns(slug: str, db: AsyncSession = Depends(get_db)):
     """Get active campaigns for a business (public endpoint)."""
-    biz_result = await db.execute(
-        text("SELECT id FROM businesses WHERE slug = :slug"),
-        {"slug": slug}
-    )
-    biz = biz_result.fetchone()
+    biz = await find_business_by_slug(db, "id, slug", slug)
     if not biz:
         raise HTTPException(status_code=404, detail="Business not found")
 
@@ -244,12 +236,14 @@ async def get_business_campaigns(slug: str, db: AsyncSession = Depends(get_db)):
               AND starts_at <= now() AND ends_at > now()
             ORDER BY created_at DESC
         """),
-        {"bid": biz[0]}
+        {"bid": biz["id"]}
     )
     campaigns = []
     for row in result.mappings().all():
         c = {k: v for k, v in dict(row).items()}
         c["id"] = str(c["id"])
+        if c.get("slug"):
+            c["slug"] = canonical_business_slug(c["slug"])
         for dt in ("starts_at", "ends_at"):
             if c.get(dt):
                 c[dt] = str(c[dt])
@@ -319,8 +313,7 @@ async def hot_right_now(
     )
     rows = []
     for row in result.mappings().all():
-        d = dict(row)
-        d["id"] = str(d["id"])
+        d = _serialize_business_row(dict(row))
         d.pop("locality_rank", None)
         rows.append(d)
     return rows
@@ -353,8 +346,7 @@ async def new_on_traderefer(
     )
     rows = []
     for row in result.mappings().all():
-        d = dict(row)
-        d["id"] = str(d["id"])
+        d = _serialize_business_row(dict(row))
         if d.get("created_at"):
             d["created_at"] = str(d["created_at"])
         d.pop("locality_rank", None)
@@ -420,7 +412,7 @@ async def get_referrer_team(referrer_id: str, db: AsyncSession = Depends(get_db)
     )
     team = []
     for row in links.mappings().all():
-        d = dict(row)
+        d = _serialize_business_row(dict(row))
         d["id"] = d.get("slug")
         team.append(d)
 
