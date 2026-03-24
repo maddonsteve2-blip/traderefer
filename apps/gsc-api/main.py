@@ -700,8 +700,12 @@ async def fetch_keyword_volume_live(keywords: list[str]):
     response_payload = await call_dataforseo("POST", "/keywords_data/google_ads/search_volume/live", payload)
     task, results = extract_dataforseo_result(response_payload)
     result = extract_first_dataforseo_result(results)
-    result_items = results if isinstance(results, list) else []
-    if result_items and all(isinstance(item, dict) and item.get("keyword") for item in result_items):
+    result_items = [
+        item
+        for item in (results if isinstance(results, list) else [])
+        if isinstance(item, dict) and item.get("keyword")
+    ]
+    if result_items:
         source_items = result_items
     else:
         source_items = result.get("items") or []
