@@ -761,11 +761,11 @@ async def fetch_account_balance_live():
     response_payload = await call_dataforseo("GET", "/appendix/user_data")
     task, results = extract_dataforseo_result(response_payload)
     result = extract_first_dataforseo_result(results)
+    money = result.get("money") or {}
     return {
         "login": result.get("login"),
-        "balance": result.get("money", {}).get("balance"),
-        "totalSpent": result.get("money", {}).get("spent") or result.get("money", {}).get("total"),
-        "money": result.get("money"),
+        "balance": money.get("balance"),
+        "totalSpent": money.get("spent") or money.get("total"),
         "updatedAt": utc_now().isoformat(),
     }, extract_dataforseo_cost(response_payload, task)
 
