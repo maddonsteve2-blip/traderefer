@@ -244,7 +244,11 @@ async def call_dataforseo(method: str, endpoint: str, data: Any = None):
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.request(method=method, url=url, headers=headers, json=data)
         response.raise_for_status()
-        payload = response.json()
+        try:
+            payload = response.json()
+        except ValueError:
+            preview = response.text[:500]
+            raise HTTPException(status_code=502, detail=f"DataForSEO returned non-JSON content: {preview}")
     except httpx.HTTPStatusError as exc:
         detail = exc.response.text
         raise HTTPException(status_code=exc.response.status_code, detail=f"DataForSEO HTTP error: {detail}")
@@ -258,13 +262,16 @@ async def call_dataforseo(method: str, endpoint: str, data: Any = None):
     except AttributeError:
         task = None
 
-    append_api_log({
-        "timestamp": utc_now().isoformat(),
-        "endpoint": endpoint,
-        "method": method,
-        "cost": extract_dataforseo_cost(payload, task),
-        "status_code": task.get("status_code") if task else payload.get("status_code"),
-    })
+    try:
+        append_api_log({
+            "timestamp": utc_now().isoformat(),
+            "endpoint": endpoint,
+            "method": method,
+            "cost": extract_dataforseo_cost(payload, task),
+            "status_code": task.get("status_code") if task else payload.get("status_code"),
+        })
+    except Exception:
+        pass
     return payload
 
 
@@ -851,9 +858,24 @@ async def refresh_backlink_gap_cache():
 
 @app.get("/api/account/balance")
 async def get_account_balance(response: Response):
-    balance, cost = await fetch_account_balance_live()
-    response.headers["X-DataForSEO-Cost"] = str(cost or 0)
-    return balance
+    try:
+        balance, cost = await fetch_account_balance_live()
+        response.headers["X-DataForSEO-Cost"] = str(cost or 0)
+        return balance
+    except HTTPException as exc:
+        response.status_code = exc.status_code
+        return {
+            "ok": False,
+            "error": exc.detail,
+            "updatedAt": utc_now().isoformat(),
+        }
+    except Exception as exc:
+        response.status_code = 500
+        return {
+            "ok": False,
+            "error": f"Unexpected balance error: {str(exc)}",
+            "updatedAt": utc_now().isoformat(),
+        }
 
 
 @app.post("/api/keywords/volume")
@@ -970,19 +992,32 @@ async def get_backlink_gap(
 
 @app.get("/api/status")
 async def get_dataforseo_status(response: Response):
-    balance, cost = await fetch_account_balance_live()
-    response.headers["X-DataForSEO-Cost"] = str(cost or 0)
     keyword_cache = read_cache_payload(KEYWORDS_VOLUME_FILE)
     keyword_gap_cache = read_cache_payload(KEYWORD_GAP_FILE)
     backlink_gap_cache = read_cache_payload(BACKLINK_GAP_FILE)
     serp_cache = read_cache_payload(SERP_RANKINGS_FILE)
     existing_pages_cache = read_cache_payload(EXISTING_PAGES_FILE)
     api_log = read_json_file_or_default(API_LOG_FILE, [])
+    account: dict[str, Any] | None = None
+    account_error = None
+    cost = 0
+
+    try:
+        account, cost = await fetch_account_balance_live()
+        response.headers["X-DataForSEO-Cost"] = str(cost or 0)
+    except HTTPException as exc:
+        response.status_code = 200
+        account_error = exc.detail
+    except Exception as exc:
+        response.status_code = 200
+        account_error = f"Unexpected status error: {str(exc)}"
+
     return {
         "service": "TradeRefer DataForSEO API",
         "status": "online",
         "configured": dataforseo_is_configured(),
-        "account": balance,
+        "account": account,
+        "accountError": account_error,
         "cache": {
             "keywordsVolume": build_cache_freshness(KEYWORDS_VOLUME_FILE, DATAFORSEO_TTLS["keywords_volume"], keyword_cache),
             "keywordGap": build_cache_freshness(KEYWORD_GAP_FILE, DATAFORSEO_TTLS["keyword_gap"], keyword_gap_cache),
