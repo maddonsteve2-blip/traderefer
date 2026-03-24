@@ -16,19 +16,25 @@ export const metadata: Metadata = {
     },
 };
 
+type TradeStatsRow = {
+    trade_category: string;
+    count: string | number;
+    suburbs: string | number;
+};
+
 async function getTradeStats(): Promise<Array<{ trade: string; count: number; suburbs: number }>> {
     try {
-        const results = await sql`
+        const results = await sql<TradeStatsRow[]>`
             SELECT trade_category, COUNT(*) as count, COUNT(DISTINCT suburb) as suburbs
             FROM businesses
             WHERE status = 'active' AND trade_category IS NOT NULL
             GROUP BY trade_category
             ORDER BY count DESC
         `;
-        return results.map((r: any) => ({
-            trade: r.trade_category as string,
-            count: parseInt(r.count, 10),
-            suburbs: parseInt(r.suburbs, 10),
+        return results.map((r) => ({
+            trade: r.trade_category,
+            count: parseInt(String(r.count), 10),
+            suburbs: parseInt(String(r.suburbs), 10),
         }));
     } catch {
         return [];
@@ -99,13 +105,16 @@ export default async function CategoriesPage() {
                                 {tradeStats.map(({ trade, count, suburbs }) => {
                                     const slug = tradeToSlug(trade);
                                     const jobs = JOB_TYPES[trade] || [];
+                                    const primaryHref = trade === "Plumbing"
+                                        ? "/trades/plumbing"
+                                        : `/businesses?category=${encodeURIComponent(trade)}`;
                                     return (
                                         <div
                                             key={trade}
                                             id={slug}
                                             className="bg-white rounded-2xl border-2 border-zinc-200 hover:border-[#FF6600] hover:shadow-lg transition-all duration-300 overflow-hidden group"
                                         >
-                                            <Link href={`/businesses?category=${encodeURIComponent(trade)}`} className="block p-6">
+                                            <Link href={primaryHref} className="block p-6">
                                                 <div className="flex items-start justify-between mb-3">
                                                     <h3 className="font-black text-[#1A1A1A] group-hover:text-[#FF6600] transition-colors leading-tight" style={{ fontSize: '20px' }}>
                                                         {trade}
