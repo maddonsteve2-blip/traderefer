@@ -405,7 +405,7 @@ export default async function PlumbingTradeHubPage() {
                                 return (
                                     <Link
                                         key={`${city}-${state}`}
-                                        href={`/local/${stateSlug}/${citySlug}`}
+                                        href={`/local/${stateSlug}/${citySlug}?category=${encodeURIComponent(TRADE_NAME)}`}
                                         className="flex items-center justify-between px-5 py-4 bg-zinc-50 border-2 border-zinc-200 rounded-2xl hover:bg-orange-50 hover:border-[#FF6600] transition-colors group"
                                     >
                                         <div>
