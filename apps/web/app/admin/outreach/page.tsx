@@ -6,7 +6,7 @@ import {
     Mail, Upload, Play, Pause, RefreshCw, CheckCircle2, XCircle,
     AlertTriangle, ChevronDown, ChevronUp, Loader2, Send, Eye,
     MessageSquare, BarChart2, Users, Inbox, Plus, Trash2, ExternalLink,
-    ShieldCheck, FileText, Check, Copy
+    ShieldCheck, FileText, Check, Copy, Download
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -178,6 +178,28 @@ function CampaignRow({ campaign, onRefresh }: { campaign: Campaign; onRefresh: (
                             {acting ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                         </button>
                     )}
+                    <a
+                        href={`${API}/admin/outreach/campaigns/${campaign.id}/export`}
+                        title="Export leads as CSV"
+                        className="p-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 text-zinc-600 transition-colors"
+                        onClick={async (e) => {
+                            e.preventDefault();
+                            const token = await getToken();
+                            const res = await fetch(`${API}/admin/outreach/campaigns/${campaign.id}/export`, {
+                                headers: { Authorization: `Bearer ${token}` },
+                            });
+                            if (!res.ok) { toast.error("Export failed"); return; }
+                            const blob = await res.blob();
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = `campaign-${campaign.id.slice(0, 8)}-leads.csv`;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                        }}
+                    >
+                        <Download className="w-4 h-4" />
+                    </a>
                     <button className="p-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 text-zinc-500 transition-colors">
                         {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                     </button>

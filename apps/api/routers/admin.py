@@ -2253,3 +2253,50 @@ async def get_campaign_replies(
             })
 
     return replies
+
+
+@router.get("/outreach/campaigns/{campaign_id}/export")
+async def export_campaign_leads_csv(
+    campaign_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """Export verified leads as CSV for manual Instantly import."""
+    from fastapi.responses import StreamingResponse
+    import csv as csv_module
+    import io
+
+    await _ensure_outreach_tables(db)
+
+    result = await db.execute(text("""
+        SELECT email, first_name, business_name, trade_category, suburb,
+               email_verification_status, claim_slug, status
+        FROM cold_email_leads
+        WHERE campaign_id = :cid
+        ORDER BY email_verification_status, business_name
+    """), {"cid": campaign_id})
+    leads = list(result.mappings().all())
+
+    output = io.StringIO()
+    writer = csv_module.writer(output)
+    writer.writerow(["email", "first_name", "company_name", "trade_category", "suburb",
+                     "verification_status", "claim_url", "send_status"])
+    for lead in leads:
+        claim_url = f"https://traderefer.au/claim/{lead['claim_slug']}" if lead.get("claim_slug") else ""
+        writer.writerow([
+            lead["email"],
+            lead["first_name"] or "",
+            lead["business_name"] or "",
+            lead["trade_category"] or "",
+            lead["suburb"] or "",
+            lead["email_verification_status"] or "unverified",
+            claim_url,
+            lead["status"] or "pending",
+        ])
+
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=campaign-{campaign_id[:8]}-leads.csv"},
+    )
