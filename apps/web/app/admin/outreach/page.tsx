@@ -6,7 +6,7 @@ import {
     Mail, Upload, Play, Pause, RefreshCw, CheckCircle2, XCircle,
     AlertTriangle, ChevronDown, ChevronUp, Loader2, Send, Eye,
     MessageSquare, BarChart2, Users, Inbox, Plus, Trash2, ExternalLink,
-    ShieldCheck, FileText
+    ShieldCheck, FileText, Check, Copy
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -567,6 +567,90 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
     );
 }
 
+const TEMPLATE_A = `Subject: Quick question about {{business_name}}
+
+Hi {{first_name}},
+
+I came across {{business_name}} and wanted to reach out quickly.
+
+We've built a platform called TradeRefer where trade businesses set their own referral price — people in your network send you leads, you only pay when a job converts.
+
+I've already created a profile for {{business_name}} on the platform. If you'd like to claim it and set your own referral price, here's your direct link:
+
+{{claim_url}}
+
+Takes about 2 minutes. No subscription, no lock-in.
+
+— Steve`;
+
+const TEMPLATE_B = `Subject: {{business_name}} on TradeRefer
+
+Hi {{first_name}},
+
+We've listed {{business_name}} on TradeRefer — a referral platform where 247 Australian trade businesses are getting word-of-mouth leads from their networks.
+
+The way it works: you set the reward amount you'd pay someone for referring a customer to you. That's it. No monthly fees.
+
+Your profile is ready — claim it here:
+
+{{claim_url}}
+
+Happy to answer any questions.
+
+— Steve`;
+
+function EmailTemplatesSection() {
+    const [copied, setCopied] = useState<string | null>(null);
+
+    const copy = (key: string, text: string) => {
+        navigator.clipboard.writeText(text);
+        setCopied(key);
+        toast.success("Template copied!");
+        setTimeout(() => setCopied(null), 2500);
+    };
+
+    return (
+        <div className="mt-8 bg-white rounded-2xl border border-zinc-200 p-5">
+            <h3 className="text-sm font-black text-zinc-900 mb-1 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-orange-500" /> Email Templates for Instantly
+            </h3>
+            <p className="text-xs text-zinc-500 mb-4">
+                Copy these into your Instantly campaign. Variables in <code className="bg-zinc-100 px-1 rounded">{"{{double_braces}}"}</code> are auto-filled by Instantly from the lead data we push.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                    { key: "A", label: "Template A — Direct value", body: TEMPLATE_A, note: "Best open rates. Direct, no fluff." },
+                    { key: "B", label: "Template B — Social proof", body: TEMPLATE_B, note: "Uses '247 tradies' social proof angle." },
+                ].map(t => (
+                    <div key={t.key} className="rounded-xl border border-zinc-200 overflow-hidden">
+                        <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 border-b border-zinc-200">
+                            <div>
+                                <span className="text-xs font-black text-zinc-900">{t.label}</span>
+                                <span className="text-xs text-zinc-500 ml-2">{t.note}</span>
+                            </div>
+                            <button
+                                onClick={() => copy(t.key, t.body)}
+                                className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg transition-colors ${copied === t.key ? "bg-green-100 text-green-700" : "bg-zinc-100 hover:bg-zinc-200 text-zinc-600"}`}
+                            >
+                                {copied === t.key ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                {copied === t.key ? "Copied!" : "Copy"}
+                            </button>
+                        </div>
+                        <pre className="p-3 text-xs text-zinc-700 whitespace-pre-wrap leading-relaxed font-mono bg-white max-h-52 overflow-y-auto">
+                            {t.body}
+                        </pre>
+                    </div>
+                ))}
+            </div>
+            <div className="mt-4 p-3 bg-zinc-50 rounded-xl border border-zinc-100">
+                <p className="text-xs font-bold text-zinc-600">
+                    Available merge variables: <code className="bg-white px-1 rounded border border-zinc-200">{"{{first_name}}"}</code> <code className="bg-white px-1 rounded border border-zinc-200">{"{{business_name}}"}</code> <code className="bg-white px-1 rounded border border-zinc-200">{"{{claim_url}}"}</code>
+                </p>
+            </div>
+        </div>
+    );
+}
+
 export default function AdminOutreachPage() {
     const { getToken } = useAuth();
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -719,6 +803,9 @@ export default function AdminOutreachPage() {
                         ))}
                     </div>
                 </div>
+
+                {/* Email Templates */}
+                <EmailTemplatesSection />
 
             </div>
 
