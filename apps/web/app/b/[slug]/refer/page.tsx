@@ -17,16 +17,20 @@ async function getBusiness(slug: string) {
 
 export default async function ReferPublicPage({
     params,
+    searchParams,
 }: {
     params: Promise<{ slug: string }>;
+    searchParams: Promise<{ src?: string }>;
 }) {
-    const { slug } = await params;
+    const [{ slug }, sp] = await Promise.all([params, searchParams]);
     const business = await getBusiness(slug);
     if (!business) notFound();
 
     const fee = business.referral_fee_cents
         ? `$${(business.referral_fee_cents / 100).toFixed(0)}`
         : null;
+
+    const srcParam = sp?.src ? `&src=${sp.src}` : "";
 
     return (
         <main className="min-h-screen bg-zinc-50 flex items-center justify-center p-6 md:p-8">
@@ -74,7 +78,7 @@ export default async function ReferPublicPage({
                 </div>
 
                 <Link
-                    href={`/join/referrer?next=/dashboard/referrer/refer/${slug}`}
+                    href={`/join/referrer?next=/dashboard/referrer/refer/${slug}${srcParam}`}
                     className="w-full flex items-center justify-center gap-3 bg-orange-600 hover:bg-orange-700 text-white font-black text-lg md:text-xl rounded-2xl h-16 md:h-18 transition-all shadow-xl shadow-orange-500/20 active:scale-95"
                 >
                     Join & Start Earning <ArrowRight className="w-5 h-5" />
@@ -82,7 +86,7 @@ export default async function ReferPublicPage({
                 <div className="mt-6 flex flex-col gap-2">
                     <p className="text-sm text-zinc-500 font-bold">
                         Already a member?{" "}
-                        <Link href={`/sign-in?redirect_url=/dashboard/referrer/refer/${slug}`} className="text-orange-500 hover:text-orange-600 font-black">
+                        <Link href={`/sign-in?redirect_url=/dashboard/referrer/refer/${slug}${srcParam}`} className="text-orange-500 hover:text-orange-600 font-black">
                             Sign in here
                         </Link>
                     </p>

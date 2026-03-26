@@ -1842,25 +1842,73 @@ async def create_outreach_campaign(
         VALUES (:id, :name, :template, 'draft', :total)
     """), {"id": campaign_id, "name": name, "template": template_version, "total": len(normalised)})
 
-    # Insert leads
+    # Insert leads — attempt to match each row to a real business in the DB
     for row in normalised:
         email = row.get("email", "")
         business_name = row.get("business_name", "")
         suburb = row.get("suburb", "")
-        slug_base = _slugify(f"{business_name}-{suburb}") or _slugify(email.split("@")[0])
-        claim_slug = f"{slug_base}-{str(uuid.uuid4())[:6]}"
+        trade_category = row.get("trade_category", "")
+
+        # Try to find matching business by email first, then name+suburb
+        matched_id = None
+        claim_slug = None
+
+        if email:
+            match = await db.execute(text("""
+                SELECT id, slug FROM businesses
+                WHERE LOWER(business_email) = LOWER(:email)
+                  AND status = 'active'
+                LIMIT 1
+            """), {"email": email})
+            row_match = match.mappings().first()
+            if row_match:
+                matched_id = str(row_match["id"])
+                claim_slug = row_match["slug"]
+
+        if not claim_slug and business_name and suburb:
+            match = await db.execute(text("""
+                SELECT id, slug FROM businesses
+                WHERE LOWER(business_name) = LOWER(:name)
+                  AND LOWER(suburb) = LOWER(:suburb)
+                  AND status = 'active'
+                LIMIT 1
+            """), {"name": business_name, "suburb": suburb})
+            row_match = match.mappings().first()
+            if row_match:
+                matched_id = str(row_match["id"])
+                claim_slug = row_match["slug"]
+
+        if not claim_slug and business_name:
+            # Fuzzy: name only
+            match = await db.execute(text("""
+                SELECT id, slug FROM businesses
+                WHERE LOWER(business_name) = LOWER(:name)
+                  AND status = 'active'
+                LIMIT 1
+            """), {"name": business_name})
+            row_match = match.mappings().first()
+            if row_match:
+                matched_id = str(row_match["id"])
+                claim_slug = row_match["slug"]
+
+        # If still no match, use a slug-like value so the claim page can handle it gracefully
+        if not claim_slug:
+            slug_base = _slugify(f"{business_name}-{suburb}") or _slugify(email.split("@")[0])
+            claim_slug = slug_base or f"business-{str(uuid.uuid4())[:8]}"
+
         await db.execute(text("""
             INSERT INTO cold_email_leads
-                (id, campaign_id, email, first_name, business_name, trade_category, suburb, claim_slug, status)
+                (id, campaign_id, business_id, email, first_name, business_name, trade_category, suburb, claim_slug, status)
             VALUES
-                (:id, :cid, :email, :fname, :bname, :trade, :suburb, :slug, 'pending')
+                (:id, :cid, :bid, :email, :fname, :bname, :trade, :suburb, :slug, 'pending')
         """), {
             "id": str(uuid.uuid4()),
             "cid": campaign_id,
+            "bid": matched_id,
             "email": email,
             "fname": row.get("first_name", ""),
             "bname": business_name,
-            "trade": row.get("trade_category", ""),
+            "trade": trade_category,
             "suburb": suburb,
             "slug": claim_slug,
         })

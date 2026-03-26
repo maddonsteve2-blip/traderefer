@@ -253,6 +253,7 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
     const [campaignId, setCampaignId] = useState<string | null>(null);
     const [includeValid, setIncludeValid] = useState(true);
     const [includeCatchall, setIncludeCatchall] = useState(false);
+    const [instantlyCampaignId, setInstantlyCampaignId] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleFile = (file: File) => {
@@ -324,7 +325,10 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ include_catchall: includeCatchall }),
+                body: JSON.stringify({
+                    include_catchall: includeCatchall,
+                    instantly_campaign_id: instantlyCampaignId.trim() || null,
+                }),
             });
             if (!res.ok) {
                 const err = await res.json().catch(() => null);
@@ -523,13 +527,29 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
                                 </div>
                             </div>
 
+                            <div>
+                                <label className="block text-xs font-black uppercase tracking-widest text-zinc-500 mb-1.5">
+                                    Instantly Campaign ID <span className="text-zinc-400 normal-case font-medium">(from Instantly dashboard)</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={instantlyCampaignId}
+                                    onChange={e => setInstantlyCampaignId(e.target.value)}
+                                    placeholder="e.g. abc123def456 — leave blank to dry-run without Instantly"
+                                    className="w-full h-12 px-4 rounded-2xl border border-zinc-200 bg-zinc-50 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500"
+                                />
+                                <p className="text-xs text-zinc-400 mt-1.5">
+                                    Create the campaign in Instantly first, set the sending template and mailboxes, then paste the ID here to push leads into it.
+                                </p>
+                            </div>
+
                             <button
                                 onClick={handleLaunch}
                                 disabled={loading}
                                 className="w-full h-12 rounded-2xl bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white font-black flex items-center justify-center gap-2 transition-colors"
                             >
                                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                                {loading ? "Launching campaign…" : "Launch Campaign"}
+                                {loading ? "Launching campaign…" : instantlyCampaignId.trim() ? "Push to Instantly & Launch" : "Dry Run (no Instantly key)"}
                             </button>
                         </>
                     )}

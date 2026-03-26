@@ -65,7 +65,7 @@ function formatFee(cents: number | null): string {
 
 function generateBadgeHtml(style: BadgeStyle, business: BusinessData): string {
     const fee = formatFee(business.referral_fee_cents);
-    const referUrl = `https://traderefer.au/b/${business.slug}/refer`;
+    const referUrl = `https://traderefer.au/b/${business.slug}/refer?src=badge`;
     const name = business.business_name || "My Business";
     const rating = business.avg_rating ? business.avg_rating.toFixed(1) : "5.0";
     const reviews = business.total_reviews || 0;
