@@ -2034,7 +2034,7 @@ async def launch_outreach_campaign(
     if INSTANTLY_API_KEY and instantly_campaign_id:
         async with httpx.AsyncClient(timeout=30) as client:
             for lead in leads:
-                claim_url = f"https://traderefer.au/claim/{lead['claim_slug']}"
+                claim_url = f"https://traderefer.au/claim/{lead['claim_slug']}?lid={lead['id']}"
                 try:
                     res = await client.post(
                         f"{INSTANTLY_BASE}/lead/add",

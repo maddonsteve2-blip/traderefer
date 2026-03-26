@@ -498,3 +498,43 @@ async def logo_proxy(url: str = Query(...)):
         )
     except httpx.RequestError:
         raise HTTPException(status_code=502, detail="Failed to fetch image")
+
+
+@router.post("/outreach/track/{lead_id}/clicked")
+async def track_lead_claim_click(lead_id: str, db: AsyncSession = Depends(get_db)):
+    """Record when a cold email lead clicks their claim link. No auth required."""
+    try:
+        await db.execute(text("""
+            UPDATE cold_email_leads
+            SET clicked_at = COALESCE(clicked_at, NOW()), status = CASE WHEN status = 'sent' THEN 'clicked' ELSE status END
+            WHERE id = :lid
+        """), {"lid": lead_id})
+        await db.commit()
+    except Exception:
+        pass  # silent — tracking failures must never break the claim flow
+    return {"ok": True}
+
+
+@router.post("/outreach/track/{lead_id}/claimed")
+async def track_lead_claimed(lead_id: str, db: AsyncSession = Depends(get_db)):
+    """Record when a cold email lead successfully claims their profile."""
+    try:
+        result = await db.execute(text("""
+            UPDATE cold_email_leads
+            SET claimed_at = COALESCE(claimed_at, NOW()), status = 'claimed'
+            WHERE id = :lid
+            RETURNING campaign_id
+        """), {"lid": lead_id})
+        row = result.mappings().first()
+        if row:
+            await db.execute(text("""
+                UPDATE cold_email_campaigns
+                SET claimed_count = claimed_count + 1
+                WHERE id = :cid AND NOT EXISTS (
+                    SELECT 1 FROM cold_email_leads WHERE id = :lid AND status = 'claimed'
+                )
+            """), {"cid": str(row["campaign_id"]), "lid": lead_id})
+        await db.commit()
+    except Exception:
+        pass
+    return {"ok": True}

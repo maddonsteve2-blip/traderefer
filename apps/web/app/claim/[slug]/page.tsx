@@ -50,6 +50,14 @@ function ClaimPageContent({ slug }: { slug: string }) {
     const [verifying, setVerifying] = useState(false);
     const [codeSent, setCodeSent] = useState(false);
     const manualSubmitted = searchParams.get("manual") === "submitted";
+    const leadId = searchParams.get("lid");
+
+    // Fire click tracking when a cold-email lead arrives (non-blocking, silent)
+    useEffect(() => {
+        if (leadId) {
+            fetch(`${API}/outreach/track/${leadId}/clicked`, { method: "POST" }).catch(() => {});
+        }
+    }, [leadId]);
 
     useEffect(() => {
         let ignore = false;
@@ -134,6 +142,9 @@ function ClaimPageContent({ slug }: { slug: string }) {
                 throw new Error(data?.detail || "Verification failed");
             }
             toast.success("Business verified. Continue to claim your profile.");
+            if (leadId) {
+                fetch(`${API}/outreach/track/${leadId}/claimed`, { method: "POST" }).catch(() => {});
+            }
             router.push(`/onboarding/business?claim=${business.id}&slug=${business.slug}&claim_token=${encodeURIComponent(data.claim_verification_token)}`);
         } catch (err) {
             const message = (err as Error).message || "Verification failed";
