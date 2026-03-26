@@ -527,23 +527,42 @@ async def get_business_dashboard(
         leads_result = await db.execute(leads_query, {
             "id": biz_id
         })
-        recent_leads = leads_result.mappings().all()
+        recent_leads = list(leads_result.mappings().all())
+
+        website_quotes_query = text("""
+            SELECT m.id, r.consumer_name, r.consumer_suburb, r.consumer_phone,
+                   r.consumer_email, r.consumer_address, r.job_description,
+                   m.status, m.created_at
+            FROM website_quote_matches m
+            JOIN website_quote_requests r ON r.id = m.request_id
+            WHERE m.business_id = :id
+              AND m.is_claimed_snapshot = true
+            ORDER BY m.created_at DESC
+            LIMIT 5
+        """)
+        website_quotes_result = await db.execute(website_quotes_query, {"id": biz_id})
+        website_quotes = website_quotes_result.mappings().all()
+        recent_leads.extend(website_quotes)
+        recent_leads.sort(key=lambda item: item["created_at"], reverse=True)
+        recent_leads = recent_leads[:5]
 
         unlocked_statuses = ["UNLOCKED", "ON_THE_WAY", "CONFIRMED", "MEETING_VERIFIED",
-                              "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS"]
+                              "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS", "WEBSITE_QUOTE"]
         formatted_recent = []
         for l in recent_leads:
-            is_unlocked = l["status"].upper() in unlocked_statuses
+            status = "WEBSITE_QUOTE" if l["status"].upper() == "NEW" and "unlock_fee_cents" not in l else l["status"].upper()
+            is_unlocked = status in unlocked_statuses
             formatted_recent.append({
                 "id": str(l["id"]),
                 "customer_name": l["consumer_name"] if is_unlocked else f"{l['consumer_name'][0]}*** ****",
                 "suburb": l["consumer_suburb"],
                 "description": l["job_description"],
-                "status": l["status"].upper(),
-                "unlock_fee": (l["unlock_fee_cents"] or 0) / 100,
+                "status": status,
+                "unlock_fee": (l.get("unlock_fee_cents") or 0) / 100,
                 "phone": l["consumer_phone"] if is_unlocked else None,
                 "email": l["consumer_email"] if is_unlocked else None,
                 "address": l["consumer_address"] if is_unlocked else None,
+                "source": "website_quote" if status == "WEBSITE_QUOTE" else "referral_lead",
             })
 
         return {
@@ -631,29 +650,47 @@ async def get_business_leads(
         ORDER BY created_at DESC
     """)
     result = await db.execute(query, {"id": uuid.UUID(business_id)})
-    leads = result.mappings().all()
+    leads = list(result.mappings().all())
+
+    website_quotes_query = text("""
+        SELECT m.id, r.consumer_name, r.consumer_phone, r.consumer_email,
+               r.consumer_suburb, r.consumer_address, r.job_description,
+               m.status, m.created_at
+        FROM website_quote_matches m
+        JOIN website_quote_requests r ON r.id = m.request_id
+        WHERE m.business_id = :id
+          AND m.is_claimed_snapshot = true
+        ORDER BY m.created_at DESC
+    """)
+    website_quotes_result = await db.execute(website_quotes_query, {"id": uuid.UUID(business_id)})
+    website_quotes = website_quotes_result.mappings().all()
+    leads.extend(website_quotes)
+    leads.sort(key=lambda item: item["created_at"], reverse=True)
 
     formatted_leads = []
     unlocked_statuses = ["UNLOCKED", "ON_THE_WAY", "CONFIRMED", "MEETING_VERIFIED",
-                         "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS"]
+                         "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS", "WEBSITE_QUOTE"]
     for l in leads:
-        is_unlocked = l["status"].upper() in unlocked_statuses
+        status = "WEBSITE_QUOTE" if l["status"].upper() == "NEW" and "unlock_fee_cents" not in l else l["status"].upper()
+        is_unlocked = status in unlocked_statuses
 
         lead_dict = {
             "id": str(l["id"]),
             "customer_name": l["consumer_name"] if is_unlocked else f"{l['consumer_name'][0]}*** ****",
             "suburb": l["consumer_suburb"],
             "description": l["job_description"],
-            "status": l["status"].upper(),
-            "created_at": "Recently",
-            "unlock_fee_cents": l["unlock_fee_cents"] or 0,
-            "unlock_fee": (l["unlock_fee_cents"] or 0) / 100,
-            "referral_fee_snapshot_cents": l["referral_fee_snapshot_cents"] or 0,
-            "referral_fee": (l["referral_fee_snapshot_cents"] or 0) / 100,
+            "status": status,
+            "created_at": str(l["created_at"]),
+            "unlock_fee_cents": l.get("unlock_fee_cents") or 0,
+            "unlock_fee": (l.get("unlock_fee_cents") or 0) / 100,
+            "referral_fee_snapshot_cents": l.get("referral_fee_snapshot_cents") or 0,
+            "referral_fee": (l.get("referral_fee_snapshot_cents") or 0) / 100,
             "platform_fee_cents": 0,
             "phone": l["consumer_phone"] if is_unlocked else None,
             "email": l["consumer_email"] if is_unlocked else None,
-            "address": l["consumer_address"] if is_unlocked else None
+            "address": l["consumer_address"] if is_unlocked else None,
+            "source": "website_quote" if status == "WEBSITE_QUOTE" else "referral_lead",
+            "is_free_website_quote": status == "WEBSITE_QUOTE",
         }
         formatted_leads.append(lead_dict)
 

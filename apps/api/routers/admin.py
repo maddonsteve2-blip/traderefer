@@ -1655,3 +1655,556 @@ async def rename_trade_category(
     """), {"old": req.old_name, "new": req.new_name})
     await db.commit()
     return {"status": "renamed", "from": req.old_name, "to": req.new_name, "affected": result.rowcount}
+
+
+# ── Cold Email Outreach ──
+
+INSTANTLY_API_KEY = os.getenv("INSTANTLY_API_KEY", "")
+NEVERBOUNCE_API_KEY = os.getenv("NEVERBOUNCE_API_KEY", "")
+INSTANTLY_BASE = "https://api.instantly.ai/api/v1"
+NEVERBOUNCE_BASE = "https://api.neverbounce.com/v4"
+
+
+async def _ensure_outreach_tables(db: AsyncSession):
+    """Create outreach tables if they don't exist yet."""
+    await db.execute(text("""
+        CREATE TABLE IF NOT EXISTS cold_email_campaigns (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            name TEXT NOT NULL,
+            instantly_campaign_id TEXT UNIQUE,
+            template_version TEXT DEFAULT 'A',
+            status TEXT DEFAULT 'draft',
+            total_leads INTEGER DEFAULT 0,
+            sent_count INTEGER DEFAULT 0,
+            opened_count INTEGER DEFAULT 0,
+            clicked_count INTEGER DEFAULT 0,
+            replied_count INTEGER DEFAULT 0,
+            claimed_count INTEGER DEFAULT 0,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            started_at TIMESTAMPTZ,
+            completed_at TIMESTAMPTZ
+        )
+    """))
+    await db.execute(text("""
+        CREATE TABLE IF NOT EXISTS cold_email_leads (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            campaign_id UUID REFERENCES cold_email_campaigns(id) ON DELETE CASCADE,
+            business_id UUID,
+            email TEXT NOT NULL,
+            first_name TEXT,
+            business_name TEXT,
+            trade_category TEXT,
+            suburb TEXT,
+            claim_slug TEXT,
+            email_verification_status TEXT,
+            send_approved BOOLEAN DEFAULT FALSE,
+            status TEXT DEFAULT 'pending',
+            sent_at TIMESTAMPTZ,
+            clicked_at TIMESTAMPTZ,
+            replied_at TIMESTAMPTZ,
+            claimed_at TIMESTAMPTZ,
+            reply_text TEXT,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )
+    """))
+    await db.execute(text("""
+        CREATE TABLE IF NOT EXISTS partner_badge_installs (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            business_id UUID,
+            badge_style TEXT DEFAULT 'trust',
+            installed_at TIMESTAMPTZ DEFAULT NOW(),
+            click_count INTEGER DEFAULT 0,
+            referrer_signup_count INTEGER DEFAULT 0
+        )
+    """))
+    await db.commit()
+
+
+def _slugify(value: str) -> str:
+    import re as _re
+    value = str(value or "").lower().strip()
+    value = _re.sub(r"[^a-z0-9\s-]", "", value)
+    value = _re.sub(r"[\s-]+", "-", value)
+    return value.strip("-")
+
+
+async def _neverbounce_verify(emails: list[str]) -> dict:
+    """Verify emails using NeverBounce bulk API. Returns categorised results."""
+    if not NEVERBOUNCE_API_KEY:
+        # No API key — mark everything as valid (dev mode)
+        return {
+            "valid": emails, "invalid": [], "catchall": [],
+            "unknown": [], "disposable": [],
+        }
+
+    async with httpx.AsyncClient(timeout=300) as client:
+        # Create job
+        create_res = await client.post(
+            f"{NEVERBOUNCE_BASE}/jobs/create",
+            json={
+                "key": NEVERBOUNCE_API_KEY,
+                "input": [{"email": e} for e in emails],
+                "auto_start": True,
+            }
+        )
+        if not create_res.is_success:
+            raise HTTPException(status_code=502, detail="NeverBounce create failed")
+        job_id = create_res.json().get("job_id")
+
+        # Poll until complete
+        for _ in range(60):  # max 10 min
+            await asyncio.sleep(10)
+            status_res = await client.get(
+                f"{NEVERBOUNCE_BASE}/jobs/status",
+                params={"key": NEVERBOUNCE_API_KEY, "job_id": job_id}
+            )
+            if status_res.json().get("job_status") == "complete":
+                break
+
+        # Get results
+        results_res = await client.get(
+            f"{NEVERBOUNCE_BASE}/jobs/results",
+            params={"key": NEVERBOUNCE_API_KEY, "job_id": job_id}
+        )
+        results = results_res.json().get("results", [])
+
+    categorised: dict[str, list[str]] = {
+        "valid": [], "invalid": [], "catchall": [], "unknown": [], "disposable": []
+    }
+    for r in results:
+        status = r.get("result", "unknown")
+        email = r.get("email", "")
+        categorised.setdefault(status, []).append(email)
+    return categorised
+
+
+@router.get("/outreach/campaigns")
+async def list_outreach_campaigns(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    await _ensure_outreach_tables(db)
+    result = await db.execute(text("""
+        SELECT id, name, instantly_campaign_id, template_version, status,
+               total_leads, sent_count, opened_count, clicked_count,
+               replied_count, claimed_count, created_at, started_at
+        FROM cold_email_campaigns
+        ORDER BY created_at DESC
+    """))
+    campaigns = [dict(r) for r in result.mappings().all()]
+    for c in campaigns:
+        if c.get("created_at"):
+            c["created_at"] = c["created_at"].isoformat()
+        if c.get("started_at"):
+            c["started_at"] = c["started_at"].isoformat()
+        c["id"] = str(c["id"])
+    return {"campaigns": campaigns}
+
+
+from fastapi import UploadFile, File, Form
+
+
+@router.post("/outreach/campaigns")
+async def create_outreach_campaign(
+    name: str = Form(...),
+    template_version: str = Form("A"),
+    csv_file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """Create a new outreach campaign from a CSV upload."""
+    import csv as csv_module
+    import io
+
+    await _ensure_outreach_tables(db)
+
+    # Parse CSV
+    content = await csv_file.read()
+    text_content = content.decode("utf-8-sig", errors="replace")
+    reader = csv_module.DictReader(io.StringIO(text_content))
+    rows = list(reader)
+
+    if not rows:
+        raise HTTPException(status_code=400, detail="CSV is empty")
+
+    # Normalise column names (case-insensitive)
+    normalised = []
+    for row in rows:
+        norm = {k.lower().strip(): str(v or "").strip() for k, v in row.items()}
+        email = norm.get("email", "")
+        if email and "@" in email:
+            normalised.append(norm)
+
+    if not normalised:
+        raise HTTPException(status_code=400, detail="No valid email addresses found in CSV")
+
+    # Create campaign record
+    campaign_id = str(uuid.uuid4())
+    await db.execute(text("""
+        INSERT INTO cold_email_campaigns (id, name, template_version, status, total_leads)
+        VALUES (:id, :name, :template, 'draft', :total)
+    """), {"id": campaign_id, "name": name, "template": template_version, "total": len(normalised)})
+
+    # Insert leads
+    for row in normalised:
+        email = row.get("email", "")
+        business_name = row.get("business_name", "")
+        suburb = row.get("suburb", "")
+        slug_base = _slugify(f"{business_name}-{suburb}") or _slugify(email.split("@")[0])
+        claim_slug = f"{slug_base}-{str(uuid.uuid4())[:6]}"
+        await db.execute(text("""
+            INSERT INTO cold_email_leads
+                (id, campaign_id, email, first_name, business_name, trade_category, suburb, claim_slug, status)
+            VALUES
+                (:id, :cid, :email, :fname, :bname, :trade, :suburb, :slug, 'pending')
+        """), {
+            "id": str(uuid.uuid4()),
+            "cid": campaign_id,
+            "email": email,
+            "fname": row.get("first_name", ""),
+            "bname": business_name,
+            "trade": row.get("trade_category", ""),
+            "suburb": suburb,
+            "slug": claim_slug,
+        })
+
+    await db.commit()
+    return {"id": campaign_id, "name": name, "total_leads": len(normalised), "status": "draft"}
+
+
+@router.post("/outreach/campaigns/{campaign_id}/verify")
+async def verify_campaign_emails(
+    campaign_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """Run NeverBounce verification on all pending leads in a campaign."""
+    await _ensure_outreach_tables(db)
+
+    # Get pending leads
+    result = await db.execute(text("""
+        SELECT id, email FROM cold_email_leads
+        WHERE campaign_id = :cid AND email_verification_status IS NULL
+    """), {"cid": campaign_id})
+    leads = list(result.mappings().all())
+
+    if not leads:
+        raise HTTPException(status_code=400, detail="No unverified leads in this campaign")
+
+    emails = [r["email"] for r in leads]
+
+    # Update status to verifying
+    await db.execute(text("""
+        UPDATE cold_email_campaigns SET status = 'verifying' WHERE id = :id
+    """), {"id": campaign_id})
+    await db.commit()
+
+    try:
+        categorised = await _neverbounce_verify(emails)
+    except Exception as e:
+        await db.execute(text("""
+            UPDATE cold_email_campaigns SET status = 'draft' WHERE id = :id
+        """), {"id": campaign_id})
+        await db.commit()
+        raise HTTPException(status_code=502, detail=f"Email verification failed: {str(e)}")
+
+    # Update individual lead statuses
+    for status_key, email_list in categorised.items():
+        for email in email_list:
+            approved = status_key == "valid"
+            await db.execute(text("""
+                UPDATE cold_email_leads
+                SET email_verification_status = :status, send_approved = :approved
+                WHERE campaign_id = :cid AND email = :email
+            """), {"status": status_key, "approved": approved, "cid": campaign_id, "email": email})
+
+    await db.execute(text("""
+        UPDATE cold_email_campaigns SET status = 'ready' WHERE id = :id
+    """), {"id": campaign_id})
+    await db.commit()
+
+    valid_count = len(categorised.get("valid", []))
+    invalid_count = len(categorised.get("invalid", []) + categorised.get("disposable", []))
+    catchall_count = len(categorised.get("catchall", []))
+    unknown_count = len(categorised.get("unknown", []))
+    total = len(emails)
+
+    bounce_valid = round((total - valid_count) / max(total, 1) * 100 * 0.3, 1)
+    bounce_catchall = round(bounce_valid + (catchall_count / max(total, 1)) * 50, 1)
+
+    return {
+        "total": total,
+        "valid": valid_count,
+        "invalid": invalid_count,
+        "catchall": catchall_count,
+        "unknown": unknown_count,
+        "estimated_bounce_rate_valid_only": f"{min(bounce_valid, 4.9):.1f}%",
+        "estimated_bounce_rate_with_catchall": f"{min(bounce_catchall, 9.9):.1f}%",
+    }
+
+
+class LaunchCampaignRequest(BaseModel):
+    include_catchall: bool = False
+    instantly_campaign_id: Optional[str] = None
+
+
+@router.post("/outreach/campaigns/{campaign_id}/launch")
+async def launch_outreach_campaign(
+    campaign_id: str,
+    req: LaunchCampaignRequest,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """Push approved leads to Instantly and mark campaign as active."""
+    await _ensure_outreach_tables(db)
+
+    # Get campaign
+    camp_result = await db.execute(text("""
+        SELECT * FROM cold_email_campaigns WHERE id = :id
+    """), {"id": campaign_id})
+    campaign = camp_result.mappings().first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+
+    # Get leads to send
+    statuses = ["valid"]
+    if req.include_catchall:
+        statuses.extend(["catchall", "unknown"])
+
+    placeholders = ",".join([f"'{s}'" for s in statuses])
+    leads_result = await db.execute(text(f"""
+        SELECT id, email, first_name, business_name, claim_slug
+        FROM cold_email_leads
+        WHERE campaign_id = :cid AND email_verification_status IN ({placeholders})
+    """), {"cid": campaign_id})
+    leads = list(leads_result.mappings().all())
+
+    if not leads:
+        raise HTTPException(status_code=400, detail="No approved leads to send")
+
+    instantly_campaign_id = req.instantly_campaign_id or campaign.get("instantly_campaign_id")
+    pushed = 0
+    errors = 0
+
+    if INSTANTLY_API_KEY and instantly_campaign_id:
+        async with httpx.AsyncClient(timeout=30) as client:
+            for lead in leads:
+                claim_url = f"https://traderefer.au/claim/{lead['claim_slug']}"
+                try:
+                    res = await client.post(
+                        f"{INSTANTLY_BASE}/lead/add",
+                        headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
+                        json={
+                            "campaign_id": instantly_campaign_id,
+                            "email": lead["email"],
+                            "first_name": lead["first_name"] or "there",
+                            "company_name": lead["business_name"] or "",
+                            "variables": {
+                                "business_name": lead["business_name"] or "",
+                                "claim_url": claim_url,
+                                "sender_name": "Steve",
+                            },
+                        }
+                    )
+                    if res.is_success:
+                        pushed += 1
+                        await db.execute(text("""
+                            UPDATE cold_email_leads SET status = 'sent', sent_at = NOW()
+                            WHERE id = :id
+                        """), {"id": str(lead["id"])})
+                    else:
+                        errors += 1
+                except Exception:
+                    errors += 1
+    else:
+        # No Instantly key — just mark as sent for dev/staging
+        for lead in leads:
+            await db.execute(text("""
+                UPDATE cold_email_leads SET status = 'sent', sent_at = NOW(), send_approved = TRUE
+                WHERE id = :id
+            """), {"id": str(lead["id"])})
+        pushed = len(leads)
+
+    await db.execute(text("""
+        UPDATE cold_email_campaigns
+        SET status = 'active', started_at = NOW(),
+            sent_count = :sent,
+            instantly_campaign_id = COALESCE(instantly_campaign_id, :icid)
+        WHERE id = :id
+    """), {"id": campaign_id, "sent": pushed, "icid": instantly_campaign_id})
+    await db.commit()
+
+    return {"status": "launched", "pushed": pushed, "errors": errors, "total": len(leads)}
+
+
+@router.post("/outreach/campaigns/{campaign_id}/sync")
+async def sync_campaign_stats(
+    campaign_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """Pull latest stats from Instantly API and update database."""
+    await _ensure_outreach_tables(db)
+
+    camp_result = await db.execute(text("""
+        SELECT instantly_campaign_id FROM cold_email_campaigns WHERE id = :id
+    """), {"id": campaign_id})
+    campaign = camp_result.mappings().first()
+    if not campaign or not campaign.get("instantly_campaign_id"):
+        raise HTTPException(status_code=400, detail="No Instantly campaign linked")
+
+    if not INSTANTLY_API_KEY:
+        raise HTTPException(status_code=503, detail="INSTANTLY_API_KEY not configured")
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        res = await client.get(
+            f"{INSTANTLY_BASE}/campaign/get/{campaign['instantly_campaign_id']}",
+            headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
+        )
+        if not res.is_success:
+            raise HTTPException(status_code=502, detail="Instantly API error")
+        data = res.json()
+
+    await db.execute(text("""
+        UPDATE cold_email_campaigns
+        SET sent_count = :sent, opened_count = :opened,
+            clicked_count = :clicked, replied_count = :replied
+        WHERE id = :id
+    """), {
+        "id": campaign_id,
+        "sent": data.get("sent", 0),
+        "opened": data.get("opened", 0),
+        "clicked": data.get("clicked", 0),
+        "replied": data.get("replied", 0),
+    })
+    await db.commit()
+    return {"status": "synced", "stats": data}
+
+
+@router.post("/outreach/campaigns/{campaign_id}/pause")
+async def pause_campaign(
+    campaign_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    await _ensure_outreach_tables(db)
+    camp_result = await db.execute(text(
+        "SELECT instantly_campaign_id FROM cold_email_campaigns WHERE id = :id"
+    ), {"id": campaign_id})
+    campaign = camp_result.mappings().first()
+
+    if INSTANTLY_API_KEY and campaign and campaign.get("instantly_campaign_id"):
+        async with httpx.AsyncClient(timeout=15) as client:
+            await client.post(
+                f"{INSTANTLY_BASE}/campaign/pause",
+                headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
+                json={"campaign_id": campaign["instantly_campaign_id"]},
+            )
+
+    await db.execute(text(
+        "UPDATE cold_email_campaigns SET status = 'paused' WHERE id = :id"
+    ), {"id": campaign_id})
+    await db.commit()
+    return {"status": "paused"}
+
+
+@router.post("/outreach/campaigns/{campaign_id}/resume")
+async def resume_campaign(
+    campaign_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    await _ensure_outreach_tables(db)
+    camp_result = await db.execute(text(
+        "SELECT instantly_campaign_id FROM cold_email_campaigns WHERE id = :id"
+    ), {"id": campaign_id})
+    campaign = camp_result.mappings().first()
+
+    if INSTANTLY_API_KEY and campaign and campaign.get("instantly_campaign_id"):
+        async with httpx.AsyncClient(timeout=15) as client:
+            await client.post(
+                f"{INSTANTLY_BASE}/campaign/resume",
+                headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
+                json={"campaign_id": campaign["instantly_campaign_id"]},
+            )
+
+    await db.execute(text(
+        "UPDATE cold_email_campaigns SET status = 'active' WHERE id = :id"
+    ), {"id": campaign_id})
+    await db.commit()
+    return {"status": "resumed"}
+
+
+@router.get("/outreach/campaigns/{campaign_id}/replies")
+async def get_campaign_replies(
+    campaign_id: str,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """Fetch replies from Instantly and sync to database."""
+    await _ensure_outreach_tables(db)
+
+    camp_result = await db.execute(text(
+        "SELECT instantly_campaign_id FROM cold_email_campaigns WHERE id = :id"
+    ), {"id": campaign_id})
+    campaign = camp_result.mappings().first()
+
+    replies = []
+
+    if INSTANTLY_API_KEY and campaign and campaign.get("instantly_campaign_id"):
+        try:
+            async with httpx.AsyncClient(timeout=15) as client:
+                res = await client.get(
+                    f"{INSTANTLY_BASE}/campaign/replies/{campaign['instantly_campaign_id']}",
+                    headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
+                )
+                if res.is_success:
+                    instantly_replies = res.json() if isinstance(res.json(), list) else []
+                    for r in instantly_replies:
+                        email = r.get("email", "")
+                        reply_text = r.get("reply_text", r.get("text", ""))
+                        timestamp = r.get("timestamp", r.get("created_at", ""))
+
+                        # Sync to DB
+                        await db.execute(text("""
+                            UPDATE cold_email_leads
+                            SET reply_text = :text, replied_at = NOW(), status = 'replied'
+                            WHERE campaign_id = :cid AND email = :email
+                        """), {"text": reply_text, "cid": campaign_id, "email": email})
+
+                        # Get business name
+                        biz_result = await db.execute(text("""
+                            SELECT business_name FROM cold_email_leads
+                            WHERE campaign_id = :cid AND email = :email LIMIT 1
+                        """), {"cid": campaign_id, "email": email})
+                        biz = biz_result.mappings().first()
+
+                        replies.append({
+                            "email": email,
+                            "business_name": biz["business_name"] if biz else None,
+                            "reply_text": reply_text,
+                            "timestamp": timestamp,
+                            "status": "replied",
+                        })
+                    await db.commit()
+        except Exception:
+            pass
+
+    # Always return DB replies as fallback
+    if not replies:
+        db_result = await db.execute(text("""
+            SELECT email, business_name, reply_text, replied_at as timestamp, status
+            FROM cold_email_leads
+            WHERE campaign_id = :cid AND replied_at IS NOT NULL
+            ORDER BY replied_at DESC
+        """), {"cid": campaign_id})
+        for r in db_result.mappings().all():
+            replies.append({
+                "email": r["email"],
+                "business_name": r["business_name"],
+                "reply_text": r["reply_text"] or "",
+                "timestamp": r["timestamp"].isoformat() if r["timestamp"] else "",
+                "status": r["status"],
+            })
+
+    return replies

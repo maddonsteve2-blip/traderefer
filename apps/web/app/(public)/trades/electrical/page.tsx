@@ -19,91 +19,91 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Plumbing Services Australia | Find Verified Plumbing Professionals | TradeRefer",
+    title: "Electrical Services Australia | Find Licensed Electricians | TradeRefer",
     description:
-        "Find trusted plumbing professionals across Australia. Compare quotes, understand costs, check licensing requirements, and hire with confidence through TradeRefer.",
-    alternates: { canonical: "https://traderefer.au/trades/plumbing" },
+        "Find trusted licensed electricians across Australia. Compare quotes, understand costs, check licensing requirements by state, and hire with confidence through TradeRefer.",
+    alternates: { canonical: "https://traderefer.au/trades/electrical" },
     openGraph: {
-        title: "Plumbing Services Australia | TradeRefer",
+        title: "Electrical Services Australia | TradeRefer",
         description:
-            "Compare plumbing costs, hiring tips, licensing requirements, and verified local plumbing professionals across Australia.",
-        url: "https://traderefer.au/trades/plumbing",
+            "Compare electrician costs, hiring tips, licensing requirements, and verified local electrical professionals across Australia.",
+        url: "https://traderefer.au/trades/electrical",
         type: "website",
     },
 };
 
-const TRADE_NAME = "Plumbing";
+const TRADE_NAME = "Electrical";
 const cost = TRADE_COST_GUIDE[TRADE_NAME];
 const faqs = TRADE_FAQ_BANK[TRADE_NAME].slice(0, 6);
 const services = JOB_TYPES[TRADE_NAME].slice(0, 12);
 const relatedTrades = [
-    { label: "Electrical", href: "/categories#electrical" },
+    { label: "Plumbing", href: "/trades/plumbing" },
     { label: "Air Conditioning & Heating", href: "/categories#air-conditioning-heating" },
+    { label: "Solar Installation", href: "/categories#solar-installation" },
     { label: "Roofing", href: "/categories#roofing" },
-    { label: "Painting", href: "/categories#painting" },
-    { label: "Landscaping", href: "/categories#landscaping" },
+    { label: "Building", href: "/categories#building" },
     { label: "Waterproofing", href: "/categories#waterproofing" },
 ];
 
 const cityPricing = [
-    { city: "Sydney", state: "NSW", hourly: "$100–$150/hr", callout: "$80–$110", blockedDrain: "$200–$400", hotWater: "$1,800–$3,500" },
-    { city: "Melbourne", state: "VIC", hourly: "$90–$140/hr", callout: "$70–$110", blockedDrain: "$200–$350", hotWater: "$1,700–$3,200" },
-    { city: "Brisbane", state: "QLD", hourly: "$80–$130/hr", callout: "$65–$100", blockedDrain: "$180–$320", hotWater: "$1,500–$3,000" },
-    { city: "Perth", state: "WA", hourly: "$90–$140/hr", callout: "$70–$105", blockedDrain: "$200–$360", hotWater: "$1,600–$3,200" },
-    { city: "Adelaide", state: "SA", hourly: "$80–$120/hr", callout: "$60–$95", blockedDrain: "$180–$300", hotWater: "$1,500–$2,900" },
-    { city: "Canberra", state: "ACT", hourly: "$95–$145/hr", callout: "$75–$110", blockedDrain: "$200–$360", hotWater: "$1,700–$3,200" },
-    { city: "Hobart", state: "TAS", hourly: "$85–$130/hr", callout: "$65–$100", blockedDrain: "$190–$320", hotWater: "$1,600–$3,000" },
-    { city: "Darwin", state: "NT", hourly: "$100–$155/hr", callout: "$80–$115", blockedDrain: "$210–$380", hotWater: "$1,800–$3,400" },
+    { city: "Sydney", state: "NSW", hourly: "$90–$140/hr", callout: "$80–$120", powerPoint: "$150–$300", switchboard: "$1,500–$3,500" },
+    { city: "Melbourne", state: "VIC", hourly: "$85–$135/hr", callout: "$75–$110", powerPoint: "$140–$280", switchboard: "$1,400–$3,200" },
+    { city: "Brisbane", state: "QLD", hourly: "$80–$130/hr", callout: "$70–$105", powerPoint: "$130–$260", switchboard: "$1,300–$3,000" },
+    { city: "Perth", state: "WA", hourly: "$85–$135/hr", callout: "$75–$110", powerPoint: "$140–$270", switchboard: "$1,400–$3,200" },
+    { city: "Adelaide", state: "SA", hourly: "$75–$125/hr", callout: "$65–$100", powerPoint: "$130–$250", switchboard: "$1,300–$2,900" },
+    { city: "Canberra", state: "ACT", hourly: "$90–$140/hr", callout: "$75–$115", powerPoint: "$150–$290", switchboard: "$1,500–$3,300" },
+    { city: "Hobart", state: "TAS", hourly: "$80–$130/hr", callout: "$65–$105", powerPoint: "$135–$260", switchboard: "$1,350–$3,000" },
+    { city: "Darwin", state: "NT", hourly: "$95–$150/hr", callout: "$80–$120", powerPoint: "$155–$310", switchboard: "$1,600–$3,600" },
 ];
 
 const commonJobCosts = [
-    ["Tap repair or replacement", "$100–$200"],
-    ["Toilet repair", "$150–$400"],
-    ["Blocked drain clearing", "$200–$300"],
-    ["Complex drain clearing / hydro jetting", "$400–$1,500"],
-    ["Burst pipe repair", "$500–$1,200"],
-    ["Leak detection", "$150–$400"],
-    ["CCTV drain inspection", "$200–$400"],
-    ["Pipe relining", "$600–$1,200 per metre"],
-    ["Hot water system replacement", "$1,500–$3,500"],
-    ["Gas fitting appliance connection", "$400–$1,500"],
+    ["Power point installation (single)", "$150–$300"],
+    ["Safety switch (RCD) installation", "$150–$350"],
+    ["Switchboard upgrade", "$1,200–$3,500"],
+    ["Smoke alarm installation (per unit)", "$80–$200"],
+    ["Ceiling fan installation", "$150–$300"],
+    ["Light fitting replacement", "$80–$200"],
+    ["EV charger installation", "$1,000–$2,500"],
+    ["Home rewiring (full)", "$4,000–$12,000+"],
+    ["Electrical fault finding", "$150–$400"],
+    ["Test and tag (per item)", "$2–$5"],
 ];
 
 const hiringTips = [
     {
-        title: "Verify the plumbing licence",
-        body: "All plumbing work in Australia must be completed by a licensed plumber. Ask for the licence number and confirm it with the relevant state authority before work starts.",
+        title: "Verify the electrical licence",
+        body: "All electrical work in Australia must be performed by a licensed electrician. Ask for the licence number and verify it with the relevant state authority (e.g., Energy Safe Victoria, NSW Fair Trading, QBCC) before any work begins.",
         icon: BadgeCheck,
     },
     {
-        title: "Get 2–3 written quotes",
-        body: "Written quotes should separate labour, materials, call-out fees, and GST. Avoid vague verbal pricing and compare scope carefully before accepting a job.",
+        title: "Request a written quote and scope",
+        body: "Written quotes should itemise labour, materials, call-out fees, and GST separately. Avoid vague verbal pricing and ensure the scope clearly describes what is and isn't included.",
         icon: FileText,
     },
     {
-        title: "Check insurance and compliance",
-        body: "A reputable plumber should carry public liability insurance and provide compliance certificates where required, especially for higher-value works or regulated installations.",
+        title: "Ask for a Certificate of Electrical Safety",
+        body: "Licensed electricians are legally required to issue a Certificate of Electrical Safety (or equivalent compliance certificate) for all prescribed electrical work. If they don't offer one, walk away.",
         icon: ShieldCheck,
     },
     {
-        title: "Read verified reviews",
-        body: "Look for review patterns about punctuality, hidden charges, and cleanup quality. TradeRefer surfaces verified businesses ranked by real community referrals, not paid placement.",
+        title: "Check public liability insurance",
+        body: "A reputable electrician should carry current public liability insurance. TradeRefer surfaces verified businesses ranked by real community referrals, not paid placement — so you can compare with confidence.",
         icon: Star,
     },
 ];
 
 const whyTradeRefer = [
     {
-        title: "Verified plumbing businesses",
-        body: "TradeRefer helps surface ABN-checked plumbing businesses so homeowners can compare verified providers instead of relying on anonymous listings.",
+        title: "Verified electrical businesses",
+        body: "TradeRefer helps surface ABN-checked electrical businesses so homeowners and businesses can compare verified providers instead of relying on anonymous listings.",
     },
     {
         title: "Better quote comparison",
-        body: "Use this hub to understand typical plumbing rates before you request quotes, so you can quickly spot overpriced or incomplete proposals.",
+        body: "Use this hub to understand typical electrician rates before you request quotes, so you can quickly spot overpriced or incomplete proposals.",
     },
     {
         title: "Australia-wide local discovery",
-        body: "Move from this national plumbing guide into city and local pages to find businesses in the areas that matter most to you.",
+        body: "Move from this national electrical guide into city and local pages to find licensed electricians in the areas that matter most to you.",
     },
 ];
 
@@ -172,7 +172,7 @@ async function getFeaturedCityCounts(tradeName: string): Promise<Record<string, 
     }
 }
 
-export default async function PlumbingTradeHubPage() {
+export default async function ElectricalTradeHubPage() {
     const [countsByState, cityCounts] = await Promise.all([
         getBusinessCountByState(TRADE_NAME),
         getFeaturedCityCounts(TRADE_NAME),
@@ -187,15 +187,15 @@ export default async function PlumbingTradeHubPage() {
         itemListElement: [
             { "@type": "ListItem", position: 1, name: "Home", item: "https://traderefer.au" },
             { "@type": "ListItem", position: 2, name: "Trade Guides", item: "https://traderefer.au/categories" },
-            { "@type": "ListItem", position: 3, name: "Plumbing Services Australia", item: "https://traderefer.au/trades/plumbing" },
+            { "@type": "ListItem", position: 3, name: "Electrical Services Australia", item: "https://traderefer.au/trades/electrical" },
         ],
     };
 
     const serviceJsonLd = {
         "@context": "https://schema.org",
         "@type": "Service",
-        name: "Plumbing Services Australia",
-        serviceType: "Plumbing",
+        name: "Electrical Services Australia",
+        serviceType: "Electrical",
         areaServed: { "@type": "Country", name: "Australia" },
         provider: { "@type": "Organization", name: "TradeRefer", url: "https://traderefer.au" },
         offers: {
@@ -232,7 +232,7 @@ export default async function PlumbingTradeHubPage() {
                         <ChevronRight className="w-4 h-4" />
                         <Link href="/categories" className="hover:text-white transition-colors">Trade Guides</Link>
                         <ChevronRight className="w-4 h-4" />
-                        <span className="text-[#FF6600]">Plumbing</span>
+                        <span className="text-[#FF6600]">Electrical</span>
                     </nav>
 
                     <div className="max-w-4xl">
@@ -241,15 +241,15 @@ export default async function PlumbingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Plumbing</span> Professionals Across Australia
+                            Find Licensed <span className="text-[#FF6600]">Electricians</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Use this TradeRefer plumbing hub to compare typical plumbing costs, understand licensing requirements in each state,
-                            and discover verified local plumbing businesses in the Australian cities where demand is highest.
+                            Use this TradeRefer electrical hub to compare typical electrician costs, understand licensing requirements
+                            in each state, and discover verified local electrical businesses in the Australian cities where demand is highest.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
-                                href="/quotes?trade=Plumbing&source=%2Ftrades%2Fplumbing"
+                                href="/quotes?trade=Electrical&source=%2Ftrades%2Felectrical"
                                 className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2"
                                 style={{ minHeight: "64px", fontSize: "18px" }}
                             >
@@ -257,11 +257,11 @@ export default async function PlumbingTradeHubPage() {
                                 <ArrowRight className="w-5 h-5" />
                             </Link>
                             <Link
-                                href="/businesses?category=Plumbing"
+                                href="/businesses?category=Electrical"
                                 className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center"
                                 style={{ minHeight: "64px", fontSize: "18px" }}
                             >
-                                Browse Plumbing Businesses
+                                Browse Electrical Businesses
                             </Link>
                             <Link
                                 href="/local"
@@ -275,7 +275,7 @@ export default async function PlumbingTradeHubPage() {
                         <div className="flex flex-wrap gap-6 text-white font-bold mt-8" style={{ fontSize: "16px" }}>
                             <span className="flex items-center gap-2"><DollarSign className="w-4 h-4 text-[#FF6600]" />Typical rates ${cost.low}–${cost.high}{cost.unit}</span>
                             {totalBusinesses > 0 && (
-                                <span className="flex items-center gap-2"><BadgeCheck className="w-4 h-4 text-[#FF6600]" />{totalBusinesses.toLocaleString()} plumbing businesses listed</span>
+                                <span className="flex items-center gap-2"><BadgeCheck className="w-4 h-4 text-[#FF6600]" />{totalBusinesses.toLocaleString()} electrical businesses listed</span>
                             )}
                             {statesCovered > 0 && (
                                 <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#FF6600]" />Available in {statesCovered} states & territories</span>
@@ -290,10 +290,10 @@ export default async function PlumbingTradeHubPage() {
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
                         <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: "32px" }}>
                             <DollarSign className="w-6 h-6 text-[#FF6600]" />
-                            Plumbing Cost Guide Australia
+                            Electrician Cost Guide Australia
                         </h2>
                         <p className="text-zinc-500 mb-8" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                            Plumbing jobs vary by city, urgency, and complexity. These national guide figures help you benchmark quotes before choosing a provider.
+                            Electrical job costs vary by city, urgency, and complexity. These national guide figures help you benchmark quotes before choosing a provider.
                         </p>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -321,8 +321,8 @@ export default async function PlumbingTradeHubPage() {
                                         <th className="px-4 py-3 font-black" style={{ fontSize: "14px" }}>City</th>
                                         <th className="px-4 py-3 font-black" style={{ fontSize: "14px" }}>Hourly Rate</th>
                                         <th className="px-4 py-3 font-black" style={{ fontSize: "14px" }}>Call-out</th>
-                                        <th className="px-4 py-3 font-black" style={{ fontSize: "14px" }}>Blocked Drain</th>
-                                        <th className="px-4 py-3 font-black" style={{ fontSize: "14px" }}>Hot Water System</th>
+                                        <th className="px-4 py-3 font-black" style={{ fontSize: "14px" }}>Power Point</th>
+                                        <th className="px-4 py-3 font-black" style={{ fontSize: "14px" }}>Switchboard Upgrade</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -331,8 +331,8 @@ export default async function PlumbingTradeHubPage() {
                                             <td className="px-4 py-3 font-bold text-zinc-900" style={{ fontSize: "16px" }}>{row.city}</td>
                                             <td className="px-4 py-3 text-zinc-600" style={{ fontSize: "16px" }}>{row.hourly}</td>
                                             <td className="px-4 py-3 text-zinc-600" style={{ fontSize: "16px" }}>{row.callout}</td>
-                                            <td className="px-4 py-3 text-zinc-600" style={{ fontSize: "16px" }}>{row.blockedDrain}</td>
-                                            <td className="px-4 py-3 text-zinc-600" style={{ fontSize: "16px" }}>{row.hotWater}</td>
+                                            <td className="px-4 py-3 text-zinc-600" style={{ fontSize: "16px" }}>{row.powerPoint}</td>
+                                            <td className="px-4 py-3 text-zinc-600" style={{ fontSize: "16px" }}>{row.switchboard}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -340,7 +340,7 @@ export default async function PlumbingTradeHubPage() {
                         </div>
 
                         <div className="mt-8">
-                            <h3 className="font-black text-zinc-900 mb-4 font-display" style={{ fontSize: "24px" }}>Common Plumbing Job Costs</h3>
+                            <h3 className="font-black text-zinc-900 mb-4 font-display" style={{ fontSize: "24px" }}>Common Electrical Job Costs</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {commonJobCosts.map(([label, value]) => (
                                     <div key={label} className="flex items-center justify-between bg-zinc-50 rounded-2xl border border-zinc-100 px-5 py-4 gap-4">
@@ -356,10 +356,10 @@ export default async function PlumbingTradeHubPage() {
                         <div className="bg-white rounded-3xl border border-zinc-200 p-8">
                             <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: "32px" }}>
                                 <Wrench className="w-6 h-6 text-[#FF6600]" />
-                                Plumbing Services We Cover
+                                Electrical Services We Cover
                             </h2>
                             <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                TradeRefer’s plumbing hub supports both urgent household repairs and larger residential or commercial plumbing projects.
+                                TradeRefer&apos;s electrical hub supports both urgent household repairs and larger residential or commercial electrical projects.
                             </p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {services.map((service) => (
@@ -379,10 +379,10 @@ export default async function PlumbingTradeHubPage() {
                         <div className="bg-white rounded-3xl border border-zinc-200 p-8">
                             <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: "28px" }}>
                                 <Clock3 className="w-5 h-5 text-blue-500" />
-                                Before You Hire a Plumber
+                                Before You Hire an Electrician
                             </h2>
                             <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Use these checks to avoid unlicensed work, hidden fees, and poor-quality outcomes.
+                                Use these checks to avoid unlicensed work, hidden fees, and safety risks.
                             </p>
                             <div className="space-y-4">
                                 {hiringTips.map(({ title, body, icon: Icon }) => (
@@ -403,10 +403,10 @@ export default async function PlumbingTradeHubPage() {
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
                         <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: "32px" }}>
                             <MapPin className="w-6 h-6 text-[#FF6600]" />
-                            Find Plumbing Businesses by City
+                            Find Electrical Businesses by City
                         </h2>
                         <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                            Start with the major cities where TradeRefer already has plumbing businesses listed, then drill into suburb-level pages from there.
+                            Start with the major cities where TradeRefer already has electrical businesses listed, then drill into suburb-level pages from there.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {featuredCities.map(({ city, state, stateSlug, citySlug }) => {
@@ -414,7 +414,7 @@ export default async function PlumbingTradeHubPage() {
                                 return (
                                     <Link
                                         key={`${city}-${state}`}
-                                        href={`/local/${stateSlug}/${citySlug}?category=${encodeURIComponent(TRADE_NAME)}`}
+                                        href={`/local/${stateSlug}/${citySlug}`}
                                         className="flex items-center justify-between px-5 py-4 bg-zinc-50 border-2 border-zinc-200 rounded-2xl hover:bg-orange-50 hover:border-[#FF6600] transition-colors group"
                                     >
                                         <div>
@@ -430,21 +430,21 @@ export default async function PlumbingTradeHubPage() {
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
                         <div className="max-w-3xl mb-8">
-                            <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Plumbing Quotes</h2>
+                            <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Electrical Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your plumbing quotes here and we&apos;ll match your job with up to 3 verified local businesses.
+                                Request your electrical quotes here and we&apos;ll match your job with up to 3 verified local businesses.
                             </p>
                         </div>
-                        <PublicMultiQuoteForm initialTradeCategory="Plumbing" initialSourcePage="/trades/plumbing" />
+                        <PublicMultiQuoteForm initialTradeCategory="Electrical" initialSourcePage="/trades/electrical" />
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
                         <h2 className="font-black text-[#1A1A1A] mb-2 flex items-center gap-2 font-display" style={{ fontSize: "32px" }}>
                             <FileText className="w-6 h-6 text-blue-500" />
-                            Plumbing Licensing Requirements by State
+                            Electrical Licensing Requirements by State
                         </h2>
                         <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                            Plumbing is regulated in every Australian state and territory. Always confirm the contractor is correctly licensed for the location where the work is performed.
+                            Electrical work is regulated in every Australian state and territory. Always confirm the contractor is correctly licensed for the location where the work is performed.
                         </p>
                         <div className="space-y-3">
                             {Object.entries(STATE_LICENSING[TRADE_NAME]).map(([stateCode, text]) => (
@@ -467,7 +467,7 @@ export default async function PlumbingTradeHubPage() {
 
                     <section>
                         <h2 className="font-black text-[#1A1A1A] mb-8 font-display" style={{ fontSize: "32px" }}>
-                            Plumbing: Frequently Asked Questions
+                            Electrical: Frequently Asked Questions
                         </h2>
                         <div className="space-y-4">
                             {faqs.map((faq) => (
@@ -485,7 +485,7 @@ export default async function PlumbingTradeHubPage() {
                             Related Trade Guides
                         </h2>
                         <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                            Continue exploring adjacent trade categories that homeowners often compare alongside plumbing work.
+                            Continue exploring adjacent trade categories that homeowners often compare alongside electrical work.
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {relatedTrades.map((trade) => (
@@ -503,24 +503,24 @@ export default async function PlumbingTradeHubPage() {
                     </section>
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
-                        <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Plumber Near You?</h2>
+                        <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need an Electrician Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local plumbing businesses, compare their services, and move into suburb-level directory pages to find the best plumber for your job.
+                            Browse verified local electrical businesses, compare their services, and move into suburb-level directory pages to find the best licensed electrician for your job.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link
-                                href="/quotes?trade=Plumbing&source=%2Ftrades%2Fplumbing"
+                                href="/quotes?trade=Electrical&source=%2Ftrades%2Felectrical"
                                 className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors"
                                 style={{ minHeight: "64px", fontSize: "18px" }}
                             >
                                 Get 3 Free Quotes <ArrowRight className="w-5 h-5" />
                             </Link>
                             <Link
-                                href="/businesses?category=Plumbing"
+                                href="/businesses?category=Electrical"
                                 className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10"
                                 style={{ minHeight: "64px", fontSize: "18px" }}
                             >
-                                Browse Plumbing Businesses
+                                Browse Electrical Businesses
                             </Link>
                         </div>
                     </section>

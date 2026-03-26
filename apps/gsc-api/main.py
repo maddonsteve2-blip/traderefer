@@ -840,6 +840,34 @@ def map_backlink_gap_item(item: dict[str, Any]):
     }
 
 
+def map_serp_rankings_item(item: dict[str, Any]):
+    keyword = item.get("keyword")
+    competitor_rank = item.get("firstDomainRank")
+    traderefer_rank = item.get("secondDomainRank")
+    rank_gap = None
+    if isinstance(competitor_rank, (int, float)) and isinstance(traderefer_rank, (int, float)):
+        rank_gap = traderefer_rank - competitor_rank
+    status = "missing"
+    if isinstance(traderefer_rank, (int, float)) and isinstance(competitor_rank, (int, float)):
+        status = "behind" if traderefer_rank > competitor_rank else "ahead"
+    elif isinstance(traderefer_rank, (int, float)):
+        status = "ranked"
+    elif isinstance(competitor_rank, (int, float)):
+        status = "competitor_only"
+    return {
+        "keyword": keyword,
+        "searchVolume": item.get("searchVolume"),
+        "competitorDomain": DATAFORSEO_KEYWORD_GAP_TARGET,
+        "competitorRank": competitor_rank,
+        "competitorUrl": item.get("firstDomainUrl"),
+        "tradereferDomain": DATAFORSEO_KEYWORD_GAP_EXCLUDE,
+        "tradereferRank": traderefer_rank,
+        "tradereferUrl": item.get("secondDomainUrl"),
+        "rankGap": rank_gap,
+        "status": status,
+    }
+
+
 async def refresh_backlink_gap_cache():
     targets = {str(index + 1): target for index, target in enumerate(DATAFORSEO_BACKLINK_TARGETS)}
     payload = [{
@@ -868,6 +896,29 @@ async def refresh_backlink_gap_cache():
         "items": items,
     })
     return cache_payload, extract_dataforseo_cost(response_payload, task)
+
+
+async def refresh_serp_rankings_cache():
+    keyword_gap_payload, _ = await refresh_keyword_gap_cache()
+    keyword_items = keyword_gap_payload.get("items", []) or []
+    serp_items = [
+        map_serp_rankings_item(item)
+        for item in keyword_items
+        if item.get("keyword")
+    ]
+    serp_items.sort(
+        key=lambda item: (
+            0 if item.get("status") == "competitor_only" else 1,
+            -(item.get("searchVolume") or 0),
+            item.get("tradereferRank") if isinstance(item.get("tradereferRank"), (int, float)) else 999,
+        )
+    )
+    cache_payload = write_dataforseo_cache(SERP_RANKINGS_FILE, {
+        "competitorDomain": DATAFORSEO_KEYWORD_GAP_TARGET,
+        "tradereferDomain": DATAFORSEO_KEYWORD_GAP_EXCLUDE,
+        "items": serp_items,
+    })
+    return cache_payload
 
 
 @app.get("/api/account/balance")
@@ -1022,6 +1073,38 @@ async def get_backlink_gap(
     }
 
 
+@app.get("/api/competitors/backlink-gap")
+async def get_competitor_backlink_gap(
+    response: Response,
+    refresh: bool = Query(False),
+):
+    return await get_backlink_gap(response=response, refresh=refresh)
+
+
+@app.get("/api/serp/rankings")
+async def get_serp_rankings(
+    response: Response,
+    refresh: bool = Query(False),
+):
+    cache_payload, is_fresh, freshness = cache_is_fresh(SERP_RANKINGS_FILE, DATAFORSEO_TTLS["serp_rankings"])
+    if refresh or not is_fresh:
+        cache_payload = await refresh_serp_rankings_cache()
+        freshness = build_cache_freshness(SERP_RANKINGS_FILE, DATAFORSEO_TTLS["serp_rankings"], cache_payload)
+    items = cache_payload.get("items", []) or []
+    response.headers["X-DataForSEO-Cost"] = "0"
+    return {
+        "competitorDomain": cache_payload.get("competitorDomain", DATAFORSEO_KEYWORD_GAP_TARGET),
+        "tradereferDomain": cache_payload.get("tradereferDomain", DATAFORSEO_KEYWORD_GAP_EXCLUDE),
+        "rankings": items,
+        "summary": {
+            "competitorOnly": len([item for item in items if item.get("status") == "competitor_only"]),
+            "tradereferRanked": len([item for item in items if item.get("tradereferRank") is not None]),
+            "sharedKeywords": len([item for item in items if item.get("tradereferRank") is not None and item.get("competitorRank") is not None]),
+        },
+        "freshness": freshness,
+    }
+
+
 @app.get("/api/status")
 async def get_dataforseo_status(response: Response):
     keyword_cache = read_cache_payload(KEYWORDS_VOLUME_FILE)
@@ -1077,7 +1160,9 @@ def root():
             "/api/keywords/opportunities": "Get top cached keyword opportunities without matching local pages",
             "/api/pages/update": "Update the cached list of existing local page paths",
             "/api/competitors/keyword-gap": "Get cached competitor keyword gap data",
+            "/api/competitors/backlink-gap": "Compatibility route for cached backlink gap data",
             "/api/backlinks/gap": "Get cached backlink gap data",
+            "/api/serp/rankings": "Get cached SERP rankings derived from competitor keyword gap data",
             "/api/gsc/status": "Check cache freshness, refresh capability, and service configuration",
             "/api/gsc/refresh": "Refresh Google Search Console data and overwrite the cache file",
             "/api/gsc/latest": "Get latest GSC report summary",

@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 import { ChevronRight, MapPin, Users, Building2 } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -72,6 +73,15 @@ export default async function LocalDirectoryPage({
                     <p className="text-xl md:text-2xl text-zinc-600 mb-6 leading-relaxed font-medium max-w-3xl">
                         Find verified, community-recommended trades across Australia. {totalBusinesses.toLocaleString()} ABN-verified businesses across {states.length} states.
                     </p>
+                    <div className="flex flex-wrap gap-4 mb-8">
+                        <Link href="/quotes?source=%2Flocal" className="inline-flex items-center justify-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}>
+                            Get 3 Free Quotes
+                            <ChevronRight className="w-4 h-4" />
+                        </Link>
+                        <Link href="/categories" className="inline-flex items-center justify-center bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-black px-8 rounded-xl transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}>
+                            Browse by Trade
+                        </Link>
+                    </div>
                     <div className="flex flex-wrap gap-4 mb-12 text-sm font-medium text-zinc-500">
                         <Link href="/categories" className="flex items-center gap-1.5 hover:text-orange-600 transition-colors">
                             <ChevronRight className="w-3 h-3" /> Browse by Trade Category
@@ -80,6 +90,16 @@ export default async function LocalDirectoryPage({
                             <ChevronRight className="w-3 h-3" /> Browse All Cities &amp; Suburbs
                         </Link>
                     </div>
+
+                    <section className="bg-white rounded-[32px] border-2 border-zinc-100 p-8 md:p-10 mb-12">
+                        <div className="max-w-3xl mb-8">
+                            <h2 className="text-3xl md:text-4xl font-black text-zinc-900 mb-3 font-display tracking-tight">Get 3 Free Quotes</h2>
+                            <p className="text-lg md:text-xl text-zinc-600 leading-relaxed font-medium">
+                                Describe your job and location once, and we&apos;ll match your request with up to 3 verified local businesses.
+                            </p>
+                        </div>
+                        <PublicMultiQuoteForm initialSourcePage="/local" />
+                    </section>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {states.map((state) => (

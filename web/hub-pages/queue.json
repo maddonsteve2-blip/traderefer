@@ -1,0 +1,33 @@
+{
+  "lastUpdated": "2026-03-25",
+  "notes": "Priority order based on Australian search volume. Update 'status' to 'published' once live on site.",
+  "queue": [
+    { "trade": "Plumbing",              "slug": "plumbing",               "status": "built",     "builtDate": "2026-03-25", "file": "apps/web/app/(public)/trades/plumbing/page.tsx" },
+    { "trade": "Electrical",            "slug": "electrical",             "status": "built",     "builtDate": "2026-03-25", "file": "apps/web/app/(public)/trades/electrical/page.tsx" },
+    { "trade": "Air Conditioning",      "slug": "air-conditioning",       "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Roofing",               "slug": "roofing",                "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Painting",              "slug": "painting",               "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Landscaping",           "slug": "landscaping",            "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Tiling",                "slug": "tiling",                 "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Pest Control",          "slug": "pest-control",           "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Concreting",            "slug": "concreting",             "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Fencing",               "slug": "fencing",                "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Commercial Cleaning",   "slug": "commercial-cleaning",    "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "House Cleaning",        "slug": "house-cleaning",         "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Solar Installation",    "slug": "solar-installation",     "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Removalists",           "slug": "removalists",            "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Flooring",              "slug": "flooring",               "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Rendering",             "slug": "rendering",              "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Waterproofing",         "slug": "waterproofing",          "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Carpentry",             "slug": "carpentry",              "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Asbestos Removal",      "slug": "asbestos-removal",       "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Cabinet Making",        "slug": "cabinet-making",         "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Glazing",               "slug": "glazing",                "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Insulation",            "slug": "insulation",             "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Irrigation",            "slug": "irrigation",             "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Skip Bins",             "slug": "skip-bins",              "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Pool Building",         "slug": "pool-building",          "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Stonemasonry",          "slug": "stonemasonry",           "status": "pending",   "builtDate": null, "file": null },
+    { "trade": "Demolition",            "slug": "demolition",             "status": "pending",   "builtDate": null, "file": null }
+  ]
+}

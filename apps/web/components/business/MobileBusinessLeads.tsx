@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Loader2, Info, MapPin, Phone, MessageSquare, Unlock, Zap, CheckCircle2, Gift, Wallet, Clock, XCircle, ArrowRight, Users } from "lucide-react";
+import { Search, Loader2, Info, MapPin, Phone, MessageSquare, Unlock, Zap, CheckCircle2, Gift, Clock, XCircle, Users } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PinConfirmationModal } from "@/components/dashboard/PinConfirmationModal";
 import { WalletWidget } from "@/components/dashboard/WalletWidget";
-import Link from "next/link";
 import { toast } from "sonner";
 import posthog from "posthog-js";
 
@@ -27,6 +26,7 @@ const STATUS_LABELS: Record<string, string> = {
     PAYMENT_PENDING_CONFIRMATION: "Awaiting Confirmation",
     EXPIRED: "Expired",
     DISPUTED: "Under Review",
+    WEBSITE_QUOTE: "Website Quote",
 };
 
 function formatStatus(status: string): string {
@@ -47,6 +47,8 @@ interface Lead {
     email?: string;
     address?: string;
     referrer_name?: string;
+    source?: string;
+    is_free_website_quote?: boolean;
 }
 
 export function MobileBusinessLeads() {
@@ -159,7 +161,7 @@ export function MobileBusinessLeads() {
         }
     };
 
-    const handlePinConfirmed = async (leadId: string) => {
+    const handlePinConfirmed = async () => {
         await fetchLeads();
         setShowPinModal(null);
         toast.success("Job confirmed! Referral payment released.");
@@ -174,14 +176,13 @@ export function MobileBusinessLeads() {
     }
 
     const filteredLeads = leads.filter(l => {
-        const matchesSearch = 
-            l.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
-            l.description.toLowerCase().includes(search.toLowerCase()) ||
-            l.suburb.toLowerCase().includes(search.toLowerCase());
+        const matchesSearch = l.customer_name?.toLowerCase().includes(search.toLowerCase()) ||
+            l.suburb?.toLowerCase().includes(search.toLowerCase()) ||
+            l.description?.toLowerCase().includes(search.toLowerCase());
 
         const matchesFilter = (() => {
             if (filter === "new") return ["PENDING", "VERIFIED", "READY_FOR_BUSINESS"].includes(l.status);
-            if (filter === "unlocked") return ["UNLOCKED", "ON_THE_WAY", "MEETING_VERIFIED"].includes(l.status);
+            if (filter === "unlocked") return ["UNLOCKED", "ON_THE_WAY", "MEETING_VERIFIED", "WEBSITE_QUOTE"].includes(l.status);
             if (filter === "won") return ["CONFIRMED", "CONFIRMED_SUCCESS"].includes(l.status);
             return true;
         })();
@@ -189,7 +190,7 @@ export function MobileBusinessLeads() {
         return matchesSearch && matchesFilter;
     });
 
-    const UNLOCKED_STATUSES = ["UNLOCKED", "ON_THE_WAY", "MEETING_VERIFIED", "VALID_LEAD", "CONFIRMED_SUCCESS", "CONFIRMED"];
+    const UNLOCKED_STATUSES = ["UNLOCKED", "ON_THE_WAY", "MEETING_VERIFIED", "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS", "CONFIRMED", "WEBSITE_QUOTE"];
     const LOCKED_STATUSES = ["PENDING", "VERIFIED", "READY_FOR_BUSINESS", "SCREENING"];
 
     return (
@@ -250,6 +251,7 @@ export function MobileBusinessLeads() {
                     {filteredLeads.map((lead) => {
                         const isUnlocked = UNLOCKED_STATUSES.includes(lead.status);
                         const isLocked = LOCKED_STATUSES.includes(lead.status) && lead.status !== 'SCREENING';
+                        const isWebsiteQuote = lead.status === 'WEBSITE_QUOTE';
                         
                         return (
                             <div key={lead.id} className="bg-white border border-zinc-200 rounded-[32px] overflow-hidden shadow-sm">
@@ -261,7 +263,7 @@ export function MobileBusinessLeads() {
                                             </div>
                                             <div>
                                                 <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Referred by</p>
-                                                <p className="text-base font-bold text-zinc-900">{lead.referrer_name || 'Anonymous'}</p>
+                                                <p className="text-base font-bold text-zinc-900">{isWebsiteQuote ? 'TradeRefer Website' : (lead.referrer_name || 'Anonymous')}</p>
                                             </div>
                                         </div>
                                         <Badge 
@@ -279,8 +281,14 @@ export function MobileBusinessLeads() {
                                         </div>
                                         {isUnlocked ? (
                                             <div className="bg-zinc-50 rounded-2xl p-4 space-y-3">
+                                                {isWebsiteQuote && (
+                                                    <div className="bg-blue-50 border border-blue-100 rounded-2xl p-3">
+                                                        <p className="text-blue-800 font-black text-sm uppercase tracking-widest">Free website quote</p>
+                                                        <p className="text-blue-700 font-medium text-sm mt-1">No unlock fee applies to this enquiry.</p>
+                                                    </div>
+                                                )}
                                                 <p className="text-zinc-600 font-medium text-lg italic leading-relaxed">
-                                                    "{lead.description}"
+                                                    &quot;{lead.description}&quot;
                                                 </p>
                                                 {lead.address && (
                                                     <div className="flex items-start gap-2 pt-3 border-t border-zinc-200">
@@ -304,7 +312,7 @@ export function MobileBusinessLeads() {
                                         ) : (
                                             <div className="bg-zinc-50 border border-dashed border-zinc-200 rounded-2xl p-4">
                                                 <p className="text-zinc-500 font-medium text-lg italic">
-                                                    "{lead.description}"
+                                                    &quot;{lead.description}&quot;
                                                 </p>
                                             </div>
                                         )}
@@ -312,7 +320,13 @@ export function MobileBusinessLeads() {
 
                                     {/* ── Actions ── */}
                                     <div className="pt-2">
-                                        {isLocked ? (
+                                        {isWebsiteQuote ? (
+                                            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex flex-col items-center gap-1 text-center">
+                                                <CheckCircle2 className="w-6 h-6 text-blue-600" />
+                                                <p className="text-blue-800 font-black text-sm uppercase tracking-widest">Ready to contact</p>
+                                                <p className="text-blue-700 font-medium text-sm">This quote came from the website and is already unlocked for free.</p>
+                                            </div>
+                                        ) : isLocked ? (
                                             <Button 
                                                 onClick={() => handleUnlock(lead.id)}
                                                 disabled={isUnlocking === lead.id}
@@ -338,7 +352,7 @@ export function MobileBusinessLeads() {
                                                 ) : (
                                                     <>
                                                         <Zap className="w-5 h-5 mr-3 text-orange-500" />
-                                                        I'm on my way
+                                                        I&apos;m on my way
                                                     </>
                                                 )}
                                             </Button>
@@ -367,11 +381,11 @@ export function MobileBusinessLeads() {
                                     
                                     <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
                                         <div className="flex items-center gap-1.5">
-                                            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">Referral Reward</p>
+                                            <p className="text-xs font-black text-zinc-400 uppercase tracking-widest">{isWebsiteQuote ? 'Lead Type' : 'Referral Reward'}</p>
                                             <Info className="w-3.5 h-3.5 text-zinc-300" />
                                         </div>
                                         <p className="text-lg font-black text-zinc-900">
-                                            ${((lead.referral_fee_snapshot_cents || 0) / 100).toFixed(0)}
+                                            {isWebsiteQuote ? 'Free Website Quote' : `$${((lead.referral_fee_snapshot_cents || 0) / 100).toFixed(0)}`}
                                         </p>
                                     </div>
                                 </div>
@@ -381,8 +395,8 @@ export function MobileBusinessLeads() {
 
                     {filteredLeads.length === 0 && (
                         <div className="py-24 flex flex-col items-center justify-center text-zinc-300 gap-4 bg-zinc-100/50 rounded-[40px] border border-dashed border-zinc-200">
-                            <Search className="w-12 h-12 opacity-10" />
-                            <div className="text-center">
+                            <div className="flex items-center justify-center gap-4 text-sm text-zinc-500">
+                                <div className="w-8 h-px bg-zinc-200" />
                                 <p className="font-black text-lg text-zinc-400">No leads found</p>
                                 <p className="text-sm font-medium">Try a different filter or search term</p>
                             </div>
@@ -394,7 +408,7 @@ export function MobileBusinessLeads() {
             {showPinModal && (
                 <PinConfirmationModal 
                     leadId={showPinModal!}
-                    onConfirmed={() => handlePinConfirmed(showPinModal!)}
+                    onConfirmed={handlePinConfirmed}
                     onClose={() => setShowPinModal(null)}
                 />
             )}

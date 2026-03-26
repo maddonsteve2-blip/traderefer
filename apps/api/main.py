@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from routers import public, leads, business, referrer, admin, webhooks, media, messages, deals, campaigns, notifications as notif_router, twilio_inbound, invitations, business_invitations, applications, badges as badges_router, events as events_router
+from routers import public, leads, business, referrer, admin, webhooks, media, messages, deals, campaigns, notifications as notif_router, twilio_inbound, invitations, business_invitations, applications, badges as badges_router, events as events_router, website_quotes
 import os
 from dotenv import load_dotenv
 from utils.sentry_config import init_sentry
@@ -43,6 +43,7 @@ app.add_middleware(
 app.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
 app.include_router(public.router, tags=["Public"])
 app.include_router(leads.router, prefix="/leads", tags=["Leads"])
+app.include_router(website_quotes.router, prefix="/website-quotes", tags=["Website Quotes"])
 app.include_router(business.router, prefix="/business", tags=["Business"])
 app.include_router(referrer.router, prefix="/referrer", tags=["Referrer"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])

@@ -236,6 +236,75 @@ async def send_business_enquiry_teaser(email: str, business_name: str, business_
     await _send(email, f"New enquiry in {suburb} ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â claim your profile to respond", _wrap(body, f"You received this because {business_name} is listed on traderefer.au. To opt out reply to this email."))
 
 
+async def send_business_website_quote(email: str, business_name: str, consumer_name: str, suburb: str, job_description: str):
+    first_name = _lead_first_name(consumer_name)
+    summary = _lead_summary(job_description)
+    body = f"""
+      <div style="background:#ea580c;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
+        <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">New free website quote</h1>
+        <p style="color:#fed7aa;margin:8px 0 0;font-size:15px">A customer in {suburb} is waiting for your response</p>
+      </div>
+      <p style="font-size:16px;color:#333">Hi {business_name},</p>
+      <p style="font-size:16px;color:#333">You have received a <strong>free website quote</strong> on traderefer.au. There is no unlock fee for this enquiry.</p>
+      <div style="background:#f9f9f9;border-radius:8px;padding:16px;margin:20px 0">
+        <p style="margin:0 0 8px;color:#666;font-size:14px">Customer: <strong>{first_name}</strong> &nbsp;|&nbsp; Location: <strong>{suburb}</strong></p>
+        <p style="margin:0;color:#666;font-size:14px">Request summary: <strong>{summary}</strong></p>
+      </div>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/dashboard/business/leads" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:900;font-size:16px">Open Leads Dashboard &rarr;</a>
+      </div>
+    """
+    await _send(email, f"Free website quote in {suburb} — respond now", _wrap(body, "You're receiving this as a claimed business on traderefer.au."))
+
+
+async def send_consumer_quote_request_confirmation(email: str, consumer_name: str, match_count: int, trade_category: str, job_description: str, location: str):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Your quote request has been received</h1>
+      <p>Hi {consumer_name}, we’ve sent your request to up to <strong>{match_count} local providers</strong> for {trade_category} in <strong>{location}</strong>.</p>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0">
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Trade</td><td style="padding:8px">{trade_category}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Location</td><td style="padding:8px">{location}</td></tr>
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Job</td><td style="padding:8px">{job_description[:300]}</td></tr>
+      </table>
+      <p style="color:#666">Matched businesses may contact you directly by phone, SMS, or email.</p>
+    """
+    await _send(email, f"Your {trade_category} quote request has been received", _wrap(body))
+
+
+async def send_admin_quote_queue_alert(email: str, trade_category: str, location: str, job_description: str, urgency: str, claimed_count: int, target_count: int, request_id: str):
+    body = f"""
+      <h1 style="color:#ea580c;margin-top:0">Website quote needs admin review</h1>
+      <p>A website quote request could not be fully supplied with claimed businesses and has been placed into the admin allocation queue.</p>
+      <table style="width:100%;border-collapse:collapse;margin:16px 0">
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Trade</td><td style="padding:8px">{trade_category}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Location</td><td style="padding:8px">{location}</td></tr>
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Urgency</td><td style="padding:8px">{urgency}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Claimed matches</td><td style="padding:8px">{claimed_count} / {target_count}</td></tr>
+        <tr><td style="padding:8px;color:#666;font-weight:bold">Request ID</td><td style="padding:8px">{request_id}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;color:#666;font-weight:bold">Job</td><td style="padding:8px">{job_description[:400]}</td></tr>
+      </table>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{FRONTEND_URL}/admin" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:900;font-size:16px">Open Admin Console &rarr;</a>
+      </div>
+    """
+    await _send(email, f"Admin review needed: {trade_category} quote in {location}", _wrap(body))
+
+
+async def send_business_claimed_success(email: str, business_name: str, dashboard_url: str):
+    body = f"""
+      <div style="background:#16a34a;padding:20px 24px;text-align:center;margin:-28px -24px 24px">
+        <h1 style="color:#fff;margin:0;font-size:24px;font-weight:900">Your profile is live!</h1>
+        <p style="color:#fff;margin:8px 0 0;font-size:15px">You can now view and respond to leads in your dashboard.</p>
+      </div>
+      <p style="font-size:16px;color:#333">Hi {business_name},</p>
+      <p style="font-size:16px;color:#333">Your business profile is now live on TradeRefer. You can view and respond to leads in your dashboard.</p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="{dashboard_url}" style="display:inline-block;background:#ea580c;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:900;font-size:16px">Open Dashboard &rarr;</a>
+      </div>
+    """
+    await _send(email, f"Your profile is live on TradeRefer", _wrap(body))
+
+
 async def send_invitation_email(to_email: str, invitee_name: str, inviter_name: str, invitation_type: str, signup_url: str):
     if invitation_type == "business":
         headline = f"{inviter_name} invited you to get more leads ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â for free"

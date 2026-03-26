@@ -138,6 +138,7 @@ export default async function Top10CityPage({ params }: PageProps) {
     const licenceText = STATE_LICENSING[tradeName]?.[stateUpper] || null;
     const howToChoose = HOW_TO_CHOOSE[tradeName] || HOW_TO_CHOOSE["Electrician"];
     const tradeSlug = tradeToSlug(tradeName);
+    const quotesHref = `/quotes?trade=${encodeURIComponent(tradeName)}&city=${encodeURIComponent(cityName)}&state=${state.toUpperCase()}&source=${encodeURIComponent(`/top/${trade}/${state}/${city}`)}`;
 
     const breadcrumbJsonLd = {
         "@context": "https://schema.org",
@@ -242,6 +243,7 @@ export default async function Top10CityPage({ params }: PageProps) {
                         <div className="flex flex-wrap gap-4">
                             <Link href="#ranked-list" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>See the Ranked List</Link>
                             <Link href={`/local/${state}/${city}/${tradeSlug}`} className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl border border-white/20 transition-colors inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>All {tradeName} in {cityName}</Link>
+                            <Link href={quotesHref} className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>Get 3 Free Quotes</Link>
                         </div>
                     </div>
                 </div>
@@ -282,7 +284,7 @@ export default async function Top10CityPage({ params }: PageProps) {
                                 Top {businesses.length} {tradeName} in {cityName} — Ranked by Customer Rating
                             </h2>
                             <p className="text-zinc-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                                Ranked by verified Google rating, highest first. All businesses are ABN-verified and listed on TradeRefer.
+                                Compare the highest-rated {tradeName.toLowerCase()} in {cityName}, {stateName}. All businesses listed are ABN-verified and surfaced without paid placement.
                             </p>
                             <div className="space-y-5">
                                 {businesses.map((biz: any, index: number) => (
@@ -334,6 +336,7 @@ export default async function Top10CityPage({ params }: PageProps) {
                                                 <div className="flex flex-wrap gap-3">
                                                     <Link href={`/b/${biz.slug}`} className="bg-[#1A1A1A] hover:bg-black text-white font-black px-6 rounded-xl transition-colors inline-flex items-center justify-center" style={{ minHeight: '48px', fontSize: '16px' }}>View Profile</Link>
                                                     <Link href={`/b/${biz.slug}#enquiry-form`} className="border-2 border-zinc-200 hover:bg-zinc-50 font-black px-6 rounded-xl transition-colors inline-flex items-center justify-center" style={{ minHeight: '48px', fontSize: '16px' }}>Get Quote</Link>
+                                                    <Link href={quotesHref} className="border-2 border-orange-200 text-[#FF6600] hover:bg-orange-50 font-black px-6 rounded-xl transition-colors inline-flex items-center justify-center" style={{ minHeight: '48px', fontSize: '16px' }}>Get 3 Quotes</Link>
                                                 </div>
                                             </div>
                                         </div>

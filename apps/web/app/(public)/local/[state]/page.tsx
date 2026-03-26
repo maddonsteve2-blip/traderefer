@@ -8,6 +8,8 @@ import { Metadata } from "next";
 
 import { sql } from "@/lib/db";
 
+import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
+
 import { STATE_LICENSING, STATE_AUTHORITY_LINKS } from "@/lib/constants";
 
 
@@ -22,15 +24,23 @@ interface PageProps {
 
 
 
-function formatSlug(slug: string) {
+type CityCountRow = {
 
-    if (!slug) return "";
+    city: string;
 
-    try { slug = decodeURIComponent(slug); } catch { /* already decoded */ }
+    count: string | number;
 
-    return slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+};
 
-}
+
+
+type TradeCountRow = {
+
+    trade: string;
+
+    count: string | number;
+
+};
 
 
 
@@ -70,7 +80,7 @@ async function getCitiesInState(state: string): Promise<{ city: string; count: n
 
     try {
 
-        const results = await sql`
+        const results = await sql<CityCountRow[]>`
 
             SELECT lr.parent_city_name AS city, COUNT(*) as count
 
@@ -92,7 +102,7 @@ async function getCitiesInState(state: string): Promise<{ city: string; count: n
 
         `;
 
-        return results.map((r: any) => ({ city: r.city, count: parseInt(r.count, 10) }));
+        return results.map((r) => ({ city: r.city, count: parseInt(String(r.count), 10) }));
 
     } catch { return []; }
 
@@ -124,7 +134,7 @@ async function getTopTradesForState(state: string): Promise<{ trade: string; cou
 
     try {
 
-        const results = await sql`
+        const results = await sql<TradeCountRow[]>`
 
             SELECT trade_category as trade, COUNT(*) as count
 
@@ -142,7 +152,7 @@ async function getTopTradesForState(state: string): Promise<{ trade: string; cou
 
         `;
 
-        return results.map((r: any) => ({ trade: r.trade, count: parseInt(r.count, 10) }));
+        return results.map((r) => ({ trade: r.trade, count: parseInt(String(r.count), 10) }));
 
     } catch { return []; }
 
@@ -302,6 +312,24 @@ export default async function StateDirectoryPage({ params, searchParams }: PageP
 
                         </p>
 
+                        <div className="flex flex-wrap gap-4 mb-6">
+
+                            <Link href={`/quotes?state=${stateUpper}&source=${encodeURIComponent(`/local/${state}`)}`} className="inline-flex items-center justify-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}>
+
+                                Get 3 Free Quotes
+
+                                <ChevronRight className="w-4 h-4" />
+
+                            </Link>
+
+                            <Link href="/categories" className="inline-flex items-center justify-center bg-white border-2 border-gray-200 hover:border-[#FF6600] rounded-xl px-5 py-3 font-bold text-[#1A1A1A] hover:text-[#FF6600] transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}>
+
+                                Browse by Trade
+
+                            </Link>
+
+                        </div>
+
                         {authorityLink && (
 
                             <a href={authorityLink.url} target="_blank" rel="noopener noreferrer"
@@ -333,6 +361,26 @@ export default async function StateDirectoryPage({ params, searchParams }: PageP
                 <div className="container mx-auto px-4">
 
                     <div className="max-w-5xl mx-auto space-y-16">
+
+
+
+                        <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
+
+                            <div className="max-w-3xl mb-8">
+
+                                <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: '32px' }}>Get 3 Free Quotes in {stateName}</h2>
+
+                                <p className="text-gray-500" style={{ fontSize: '20px', lineHeight: 1.7 }}>
+
+                                    Request quotes once and we&apos;ll match your job with up to 3 verified local businesses across {stateName}.
+
+                                </p>
+
+                            </div>
+
+                            <PublicMultiQuoteForm initialState={stateUpper} initialSourcePage={`/local/${state}`} />
+
+                        </section>
 
 
 

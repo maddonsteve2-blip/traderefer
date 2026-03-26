@@ -24,6 +24,7 @@ import {
     ImagePlus,
     Globe,
     Database,
+    Mail,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -66,6 +67,7 @@ const ADMIN_NAV: NavGroup[] = [
         title: "Analytics",
         items: [
             { label: "SEO & Search", href: "/admin/seo", matchPath: "/admin/seo", icon: Search },
+            { label: "Outreach", href: "/admin/outreach", matchPath: "/admin/outreach", icon: Mail },
         ],
     },
     {

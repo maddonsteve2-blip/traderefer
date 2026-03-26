@@ -544,6 +544,13 @@ export default async function PublicProfilePage({
     const localSuburbSlug = getLocalSuburbSegment(business);
     const localTradeSlug = slugifySegment(String(business.trade_category || ""));
     const cityLabel = String(business.city || business.suburb || "").trim();
+    const compareQuoteParams = new URLSearchParams();
+    if (business.trade_category) compareQuoteParams.set("trade", String(business.trade_category));
+    if (business.state) compareQuoteParams.set("state", String(business.state).toUpperCase());
+    if (business.city) compareQuoteParams.set("city", String(business.city));
+    if (business.suburb) compareQuoteParams.set("suburb", String(business.suburb));
+    compareQuoteParams.set("source", `/b/${canonicalSlug}`);
+    const compareQuotesHref = `/quotes?${compareQuoteParams.toString()}`;
     const visibleTrustDetails = [
         hasYearsExperience ? `${business.years_experience} years of experience` : "",
         business.licence_number ? `licence ${business.licence_number}` : "",
@@ -793,6 +800,7 @@ export default async function PublicProfilePage({
                                     <Link data-claim-banner href={`/claim/${slug}`} className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 transition-all active:scale-95 flex items-center justify-center mb-2" style={{ minHeight: '64px', fontSize: '18px' }}>Claim This Business</Link>
                                 )}
                                 <Link href="#enquiry-form" className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none shadow-md shadow-orange-200 transition-all active:scale-95 flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>Get a Free Quote</Link>
+                                <Link href={compareQuotesHref} className="w-full bg-white border-2 border-orange-200 text-[#FF6600] hover:bg-orange-50 rounded-xl font-black shadow-sm flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '16px' }}>Compare 3 Quotes <ArrowRight className="w-4 h-4" /></Link>
                                 <Link href={`/dashboard/referrer/refer/${slug}`} className="w-full bg-white border-2 border-zinc-200 text-zinc-700 hover:bg-zinc-50 rounded-xl font-black shadow-sm flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '16px' }}>Refer &amp; Earn <ArrowRight className="w-4 h-4" /></Link>
                             </div>
 

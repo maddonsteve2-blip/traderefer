@@ -1,85 +1,61 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, AlertCircle, User, Phone, Mail, MapPin, MessageSquare, Clock, Zap, Loader2, ArrowRight } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
-import { trackReferralSubmitted } from "@/lib/posthog-events";
+import { AlertCircle, ArrowRight, CheckCircle2, Clock, Loader2, Mail, MapPin, MessageSquare, Phone, User, Zap } from "lucide-react";
+import { TRADE_CATEGORIES } from "@/lib/constants";
 
-interface LeadFormProps {
-    businessName: string;
-    businessId: string;
-    referralCode?: string;
-}
+type PublicMultiQuoteFormProps = {
+    initialTradeCategory?: string;
+    initialState?: string;
+    initialSuburb?: string;
+    initialCity?: string;
+    initialSourcePage?: string;
+};
 
-export function LeadForm({ businessName, businessId, referralCode }: LeadFormProps) {
+export function PublicMultiQuoteForm({
+    initialTradeCategory = "",
+    initialState = "",
+    initialSuburb = "",
+    initialCity = "",
+    initialSourcePage = "/quotes",
+}: PublicMultiQuoteFormProps) {
     const router = useRouter();
-    const { isSignedIn, userId, getToken } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState(false);
-    const [isOwner, setIsOwner] = useState(false);
-
-    // Check if current user owns this business
-    useEffect(() => {
-        if (!isSignedIn || !userId) {
-            setIsOwner(false);
-            return;
-        }
-        (async () => {
-            try {
-                const token = await getToken();
-                if (!token) {
-                    console.warn("No auth token available");
-                    setIsOwner(false);
-                    return;
-                }
-                const res = await fetch(`/api/backend/business/me`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    const biz = await res.json();
-                    setIsOwner(biz.id === businessId);
-                } else {
-                    console.warn("Business ownership check failed:", res.status, res.statusText);
-                    setIsOwner(false);
-                }
-            } catch (err) {
-                console.error("Business ownership check error:", err);
-                // If check fails, assume not owner
-                setIsOwner(false);
-            }
-        })();
-    }, [isSignedIn, userId, businessId, getToken]);
-
+    const [addressValue, setAddressValue] = useState("");
+    const [suburbValue, setSuburbValue] = useState(initialSuburb);
+    const [stateValue, setStateValue] = useState(initialState);
+    const [cityValue] = useState(initialCity);
     const [formData, setFormData] = useState({
+        trade_category: initialTradeCategory,
         consumer_name: "",
         consumer_phone: "",
         consumer_email: "",
-        consumer_suburb: "",
+        consumer_suburb: initialSuburb,
         consumer_address: "",
         job_description: "",
-        lead_urgency: "warm"
+        lead_urgency: "warm",
     });
-    const [addressValue, setAddressValue] = useState("");
-    const [suburbValue, setSuburbValue] = useState("");
-    const [stateValue, setStateValue] = useState("");
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    const tradeLabel = useMemo(() => formData.trade_category || "local tradies", [formData.trade_category]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     const handleAddressSelect = (address: string, suburb: string, state: string) => {
         setAddressValue(address);
         setSuburbValue(suburb);
         setStateValue(state);
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
             consumer_address: address,
-            consumer_suburb: suburb
+            consumer_suburb: suburb,
         }));
     };
 
@@ -89,55 +65,32 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
         setError(null);
 
         try {
-            const isReferralLead = Boolean(referralCode);
-            const response = await fetch(isReferralLead ? `/api/backend/leads/` : `/api/backend/website-quotes/submit`, {
-                method: 'POST',
+            const response = await fetch("/api/backend/website-quotes/submit", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    business_id: businessId,
-                    ...(isReferralLead ? { referral_code: referralCode } : {
-                        source_page: typeof window !== 'undefined' ? window.location.pathname : '',
-                        consumer_state: stateValue,
-                        target_match_count: 1,
-                    }),
                     ...formData,
+                    trade_category: formData.trade_category,
+                    consumer_state: stateValue,
+                    consumer_city: cityValue,
+                    source_page: typeof window !== "undefined" ? window.location.pathname + window.location.search : initialSourcePage,
+                    target_match_count: 3,
                 }),
             });
 
             if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.detail || "Failed to send enquiry");
-            }
-
-            const data = await response.json();
-
-            if (isReferralLead) {
-                trackReferralSubmitted({
-                    referralId: data.id,
-                    tradeCategory: data.trade_type || 'unknown',
-                    suburb: formData.consumer_suburb,
-                    state: stateValue || 'unknown',
-                    jobValueEstimate: undefined,
-                    matchedBusinesses: 1,
-                    urgency: formData.lead_urgency === 'hot' ? 'emergency' : formData.lead_urgency === 'warm' ? 'standard' : 'planning',
-                    sourcePage: typeof window !== 'undefined' ? window.location.pathname : '',
-                });
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.detail || "Failed to request quotes");
             }
 
             setSubmitSuccess(true);
             setIsLoading(false);
-
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            if (!isReferralLead || isOwner) {
-                router.push("/leads/success");
-            } else {
-                router.push(`/leads/verify?id=${data.id}`);
-            }
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            router.push("/leads/success");
         } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : "Failed to send enquiry");
+            setError(err instanceof Error ? err.message : "Failed to request quotes");
             setIsLoading(false);
         }
     };
@@ -149,8 +102,8 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                     <CheckCircle2 className="w-6 h-6 text-orange-600" />
                 </div>
                 <div>
-                    <div className="text-lg font-black text-orange-950 leading-tight">Free Enquiry / Quote</div>
-                    <div className="text-xs md:text-sm text-orange-800/70 font-bold">No obligation, 100% free to send.</div>
+                    <div className="text-lg font-black text-orange-950 leading-tight">Get up to 3 free quotes</div>
+                    <div className="text-xs md:text-sm text-orange-800/70 font-bold">We’ll match your request with up to 3 local businesses. No obligation.</div>
                 </div>
             </div>
 
@@ -165,13 +118,32 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                 <div className="bg-green-50 border border-green-200 rounded-[24px] p-6 flex items-center gap-4 text-green-800 shadow-sm animate-in zoom-in-95">
                     <CheckCircle2 className="w-8 h-8 shrink-0" />
                     <div>
-                        <p className="text-lg font-black leading-none mb-1">Enquiry sent!</p>
-                        <p className="text-sm font-bold opacity-80">Check your email for confirmation...</p>
+                        <p className="text-lg font-black leading-none mb-1">Quote request sent!</p>
+                        <p className="text-sm font-bold opacity-80">We’ve started matching your job with local businesses.</p>
                     </div>
                 </div>
             )}
 
             <form className="space-y-5 md:space-y-6" onSubmit={handleSubmit}>
+                <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-[10px] md:text-xs font-black text-zinc-400 uppercase tracking-[0.2em] ml-1">
+                        <Zap className="w-3.5 h-3.5 text-orange-500" />
+                        Trade Needed
+                    </label>
+                    <select
+                        required
+                        name="trade_category"
+                        value={formData.trade_category}
+                        onChange={handleChange}
+                        className="w-full h-14 md:h-16 px-5 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-medium text-lg text-zinc-900 shadow-sm appearance-none"
+                    >
+                        <option value="" disabled>Select a trade</option>
+                        {TRADE_CATEGORIES.map((trade) => (
+                            <option key={trade} value={trade}>{trade}</option>
+                        ))}
+                    </select>
+                </div>
+
                 <div className="space-y-2">
                     <label className="flex items-center gap-2 text-[10px] md:text-xs font-black text-zinc-400 uppercase tracking-[0.2em] ml-1">
                         <User className="w-3.5 h-3.5 text-orange-500" />
@@ -231,7 +203,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                         suburbValue={suburbValue}
                         stateValue={stateValue}
                         onAddressSelect={handleAddressSelect}
-                        className="w-full h-14 md:h-16 px-5 bg-zinc-50 border border-zinc-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-lg text-zinc-900 placeholder:text-zinc-300 shadow-sm"
+                        className="w-full h-14 md:h-16 px-5 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-medium text-lg text-zinc-900 placeholder:text-zinc-300 shadow-sm"
                         placeholder="Type property address..."
                     />
                 </div>
@@ -248,7 +220,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                         value={formData.job_description}
                         onChange={handleChange}
                         className="w-full px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-[24px] focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all font-bold text-lg text-zinc-900 placeholder:text-zinc-300 shadow-sm resize-none leading-relaxed"
-                        placeholder="Describe the job you need help with..."
+                        placeholder={`Tell us what you need help with from ${tradeLabel} businesses...`}
                     />
                 </div>
 
@@ -259,20 +231,20 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
                     </label>
                     <div className="grid grid-cols-3 gap-3">
                         {[
-                            { value: "hot", label: "Urgent", icon: Zap, color: "border-orange-500 bg-orange-500 text-white shadow-orange-500/20" },
-                            { value: "warm", label: "Soon", icon: Clock, color: "border-orange-500 bg-orange-500 text-white shadow-orange-500/20" },
-                            { value: "cold", label: "Later", icon: MessageSquare, color: "border-zinc-200 bg-zinc-100 text-zinc-900 shadow-transparent" },
-                        ].map(opt => (
+                            { value: "hot", label: "Urgent", color: "border-orange-500 bg-orange-500 text-white shadow-orange-500/20" },
+                            { value: "warm", label: "Soon", color: "border-orange-500 bg-orange-500 text-white shadow-orange-500/20" },
+                            { value: "cold", label: "Later", color: "border-orange-500 bg-orange-500 text-white shadow-orange-500/20" },
+                        ].map((opt) => (
                             <button
                                 key={opt.value}
                                 type="button"
-                                onClick={() => setFormData(prev => ({ ...prev, lead_urgency: opt.value }))}
+                                onClick={() => setFormData((prev) => ({ ...prev, lead_urgency: opt.value }))}
                                 className={`h-12 md:h-14 rounded-2xl border-2 text-center transition-all flex items-center justify-center p-2 active:scale-95 ${formData.lead_urgency === opt.value
                                     ? opt.color + " shadow-lg -translate-y-0.5"
                                     : "border-zinc-100 bg-zinc-50 text-zinc-400 hover:border-zinc-300 hover:bg-white"
                                     }`}
                             >
-                                <span className={`text-[11px] md:text-xs font-black uppercase tracking-widest ${formData.lead_urgency === opt.value ? 'text-white' : 'text-zinc-500'}`}>{opt.label}</span>
+                                <span className={`text-[11px] md:text-xs font-black uppercase tracking-widest ${formData.lead_urgency === opt.value ? "text-white" : "text-zinc-500"}`}>{opt.label}</span>
                             </button>
                         ))}
                     </div>
@@ -280,25 +252,26 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
 
                 <div className="flex items-start gap-4 p-5 bg-zinc-50 rounded-[20px] border border-zinc-100">
                     <div className="pt-0.5">
-                        <input required type="checkbox" id="consent" className="w-5 h-5 rounded-lg border-2 border-zinc-200 text-orange-500 focus:ring-orange-500/10 cursor-pointer transition-all" />
+                        <input required type="checkbox" id="quotes-consent" className="w-5 h-5 rounded-lg border-2 border-zinc-200 text-orange-500 focus:ring-orange-500/10 cursor-pointer transition-all" />
                     </div>
-                    <label htmlFor="consent" className="text-xs md:text-sm text-zinc-500 font-bold leading-relaxed cursor-pointer select-none">
-                        I agree to share my details with <span className="text-zinc-900">{businessName}</span> for this enquiry. <Link href="/privacy" className="text-orange-500 hover:text-orange-600 transition-all font-black">Privacy Policy</Link>
+                    <label htmlFor="quotes-consent" className="text-xs md:text-sm text-zinc-500 font-bold leading-relaxed cursor-pointer select-none">
+                        I agree to share my details with up to 3 matching businesses for this quote request. <Link href="/privacy" className="text-orange-500 hover:text-orange-600 transition-all font-black">Privacy Policy</Link>
                     </label>
                 </div>
 
                 <Button
+                    type="submit"
                     disabled={isLoading}
                     className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-[24px] h-16 md:h-20 text-lg md:text-2xl font-black shadow-2xl shadow-orange-500/20 transition-all active:scale-95 group mt-4"
                 >
                     {isLoading ? (
                         <div className="flex items-center gap-3">
                             <Loader2 className="w-6 h-6 animate-spin" />
-                            Processing...
+                            Finding quotes...
                         </div>
                     ) : (
                         <div className="flex items-center justify-center gap-3">
-                            Submit Enquiry
+                            Get 3 Free Quotes
                             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                         </div>
                     )}

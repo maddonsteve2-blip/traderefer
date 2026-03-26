@@ -2,6 +2,7 @@ import { sql } from "@/lib/db";
 import { Metadata } from "next";
 import Link from "next/link";
 import { JOB_TYPES, jobToSlug } from "@/lib/constants";
+import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 import { ChevronRight, Wrench, Users, ArrowRight, Search } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -84,6 +85,15 @@ export default async function CategoriesPage() {
                     <p className="text-zinc-400 max-w-2xl mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                         Browse {totalTrades} trade categories across Australia. Find verified, ABN-checked local tradies with real community ratings.
                     </p>
+                    <div className="flex flex-wrap gap-4 mb-8">
+                        <Link href="/quotes?source=%2Fcategories" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '18px' }}>
+                            Get 3 Free Quotes
+                            <ArrowRight className="w-5 h-5" />
+                        </Link>
+                        <Link href="/local" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>
+                            Browse by Location
+                        </Link>
+                    </div>
                     <div className="flex flex-wrap gap-6 text-white font-bold" style={{ fontSize: '16px' }}>
                         <span className="flex items-center gap-2"><Users className="w-4 h-4 text-[#FF6600]" />{totalBusinesses.toLocaleString()} verified businesses</span>
                         <span className="flex items-center gap-2"><Wrench className="w-4 h-4 text-[#FF6600]" />{totalTrades} trade categories</span>
@@ -107,6 +117,8 @@ export default async function CategoriesPage() {
                                     const jobs = JOB_TYPES[trade] || [];
                                     const primaryHref = trade === "Plumbing"
                                         ? "/trades/plumbing"
+                                        : trade === "Electrical"
+                                        ? "/trades/electrical"
                                         : `/businesses?category=${encodeURIComponent(trade)}`;
                                     return (
                                         <div
@@ -180,16 +192,27 @@ export default async function CategoriesPage() {
                         </div>
                     </section>
 
+                    <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10 mb-16">
+                        <div className="max-w-3xl mb-8">
+                            <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: '32px' }}>Get 3 Free Quotes</h2>
+                            <p className="text-zinc-500" style={{ fontSize: '20px', lineHeight: 1.7 }}>
+                                Tell us what trade you need and where the job is located. We&apos;ll match your request with up to 3 verified local businesses.
+                            </p>
+                        </div>
+                        <PublicMultiQuoteForm initialSourcePage="/categories" />
+                    </section>
+
                     {/* Browse by Location CTA */}
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-10 text-white text-center">
-                        <h2 className="font-black mb-4 text-white" style={{ fontSize: '32px' }}>Browse by Location</h2>
-                        <p className="text-zinc-400 mb-8 max-w-lg mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find trades specifically in your suburb, city or state. All businesses are ABN-verified and ranked by real community referrals.</p>
+                        <h2 className="font-black mb-4 text-white" style={{ fontSize: '32px' }}>Need quotes instead of browsing?</h2>
+                        <p className="text-zinc-400 mb-8 max-w-lg mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>Request up to 3 free quotes from verified local businesses, or keep browsing by suburb, city, or state.</p>
                         <div className="flex flex-wrap gap-4 justify-center">
-                            <Link href="/locations" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>
-                                Browse All Locations
+                            <Link href="/quotes?source=%2Fcategories" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: '64px', fontSize: '18px' }}>
+                                Get 3 Free Quotes
+                                <ArrowRight className="w-5 h-5" />
                             </Link>
                             <Link href="/local" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: '64px', fontSize: '18px' }}>
-                                State Directory
+                                Browse by Location
                             </Link>
                         </div>
                     </section>

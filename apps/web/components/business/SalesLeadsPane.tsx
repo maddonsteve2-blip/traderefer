@@ -4,7 +4,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState, useCallback } from "react";
 import {
     Target, MapPin, Phone, Mail,
-    Unlock, Loader2, ChevronRight, User, ArrowLeft, Search,
+    Unlock, Loader2, User, ArrowLeft, Search,
     Lock as LockIcon
 } from "lucide-react";
 import { PinConfirmationModal } from "@/components/dashboard/PinConfirmationModal";
@@ -28,6 +28,8 @@ interface Lead {
     email?: string;
     address?: string;
     referrer_name?: string;
+    source?: string;
+    is_free_website_quote?: boolean;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -44,6 +46,7 @@ const STATUS_COLORS: Record<string, string> = {
     MEETING_VERIFIED: "bg-emerald-100 text-emerald-700",
     VALID_LEAD: "bg-emerald-100 text-emerald-700",
     PAYMENT_PENDING_CONFIRMATION: "bg-amber-100 text-amber-700",
+    WEBSITE_QUOTE: "bg-blue-100 text-blue-700",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -62,6 +65,7 @@ const STATUS_LABELS: Record<string, string> = {
     PAYMENT_PENDING_CONFIRMATION: "Awaiting Confirmation",
     EXPIRED: "Expired",
     DISPUTED: "Under Review",
+    WEBSITE_QUOTE: "Website Quote",
 };
 
 function formatStatus(status: string): string {
@@ -113,7 +117,15 @@ export function SalesLeadsPane() {
         setLoading(false);
     }, [getToken, apiUrl]);
 
-    useEffect(() => { if (isLoaded) fetchLeads(); }, [isLoaded, fetchLeads]);
+    useEffect(() => {
+        if (!isLoaded) return;
+
+        const timer = setTimeout(() => {
+            void fetchLeads();
+        }, 0);
+
+        return () => clearTimeout(timer);
+    }, [isLoaded, fetchLeads]);
 
     // SSE: refresh leads when new lead arrives or one gets unlocked
     useLiveEvent("lead_new", () => { fetchLeads(); });
@@ -142,7 +154,7 @@ export function SalesLeadsPane() {
 
     const selected = leads.find(l => l.id === selectedId) ?? null;
     const isUnlocked = (status: string) =>
-        ["UNLOCKED", "ON_THE_WAY", "CONFIRMED", "MEETING_VERIFIED", "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS"].includes(status.toUpperCase());
+        ["UNLOCKED", "ON_THE_WAY", "CONFIRMED", "MEETING_VERIFIED", "VALID_LEAD", "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS", "WEBSITE_QUOTE"].includes(status.toUpperCase());
 
     return (
         <div id="tour-biz-leads-table" className="flex flex-1 min-h-0 overflow-hidden">
@@ -199,6 +211,9 @@ export function SalesLeadsPane() {
                                             <p className={`font-bold truncate text-[16px] ${unlocked ? 'text-zinc-900' : 'text-zinc-400 italic'}`}>
                                                 {unlocked ? lead.customer_name : 'Locked Lead'}
                                             </p>
+                                            {lead.status === "WEBSITE_QUOTE" && (
+                                                <p className="text-[11px] font-black uppercase tracking-widest text-blue-600 mt-0.5">Free website quote</p>
+                                            )}
                                             <div className="flex items-center justify-between gap-1.5 mt-1">
                                                 <p className="text-zinc-500 font-medium truncate flex items-center gap-1 text-[13px]">
                                                     <MapPin className="w-3.5 h-3.5" />{lead.suburb}
@@ -234,10 +249,10 @@ export function SalesLeadsPane() {
                         iconColor="text-zinc-400"
                         iconBg="bg-zinc-100"
                         title="Select a lead to view details"
-                        description="Leads marked 'Ready to Unlock' contain a customer's contact details. Top up your wallet to claim them — you only pay when you unlock."
+                        description="Referral leads still use paid unlocks. Website quotes arrive free and show their contact details immediately."
                         primaryCTA={{ label: 'Top up wallet', href: '/dashboard/business/wallet' }}
                         secondaryCTA={{ label: 'Invite a referrer', href: '/dashboard/business/force?tab=partners' }}
-                        tip="Leads expire after 7 days — unlock them before they're gone."
+                        tip="Website quotes are free. Referral leads still expire after 7 days if left locked."
                         ghostRows={[
                             { widths: ['w-32', 'w-48'] },
                             { widths: ['w-24', 'w-36'] },
@@ -287,6 +302,12 @@ export function SalesLeadsPane() {
                         {isUnlocked(selected.status) ? (
                             <div className="bg-white rounded-2xl border border-zinc-100 p-6 space-y-4">
                                 <p className="font-bold text-zinc-500 uppercase tracking-wider mb-1 text-base">Contact Details</p>
+                                {selected.status === "WEBSITE_QUOTE" && (
+                                    <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                                        <p className="font-black text-blue-800 text-lg">Free website quote</p>
+                                        <p className="text-blue-700 font-medium mt-1 text-base">This enquiry came through the website and does not require any unlock payment.</p>
+                                    </div>
+                                )}
                                 {selected.phone && (
                                     <a href={`tel:${selected.phone}`} className="flex items-center gap-4 text-zinc-700 hover:text-orange-600 transition-colors">
                                         <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">

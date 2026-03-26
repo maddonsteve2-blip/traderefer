@@ -5,14 +5,14 @@ import { Loader } from "@googlemaps/js-api-loader";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
-const loader = new Loader({ apiKey: API_KEY, version: "weekly" });
+const loader = new Loader({ apiKey: API_KEY, version: "weekly", libraries: ["places"] });
 
-let _placesLib: any = null;
-async function getPlacesLib(): Promise<any> {
-    if (_placesLib) return _placesLib;
-    _placesLib = await loader.importLibrary("places");
-    return _placesLib;
-}
+type SuggestionItem = {
+    fullText: string;
+    mainText: string;
+    placeId: string;
+    secondaryText: string;
+};
 
 export function AddressAutocomplete({
     addressValue = "",
@@ -29,64 +29,109 @@ export function AddressAutocomplete({
     className?: string;
     placeholder?: string;
 }) {
-    const [inputValue, setInputValue] = useState("");
-    const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [inputValue, setInputValue] = useState(() => {
+        if (addressValue && suburbValue && stateValue) {
+            return `${addressValue}, ${suburbValue} ${stateValue}`;
+        }
+        if (addressValue && suburbValue) {
+            return `${addressValue}, ${suburbValue}`;
+        }
+        if (addressValue) {
+            return addressValue;
+        }
+        if (suburbValue) {
+            return suburbValue;
+        }
+        return "";
+    });
+    const [suggestions, setSuggestions] = useState<SuggestionItem[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [ready, setReady] = useState(false);
     const [loadError, setLoadError] = useState(false);
     const [fetchError, setFetchError] = useState(false);
     const [manualMode, setManualMode] = useState(false);
-    const sessionTokenRef = useRef<any>(null);
+    const mapsRef = useRef<typeof google | null>(null);
+    const serviceRef = useRef<google.maps.places.AutocompleteService | null>(null);
+    const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
+    const placesContainerRef = useRef<HTMLDivElement | null>(null);
+    const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
     const onSelectRef = useRef(onAddressSelect);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    onSelectRef.current = onAddressSelect;
 
-    // Load Places library on mount
     useEffect(() => {
-        getPlacesLib()
-            .then((lib: any) => {
-                sessionTokenRef.current = new lib.AutocompleteSessionToken();
+        onSelectRef.current = onAddressSelect;
+    }, [onAddressSelect]);
+
+    useEffect(() => {
+        let mounted = true;
+
+        loader.load()
+            .then((googleMaps) => {
+                if (!mounted || !placesContainerRef.current) return;
+                mapsRef.current = googleMaps;
+                serviceRef.current = new googleMaps.maps.places.AutocompleteService();
+                placesServiceRef.current = new googleMaps.maps.places.PlacesService(placesContainerRef.current);
+                sessionTokenRef.current = new googleMaps.maps.places.AutocompleteSessionToken();
                 setReady(true);
             })
             .catch(() => setLoadError(true));
+
+        return () => {
+            mounted = false;
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
     }, []);
 
-    // Sync initial display value
-    useEffect(() => {
-        if (addressValue && suburbValue && stateValue) {
-            setInputValue(`${addressValue}, ${suburbValue} ${stateValue}`);
-        } else if (addressValue && suburbValue) {
-            setInputValue(`${addressValue}, ${suburbValue}`);
-        } else if (addressValue) {
-            setInputValue(addressValue);
-        } else if (suburbValue) {
-            setInputValue(suburbValue);
-        }
-    }, [addressValue, suburbValue, stateValue]);
-
     const fetchSuggestions = useCallback(async (input: string) => {
-        if (!input || input.length < 3) { setSuggestions([]); return; }
+        if (!input || input.length < 3) {
+            setSuggestions([]);
+            setShowDropdown(false);
+            setFetchError(false);
+            return;
+        }
+
+        if (!serviceRef.current) {
+            setFetchError(true);
+            return;
+        }
+
         try {
-            const lib = await getPlacesLib();
             if (!sessionTokenRef.current) {
-                sessionTokenRef.current = new lib.AutocompleteSessionToken();
+                const googleMaps = mapsRef.current;
+                if (!googleMaps) {
+                    setFetchError(true);
+                    return;
+                }
+                sessionTokenRef.current = new googleMaps.maps.places.AutocompleteSessionToken();
             }
-            const { suggestions: results } = await lib.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+
+            const response = await serviceRef.current.getPlacePredictions({
                 input,
+                componentRestrictions: { country: "au" },
                 sessionToken: sessionTokenRef.current,
-                includedRegionCodes: ["au"],
+                types: ["address"],
             });
+
+            const results = response.predictions || [];
+
             if (!results || results.length === 0) {
                 setFetchError(true);
             } else {
                 setFetchError(false);
             }
-            setSuggestions(results || []);
-            setShowDropdown(true);
+
+            setSuggestions(results.map((prediction) => ({
+                fullText: prediction.description,
+                mainText: prediction.structured_formatting.main_text,
+                placeId: prediction.place_id,
+                secondaryText: prediction.structured_formatting.secondary_text || "",
+            })));
+            setShowDropdown(results.length > 0);
         } catch (err) {
             console.error("Places autocomplete error:", err);
             setFetchError(true);
             setSuggestions([]);
+            setShowDropdown(false);
         }
     }, []);
 
@@ -97,20 +142,36 @@ export function AddressAutocomplete({
         debounceRef.current = setTimeout(() => fetchSuggestions(val), 200);
     };
 
-    const handleSelect = useCallback(async (suggestion: any) => {
+    const handleSelect = useCallback(async (suggestion: SuggestionItem) => {
         setShowDropdown(false);
         setSuggestions([]);
-        const displayText = suggestion.placePrediction?.text?.text || "";
+        const displayText = suggestion.fullText || "";
         setInputValue(displayText);
 
+        if (!placesServiceRef.current) {
+            setFetchError(true);
+            return;
+        }
+
         try {
-            const lib = await getPlacesLib();
-            const place = suggestion.placePrediction.toPlace();
-            await place.fetchFields({
-                fields: ["addressComponents", "formattedAddress", "displayName"],
+            const place = await new Promise<google.maps.places.PlaceResult>((resolve, reject) => {
+                placesServiceRef.current?.getDetails({
+                    placeId: suggestion.placeId,
+                    fields: ["address_components", "formatted_address", "name"],
+                    sessionToken: sessionTokenRef.current || undefined,
+                }, (result, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK && result) {
+                        resolve(result);
+                        return;
+                    }
+                    reject(new Error(status || "PLACE_DETAILS_FAILED"));
+                });
             });
-            // Refresh session token after selection
-            sessionTokenRef.current = new lib.AutocompleteSessionToken();
+
+            const googleMaps = mapsRef.current;
+            if (googleMaps) {
+                sessionTokenRef.current = new googleMaps.maps.places.AutocompleteSessionToken();
+            }
 
             let streetNumber = "";
             let route = "";
@@ -118,26 +179,27 @@ export function AddressAutocomplete({
             let adminArea = "VIC";
             let postcode = "";
 
-            for (const c of (place.addressComponents || [])) {
-                if (c.types.includes("street_number")) streetNumber = c.longText || "";
-                if (c.types.includes("route")) route = c.longText || "";
-                if (c.types.includes("locality")) locality = c.longText || "";
-                if (c.types.includes("administrative_area_level_1")) adminArea = c.shortText || "";
-                if (c.types.includes("postal_code")) postcode = c.longText || "";
+            for (const c of (place.address_components || [])) {
+                if (c.types.includes("street_number")) streetNumber = c.long_name || "";
+                if (c.types.includes("route")) route = c.long_name || "";
+                if (c.types.includes("locality")) locality = c.long_name || "";
+                if (c.types.includes("administrative_area_level_1")) adminArea = c.short_name || "";
+                if (c.types.includes("postal_code")) postcode = c.long_name || "";
             }
+
             if (!locality) {
-                const sub = (place.addressComponents || []).find(
-                    (c: any) => c.types.includes("sublocality") || c.types.includes("sublocality_level_1")
+                const sub = (place.address_components || []).find(
+                    (c) => c.types.includes("sublocality") || c.types.includes("sublocality_level_1")
                 );
-                if (sub) locality = sub.longText || "";
+                if (sub) locality = sub.long_name || "";
             }
 
             const address = `${streetNumber} ${route}`.trim();
-            const full = place.formattedAddress || displayText;
+            const full = place.formatted_address || displayText;
             setInputValue(full);
             onSelectRef.current(
-                address || place.displayName || full,
-                locality || address || place.displayName || "",
+                address || place.name || full,
+                locality || address || place.name || "",
                 adminArea,
                 postcode
             );
@@ -172,6 +234,7 @@ export function AddressAutocomplete({
 
     return (
         <div className="relative">
+            <div ref={placesContainerRef} className="hidden" />
             <input
                 type="text"
                 value={inputValue}
@@ -185,15 +248,15 @@ export function AddressAutocomplete({
             />
             {showDropdown && suggestions.length > 0 && (
                 <ul className="absolute z-50 w-full bg-white border border-zinc-200 rounded-xl shadow-lg mt-1 overflow-hidden">
-                    {suggestions.map((s: any, i: number) => (
+                    {suggestions.map((s, i) => (
                         <li
                             key={i}
                             onMouseDown={() => handleSelect(s)}
                             className="px-4 py-3 text-sm text-zinc-800 hover:bg-orange-50 hover:text-orange-700 cursor-pointer border-b border-zinc-50 last:border-0"
                         >
-                            <span className="font-medium">{s.placePrediction?.mainText?.text}</span>
-                            {s.placePrediction?.secondaryText?.text && (
-                                <span className="text-zinc-400 ml-1">{s.placePrediction.secondaryText.text}</span>
+                            <span className="font-medium">{s.mainText}</span>
+                            {s.secondaryText && (
+                                <span className="text-zinc-400 ml-1">{s.secondaryText}</span>
                             )}
                         </li>
                     ))}

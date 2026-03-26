@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 import { ChevronRight, Hammer, Lightbulb, Pipette as Pipe, Paintbrush, Wrench, Home, Truck, Trash2, Shovel, Scissors, Lock, Wind, Bug, PenTool, HardHat, Construction, LayoutGrid, Fence, MapPin, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -11,7 +12,16 @@ interface PageProps {
     searchParams: Promise<{ category?: string }>;
 }
 
-const TRADE_ICONS: Record<string, any> = {
+type TradeCountRow = {
+    trade: string;
+    count: string | number;
+};
+
+type SuburbRow = {
+    suburb: string;
+};
+
+const TRADE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
     "Plumbing": Pipe, "Plumber": Pipe,
     "Electrician": Lightbulb, "Electrical": Lightbulb,
     "Carpenter": Hammer, "Carpentry": Hammer,
@@ -93,7 +103,7 @@ async function getTradesWithCounts(state: string, city: string, suburb: string):
         const stateCode = state.toUpperCase();
         const cityName = formatSlug(city);
         const suburbName = formatSlug(suburb);
-        const results = await sql`
+        const results = await sql<TradeCountRow[]>`
             SELECT trade_category as trade, COUNT(*) as count
             FROM businesses
             WHERE status = 'active'
@@ -103,7 +113,7 @@ async function getTradesWithCounts(state: string, city: string, suburb: string):
             GROUP BY trade_category
             ORDER BY count DESC
         `;
-        return results.map((r: any) => ({ trade: r.trade, count: parseInt(r.count, 10) }));
+        return results.map((r) => ({ trade: r.trade, count: parseInt(String(r.count), 10) }));
     } catch { return []; }
 }
 
@@ -112,7 +122,7 @@ async function getNearbySuburbs(state: string, city: string, currentSuburb: stri
         const stateCode = state.toUpperCase();
         const cityName = formatSlug(city);
         const suburbName = formatSlug(currentSuburb);
-        const results = await sql`
+        const results = await sql<SuburbRow[]>`
             SELECT DISTINCT suburb FROM businesses
             WHERE status = 'active'
               AND UPPER(state) = ${stateCode}
@@ -122,7 +132,7 @@ async function getNearbySuburbs(state: string, city: string, currentSuburb: stri
             ORDER BY suburb ASC
             LIMIT 12
         `;
-        return results.map((r: any) => r.suburb).filter(Boolean);
+        return results.map((r) => r.suburb).filter(Boolean);
     } catch { return []; }
 }
 
@@ -132,6 +142,7 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
     const cityName = formatSlug(city);
     const suburbName = formatSlug(suburb);
     const stateUpper = state.toUpperCase();
+    const quoteHref = `/quotes?suburb=${encodeURIComponent(suburbName)}&city=${encodeURIComponent(cityName)}&state=${stateUpper}&source=${encodeURIComponent(`/local/${state}/${city}/${suburb}`)}`;
 
     // If URL has no postcode but we know it, 308 permanent redirect to postcode URL
     const { postcode: urlPostcode, suburb: bareSuburb } = parseSuburbSlug(suburb);
@@ -216,38 +227,27 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
                     </div>
                     <div className="max-w-4xl">
                         <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
-                            Best Trades in <span className="text-[#FF6600]">{suburbName}{postcode ? ` ${stateUpper} ${postcode}` : ''}</span>
+                            Best Trades in <span className="text-[#FF6600]">{suburbName}{postcode ? ` ${postcode}` : ''}</span>
                         </h1>
                         <p className="text-gray-600 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                            All businesses ABN-verified and ranked by real community referrals — not paid placement.
+                            {suburbStats.total > 0
+                                ? `${suburbStats.total.toLocaleString()} verified tradies across ${suburbStats.categories} trade categories in ${suburbName}, ${cityName}.`
+                                : `Find verified local trades in ${suburbName}, ${cityName}. Browse by trade category to compare experts near you.`
+                            }
                         </p>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── PAY ONLY WHEN YOU WIN BANNER ── */}
-            <div className="bg-gradient-to-r from-orange-50 via-white to-orange-50 border-b border-orange-100 py-4">
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                <ShieldCheck className="w-4 h-4 text-green-600" />
-                            </div>
-                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>No lead fees — ever</p>
+                        <div className="flex flex-wrap gap-4 mb-6">
+                            <Link href={quoteHref} className="inline-flex items-center justify-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}>
+                                Get 3 Free Quotes
+                                <ChevronRight className="w-4 h-4" />
+                            </Link>
+                            <Link href="/categories" className="inline-flex items-center justify-center bg-white border-2 border-gray-200 hover:border-[#FF6600] rounded-xl px-5 py-3 font-bold text-[#1A1A1A] hover:text-[#FF6600] transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}>
+                                Browse by Trade
+                            </Link>
                         </div>
-                        <div className="hidden sm:block w-1.5 h-1.5 bg-zinc-300 rounded-full" />
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <MapPin className="w-4 h-4 text-blue-600" />
-                            </div>
-                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>Pay only when you win the job</p>
-                        </div>
-                        <div className="hidden sm:block w-1.5 h-1.5 bg-zinc-300 rounded-full" />
-                        <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                                <ShieldCheck className="w-4 h-4 text-orange-600" />
-                            </div>
-                            <p className="font-black text-zinc-900" style={{ fontSize: '16px' }}>100% ABN-verified businesses</p>
+                        <div className="flex flex-wrap gap-4 text-[#1A1A1A] font-bold" style={{ fontSize: '16px' }}>
+                            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#FF6600]" />ABN-checked businesses</span>
+                            <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#FF6600]" />{cityName}, {stateUpper}</span>
+                            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#FF6600]" />Pay only when you win the job</span>
                         </div>
                     </div>
                 </div>
@@ -257,6 +257,16 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
             <div className="py-20">
                 <div className="container mx-auto px-4">
                     <div className="max-w-5xl mx-auto space-y-16">
+
+                        <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
+                            <div className="max-w-3xl mb-8">
+                                <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: '32px' }}>Get 3 Free Quotes in {suburbName}</h2>
+                                <p className="text-gray-500" style={{ fontSize: '20px', lineHeight: 1.7 }}>
+                                    Submit your job once and we&apos;ll match you with up to 3 verified local businesses in {suburbName}, {cityName}.
+                                </p>
+                            </div>
+                            <PublicMultiQuoteForm initialState={stateUpper} initialCity={cityName} initialSuburb={suburbName} initialSourcePage={`/local/${state}/${city}/${suburb}`} />
+                        </section>
 
                         {/* Trade category grid — oversized 120px icons */}
                         <section>

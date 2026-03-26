@@ -47,6 +47,7 @@ export default async function AdminDashboardPage() {
         { label: "Fill & Scrape Tools", description: "Run Google Places fill, photo filler, scrapers", href: "/admin/tools", icon: Wrench, color: "text-orange-500" },
         { label: "User Management", description: "Manage businesses & referrer accounts", href: "/admin/users", icon: Users, color: "text-violet-500" },
         { label: "Leads & Disputes", description: "Review leads, resolve disputes", href: "/admin/leads", icon: Target, color: "text-red-500" },
+        { label: "Website Quotes Queue", description: "Review under-supplied website quote requests", href: "/admin/website-quotes", icon: FolderSearch, color: "text-cyan-500" },
         { label: "SEO & Analytics", description: "Google Search Console data, opportunities", href: "/admin/seo", icon: Search, color: "text-green-500" },
         { label: "Fill Queue", description: "Empty suburb+trade pages awaiting fill", href: "/admin/fill-queue", icon: FolderSearch, color: "text-amber-500" },
     ];

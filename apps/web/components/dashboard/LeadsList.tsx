@@ -39,6 +39,7 @@ const STATUS_LABELS: Record<string, string> = {
     PAYMENT_PENDING_CONFIRMATION: "Awaiting Confirmation",
     EXPIRED: "Expired",
     DISPUTED: "Under Review",
+    WEBSITE_QUOTE: "Website Quote",
 };
 
 function formatStatus(status: string): string {
@@ -60,6 +61,8 @@ interface Lead {
     email?: string;
     address?: string;
     referrer_name?: string;
+    source?: string;
+    is_free_website_quote?: boolean;
 }
 
 export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
@@ -191,7 +194,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
     };
 
     const UNLOCKED_STATUSES = ["UNLOCKED", "ON_THE_WAY", "MEETING_VERIFIED", "VALID_LEAD",
-        "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS", "CONFIRMED"];
+        "PAYMENT_PENDING_CONFIRMATION", "CONFIRMED_SUCCESS", "CONFIRMED", "WEBSITE_QUOTE"];
     const LOCKED_STATUSES = ["PENDING", "VERIFIED", "READY_FOR_BUSINESS", "SCREENING"];
 
     return (
@@ -218,7 +221,9 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
             )}
 
             <div className="grid grid-cols-1 gap-6">
-                {leads.map((lead) => (
+                {leads.map((lead) => {
+                    const isWebsiteQuote = lead.status === 'WEBSITE_QUOTE';
+                    return (
                     <Card key={lead.id} className={`overflow-hidden transition-all hover:border-orange-400 group p-0`}>
                         <div className="p-8">
                             <div className="flex flex-col lg:flex-row gap-8">
@@ -229,7 +234,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                         </div>
                                         <div>
                                             <p className="font-bold text-zinc-400" style={{ fontSize: 17 }}>Referred by</p>
-                                            <p className="font-black text-zinc-900" style={{ fontSize: 20 }}>{lead.referrer_name || 'Anonymous Referrer'}</p>
+                                            <p className="font-black text-zinc-900" style={{ fontSize: 20 }}>{isWebsiteQuote ? 'TradeRefer Website' : (lead.referrer_name || 'Anonymous Referrer')}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2 text-xl text-zinc-400 font-medium tracking-tight">
@@ -249,6 +254,12 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                     </div>
                                     {UNLOCKED_STATUSES.includes(lead.status) ? (
                                         <div className="space-y-4 mb-4">
+                                            {isWebsiteQuote && (
+                                                <div className="p-5 bg-blue-50 rounded-2xl border border-blue-100">
+                                                    <div className="text-base font-bold text-blue-600 uppercase tracking-wider mb-1">Free Website Quote</div>
+                                                    <p className="text-blue-800 leading-relaxed font-medium text-lg">This enquiry came through the website and is already unlocked for free.</p>
+                                                </div>
+                                            )}
                                             <div className="p-5 bg-orange-50 rounded-2xl border border-orange-100">
                                                 <div className="text-base font-bold text-orange-500 uppercase tracking-wider mb-1">Job Description</div>
                                                 <p className="text-zinc-800 leading-relaxed font-medium text-xl">{lead.description}</p>
@@ -281,7 +292,13 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                 </div>
 
                                 <div className="w-full lg:w-72 flex flex-col justify-center gap-4 lg:border-l lg:pl-8 border-zinc-100">
-                                    {LOCKED_STATUSES.includes(lead.status) && lead.status !== 'SCREENING' ? (
+                                    {isWebsiteQuote ? (
+                                        <div className="flex flex-col items-center gap-2 p-5 bg-blue-50 rounded-3xl border border-blue-100 text-center">
+                                            <CheckCircle2 className="w-10 h-10 text-blue-600" />
+                                            <div className="text-xl font-bold text-blue-800">Free Website Quote</div>
+                                            <div className="text-base font-medium text-blue-700">No wallet deduction or unlock step is required.</div>
+                                        </div>
+                                    ) : LOCKED_STATUSES.includes(lead.status) && lead.status !== 'SCREENING' ? (
                                         <>
                                             <div className="text-center mb-2">
                                                 <div className="text-xl text-zinc-400 font-bold uppercase tracking-wider mb-1">Unlock Fee</div>
@@ -350,7 +367,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                                         </div>
                                     )}
 
-                                    {!['CONFIRMED', 'CONFIRMED_SUCCESS'].includes(lead.status) && (
+                                    {!['CONFIRMED', 'CONFIRMED_SUCCESS'].includes(lead.status) && !isWebsiteQuote && (
                                         <p className="text-lg text-zinc-400 text-center leading-tight px-4">
                                             {lead.status === 'ON_THE_WAY'
                                             ? 'Get the 4-digit PIN from the customer to confirm the job.'
@@ -363,7 +380,7 @@ export function LeadsList({ initialLeads }: { initialLeads: Lead[] }) {
                             </div>
                         </div>
                     </Card>
-                ))}
+                )})}
             </div>
         </>
     );

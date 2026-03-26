@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Copy, ExternalLink, Check } from "lucide-react";
+import { Copy, ExternalLink, Check, Award } from "lucide-react";
+import Link from "next/link";
 import { BusinessReferralProgress } from "@/components/business/BusinessReferralProgress";
 import { PrezzeeRewardsCard } from "@/components/shared/PrezzeeRewardsCard";
 
@@ -67,7 +68,22 @@ export function BusinessSidebar({ slug, businessName, hasReferrer }: BusinessSid
                 </div>
             </div>
 
-            {/* ── Card 2: Friend Rewards — Prezzee progress mirror ── */}
+            {/* ── Card 2: Partner Badge CTA ── */}
+            <Link
+                href="/dashboard/business/badge"
+                className="flex items-center gap-4 bg-white border-2 border-orange-100 hover:border-orange-400 rounded-2xl p-4 transition-all group"
+            >
+                <div className="w-11 h-11 rounded-xl bg-orange-100 flex items-center justify-center shrink-0 group-hover:bg-orange-500 transition-colors">
+                    <Award className="w-5 h-5 text-orange-500 group-hover:text-white transition-colors" />
+                </div>
+                <div className="min-w-0 flex-1">
+                    <p className="font-black text-zinc-900 text-sm leading-tight">Get Your Partner Badge</p>
+                    <p className="text-xs text-zinc-500 font-medium mt-0.5 leading-tight">Add to your website — earn backlinks &amp; referrers</p>
+                </div>
+                <ExternalLink className="w-4 h-4 text-zinc-300 group-hover:text-orange-500 transition-colors shrink-0" />
+            </Link>
+
+            {/* ── Card 3: Friend Rewards — Prezzee progress mirror ── */}
             <BusinessReferralProgress />
 
         </div>

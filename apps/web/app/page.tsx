@@ -1,5 +1,6 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { Metadata } from "next";
 import { SignedInOut } from "@/components/SignedInOut";
 import {
   MapPin, ArrowRight,
@@ -11,6 +12,33 @@ import { TRADE_CATEGORIES } from "@/lib/constants";
 import { sql } from "@/lib/db";
 
 import { SmartSearch } from "@/components/SmartSearch";
+
+export const metadata: Metadata = {
+  title: "TradeRefer | More Customers for Tradies. Earn Gift Cards for Referrals.",
+  description: "TradeRefer turns word-of-mouth into revenue. Trade businesses get more customers. Referrers get paid in gift cards. Join Australia's referral network — sign up free.",
+  openGraph: {
+    title: "TradeRefer | More Customers for Tradies. Earn Gift Cards for Referrals.",
+    description: "TradeRefer turns word-of-mouth into revenue. Trade businesses get more customers. Referrers get paid in gift cards. Join Australia's referral network — sign up free.",
+    url: "https://traderefer.au",
+    siteName: "TradeRefer",
+    type: "website",
+    images: [{ url: "https://traderefer.au/og-default.jpg", width: 1200, height: 630, alt: "TradeRefer — More customers for tradies. Earn gift cards for referrals." }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TradeRefer | More Customers for Tradies. Earn Gift Cards for Referrals.",
+    description: "TradeRefer turns word-of-mouth into revenue. Trade businesses get more customers. Referrers get paid in gift cards. Join Australia's referral network — sign up free.",
+    images: ["https://traderefer.au/og-default.jpg"],
+  },
+};
+
+type PopularSearchRow = {
+  state: string;
+  city: string;
+  trade_category: string;
+  business_count: string | number;
+  sample_address: string | null;
+};
 
 const ROICalculators = dynamic(() => import("@/components/home/ROICalculators").then((mod) => mod.ROICalculators), {
   loading: () => <div className="min-h-[720px] rounded-2xl bg-white border border-gray-200 animate-pulse" />,
@@ -30,7 +58,7 @@ function extractPostcode(address: string): string | null {
 
 async function getPopularSearches() {
   try {
-    const result = await sql`
+    const result = await sql<PopularSearchRow[]>`
       SELECT state, city, trade_category, business_count, sample_address FROM (
         SELECT 
           state,
@@ -50,11 +78,11 @@ async function getPopularSearches() {
       LIMIT 20
     `;
 
-    return result.map((row: any) => {
+    return result.map((row) => {
       const citySlug = row.city.toLowerCase().replace(/\s+/g, '-');
       const tradeSlug = row.trade_category.toLowerCase().replace(/\s+&?\s*/g, '-');
       const stateSlug = row.state.toLowerCase();
-      const postcode = extractPostcode(row.sample_address);
+      const postcode = extractPostcode(row.sample_address || "");
       const cityWithPostcode = postcode ? `${citySlug}-${postcode}` : citySlug;
       
       return {
@@ -99,12 +127,12 @@ export default async function HomePage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-[#1A1A1A] mb-4 md:mb-6 leading-[1.1] tracking-tight font-display">
-            Australia&apos;s Verified{" "}
-            <span className="text-[#FF6600]">Trade Referral</span>{" "}
-            Marketplace
+            More customers for tradies.{" "}
+            <span className="text-[#FF6600]">Earn gift cards</span>{" "}
+            for referrals.
           </h1>
           <p className="text-xl md:text-2xl lg:text-3xl text-gray-600 mb-8 md:mb-16 max-w-3xl mx-auto leading-relaxed">
-            Built on Trust, Paid on Success. The smartest way to scale your trade business.
+            Trade businesses get more jobs. Referrers get rewarded for trusted introductions. Join Australia&apos;s referral network and sign up free.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 max-w-5xl mx-auto">
@@ -115,7 +143,7 @@ export default async function HomePage() {
               </div>
               <h3 className="text-3xl font-extrabold mb-3 font-display text-[#1A1A1A]">Referrers</h3>
               <p className="text-gray-600 mb-8 text-center text-xl leading-relaxed flex-grow">
-                Monetize your network. Earn gift cards for every trade job you refer — no selling, just connecting.
+                Get rewarded for trusted introductions. Earn gift cards for every trade job you refer — no selling, just connecting.
               </p>
               <SignedInOut
                 signedOut={
@@ -123,7 +151,7 @@ export default async function HomePage() {
                     href="/register?type=referrer"
                     className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
                   >
-                    Earn Gift Card Rewards <ArrowRight className="w-6 h-6" />
+                    Get Paid to Refer <ArrowRight className="w-6 h-6" />
                   </Link>
                 }
                 signedIn={
@@ -147,7 +175,7 @@ export default async function HomePage() {
               </div>
               <h3 className="text-3xl font-extrabold mb-3 font-display z-10 text-white">Trade Businesses</h3>
               <p className="text-gray-300 mb-8 text-center text-xl leading-relaxed flex-grow z-10">
-                Get exclusive, verified leads. Zero upfront cost — only pay a 20% fee when you win the job.
+                Get more jobs from trusted referrals. Zero upfront cost — only pay a 20% fee when you win the job.
               </p>
               <SignedInOut
                 signedOut={
@@ -156,7 +184,7 @@ export default async function HomePage() {
                     className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
                     style={{ minHeight: "64px" }}
                   >
-                    Grow Your Network <TrendingUp className="w-6 h-6" />
+                    Get More Jobs <TrendingUp className="w-6 h-6" />
                   </Link>
                 }
                 signedIn={

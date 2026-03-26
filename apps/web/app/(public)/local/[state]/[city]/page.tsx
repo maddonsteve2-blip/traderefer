@@ -1,4 +1,5 @@
 import { sql } from "@/lib/db";
+import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 import { ChevronRight, MapPin, Users, Clock, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,6 +9,15 @@ interface PageProps {
     params: Promise<{ state: string; city: string }>;
     searchParams: Promise<{ category?: string }>;
 }
+
+type SuburbRow = {
+    suburb: string;
+};
+
+type SuburbCountRow = {
+    suburb: string;
+    count: string | number;
+};
 
 function formatSlug(slug: string) {
     if (!slug) return "";
@@ -48,7 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 async function getSuburbsInCity(state: string, city: string): Promise<string[]> {
     try {
         const cityName = formatSlug(city);
-        const results = await sql`
+        const results = await sql<SuburbRow[]>`
             SELECT DISTINCT b.suburb
             FROM businesses b
             WHERE b.status = 'active'
@@ -58,10 +68,10 @@ async function getSuburbsInCity(state: string, city: string): Promise<string[]> 
               AND LOWER(b.city) = LOWER(${cityName})
             ORDER BY b.suburb ASC
         `;
-        const suburbs = results.map((r: any) => r.suburb).filter(Boolean);
+        const suburbs = results.map((r) => r.suburb).filter(Boolean);
         if (suburbs.length > 0) return suburbs;
 
-        const fallbackResults = await sql`
+        const fallbackResults = await sql<SuburbRow[]>`
             SELECT DISTINCT lr.name AS suburb
             FROM locations_reference lr
             WHERE lr.is_active = true
@@ -70,7 +80,7 @@ async function getSuburbsInCity(state: string, city: string): Promise<string[]> 
               AND LOWER(lr.parent_city_name) = LOWER(${cityName})
             ORDER BY lr.name ASC
         `;
-        return fallbackResults.map((r: any) => r.suburb).filter(Boolean);
+        return fallbackResults.map((r) => r.suburb).filter(Boolean);
     } catch { return []; }
 }
 
@@ -78,7 +88,7 @@ async function getBusinessCountsBySuburb(state: string, city: string, suburbs: s
     if (suburbs.length === 0) return {};
     try {
         const cityName = formatSlug(city);
-        const results = await sql`
+        const results = await sql<SuburbCountRow[]>`
             SELECT suburb, COUNT(*) as count
             FROM businesses
             WHERE status = 'active'
@@ -88,7 +98,7 @@ async function getBusinessCountsBySuburb(state: string, city: string, suburbs: s
             GROUP BY suburb
         `;
         const map: Record<string, number> = {};
-        results.forEach((r: any) => { map[r.suburb] = parseInt(r.count, 10); });
+        results.forEach((r) => { map[r.suburb] = parseInt(String(r.count), 10); });
         return map;
     } catch { return {}; }
 }
@@ -191,6 +201,15 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
                                 : `Find verified local trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to connect with experts near you.`
                             }
                         </p>
+                        <div className="flex flex-wrap gap-4 mb-6">
+                            <Link href={`/quotes?city=${encodeURIComponent(cityName)}&state=${stateUpper}&source=${encodeURIComponent(`/local/${state}/${city}`)}`} className="inline-flex items-center justify-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}>
+                                Get 3 Free Quotes
+                                <ChevronRight className="w-4 h-4" />
+                            </Link>
+                            <Link href="/categories" className="inline-flex items-center justify-center bg-white border-2 border-gray-200 hover:border-[#FF6600] rounded-xl px-5 py-3 font-bold text-[#1A1A1A] hover:text-[#FF6600] transition-colors" style={{ minHeight: '64px', fontSize: '18px' }}>
+                                Browse by Trade
+                            </Link>
+                        </div>
                         {suburbs.length > 0 && (
                             <p className="text-gray-400 font-medium" style={{ fontSize: '16px' }}>
                                 Servicing {cityName} including {suburbs.slice(0, 3).join(', ')}{suburbs.length > 3 ? ` and ${suburbs.length - 3} more suburbs` : ''}.
@@ -204,6 +223,16 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
             <div className="py-20">
                 <div className="container mx-auto px-4">
                     <div className="max-w-5xl mx-auto space-y-12">
+
+                        <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
+                            <div className="max-w-3xl mb-8">
+                                <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: '32px' }}>Get 3 Free Quotes in {cityName}</h2>
+                                <p className="text-gray-500" style={{ fontSize: '20px', lineHeight: 1.7 }}>
+                                    Submit your job once and we&apos;ll match you with up to 3 verified local businesses across {cityName}, {stateUpper}.
+                                </p>
+                            </div>
+                            <PublicMultiQuoteForm initialState={stateUpper} initialCity={cityName} initialSourcePage={`/local/${state}/${city}`} />
+                        </section>
 
                         {/* Stats + urgency bar */}
                         <div className="flex flex-wrap gap-4 items-center">
