@@ -6,7 +6,7 @@ import {
     Mail, Upload, Play, Pause, RefreshCw, CheckCircle2, XCircle,
     AlertTriangle, ChevronDown, ChevronUp, Loader2, Send, Eye,
     MessageSquare, BarChart2, Users, Inbox, Plus, Trash2, ExternalLink,
-    ShieldCheck, FileText, Check, Copy, Download
+    ShieldCheck, FileText, Check, Copy, Download, Award
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -690,11 +690,16 @@ function EmailTemplatesSection() {
     );
 }
 
+interface BadgeInstall { badge_style: string; installed_at: string | null; business_name: string; slug: string; }
+interface BadgeStats { total: number; by_style: { style: string; count: number }[]; recent: BadgeInstall[]; }
+
 export default function AdminOutreachPage() {
     const { getToken } = useAuth();
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCreate, setShowCreate] = useState(false);
+    const [badgeStats, setBadgeStats] = useState<BadgeStats | null>(null);
+    const [syncingAll, setSyncingAll] = useState(false);
     const [overallStats, setOverallStats] = useState({
         total_campaigns: 0,
         total_leads: 0,
@@ -725,7 +730,33 @@ export default function AdminOutreachPage() {
         finally { setLoading(false); }
     }, [getToken]);
 
-    useEffect(() => { fetchCampaigns(); }, [fetchCampaigns]);
+    const fetchBadgeStats = useCallback(async () => {
+        try {
+            const token = await getToken();
+            const res = await fetch(`${API}/admin/outreach/badge-installs`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.ok) setBadgeStats(await res.json());
+        } catch { /* silent */ }
+    }, [getToken]);
+
+    const syncAll = async () => {
+        setSyncingAll(true);
+        try {
+            const token = await getToken();
+            const res = await fetch(`${API}/admin/outreach/sync-all`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            toast.success(`Synced ${data.synced} campaigns`);
+            fetchCampaigns();
+        } catch { toast.error("Sync failed"); }
+        finally { setSyncingAll(false); }
+    };
+
+    useEffect(() => { fetchCampaigns(); fetchBadgeStats(); }, [fetchCampaigns, fetchBadgeStats]);
 
     return (
         <div className="min-h-screen bg-zinc-50">
@@ -788,12 +819,23 @@ export default function AdminOutreachPage() {
                 <div className="space-y-3">
                     <div className="flex items-center justify-between mb-2">
                         <h2 className="text-sm font-black text-zinc-900">Campaigns ({campaigns.length})</h2>
-                        <button
-                            onClick={fetchCampaigns}
-                            className="text-xs font-bold text-zinc-400 hover:text-zinc-700 flex items-center gap-1"
-                        >
-                            <RefreshCw className="w-3 h-3" /> Refresh
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={syncAll}
+                                disabled={syncingAll}
+                                className="text-xs font-bold text-violet-600 hover:text-violet-800 flex items-center gap-1 disabled:opacity-50"
+                                title="Sync all active campaigns with Instantly"
+                            >
+                                {syncingAll ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />} Sync All
+                            </button>
+                            <span className="text-zinc-300">·</span>
+                            <button
+                                onClick={fetchCampaigns}
+                                className="text-xs font-bold text-zinc-400 hover:text-zinc-700 flex items-center gap-1"
+                            >
+                                <RefreshCw className="w-3 h-3" /> Refresh
+                            </button>
+                        </div>
                     </div>
 
                     {loading ? (
@@ -845,6 +887,41 @@ export default function AdminOutreachPage() {
 
                 {/* Email Templates */}
                 <EmailTemplatesSection />
+
+                {/* Badge Installs */}
+                {badgeStats && (
+                    <div className="mt-6 bg-white rounded-2xl border border-zinc-200 p-5">
+                        <h3 className="text-sm font-black text-zinc-900 mb-3 flex items-center gap-2">
+                            <Award className="w-4 h-4 text-orange-500" /> Partner Badge Installs
+                            <span className="ml-auto text-lg font-black text-orange-600">{badgeStats.total}</span>
+                        </h3>
+                        <div className="flex gap-3 mb-4">
+                            {badgeStats.by_style.map(s => (
+                                <div key={s.style} className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 rounded-xl border border-orange-100">
+                                    <span className="text-xs font-bold text-orange-700">{s.style}</span>
+                                    <span className="text-xs font-black text-orange-900">{s.count}</span>
+                                </div>
+                            ))}
+                            {badgeStats.by_style.length === 0 && (
+                                <p className="text-xs text-zinc-400">No badge installs yet</p>
+                            )}
+                        </div>
+                        {badgeStats.recent.length > 0 && (
+                            <div className="space-y-1 max-h-48 overflow-y-auto">
+                                {badgeStats.recent.map((b, i) => (
+                                    <div key={i} className="flex items-center gap-3 text-xs px-2 py-1.5 rounded-lg hover:bg-zinc-50">
+                                        <span className="w-16 shrink-0 px-2 py-0.5 bg-zinc-100 rounded-full text-center font-bold text-zinc-600">{b.badge_style}</span>
+                                        <span className="flex-1 font-medium text-zinc-700 truncate">{b.business_name || '—'}</span>
+                                        {b.slug && (
+                                            <a href={`/b/${b.slug}`} target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline shrink-0">{b.slug}</a>
+                                        )}
+                                        <span className="text-zinc-400 shrink-0">{b.installed_at ? new Date(b.installed_at).toLocaleDateString('en-AU') : '—'}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
             </div>
 

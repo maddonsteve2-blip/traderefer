@@ -2381,3 +2381,90 @@ async def export_campaign_leads_csv(
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=campaign-{campaign_id[:8]}-leads.csv"},
     )
+
+
+@router.post("/outreach/sync-all")
+async def sync_all_campaigns(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """Batch-sync stats + replies for all active campaigns. Suitable as a cron target."""
+    await _ensure_outreach_tables(db)
+
+    result = await db.execute(text("""
+        SELECT id, instantly_campaign_id FROM cold_email_campaigns
+        WHERE status IN ('active', 'paused') AND instantly_campaign_id IS NOT NULL
+    """))
+    campaigns = list(result.mappings().all())
+
+    synced = 0
+    errors = 0
+
+    if INSTANTLY_API_KEY and campaigns:
+        async with httpx.AsyncClient(timeout=30) as client:
+            for c in campaigns:
+                try:
+                    # Sync stats
+                    res = await client.get(
+                        f"{INSTANTLY_BASE}/campaign/get/{c['instantly_campaign_id']}",
+                        headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
+                    )
+                    if res.status_code == 200:
+                        data = res.json()
+                        await db.execute(text("""
+                            UPDATE cold_email_campaigns SET
+                                sent_count    = :sent,
+                                opened_count  = :opened,
+                                clicked_count = :clicked,
+                                replied_count = :replied
+                            WHERE id = :id
+                        """), {
+                            "id": str(c["id"]),
+                            "sent": data.get("emails_sent_count", 0),
+                            "opened": data.get("open_count", 0),
+                            "clicked": data.get("link_click_count", 0),
+                            "replied": data.get("reply_count", 0),
+                        })
+                        synced += 1
+                except Exception:
+                    errors += 1
+
+    await db.commit()
+    return {"synced": synced, "errors": errors, "total_campaigns": len(campaigns)}
+
+
+@router.get("/outreach/badge-installs")
+async def get_badge_installs_overview(
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    """Overview of partner badge installs — total, by style, recent."""
+    await _ensure_outreach_tables(db)
+
+    total = await db.execute(text("SELECT COUNT(*) FROM partner_badge_installs"))
+    by_style = await db.execute(text("""
+        SELECT badge_style, COUNT(*) as count
+        FROM partner_badge_installs
+        GROUP BY badge_style ORDER BY count DESC
+    """))
+    recent = await db.execute(text("""
+        SELECT p.badge_style, p.installed_at, b.business_name, b.slug
+        FROM partner_badge_installs p
+        LEFT JOIN businesses b ON b.id = p.business_id
+        ORDER BY p.installed_at DESC
+        LIMIT 20
+    """))
+
+    return {
+        "total": total.scalar() or 0,
+        "by_style": [{"style": r["badge_style"], "count": r["count"]} for r in by_style.mappings().all()],
+        "recent": [
+            {
+                "badge_style": r["badge_style"],
+                "installed_at": r["installed_at"].isoformat() if r["installed_at"] else None,
+                "business_name": r["business_name"] or "",
+                "slug": r["slug"] or "",
+            }
+            for r in recent.mappings().all()
+        ],
+    }
