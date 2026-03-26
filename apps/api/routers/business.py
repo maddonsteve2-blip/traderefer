@@ -2161,6 +2161,33 @@ async def request_business_claim(
      return {"status": "success", "message": "Claim request submitted for verification"}
 
 
+@router.post("/me/badge/generate")
+async def record_badge_generate(
+    data: dict,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(get_current_user),
+):
+    """Record when a business generates/copies their partner badge HTML."""
+    biz = await db.execute(
+        text("SELECT id FROM businesses WHERE user_id = :uid LIMIT 1"),
+        {"uid": user.user_id},
+    )
+    row = biz.mappings().first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Business not found")
+
+    badge_style = data.get("badge_style", "trust")
+
+    # Upsert — one record per style per business (update installed_at on re-generate)
+    await db.execute(text("""
+        INSERT INTO partner_badge_installs (id, business_id, badge_style, installed_at)
+        VALUES (gen_random_uuid(), :bid, :style, NOW())
+        ON CONFLICT (business_id, badge_style) DO UPDATE SET installed_at = NOW()
+    """), {"bid": str(row["id"]), "style": badge_style})
+    await db.commit()
+    return {"ok": True, "business_id": str(row["id"]), "badge_style": badge_style}
+
+
 @router.post("/{business_id}/delist")
 async def request_delisting(
     business_id: uuid.UUID,

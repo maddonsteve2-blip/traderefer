@@ -1714,8 +1714,22 @@ async def _ensure_outreach_tables(db: AsyncSession):
             badge_style TEXT DEFAULT 'trust',
             installed_at TIMESTAMPTZ DEFAULT NOW(),
             click_count INTEGER DEFAULT 0,
-            referrer_signup_count INTEGER DEFAULT 0
+            referrer_signup_count INTEGER DEFAULT 0,
+            UNIQUE (business_id, badge_style)
         )
+    """))
+    # Idempotently add constraint for tables created without it
+    await db.execute(text("""
+        DO $$ BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM pg_constraint
+                WHERE conname = 'partner_badge_installs_business_id_badge_style_key'
+            ) THEN
+                ALTER TABLE partner_badge_installs
+                ADD CONSTRAINT partner_badge_installs_business_id_badge_style_key
+                UNIQUE (business_id, badge_style);
+            END IF;
+        END $$;
     """))
     await db.commit()
 

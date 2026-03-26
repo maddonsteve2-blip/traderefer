@@ -232,12 +232,21 @@ export default function BadgeGeneratorPage() {
     const badgeHtml = business ? generateBadgeHtml(selectedStyle, business) : "";
     const fee = formatFee(business?.referral_fee_cents ?? null);
 
-    const handleCopy = () => {
+    const handleCopy = async () => {
         if (!badgeHtml) return;
         navigator.clipboard.writeText(badgeHtml);
         setCopied(true);
         toast.success("Badge code copied to clipboard!");
         setTimeout(() => setCopied(false), 2500);
+        // Record install (fire-and-forget)
+        try {
+            const token = await getToken();
+            fetch("/api/backend/business/me/badge/generate", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ badge_style: selectedStyle }),
+            }).catch(() => {});
+        } catch { /* silent */ }
     };
 
     const handleDownload = () => {
