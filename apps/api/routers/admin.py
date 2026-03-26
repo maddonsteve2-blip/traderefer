@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from services.auth import require_admin, AuthenticatedUser
 from services.database import get_db
 from services.email import send_dispute_resolved_business, send_dispute_resolved_referrer
@@ -1799,9 +1799,6 @@ async def list_outreach_campaigns(
             c["started_at"] = c["started_at"].isoformat()
         c["id"] = str(c["id"])
     return {"campaigns": campaigns}
-
-
-from fastapi import UploadFile, File, Form
 
 
 @router.post("/outreach/campaigns")

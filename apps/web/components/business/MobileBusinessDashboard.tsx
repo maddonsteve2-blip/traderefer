@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Share2, Target, DollarSign, Users, Star, Zap, AlertTriangle, Wallet, Clock, ArrowRight } from "lucide-react";
+import { Share2, Target, DollarSign, Users, Star, Zap, AlertTriangle, Wallet, Clock, ArrowRight, Award } from "lucide-react";
 import Link from "next/link";
 import { InviteReferrersDialog } from "@/components/dashboard/InviteReferrersDialog";
 
@@ -93,6 +93,21 @@ export function MobileBusinessDashboard({ business, stats, recentLeads }: Mobile
                     </div>
                 </div>
             )}
+
+            {/* Partner Badge CTA */}
+            <Link
+                href="/dashboard/business/badge"
+                className="flex items-center gap-4 bg-white border-2 border-orange-100 hover:border-orange-400 rounded-[20px] p-4 transition-all active:scale-[0.98]"
+            >
+                <div className="w-11 h-11 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                    <Award className="w-5 h-5 text-orange-500" />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <p className="text-[15px] font-black text-zinc-900 leading-tight">Get Your Partner Badge</p>
+                    <p className="text-[12px] font-bold text-zinc-500 mt-0.5">Add to your website to earn referrers</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-zinc-300 shrink-0" />
+            </Link>
 
             {/* Referral Card (The "Simplified Mobile" Look) */}
             <div className="bg-zinc-900 rounded-[24px] p-6 flex flex-col gap-4 text-white shadow-xl shadow-zinc-900/10">
