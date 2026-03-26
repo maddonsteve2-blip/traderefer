@@ -2255,6 +2255,73 @@ async def get_campaign_replies(
     return replies
 
 
+@router.get("/outreach/campaigns/{campaign_id}/leads")
+async def get_campaign_leads(
+    campaign_id: str,
+    status: str | None = None,
+    limit: int = 200,
+    offset: int = 0,
+    db: AsyncSession = Depends(get_db),
+    user: AuthenticatedUser = Depends(require_admin),
+):
+    await _ensure_outreach_tables(db)
+
+    where_clauses = ["campaign_id = :cid"]
+    params: dict = {"cid": campaign_id, "limit": limit, "offset": offset}
+    if status:
+        where_clauses.append("status = :status")
+        params["status"] = status
+
+    where_sql = " AND ".join(where_clauses)
+    result = await db.execute(text(f"""
+        SELECT id, email, first_name, business_name, trade_category, suburb,
+               email_verification_status, claim_slug, status,
+               sent_at, clicked_at, replied_at, claimed_at, reply_text,
+               business_id
+        FROM cold_email_leads
+        WHERE {where_sql}
+        ORDER BY
+            CASE status
+                WHEN 'claimed' THEN 0
+                WHEN 'replied' THEN 1
+                WHEN 'clicked' THEN 2
+                WHEN 'sent' THEN 3
+                ELSE 4
+            END,
+            created_at DESC
+        LIMIT :limit OFFSET :offset
+    """), params)
+
+    leads = []
+    for r in result.mappings().all():
+        claim_url = f"https://traderefer.au/claim/{r['claim_slug']}?lid={r['id']}" if r.get("claim_slug") else None
+        leads.append({
+            "id": str(r["id"]),
+            "email": r["email"],
+            "first_name": r["first_name"] or "",
+            "business_name": r["business_name"] or "",
+            "trade_category": r["trade_category"] or "",
+            "suburb": r["suburb"] or "",
+            "verification_status": r["email_verification_status"] or "unverified",
+            "claim_slug": r["claim_slug"] or "",
+            "claim_url": claim_url,
+            "status": r["status"] or "pending",
+            "sent_at": r["sent_at"].isoformat() if r["sent_at"] else None,
+            "clicked_at": r["clicked_at"].isoformat() if r["clicked_at"] else None,
+            "replied_at": r["replied_at"].isoformat() if r["replied_at"] else None,
+            "claimed_at": r["claimed_at"].isoformat() if r["claimed_at"] else None,
+            "reply_text": r["reply_text"] or "",
+            "business_id": str(r["business_id"]) if r["business_id"] else None,
+        })
+
+    count_result = await db.execute(text(f"""
+        SELECT COUNT(*) FROM cold_email_leads WHERE {where_sql}
+    """), {k: v for k, v in params.items() if k not in ("limit", "offset")})
+    total = count_result.scalar() or 0
+
+    return {"leads": leads, "total": total, "limit": limit, "offset": offset}
+
+
 @router.get("/outreach/campaigns/{campaign_id}/export")
 async def export_campaign_leads_csv(
     campaign_id: str,

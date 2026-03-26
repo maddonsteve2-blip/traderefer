@@ -8,6 +8,7 @@ import {
     MessageSquare, BarChart2, Users, Inbox, Plus, Trash2, ExternalLink,
     ShieldCheck, FileText, Check, Copy, Download
 } from "lucide-react";
+import Link from "next/link";
 import { toast } from "sonner";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -178,6 +179,13 @@ function CampaignRow({ campaign, onRefresh }: { campaign: Campaign; onRefresh: (
                             {acting ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                         </button>
                     )}
+                    <Link
+                        href={`/admin/outreach/${campaign.id}`}
+                        title="View leads"
+                        className="p-2 rounded-xl bg-zinc-50 hover:bg-zinc-100 text-zinc-600 transition-colors"
+                    >
+                        <Users className="w-4 h-4" />
+                    </Link>
                     <a
                         href={`${API}/admin/outreach/campaigns/${campaign.id}/export`}
                         title="Export leads as CSV"
@@ -589,37 +597,46 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
     );
 }
 
-const TEMPLATE_A = `Subject: Quick question about {{business_name}}
+const TEMPLATE_A = `Subject: {{business_name}} — quick referral opportunity
 
-Hi {{first_name}},
+{Hi|Hey|G'day} {{first_name}},
 
-I came across {{business_name}} and wanted to reach out quickly.
+{I run|I'm with} TradeRefer, a platform that {connects|matches} Australian tradies with people who refer customers for cash.
 
-We've built a platform called TradeRefer where trade businesses set their own referral price — people in your network send you leads, you only pay when a job converts.
-
-I've already created a profile for {{business_name}} on the platform. If you'd like to claim it and set your own referral price, here's your direct link:
+I {noticed|saw} {{business_name}} isn't listed yet, so I {set up|created} a free profile:
 
 {{claim_url}}
 
-Takes about 2 minutes. No subscription, no lock-in.
+• You set your own referral reward (e.g., "$50 per customer")
+• People sign up to refer customers to you
+• You only pay when you get a real customer
 
-— Steve`;
+No monthly fees. No contracts. {Claim it here|Get started}: {{claim_url}}
 
-const TEMPLATE_B = `Subject: {{business_name}} on TradeRefer
+{Cheers|Thanks},
+{{sender_name}}
+TradeRefer`;
 
-Hi {{first_name}},
+const TEMPLATE_B = `Subject: {{business_name}} — join 247 tradies on TradeRefer
 
-We've listed {{business_name}} on TradeRefer — a referral platform where 247 Australian trade businesses are getting word-of-mouth leads from their networks.
+{Hi|Hey|G'day} {{first_name}},
 
-The way it works: you set the reward amount you'd pay someone for referring a customer to you. That's it. No monthly fees.
+{Quick one|Just a note} — 247+ Australian tradies are using TradeRefer to get customer referrals.
 
-Your profile is ready — claim it here:
+I {noticed|saw} {{business_name}} isn't on the platform, so I {created|built} a profile:
 
 {{claim_url}}
 
-Happy to answer any questions.
+How it works:
+• {Set|Choose} your referral reward ({most tradies do|typically} $50–$100)
+• We {connect|match} you with people who refer customers
+• You only pay when you {get|receive} a real customer
 
-— Steve`;
+{Claim it here|Get started}: {{claim_url}}
+
+{Cheers|Thanks},
+{{sender_name}}
+TradeRefer`;
 
 function EmailTemplatesSection() {
     const [copied, setCopied] = useState<string | null>(null);
