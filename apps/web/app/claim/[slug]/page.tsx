@@ -178,12 +178,26 @@ function ClaimPageContent({ slug }: { slug: string }) {
                                 <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
                             </div>
                         ) : error ? (
-                            <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700 font-bold flex items-start gap-3">
-                                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-                                <div>
-                                    <p>{error}</p>
-                                    <Link href="/contact" className="inline-flex mt-3 text-red-700 underline underline-offset-4">Contact support</Link>
+                            <div className="space-y-6">
+                                <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center">
+                                    <AlertCircle className="w-8 h-8 text-orange-500" />
                                 </div>
+                                <div>
+                                    <h1 className="text-3xl font-black text-zinc-900 font-display tracking-tight">Let's find your business</h1>
+                                    <p className="mt-3 text-zinc-500 font-medium leading-relaxed">
+                                        We couldn't locate your exact profile from this link. Search below to find your business and start the claim process.
+                                    </p>
+                                </div>
+                                <Link
+                                    href={`/claim?q=${encodeURIComponent(slug.replace(/-/g, " "))}`}
+                                    className="inline-flex items-center gap-2 h-12 px-6 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-2xl transition-colors"
+                                >
+                                    Search for my business <ArrowRight className="w-4 h-4" />
+                                </Link>
+                                <p className="text-sm text-zinc-400">
+                                    Still having trouble?{" "}
+                                    <Link href="/contact" className="text-zinc-600 underline underline-offset-4 font-bold">Contact support</Link>
+                                </p>
                             </div>
                         ) : business?.is_claimed ? (
                             <div className="space-y-6">
