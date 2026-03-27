@@ -14,6 +14,7 @@ import re
 import asyncio
 import os
 from utils.business_slugs import generate_unique_business_slug
+from services.minimax import batch_generate_ai_openings
 
 router = APIRouter()
 
@@ -1704,8 +1705,12 @@ async def _ensure_outreach_tables(db: AsyncSession):
             replied_at TIMESTAMPTZ,
             claimed_at TIMESTAMPTZ,
             reply_text TEXT,
+            ai_opening TEXT,
             created_at TIMESTAMPTZ DEFAULT NOW()
         )
+    """))
+    await db.execute(text("""
+        ALTER TABLE cold_email_leads ADD COLUMN IF NOT EXISTS ai_opening TEXT
     """))
     await db.execute(text("""
         CREATE TABLE IF NOT EXISTS partner_badge_installs (
@@ -2005,6 +2010,7 @@ async def verify_campaign_emails(
 class LaunchCampaignRequest(BaseModel):
     include_catchall: bool = False
     instantly_campaign_id: Optional[str] = None
+    use_ai_personalise: bool = False
 
 
 @router.post("/outreach/campaigns/{campaign_id}/launch")
@@ -2032,7 +2038,7 @@ async def launch_outreach_campaign(
 
     placeholders = ",".join([f"'{s}'" for s in statuses])
     leads_result = await db.execute(text(f"""
-        SELECT id, email, first_name, business_name, claim_slug
+        SELECT id, email, first_name, business_name, trade_category, suburb, claim_slug
         FROM cold_email_leads
         WHERE campaign_id = :cid AND email_verification_status IN ({placeholders})
     """), {"cid": campaign_id})
@@ -2045,11 +2051,37 @@ async def launch_outreach_campaign(
     pushed = 0
     errors = 0
 
+    # ── AI personalisation via MiniMax M2.7 ──────────────────────────
+    ai_openings: dict[str, str] = {}
+    if req.use_ai_personalise:
+        ai_openings = await batch_generate_ai_openings(
+            [{"id": str(l["id"]), "first_name": l.get("first_name") or "",
+              "business_name": l.get("business_name") or "",
+              "trade_category": l.get("trade_category") or "",
+              "suburb": l.get("suburb") or ""} for l in leads],
+            concurrency=5,
+        )
+        # Persist openings to DB
+        for lead_id, opening in ai_openings.items():
+            if opening:
+                await db.execute(text("""
+                    UPDATE cold_email_leads SET ai_opening = :opening WHERE id = :id
+                """), {"opening": opening, "id": lead_id})
+        await db.commit()
+
     if INSTANTLY_API_KEY and instantly_campaign_id:
         async with httpx.AsyncClient(timeout=30) as client:
             for lead in leads:
                 claim_url = f"https://traderefer.au/claim/{lead['claim_slug']}?lid={lead['id']}"
                 try:
+                    lead_vars: dict = {
+                        "business_name": lead["business_name"] or "",
+                        "claim_url": claim_url,
+                        "sender_name": "Steve",
+                    }
+                    ai_opening = ai_openings.get(str(lead["id"]), "")
+                    if ai_opening:
+                        lead_vars["ai_opening"] = ai_opening
                     res = await client.post(
                         f"{INSTANTLY_BASE}/lead/add",
                         headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
@@ -2058,11 +2090,7 @@ async def launch_outreach_campaign(
                             "email": lead["email"],
                             "first_name": lead["first_name"] or "there",
                             "company_name": lead["business_name"] or "",
-                            "variables": {
-                                "business_name": lead["business_name"] or "",
-                                "claim_url": claim_url,
-                                "sender_name": "Steve",
-                            },
+                            "variables": lead_vars,
                         }
                     )
                     if res.is_success:

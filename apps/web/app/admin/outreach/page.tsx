@@ -6,7 +6,7 @@ import {
     Mail, Upload, Play, Pause, RefreshCw, CheckCircle2, XCircle,
     AlertTriangle, ChevronDown, ChevronUp, Loader2, Send, Eye,
     MessageSquare, BarChart2, Users, Inbox, Plus, Trash2, ExternalLink,
-    ShieldCheck, FileText, Check, Copy, Download, Award
+    ShieldCheck, FileText, Check, Copy, Download, Award, Sparkles
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -284,6 +284,7 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
     const [includeValid, setIncludeValid] = useState(true);
     const [includeCatchall, setIncludeCatchall] = useState(false);
     const [instantlyCampaignId, setInstantlyCampaignId] = useState("");
+    const [useAiPersonalise, setUseAiPersonalise] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleFile = (file: File) => {
@@ -358,6 +359,7 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
                 body: JSON.stringify({
                     include_catchall: includeCatchall,
                     instantly_campaign_id: instantlyCampaignId.trim() || null,
+                    use_ai_personalise: useAiPersonalise,
                 }),
             });
             if (!res.ok) {
@@ -557,6 +559,28 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
                                 </div>
                             </div>
 
+                            <label className="flex items-center justify-between gap-4 p-4 bg-violet-50 border border-violet-200 rounded-2xl cursor-pointer hover:bg-violet-100 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <Sparkles className="w-5 h-5 text-violet-600 shrink-0" />
+                                    <div>
+                                        <p className="text-sm font-black text-violet-900">AI Personalisation (MiniMax M2.7)</p>
+                                        <p className="text-xs text-violet-700 mt-0.5">
+                                            Generate a unique opening line per lead. Adds <code className="bg-violet-100 px-1 rounded">&#123;&#123;ai_opening&#125;&#125;</code> variable to each Instantly lead.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="relative shrink-0">
+                                    <input
+                                        type="checkbox"
+                                        checked={useAiPersonalise}
+                                        onChange={e => setUseAiPersonalise(e.target.checked)}
+                                        className="sr-only"
+                                    />
+                                    <div className={`w-11 h-6 rounded-full transition-colors ${useAiPersonalise ? "bg-violet-600" : "bg-zinc-300"}`} />
+                                    <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${useAiPersonalise ? "translate-x-5" : ""}`} />
+                                </div>
+                            </label>
+
                             <div>
                                 <label className="block text-xs font-black uppercase tracking-widest text-zinc-500 mb-1.5">
                                     Instantly Campaign ID <span className="text-zinc-400 normal-case font-medium">(from Instantly dashboard)</span>
@@ -587,8 +611,12 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
                     {step === "launching" && (
                         <div className="py-12 text-center">
                             <Loader2 className="w-10 h-10 animate-spin text-orange-500 mx-auto mb-4" />
-                            <p className="font-black text-zinc-900">Pushing leads to Instantly…</p>
-                            <p className="text-sm text-zinc-500 mt-1">This may take a moment for large lists</p>
+                            <p className="font-black text-zinc-900">
+                                {useAiPersonalise ? "Generating AI openings & pushing to Instantly…" : "Pushing leads to Instantly…"}
+                            </p>
+                            <p className="text-sm text-zinc-500 mt-1">
+                                {useAiPersonalise ? "MiniMax M2.7 is writing personalised openers — this takes ~1s per lead" : "This may take a moment for large lists"}
+                            </p>
                         </div>
                     )}
                 </div>
@@ -599,7 +627,7 @@ function CreateCampaignModal({ onClose, onCreated }: { onClose: () => void; onCr
 
 const TEMPLATE_A = `Subject: {{business_name}} — quick referral opportunity
 
-{Hi|Hey|G'day} {{first_name}},
+{Hi|Hey|G'day} {{first_name}}, {{ai_opening}}
 
 {I run|I'm with} TradeRefer, a platform that {connects|matches} Australian tradies with people who refer customers for cash.
 
@@ -681,9 +709,13 @@ function EmailTemplatesSection() {
                     </div>
                 ))}
             </div>
-            <div className="mt-4 p-3 bg-zinc-50 rounded-xl border border-zinc-100">
+            <div className="mt-4 p-3 bg-zinc-50 rounded-xl border border-zinc-100 space-y-1">
                 <p className="text-xs font-bold text-zinc-600">
-                    Available merge variables: <code className="bg-white px-1 rounded border border-zinc-200">{"{{first_name}}"}</code> <code className="bg-white px-1 rounded border border-zinc-200">{"{{business_name}}"}</code> <code className="bg-white px-1 rounded border border-zinc-200">{"{{claim_url}}"}</code>
+                    Available merge variables: <code className="bg-white px-1 rounded border border-zinc-200">{"{{first_name}}"}</code> <code className="bg-white px-1 rounded border border-zinc-200">{"{{business_name}}"}</code> <code className="bg-white px-1 rounded border border-zinc-200">{"{{claim_url}}"}</code> <code className="bg-white px-1 rounded border border-zinc-200">{"{{sender_name}}"}</code>
+                </p>
+                <p className="text-xs text-violet-700 font-bold">
+                    <span className="inline-flex items-center gap-1"><Sparkles className="w-3 h-3" /> AI only:</span>{" "}
+                    <code className="bg-violet-50 px-1 rounded border border-violet-200">{"{{ai_opening}}"}</code> — unique personalised sentence per lead (requires MiniMax toggle on launch)
                 </p>
             </div>
         </div>
