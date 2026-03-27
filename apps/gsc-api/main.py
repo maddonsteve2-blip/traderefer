@@ -42,7 +42,7 @@ CLIENT_SECRET_FILE = ROOT_DIR / "client_secret_643902729199-qn7nntblms4brtb7ddtj
 DEFAULT_SITE_URL = os.getenv("GSC_SITE_URL", "sc-domain:traderefer.au")
 DEFAULT_SITE_URL_ALT = os.getenv("GSC_SITE_URL_ALT", "https://traderefer.au/")
 STALE_AFTER_HOURS = int(os.getenv("GSC_STALE_AFTER_HOURS", "24"))
-AUTO_REFRESH_ON_STALE = os.getenv("GSC_AUTO_REFRESH_ON_STALE", "false").strip().lower() in {"1", "true", "yes", "on"}
+AUTO_REFRESH_ON_STALE = os.getenv("GSC_AUTO_REFRESH_ON_STALE", "true").strip().lower() in {"1", "true", "yes", "on"}
 REFRESH_SECRET = os.getenv("GSC_REFRESH_SECRET", "").strip()
 REFRESH_LOCK = Lock()
 DATAFORSEO_BASE_URL = os.getenv("DATAFORSEO_BASE_URL", "https://api.dataforseo.com/v3").rstrip("/")
@@ -991,10 +991,32 @@ async def get_bulk_keyword_volume(
 
 
 @app.get("/api/keywords/opportunities")
-def get_keyword_opportunities(
+async def get_keyword_opportunities(
+    response: Response,
     limit: int = Query(50, ge=1, le=1000),
     existing_pages: str | None = Query(default=None),
 ):
+    # Auto-seed keyword volume cache from keyword gap keywords when cache is empty
+    cache_payload = read_cache_payload(KEYWORDS_VOLUME_FILE)
+    if keyword_volume_cache_is_empty(cache_payload) and dataforseo_is_configured():
+        try:
+            gap_payload = read_cache_payload(KEYWORD_GAP_FILE)
+            gap_is_empty = not isinstance(gap_payload.get("items"), list) or len(gap_payload.get("items", [])) == 0
+            if gap_is_empty:
+                # Fetch fresh keyword gap first so we have keywords to seed from
+                gap_payload, _ = await refresh_keyword_gap_cache()
+            gap_keywords = [
+                item["keyword"]
+                for item in (gap_payload.get("items") or [])
+                if item.get("keyword")
+            ][:100]
+            if gap_keywords:
+                fetched_items, cost = await fetch_keyword_volume_live(gap_keywords)
+                cache_payload = merge_keyword_volume_cache({}, fetched_items)
+                response.headers["X-DataForSEO-Cost"] = str(cost or 0)
+        except Exception:
+            pass  # Best-effort — fall through to empty result if seeding fails
+
     result = find_keyword_opportunities(limit=limit, existing_pages=existing_pages)
     return {
         "opportunities": result["items"],
