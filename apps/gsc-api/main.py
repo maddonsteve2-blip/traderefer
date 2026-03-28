@@ -748,6 +748,95 @@ def get_existing_pages(existing_pages: str | None = None):
     return {normalise_page_path(page) for page in page_paths if page}
 
 
+# ── Trade keyword relevance filter ───────────────────────────────────────────
+# Keywords must contain at least one of these root terms to be considered
+# trade-relevant for TradeRefer's audience.
+_TRADE_ROOTS: frozenset[str] = frozenset({
+    # Plumbing / gas
+    "plumb", "plumber", "drain", "hot water", "gas fit", "blocked drain", "pipe",
+    # Electrical
+    "electri", "electrician", "switchboard", "ev charger", "solar panel", "solar install",
+    # Building / construction
+    "builder", "building", "construct", "renovation", "renovate", "extension", "knock down",
+    # Carpentry / joinery / decking
+    "carpent", "carpenter", "joiner", "joinery", "cabinet maker", "deck build", "pergola",
+    # Fencing
+    "fencing", "fencer", "fence build", "fence install",
+    # Painting
+    "painter", "painting", "paint job",
+    # Tiling
+    "tiler", "tiling", " tile",
+    # Landscaping / gardening
+    "landscap", "gardener", "gardening", "lawn mow", "lawn care", "turf lay", "retaining wall",
+    "garden maintenance", "garden design",
+    # Cleaning
+    "cleaner", "cleaning", "pressure wash", "gutter clean", "window clean", "end of lease clean",
+    # Roofing
+    "roofer", "roofing", "roof repair", "gutter repair", "fascia",
+    # Pest control
+    "pest control", "termite", "cockroach treat", "rodent control",
+    # Air conditioning / HVAC
+    "air con", "aircon", "hvac", "ducted", "split system", " hvac", "refrigeration",
+    # Concreting / paving
+    "concreter", "concreting", "concrete slab", "concrete driveway", "paving", "paver",
+    # Pool / spa
+    "pool service", "pool clean", "pool repair", "spa service",
+    # Handyman
+    "handyman", "odd job", "home repair", "home maintenance",
+    # Locksmith / security
+    "locksmith", "lock repair", "security install",
+    # Plastering / rendering
+    "plaster", "rendering", "renderer",
+    # Welding / metalwork
+    "welder", "welding",
+    # Mechanical / automotive
+    "mechanic", "auto repair", "car service", "car repair", "log book",
+    # Removals / storage
+    "removalist", "removals", "mover", "moving company",
+    # Skip / waste
+    "skip bin", "rubbish remov", "waste remov", "junk remov",
+    # Earthworks / excavation
+    "excavat", "earthwork", "bobcat", "demolit",
+    # Appliance repair
+    "appliance repair", "washing machine repair", "dishwasher repair", "oven repair",
+    # Solar
+    "solar install", "solar panel", "solar system",
+    # General intent signals
+    "tradies", "tradie", "trade", "contractor", "installer",
+    "near me", "in my area", "close to me", "find a", "hire a", "best ", "local ",
+    "how much", "cost of", "price of", "quote for",
+})
+
+# Known consumer retail / food / non-trade brands and categories to exclude
+_CONSUMER_BLOCKLIST: frozenset[str] = frozenset({
+    "aldi", "kfc", "mcdonald", "mcdonalds", "subway", "bunnings", "woolworth", "woolies",
+    "coles", "domino", "pizza hut", "hungry jack", "guzman", "nandos", "red rooster",
+    "ikea", "costco", "target store", "kmart", "big w", "officeworks", "jb hi-fi",
+    "netflix", "spotify", "facebook", "instagram", "tiktok", "youtube",
+    "amazon", "ebay", "gumtree", "seek job", "indeed job",
+    "grocery", "supermarket", "food deliver", "uber eat", "doordash", "deliveroo",
+    "petrol", "fuel price", "servo near",
+    "restaurant", "cafe near", "coffee shop",
+    "chemist warehouse", "priceline", "pharmacy near",
+    "gym near", "fitness near", "yoga near",
+    "hairdresser", "hair salon", "barber near", "nail salon",
+    "vet near", "dog grooming",
+    "school near", "childcare near", "daycare near",
+})
+
+
+def _is_trade_relevant(keyword: str) -> bool:
+    """Return True only if the keyword is relevant to trade/home-service searches."""
+    kw = keyword.lower()
+    for block in _CONSUMER_BLOCKLIST:
+        if block in kw:
+            return False
+    for root in _TRADE_ROOTS:
+        if root in kw:
+            return True
+    return False
+
+
 def find_keyword_opportunities(limit: int, existing_pages: str | None = None):
     cache_payload = read_cache_payload(KEYWORDS_VOLUME_FILE)
     cache_items = list(get_keyword_volume_cache_items(cache_payload).values())
@@ -756,6 +845,8 @@ def find_keyword_opportunities(limit: int, existing_pages: str | None = None):
     for item in cache_items:
         keyword = item.get("keyword")
         if not keyword:
+            continue
+        if not _is_trade_relevant(keyword):
             continue
         path = "/local/" + "-".join(keyword.strip().lower().split())
         if path in current_pages:
@@ -776,6 +867,8 @@ def find_keyword_opportunities(limit: int, existing_pages: str | None = None):
         "freshness": freshness,
         "existingPagesCount": len(current_pages),
         "totalCandidates": len(opportunities),
+        "totalCacheItems": len(cache_items),
+        "filteredCount": len(cache_items) - len(opportunities),
     }
 
 
@@ -1016,7 +1109,7 @@ async def get_keyword_opportunities(
             gap_keywords = [
                 item["keyword"]
                 for item in (gap_payload.get("items") or [])
-                if item.get("keyword")
+                if item.get("keyword") and _is_trade_relevant(item["keyword"])
             ][:100]
             if gap_keywords:
                 fetched_items, cost = await fetch_keyword_volume_live(gap_keywords)
