@@ -4,8 +4,9 @@ Provides Google Search Console data analysis endpoints
 """
 
 from datetime import datetime, timedelta, timezone
-from threading import Lock
+from threading import Lock, Thread
 from base64 import b64encode
+import time
 from fastapi import Body, FastAPI, Header, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -45,6 +46,7 @@ STALE_AFTER_HOURS = int(os.getenv("GSC_STALE_AFTER_HOURS", "24"))
 AUTO_REFRESH_ON_STALE = os.getenv("GSC_AUTO_REFRESH_ON_STALE", "true").strip().lower() in {"1", "true", "yes", "on"}
 REFRESH_SECRET = os.getenv("GSC_REFRESH_SECRET", "").strip()
 REFRESH_LOCK = Lock()
+_last_refresh_error: str | None = None
 DATAFORSEO_BASE_URL = os.getenv("DATAFORSEO_BASE_URL", "https://api.dataforseo.com/v3").rstrip("/")
 DATAFORSEO_LOGIN = os.getenv("DATAFORSEO_LOGIN", "").strip()
 DATAFORSEO_PASSWORD = os.getenv("DATAFORSEO_PASSWORD", "").strip()
@@ -532,6 +534,7 @@ def refresh_gsc_data():
 
 
 def load_gsc_data(force_refresh: bool = False, refresh_if_stale: bool = False):
+    global _last_refresh_error
     data = load_cached_gsc_data()
     freshness = build_freshness(data)
     should_refresh = force_refresh or (refresh_if_stale and freshness["isStale"]) or (AUTO_REFRESH_ON_STALE and freshness["isStale"])
@@ -540,11 +543,16 @@ def load_gsc_data(force_refresh: bool = False, refresh_if_stale: bool = False):
         if not refresh_is_configured():
             return data
         try:
+            _last_refresh_error = None
             return refresh_gsc_data()
-        except HTTPException:
-            raise
         except Exception as exc:
-            raise HTTPException(status_code=500, detail=f"Failed to refresh GSC data: {str(exc)}")
+            _last_refresh_error = str(exc)
+            if force_refresh:
+                if isinstance(exc, HTTPException):
+                    raise
+                raise HTTPException(status_code=500, detail=f"Failed to refresh GSC data: {str(exc)}")
+            # Auto/lazy refresh failed — serve stale data rather than erroring
+            return data
 
     return data
 
@@ -1166,6 +1174,32 @@ async def get_dataforseo_status(response: Response):
     }
 
 
+def _background_refresh_worker():
+    """Daemon thread: refresh GSC data on startup (if stale) then every GSC_REFRESH_INTERVAL_HOURS hours."""
+    global _last_refresh_error
+    interval_hours = int(os.getenv("GSC_REFRESH_INTERVAL_HOURS", "6"))
+    interval_secs = interval_hours * 3600
+    # Small startup delay so the HTTP server is fully ready before the first refresh attempt
+    time.sleep(10)
+    while True:
+        if refresh_is_configured():
+            try:
+                raw = read_json_file_or_default(DATA_FILE, {})
+                freshness = build_freshness(raw)
+                if freshness.get("isStale", True):
+                    _last_refresh_error = None
+                    refresh_gsc_data()
+            except Exception as exc:
+                _last_refresh_error = str(exc)
+        time.sleep(interval_secs)
+
+
+@app.on_event("startup")
+def start_background_refresh():
+    t = Thread(target=_background_refresh_worker, daemon=True, name="gsc-bg-refresh")
+    t.start()
+
+
 @app.get("/")
 def root():
     return {
@@ -1267,6 +1301,7 @@ def get_gsc_status():
         "cacheFile": payload["cacheFile"],
         "siteUrl": payload["data"].get("siteUrl"),
         "dateRanges": payload["data"].get("dateRanges"),
+        "lastRefreshError": _last_refresh_error,
     }
 
 
