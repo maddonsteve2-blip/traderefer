@@ -50,6 +50,9 @@ export function AddressAutocomplete({
     const [loadError, setLoadError] = useState(false);
     const [fetchError, setFetchError] = useState(false);
     const [manualMode, setManualMode] = useState(false);
+    const [manualStreet, setManualStreet] = useState(addressValue || "");
+    const [manualSuburb, setManualSuburb] = useState(suburbValue || "");
+    const [manualState, setManualState] = useState(stateValue || "VIC");
     const mapsRef = useRef<typeof google | null>(null);
     const serviceRef = useRef<google.maps.places.AutocompleteService | null>(null);
     const placesServiceRef = useRef<google.maps.places.PlacesService | null>(null);
@@ -65,8 +68,12 @@ export function AddressAutocomplete({
     useEffect(() => {
         let mounted = true;
 
+        // Fallback: if Maps API doesn't load within 6s, switch to manual mode
+        const timeoutId = setTimeout(() => { if (mounted && !ready) setLoadError(true); }, 6000);
+
         loader.load()
             .then((googleMaps) => {
+                clearTimeout(timeoutId);
                 if (!mounted || !placesContainerRef.current) return;
                 mapsRef.current = googleMaps;
                 serviceRef.current = new googleMaps.maps.places.AutocompleteService();
@@ -74,11 +81,12 @@ export function AddressAutocomplete({
                 sessionTokenRef.current = new googleMaps.maps.places.AutocompleteSessionToken();
                 setReady(true);
             })
-            .catch(() => setLoadError(true));
+            .catch(() => { clearTimeout(timeoutId); setLoadError(true); });
 
         return () => {
             mounted = false;
             if (debounceRef.current) clearTimeout(debounceRef.current);
+            clearTimeout(timeoutId);
         };
     }, []);
 
@@ -208,17 +216,37 @@ export function AddressAutocomplete({
         }
     }, []);
 
+    const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
+
     if (loadError || manualMode) {
+        const fireManual = (street: string, suburb: string, state: string) => {
+            onSelectRef.current(street, suburb, state, "");
+        };
         return (
-            <div className="space-y-2">
+            <div className="space-y-3">
                 <input
                     type="text"
                     placeholder="Street address (e.g. 42 Main St)"
-                    defaultValue={addressValue}
-                    onChange={(e) => onSelectRef.current(e.target.value, suburbValue, stateValue)}
+                    value={manualStreet}
+                    onChange={(e) => { setManualStreet(e.target.value); fireManual(e.target.value, manualSuburb, manualState); }}
                     className={className}
                     autoComplete="street-address"
                 />
+                <input
+                    type="text"
+                    placeholder="Suburb (e.g. Melbourne)"
+                    value={manualSuburb}
+                    onChange={(e) => { setManualSuburb(e.target.value); fireManual(manualStreet, e.target.value, manualState); }}
+                    className={className}
+                    autoComplete="address-level2"
+                />
+                <select
+                    value={manualState}
+                    onChange={(e) => { setManualState(e.target.value); fireManual(manualStreet, manualSuburb, e.target.value); }}
+                    className={`${className} cursor-pointer`}
+                >
+                    {AU_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
                 {!loadError && (
                     <button
                         type="button"
