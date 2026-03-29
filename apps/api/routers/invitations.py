@@ -41,6 +41,40 @@ async def _get_referrer_id(user: AuthenticatedUser, db: AsyncSession) -> uuid.UU
     return row[0]
 
 
+@router.get("/resolve")
+async def resolve_invite_code(
+    code: str = "",
+    db: AsyncSession = Depends(get_db),
+):
+    """Public endpoint — resolve an invite code to inviter/invitee details for the landing page."""
+    if not code:
+        return {"found": False}
+
+    res = await db.execute(text("""
+        SELECT
+            ui.invitee_name,
+            ui.invitation_type,
+            ui.inviter_type,
+            COALESCE(r.full_name, b.business_name, 'A friend') as inviter_name
+        FROM user_invitations ui
+        LEFT JOIN referrers r ON ui.inviter_id = r.id::text AND ui.inviter_type = 'referrer'
+        LEFT JOIN businesses b ON ui.inviter_id = b.id::text AND ui.inviter_type = 'business'
+        WHERE ui.referral_code = :code
+        LIMIT 1
+    """), {"code": code})
+    row = res.mappings().first()
+
+    if not row:
+        return {"found": False}
+
+    return {
+        "found": True,
+        "inviter_name": row["inviter_name"] or "A friend",
+        "invitee_name": row["invitee_name"] or "",
+        "invitation_type": row["invitation_type"] or "referrer",
+    }
+
+
 @router.post("/send")
 async def send_invitations(
     data: InviteRequest,
@@ -105,7 +139,7 @@ async def send_invitations(
             errors.append({"name": invitee_name, "error": str(e)})
             continue
 
-        signup_url = f"{FRONTEND_URL}/onboarding/{invitation_type}?invite={referral_code}"
+        signup_url = f"{FRONTEND_URL}/join/{invitation_type}?invite={referral_code}"
 
         # Send email invitation
         if invitee_email:

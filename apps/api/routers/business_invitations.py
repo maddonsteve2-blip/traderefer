@@ -74,9 +74,9 @@ async def send_business_invitations(
 
         referral_code = str(uuid.uuid4())[:8].upper()
         signup_url = (
-            f"{FRONTEND_URL}/onboarding/{inv_type}?invite={referral_code}"
+            f"{FRONTEND_URL}/join/{inv_type}?invite={referral_code}"
             if inv_type == "referrer"
-            else f"{FRONTEND_URL}/onboarding/business?invite={referral_code}"
+            else f"{FRONTEND_URL}/join/business?invite={referral_code}"
         )
 
         try:
