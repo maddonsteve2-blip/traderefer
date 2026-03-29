@@ -66,9 +66,9 @@ async def send_invitations(
     errors = []
 
     for invitee in data.invitees:
-        invitee_name = invitee.get("name", "Friend")
-        invitee_email = invitee.get("email", "").strip().lower() or None
-        invitee_phone = invitee.get("phone", "").strip() or None
+        invitee_name = invitee.get("name") or "Friend"
+        invitee_email = (invitee.get("email") or "").strip().lower() or None
+        invitee_phone = (invitee.get("phone") or "").strip() or None
         invitation_type = invitee.get("type", "referrer")
 
         if not invitee_email and not invitee_phone:
