@@ -213,30 +213,47 @@ export default async function JoinReferrerPage({
                         </div>
                     </div>
 
-                    {/* Right: Prezzee invite bonus (2 cols) — smaller */}
-                    <div className="lg:col-span-2 rounded-3xl bg-white border border-zinc-200 p-6 md:p-8 flex flex-col">
-                        <div className="flex items-center gap-2 mb-3">
-                            <Gift className="w-5 h-5 text-amber-500" />
-                            <span className="text-[11px] font-black text-zinc-400 uppercase tracking-widest">Bonus reward</span>
-                        </div>
-                        <h3 className="text-xl font-black text-zinc-900 mb-2">
-                            Invite 5 friends → <span className="text-emerald-600">$25 Prezzee Card</span>
-                        </h3>
-                        <p className="text-zinc-500 font-medium text-base mb-4 leading-relaxed">
-                            On top of per-lead earnings, invite friends and family. Once 5 sign up and become active, you get a $25 Prezzee gift card automatically.
-                        </p>
-                        <div className="flex items-center gap-3 mt-auto">
-                            <div className="shrink-0">
+                    {/* Right: Prezzee invite bonus (2 cols) — premium dark card */}
+                    <div className="lg:col-span-2 rounded-3xl bg-[#0F172A] p-6 md:p-7 flex flex-col relative overflow-hidden border border-white/5 shadow-2xl">
+                        {/* Subtle glow effect */}
+                        <div className="absolute -top-20 -right-20 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                        <div className="relative z-10 flex flex-col h-full">
+                            {/* Prezzee branding */}
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="text-white/60 font-black uppercase tracking-[0.2em] text-xs">Bonus Reward by</span>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src="/images/prezzee/prezzee-logo.svg" alt="Prezzee" className="h-4 w-auto brightness-0 invert opacity-70" />
+                            </div>
+
+                            {/* Large animated Smart Card */}
+                            <div className="flex justify-center mb-4">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                     src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
                                     alt="Prezzee Smart Card"
-                                    className="w-20 rounded-lg shadow-sm"
+                                    className="w-48 rounded-2xl shadow-2xl shadow-black/40"
                                 />
                             </div>
-                            <div className="flex flex-wrap gap-1">
-                                {["Woolworths", "Bunnings", "Uber", "Netflix", "+400"].map(b => (
-                                    <span key={b} className="bg-zinc-50 text-zinc-500 font-bold text-xs px-2.5 py-1 rounded-full border border-zinc-200">{b}</span>
+
+                            {/* Headline */}
+                            <h3 className="text-white font-black text-xl mb-1 text-center">
+                                Invite 5 friends, earn a
+                            </h3>
+                            <p className="text-center mb-3">
+                                <span className="text-emerald-400 font-black text-4xl">$25</span>
+                                <span className="text-white font-black text-xl ml-2">Gift Card</span>
+                            </p>
+
+                            <p className="text-zinc-400 font-medium text-base text-center mb-5 leading-relaxed">
+                                Once 5 friends sign up and become active, you get a $25 Prezzee Smart Card — automatically.
+                            </p>
+
+                            {/* Brand chips */}
+                            <div className="flex flex-wrap justify-center gap-2 mt-auto">
+                                {["Woolworths", "Bunnings", "Uber Eats", "Netflix", "JB Hi-Fi", "+400 more"].map(b => (
+                                    <span key={b} className="bg-white/10 text-white/80 font-bold text-xs px-3 py-1.5 rounded-lg border border-white/5">{b}</span>
                                 ))}
                             </div>
                         </div>
