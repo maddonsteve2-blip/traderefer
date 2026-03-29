@@ -83,12 +83,12 @@ async def send_invitations(
             await db.execute(text("""
                 INSERT INTO user_invitations
                     (inviter_id, invitee_name, invitee_email, invitee_phone,
-                     invitation_type, invitation_method, referral_code, status)
+                     invitation_type, invitation_method, referral_code, status, inviter_type)
                 VALUES
                     (:inviter_id, :name, :email, :phone,
-                     :type, :method, :code, 'pending')
-                ON CONFLICT (inviter_id, invitee_email) DO UPDATE
-                    SET invited_at = now(), referral_code = EXCLUDED.referral_code
+                     :type, :method, :code, 'pending', 'referrer')
+                ON CONFLICT (inviter_id, invitee_email, inviter_type)
+                    DO UPDATE SET invited_at = now(), referral_code = EXCLUDED.referral_code
             """), {
                 "inviter_id": referrer_id,
                 "name": invitee_name,

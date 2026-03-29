@@ -50,7 +50,14 @@ export function InviteFriendsDialog({
 
 
     const sendInvitations = async () => {
-        if (invitees.length === 0) { toast.error("Add at least one person to invite"); return; }
+        // Auto-add current form entry if filled (user might skip "Add to List")
+        let finalInvitees = [...invitees];
+        if (form.name.trim() && (form.email.trim() || form.phone.trim())) {
+            finalInvitees.push({ ...form, id: crypto.randomUUID() });
+            setInvitees(finalInvitees);
+            setForm({ name: "", email: "", phone: "", type: "referrer" });
+        }
+        if (finalInvitees.length === 0) { toast.error("Enter a name and email or phone to invite"); return; }
         setSending(true);
         try {
             const token = await getToken();
@@ -58,18 +65,29 @@ export function InviteFriendsDialog({
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({
-                    invitees: invitees.map(i => ({
+                    invitees: finalInvitees.map(i => ({
                         name: i.name, email: i.email || null, phone: i.phone || null, type: i.type
                     })),
-                    method: invitees.some(i => i.email) ? "email" : "sms",
+                    method: finalInvitees.some(i => i.email) ? "email" : "sms",
                 })
             });
-            if (!res.ok) throw new Error(await res.text());
+            if (!res.ok) {
+                const errText = await res.text();
+                console.error("Invitation send error:", errText);
+                throw new Error(errText);
+            }
             const data = await res.json();
-            toast.success(`${data.total} invitation${data.total !== 1 ? "s" : ""} sent!`);
-            setSent(true);
-        } catch (e) {
-            toast.error("Failed to send some invitations. Please try again.");
+            if (data.total > 0) {
+                toast.success(`${data.total} invitation${data.total !== 1 ? "s" : ""} sent!`);
+                setSent(true);
+            } else if (data.errors?.length > 0) {
+                toast.error(`Failed: ${data.errors[0]?.error || "Unknown error"}`);
+            } else {
+                toast.error("No invitations were sent. Please try again.");
+            }
+        } catch (e: any) {
+            console.error("Invitation error:", e);
+            toast.error(e?.message?.includes("404") ? "Referrer account not found. Try refreshing the page." : "Failed to send invitation. Please try again.");
         } finally {
             setSending(false);
         }
@@ -166,9 +184,11 @@ export function InviteFriendsDialog({
 
                                     {formError && <p className="text-red-500 font-black px-1" style={{ fontSize: '14px' }}>{formError}</p>}
 
-                                    <Button onClick={addInvitee} variant="outline" className="w-full rounded-2xl border-2 border-zinc-200 h-14 font-black transition-all active:scale-95" style={{ fontSize: '17px' }}>
-                                        <Plus className="w-5 h-5 mr-1.5" /> Add to List
-                                    </Button>
+                                    {invitees.length > 0 && (
+                                        <Button onClick={addInvitee} variant="outline" className="w-full rounded-2xl border-2 border-zinc-200 h-14 font-black transition-all active:scale-95" style={{ fontSize: '17px' }}>
+                                            <Plus className="w-5 h-5 mr-1.5" /> Add Another
+                                        </Button>
+                                    )}
                                 </div>
 
                             {/* Invitee list */}
@@ -201,12 +221,12 @@ export function InviteFriendsDialog({
                         <div className="px-8 pb-8 pt-4 border-t-2 border-zinc-100">
                             <Button
                                 onClick={sendInvitations}
-                                disabled={sending || invitees.length === 0}
+                                disabled={sending || (invitees.length === 0 && !form.name.trim())}
                                 className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-16 font-black shadow-xl shadow-orange-500/20 transition-all active:scale-95"
                                 style={{ fontSize: '20px' }}
                             >
                                 {sending ? <Loader2 className="w-6 h-6 animate-spin mr-3" /> : <Send className="w-6 h-6 mr-3" />}
-                                {sending ? "Sending..." : `Send ${invitees.length > 0 ? invitees.length : ""} Invitation${invitees.length !== 1 ? "s" : ""}`}
+                                {sending ? "Sending..." : invitees.length > 0 ? `Send ${invitees.length} Invitation${invitees.length !== 1 ? "s" : ""}` : "Send Invitation"}
                             </Button>
                         </div>
                     </>
