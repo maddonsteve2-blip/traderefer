@@ -3,6 +3,14 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "sonner",
+      "@clerk/nextjs",
+      "@clerk/clerk-react",
+    ],
+  },
   images: {
     remotePatterns: [
       {

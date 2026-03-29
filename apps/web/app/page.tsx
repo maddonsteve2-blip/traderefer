@@ -11,7 +11,9 @@ import {
 import { TRADE_CATEGORIES } from "@/lib/constants";
 import { sql } from "@/lib/db";
 
-import { SmartSearch } from "@/components/SmartSearch";
+const SmartSearch = dynamic(() => import("@/components/SmartSearch").then((m) => m.SmartSearch), {
+  loading: () => <div className="h-14 rounded-xl bg-white/10 animate-pulse" />,
+});
 
 export const metadata: Metadata = {
   title: "TradeRefer | More Customers for Tradies. Earn Gift Cards for Referrals.",

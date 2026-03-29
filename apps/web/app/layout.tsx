@@ -3,10 +3,9 @@ import { Inter, Outfit, Montserrat, Oswald } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Toaster } from "sonner";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
 import { DirectoryFooter } from "@/components/DirectoryFooter";
-import { PostHogPageView } from "@/components/PostHogPageView";
+import { ClientProviders } from "@/components/ClientProviders";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -114,11 +113,10 @@ export default function RootLayout({
         >
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
-          <PostHogPageView />
+          <ClientProviders />
           <ConditionalLayout footer={<DirectoryFooter />}>
             {children}
           </ConditionalLayout>
-          <Toaster position="top-center" richColors />
         </body>
       </html>
     </ClerkProvider>
