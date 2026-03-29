@@ -91,7 +91,7 @@ export default async function JoinBusinessPage({
                         <div className="flex flex-wrap gap-x-5 gap-y-2 text-base text-zinc-500 font-bold">
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> Free to list</span>
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> No monthly fees</span>
-                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> First lead is free</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> Direct enquiries are free</span>
                         </div>
                     </div>
 
@@ -127,7 +127,7 @@ export default async function JoinBusinessPage({
                         </div>
 
                         <div className="border-t border-white/10 pt-4">
-                            <p className="text-zinc-400 text-[15px] font-medium">Example based on $10 referral fee. All leads are AI-screened for quality before you see them.</p>
+                            <p className="text-zinc-400 text-[15px] font-medium">Example based on $10 referral fee for referral leads. Direct enquiries from your profile page are always free.</p>
                         </div>
                     </div>
                 </div>
@@ -190,7 +190,7 @@ export default async function JoinBusinessPage({
                                 { icon: ShieldCheck, title: "No monthly fees or contracts", desc: "Your listing is 100% free. Only pay when you choose to unlock a lead." },
                                 { icon: Zap, title: "AI-screened leads", desc: "Every lead goes through AI screening before reaching you. No spam, no tyre kickers." },
                                 { icon: DollarSign, title: "You control the cost", desc: "Set your referral fee from $3 to $75+. Higher fees attract more referrers to promote you." },
-                                { icon: Star, title: "First lead is free", desc: "Try it risk-free. Your first lead costs nothing — we want you to see the quality." },
+                                { icon: Star, title: "Direct enquiries are free", desc: "Leads from your profile page cost nothing — you only pay for referral leads you choose to unlock." },
                             ].map(({ icon: Icon, title, desc }) => (
                                 <div key={title} className="flex gap-4 items-start">
                                     <div className="w-12 h-12 bg-emerald-500/15 rounded-xl flex items-center justify-center shrink-0">
