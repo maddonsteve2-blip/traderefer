@@ -44,7 +44,7 @@ export default async function JoinBusinessPage({
                     <Link href="/"><Logo size="sm" /></Link>
                     <Link
                         href={signUpUrl}
-                        className="bg-orange-600 hover:bg-orange-700 text-white font-black text-sm px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-lg shadow-orange-600/25 ring-2 ring-orange-600/20"
+                        className="bg-orange-600 hover:bg-orange-700 text-white font-black text-base px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-lg shadow-orange-600/25 ring-2 ring-orange-600/20"
                     >
                         Claim Free Profile
                     </Link>
@@ -57,7 +57,7 @@ export default async function JoinBusinessPage({
                     {/* Left: Copy */}
                     <div>
                         {inviterName && (
-                            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 font-bold text-sm px-4 py-2 rounded-full mb-4 border border-emerald-100">
+                            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 font-bold text-base px-4 py-2 rounded-full mb-4 border border-emerald-100">
                                 <Users className="w-4 h-4" />
                                 {inviterName} invited you
                             </div>
@@ -71,11 +71,11 @@ export default async function JoinBusinessPage({
                             )}
                         </h1>
 
-                        <p className="text-lg text-zinc-500 font-medium leading-relaxed mb-5 max-w-lg">
+                        <p className="text-xl text-zinc-500 font-medium leading-relaxed mb-5 max-w-lg">
                             TradeRefer connects your business with trusted local referrers who recommend you to people looking for work done. <strong className="text-zinc-800">You set your own referral fee</strong> — and only pay when you choose to unlock a lead.
                         </p>
 
-                        <p className="text-sm text-emerald-600 font-bold mb-5 flex items-center gap-1.5">
+                        <p className="text-base text-emerald-600 font-bold mb-5 flex items-center gap-1.5">
                             <Building2 className="w-4 h-4" /> 5,000+ businesses already listed across Australia
                         </p>
 
@@ -88,7 +88,7 @@ export default async function JoinBusinessPage({
                             </Link>
                         </div>
 
-                        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500 font-bold">
+                        <div className="flex flex-wrap gap-x-5 gap-y-2 text-base text-zinc-500 font-bold">
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> Free to list</span>
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> No monthly fees</span>
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> First lead is free</span>
@@ -101,33 +101,33 @@ export default async function JoinBusinessPage({
 
                         <div className="bg-white/5 rounded-2xl p-5 border border-white/10 mb-5">
                             <div className="flex items-center justify-between mb-3">
-                                <p className="font-black text-white text-lg">Your referral fee</p>
+                                <p className="font-black text-white text-xl">Your referral fee</p>
                                 <Settings className="w-5 h-5 text-zinc-500" />
                             </div>
                             <div className="flex items-end gap-2 mb-2">
                                 <span className="text-5xl font-black text-emerald-400">$3–$75</span>
-                                <span className="text-zinc-500 font-bold text-sm mb-2">you decide</span>
+                                <span className="text-zinc-500 font-bold text-base mb-2">you decide</span>
                             </div>
-                            <p className="text-zinc-400 text-sm font-medium">Set any amount from $3 to $75+. Higher fees attract more referrers to promote your business.</p>
+                            <p className="text-zinc-400 text-base font-medium">Set any amount from $3 to $75+. Higher fees attract more referrers to promote your business.</p>
                         </div>
 
                         <div className="space-y-3 mb-5">
                             <div className="flex justify-between items-center bg-white/5 rounded-xl p-3 border border-white/10">
-                                <span className="text-zinc-400 font-medium text-sm">Your fee (you set this)</span>
+                                <span className="text-zinc-400 font-medium text-base">Your fee (you set this)</span>
                                 <span className="font-black text-white">$10.00</span>
                             </div>
                             <div className="flex justify-between items-center bg-white/5 rounded-xl p-3 border border-white/10">
-                                <span className="text-zinc-400 font-medium text-sm">Platform fee (20%)</span>
+                                <span className="text-zinc-400 font-medium text-base">Platform fee (20%)</span>
                                 <span className="font-black text-white">$2.00</span>
                             </div>
                             <div className="flex justify-between items-center bg-emerald-500/10 rounded-xl p-3 border border-emerald-500/20">
-                                <span className="text-emerald-300 font-bold text-sm">Total to unlock a lead</span>
+                                <span className="text-emerald-300 font-bold text-base">Total to unlock a lead</span>
                                 <span className="font-black text-emerald-400 text-xl">$12.00</span>
                             </div>
                         </div>
 
                         <div className="border-t border-white/10 pt-4">
-                            <p className="text-zinc-400 text-sm font-medium">Example based on $10 referral fee. All leads are AI-screened for quality before you see them.</p>
+                            <p className="text-zinc-400 text-[15px] font-medium">Example based on $10 referral fee. All leads are AI-screened for quality before you see them.</p>
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,7 @@ export default async function JoinBusinessPage({
             {/* ═══ HOW IT WORKS — 4-step wide row ═══ */}
             <section className="w-full bg-zinc-50 border-y border-zinc-200/60">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-14">
-                    <h2 className="text-2xl md:text-3xl font-black text-zinc-900 text-center mb-8 tracking-tight">
+                    <h2 className="text-3xl md:text-4xl font-black text-zinc-900 text-center mb-8 tracking-tight">
                         How it works for your business
                     </h2>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
@@ -150,9 +150,9 @@ export default async function JoinBusinessPage({
                                 <div className="w-14 h-14 bg-zinc-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                     <Icon className="w-7 h-7 text-zinc-700" />
                                 </div>
-                                <p className="text-[11px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Step {step}</p>
-                                <h3 className="text-base md:text-lg font-black text-zinc-900 mb-1.5">{title}</h3>
-                                <p className="text-zinc-500 font-medium text-sm leading-snug">{desc}</p>
+                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1.5">Step {step}</p>
+                                <h3 className="text-lg md:text-xl font-black text-zinc-900 mb-1.5">{title}</h3>
+                                <p className="text-zinc-500 font-medium text-base leading-snug">{desc}</p>
                             </div>
                         ))}
                     </div>
@@ -167,10 +167,10 @@ export default async function JoinBusinessPage({
                             <Quote className="w-6 h-6 text-emerald-600" />
                         </div>
                         <div>
-                            <p className="text-lg text-zinc-800 font-bold leading-relaxed mb-2">
+                            <p className="text-xl text-zinc-800 font-bold leading-relaxed mb-2">
                                 &ldquo;We got 3 solid jobs in our first week. The leads are genuine — real people who need work done, not spam. Best part is we set our own fee.&rdquo;
                             </p>
-                            <p className="text-sm text-zinc-500 font-bold">Mark T. — Plumber, Melbourne</p>
+                            <p className="text-base text-zinc-500 font-bold">Mark T. — Plumber, Melbourne</p>
                         </div>
                     </div>
                 </div>
@@ -195,8 +195,8 @@ export default async function JoinBusinessPage({
                                         <Icon className="w-5 h-5 text-emerald-400" />
                                     </div>
                                     <div>
-                                        <p className="font-black text-white mb-0.5">{title}</p>
-                                        <p className="text-zinc-400 text-sm font-medium">{desc}</p>
+                                        <p className="font-black text-white text-lg mb-0.5">{title}</p>
+                                        <p className="text-zinc-400 text-base font-medium">{desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -208,8 +208,8 @@ export default async function JoinBusinessPage({
                                 { value: "1,200+", label: "Referrers" },
                             ].map(s => (
                                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center">
-                                    <p className="text-lg font-black text-emerald-400">{s.value}</p>
-                                    <p className="text-zinc-500 font-bold text-[10px] uppercase tracking-widest">{s.label}</p>
+                                    <p className="text-2xl font-black text-emerald-400">{s.value}</p>
+                                    <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest">{s.label}</p>
                                 </div>
                             ))}
                         </div>
@@ -219,10 +219,10 @@ export default async function JoinBusinessPage({
                     <div className="lg:col-span-2 flex flex-col gap-5">
                         {/* Trade types */}
                         <div className="rounded-2xl bg-white border border-zinc-200 p-5 md:p-6">
-                            <h3 className="text-base font-black text-zinc-900 mb-3">Works for every trade</h3>
+                            <h3 className="text-lg font-black text-zinc-900 mb-3">Works for every trade</h3>
                             <div className="flex flex-wrap gap-1.5">
                                 {["Plumbing", "Electrical", "Building", "Roofing", "Painting", "Carpentry", "Landscaping", "Tiling", "Fencing", "HVAC", "Solar", "+50 more"].map(trade => (
-                                    <span key={trade} className="bg-zinc-50 text-zinc-600 font-bold text-xs px-2.5 py-1 rounded-full border border-zinc-200">
+                                    <span key={trade} className="bg-zinc-50 text-zinc-600 font-bold text-sm px-3 py-1.5 rounded-full border border-zinc-200">
                                         {trade}
                                     </span>
                                 ))}
@@ -235,10 +235,10 @@ export default async function JoinBusinessPage({
                                 <Gift className="w-5 h-5 text-amber-500" />
                                 <span className="text-[11px] font-black text-zinc-400 uppercase tracking-widest">Bonus</span>
                             </div>
-                            <h3 className="text-lg font-black text-zinc-900 mb-1.5">
+                            <h3 className="text-xl font-black text-zinc-900 mb-1.5">
                                 Invite 5 people → <span className="text-emerald-600">$25 Prezzee Card</span>
                             </h3>
-                            <p className="text-zinc-500 font-medium text-sm mb-3 leading-relaxed">
+                            <p className="text-zinc-500 font-medium text-base mb-3 leading-relaxed">
                                 Know other tradies? Invite them to TradeRefer. Once 5 sign up and become active, you get a $25 Prezzee gift card automatically.
                             </p>
                             <div className="flex items-center gap-3 mt-auto">
@@ -250,7 +250,7 @@ export default async function JoinBusinessPage({
                                 />
                                 <div className="flex flex-wrap gap-1">
                                     {["Woolworths", "Bunnings", "Uber", "Netflix", "+400"].map(b => (
-                                        <span key={b} className="bg-zinc-50 text-zinc-500 font-bold text-[10px] px-2 py-0.5 rounded-full border border-zinc-200">{b}</span>
+                                        <span key={b} className="bg-zinc-50 text-zinc-500 font-bold text-xs px-2.5 py-1 rounded-full border border-zinc-200">{b}</span>
                                     ))}
                                 </div>
                             </div>
@@ -268,7 +268,7 @@ export default async function JoinBusinessPage({
                             : "Ready to get more leads?"
                         }
                     </h2>
-                    <p className="text-lg text-zinc-500 font-medium mb-6 max-w-lg mx-auto">
+                    <p className="text-xl text-zinc-500 font-medium mb-6 max-w-lg mx-auto">
                         Create your free profile in 3 minutes. Set your own referral fee, get AI-screened leads, and your first lead is on us.
                     </p>
                     <Link
@@ -277,7 +277,7 @@ export default async function JoinBusinessPage({
                     >
                         Claim Your Free Profile <ArrowRight className="w-5 h-5" />
                     </Link>
-                    <p className="mt-3 text-sm text-zinc-400 font-medium">Free forever. No credit card. No lock-in.</p>
+                    <p className="mt-3 text-base text-zinc-400 font-medium">Free forever. No credit card. No lock-in.</p>
                 </div>
             </section>
 

@@ -44,7 +44,7 @@ export default async function JoinReferrerPage({
                     <Link href="/"><Logo size="sm" /></Link>
                     <Link
                         href={signUpUrl}
-                        className="bg-orange-600 hover:bg-orange-700 text-white font-black text-sm px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-lg shadow-orange-600/25 ring-2 ring-orange-600/20"
+                        className="bg-orange-600 hover:bg-orange-700 text-white font-black text-base px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-lg shadow-orange-600/25 ring-2 ring-orange-600/20"
                     >
                         Join Free
                     </Link>
@@ -57,7 +57,7 @@ export default async function JoinReferrerPage({
                     {/* Left: Copy */}
                     <div>
                         {inviterName && (
-                            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 font-bold text-sm px-4 py-2 rounded-full mb-4 border border-emerald-100">
+                            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 font-bold text-base px-4 py-2 rounded-full mb-4 border border-emerald-100">
                                 <Users className="w-4 h-4" />
                                 {inviterName} invited you
                             </div>
@@ -71,11 +71,11 @@ export default async function JoinReferrerPage({
                             )}
                         </h1>
 
-                        <p className="text-lg text-zinc-500 font-medium leading-relaxed mb-5 max-w-lg">
+                        <p className="text-xl text-zinc-500 font-medium leading-relaxed mb-5 max-w-lg">
                             Know someone who needs a plumber, sparky or builder? Refer a quality tradie from our network. <strong className="text-zinc-800">Each business sets their own referral fee</strong> — you earn 80% as a Prezzee gift card every time they take your lead.
                         </p>
 
-                        <p className="text-sm text-emerald-600 font-bold mb-5 flex items-center gap-1.5">
+                        <p className="text-base text-emerald-600 font-bold mb-5 flex items-center gap-1.5">
                             <Users className="w-4 h-4" /> 1,200+ referrers already earning across Australia
                         </p>
 
@@ -88,7 +88,7 @@ export default async function JoinReferrerPage({
                             </Link>
                         </div>
 
-                        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500 font-bold">
+                        <div className="flex flex-wrap gap-x-5 gap-y-2 text-base text-zinc-500 font-bold">
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> 100% free</span>
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> No experience needed</span>
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> Paid via Prezzee gift cards</span>
@@ -102,8 +102,8 @@ export default async function JoinReferrerPage({
                             <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <p className="font-black text-white">Plumber referral</p>
-                                        <p className="text-zinc-500 text-sm font-medium">Business fee: $15</p>
+                                        <p className="font-black text-white text-lg">Plumber referral</p>
+                                        <p className="text-zinc-400 text-base font-medium">Business fee: $15</p>
                                     </div>
                                     <p className="text-2xl font-black text-emerald-400">+$12</p>
                                 </div>
@@ -111,8 +111,8 @@ export default async function JoinReferrerPage({
                             <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <p className="font-black text-white">Electrician referral</p>
-                                        <p className="text-zinc-500 text-sm font-medium">Business fee: $25</p>
+                                        <p className="font-black text-white text-lg">Electrician referral</p>
+                                        <p className="text-zinc-400 text-base font-medium">Business fee: $25</p>
                                     </div>
                                     <p className="text-2xl font-black text-emerald-400">+$20</p>
                                 </div>
@@ -120,16 +120,16 @@ export default async function JoinReferrerPage({
                             <div className="bg-emerald-500/10 rounded-2xl p-4 border border-emerald-500/20">
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <p className="font-black text-white">Builder referral</p>
-                                        <p className="text-zinc-500 text-sm font-medium">Business fee: $75</p>
+                                        <p className="font-black text-white text-lg">Builder referral</p>
+                                        <p className="text-zinc-400 text-base font-medium">Business fee: $75</p>
                                     </div>
                                     <p className="text-3xl font-black text-emerald-400">+$60</p>
                                 </div>
                             </div>
                         </div>
                         <div className="border-t border-white/10 pt-4">
-                            <p className="text-zinc-300 text-sm font-medium mb-1">You earn <strong className="text-emerald-400">80%</strong> of whatever the business sets as their referral fee.</p>
-                            <p className="text-zinc-500 text-xs font-medium">Paid automatically as Prezzee gift cards — Woolworths, Bunnings, Uber, Netflix & 400+ brands.</p>
+                            <p className="text-zinc-300 text-[15px] font-medium mb-1">You earn <strong className="text-emerald-400">80%</strong> of whatever the business sets as their referral fee.</p>
+                            <p className="text-zinc-500 text-sm font-medium">Paid automatically as Prezzee gift cards — Woolworths, Bunnings, Uber, Netflix & 400+ brands.</p>
                         </div>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ export default async function JoinReferrerPage({
             {/* ═══ HOW IT WORKS — 4-step wide row ═══ */}
             <section className="w-full bg-zinc-50 border-y border-zinc-200/60">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-14">
-                    <h2 className="text-2xl md:text-3xl font-black text-zinc-900 text-center mb-8 tracking-tight">
+                    <h2 className="text-3xl md:text-4xl font-black text-zinc-900 text-center mb-8 tracking-tight">
                         How it works — 4 simple steps
                     </h2>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
@@ -152,9 +152,9 @@ export default async function JoinReferrerPage({
                                 <div className="w-14 h-14 bg-zinc-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                     <Icon className="w-7 h-7 text-zinc-700" />
                                 </div>
-                                <p className="text-[11px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Step {step}</p>
-                                <h3 className="text-base md:text-lg font-black text-zinc-900 mb-1.5">{title}</h3>
-                                <p className="text-zinc-500 font-medium text-sm leading-snug">{desc}</p>
+                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1.5">Step {step}</p>
+                                <h3 className="text-lg md:text-xl font-black text-zinc-900 mb-1.5">{title}</h3>
+                                <p className="text-zinc-500 font-medium text-base leading-snug">{desc}</p>
                             </div>
                         ))}
                     </div>
@@ -169,10 +169,10 @@ export default async function JoinReferrerPage({
                             <Quote className="w-6 h-6 text-emerald-600" />
                         </div>
                         <div>
-                            <p className="text-lg text-zinc-800 font-bold leading-relaxed mb-2">
+                            <p className="text-xl text-zinc-800 font-bold leading-relaxed mb-2">
                                 &ldquo;I earned $145 last month just recommending my plumber and electrician to neighbours. It&apos;s genuinely the easiest side income I&apos;ve ever had.&rdquo;
                             </p>
-                            <p className="text-sm text-zinc-500 font-bold">Sarah M. — Referrer, Sydney</p>
+                            <p className="text-base text-zinc-500 font-bold">Sarah M. — Referrer, Sydney</p>
                         </div>
                     </div>
                 </div>
@@ -193,8 +193,8 @@ export default async function JoinReferrerPage({
                                 { value: "335+", label: "Prezzee Brands" },
                             ].map(s => (
                                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-3.5 text-center">
-                                    <p className="text-xl font-black text-emerald-400">{s.value}</p>
-                                    <p className="text-zinc-500 font-bold text-[11px] uppercase tracking-widest">{s.label}</p>
+                                    <p className="text-2xl md:text-3xl font-black text-emerald-400">{s.value}</p>
+                                    <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest">{s.label}</p>
                                 </div>
                             ))}
                         </div>
@@ -206,8 +206,8 @@ export default async function JoinReferrerPage({
                                 "Tier system: refer more, earn a bigger share (up to 90%)",
                             ].map(txt => (
                                 <div key={txt} className="flex items-start gap-2.5">
-                                    <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                                    <p className="text-sm text-zinc-300 font-medium">{txt}</p>
+                                    <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
+                                    <p className="text-base text-zinc-300 font-medium">{txt}</p>
                                 </div>
                             ))}
                         </div>
@@ -222,7 +222,7 @@ export default async function JoinReferrerPage({
                         <h3 className="text-xl font-black text-zinc-900 mb-2">
                             Invite 5 friends → <span className="text-emerald-600">$25 Prezzee Card</span>
                         </h3>
-                        <p className="text-zinc-500 font-medium text-sm mb-4 leading-relaxed">
+                        <p className="text-zinc-500 font-medium text-base mb-4 leading-relaxed">
                             On top of per-lead earnings, invite friends and family. Once 5 sign up and become active, you get a $25 Prezzee gift card automatically.
                         </p>
                         <div className="flex items-center gap-3 mt-auto">
@@ -236,7 +236,7 @@ export default async function JoinReferrerPage({
                             </div>
                             <div className="flex flex-wrap gap-1">
                                 {["Woolworths", "Bunnings", "Uber", "Netflix", "+400"].map(b => (
-                                    <span key={b} className="bg-zinc-50 text-zinc-500 font-bold text-[10px] px-2 py-0.5 rounded-full border border-zinc-200">{b}</span>
+                                    <span key={b} className="bg-zinc-50 text-zinc-500 font-bold text-xs px-2.5 py-1 rounded-full border border-zinc-200">{b}</span>
                                 ))}
                             </div>
                         </div>
@@ -253,7 +253,7 @@ export default async function JoinReferrerPage({
                             : "Start earning today — it's free"
                         }
                     </h2>
-                    <p className="text-lg text-zinc-500 font-medium mb-6 max-w-lg mx-auto">
+                    <p className="text-xl text-zinc-500 font-medium mb-6 max-w-lg mx-auto">
                         Sign up in 2 minutes, pick the tradies you trust, and earn up to $60 every time someone takes your referral.
                     </p>
                     <Link
@@ -262,7 +262,7 @@ export default async function JoinReferrerPage({
                     >
                         Join Free & Start Earning <ArrowRight className="w-5 h-5" />
                     </Link>
-                    <p className="mt-3 text-sm text-zinc-400 font-medium">No credit card. No experience. No strings.</p>
+                    <p className="mt-3 text-base text-zinc-400 font-medium">No credit card. No experience. No strings.</p>
                 </div>
             </section>
 
