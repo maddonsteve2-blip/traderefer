@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { MapPin, ChevronRight, Phone, CheckCircle, Loader2, User, ShieldCheck } from "lucide-react";
 import Link from "next/link";
@@ -24,6 +24,7 @@ function ReferrerOnboardingInner() {
     const searchParams = useSearchParams();
     const inviteCode = searchParams.get("invite") || "";
 
+    const nameInitializedRef = useRef(false);
     const [step, setStep] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [otpSent, setOtpSent] = useState(false);
@@ -31,6 +32,7 @@ function ReferrerOnboardingInner() {
     const [otpCode, setOtpCode] = useState("");
     const [otpError, setOtpError] = useState("");
 
+    const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [phoneError, setPhoneError] = useState("");
 
@@ -42,6 +44,14 @@ function ReferrerOnboardingInner() {
     });
     const [addressError, setAddressError] = useState("");
     const [isCheckingProfile, setIsCheckingProfile] = useState(true);
+
+    // Pre-fill name from Clerk once — guard prevents Clerk's async re-renders from resetting user edits
+    useEffect(() => {
+        if (!nameInitializedRef.current && (user?.fullName || user?.firstName)) {
+            setName(user.fullName || user.firstName || "");
+            nameInitializedRef.current = true;
+        }
+    }, [user]);
 
     // Auto-skip verification if already a verified business
     useEffect(() => {
@@ -120,6 +130,8 @@ function ReferrerOnboardingInner() {
             });
             if (!res.ok) throw new Error(await res.text());
             setOtpSent(true);
+            setOtpCode("");
+            setOtpError("");
             setStep(1);
             toast.success("Verification code sent!");
         } catch (e) {
@@ -163,7 +175,7 @@ function ReferrerOnboardingInner() {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({
-                    full_name: user?.fullName || user?.firstName || "",
+                    full_name: name || user?.fullName || user?.firstName || "",
                     phone,
                     street_address: address.street,
                     suburb: address.suburb,
@@ -280,9 +292,13 @@ function ReferrerOnboardingInner() {
                                         <label className="block text-xs font-black text-zinc-400 uppercase tracking-widest mb-2 md:mb-3 flex items-center gap-2">
                                             <User className="w-3.5 h-3.5" /> Your Name
                                         </label>
-                                        <div className="w-full px-5 py-3 md:px-6 md:py-4 bg-zinc-50 border border-zinc-100 rounded-2xl text-lg font-medium text-zinc-700">
-                                            {user?.fullName || user?.firstName || "Loading..."}
-                                        </div>
+                                        <input
+                                            type="text"
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            placeholder="Your full name"
+                                            className="w-full px-5 py-3 md:px-6 md:py-4 bg-zinc-50 border border-zinc-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all text-lg font-medium placeholder:text-zinc-300"
+                                        />
                                     </div>
 
                                     <div>

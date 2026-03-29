@@ -56,7 +56,7 @@ async def send_otp(data: OTPSendRequest):
     code = str(random.randint(100000, 999999))
     _otp_store[phone] = {"code": code, "expires_at": datetime.utcnow() + timedelta(minutes=10)}
     try:
-        await _send_sms(phone, f"Your TradeRefer verification code is: {code}\nExpires in 10 minutes.")
+        await _send_sms(phone, f"Your TradeRefer verification code is: {code}\nExpires in 10 minutes.", raise_on_error=True)
         return {"sent": True}
     except Exception as e:
         error_logger.error(f"OTP send failed for {phone}: {e}")

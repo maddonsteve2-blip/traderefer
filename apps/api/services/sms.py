@@ -12,13 +12,14 @@ TWILIO_FROM_NUMBERS = [n.strip() for n in _from_numbers_raw.split(",") if n.stri
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://traderefer.au")
 
 
-async def _send_sms(to: str, body: str, from_number: Optional[str] = None):
+async def _send_sms(to: str, body: str, from_number: Optional[str] = None, raise_on_error: bool = False):
     """Send SMS via Twilio. Skips gracefully if credentials not set.
     
     Args:
         to: Recipient phone number
         body: SMS message body
         from_number: Specific Twilio number to send from (optional, random if not provided)
+        raise_on_error: If True, re-raises Twilio exceptions (use for OTP flows where delivery must be confirmed)
     """
     if not TWILIO_ACCOUNT_SID or not TWILIO_AUTH_TOKEN or not TWILIO_FROM_NUMBERS:
         email_logger.warning(f"Twilio credentials not set — skipping SMS to {to}")
@@ -48,6 +49,8 @@ async def _send_sms(to: str, body: str, from_number: Optional[str] = None):
         return result
     except Exception as e:
         error_logger.error(f"SMS failed | to={phone} | error={e}", exc_info=True)
+        if raise_on_error:
+            raise
 
 
 def _lead_first_name(full_name: str) -> str:
