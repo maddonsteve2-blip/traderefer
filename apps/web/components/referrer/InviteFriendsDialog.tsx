@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     UserPlus, Send, CheckCircle, Loader2,
-    Building2, Users, X, Plus
+    Building2, Users, X, Plus, Gift, User
 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
@@ -102,35 +102,109 @@ export function InviteFriendsDialog({
         <Dialog open={open} onOpenChange={handleClose}>
             <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden rounded-3xl border-0 shadow-2xl">
                 {sent ? (
-                    <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
-                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                    <div className="flex flex-col items-center justify-center py-12 px-8 text-center">
+                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-5 shadow-sm">
                             <CheckCircle className="w-10 h-10 text-green-600" />
                         </div>
-                        <h3 className="font-black text-zinc-900 mb-3" style={{ fontSize: '28px' }}>Invitations Sent!</h3>
-                        <p className="text-zinc-500 font-bold mb-3" style={{ fontSize: '18px' }}>Your friends will receive an invite email or SMS.</p>
-                        <div className="bg-orange-50 border-2 border-orange-100 rounded-[24px] px-6 py-5 mt-4 mb-8 w-full shadow-sm">
-                            <p className="font-black text-orange-800" style={{ fontSize: '18px' }}>🎁 Earn $25 when 5 friends join!</p>
-                            <p className="text-orange-600 font-bold mt-1.5" style={{ fontSize: '15px' }}>Track progress in your dashboard.</p>
+                        <h3 className="font-black text-zinc-900 mb-2" style={{ fontSize: '28px' }}>
+                            {invitees.length} Invitation{invitees.length !== 1 ? "s" : ""} Sent!
+                        </h3>
+                        <p className="text-zinc-500 font-bold mb-5" style={{ fontSize: '16px' }}>They'll get an email or SMS shortly.</p>
+
+                        {/* Mini progress circles on success screen */}
+                        <div className="flex items-center justify-center gap-1.5 mb-4">
+                            {[0, 1, 2, 3, 4].map(i => (
+                                <div key={i} className={`w-9 h-9 rounded-full flex items-center justify-center border-2 ${
+                                    i < invitees.length
+                                        ? "bg-orange-500 border-orange-400"
+                                        : "bg-zinc-100 border-zinc-200 border-dashed"
+                                }`}>
+                                    {i < invitees.length
+                                        ? <CheckCircle className="w-4 h-4 text-white" />
+                                        : <span className="text-zinc-400 font-bold" style={{ fontSize: '12px' }}>{i + 1}</span>
+                                    }
+                                </div>
+                            ))}
+                            <div className="w-2 h-0.5 bg-zinc-200" />
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                                invitees.length >= 5
+                                    ? "bg-green-500 border-green-400 shadow-md shadow-green-500/30"
+                                    : "bg-zinc-100 border-zinc-200 border-dashed"
+                            }`}>
+                                <Gift className={`w-4 h-4 ${invitees.length >= 5 ? "text-white" : "text-zinc-400"}`} />
+                            </div>
                         </div>
-                        <Button onClick={handleClose} className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-16 font-black shadow-xl shadow-orange-500/20 transition-all active:scale-95" style={{ fontSize: '20px' }}>Done</Button>
+
+                        <div className="bg-orange-50 border-2 border-orange-100 rounded-[20px] px-6 py-4 mb-6 w-full">
+                            {invitees.length >= 5 ? (
+                                <>
+                                    <p className="font-black text-green-700" style={{ fontSize: '17px' }}>� Amazing! You'll get your $25 gift card once they join!</p>
+                                    <p className="text-green-600 font-bold mt-1" style={{ fontSize: '14px' }}>Track progress in your dashboard.</p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className="font-black text-orange-800" style={{ fontSize: '17px' }}>🎁 {5 - invitees.length} more invite{5 - invitees.length !== 1 ? "s" : ""} to earn your $25 gift card!</p>
+                                    <p className="text-orange-600 font-bold mt-1" style={{ fontSize: '14px' }}>Come back anytime to invite more friends.</p>
+                                </>
+                            )}
+                        </div>
+                        <Button onClick={handleClose} className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-full h-14 font-black shadow-xl shadow-orange-500/20 transition-all active:scale-95" style={{ fontSize: '20px' }}>Done</Button>
                     </div>
                 ) : (
                     <>
                         {/* Header */}
-                        <div className="bg-zinc-900 px-8 pt-8 pb-6">
-                            <div className="flex items-center justify-between mb-2">
+                        <div className="bg-zinc-900 px-8 pt-8 pb-7">
+                            <div className="flex items-center justify-between mb-1">
                                 <DialogTitle className="text-white font-black" style={{ fontSize: '24px' }}>Invite Friends</DialogTitle>
                                 <button onClick={handleClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 transition-colors">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
-                            <p className="text-zinc-400 font-bold leading-relaxed" style={{ fontSize: '16px' }}>Invite friends to join as referrers or businesses. Earn a $25 gift card when 5 become active.</p>
+                            <p className="text-zinc-400 font-bold mb-5" style={{ fontSize: '15px' }}>Referrers or businesses — any mix counts!</p>
 
-                            {/* Incentive pills */}
-                            <div className="flex gap-2.5 mt-5">
-                                <div className="bg-orange-500/20 text-orange-300 font-black px-4 py-1.5 rounded-full" style={{ fontSize: '13px', letterSpacing: '0.02em' }}>🎁 5 friends = $25 gift card</div>
-                                <div className="bg-zinc-700 text-zinc-300 font-black px-4 py-1.5 rounded-full" style={{ fontSize: '13px', letterSpacing: '0.02em' }}>Email + SMS</div>
+                            {/* 5-slot progress tracker */}
+                            <div className="flex items-center justify-center gap-2">
+                                {[0, 1, 2, 3, 4].map(i => {
+                                    const inv = invitees[i];
+                                    const filled = !!inv;
+                                    return (
+                                        <div key={i} className="flex items-center">
+                                            <div className={`w-11 h-11 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                                                filled
+                                                    ? "bg-orange-500 border-orange-400 shadow-lg shadow-orange-500/30 scale-105"
+                                                    : "bg-zinc-800 border-zinc-700 border-dashed"
+                                            }`}>
+                                                {filled ? (
+                                                    inv.type === "business"
+                                                        ? <Building2 className="w-5 h-5 text-white" />
+                                                        : <User className="w-5 h-5 text-white" />
+                                                ) : (
+                                                    <span className="text-zinc-500 font-black" style={{ fontSize: '14px' }}>{i + 1}</span>
+                                                )}
+                                            </div>
+                                            {i < 4 && (
+                                                <div className={`w-3 h-0.5 ${filled && invitees[i + 1] ? "bg-orange-500" : "bg-zinc-700"} transition-colors`} />
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                                {/* Gift card reward */}
+                                <div className="flex items-center">
+                                    <div className="w-3 h-0.5 bg-zinc-700" />
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                                        invitees.length >= 5
+                                            ? "bg-green-500 border-green-400 shadow-lg shadow-green-500/40 scale-110 animate-pulse"
+                                            : "bg-zinc-800 border-zinc-700 border-dashed"
+                                    }`}>
+                                        <Gift className={`w-5 h-5 ${invitees.length >= 5 ? "text-white" : "text-zinc-500"}`} />
+                                    </div>
+                                </div>
                             </div>
+                            <p className="text-center mt-3 font-black text-orange-400" style={{ fontSize: '14px' }}>
+                                {invitees.length >= 5
+                                    ? "🎉 You've hit 5! Send to unlock your $25 gift card!"
+                                    : `${invitees.length}/5 invited — ${5 - invitees.length} more to earn a $25 Prezzee gift card`}
+                            </p>
                         </div>
 
                         <div className="px-8 py-6 space-y-6 max-h-[60vh] overflow-y-auto">
@@ -184,9 +258,14 @@ export function InviteFriendsDialog({
 
                                     {formError && <p className="text-red-500 font-black px-1" style={{ fontSize: '14px' }}>{formError}</p>}
 
-                                    {invitees.length > 0 && (
+                                    {invitees.length > 0 && invitees.length < 5 && (
+                                        <Button onClick={addInvitee} variant="outline" className="w-full rounded-2xl border-2 border-orange-200 bg-orange-50 hover:bg-orange-100 h-14 font-black transition-all active:scale-95 text-orange-700" style={{ fontSize: '17px' }}>
+                                            <Plus className="w-5 h-5 mr-1.5" /> Add #{invitees.length + 1} of 5
+                                        </Button>
+                                    )}
+                                    {invitees.length >= 5 && (
                                         <Button onClick={addInvitee} variant="outline" className="w-full rounded-2xl border-2 border-zinc-200 h-14 font-black transition-all active:scale-95" style={{ fontSize: '17px' }}>
-                                            <Plus className="w-5 h-5 mr-1.5" /> Add Another
+                                            <Plus className="w-5 h-5 mr-1.5" /> Add More
                                         </Button>
                                     )}
                                 </div>
