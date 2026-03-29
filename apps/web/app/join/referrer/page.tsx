@@ -137,24 +137,25 @@ export default async function JoinReferrerPage({
 
             {/* ═══ HOW IT WORKS — 4-step wide row ═══ */}
             <section className="w-full bg-zinc-50 border-y border-zinc-200/60">
-                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-14">
-                    <h2 className="text-3xl md:text-4xl font-black text-zinc-900 text-center mb-8 tracking-tight">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-20">
+                    <p className="text-emerald-600 font-black text-base uppercase tracking-widest text-center mb-3">Simple Process</p>
+                    <h2 className="text-3xl md:text-[2.75rem] font-black text-zinc-900 text-center mb-10 tracking-tight leading-tight">
                         How it works — 4 simple steps
                     </h2>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         {[
                             { step: "1", icon: ShieldCheck, title: "Sign up free", desc: "Create your account in 2 minutes. No cost, ever." },
                             { step: "2", icon: Briefcase, title: "Pick businesses", desc: "Browse 5,000+ tradies and apply to refer the ones you trust." },
                             { step: "3", icon: Users, title: "Send leads", desc: "Know someone who needs work done? Share your unique link or submit a lead." },
                             { step: "4", icon: DollarSign, title: "Get paid", desc: "When the business takes your lead, you earn their referral fee as a Prezzee gift card." },
                         ].map(({ step, icon: Icon, title, desc }) => (
-                            <div key={step} className="bg-white rounded-2xl p-5 md:p-7 border border-zinc-200/80 text-center shadow-sm">
-                                <div className="w-14 h-14 bg-zinc-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                    <Icon className="w-7 h-7 text-zinc-700" />
+                            <div key={step} className="bg-white rounded-2xl p-6 md:p-8 border border-zinc-200/80 text-center shadow-sm hover:shadow-lg transition-shadow">
+                                <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                                    <Icon className="w-8 h-8 text-emerald-600" />
                                 </div>
-                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1.5">Step {step}</p>
-                                <h3 className="text-lg md:text-xl font-black text-zinc-900 mb-1.5">{title}</h3>
-                                <p className="text-zinc-500 font-medium text-base leading-snug">{desc}</p>
+                                <p className="text-xs font-black text-emerald-600/60 uppercase tracking-widest mb-2">Step {step}</p>
+                                <h3 className="text-xl md:text-[1.35rem] font-black text-zinc-900 mb-2">{title}</h3>
+                                <p className="text-zinc-500 font-medium text-base leading-relaxed">{desc}</p>
                             </div>
                         ))}
                     </div>
@@ -163,16 +164,16 @@ export default async function JoinReferrerPage({
 
             {/* ═══ TESTIMONIAL ═══ */}
             <section className="w-full bg-white">
-                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-14">
-                    <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center">
-                        <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
-                            <Quote className="w-6 h-6 text-emerald-600" />
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-20">
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row gap-8 items-center">
+                        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+                            <Quote className="w-8 h-8 text-emerald-600" />
                         </div>
                         <div>
-                            <p className="text-xl text-zinc-800 font-bold leading-relaxed mb-2">
+                            <p className="text-xl md:text-2xl text-zinc-800 font-bold leading-relaxed mb-3">
                                 &ldquo;I earned $145 last month just recommending my plumber and electrician to neighbours. It&apos;s genuinely the easiest side income I&apos;ve ever had.&rdquo;
                             </p>
-                            <p className="text-base text-zinc-500 font-bold">Sarah M. — Referrer, Sydney</p>
+                            <p className="text-lg text-zinc-500 font-bold">Sarah M. — Referrer, Sydney</p>
                         </div>
                     </div>
                 </div>
@@ -180,34 +181,35 @@ export default async function JoinReferrerPage({
 
             {/* ═══ SPLIT: Social proof + Prezzee bonus ═══ */}
             <section className="w-full bg-zinc-50 border-y border-zinc-200/60">
-                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-14 grid lg:grid-cols-5 gap-6 items-stretch">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-20 grid lg:grid-cols-5 gap-6 items-stretch">
 
                     {/* Left: Stats + trust (3 cols) */}
-                    <div className="lg:col-span-3 rounded-3xl bg-zinc-800 p-6 md:p-8 text-white flex flex-col border border-zinc-700/50">
-                        <h3 className="text-2xl font-black mb-5">Why thousands trust TradeRefer</h3>
-                        <div className="grid grid-cols-2 gap-3 mb-5">
+                    <div className="lg:col-span-3 rounded-3xl bg-zinc-800 p-7 md:p-10 text-white flex flex-col border border-zinc-700/50">
+                        <p className="text-emerald-400 font-black text-xs uppercase tracking-widest mb-2">Social Proof</p>
+                        <h3 className="text-2xl md:text-3xl font-black mb-6">Why thousands trust TradeRefer</h3>
+                        <div className="grid grid-cols-2 gap-3 mb-6">
                             {[
                                 { value: "5,000+", label: "Businesses" },
                                 { value: "1,200+", label: "Active Referrers" },
                                 { value: "$10–$60", label: "Typical Earnings" },
                                 { value: "335+", label: "Prezzee Brands" },
                             ].map(s => (
-                                <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-3.5 text-center">
-                                    <p className="text-2xl md:text-3xl font-black text-emerald-400">{s.value}</p>
-                                    <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest">{s.label}</p>
+                                <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                                    <p className="text-3xl md:text-4xl font-black text-emerald-400">{s.value}</p>
+                                    <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest mt-1">{s.label}</p>
                                 </div>
                             ))}
                         </div>
-                        <div className="space-y-2.5 mt-auto">
+                        <div className="space-y-3 mt-auto">
                             {[
                                 "Businesses set their own fee — you always know what you'll earn",
                                 "AI-screened leads mean businesses trust your referrals",
                                 "Earnings paid as Prezzee cards — spend at 400+ stores",
                                 "Tier system: refer more, earn a bigger share (up to 90%)",
                             ].map(txt => (
-                                <div key={txt} className="flex items-start gap-2.5">
+                                <div key={txt} className="flex items-start gap-3">
                                     <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
-                                    <p className="text-base text-zinc-300 font-medium">{txt}</p>
+                                    <p className="text-base md:text-lg text-zinc-300 font-medium">{txt}</p>
                                 </div>
                             ))}
                         </div>
@@ -262,24 +264,24 @@ export default async function JoinReferrerPage({
             </section>
 
             {/* ═══ FINAL CTA ═══ */}
-            <section className="w-full bg-white">
-                <div className="max-w-3xl mx-auto px-4 py-12 md:py-16 text-center">
-                    <h2 className="text-3xl md:text-4xl font-black text-zinc-900 mb-3 tracking-tight">
+            <section className="w-full bg-gradient-to-b from-white to-zinc-50">
+                <div className="max-w-3xl mx-auto px-4 py-16 md:py-24 text-center">
+                    <h2 className="text-4xl md:text-5xl font-black text-zinc-900 mb-4 tracking-tight leading-tight">
                         {inviterName
                             ? `${inviterName} is already earning. Join them.`
                             : "Start earning today — it's free"
                         }
                     </h2>
-                    <p className="text-xl text-zinc-500 font-medium mb-6 max-w-lg mx-auto">
+                    <p className="text-xl md:text-2xl text-zinc-500 font-medium mb-8 max-w-lg mx-auto leading-relaxed">
                         Sign up in 2 minutes, pick the tradies you trust, and earn up to $60 every time someone takes your referral.
                     </p>
                     <Link
                         href={signUpUrl}
-                        className="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black text-lg px-10 py-4 rounded-full transition-all active:scale-95 shadow-xl shadow-orange-600/25 ring-2 ring-orange-600/20"
+                        className="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black text-xl px-12 py-5 rounded-full transition-all active:scale-95 shadow-xl shadow-orange-600/25 ring-2 ring-orange-600/20"
                     >
-                        Join Free & Start Earning <ArrowRight className="w-5 h-5" />
+                        Join Free & Start Earning <ArrowRight className="w-6 h-6" />
                     </Link>
-                    <p className="mt-3 text-base text-zinc-400 font-medium">No credit card. No experience. No strings.</p>
+                    <p className="mt-4 text-lg text-zinc-400 font-medium">No credit card. No experience. No strings.</p>
                 </div>
             </section>
 
