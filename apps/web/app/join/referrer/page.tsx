@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { Gift, Users, Star, CheckCircle, ArrowRight, Zap, DollarSign, ShieldCheck } from "lucide-react";
+import { Gift, Users, ArrowRight, Zap, DollarSign, ShieldCheck, CheckCircle, TrendingUp, Star, Briefcase } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "You're Invited to TradeRefer | Earn Gift Cards by Referring Tradies",
-    description: "Join TradeRefer and earn $25 Prezzee gift cards for every 5 friends you invite. Refer quality tradies to people you know — free to join.",
+    title: "You're Invited to TradeRefer | Earn $3–$75 Per Referral",
+    description: "Join TradeRefer free and earn cash rewards every time you refer a tradie to someone who needs work done. Businesses set fees from $3 to $75+ per lead.",
     robots: { index: false, follow: false },
 };
 
@@ -38,178 +38,202 @@ export default async function JoinReferrerPage({
 
     return (
         <main className="min-h-screen bg-white">
-            {/* Navbar */}
-            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-zinc-100">
-                <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            {/* Sticky nav */}
+            <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-zinc-100">
+                <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
                     <Link href="/"><Logo size="sm" /></Link>
                     <Link
                         href={signUpUrl}
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-black text-sm px-5 py-2.5 rounded-full transition-all active:scale-95 shadow-lg shadow-orange-500/20"
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-black text-sm px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-lg shadow-orange-500/20"
                     >
                         Join Free
                     </Link>
                 </div>
             </header>
 
-            {/* Hero */}
-            <section className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-white to-amber-50" />
-                <div className="relative max-w-3xl mx-auto px-4 py-16 md:py-24 text-center">
-                    {inviterName && (
-                        <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 font-bold text-sm px-4 py-2 rounded-full mb-6">
-                            <Users className="w-4 h-4" />
-                            {inviterName} invited you
-                        </div>
-                    )}
-
-                    <h1 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tight leading-[1.1] mb-5">
-                        {inviteeName ? (
-                            <>Hi {inviteeName}! Earn <span className="text-orange-500">gift cards</span> by referring tradies</>
-                        ) : (
-                            <>Earn <span className="text-orange-500">gift cards</span> by referring quality tradies</>
+            {/* ═══ HERO — Split layout ═══ */}
+            <section className="w-full bg-gradient-to-br from-orange-50 via-white to-amber-50">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 md:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                    {/* Left: Copy */}
+                    <div>
+                        {inviterName && (
+                            <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 font-bold text-sm px-4 py-2 rounded-full mb-5">
+                                <Users className="w-4 h-4" />
+                                {inviterName} invited you
+                            </div>
                         )}
-                    </h1>
 
-                    <p className="text-lg md:text-xl text-zinc-500 font-medium max-w-xl mx-auto mb-8 leading-relaxed">
-                        Know a good plumber, sparky, or builder? Refer them to people who need work done and earn <strong className="text-zinc-900">$25 Prezzee Smart Cards</strong> — spend at Woolworths, Bunnings, Uber, Netflix & 400+ brands.
-                    </p>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-zinc-900 tracking-tight leading-[1.1] mb-5">
+                            {inviteeName ? (
+                                <>Hi {inviteeName}!<br />Earn <span className="text-orange-500">$3–$75</span> every time you refer a tradie</>
+                            ) : (
+                                <>Earn <span className="text-orange-500">$3–$75</span> every time you refer a tradie</>
+                            )}
+                        </h1>
 
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <Link
-                            href={signUpUrl}
-                            className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-black text-lg px-8 py-4 rounded-full transition-all active:scale-95 shadow-xl shadow-orange-500/20"
-                        >
-                            Join Free & Start Earning <ArrowRight className="w-5 h-5" />
-                        </Link>
+                        <p className="text-lg text-zinc-500 font-medium leading-relaxed mb-6 max-w-lg">
+                            Know someone who needs a plumber, sparky or builder? Refer a quality tradie from our network. <strong className="text-zinc-800">The business sets their own referral fee</strong> — you earn it as a Prezzee gift card every time they take your lead.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-3 mb-5">
+                            <Link
+                                href={signUpUrl}
+                                className="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-black text-lg px-8 py-4 rounded-full transition-all active:scale-95 shadow-xl shadow-orange-500/20"
+                            >
+                                Join Free — Takes 2 Min <ArrowRight className="w-5 h-5" />
+                            </Link>
+                        </div>
+
+                        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500 font-bold">
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> 100% free</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> No experience needed</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> Paid via Prezzee gift cards</span>
+                        </div>
                     </div>
 
-                    <p className="mt-4 text-sm text-zinc-400 font-medium">No cost. No experience needed. Takes 2 minutes.</p>
+                    {/* Right: Earnings example card */}
+                    <div className="bg-zinc-900 rounded-3xl p-6 md:p-8 text-white shadow-2xl">
+                        <p className="text-zinc-400 font-bold text-xs uppercase tracking-widest mb-4">How you earn</p>
+                        <div className="space-y-4 mb-6">
+                            <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="font-black text-white">Plumber referral</p>
+                                        <p className="text-zinc-500 text-sm font-medium">Business fee: $15</p>
+                                    </div>
+                                    <p className="text-2xl font-black text-green-400">+$12</p>
+                                </div>
+                            </div>
+                            <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="font-black text-white">Electrician referral</p>
+                                        <p className="text-zinc-500 text-sm font-medium">Business fee: $25</p>
+                                    </div>
+                                    <p className="text-2xl font-black text-green-400">+$20</p>
+                                </div>
+                            </div>
+                            <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="font-black text-white">Builder referral</p>
+                                        <p className="text-zinc-500 text-sm font-medium">Business fee: $75</p>
+                                    </div>
+                                    <p className="text-2xl font-black text-green-400">+$60</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border-t border-white/10 pt-4">
+                            <p className="text-zinc-400 text-sm font-medium mb-1">You earn <strong className="text-white">80%</strong> of whatever the business sets as their referral fee.</p>
+                            <p className="text-zinc-500 text-xs font-medium">Paid automatically as Prezzee gift cards — Woolworths, Bunnings, Uber, Netflix & 400+ brands.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            {/* How it works */}
-            <section className="py-16 md:py-20 bg-zinc-50">
-                <div className="max-w-4xl mx-auto px-4">
-                    <h2 className="text-3xl md:text-4xl font-black text-zinc-900 text-center mb-12 tracking-tight">
-                        How it works
+            {/* ═══ HOW IT WORKS — 4-step wide row ═══ */}
+            <section className="w-full bg-white border-y border-zinc-100">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-16">
+                    <h2 className="text-2xl md:text-3xl font-black text-zinc-900 text-center mb-10 tracking-tight">
+                        How it works — 4 simple steps
                     </h2>
-
-                    <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-                        <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-zinc-100">
-                            <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                                <span className="text-2xl font-black text-orange-500">1</span>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        {[
+                            { step: "1", icon: ShieldCheck, title: "Sign up free", desc: "Create your account in 2 minutes. No cost, ever." },
+                            { step: "2", icon: Briefcase, title: "Pick businesses", desc: "Browse 5,000+ tradies and apply to refer the ones you trust." },
+                            { step: "3", icon: Users, title: "Send leads", desc: "Know someone who needs work done? Share your unique link or submit a lead." },
+                            { step: "4", icon: DollarSign, title: "Get paid", desc: "When the business takes your lead, you earn their referral fee as a Prezzee gift card." },
+                        ].map(({ step, icon: Icon, title, desc }) => (
+                            <div key={step} className="bg-zinc-50 rounded-2xl p-5 md:p-6 border border-zinc-100 text-center">
+                                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                    <Icon className="w-6 h-6 text-orange-500" />
+                                </div>
+                                <p className="text-xs font-black text-orange-500 uppercase tracking-widest mb-1">Step {step}</p>
+                                <h3 className="text-base md:text-lg font-black text-zinc-900 mb-1">{title}</h3>
+                                <p className="text-zinc-500 font-medium text-sm leading-snug">{desc}</p>
                             </div>
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Sign up free</h3>
-                            <p className="text-zinc-500 font-medium">Create your account in under 2 minutes. No fees, no commitments.</p>
-                        </div>
-
-                        <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-zinc-100">
-                            <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                                <span className="text-2xl font-black text-orange-500">2</span>
-                            </div>
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Refer tradies</h3>
-                            <p className="text-zinc-500 font-medium">Someone needs a tradie? Refer a quality one from our network and earn a referral fee.</p>
-                        </div>
-
-                        <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-zinc-100">
-                            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                                <Gift className="w-7 h-7 text-green-600" />
-                            </div>
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Earn rewards</h3>
-                            <p className="text-zinc-500 font-medium">Invite 5 friends who join → get a <strong>$25 Prezzee Smart Card</strong>. Plus earn on every referral.</p>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
 
-            {/* Prezzee Rewards Strip */}
-            <section className="py-16 md:py-20">
-                <div className="max-w-4xl mx-auto px-4">
-                    <div className="rounded-3xl bg-[#EAF4FF] border border-blue-100 p-6 md:p-10 flex flex-col md:flex-row items-center gap-6 md:gap-10">
-                        <div className="shrink-0">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
-                                alt="Prezzee Smart Card"
-                                className="w-40 md:w-52 rounded-xl shadow-lg"
-                            />
+            {/* ═══ SPLIT: Prezzee bonus + Social proof ═══ */}
+            <section className="w-full">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-16 grid lg:grid-cols-2 gap-8 items-stretch">
+
+                    {/* Left: Prezzee invite bonus */}
+                    <div className="rounded-3xl bg-[#EAF4FF] border border-blue-100 p-6 md:p-8 flex flex-col">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Gift className="w-5 h-5 text-orange-500" />
+                            <span className="text-xs font-black text-zinc-500 uppercase tracking-widest">Bonus reward</span>
                         </div>
-                        <div className="flex-1 text-center md:text-left">
-                            <div className="flex items-center gap-2 mb-2 justify-center md:justify-start">
-                                <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Rewards powered by</span>
+                        <h3 className="text-2xl font-black text-zinc-900 mb-2">
+                            Invite 5 friends → earn a <span className="text-[#FF6600]">$25 Prezzee Smart Card</span>
+                        </h3>
+                        <p className="text-zinc-500 font-medium text-sm mb-4 leading-relaxed">
+                            On top of your per-lead earnings, invite friends and family to TradeRefer. Once 5 of them sign up and become active, you get a $25 Prezzee gift card — automatically.
+                        </p>
+                        <div className="flex items-center gap-4 mt-auto">
+                            <div className="shrink-0">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
-                                    src="/images/prezzee/prezzee-logo.svg"
-                                    alt="Prezzee"
-                                    className="h-5 w-auto"
+                                    src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
+                                    alt="Prezzee Smart Card"
+                                    className="w-28 rounded-xl shadow-md"
                                 />
                             </div>
-                            <h3 className="text-2xl md:text-3xl font-black text-zinc-900 mb-2">
-                                Invite 5 friends → earn a <span className="text-[#FF6600]">$25 Smart Card</span>
-                            </h3>
-                            <p className="text-zinc-500 font-medium mb-3">
-                                Spend at Woolworths, Bunnings, Uber Eats, Netflix, JB Hi-Fi, Kmart & 400+ more brands. Issued automatically when your friends join.
-                            </p>
-                            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                                {["Woolworths", "Bunnings", "Uber Eats", "Netflix", "JB Hi-Fi", "+400 more"].map(brand => (
-                                    <span key={brand} className="bg-white/80 text-zinc-700 font-bold text-xs px-3 py-1.5 rounded-full border border-zinc-200">
-                                        {brand}
-                                    </span>
+                            <div className="flex flex-wrap gap-1.5">
+                                {["Woolworths", "Bunnings", "Uber Eats", "Netflix", "JB Hi-Fi", "+400"].map(b => (
+                                    <span key={b} className="bg-white/80 text-zinc-600 font-bold text-[11px] px-2.5 py-1 rounded-full border border-zinc-200">{b}</span>
                                 ))}
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            {/* Trust / Social Proof */}
-            <section className="py-16 md:py-20 bg-zinc-900 text-white">
-                <div className="max-w-4xl mx-auto px-4">
-                    <h2 className="text-3xl md:text-4xl font-black text-center mb-12 tracking-tight">
-                        Join thousands of Australians
-                    </h2>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-                        {[
-                            { label: "Active Tradies", value: "5,000+" },
-                            { label: "Referrers", value: "1,200+" },
-                            { label: "Leads Matched", value: "10,000+" },
-                            { label: "Rewards Paid", value: "$50K+" },
-                        ].map(stat => (
-                            <div key={stat.label} className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
-                                <p className="text-2xl font-black text-white">{stat.value}</p>
-                                <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest mt-1">{stat.label}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="flex flex-wrap gap-4 justify-center">
-                        {[
-                            { icon: ShieldCheck, text: "100% Free to join" },
-                            { icon: Zap, text: "No experience needed" },
-                            { icon: DollarSign, text: "Earn on every referral" },
-                            { icon: Star, text: "335+ reward brands" },
-                        ].map(({ icon: Icon, text }) => (
-                            <div key={text} className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
-                                <Icon className="w-4 h-4 text-orange-400" />
-                                <span className="font-bold text-sm text-zinc-300">{text}</span>
-                            </div>
-                        ))}
+                    {/* Right: Stats + trust */}
+                    <div className="rounded-3xl bg-zinc-900 p-6 md:p-8 text-white flex flex-col">
+                        <h3 className="text-2xl font-black mb-6">Why thousands trust TradeRefer</h3>
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                            {[
+                                { value: "5,000+", label: "Businesses" },
+                                { value: "1,200+", label: "Active Referrers" },
+                                { value: "$3–$75", label: "Per-Lead Earnings" },
+                                { value: "335+", label: "Prezzee Brands" },
+                            ].map(s => (
+                                <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
+                                    <p className="text-xl font-black">{s.value}</p>
+                                    <p className="text-zinc-500 font-bold text-[11px] uppercase tracking-widest">{s.label}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="space-y-3 mt-auto">
+                            {[
+                                "Businesses set their own fee — you always know what you'll earn",
+                                "AI-screened leads mean businesses trust your referrals",
+                                "Earnings paid as Prezzee cards — spend at 400+ stores",
+                                "Tier system: refer more, earn a bigger share (up to 90%)",
+                            ].map(txt => (
+                                <div key={txt} className="flex items-start gap-2.5">
+                                    <CheckCircle className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                                    <p className="text-sm text-zinc-300 font-medium">{txt}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Final CTA */}
-            <section className="py-16 md:py-24">
-                <div className="max-w-2xl mx-auto px-4 text-center">
+            {/* ═══ FINAL CTA ═══ */}
+            <section className="w-full bg-gradient-to-b from-white to-orange-50 border-t border-zinc-100">
+                <div className="max-w-3xl mx-auto px-4 py-14 md:py-20 text-center">
                     <h2 className="text-3xl md:text-4xl font-black text-zinc-900 mb-4 tracking-tight">
-                        Ready to start earning?
-                    </h2>
-                    <p className="text-lg text-zinc-500 font-medium mb-8">
                         {inviterName
-                            ? `${inviterName} is already on TradeRefer. Join them and start earning rewards together.`
-                            : "Join Australia's leading trade referral network. Free to sign up, takes 2 minutes."
+                            ? `${inviterName} is already earning. Join them.`
+                            : "Start earning today — it's free"
                         }
+                    </h2>
+                    <p className="text-lg text-zinc-500 font-medium mb-8 max-w-lg mx-auto">
+                        Sign up in 2 minutes, pick the tradies you trust, and earn $3–$75 every time someone takes your referral. Plus $25 for every 5 friends you bring along.
                     </p>
                     <Link
                         href={signUpUrl}
@@ -217,13 +241,13 @@ export default async function JoinReferrerPage({
                     >
                         Join Free & Start Earning <ArrowRight className="w-5 h-5" />
                     </Link>
-                    <p className="mt-4 text-sm text-zinc-400 font-medium">No credit card. No strings attached.</p>
+                    <p className="mt-4 text-sm text-zinc-400 font-medium">No credit card. No experience. No strings.</p>
                 </div>
             </section>
 
             {/* Footer */}
-            <footer className="py-8 border-t border-zinc-100">
-                <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <footer className="py-6 border-t border-zinc-100">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <p className="text-zinc-300 text-xs font-bold">© 2026 TradeRefer Pty Ltd</p>
                     <div className="flex gap-4">
                         <Link href="/privacy" className="text-zinc-400 text-xs font-bold hover:text-zinc-900 transition-colors">Privacy</Link>

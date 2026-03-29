@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { Gift, Users, Star, ArrowRight, Zap, Building2, ShieldCheck, TrendingUp, BadgeCheck } from "lucide-react";
+import { Gift, Users, ArrowRight, Zap, DollarSign, ShieldCheck, CheckCircle, TrendingUp, Building2, BadgeCheck, Star, Settings } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "You're Invited to TradeRefer | Get Free Leads for Your Business",
-    description: "Join TradeRefer and get qualified job leads sent directly to you by trusted local referrers. Free to list, pay only when you unlock a lead.",
+    title: "You're Invited to TradeRefer | Get Qualified Leads for Your Trade Business",
+    description: "Join TradeRefer free. Set your own referral fee ($3–$75), get AI-screened leads from trusted local referrers, and only pay when you unlock a lead.",
     robots: { index: false, follow: false },
 };
 
@@ -38,160 +38,216 @@ export default async function JoinBusinessPage({
 
     return (
         <main className="min-h-screen bg-white">
-            {/* Navbar */}
-            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-zinc-100">
-                <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            {/* Sticky nav */}
+            <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-zinc-100">
+                <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
                     <Link href="/"><Logo size="sm" /></Link>
                     <Link
                         href={signUpUrl}
-                        className="bg-zinc-900 hover:bg-zinc-800 text-white font-black text-sm px-5 py-2.5 rounded-full transition-all active:scale-95 shadow-lg"
+                        className="bg-zinc-900 hover:bg-zinc-800 text-white font-black text-sm px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-lg"
                     >
                         Claim Free Profile
                     </Link>
                 </div>
             </header>
 
-            {/* Hero */}
-            <section className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-zinc-50 via-white to-orange-50" />
-                <div className="relative max-w-3xl mx-auto px-4 py-16 md:py-24 text-center">
-                    {inviterName && (
-                        <div className="inline-flex items-center gap-2 bg-zinc-100 text-zinc-700 font-bold text-sm px-4 py-2 rounded-full mb-6">
-                            <Users className="w-4 h-4" />
-                            {inviterName} invited you
-                        </div>
-                    )}
-
-                    <h1 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tight leading-[1.1] mb-5">
-                        {inviteeName ? (
-                            <>Hi {inviteeName}! Get <span className="text-orange-500">free leads</span> for your business</>
-                        ) : (
-                            <>Get <span className="text-orange-500">free leads</span> sent straight to you</>
+            {/* ═══ HERO — Split layout ═══ */}
+            <section className="w-full bg-gradient-to-br from-zinc-50 via-white to-orange-50">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 md:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                    {/* Left: Copy */}
+                    <div>
+                        {inviterName && (
+                            <div className="inline-flex items-center gap-2 bg-zinc-100 text-zinc-700 font-bold text-sm px-4 py-2 rounded-full mb-5">
+                                <Users className="w-4 h-4" />
+                                {inviterName} invited you
+                            </div>
                         )}
-                    </h1>
 
-                    <p className="text-lg md:text-xl text-zinc-500 font-medium max-w-xl mx-auto mb-8 leading-relaxed">
-                        TradeRefer connects your business with trusted local referrers who send you <strong className="text-zinc-900">qualified job enquiries</strong>. Free to list — only pay when you unlock a lead.
-                    </p>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-zinc-900 tracking-tight leading-[1.1] mb-5">
+                            {inviteeName ? (
+                                <>Hi {inviteeName}!<br />Get <span className="text-orange-500">qualified leads</span> from local referrers</>
+                            ) : (
+                                <>Get <span className="text-orange-500">qualified leads</span> sent straight to your business</>
+                            )}
+                        </h1>
 
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <Link
-                            href={signUpUrl}
-                            className="inline-flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-black text-lg px-8 py-4 rounded-full transition-all active:scale-95 shadow-xl"
-                        >
-                            Claim Your Free Profile <ArrowRight className="w-5 h-5" />
-                        </Link>
+                        <p className="text-lg text-zinc-500 font-medium leading-relaxed mb-6 max-w-lg">
+                            TradeRefer connects your business with trusted local referrers who recommend you to people looking for work done. <strong className="text-zinc-800">You set your own referral fee</strong> — and only pay when you choose to unlock a lead.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-3 mb-5">
+                            <Link
+                                href={signUpUrl}
+                                className="inline-flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-black text-lg px-8 py-4 rounded-full transition-all active:scale-95 shadow-xl"
+                            >
+                                Claim Your Free Profile <ArrowRight className="w-5 h-5" />
+                            </Link>
+                        </div>
+
+                        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500 font-bold">
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> Free to list</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> No monthly fees</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> First lead is free</span>
+                        </div>
                     </div>
 
-                    <p className="mt-4 text-sm text-zinc-400 font-medium">Free to list. No monthly fees. Takes 3 minutes.</p>
+                    {/* Right: Pricing/value card */}
+                    <div className="bg-zinc-900 rounded-3xl p-6 md:p-8 text-white shadow-2xl">
+                        <p className="text-zinc-400 font-bold text-xs uppercase tracking-widest mb-4">You&apos;re in control</p>
+
+                        <div className="bg-white/5 rounded-2xl p-5 border border-white/10 mb-5">
+                            <div className="flex items-center justify-between mb-3">
+                                <p className="font-black text-white text-lg">Your referral fee</p>
+                                <Settings className="w-5 h-5 text-zinc-500" />
+                            </div>
+                            <div className="flex items-end gap-2 mb-2">
+                                <span className="text-5xl font-black text-orange-400">$3–$75</span>
+                                <span className="text-zinc-500 font-bold text-sm mb-2">you decide</span>
+                            </div>
+                            <p className="text-zinc-400 text-sm font-medium">Set any amount from $3 to $75+. Higher fees attract more referrers to promote your business.</p>
+                        </div>
+
+                        <div className="space-y-3 mb-5">
+                            <div className="flex justify-between items-center bg-white/5 rounded-xl p-3 border border-white/10">
+                                <span className="text-zinc-400 font-medium text-sm">Your fee (you set this)</span>
+                                <span className="font-black text-white">$10.00</span>
+                            </div>
+                            <div className="flex justify-between items-center bg-white/5 rounded-xl p-3 border border-white/10">
+                                <span className="text-zinc-400 font-medium text-sm">Platform fee (20%)</span>
+                                <span className="font-black text-white">$2.00</span>
+                            </div>
+                            <div className="flex justify-between items-center bg-orange-500/10 rounded-xl p-3 border border-orange-500/20">
+                                <span className="text-orange-300 font-bold text-sm">Total to unlock a lead</span>
+                                <span className="font-black text-orange-400 text-xl">$12.00</span>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-white/10 pt-4">
+                            <p className="text-zinc-400 text-sm font-medium">Example based on $10 referral fee. All leads are AI-screened for quality before you see them.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            {/* How it works */}
-            <section className="py-16 md:py-20 bg-zinc-50">
-                <div className="max-w-4xl mx-auto px-4">
-                    <h2 className="text-3xl md:text-4xl font-black text-zinc-900 text-center mb-12 tracking-tight">
-                        How TradeRefer works for your business
+            {/* ═══ HOW IT WORKS — 4-step wide row ═══ */}
+            <section className="w-full bg-white border-y border-zinc-100">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-16">
+                    <h2 className="text-2xl md:text-3xl font-black text-zinc-900 text-center mb-10 tracking-tight">
+                        How it works for your business
                     </h2>
-
-                    <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-                        <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-zinc-100">
-                            <div className="w-16 h-16 bg-zinc-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                                <Building2 className="w-7 h-7 text-zinc-900" />
-                            </div>
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Create your profile</h3>
-                            <p className="text-zinc-500 font-medium">Set up your free business listing in minutes. Showcase your trade, service area, and reviews.</p>
-                        </div>
-
-                        <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-zinc-100">
-                            <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                                <TrendingUp className="w-7 h-7 text-orange-600" />
-                            </div>
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Referrers promote you</h3>
-                            <p className="text-zinc-500 font-medium">Local referrers recommend your business to people who need work done. Real leads, not spam.</p>
-                        </div>
-
-                        <div className="bg-white rounded-3xl p-8 text-center shadow-sm border border-zinc-100">
-                            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                                <BadgeCheck className="w-7 h-7 text-green-600" />
-                            </div>
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Win new customers</h3>
-                            <p className="text-zinc-500 font-medium">Unlock lead details and contact them directly. Only pay for leads you actually want.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Value Props */}
-            <section className="py-16 md:py-20">
-                <div className="max-w-4xl mx-auto px-4">
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <div className="bg-zinc-50 rounded-3xl p-8 border border-zinc-100">
-                            <ShieldCheck className="w-8 h-8 text-green-600 mb-4" />
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">No monthly fees</h3>
-                            <p className="text-zinc-500 font-medium">Your listing is completely free. No subscriptions, no lock-in contracts, no hidden charges.</p>
-                        </div>
-                        <div className="bg-zinc-50 rounded-3xl p-8 border border-zinc-100">
-                            <Zap className="w-8 h-8 text-orange-500 mb-4" />
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Quality leads only</h3>
-                            <p className="text-zinc-500 font-medium">Leads come from trusted referrers who personally recommend your business — not bots or scrapers.</p>
-                        </div>
-                        <div className="bg-zinc-50 rounded-3xl p-8 border border-zinc-100">
-                            <Star className="w-8 h-8 text-amber-500 mb-4" />
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Build your reputation</h3>
-                            <p className="text-zinc-500 font-medium">Get reviews, badges, and climb the local rankings. The more you deliver, the more referrals you get.</p>
-                        </div>
-                        <div className="bg-zinc-50 rounded-3xl p-8 border border-zinc-100">
-                            <Gift className="w-8 h-8 text-purple-500 mb-4" />
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">Earn rewards too</h3>
-                            <p className="text-zinc-500 font-medium">Invite 5 others to TradeRefer and earn a $25 Prezzee gift card — spend at 335+ brands Australia-wide.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Social Proof */}
-            <section className="py-16 md:py-20 bg-zinc-900 text-white">
-                <div className="max-w-4xl mx-auto px-4">
-                    <h2 className="text-3xl md:text-4xl font-black text-center mb-12 tracking-tight">
-                        Trusted by tradies across Australia
-                    </h2>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         {[
-                            { label: "Businesses Listed", value: "5,000+" },
-                            { label: "Active Referrers", value: "1,200+" },
-                            { label: "Leads Delivered", value: "10,000+" },
-                            { label: "All Trade Types", value: "50+" },
-                        ].map(stat => (
-                            <div key={stat.label} className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
-                                <p className="text-2xl font-black text-white">{stat.value}</p>
-                                <p className="text-zinc-500 font-bold text-xs uppercase tracking-widest mt-1">{stat.label}</p>
+                            { step: "1", icon: Building2, title: "Create your profile", desc: "Free listing in 3 minutes. Add your trade, area, photos & reviews." },
+                            { step: "2", icon: DollarSign, title: "Set your fee", desc: "Choose what you'll pay per lead ($3–$75+). Change it anytime." },
+                            { step: "3", icon: TrendingUp, title: "Referrers promote you", desc: "Trusted locals recommend your business to people who need work done." },
+                            { step: "4", icon: BadgeCheck, title: "Unlock & win jobs", desc: "See AI-screened leads, unlock the ones you want, contact them directly." },
+                        ].map(({ step, icon: Icon, title, desc }) => (
+                            <div key={step} className="bg-zinc-50 rounded-2xl p-5 md:p-6 border border-zinc-100 text-center">
+                                <div className="w-12 h-12 bg-zinc-200 rounded-xl flex items-center justify-center mx-auto mb-3">
+                                    <Icon className="w-6 h-6 text-zinc-900" />
+                                </div>
+                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">Step {step}</p>
+                                <h3 className="text-base md:text-lg font-black text-zinc-900 mb-1">{title}</h3>
+                                <p className="text-zinc-500 font-medium text-sm leading-snug">{desc}</p>
                             </div>
-                        ))}
-                    </div>
-
-                    <div className="flex flex-wrap gap-3 justify-center">
-                        {["Plumbing", "Electrical", "Building", "Roofing", "Painting", "Carpentry", "Landscaping", "Tiling"].map(trade => (
-                            <span key={trade} className="bg-white/5 border border-white/10 text-zinc-300 font-bold text-sm px-4 py-2 rounded-full">
-                                {trade}
-                            </span>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Final CTA */}
-            <section className="py-16 md:py-24">
-                <div className="max-w-2xl mx-auto px-4 text-center">
+            {/* ═══ SPLIT: Why TradeRefer + Bonus ═══ */}
+            <section className="w-full">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-16 grid lg:grid-cols-2 gap-8 items-stretch">
+
+                    {/* Left: Why it works */}
+                    <div className="rounded-3xl bg-zinc-900 p-6 md:p-8 text-white flex flex-col">
+                        <h3 className="text-2xl font-black mb-6">Why businesses choose TradeRefer</h3>
+                        <div className="space-y-4 flex-1">
+                            {[
+                                { icon: ShieldCheck, title: "No monthly fees or contracts", desc: "Your listing is 100% free. Only pay when you choose to unlock a lead." },
+                                { icon: Zap, title: "AI-screened leads", desc: "Every lead goes through AI screening before reaching you. No spam, no tyre kickers." },
+                                { icon: DollarSign, title: "You control the cost", desc: "Set your referral fee from $3 to $75+. Higher fees attract more referrers to promote you." },
+                                { icon: Star, title: "First lead is free", desc: "Try it risk-free. Your first lead costs nothing — we want you to see the quality." },
+                            ].map(({ icon: Icon, title, desc }) => (
+                                <div key={title} className="flex gap-4 items-start">
+                                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
+                                        <Icon className="w-5 h-5 text-orange-400" />
+                                    </div>
+                                    <div>
+                                        <p className="font-black text-white mb-0.5">{title}</p>
+                                        <p className="text-zinc-400 text-sm font-medium">{desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="grid grid-cols-2 gap-3 mt-6 pt-6 border-t border-white/10">
+                            {[
+                                { value: "5,000+", label: "Businesses" },
+                                { value: "50+", label: "Trade Types" },
+                            ].map(s => (
+                                <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center">
+                                    <p className="text-xl font-black">{s.value}</p>
+                                    <p className="text-zinc-500 font-bold text-[11px] uppercase tracking-widest">{s.label}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Right: Invite bonus */}
+                    <div className="flex flex-col gap-6">
+                        {/* Trade types */}
+                        <div className="rounded-3xl bg-zinc-50 border border-zinc-100 p-6 md:p-8">
+                            <h3 className="text-lg font-black text-zinc-900 mb-4">Works for every trade</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {["Plumbing", "Electrical", "Building", "Roofing", "Painting", "Carpentry", "Landscaping", "Tiling", "Fencing", "Concreting", "HVAC", "Pest Control", "Cleaning", "Solar", "+50 more"].map(trade => (
+                                    <span key={trade} className="bg-white text-zinc-600 font-bold text-sm px-3 py-1.5 rounded-full border border-zinc-200">
+                                        {trade}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Prezzee invite bonus */}
+                        <div className="rounded-3xl bg-[#EAF4FF] border border-blue-100 p-6 md:p-8 flex-1 flex flex-col">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Gift className="w-5 h-5 text-orange-500" />
+                                <span className="text-xs font-black text-zinc-500 uppercase tracking-widest">Bonus</span>
+                            </div>
+                            <h3 className="text-xl font-black text-zinc-900 mb-2">
+                                Invite 5 people → earn a <span className="text-[#FF6600]">$25 Prezzee Smart Card</span>
+                            </h3>
+                            <p className="text-zinc-500 font-medium text-sm mb-4 leading-relaxed">
+                                Know other tradies or people who&apos;d benefit? Invite them to TradeRefer. Once 5 sign up and become active, you get a $25 gift card — spend at Woolworths, Bunnings, Uber & 400+ brands.
+                            </p>
+                            <div className="flex items-center gap-4 mt-auto">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
+                                    alt="Prezzee Smart Card"
+                                    className="w-24 rounded-xl shadow-md shrink-0"
+                                />
+                                <div className="flex flex-wrap gap-1.5">
+                                    {["Woolworths", "Bunnings", "Uber", "Netflix", "+400"].map(b => (
+                                        <span key={b} className="bg-white/80 text-zinc-600 font-bold text-[11px] px-2.5 py-1 rounded-full border border-zinc-200">{b}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ═══ FINAL CTA ═══ */}
+            <section className="w-full bg-gradient-to-b from-white to-zinc-50 border-t border-zinc-100">
+                <div className="max-w-3xl mx-auto px-4 py-14 md:py-20 text-center">
                     <h2 className="text-3xl md:text-4xl font-black text-zinc-900 mb-4 tracking-tight">
-                        Ready to grow your business?
-                    </h2>
-                    <p className="text-lg text-zinc-500 font-medium mb-8">
                         {inviterName
-                            ? `${inviterName} thinks you'd be a great fit for TradeRefer. Claim your free profile and start getting leads.`
-                            : "Claim your free profile and start receiving qualified job leads from trusted local referrers."
+                            ? `${inviterName} thinks you'd be a great fit`
+                            : "Ready to get more leads?"
                         }
+                    </h2>
+                    <p className="text-lg text-zinc-500 font-medium mb-8 max-w-lg mx-auto">
+                        Create your free profile in 3 minutes. Set your own referral fee, get AI-screened leads from trusted local referrers, and your first lead is on us.
                     </p>
                     <Link
                         href={signUpUrl}
@@ -199,13 +255,13 @@ export default async function JoinBusinessPage({
                     >
                         Claim Your Free Profile <ArrowRight className="w-5 h-5" />
                     </Link>
-                    <p className="mt-4 text-sm text-zinc-400 font-medium">Free forever. No credit card required.</p>
+                    <p className="mt-4 text-sm text-zinc-400 font-medium">Free forever. No credit card. No lock-in.</p>
                 </div>
             </section>
 
             {/* Footer */}
-            <footer className="py-8 border-t border-zinc-100">
-                <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <footer className="py-6 border-t border-zinc-100">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <p className="text-zinc-300 text-xs font-bold">© 2026 TradeRefer Pty Ltd</p>
                     <div className="flex gap-4">
                         <Link href="/privacy" className="text-zinc-400 text-xs font-bold hover:text-zinc-900 transition-colors">Privacy</Link>
