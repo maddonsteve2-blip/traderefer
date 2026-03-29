@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { JOB_TYPES, jobToSlug } from '@/lib/constants';
+import { JOB_TYPES, jobToSlug, NEAR_ME_SLUGS } from '@/lib/constants';
 
 export const revalidate = 86400;
 
@@ -50,6 +50,11 @@ export async function GET() {
             urlset += `\n  <url><loc>${BASE_URL}/local/${r.state_slug}/${r.city_slug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>`;
         }
 
+        // Near-me SEO pages (high priority — transactional intent)
+        for (const nearSlug of Object.keys(NEAR_ME_SLUGS)) {
+            urlset += `\n  <url><loc>${BASE_URL}/${nearSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>`;
+        }
+
         // Australia-wide trade hub pages (/trades/[job])
         for (const jobs of Object.values(JOB_TYPES)) {
             for (const job of jobs) {
@@ -57,22 +62,7 @@ export async function GET() {
             }
         }
 
-        // Top-10 pages (/top/[trade]/[state]/[city]) — high-value ranking pages
-        const topRows = await sql`
-            SELECT DISTINCT
-                   LOWER(REPLACE(trade_category, ' ', '-')) as trade_slug,
-                   LOWER(state) as state_slug,
-                   LOWER(REPLACE(city, ' ', '-')) as city_slug
-            FROM businesses
-            WHERE status = 'active'
-              AND avg_rating IS NOT NULL
-              AND state IS NOT NULL AND state != ''
-              AND city IS NOT NULL AND city != ''
-              AND trade_category IS NOT NULL AND trade_category != ''
-        `;
-        for (const r of topRows) {
-            urlset += `\n  <url><loc>${BASE_URL}/top/${r.trade_slug}/${r.state_slug}/${r.city_slug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.75</priority></url>`;
-        }
+        // Top-10 pages moved to dedicated top.xml sitemap to keep general.xml lean
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

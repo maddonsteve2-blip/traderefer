@@ -16,7 +16,7 @@ export async function GET() {
 
         const urlset = businesses.map(biz => {
             const lastmod = (biz.updated_at || biz.created_at || new Date()).toISOString().split('T')[0];
-            return `  <url><loc>${BASE_URL}/b/${biz.slug}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`;
+            return `  <url><loc>${BASE_URL}/b/${biz.slug}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>`;
         }).join('\n');
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
