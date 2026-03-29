@@ -138,13 +138,13 @@ export function InviteFriendsDialog({
                         <div className="bg-orange-50 border-2 border-orange-100 rounded-[20px] px-6 py-4 mb-6 w-full">
                             {invitees.length >= 5 ? (
                                 <>
-                                    <p className="font-black text-green-700" style={{ fontSize: '17px' }}>� Amazing! You'll get your $25 gift card once they join!</p>
-                                    <p className="text-green-600 font-bold mt-1" style={{ fontSize: '14px' }}>Track progress in your dashboard.</p>
+                                    <p className="font-black text-orange-800" style={{ fontSize: '17px' }}>🎁 $25 Prezzee gift card waiting for you!</p>
+                                    <p className="text-orange-600 font-bold mt-1.5" style={{ fontSize: '14px' }}>Once 5 of your friends sign up and become active, your reward is automatically issued.</p>
                                 </>
                             ) : (
                                 <>
-                                    <p className="font-black text-orange-800" style={{ fontSize: '17px' }}>🎁 {5 - invitees.length} more invite{5 - invitees.length !== 1 ? "s" : ""} to earn your $25 gift card!</p>
-                                    <p className="text-orange-600 font-bold mt-1" style={{ fontSize: '14px' }}>Come back anytime to invite more friends.</p>
+                                    <p className="font-black text-orange-800" style={{ fontSize: '17px' }}>🎁 Invite {5 - invitees.length} more to reach 5!</p>
+                                    <p className="text-orange-600 font-bold mt-1.5" style={{ fontSize: '14px' }}>Once 5 friends sign up and become active, you'll earn a $25 Prezzee gift card. Come back anytime to invite more.</p>
                                 </>
                             )}
                         </div>
@@ -202,8 +202,11 @@ export function InviteFriendsDialog({
                             </div>
                             <p className="text-center mt-3 font-black text-orange-400" style={{ fontSize: '14px' }}>
                                 {invitees.length >= 5
-                                    ? "🎉 You've hit 5! Send to unlock your $25 gift card!"
-                                    : `${invitees.length}/5 invited — ${5 - invitees.length} more to earn a $25 Prezzee gift card`}
+                                    ? "🎉 5 invites ready! Send them off!"
+                                    : `${invitees.length}/5 — add ${5 - invitees.length} more for a $25 Prezzee gift card`}
+                            </p>
+                            <p className="text-center mt-1 text-zinc-500 font-bold" style={{ fontSize: '12px' }}>
+                                Gift card unlocks once they sign up & become active
                             </p>
                         </div>
 
