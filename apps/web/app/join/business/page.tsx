@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { Gift, Users, ArrowRight, Zap, DollarSign, ShieldCheck, CheckCircle, TrendingUp, Building2, BadgeCheck, Star, Settings } from "lucide-react";
+import { Gift, Users, ArrowRight, Zap, DollarSign, ShieldCheck, CheckCircle, TrendingUp, Building2, BadgeCheck, Star, Settings, Quote } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "You're Invited to TradeRefer | Get Qualified Leads for Your Trade Business",
-    description: "Join TradeRefer free. Set your own referral fee ($3–$75), get AI-screened leads from trusted local referrers, and only pay when you unlock a lead.",
+    description: "Join TradeRefer free. Set your own referral fee, get AI-screened leads from trusted local referrers, and only pay when you unlock a lead. First lead free.",
     robots: { index: false, follow: false },
 };
 
@@ -39,12 +39,12 @@ export default async function JoinBusinessPage({
     return (
         <main className="min-h-screen bg-white">
             {/* Sticky nav */}
-            <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-zinc-100">
+            <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-zinc-100">
                 <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
                     <Link href="/"><Logo size="sm" /></Link>
                     <Link
                         href={signUpUrl}
-                        className="bg-zinc-900 hover:bg-zinc-800 text-white font-black text-sm px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-lg"
+                        className="bg-orange-600 hover:bg-orange-700 text-white font-black text-sm px-6 py-2.5 rounded-full transition-all active:scale-95 shadow-lg shadow-orange-600/25 ring-2 ring-orange-600/20"
                     >
                         Claim Free Profile
                     </Link>
@@ -52,47 +52,51 @@ export default async function JoinBusinessPage({
             </header>
 
             {/* ═══ HERO — Split layout ═══ */}
-            <section className="w-full bg-gradient-to-br from-zinc-50 via-white to-orange-50">
-                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 md:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <section className="w-full bg-white">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-16 grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
                     {/* Left: Copy */}
                     <div>
                         {inviterName && (
-                            <div className="inline-flex items-center gap-2 bg-zinc-100 text-zinc-700 font-bold text-sm px-4 py-2 rounded-full mb-5">
+                            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 font-bold text-sm px-4 py-2 rounded-full mb-4 border border-emerald-100">
                                 <Users className="w-4 h-4" />
                                 {inviterName} invited you
                             </div>
                         )}
 
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-zinc-900 tracking-tight leading-[1.1] mb-5">
+                        <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-black text-zinc-900 tracking-tight leading-[1.1] mb-4">
                             {inviteeName ? (
-                                <>Hi {inviteeName}!<br />Get <span className="text-orange-500">qualified leads</span> from local referrers</>
+                                <>Hi {inviteeName}!<br />Get <span className="text-emerald-600">qualified leads</span> from local referrers</>
                             ) : (
-                                <>Get <span className="text-orange-500">qualified leads</span> sent straight to your business</>
+                                <>Get <span className="text-emerald-600">qualified leads</span> sent straight to your business</>
                             )}
                         </h1>
 
-                        <p className="text-lg text-zinc-500 font-medium leading-relaxed mb-6 max-w-lg">
+                        <p className="text-lg text-zinc-500 font-medium leading-relaxed mb-5 max-w-lg">
                             TradeRefer connects your business with trusted local referrers who recommend you to people looking for work done. <strong className="text-zinc-800">You set your own referral fee</strong> — and only pay when you choose to unlock a lead.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-3 mb-5">
+                        <p className="text-sm text-emerald-600 font-bold mb-5 flex items-center gap-1.5">
+                            <Building2 className="w-4 h-4" /> 5,000+ businesses already listed across Australia
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-3 mb-4">
                             <Link
                                 href={signUpUrl}
-                                className="inline-flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-black text-lg px-8 py-4 rounded-full transition-all active:scale-95 shadow-xl"
+                                className="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black text-lg px-8 py-4 rounded-full transition-all active:scale-95 shadow-xl shadow-orange-600/25 ring-2 ring-orange-600/20"
                             >
                                 Claim Your Free Profile <ArrowRight className="w-5 h-5" />
                             </Link>
                         </div>
 
                         <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-500 font-bold">
-                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> Free to list</span>
-                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> No monthly fees</span>
-                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-green-500" /> First lead is free</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> Free to list</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> No monthly fees</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> First lead is free</span>
                         </div>
                     </div>
 
                     {/* Right: Pricing/value card */}
-                    <div className="bg-zinc-900 rounded-3xl p-6 md:p-8 text-white shadow-2xl">
+                    <div className="bg-zinc-800 rounded-3xl p-6 md:p-8 text-white shadow-2xl border border-zinc-700/50">
                         <p className="text-zinc-400 font-bold text-xs uppercase tracking-widest mb-4">You&apos;re in control</p>
 
                         <div className="bg-white/5 rounded-2xl p-5 border border-white/10 mb-5">
@@ -101,7 +105,7 @@ export default async function JoinBusinessPage({
                                 <Settings className="w-5 h-5 text-zinc-500" />
                             </div>
                             <div className="flex items-end gap-2 mb-2">
-                                <span className="text-5xl font-black text-orange-400">$3–$75</span>
+                                <span className="text-5xl font-black text-emerald-400">$3–$75</span>
                                 <span className="text-zinc-500 font-bold text-sm mb-2">you decide</span>
                             </div>
                             <p className="text-zinc-400 text-sm font-medium">Set any amount from $3 to $75+. Higher fees attract more referrers to promote your business.</p>
@@ -116,9 +120,9 @@ export default async function JoinBusinessPage({
                                 <span className="text-zinc-400 font-medium text-sm">Platform fee (20%)</span>
                                 <span className="font-black text-white">$2.00</span>
                             </div>
-                            <div className="flex justify-between items-center bg-orange-500/10 rounded-xl p-3 border border-orange-500/20">
-                                <span className="text-orange-300 font-bold text-sm">Total to unlock a lead</span>
-                                <span className="font-black text-orange-400 text-xl">$12.00</span>
+                            <div className="flex justify-between items-center bg-emerald-500/10 rounded-xl p-3 border border-emerald-500/20">
+                                <span className="text-emerald-300 font-bold text-sm">Total to unlock a lead</span>
+                                <span className="font-black text-emerald-400 text-xl">$12.00</span>
                             </div>
                         </div>
 
@@ -130,24 +134,24 @@ export default async function JoinBusinessPage({
             </section>
 
             {/* ═══ HOW IT WORKS — 4-step wide row ═══ */}
-            <section className="w-full bg-white border-y border-zinc-100">
-                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-16">
-                    <h2 className="text-2xl md:text-3xl font-black text-zinc-900 text-center mb-10 tracking-tight">
+            <section className="w-full bg-zinc-50 border-y border-zinc-200/60">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-14">
+                    <h2 className="text-2xl md:text-3xl font-black text-zinc-900 text-center mb-8 tracking-tight">
                         How it works for your business
                     </h2>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
                         {[
                             { step: "1", icon: Building2, title: "Create your profile", desc: "Free listing in 3 minutes. Add your trade, area, photos & reviews." },
                             { step: "2", icon: DollarSign, title: "Set your fee", desc: "Choose what you'll pay per lead ($3–$75+). Change it anytime." },
                             { step: "3", icon: TrendingUp, title: "Referrers promote you", desc: "Trusted locals recommend your business to people who need work done." },
                             { step: "4", icon: BadgeCheck, title: "Unlock & win jobs", desc: "See AI-screened leads, unlock the ones you want, contact them directly." },
                         ].map(({ step, icon: Icon, title, desc }) => (
-                            <div key={step} className="bg-zinc-50 rounded-2xl p-5 md:p-6 border border-zinc-100 text-center">
-                                <div className="w-12 h-12 bg-zinc-200 rounded-xl flex items-center justify-center mx-auto mb-3">
-                                    <Icon className="w-6 h-6 text-zinc-900" />
+                            <div key={step} className="bg-white rounded-2xl p-5 md:p-7 border border-zinc-200/80 text-center shadow-sm">
+                                <div className="w-14 h-14 bg-zinc-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <Icon className="w-7 h-7 text-zinc-700" />
                                 </div>
-                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-1">Step {step}</p>
-                                <h3 className="text-base md:text-lg font-black text-zinc-900 mb-1">{title}</h3>
+                                <p className="text-[11px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Step {step}</p>
+                                <h3 className="text-base md:text-lg font-black text-zinc-900 mb-1.5">{title}</h3>
                                 <p className="text-zinc-500 font-medium text-sm leading-snug">{desc}</p>
                             </div>
                         ))}
@@ -155,13 +159,30 @@ export default async function JoinBusinessPage({
                 </div>
             </section>
 
-            {/* ═══ SPLIT: Why TradeRefer + Bonus ═══ */}
-            <section className="w-full">
-                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-16 grid lg:grid-cols-2 gap-8 items-stretch">
+            {/* ═══ TESTIMONIAL ═══ */}
+            <section className="w-full bg-white">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-14">
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center">
+                        <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center shrink-0">
+                            <Quote className="w-6 h-6 text-emerald-600" />
+                        </div>
+                        <div>
+                            <p className="text-lg text-zinc-800 font-bold leading-relaxed mb-2">
+                                &ldquo;We got 3 solid jobs in our first week. The leads are genuine — real people who need work done, not spam. Best part is we set our own fee.&rdquo;
+                            </p>
+                            <p className="text-sm text-zinc-500 font-bold">Mark T. — Plumber, Melbourne</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                    {/* Left: Why it works */}
-                    <div className="rounded-3xl bg-zinc-900 p-6 md:p-8 text-white flex flex-col">
-                        <h3 className="text-2xl font-black mb-6">Why businesses choose TradeRefer</h3>
+            {/* ═══ SPLIT: Why TradeRefer + Bonus ═══ */}
+            <section className="w-full bg-zinc-50 border-y border-zinc-200/60">
+                <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 md:py-14 grid lg:grid-cols-5 gap-6 items-stretch">
+
+                    {/* Left: Why it works (3 cols) */}
+                    <div className="lg:col-span-3 rounded-3xl bg-zinc-800 p-6 md:p-8 text-white flex flex-col border border-zinc-700/50">
+                        <h3 className="text-2xl font-black mb-5">Why businesses choose TradeRefer</h3>
                         <div className="space-y-4 flex-1">
                             {[
                                 { icon: ShieldCheck, title: "No monthly fees or contracts", desc: "Your listing is 100% free. Only pay when you choose to unlock a lead." },
@@ -171,7 +192,7 @@ export default async function JoinBusinessPage({
                             ].map(({ icon: Icon, title, desc }) => (
                                 <div key={title} className="flex gap-4 items-start">
                                     <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shrink-0">
-                                        <Icon className="w-5 h-5 text-orange-400" />
+                                        <Icon className="w-5 h-5 text-emerald-400" />
                                     </div>
                                     <div>
                                         <p className="font-black text-white mb-0.5">{title}</p>
@@ -180,27 +201,28 @@ export default async function JoinBusinessPage({
                                 </div>
                             ))}
                         </div>
-                        <div className="grid grid-cols-2 gap-3 mt-6 pt-6 border-t border-white/10">
+                        <div className="grid grid-cols-3 gap-3 mt-5 pt-5 border-t border-white/10">
                             {[
                                 { value: "5,000+", label: "Businesses" },
                                 { value: "50+", label: "Trade Types" },
+                                { value: "1,200+", label: "Referrers" },
                             ].map(s => (
                                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center">
-                                    <p className="text-xl font-black">{s.value}</p>
-                                    <p className="text-zinc-500 font-bold text-[11px] uppercase tracking-widest">{s.label}</p>
+                                    <p className="text-lg font-black text-emerald-400">{s.value}</p>
+                                    <p className="text-zinc-500 font-bold text-[10px] uppercase tracking-widest">{s.label}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Right: Invite bonus */}
-                    <div className="flex flex-col gap-6">
+                    {/* Right: Trade types + Bonus (2 cols) */}
+                    <div className="lg:col-span-2 flex flex-col gap-5">
                         {/* Trade types */}
-                        <div className="rounded-3xl bg-zinc-50 border border-zinc-100 p-6 md:p-8">
-                            <h3 className="text-lg font-black text-zinc-900 mb-4">Works for every trade</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {["Plumbing", "Electrical", "Building", "Roofing", "Painting", "Carpentry", "Landscaping", "Tiling", "Fencing", "Concreting", "HVAC", "Pest Control", "Cleaning", "Solar", "+50 more"].map(trade => (
-                                    <span key={trade} className="bg-white text-zinc-600 font-bold text-sm px-3 py-1.5 rounded-full border border-zinc-200">
+                        <div className="rounded-2xl bg-white border border-zinc-200 p-5 md:p-6">
+                            <h3 className="text-base font-black text-zinc-900 mb-3">Works for every trade</h3>
+                            <div className="flex flex-wrap gap-1.5">
+                                {["Plumbing", "Electrical", "Building", "Roofing", "Painting", "Carpentry", "Landscaping", "Tiling", "Fencing", "HVAC", "Solar", "+50 more"].map(trade => (
+                                    <span key={trade} className="bg-zinc-50 text-zinc-600 font-bold text-xs px-2.5 py-1 rounded-full border border-zinc-200">
                                         {trade}
                                     </span>
                                 ))}
@@ -208,27 +230,27 @@ export default async function JoinBusinessPage({
                         </div>
 
                         {/* Prezzee invite bonus */}
-                        <div className="rounded-3xl bg-[#EAF4FF] border border-blue-100 p-6 md:p-8 flex-1 flex flex-col">
-                            <div className="flex items-center gap-2 mb-3">
-                                <Gift className="w-5 h-5 text-orange-500" />
-                                <span className="text-xs font-black text-zinc-500 uppercase tracking-widest">Bonus</span>
+                        <div className="rounded-2xl bg-white border border-zinc-200 p-5 md:p-6 flex-1 flex flex-col">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Gift className="w-5 h-5 text-amber-500" />
+                                <span className="text-[11px] font-black text-zinc-400 uppercase tracking-widest">Bonus</span>
                             </div>
-                            <h3 className="text-xl font-black text-zinc-900 mb-2">
-                                Invite 5 people → earn a <span className="text-[#FF6600]">$25 Prezzee Smart Card</span>
+                            <h3 className="text-lg font-black text-zinc-900 mb-1.5">
+                                Invite 5 people → <span className="text-emerald-600">$25 Prezzee Card</span>
                             </h3>
-                            <p className="text-zinc-500 font-medium text-sm mb-4 leading-relaxed">
-                                Know other tradies or people who&apos;d benefit? Invite them to TradeRefer. Once 5 sign up and become active, you get a $25 gift card — spend at Woolworths, Bunnings, Uber & 400+ brands.
+                            <p className="text-zinc-500 font-medium text-sm mb-3 leading-relaxed">
+                                Know other tradies? Invite them to TradeRefer. Once 5 sign up and become active, you get a $25 Prezzee gift card automatically.
                             </p>
-                            <div className="flex items-center gap-4 mt-auto">
+                            <div className="flex items-center gap-3 mt-auto">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                     src="https://files.poweredbyprezzee.com/products/7af951a6-2a13-004b-f0eb-a87382a5b2e7/8eff8e56-2718-4514-8e1a-15ca1eb22793/Prezzee_3D_-_AU_%281%29_452_280.gif"
                                     alt="Prezzee Smart Card"
-                                    className="w-24 rounded-xl shadow-md shrink-0"
+                                    className="w-16 rounded-lg shadow-sm shrink-0"
                                 />
-                                <div className="flex flex-wrap gap-1.5">
+                                <div className="flex flex-wrap gap-1">
                                     {["Woolworths", "Bunnings", "Uber", "Netflix", "+400"].map(b => (
-                                        <span key={b} className="bg-white/80 text-zinc-600 font-bold text-[11px] px-2.5 py-1 rounded-full border border-zinc-200">{b}</span>
+                                        <span key={b} className="bg-zinc-50 text-zinc-500 font-bold text-[10px] px-2 py-0.5 rounded-full border border-zinc-200">{b}</span>
                                     ))}
                                 </div>
                             </div>
@@ -238,29 +260,29 @@ export default async function JoinBusinessPage({
             </section>
 
             {/* ═══ FINAL CTA ═══ */}
-            <section className="w-full bg-gradient-to-b from-white to-zinc-50 border-t border-zinc-100">
-                <div className="max-w-3xl mx-auto px-4 py-14 md:py-20 text-center">
-                    <h2 className="text-3xl md:text-4xl font-black text-zinc-900 mb-4 tracking-tight">
+            <section className="w-full bg-white">
+                <div className="max-w-3xl mx-auto px-4 py-12 md:py-16 text-center">
+                    <h2 className="text-3xl md:text-4xl font-black text-zinc-900 mb-3 tracking-tight">
                         {inviterName
                             ? `${inviterName} thinks you'd be a great fit`
                             : "Ready to get more leads?"
                         }
                     </h2>
-                    <p className="text-lg text-zinc-500 font-medium mb-8 max-w-lg mx-auto">
-                        Create your free profile in 3 minutes. Set your own referral fee, get AI-screened leads from trusted local referrers, and your first lead is on us.
+                    <p className="text-lg text-zinc-500 font-medium mb-6 max-w-lg mx-auto">
+                        Create your free profile in 3 minutes. Set your own referral fee, get AI-screened leads, and your first lead is on us.
                     </p>
                     <Link
                         href={signUpUrl}
-                        className="inline-flex items-center justify-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white font-black text-lg px-10 py-4 rounded-full transition-all active:scale-95 shadow-xl"
+                        className="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black text-lg px-10 py-4 rounded-full transition-all active:scale-95 shadow-xl shadow-orange-600/25 ring-2 ring-orange-600/20"
                     >
                         Claim Your Free Profile <ArrowRight className="w-5 h-5" />
                     </Link>
-                    <p className="mt-4 text-sm text-zinc-400 font-medium">Free forever. No credit card. No lock-in.</p>
+                    <p className="mt-3 text-sm text-zinc-400 font-medium">Free forever. No credit card. No lock-in.</p>
                 </div>
             </section>
 
             {/* Footer */}
-            <footer className="py-6 border-t border-zinc-100">
+            <footer className="py-5 border-t border-zinc-100">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <p className="text-zinc-300 text-xs font-bold">© 2026 TradeRefer Pty Ltd</p>
                     <div className="flex gap-4">
