@@ -180,13 +180,21 @@ async def get_reward_progress(
     """Get referral reward progress (toward $25 Prezee gift card milestones)."""
     referrer_id = await _get_referrer_id(user, db)
 
-    # Count active invitees
-    active_res = await db.execute(text("""
-        SELECT COUNT(*) as active_count
+    # Count invitees by status
+    counts_res = await db.execute(text("""
+        SELECT
+            COUNT(*) as total_invited,
+            COUNT(*) FILTER (WHERE status = 'active') as active_count,
+            COUNT(*) FILTER (WHERE status = 'pending') as pending_count,
+            COUNT(*) FILTER (WHERE status = 'accepted') as accepted_count
         FROM user_invitations
-        WHERE inviter_id = :id AND status = 'active'
+        WHERE inviter_id = :id
     """), {"id": referrer_id})
-    active_count = active_res.scalar() or 0
+    counts = counts_res.mappings().first()
+    total_invited = counts["total_invited"] or 0
+    active_count = counts["active_count"] or 0
+    pending_count = counts["pending_count"] or 0
+    accepted_count = counts["accepted_count"] or 0
 
     # Count rewards already issued
     rewards_res = await db.execute(text("""
@@ -203,6 +211,9 @@ async def get_reward_progress(
 
     return {
         "active_invitees": active_count,
+        "total_invited": total_invited,
+        "pending_invitees": pending_count,
+        "accepted_invitees": accepted_count,
         "milestones_completed": milestones_completed,
         "next_milestone_at": next_milestone_at,
         "progress_to_next": max(0, progress_to_next),

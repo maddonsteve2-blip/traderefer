@@ -6,6 +6,7 @@ interface ReferralRewardsCardProps {
     progressToNext: number;
     milestoneSize: number;
     activeInvitees: number;
+    totalInvited: number;
     milestonesCompleted: number;
     onInvite: () => void;
     onView: () => void;
@@ -16,6 +17,7 @@ export function ReferralRewardsCard({
     progressToNext,
     milestoneSize,
     activeInvitees,
+    totalInvited,
     milestonesCompleted,
     onInvite,
     onView,
@@ -51,13 +53,17 @@ export function ReferralRewardsCard({
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="grid grid-cols-3 gap-3 mb-6">
                     <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                        <p className="text-zinc-500 font-bold uppercase tracking-widest mb-1" style={{ fontSize: 13 }}>Invited</p>
-                        <p className="text-2xl font-black text-white">{activeInvitees}</p>
+                        <p className="text-zinc-500 font-bold uppercase tracking-widest mb-1" style={{ fontSize: 11 }}>Invited</p>
+                        <p className="text-2xl font-black text-white">{totalInvited}</p>
                     </div>
                     <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
-                        <p className="text-zinc-500 font-bold uppercase tracking-widest mb-1" style={{ fontSize: 13 }}>Earned</p>
+                        <p className="text-zinc-500 font-bold uppercase tracking-widest mb-1" style={{ fontSize: 11 }}>Joined</p>
+                        <p className="text-2xl font-black text-green-400">{activeInvitees}</p>
+                    </div>
+                    <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                        <p className="text-zinc-500 font-bold uppercase tracking-widest mb-1" style={{ fontSize: 11 }}>Earned</p>
                         <p className="text-2xl font-black text-orange-400">${milestonesCompleted * rewardAmountDollars}</p>
                     </div>
                 </div>

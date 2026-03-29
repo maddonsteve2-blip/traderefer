@@ -173,11 +173,16 @@ async def get_business_reward_progress(
     """Get referral reward progress for a business (toward $25 Prezzee gift card milestones)."""
     business_id = await _get_business_id(user, db)
 
-    active_res = await db.execute(text("""
-        SELECT COUNT(*) FROM user_invitations
-        WHERE inviter_id = :id AND inviter_type = 'business' AND status = 'active'
+    counts_res = await db.execute(text("""
+        SELECT
+            COUNT(*) as total_invited,
+            COUNT(*) FILTER (WHERE status = 'active') as active_count
+        FROM user_invitations
+        WHERE inviter_id = :id AND inviter_type = 'business'
     """), {"id": business_id})
-    active_count = active_res.scalar() or 0
+    counts = counts_res.mappings().first()
+    total_invited = counts["total_invited"] or 0
+    active_count = counts["active_count"] or 0
 
     rewards_res = await db.execute(text("""
         SELECT COUNT(*) FROM referral_rewards
@@ -192,6 +197,7 @@ async def get_business_reward_progress(
 
     return {
         "active_invitees": active_count,
+        "total_invited": total_invited,
         "rewards_issued": rewards_issued,
         "next_milestone": next_milestone,
         "progress_in_current": progress_in_current,
