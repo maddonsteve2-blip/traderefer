@@ -55,6 +55,14 @@ export async function GET() {
             urlset += `\n  <url><loc>${BASE_URL}/${nearSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>`;
         }
 
+        // Local trade+city SEO pages (high commercial intent)
+        const localTradePages = [
+            'local/gutter-cleaning-geelong',
+        ];
+        for (const slug of localTradePages) {
+            urlset += `\n  <url><loc>${BASE_URL}/${slug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>`;
+        }
+
         // Australia-wide trade hub pages (/trades/[job])
         for (const jobs of Object.values(JOB_TYPES)) {
             for (const job of jobs) {
