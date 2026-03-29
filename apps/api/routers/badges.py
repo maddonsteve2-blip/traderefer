@@ -83,7 +83,7 @@ async def get_social_feed(
     badge_res = await db.execute(text("""
         SELECT ub.badge_id, ub.earned_at, r.suburb, r.state
         FROM user_badges ub
-        JOIN referrers r ON r.user_id = ub.user_id
+        JOIN referrers r ON r.user_id::text = ub.user_id
         WHERE ub.user_type = 'referrer'
           AND ub.badge_id != 'verified'
           AND ub.earned_at > now() - interval '60 days'
