@@ -55,9 +55,19 @@ export async function GET() {
             urlset += `\n  <url><loc>${BASE_URL}/${nearSlug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>`;
         }
 
+        // High-volume "find a [trade] near me" pages (49,500/mo each)
+        const findTradePages = [
+            'find-a-plumber-near-me',
+            'find-an-electrician-near-me',
+        ];
+        for (const slug of findTradePages) {
+            urlset += `\n  <url><loc>${BASE_URL}/${slug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>`;
+        }
+
         // Local trade+city SEO pages (high commercial intent)
         const localTradePages = [
             'local/gutter-cleaning-geelong',
+            'local/asbestos-removal-bendigo',
         ];
         for (const slug of localTradePages) {
             urlset += `\n  <url><loc>${BASE_URL}/${slug}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>`;
