@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Header
 from services.auth import require_admin, AuthenticatedUser
 from services.database import get_db
 from services.email import send_dispute_resolved_business, send_dispute_resolved_referrer
@@ -177,6 +177,24 @@ async def trigger_lifecycle_tasks(
             "reengagement_nudges_sent": reengagement_sent,
         }
     }
+
+@router.post("/cron/sync-outreach")
+async def cron_sync_outreach(
+    x_cron_secret: Optional[str] = Header(None),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Cron endpoint: sync Instantly stats + replies for all active campaigns.
+    Designed to run every 15 minutes via Railway Cron or GitHub Actions.
+    Protected by CRON_SECRET header (falls back to admin auth when missing).
+    """
+    expected = os.getenv("CRON_SECRET", "")
+    if expected and x_cron_secret != expected:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    result = await jobs.sync_outreach_campaigns(db)
+    return {"status": "ok", **result}
+
 
 class DisputeResolve(BaseModel):
     outcome: str # 'confirm' or 'reject'

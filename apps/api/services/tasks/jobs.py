@@ -404,3 +404,90 @@ async def auto_pass_stalled_screening(db: AsyncSession):
     if leads:
         cron_logger.info(f"Auto-passed {len(leads)} stalled screening leads (24h timeout)")
     return len(leads)
+
+
+async def sync_outreach_campaigns(db: AsyncSession) -> dict:
+    """
+    Cron job: sync stats + replies from Instantly for all active/paused campaigns.
+    Safe to run every 15 minutes — skips campaigns with no Instantly ID.
+    Returns counts of synced campaigns and replies fetched.
+    """
+    import httpx
+    INSTANTLY_API_KEY = os.getenv("INSTANTLY_API_KEY", "")
+    INSTANTLY_BASE = "https://api.instantly.ai/api/v1"
+
+    if not INSTANTLY_API_KEY:
+        return {"synced": 0, "replies_fetched": 0, "skipped": "no_api_key"}
+
+    try:
+        result = await db.execute(text("""
+            SELECT id, instantly_campaign_id
+            FROM cold_email_campaigns
+            WHERE status IN ('active', 'paused')
+              AND instantly_campaign_id IS NOT NULL
+              AND instantly_campaign_id != ''
+        """))
+        campaigns = result.mappings().all()
+    except Exception:
+        return {"synced": 0, "replies_fetched": 0, "skipped": "table_missing"}
+
+    synced = 0
+    replies_fetched = 0
+    errors = 0
+
+    async with httpx.AsyncClient(timeout=20) as client:
+        for camp in campaigns:
+            cid = str(camp["id"])
+            icid = camp["instantly_campaign_id"]
+            try:
+                # Sync stats
+                stats_res = await client.get(
+                    f"{INSTANTLY_BASE}/campaign/get/{icid}",
+                    headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
+                )
+                if stats_res.is_success:
+                    data = stats_res.json()
+                    await db.execute(text("""
+                        UPDATE cold_email_campaigns SET
+                            sent_count    = GREATEST(sent_count,    COALESCE(:sent,    0)),
+                            opened_count  = GREATEST(opened_count,  COALESCE(:opened,  0)),
+                            clicked_count = GREATEST(clicked_count, COALESCE(:clicked, 0)),
+                            replied_count = GREATEST(replied_count, COALESCE(:replied, 0))
+                        WHERE id = :id
+                    """), {
+                        "id": cid,
+                        "sent":    data.get("emails_sent_count") or data.get("sent_count", 0),
+                        "opened":  data.get("emails_opened_count") or data.get("opened_count", 0),
+                        "clicked": data.get("link_clicked_count") or data.get("clicked_count", 0),
+                        "replied": data.get("emails_replied_count") or data.get("replied_count", 0),
+                    })
+
+                # Sync replies
+                replies_res = await client.get(
+                    f"{INSTANTLY_BASE}/campaign/replies/{icid}",
+                    headers={"Authorization": f"Bearer {INSTANTLY_API_KEY}"},
+                )
+                if replies_res.is_success:
+                    replies = replies_res.json() if isinstance(replies_res.json(), list) else replies_res.json().get("data", [])
+                    for reply in replies:
+                        email = reply.get("from_address") or reply.get("email", "")
+                        reply_text = reply.get("body") or reply.get("body_text") or reply.get("text", "")
+                        if not email or not reply_text:
+                            continue
+                        await db.execute(text("""
+                            UPDATE cold_email_leads
+                            SET replied_at = COALESCE(replied_at, NOW()),
+                                reply_text = COALESCE(reply_text, :reply),
+                                status     = CASE WHEN status NOT IN ('claimed') THEN 'replied' ELSE status END
+                            WHERE campaign_id = :cid AND email = :email
+                        """), {"cid": cid, "email": email.lower(), "reply": reply_text[:2000]})
+                        replies_fetched += 1
+
+                synced += 1
+            except Exception as e:
+                error_logger.warning(f"Outreach cron sync error for campaign {cid}: {e}")
+                errors += 1
+
+    await db.commit()
+    cron_logger.info(f"Outreach sync: {synced} campaigns, {replies_fetched} replies, {errors} errors")
+    return {"synced": synced, "replies_fetched": replies_fetched, "errors": errors}
