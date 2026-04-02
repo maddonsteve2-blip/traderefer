@@ -17,7 +17,10 @@ import { Wallet, Plus, User, Settings, Globe, BarChart3, Network, LogOut, Chevro
 
 import { SignedIn, SignedOut, useAuth, useUser, useClerk } from "@clerk/nextjs";
 
-import { NotificationBell } from "@/components/NotificationBell";
+const NotificationBell = dynamic(
+    () => import("@/components/NotificationBell").then((m) => m.NotificationBell),
+    { ssr: false }
+);
 
 import { Logo } from "@/components/Logo";
 
