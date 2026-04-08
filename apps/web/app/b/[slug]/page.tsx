@@ -59,6 +59,7 @@ import { proxyLogoUrl } from "@/lib/logo";
 import { JOB_TYPES, TRADE_FAQ_BANK } from "@/lib/constants";
 import { getPostcode } from "@/lib/postcodes";
 import { toOpeningHoursSchema } from "@/lib/business-hours";
+import { sql } from "@/lib/db";
 
 const LeadForm = dynamic(() => import("@/components/LeadForm").then((mod) => mod.LeadForm), {
     loading: () => <div className="min-h-[480px] rounded-2xl bg-zinc-50 border border-zinc-100 animate-pulse" />,
@@ -265,6 +266,26 @@ async function getDeals(slug: string) {
     return res.json();
 }
 
+async function getRelatedBusinesses(tradeCategory: string, suburb: string, state: string, excludeSlug: string) {
+    try {
+        const rows = await sql<{ slug: string; business_name: string; suburb: string; avg_rating: string | null; total_reviews: string | null }[]>`
+            SELECT slug, business_name, suburb, avg_rating, total_reviews
+            FROM businesses
+            WHERE status = 'active'
+              AND trade_category = ${tradeCategory}
+              AND (suburb ILIKE ${suburb} OR city ILIKE ${suburb})
+              AND state ILIKE ${state}
+              AND slug != ${excludeSlug}
+              AND slug IS NOT NULL AND slug != ''
+            ORDER BY avg_rating DESC NULLS LAST, total_reviews DESC NULLS LAST
+            LIMIT 6
+        `;
+        return rows;
+    } catch {
+        return [];
+    }
+}
+
 function formatPublicValue(value: unknown) {
     return String(value || "").trim();
 }
@@ -406,10 +427,13 @@ export default async function PublicProfilePage({
         redirect(buildBusinessProfilePath(canonicalSlug, referralCode));
     }
 
-    const [projects, googleReviews, deals] = await Promise.all([
+    const [projects, googleReviews, deals, relatedBusinesses] = await Promise.all([
         getProjects(canonicalSlug),
         getGoogleReviews(canonicalSlug),
         getDeals(canonicalSlug),
+        business.trade_category && business.suburb && business.state
+            ? getRelatedBusinesses(business.trade_category, business.suburb, business.state, canonicalSlug)
+            : Promise.resolve([]),
     ]);
 
     // Enrich this business with Google Places photos if needed (client-side trigger)
@@ -1113,19 +1137,46 @@ export default async function PublicProfilePage({
                                 const suburbWithPostcode = postcode ? `${suburbSlug}-${postcode}` : suburbSlug;
                                 
                                 return (
-                                    <nav className="bg-zinc-50 rounded-2xl border border-zinc-100 p-6">
-                                        <h3 className="font-bold text-zinc-500 text-xs uppercase tracking-widest mb-3">Browse More</h3>
-                                        <div className="flex flex-wrap gap-2">
-                                            <Link href={`/local/${stateSlug}/${citySlug}/${suburbWithPostcode}/${tradeSlug}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
-                                                <MapPin className="w-3 h-3" /> {business.trade_category} in {business.suburb}
-                                            </Link>
-                                            <Link href={`/local/${stateSlug}/${citySlug}/${suburbWithPostcode}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
-                                                <MapPin className="w-3 h-3" /> All Trades in {business.suburb}
-                                            </Link>
-                                            <Link href={`/local/${stateSlug}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
-                                                <MapPin className="w-3 h-3" /> {(business.state || 'NSW').toUpperCase()} Directory
-                                            </Link>
+                                    <nav className="bg-zinc-50 rounded-2xl border border-zinc-100 p-6 space-y-5">
+                                        <div>
+                                            <h3 className="font-bold text-zinc-500 text-xs uppercase tracking-widest mb-3">Browse More</h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                <Link href={`/local/${stateSlug}/${citySlug}/${suburbWithPostcode}/${tradeSlug}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
+                                                    <MapPin className="w-3 h-3" /> {business.trade_category} in {business.suburb}
+                                                </Link>
+                                                <Link href={`/top/${tradeSlug}/${stateSlug}/${citySlug}/${suburbWithPostcode}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
+                                                    <Star className="w-3 h-3" /> Top Rated in {business.suburb}
+                                                </Link>
+                                                <Link href={`/local/${stateSlug}/${citySlug}/${suburbWithPostcode}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
+                                                    <MapPin className="w-3 h-3" /> All Trades in {business.suburb}
+                                                </Link>
+                                                <Link href={`/local/${stateSlug}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 rounded-lg text-sm font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors">
+                                                    <MapPin className="w-3 h-3" /> {(business.state || 'NSW').toUpperCase()} Directory
+                                                </Link>
+                                            </div>
                                         </div>
+                                        {relatedBusinesses.length > 0 && (
+                                            <div>
+                                                <h3 className="font-bold text-zinc-500 text-xs uppercase tracking-widest mb-3">Other {business.trade_category} in {business.suburb}</h3>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                    {relatedBusinesses.map((biz: any) => (
+                                                        <Link
+                                                            key={biz.slug}
+                                                            href={`/b/${biz.slug}`}
+                                                            className="flex items-center justify-between px-3 py-2.5 bg-white border border-zinc-200 rounded-lg hover:border-orange-400 hover:text-orange-600 transition-colors group"
+                                                        >
+                                                            <span className="text-sm font-bold text-zinc-700 group-hover:text-orange-600 truncate">{biz.business_name}</span>
+                                                            {biz.avg_rating && parseFloat(biz.avg_rating) > 0 && (
+                                                                <span className="flex items-center gap-1 text-xs font-bold text-zinc-500 shrink-0 ml-2">
+                                                                    <Star className="w-3 h-3 fill-orange-400 text-orange-400" />
+                                                                    {parseFloat(biz.avg_rating).toFixed(1)}
+                                                                </span>
+                                                            )}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </nav>
                                 );
                             })()}
