@@ -7,6 +7,7 @@ from services.database import get_db
 from services.auth import get_current_user, AuthenticatedUser
 from services.stripe_service import StripeService
 from services.email import send_business_welcome, send_business_claim_verification_code, send_business_claim_manual_review_notification
+from services.indexnow import submit_single
 from services.sms import _send_sms
 from routers.media import s3_client, S3_BUCKET, S3_PUBLIC_URL, S3_REGION
 from utils.business_slugs import business_slug_exists, canonical_business_slug, generate_unique_business_slug
@@ -393,6 +394,12 @@ async def onboarding(
             send_business_welcome(data.business_email, data.business_name, new_slug)
         except Exception as email_err:
             print(f"Welcome email failed (non-fatal): {email_err}")
+
+        try:
+            await submit_single(f"https://traderefer.au/b/{new_slug}")
+        except Exception:
+            pass  # non-fatal
+
         return {"id": business_id, "slug": new_slug, "invite_code": invite_code}
     except Exception as e:
         await db.rollback()
