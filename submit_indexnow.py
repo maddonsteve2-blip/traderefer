@@ -24,6 +24,10 @@ INDEXNOW_KEY     = "0068d2eb419248bca5f302a93103550a"
 INDEXNOW_KEY_URL = f"https://traderefer.au/{INDEXNOW_KEY}.txt"
 BATCH_SIZE       = 10_000
 
+# NOTE: Google and Bing sitemap ping endpoints were deprecated in 2023.
+# For Google, use the Indexing API (see GOOGLE INDEXING API section at bottom of this file).
+# Bing is fully covered by IndexNow above.
+
 GREEN  = "\033[92m"
 RED    = "\033[91m"
 YELLOW = "\033[93m"
@@ -158,8 +162,26 @@ print()
 
 if failed_batches == 0:
     print(f"{GREEN}{BOLD}✓ All URLs submitted to IndexNow.{RESET}")
-    print(f"  Bing and Yandex will now prioritise crawling these pages.")
-    print(f"  Check Bing Webmaster Tools → IndexNow to see submission history.\n")
+    print(f"  Covers: Bing, Yandex, DuckDuckGo, Yahoo, Ecosia (all use Bing index)\n")
 else:
     print(f"{YELLOW}⚠  Some batches failed. Re-run the script to retry.{RESET}\n")
     sys.exit(1)
+
+print(f"{BOLD}Step 4 — Google (94% of AU searches):{RESET}")
+print(f"""
+  IndexNow does NOT cover Google — they have their own Indexing API.
+  To submit all 53k URLs to Google, you need a one-time setup:
+
+  1. Go to: https://console.cloud.google.com/
+  2. Create a project → Enable 'Web Search Indexing API'
+  3. Create a Service Account → Download the JSON key file
+  4. In Google Search Console → Settings → Users and permissions
+     → Add the service account email as an Owner
+  5. Save the JSON key file as: apps/api/google-indexing-key.json
+  6. Run: python submit_google_indexing.py
+
+  Once set up, Google can index all 53k pages within hours instead of months.
+  The API is free (no cost, no quota issues for standard use).
+""")
+print(f"{YELLOW}⚠  Google Indexing API requires the one-time setup above.{RESET}")
+print(f"  Everything else (Bing, Yandex, DuckDuckGo, Yahoo, Ecosia) is already done.\n")
