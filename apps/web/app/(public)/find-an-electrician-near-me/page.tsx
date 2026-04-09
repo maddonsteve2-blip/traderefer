@@ -16,12 +16,12 @@ const BASE_URL = "https://traderefer.au";
 export async function generateMetadata(): Promise<Metadata> {
     const year = new Date().getFullYear();
     return {
-        title: `Find an Electrician Near Me (${year}) — Compare Licensed Electricians | TradeRefer`,
+        title: `Find an Electrician Near Me | Licensed Electricians | TradeRefer`,
         description:
             "Find a licensed electrician near you Australia-wide. Compare real reviews, get free quotes, and hire safely. Residential, commercial, and emergency electricians. Post your job free.",
         alternates: { canonical: `${BASE_URL}/find-an-electrician-near-me` },
         openGraph: {
-            title: `Find an Electrician Near Me (${year}) | TradeRefer`,
+            title: `Find an Electrician Near Me | TradeRefer`,
             description: "Compare licensed electricians near you. Real reviews, free quotes, no signup needed.",
             url: `${BASE_URL}/find-an-electrician-near-me`,
             type: "website",

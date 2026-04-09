@@ -33,12 +33,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const count = businesses.length;
 
     return {
-        title: `${jobName} in ${suburbName} ${stateUpper} ${year}${priceSnippet} | TradeRefer`,
+        title: `${jobName} in ${suburbName} | TradeRefer`,
         description: `Compare ${count > 0 ? count : 'verified'} ${jobName.toLowerCase()} specialists in ${suburbName}, ${cityName} ${stateUpper}.${cost ? ` Typical cost $${cost.low}–$${cost.high}${cost.unit}.` : ''} ABN-checked, community-referred. Get free quotes today.`,
         robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
         alternates: { canonical: `https://traderefer.au/local/${state}/${city}/${suburb}/${trade}/${job}` },
         openGraph: {
-            title: `${jobName} in ${suburbName}, ${cityName} ${stateUpper} | TradeRefer`,
+            title: `${jobName} in ${suburbName} | TradeRefer`,
             description: `${count > 0 ? count : 'Verified'} local ${jobName.toLowerCase()} specialists in ${suburbName}. Compare ratings, pricing and referrals.`,
         },
     };

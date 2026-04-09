@@ -60,18 +60,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const year = new Date().getFullYear();
     return {
-        title: `${count > 0 ? count + ' ' : ''}Best ${tradeNamePlural} in ${suburbWithPostcode} ${stateUpper} (${year})${priceStr} | TradeRefer`,
+        title: `Best ${tradeNamePlural} in ${suburbWithPostcode} | TradeRefer`,
         description: `Compare ${count > 0 ? count : 'verified'} ${count === 1 ? tradeName.toLowerCase() : tradeNamePlural.toLowerCase()} in ${suburbWithPostcode}${cityDisplay} ${stateUpper}.${priceStr ? ` Avg cost $${cost.low}–$${cost.high}${cost.unit}.` : ''}${topBizStr} ${totalReviews > 0 ? ' ' + totalReviews + ' reviews.' : ''} ABN-verified, community-referred. Free quotes.`,
         robots: count === 0 ? { index: false, follow: true } : { index: true, follow: true },
         alternates: { canonical: `https://traderefer.au/local/${state}/${city}/${suburb}/${trade}` },
         openGraph: {
-            title: `${tradeName} in ${suburbWithPostcode}${cityDisplay} | TradeRefer`,
+            title: `${tradeName} in ${suburbWithPostcode} | TradeRefer`,
             description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbWithPostcode}. Compare ratings, pricing and referrals.`,
             images: [{ url: 'https://traderefer.au/og-default.jpg', width: 1200, height: 630, alt: `${tradeName} in ${suburbName}` }],
         },
         twitter: {
             card: 'summary_large_image',
-            title: `${tradeName} in ${suburbWithPostcode}${cityDisplay} | TradeRefer`,
+            title: `${tradeName} in ${suburbWithPostcode} | TradeRefer`,
             description: `${count > 0 ? count : 'Verified'} local ${tradeName.toLowerCase()} in ${suburbWithPostcode}. Compare ratings, pricing and referrals.`,
         },
     };

@@ -100,10 +100,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const topBizStr = topBiz ? ` #1: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}★).` : "";
 
     return {
-        title: `Top 10 ${tradeName} in ${suburbName}, ${cityName} (${year})${priceStr} | TradeRefer`,
+        title: `Top ${tradeName} in ${suburbName} | TradeRefer`,
         description: `The ${businesses.length} highest-rated ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateName} ranked by ${totalReviews.toLocaleString()} verified reviews.${topBizStr} Get free quotes today.`,
         openGraph: {
-            title: `Top 10 ${tradeName} in ${suburbName}, ${cityName} ${year} | TradeRefer`,
+            title: `Top ${tradeName} in ${suburbName} | TradeRefer`,
             description: `Ranked by verified Google reviews. Best ${tradeName.toLowerCase()} in ${suburbName}.`,
         },
     };

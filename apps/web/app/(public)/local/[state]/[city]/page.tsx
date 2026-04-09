@@ -40,16 +40,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const stateUpper = state.toUpperCase();
     const year = new Date().getFullYear();
     return {
-        title: `Trusted Tradies in ${cityName} ${stateUpper} (${year}) | TradeRefer`,
+        title: `Trusted Tradies in ${cityName} ${stateUpper} | TradeRefer`,
         description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to discover top-rated plumbers, electricians, painters & more. Free quotes.`,
         alternates: { canonical: `https://traderefer.au/local/${state}/${city}` },
         openGraph: {
-            title: `Trusted Tradies in ${cityName} ${stateUpper} (${year}) | TradeRefer`,
+            title: `Trusted Tradies in ${cityName} ${stateUpper} | TradeRefer`,
             description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
         },
         twitter: {
             card: 'summary_large_image',
-            title: `Trusted Tradies in ${cityName} ${stateUpper} (${year}) | TradeRefer`,
+            title: `Trusted Tradies in ${cityName} ${stateUpper} | TradeRefer`,
             description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
         },
     };

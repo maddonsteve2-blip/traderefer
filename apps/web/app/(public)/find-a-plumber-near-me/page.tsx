@@ -16,12 +16,12 @@ const BASE_URL = "https://traderefer.au";
 export async function generateMetadata(): Promise<Metadata> {
     const year = new Date().getFullYear();
     return {
-        title: `Find a Plumber Near Me (${year}) — Compare Licensed Plumbers | TradeRefer`,
+        title: `Find a Plumber Near Me | Compare Licensed Plumbers | TradeRefer`,
         description:
             "Find a licensed plumber near you Australia-wide. Compare real reviews, get free quotes, and hire with confidence. Emergency plumbers available. Post your job free on TradeRefer.",
         alternates: { canonical: `${BASE_URL}/find-a-plumber-near-me` },
         openGraph: {
-            title: `Find a Plumber Near Me (${year}) | TradeRefer`,
+            title: `Find a Plumber Near Me | TradeRefer`,
             description: "Compare licensed plumbers near you. Real reviews, free quotes, no signup needed.",
             url: `${BASE_URL}/find-a-plumber-near-me`,
             type: "website",
