@@ -35,16 +35,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { job } = await params;
     const jobName = findJobNameForSlug(job) || formatSlug(job);
     const tradeName = findTradeForJob(job);
-    const cost = tradeName ? TRADE_COST_GUIDE[tradeName] : null;
-    const year = new Date().getFullYear();
-    const priceStr = cost ? ` | $${cost.low}–$${cost.high}${cost.unit}` : "";
-
     return {
-        title: `${jobName} Cost Guide Australia ${year}${priceStr} | TradeRefer`,
+        title: `${jobName} Cost Guide | TradeRefer`,
         description: `How much does ${jobName.toLowerCase()} cost in Australia? Compare prices by state, understand licensing requirements, and find verified local specialists across Australia.`,
         alternates: { canonical: `https://traderefer.au/trades/${job}` },
         openGraph: {
-            title: `${jobName} Cost Guide Australia ${year} | TradeRefer`,
+            title: `${jobName} Cost Guide | TradeRefer`,
             description: `National pricing guide for ${jobName.toLowerCase()} in Australia. State-by-state costs, licensing requirements, and how to find the right tradie.`,
         },
     };

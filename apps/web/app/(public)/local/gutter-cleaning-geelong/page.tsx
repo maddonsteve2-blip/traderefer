@@ -14,12 +14,12 @@ export const revalidate = 3600;
 const BASE_URL = "https://traderefer.au";
 
 export const metadata: Metadata = {
-    title: "Gutter Cleaning Geelong — Find Trusted Local Gutter Cleaners | TradeRefer",
+    title: "Gutter Cleaning Geelong | Local Gutter Cleaners | TradeRefer",
     description:
         "Find reliable gutter cleaning in Geelong. Compare local tradies, read real reviews, and post your job free on TradeRefer. Quick quotes, no hassle.",
     alternates: { canonical: `${BASE_URL}/local/gutter-cleaning-geelong` },
     openGraph: {
-        title: "Gutter Cleaning Geelong — Find Trusted Local Gutter Cleaners | TradeRefer",
+        title: "Gutter Cleaning Geelong | Local Gutter Cleaners | TradeRefer",
         description:
             "Find reliable gutter cleaning in Geelong. Compare local tradies, read real reviews, and post your job free on TradeRefer.",
         url: `${BASE_URL}/local/gutter-cleaning-geelong`,

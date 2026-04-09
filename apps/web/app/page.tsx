@@ -16,10 +16,10 @@ const SmartSearch = dynamic(() => import("@/components/SmartSearch").then((m) =>
 });
 
 export const metadata: Metadata = {
-  title: "TradeRefer | More Customers for Tradies. Earn Gift Cards for Referrals.",
+  title: "TradeRefer | More Customers for Tradies. Earn Gift Cards.",
   description: "TradeRefer turns word-of-mouth into revenue. Trade businesses get more customers. Referrers get paid in gift cards. Join Australia's referral network — sign up free.",
   openGraph: {
-    title: "TradeRefer | More Customers for Tradies. Earn Gift Cards for Referrals.",
+    title: "TradeRefer | More Customers for Tradies. Earn Gift Cards.",
     description: "TradeRefer turns word-of-mouth into revenue. Trade businesses get more customers. Referrers get paid in gift cards. Join Australia's referral network — sign up free.",
     url: "https://traderefer.au",
     siteName: "TradeRefer",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "TradeRefer | More Customers for Tradies. Earn Gift Cards for Referrals.",
+    title: "TradeRefer | More Customers for Tradies. Earn Gift Cards.",
     description: "TradeRefer turns word-of-mouth into revenue. Trade businesses get more customers. Referrers get paid in gift cards. Join Australia's referral network — sign up free.",
     images: ["https://traderefer.au/og-default.jpg"],
   },

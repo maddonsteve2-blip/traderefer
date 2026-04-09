@@ -48,17 +48,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const noun = TRADE_NOUNS[tradeName] || tradeName;
     const cost = TRADE_COST_GUIDE[tradeName];
-    const year = new Date().getFullYear();
-    const priceStr = cost ? ` | $${cost.low}–$${cost.high}${cost.unit}` : "";
-
     const count = await getBusinessCount(tradeName);
 
     return {
-        title: `Best ${noun} Near Me (${year})${priceStr} | Compare & Hire | TradeRefer`,
+        title: `Best ${noun} Near Me | TradeRefer`,
         description: `Find trusted ${noun.toLowerCase()} near you. Compare ${count > 0 ? count.toLocaleString() + "+" : ""} verified ${noun.toLowerCase()} across Australia.${cost ? ` Costs from $${cost.low}–$${cost.high}${cost.unit}.` : ""} Free quotes, real reviews.`,
         alternates: { canonical: `https://traderefer.au/${slug}` },
         openGraph: {
-            title: `Best ${noun} Near Me (${year}) | TradeRefer`,
+            title: `Best ${noun} Near Me | TradeRefer`,
             description: `Compare verified ${noun.toLowerCase()} near you. Real reviews, transparent pricing, free quotes.`,
             url: `https://traderefer.au/${slug}`,
             type: "website",

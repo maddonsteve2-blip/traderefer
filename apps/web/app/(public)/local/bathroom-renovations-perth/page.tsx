@@ -14,12 +14,12 @@ export const revalidate = 3600;
 const BASE_URL = "https://traderefer.au";
 
 export const metadata: Metadata = {
-    title: "Bathroom Renovations Perth — Find Trusted Local Renovators | TradeRefer",
+    title: "Bathroom Renovations Perth | Trusted Renovators | TradeRefer",
     description:
         "Looking for bathroom renovations in Perth? TradeRefer connects you with trusted local renovators. Post your job free and get quotes fast.",
     alternates: { canonical: `${BASE_URL}/local/bathroom-renovations-perth` },
     openGraph: {
-        title: "Bathroom Renovations Perth — Find Trusted Local Renovators | TradeRefer",
+        title: "Bathroom Renovations Perth | Trusted Renovators | TradeRefer",
         description:
             "Looking for bathroom renovations in Perth? TradeRefer connects you with trusted local renovators. Post your job free and get quotes fast.",
         url: `${BASE_URL}/local/bathroom-renovations-perth`,
