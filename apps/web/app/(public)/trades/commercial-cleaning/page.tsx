@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Commercial Cleaning Services Australia | Find Verified Commercial Cleaners | TradeRefer",
+    title: "Commercial Cleaning Australia | Commercial Cleaners | TradeRefer",
     description: "Find trusted commercial cleaners across Australia. Compare office, retail, and industrial cleaning costs by city, understand insurance requirements, and hire verified local commercial cleaning businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/commercial-cleaning" },
     openGraph: { title: "Commercial Cleaning Services Australia | TradeRefer", description: "Compare commercial cleaning costs, office cleaning rates, and verified local commercial cleaners across Australia.", url: "https://traderefer.au/trades/commercial-cleaning", type: "website" },

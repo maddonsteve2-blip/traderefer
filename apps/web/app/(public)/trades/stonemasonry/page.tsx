@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Stonemasonry Services Australia | Find Verified Stonemasons | TradeRefer",
+    title: "Stonemasonry Services Australia | Stonemasons | TradeRefer",
     description: "Find trusted stonemasons across Australia. Compare stone wall, retaining wall, and paving costs by city, and hire verified local stonemasonry businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/stonemasonry" },
     openGraph: { title: "Stonemasonry Services Australia | TradeRefer", description: "Compare stonemasonry costs, stone wall pricing, and verified local stonemasons across Australia.", url: "https://traderefer.au/trades/stonemasonry", type: "website" },

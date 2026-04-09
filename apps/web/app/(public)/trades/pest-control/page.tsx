@@ -20,7 +20,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Pest Control Services Australia | Find Verified Pest Controllers | TradeRefer",
+    title: "Pest Control Services Australia | Pest Controllers | TradeRefer",
     description:
         "Find licensed pest controllers across Australia. Compare termite inspection and treatment costs by city, understand licensing requirements by state, and hire verified local pest control businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/pest-control" },

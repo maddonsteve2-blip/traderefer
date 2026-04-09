@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Asbestos Removal Australia | Find Licensed Asbestos Removalists | TradeRefer",
+    title: "Asbestos Removal Australia | Licensed Removalists | TradeRefer",
     description: "Find licensed asbestos removalists across Australia. Compare asbestos inspection and removal costs by city, understand Class A and Class B licencing requirements, and hire verified local asbestos removal businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/asbestos-removal" },
     openGraph: { title: "Asbestos Removal Australia | TradeRefer", description: "Compare asbestos removal costs, Class A vs Class B licensing, and verified licensed asbestos removalists across Australia.", url: "https://traderefer.au/trades/asbestos-removal", type: "website" },

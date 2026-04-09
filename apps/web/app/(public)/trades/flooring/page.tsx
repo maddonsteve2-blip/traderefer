@@ -20,7 +20,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Flooring Services Australia | Find Verified Flooring Installers | TradeRefer",
+    title: "Flooring Services Australia | Flooring Installers | TradeRefer",
     description:
         "Find trusted flooring installers across Australia. Compare timber, hybrid, carpet, and tile flooring costs by city, understand subfloor requirements, and hire verified local flooring businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/flooring" },

@@ -20,7 +20,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Waterproofing Services Australia | Find Verified Waterproofers | TradeRefer",
+    title: "Waterproofing Services Australia | Waterproofers | TradeRefer",
     description:
         "Find trusted waterproofing contractors across Australia. Compare shower, bathroom, and balcony waterproofing costs by city, understand AS 3740 requirements, and hire verified local waterproofers through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/waterproofing" },

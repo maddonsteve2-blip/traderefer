@@ -19,7 +19,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Plumbing Services Australia | Find Verified Plumbing Professionals | TradeRefer",
+    title: "Plumbing Services Australia | Plumbers | TradeRefer",
     description:
         "Find trusted plumbing professionals across Australia. Compare quotes, understand costs, check licensing requirements, and hire with confidence through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/plumbing" },

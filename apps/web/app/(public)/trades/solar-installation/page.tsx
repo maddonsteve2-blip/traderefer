@@ -20,7 +20,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Solar Panel Installation Australia | Find Verified Solar Installers | TradeRefer",
+    title: "Solar Panel Installation Australia | Solar Installers | TradeRefer",
     description:
         "Find CEC-accredited solar installers across Australia. Compare 6.6kW and 10kW solar system costs by city, understand the STC rebate, and hire verified local solar businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/solar-installation" },

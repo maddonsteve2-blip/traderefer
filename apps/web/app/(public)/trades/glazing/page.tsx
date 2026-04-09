@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Glazing & Window Services Australia | Find Verified Glaziers | TradeRefer",
+    title: "Glazing & Window Services Australia | Glaziers | TradeRefer",
     description: "Find trusted glaziers across Australia. Compare window replacement, double glazing, and glass repair costs by city, understand energy ratings, and hire verified local glazing businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/glazing" },
     openGraph: { title: "Glazing & Window Services Australia | TradeRefer", description: "Compare window replacement costs, double glazing pricing, and verified local glaziers across Australia.", url: "https://traderefer.au/trades/glazing", type: "website" },

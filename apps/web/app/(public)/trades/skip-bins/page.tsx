@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Skip Bin Hire Australia | Find Verified Skip Bin Companies | TradeRefer",
+    title: "Skip Bin Hire Australia | Skip Bin Companies | TradeRefer",
     description: "Find trusted skip bin hire companies across Australia. Compare skip bin sizes and hire costs by city, understand permitted vs prohibited waste, and book verified local skip bin services through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/skip-bins" },
     openGraph: { title: "Skip Bin Hire Australia | TradeRefer", description: "Compare skip bin hire costs, sizes, and verified local skip bin companies across Australia.", url: "https://traderefer.au/trades/skip-bins", type: "website" },

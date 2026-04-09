@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "House Cleaning Services Australia | Find Verified House Cleaners | TradeRefer",
+    title: "House Cleaning Services Australia | House Cleaners | TradeRefer",
     description: "Find trusted house cleaners across Australia. Compare regular and end-of-lease cleaning costs by city, understand what to look for, and hire verified local house cleaning businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/house-cleaning" },
     openGraph: { title: "House Cleaning Services Australia | TradeRefer", description: "Compare house cleaning costs, end-of-lease cleaning prices, and verified local house cleaners across Australia.", url: "https://traderefer.au/trades/house-cleaning", type: "website" },

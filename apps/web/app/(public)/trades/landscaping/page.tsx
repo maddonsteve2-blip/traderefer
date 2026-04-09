@@ -20,7 +20,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Landscaping Services Australia | Find Verified Landscapers | TradeRefer",
+    title: "Landscaping Services Australia | Landscapers | TradeRefer",
     description:
         "Find trusted landscapers across Australia. Compare landscaping costs by city, understand council approval requirements, and hire verified local landscaping businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/landscaping" },

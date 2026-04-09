@@ -209,7 +209,13 @@ function buildSeoContent(business: any, slug: string, hasRating: boolean, rating
     const titleTrade = tradeCategory || serviceLabel || "Tradie";
     const titleLocationParts = [primaryLocation, stateLabel].filter(Boolean);
     const titleLocation = titleLocationParts.join(" ").trim() || locationLabel;
-    const title = `${cleanName} | ${titleTrade} in ${titleLocation} | TradeRefer`;
+    const fullTitle = `${cleanName} | ${titleTrade} in ${titleLocation} | TradeRefer`;
+    const shortTitle = `${cleanName} | ${titleTrade} | TradeRefer`;
+    const minTitle = `${cleanName} | TradeRefer`;
+    const title = fullTitle.length <= 70 ? fullTitle
+        : shortTitle.length <= 70 ? shortTitle
+        : minTitle.length <= 70 ? minTitle
+        : `${cleanName.slice(0, 57)} | TradeRefer`;
     const description = [
         `${cleanName} provides ${titleTrade.toLowerCase()} services in ${localArea}.`,
         yearsExperience > 0 ? `${yearsExperience} years experience.` : "",

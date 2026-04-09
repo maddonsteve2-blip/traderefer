@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Cabinet Making Services Australia | Find Verified Cabinet Makers | TradeRefer",
+    title: "Cabinet Making Services Australia | Cabinet Makers | TradeRefer",
     description: "Find trusted cabinet makers across Australia. Compare custom kitchen, bathroom vanity, and wardrobe cabinet costs by city, and hire verified local cabinet making businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/cabinet-making" },
     openGraph: { title: "Cabinet Making Services Australia | TradeRefer", description: "Compare custom cabinet costs, kitchen joinery pricing, and verified local cabinet makers across Australia.", url: "https://traderefer.au/trades/cabinet-making", type: "website" },

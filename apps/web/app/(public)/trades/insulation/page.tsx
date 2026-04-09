@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Insulation Services Australia | Find Verified Insulation Installers | TradeRefer",
+    title: "Insulation Services Australia | Insulation Installers | TradeRefer",
     description: "Find trusted insulation installers across Australia. Compare ceiling, wall, and underfloor insulation costs by city, understand R-value requirements, and hire verified local insulation businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/insulation" },
     openGraph: { title: "Insulation Services Australia | TradeRefer", description: "Compare insulation costs, R-value requirements, and verified local insulation installers across Australia.", url: "https://traderefer.au/trades/insulation", type: "website" },

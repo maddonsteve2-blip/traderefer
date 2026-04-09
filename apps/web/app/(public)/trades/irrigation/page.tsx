@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Irrigation Services Australia | Find Verified Irrigation Contractors | TradeRefer",
+    title: "Irrigation Services Australia | Irrigation Contractors | TradeRefer",
     description: "Find trusted irrigation contractors across Australia. Compare drip, pop-up, and automatic irrigation system costs by city, and hire verified local irrigation businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/irrigation" },
     openGraph: { title: "Irrigation Services Australia | TradeRefer", description: "Compare irrigation system costs, automated watering pricing, and verified local irrigation contractors across Australia.", url: "https://traderefer.au/trades/irrigation", type: "website" },

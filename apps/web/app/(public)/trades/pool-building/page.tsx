@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Pool Building Services Australia | Find Verified Pool Builders | TradeRefer",
+    title: "Pool Building Services Australia | Pool Builders | TradeRefer",
     description: "Find trusted pool builders across Australia. Compare concrete, fibreglass, and above-ground pool costs by city, understand council approval and fencing requirements, and hire verified local pool builders through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/pool-building" },
     openGraph: { title: "Pool Building Services Australia | TradeRefer", description: "Compare pool construction costs, fibreglass vs concrete pricing, and verified local pool builders across Australia.", url: "https://traderefer.au/trades/pool-building", type: "website" },

@@ -8,7 +8,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Demolition Services Australia | Find Verified Demolition Contractors | TradeRefer",
+    title: "Demolition Services Australia | Demolition Contractors | TradeRefer",
     description: "Find trusted demolition contractors across Australia. Compare house, shed, and pool demolition costs by city, understand DA requirements, and hire verified local demolition businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/demolition" },
     openGraph: { title: "Demolition Services Australia | TradeRefer", description: "Compare demolition costs, DA requirements, asbestos obligations, and verified local demolition contractors across Australia.", url: "https://traderefer.au/trades/demolition", type: "website" },

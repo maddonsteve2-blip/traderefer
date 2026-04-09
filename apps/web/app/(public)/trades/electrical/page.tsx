@@ -19,7 +19,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Electrical Services Australia | Find Licensed Electricians | TradeRefer",
+    title: "Electrical Services Australia | Licensed Electricians | TradeRefer",
     description:
         "Find trusted licensed electricians across Australia. Compare quotes, understand costs, check licensing requirements by state, and hire with confidence through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/electrical" },

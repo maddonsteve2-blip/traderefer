@@ -20,7 +20,7 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Fencing Services Australia | Find Verified Fencing Contractors | TradeRefer",
+    title: "Fencing Services Australia | Fencing Contractors | TradeRefer",
     description:
         "Find trusted fencing contractors across Australia. Compare Colorbond, timber, and pool fencing costs by city, understand dividing fence laws, and hire verified fencers through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/fencing" },
