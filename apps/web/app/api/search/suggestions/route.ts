@@ -1,40 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 
-const TRADE_CATEGORIES = [
-  "Air Conditioning & Heating",
-  "Bricklaying",
-  "Building & Carpentry",
-  "Cabinet Making",
-  "Cleaning",
-  "Concreting",
-  "Demolition",
-  "Electrical",
-  "Fencing",
-  "Flooring",
-  "Garage Doors",
-  "Gardening & Lawn Care",
-  "Glazing",
-  "Handyman",
-  "Insulation",
-  "Landscaping",
-  "Locksmith",
-  "Painting",
-  "Pest Control",
-  "Plastering",
-  "Plumbing",
-  "Renovations",
-  "Roofing",
-  "Rubbish Removal",
-  "Security Systems",
-  "Sheds & Outdoor Structures",
-  "Solar & Energy",
-  "Tiling",
-  "Tree Services",
-  "Window Cleaning",
-  "Other"
-];
-
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const query = searchParams.get("q")?.trim().toLowerCase() || "";
@@ -45,12 +11,22 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Search trades
+    // Search trades — live from the taxonomy, so suggestions can never offer
+    // a category with zero businesses (the old hardcoded list went stale).
     let trades: string[] = [];
     if (type === "all" || type === "trade") {
-      trades = TRADE_CATEGORIES.filter(
-        (t) => t.toLowerCase().includes(query) && t !== "Other"
-      ).slice(0, 6);
+      const tradeResults = await sql`
+        SELECT trade_category, COUNT(*)::int AS n
+        FROM businesses
+        WHERE status = 'active'
+          AND trade_category ILIKE ${'%' + query + '%'}
+          AND trade_category IS NOT NULL
+        GROUP BY trade_category
+        HAVING COUNT(*) >= 3
+        ORDER BY n DESC
+        LIMIT 6
+      `;
+      trades = tradeResults.map((r: any) => r.trade_category as string);
     }
 
     // Search suburbs and postcodes from database
@@ -92,7 +68,16 @@ export async function GET(request: NextRequest) {
         ORDER BY count DESC, city ASC
         LIMIT 4
       `;
-      cityResults.forEach(r => suburbs.push(r as any));
+      // Skip city entries that duplicate an already-listed suburb suggestion
+      // (e.g. suburb "Parramatta" + city "Parramatta" both matching).
+      const seen = new Set(suburbs.map((s) => `${s.suburb.toLowerCase()}|${s.state}`));
+      cityResults.forEach((r: any) => {
+        const key = `${String(r.suburb).toLowerCase()}|${r.state}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          suburbs.push(r);
+        }
+      });
     }
 
     return NextResponse.json({ trades, suburbs });

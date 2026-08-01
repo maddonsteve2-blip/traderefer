@@ -29,6 +29,7 @@ import {
     jobToSlug,
     normalizeTradeName,
 } from "@/lib/constants";
+import { buildOgImageUrl } from "@/lib/og-image";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
@@ -49,25 +50,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const noun = TRADE_NOUNS[tradeName] || tradeName;
     const cost = TRADE_COST_GUIDE[tradeName];
     const count = await getBusinessCount(tradeName);
+    const ogImageUrl = buildOgImageUrl({
+        template: "near-me",
+        title: `Best ${noun} near me`,
+        subtitle: `Compare ${noun.toLowerCase()} across Australia with reviews, pricing context and free quote pathways.`,
+        eyebrow: "Near me guide",
+        badge: "Australia-wide",
+        stat1: count > 0 ? `${count.toLocaleString()}+ listings` : "Available listings",
+        stat2: cost ? `$${cost.low}-${cost.high}${cost.unit}` : "Transparent pricing",
+        stat3: "Free quotes",
+    });
 
     return {
-        title: `Best ${noun} Near Me | TradeRefer`,
-        description: `Find trusted ${noun.toLowerCase()} near you. Compare ${count > 0 ? count.toLocaleString() + "+" : ""} verified ${noun.toLowerCase()} across Australia.${cost ? ` Costs from $${cost.low}–$${cost.high}${cost.unit}.` : ""} Free quotes, real reviews.`,
+        title: `${noun} Near Me | TradeRefer`,
+        description: `Find trusted ${noun.toLowerCase()} near you. Compare ${count > 0 ? count.toLocaleString() + "+" : ""} ${noun.toLowerCase()} across Australia.${cost ? ` Costs from $${cost.low}–$${cost.high}${cost.unit}.` : ""} Free quotes, real reviews.`,
         robots: { index: false, follow: true },
         alternates: { canonical: `https://traderefer.au/${slug}` },
         openGraph: {
             title: `Best ${noun} Near Me | TradeRefer`,
-            description: `Compare verified ${noun.toLowerCase()} near you. Real reviews, transparent pricing, free quotes.`,
+            description: `Compare ${noun.toLowerCase()} near you. Real reviews, transparent pricing, free quotes.`,
             url: `https://traderefer.au/${slug}`,
             siteName: "TradeRefer",
             type: "website",
-            images: [{ url: "https://traderefer.au/og-default.jpg", width: 1200, height: 630, alt: `${noun} near me on TradeRefer` }],
+            images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${noun} near me on TradeRefer` }],
         },
         twitter: {
             card: "summary_large_image",
             title: `Best ${noun} Near Me | TradeRefer`,
-            description: `Compare verified ${noun.toLowerCase()} near you. Real reviews, transparent pricing, free quotes.`,
-            images: ["https://traderefer.au/og-default.jpg"],
+            description: `Compare ${noun.toLowerCase()} near you. Real reviews, transparent pricing, free quotes.`,
+            images: [ogImageUrl],
         },
     };
 }
@@ -238,7 +249,7 @@ export default async function NearMePage({ params }: PageProps) {
                             Best <span className="text-[#FF6600]">{noun}</span> Near Me
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Compare {totalCount > 0 ? `${totalCount.toLocaleString()}+` : "verified"} {noun.toLowerCase()} across Australia. 
+                            Compare {totalCount > 0 ? `${totalCount.toLocaleString()}+` : "available"} {noun.toLowerCase()} across Australia.
                             Check real reviews, compare pricing{cost ? ` (from $${cost.low}–$${cost.high}${cost.unit})` : ""}, 
                             and get free quotes from trusted local professionals.
                         </p>
@@ -351,9 +362,9 @@ export default async function NearMePage({ params }: PageProps) {
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {[
-                                { step: "1", icon: Search, title: "Search & compare", desc: `Browse verified ${noun.toLowerCase()} in your area. Check ratings, reviews, and pricing to shortlist the best match.` },
-                                { step: "2", icon: FileText, title: "Get free quotes", desc: `Request up to 3 free quotes from local ${noun.toLowerCase()}. No obligation, no hidden fees.` },
-                                { step: "3", icon: CheckCircle2, title: "Hire with confidence", desc: `Choose the ${noun.toLowerCase().replace(/s$/, "")} that fits your budget and schedule. All businesses are ABN-verified.` },
+                                { step: "1", icon: Search, title: "Search & compare", desc: `Browse ${noun.toLowerCase()} in your area. Check ratings, reviews, services and pricing context to shortlist the best match.` },
+                                { step: "2", icon: FileText, title: "Get free quotes", desc: `Request up to 3 free quotes from local ${noun.toLowerCase()} and compare the replies before choosing who to contact.` },
+                                { step: "3", icon: CheckCircle2, title: "Hire with confidence", desc: `Choose the ${noun.toLowerCase().replace(/s$/, "")} that fits your budget, timeline and job scope.` },
                             ].map(({ step, icon: Icon, title, desc }) => (
                                 <div key={step} className="text-center">
                                     <div className="w-16 h-16 bg-orange-50 border-2 border-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -482,8 +493,8 @@ export default async function NearMePage({ params }: PageProps) {
                     {/* ═══ WHY TRADEREFER ═══ */}
                     <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {[
-                            { icon: ShieldCheck, title: "Verified businesses", desc: `Every ${noun.toLowerCase().replace(/s$/, "")} on TradeRefer is ABN-checked and community-referred.` },
-                            { icon: Star, title: "Real reviews", desc: "Read verified reviews from real customers. No fake ratings, no paid placements." },
+                            { icon: ShieldCheck, title: "Checked profiles", desc: `TradeRefer uses ABN, location and service data where available to make ${noun.toLowerCase()} easier to compare.` },
+                            { icon: Star, title: "Public review signals", desc: "Use ratings, reviews, service details and suburb coverage to build a practical shortlist." },
                             { icon: Zap, title: "Free quotes", desc: `Request up to 3 free quotes and compare pricing, availability, and scope of work.` },
                         ].map(({ icon: Icon, title, desc }) => (
                             <div key={title} className="bg-white rounded-3xl border border-zinc-200 p-8">
@@ -542,7 +553,7 @@ export default async function NearMePage({ params }: PageProps) {
                             Need {noun === "Handymen" ? "a Handyman" : `a ${noun.replace(/s$/, "").replace(/ers$/, "er").replace(/ors$/, "or")}`} Near You?
                         </h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Compare verified {noun.toLowerCase()}, check real reviews, and get free quotes from trusted local professionals across Australia.
+                            Compare {noun.toLowerCase()}, check real reviews, and get free quotes from trusted local professionals across Australia.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

@@ -25,7 +25,7 @@ interface ReferrerProfile {
 }
 
 const BADGE_DEFS = [
-    { id: 'verified',        label: 'Verified Member',  desc: 'Identity confirmed on TradeRefer',  icon: ShieldCheck, colorClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', iconClass: 'text-emerald-500', earned: (_p: ReferrerProfile) => true },
+    { id: 'verified',        label: 'Verified Member',  desc: 'Identity confirmed on TradeRefer',  icon: ShieldCheck, colorClass: 'bg-emerald-50 border-emerald-200 text-emerald-700', iconClass: 'text-emerald-500', earned: () => true },
     { id: 'elite',           label: 'Elite Referrer',   desc: 'Quality score 96+',                 icon: Crown,       colorClass: 'bg-amber-50 border-amber-200 text-amber-700',       iconClass: 'text-amber-500',  earned: (p: ReferrerProfile) => p.quality_score >= 96 },
     { id: 'top_performer',   label: 'Top Performer',    desc: 'Quality score 80+',                 icon: Trophy,      colorClass: 'bg-orange-50 border-orange-200 text-orange-700',     iconClass: 'text-orange-500', earned: (p: ReferrerProfile) => p.quality_score >= 80 },
     { id: 'rising_star',     label: 'Rising Star',      desc: 'Quality score 60+',                 icon: Star,        colorClass: 'bg-blue-50 border-blue-200 text-blue-700',           iconClass: 'text-blue-400',   earned: (p: ReferrerProfile) => p.quality_score >= 60 },
@@ -56,7 +56,7 @@ export default function ReferrerProfileViewPage() {
     useEffect(() => {
         if (!isLoaded) return;
         if (!isSignedIn) {
-            router.push(`/sign-in?redirect_url=/dashboard/referrer-profile/${id}`);
+            router.push(`/login?redirect_url=${encodeURIComponent(`/dashboard/referrer-profile/${id}`)}`);
             return;
         }
         if (!id) return;

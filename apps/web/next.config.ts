@@ -34,6 +34,19 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Security headers on every route. CSP is deliberately NOT set here —
+        // Clerk auth UI and inline/analytics scripts need a carefully tuned
+        // policy and getting it wrong blind (source maps, workers, frame
+        // ancestors) breaks sign-in; revisit with a real audit before adding one.
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+      {
         source: '/images/:path*',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
@@ -56,6 +69,19 @@ const nextConfig: NextConfig = {
       {
         source: "/ingest/:path*",
         destination: "https://us.i.posthog.com/:path*",
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      // skipTrailingSlashRedirect (below) disables Next's sitewide
+      // trailing-slash 308 so the PostHog /ingest proxy keeps working — this
+      // restores it for everything except /ingest and /api, killing the
+      // duplicate-URL surface (every page also resolved with a trailing /).
+      {
+        source: "/:path((?!ingest|api)(?:.*[^/])?)/",
+        destination: "/:path",
+        permanent: true,
       },
     ];
   },

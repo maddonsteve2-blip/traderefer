@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
 const PREZZEE_CARDS = [
   { name: "Prezzee Smart Card", url: "/images/prezzee/prezzee-smart-card.webp", desc: "One card. Swap into 400+ brands. The ultimate gift." },
@@ -37,6 +35,7 @@ export function PrezzeeCarousel() {
         className="overflow-hidden relative"
         onMouseEnter={() => setCarouselPaused(true)}
         onMouseLeave={() => setCarouselPaused(false)}
+        aria-hidden="true"
       >
         {/* Left/right fade masks so edge cards look clean */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-gradient-to-r from-white to-transparent" />
@@ -50,10 +49,9 @@ export function PrezzeeCarousel() {
           }}
         >
           {allCards.map((card, i) => (
-            <Link
+            <div
               key={i}
-              href="/rewards"
-              className="w-[280px] md:w-[320px] flex-shrink-0 bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 group cursor-pointer hover:shadow-xl transition-shadow"
+              className="w-[280px] md:w-[320px] flex-shrink-0 bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -61,17 +59,17 @@ export function PrezzeeCarousel() {
                 alt={card.name}
                 width="452"
                 height="280"
-                className="w-full aspect-[452/280] object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full aspect-[452/280] object-cover"
                 loading="lazy"
               />
               <div className="p-5">
                 <h4 className="font-bold text-lg mb-1.5 font-display">{card.name}</h4>
                 <p className="text-gray-500 mb-3 text-sm leading-relaxed">{card.desc}</p>
-                <span className="text-[#FF6600] font-bold flex items-center gap-1 group-hover:gap-2 transition-all text-sm">
-                  Start earning <ArrowRight className="w-4 h-4" />
+                <span className="text-[#FF6600] font-bold text-sm">
+                  Reward option
                 </span>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

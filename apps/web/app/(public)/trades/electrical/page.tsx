@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: "Electrical Services Australia | TradeRefer",
         description:
-            "Compare electrician costs, hiring tips, licensing requirements, and verified local electrical professionals across Australia.",
+            "Compare electrician costs, hiring tips, licensing requirements, and local electrical professionals across Australia.",
         url: "https://traderefer.au/trades/electrical",
         type: "website",
     },
@@ -87,15 +87,15 @@ const hiringTips = [
     },
     {
         title: "Check public liability insurance",
-        body: "A reputable electrician should carry current public liability insurance. TradeRefer surfaces verified businesses ranked by real community referrals, not paid placement — so you can compare with confidence.",
+        body: "A reputable electrician should carry current public liability insurance. TradeRefer surfaces profile, public review, and referral signals where available so you can compare with more context.",
         icon: Star,
     },
 ];
 
 const whyTradeRefer = [
     {
-        title: "Verified electrical businesses",
-        body: "TradeRefer helps surface ABN-checked electrical businesses so homeowners and businesses can compare verified providers instead of relying on anonymous listings.",
+        title: "Checked electrical businesses",
+        body: "TradeRefer helps surface ABN-checked electrical businesses so homeowners and businesses can compare providers instead of relying on anonymous listings.",
     },
     {
         title: "Better quote comparison",
@@ -245,7 +245,7 @@ export default async function ElectricalTradeHubPage() {
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer electrical hub to compare typical electrician costs, understand licensing requirements
-                            in each state, and discover verified local electrical businesses in the Australian cities where demand is highest.
+                            in each state, and discover local electrical businesses in the Australian cities where demand is highest.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -382,7 +382,7 @@ export default async function ElectricalTradeHubPage() {
                                 Before You Hire an Electrician
                             </h2>
                             <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Use these checks to avoid unlicensed work, hidden fees, and safety risks.
+                                Use these checks to avoid unlicensed work, unclear charges, and safety risks.
                             </p>
                             <div className="space-y-4">
                                 {hiringTips.map(({ title, body, icon: Icon }) => (
@@ -432,7 +432,7 @@ export default async function ElectricalTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Electrical Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your electrical quotes here and we&apos;ll match your job with up to 3 verified local businesses.
+                                Request your electrical quotes here and we&apos;ll match your job with up to 3 local trade profiles.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Electrical" initialSourcePage="/trades/electrical" />
@@ -505,7 +505,7 @@ export default async function ElectricalTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need an Electrician Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local electrical businesses, compare their services, and move into suburb-level directory pages to find the best licensed electrician for your job.
+                            Browse local electrical businesses, compare their services, and move into suburb-level directory pages to find the best licensed electrician for your job.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

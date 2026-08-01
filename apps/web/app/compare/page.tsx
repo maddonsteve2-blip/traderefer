@@ -8,8 +8,8 @@ export default function ComparePage() {
     const [monthlySpend, setMonthlySpend] = useState(500);
     const [winRate, setWinRate] = useState(30);
 
-    const wasted = Math.round(monthlySpend * (1 - winRate / 100));
-    const annualWaste = wasted * 12;
+    const unconvertedSpend = Math.round(monthlySpend * (1 - winRate / 100));
+    const annualUnconvertedSpend = unconvertedSpend * 12;
 
     const spendPct = `${((monthlySpend - 100) / (5000 - 100)) * 100}%`;
     const winPct = `${((winRate - 5) / (90 - 5)) * 100}%`;
@@ -25,12 +25,12 @@ export default function ComparePage() {
                 />
                 <div className="absolute inset-0 z-0 bg-[#FCFCFC]/80" />
                 <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-                    <p className="text-[#FF6600] font-black text-lg uppercase tracking-widest mb-5">TradeRefer vs The Rest</p>
+                    <p className="text-[#FF6600] font-black text-lg uppercase tracking-widest mb-5">Compare lead models</p>
                     <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-extrabold text-[#1A1A1A] mb-6 leading-[1.1] font-display">
-                        Stop Paying<br />to Lose Jobs.
+                        Know what your leads cost before you commit.
                     </h1>
                     <p className="text-[#1A1A1A] max-w-2xl mx-auto" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                        Traditional lead sites charge you upfront — win or lose. TradeRefer&apos;s revenue-first model means you only pay when you win the work.
+                        Compare monthly lead spend with TradeRefer&apos;s profile and referral flow: no monthly listing fee, free direct enquiries, and referral terms shown before you unlock a lead.
                     </p>
                 </div>
             </section>
@@ -41,17 +41,17 @@ export default function ComparePage() {
                     <div className="text-center mb-12">
                         <p className="text-[#FF6600] font-black text-lg uppercase tracking-widest mb-4">For Trade Businesses</p>
                         <h2 className="text-[32px] md:text-[52px] font-extrabold text-[#1A1A1A] font-display leading-tight">
-                            Marketing Waste Calculator
+                            Lead Spend Reality Check
                         </h2>
                         <p className="text-gray-600 mt-4" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                            See exactly how much you&apos;re burning on traditional lead sites every month.
+                            Estimate how much monthly lead spend is not turning into won work.
                         </p>
                     </div>
 
                     <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-xl overflow-hidden">
                         {/* Card header */}
                         <div className="bg-[#1A1A1A] px-8 py-6">
-                            <h3 className="text-3xl md:text-4xl font-extrabold text-white font-display">Protect Your Cash Flow.</h3>
+                            <h3 className="text-3xl md:text-4xl font-extrabold text-white font-display">Review the numbers first.</h3>
                             <p className="text-zinc-400 text-lg mt-2">Move the sliders to see your real numbers.</p>
                         </div>
 
@@ -95,30 +95,30 @@ export default function ComparePage() {
                             {/* Results row */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-6 text-center">
-                                    <p className="text-base font-black text-red-600 uppercase tracking-widest mb-2">Wasted Monthly</p>
-                                    <p className="text-5xl font-black text-red-500 leading-none">${wasted.toLocaleString()}</p>
-                                    <p className="text-base text-red-400 mt-2 font-medium">${annualWaste.toLocaleString()} per year</p>
+                                    <p className="text-base font-black text-red-600 uppercase tracking-widest mb-2">Not tied to wins</p>
+                                    <p className="text-5xl font-black text-red-500 leading-none">${unconvertedSpend.toLocaleString()}</p>
+                                    <p className="text-base text-red-400 mt-2 font-medium">${annualUnconvertedSpend.toLocaleString()} per year</p>
                                 </div>
                                 <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 text-center">
-                                    <p className="text-base font-black text-green-600 uppercase tracking-widest mb-2">With TradeRefer</p>
+                                    <p className="text-base font-black text-green-600 uppercase tracking-widest mb-2">TradeRefer listing</p>
                                     <p className="text-5xl font-black text-green-600 leading-none">$0</p>
-                                    <p className="text-base text-green-500 mt-2 font-medium">Upfront cost. Zero.</p>
+                                    <p className="text-base text-green-500 mt-2 font-medium">monthly listing fee</p>
                                 </div>
                             </div>
 
                             {/* Protected Cash Flow result */}
                             <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 text-center">
-                                <p className="text-base font-black text-green-700 uppercase tracking-widest mb-2">Your Protected Cash Flow</p>
+                                <p className="text-base font-black text-green-700 uppercase tracking-widest mb-2">Spend to review</p>
                                 <p className="text-6xl md:text-7xl font-black text-green-600 leading-none">
-                                    ${wasted.toLocaleString()}<span className="text-3xl">/mo</span>
+                                    ${unconvertedSpend.toLocaleString()}<span className="text-3xl">/mo</span>
                                 </p>
                                 <p className="text-lg text-green-700 mt-3 font-medium">
-                                    saved by switching to a revenue-first model
+                                    currently not connected to won jobs
                                 </p>
                             </div>
 
                             <p className="text-base text-gray-500" style={{ lineHeight: 1.7 }}>
-                                TradeRefer charges $0 upfront. The 20% success fee on won jobs qualifies as a Marketing &amp; Promotion expense deductible under <strong>Section 8-1 of the ITAA 1997</strong>.
+                                TradeRefer business profiles have no monthly listing fee. Referral lead terms are displayed before a business chooses whether to unlock a lead.
                             </p>
 
                             <Link
@@ -126,7 +126,7 @@ export default function ComparePage() {
                                 className="flex items-center justify-center gap-3 w-full bg-[#1A1A1A] hover:bg-zinc-800 text-white font-black rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95 font-cta"
                                 style={{ minHeight: "64px", fontSize: "22px" }}
                             >
-                                Protect My Cash Flow <TrendingUp className="w-6 h-6" />
+                                Compare My Options <TrendingUp className="w-6 h-6" />
                             </Link>
                         </div>
                     </div>
@@ -142,7 +142,7 @@ export default function ComparePage() {
                             Side-by-Side Comparison
                         </h2>
                         <p className="text-gray-600 mt-4" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                            Traditional platforms vs TradeRefer — no spin, just the numbers.
+                            Traditional lead marketplaces vs TradeRefer, with the assumptions made visible.
                         </p>
                     </div>
 
@@ -152,15 +152,15 @@ export default function ComparePage() {
                         <div className="bg-white rounded-2xl border-2 border-gray-200 shadow-lg overflow-hidden">
                             <div className="bg-gray-100 border-b-4 border-red-500 px-8 py-6 text-center">
                                 <span className="bg-red-100 text-red-700 text-sm font-black px-5 py-2 rounded-full uppercase tracking-widest">Traditional Lead Sites</span>
-                                <p className="text-gray-500 mt-3" style={{ fontSize: '17px' }}>HiPages, Hipages, ServiceSeeking</p>
+                                <p className="text-gray-500 mt-3" style={{ fontSize: '17px' }}>Typical pay-per-lead marketplaces</p>
                             </div>
                             <div className="p-8">
                                 <ul className="space-y-6">
                                     {[
-                                        { label: "$21+ per lead just to quote", sub: "Pay before you even know if you'll win" },
-                                        { label: "Shared with 3–5 competitors", sub: "Racing to quote cheapest, not best" },
-                                        { label: "Pay even if you lose", sub: "Sunk cost — money gone forever" },
-                                        { label: "No quality filter", sub: "Any tradie can buy the same lead" },
+                                        { label: "Pay before you quote", sub: "Lead cost is often due before you know whether the job is suitable" },
+                                        { label: "Often shared with competitors", sub: "More businesses can mean faster price pressure" },
+                                        { label: "Spend can continue after losses", sub: "A poor fit still consumes budget and quoting time" },
+                                        { label: "Quality varies by platform", sub: "Review the screening process before relying on the lead source" },
                                         { label: "Monthly subscription fees", sub: "Fixed costs before a single job" },
                                     ].map(item => (
                                         <li key={item.label} className="flex items-start gap-4">
@@ -175,7 +175,7 @@ export default function ComparePage() {
                                     ))}
                                 </ul>
                                 <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-                                    <span className="text-red-500 font-black text-xl">High Risk, Unknown Reward</span>
+                                    <span className="text-red-500 font-black text-xl">Higher upfront commitment</span>
                                 </div>
                             </div>
                         </div>
@@ -184,15 +184,15 @@ export default function ComparePage() {
                         <div className="bg-white rounded-2xl border-2 border-[#FF6600] shadow-xl overflow-hidden">
                             <div className="bg-[#FF6600] px-8 py-6 text-center">
                                 <span className="bg-white text-[#FF6600] text-sm font-black px-5 py-2 rounded-full uppercase tracking-widest">TradeRefer</span>
-                                <p className="text-white/85 mt-3" style={{ fontSize: '17px' }}>Revenue-first. ABN &amp; Licence Verified.</p>
+                                <p className="text-white/85 mt-3" style={{ fontSize: '17px' }}>No monthly listing fee. Terms shown before unlock.</p>
                             </div>
                             <div className="p-8">
                                 <ul className="space-y-6">
                                     {[
-                                        { label: "$0 per lead — ever", sub: "Zero upfront. Browse, quote, win first" },
-                                        { label: "Exclusive referrals to you", sub: "Community-matched, not mass-distributed" },
-                                        { label: "Pay only when you win", sub: "20% success fee on completed jobs only" },
-                                        { label: "ABN + licence verified only", sub: "Every business on the platform is checked" },
+                                        { label: "$0 monthly listing fee", sub: "Claim your profile and receive direct profile enquiries without a subscription" },
+                                        { label: "Referral details before unlock", sub: "Review the customer, trade and job context before choosing to proceed" },
+                                        { label: "Costs connected to referral outcomes", sub: "Referral terms are shown clearly before a paid lead is unlocked" },
+                                        { label: "ABN and location checks", sub: "Profiles use public business details where available" },
                                         { label: "No subscriptions", sub: "No monthly fees, no lock-in contracts" },
                                     ].map(item => (
                                         <li key={item.label} className="flex items-start gap-4">
@@ -207,7 +207,7 @@ export default function ComparePage() {
                                     ))}
                                 </ul>
                                 <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-                                    <span className="text-green-600 font-black text-xl">Zero Risk, Infinite Upside</span>
+                                    <span className="text-green-600 font-black text-xl">Clear terms, controlled spend</span>
                                 </div>
                             </div>
                         </div>
@@ -220,13 +220,13 @@ export default function ComparePage() {
                             className="inline-flex items-center justify-center gap-3 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl shadow-xl transition-all hover:scale-105 active:scale-95 font-cta px-12"
                             style={{ minHeight: "64px", fontSize: "22px" }}
                         >
-                            Switch to Revenue-First <ArrowRight className="w-6 h-6" />
+                            Compare TradeRefer <ArrowRight className="w-6 h-6" />
                         </Link>
                         <p className="text-gray-500 mt-5" style={{ fontSize: '18px' }}>
                             No credit card. No subscription. ABN required.
                         </p>
                         <p className="text-gray-400 mt-2" style={{ fontSize: '15px', lineHeight: 1.7 }}>
-                            The 20% success fee is a fully deductible Marketing &amp; Promotion expense under Section 8-1 of the ITAA 1997.
+                            Direct profile enquiries are free. Paid referral lead terms are shown before you unlock.
                         </p>
                     </div>
                 </div>
@@ -240,7 +240,7 @@ export default function ComparePage() {
                         "@context": "https://schema.org",
                         "@type": "WebPage",
                         "name": "TradeRefer vs Traditional Lead Sites",
-                        "description": "Compare TradeRefer's revenue-first model against traditional lead sites like HiPages. Zero upfront cost, pay only when you win.",
+                        "description": "Compare TradeRefer's no-monthly-fee business profiles and referral lead terms with traditional pay-per-lead marketplaces.",
                         "url": "https://traderefer.au/compare",
                         "publisher": { "@type": "Organization", "name": "TradeRefer", "url": "https://traderefer.au" }
                     })

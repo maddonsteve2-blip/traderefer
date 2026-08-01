@@ -1,0 +1,4490 @@
+{
+ "acoustic-insulation": {
+  "trade": "Insulation",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 10,
+   "high": 25
+  },
+  "materials": [
+   {
+    "name": "Acoustic insulation batts",
+    "unit": "pack",
+    "optional": false,
+    "low": 74.55,
+    "typical": 74.55,
+    "high": 74.55
+   }
+  ]
+ },
+ "acrylic-rendering": {
+  "trade": "Rendering",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Acrylic render 15L",
+    "unit": "15L bucket",
+    "optional": false,
+    "low": 213.42,
+    "typical": 213.42,
+    "high": 213.42
+   },
+   {
+    "name": "Render reinforcing mesh",
+    "unit": "50m roll",
+    "optional": false,
+    "low": 46.09,
+    "typical": 51.16,
+    "high": 56.23
+   }
+  ]
+ },
+ "ag-pipe-installation": {
+  "trade": "Drainage",
+  "tradeCost": {
+   "unit": " per job",
+   "low": 300,
+   "high": 2000
+  },
+  "materials": [
+   {
+    "name": "Slotted ag drainage pipe 100mm",
+    "unit": "20m roll",
+    "optional": false,
+    "low": 4.85,
+    "typical": 8.04,
+    "high": 21.24
+   },
+   {
+    "name": "Drainage gravel 20mm",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 12.18,
+    "typical": 15.72,
+    "high": 24.99
+   }
+  ]
+ },
+ "aluminium-slat-fencing": {
+  "trade": "Fencing",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 100,
+   "high": 180
+  },
+  "materials": [
+   {
+    "name": "Aluminium slat fence panel",
+    "unit": "panel",
+    "optional": false,
+    "low": 353.94,
+    "typical": 708.75,
+    "high": 1069.31
+   },
+   {
+    "name": "Galvanised steel fence post",
+    "unit": "each",
+    "optional": false,
+    "low": 37.46,
+    "typical": 102.92,
+    "high": 232.57
+   },
+   {
+    "name": "Concrete mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 8.89,
+    "typical": 11.54,
+    "high": 36.8
+   }
+  ]
+ },
+ "artificial-turf-installation": {
+  "trade": "Landscaping",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Synthetic turf",
+    "unit": "per m²",
+    "optional": false,
+    "low": 12.76,
+    "typical": 19.49,
+    "high": 23.18
+   },
+   {
+    "name": "Crusher dust",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 10.91,
+    "typical": 10.91,
+    "high": 10.91
+   },
+   {
+    "name": "Weed mat",
+    "unit": "roll",
+    "optional": false,
+    "low": 23.68,
+    "typical": 48.62,
+    "high": 79.95
+   }
+  ]
+ },
+ "backyard-landscaping": {
+  "trade": "Landscaping",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Sir Walter buffalo turf",
+    "unit": "per m²",
+    "optional": true,
+    "low": 16.16,
+    "typical": 18.3,
+    "high": 18.84
+   },
+   {
+    "name": "Garden soil 25L",
+    "unit": "25L bag",
+    "optional": false,
+    "low": 5.97,
+    "typical": 10.8,
+    "high": 22.21
+   },
+   {
+    "name": "Hardwood mulch 60L",
+    "unit": "60L bag",
+    "optional": false,
+    "low": 10.63,
+    "typical": 15.36,
+    "high": 20.09
+   },
+   {
+    "name": "Retaining wall block",
+    "unit": "each",
+    "optional": true,
+    "low": 3.25,
+    "typical": 4.26,
+    "high": 6.44
+   }
+  ]
+ },
+ "balcony-waterproofing": {
+  "trade": "Waterproofing",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Liquid waterproofing membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 59.42,
+    "typical": 110.32,
+    "high": 261.51
+   },
+   {
+    "name": "Waterproofing primer 4L",
+    "unit": "4L",
+    "optional": false,
+    "low": 19.62,
+    "typical": 32.2,
+    "high": 54.84
+   },
+   {
+    "name": "Waterproofing reinforcing bandage",
+    "unit": "roll",
+    "optional": false,
+    "low": 37.57,
+    "typical": 44.65,
+    "high": 51.73
+   }
+  ]
+ },
+ "bamboo-flooring-installation": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Bamboo flooring",
+    "unit": "per m²",
+    "optional": false,
+    "low": null,
+    "typical": null,
+    "high": null
+   },
+   {
+    "name": "Flooring foam underlay",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14.01,
+    "typical": 14.01,
+    "high": 14.01
+   }
+  ]
+ },
+ "bath-to-shower-conversion": {
+  "trade": "Bathroom Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 15000,
+   "high": 35000
+  },
+  "materials": [
+   {
+    "name": "Semi-frameless shower screen",
+    "unit": "each",
+    "optional": false,
+    "low": 275,
+    "typical": 359,
+    "high": 1007.6
+   },
+   {
+    "name": "Liquid waterproofing membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 59.42,
+    "typical": 110.32,
+    "high": 261.51
+   },
+   {
+    "name": "Porcelain floor tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 28.9,
+    "typical": 85,
+    "high": 125
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Shower head",
+    "unit": "each",
+    "optional": false,
+    "low": 43.58,
+    "typical": 107.5,
+    "high": 150.2
+   }
+  ]
+ },
+ "bathroom-renovation-plumbing": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "PEX pipe 16mm",
+    "unit": "5m length",
+    "optional": false,
+    "low": 6.42,
+    "typical": 10.46,
+    "high": 22.65
+   },
+   {
+    "name": "Basin mixer tap",
+    "unit": "each",
+    "optional": false,
+    "low": 92.72,
+    "typical": 195,
+    "high": 325.76
+   },
+   {
+    "name": "Shower head",
+    "unit": "each",
+    "optional": false,
+    "low": 43.58,
+    "typical": 107.5,
+    "high": 150.2
+   },
+   {
+    "name": "Toilet suite",
+    "unit": "each",
+    "optional": false,
+    "low": 315.2,
+    "typical": 676,
+    "high": 1489.6
+   },
+   {
+    "name": "Flexible braided hose",
+    "unit": "each",
+    "optional": false,
+    "low": 6.2,
+    "typical": 13.98,
+    "high": 29.44
+   }
+  ]
+ },
+ "bathroom-tap-installation": {
+  "trade": "Bathroom Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 15000,
+   "high": 35000
+  },
+  "materials": [
+   {
+    "name": "Basin mixer tap",
+    "unit": "each",
+    "optional": false,
+    "low": 92.72,
+    "typical": 195,
+    "high": 325.76
+   },
+   {
+    "name": "Flexible braided hose",
+    "unit": "each",
+    "optional": false,
+    "low": 6.2,
+    "typical": 13.98,
+    "high": 29.44
+   }
+  ]
+ },
+ "bathroom-tiling": {
+  "trade": "Bathroom Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 15000,
+   "high": 35000
+  },
+  "materials": [
+   {
+    "name": "Ceramic wall tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14,
+    "typical": 23.5,
+    "high": 58.9
+   },
+   {
+    "name": "Porcelain floor tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 28.9,
+    "typical": 85,
+    "high": 125
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   },
+   {
+    "name": "Tile spacers",
+    "unit": "pack",
+    "optional": false,
+    "low": 10.25,
+    "typical": 16.89,
+    "high": 21.94
+   },
+   {
+    "name": "Aluminium tile trim",
+    "unit": "2.5m length",
+    "optional": false,
+    "low": 10.82,
+    "typical": 24.17,
+    "high": 54.02
+   }
+  ]
+ },
+ "bathroom-waterproofing": {
+  "trade": "Waterproofing",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Liquid waterproofing membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 59.42,
+    "typical": 110.32,
+    "high": 261.51
+   },
+   {
+    "name": "Waterproofing primer 4L",
+    "unit": "4L",
+    "optional": false,
+    "low": 19.62,
+    "typical": 32.2,
+    "high": 54.84
+   },
+   {
+    "name": "Bond breaker sealant",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 12.58,
+    "typical": 14.34,
+    "high": 27.63
+   },
+   {
+    "name": "Waterproofing reinforcing bandage",
+    "unit": "roll",
+    "optional": false,
+    "low": 37.57,
+    "typical": 44.65,
+    "high": 51.73
+   }
+  ]
+ },
+ "blocked-drain-repair": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "PVC DWV pipe 100mm",
+    "unit": "3m length",
+    "optional": true,
+    "low": 5.9,
+    "typical": 12.54,
+    "high": 31.6
+   }
+  ]
+ },
+ "bluestone-paving": {
+  "trade": "Stonemasonry",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 100,
+   "high": 300
+  },
+  "materials": [
+   {
+    "name": "Bluestone paver",
+    "unit": "per m²",
+    "optional": false,
+    "low": 15.38,
+    "typical": 23.07,
+    "high": 30.76
+   },
+   {
+    "name": "Paving sand 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 10.5,
+    "typical": 13.04,
+    "high": 20.63
+   },
+   {
+    "name": "Crusher dust",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 10.91,
+    "typical": 10.91,
+    "high": 10.91
+   }
+  ]
+ },
+ "boundary-fence-replacement": {
+  "trade": "Fencing",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 100,
+   "high": 180
+  },
+  "materials": [
+   {
+    "name": "Treated pine fence paling",
+    "unit": "each",
+    "optional": false,
+    "low": 1.68,
+    "typical": 2.42,
+    "high": 3.56
+   },
+   {
+    "name": "Treated pine fence post 125x75",
+    "unit": "each",
+    "optional": false,
+    "low": 24.31,
+    "typical": 36,
+    "high": 68.14
+   },
+   {
+    "name": "Treated pine fence rail",
+    "unit": "per lm",
+    "optional": false,
+    "low": 10.47,
+    "typical": 22.92,
+    "high": 27.17
+   },
+   {
+    "name": "Concrete mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 8.89,
+    "typical": 11.54,
+    "high": 36.8
+   }
+  ]
+ },
+ "brick-paving-installation": {
+  "trade": "Paving",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Clay brick paver",
+    "unit": "each",
+    "optional": false,
+    "low": 33.55,
+    "typical": 41.96,
+    "high": 50.37
+   },
+   {
+    "name": "Paving sand 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 10.5,
+    "typical": 13.04,
+    "high": 20.63
+   },
+   {
+    "name": "Crusher dust",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 10.91,
+    "typical": 10.91,
+    "high": 10.91
+   }
+  ]
+ },
+ "burst-pipe-repair": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "PEX pipe 16mm",
+    "unit": "5m length",
+    "optional": false,
+    "low": 6.42,
+    "typical": 10.46,
+    "high": 22.65
+   },
+   {
+    "name": "Copper pipe 15mm",
+    "unit": "per metre",
+    "optional": true,
+    "low": 6.72,
+    "typical": 10.35,
+    "high": 16.21
+   }
+  ]
+ },
+ "caesarstone-benchtop-installation": {
+  "trade": "Kitchen Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 20000,
+   "high": 45000
+  },
+  "materials": [
+   {
+    "name": "Engineered stone benchtop 20mm",
+    "unit": "per m²",
+    "optional": false,
+    "low": 799,
+    "typical": 1079,
+    "high": 1320
+   }
+  ]
+ },
+ "carpet-laying": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Carpet",
+    "unit": "per m²",
+    "optional": false,
+    "low": 6.99,
+    "typical": 12.64,
+    "high": 17.9
+   },
+   {
+    "name": "Flooring foam underlay",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14.01,
+    "typical": 14.01,
+    "high": 14.01
+   }
+  ]
+ },
+ "ceiling-fan-installation": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "Ceiling fan with light",
+    "unit": "each",
+    "optional": false,
+    "low": 135.56,
+    "typical": 272,
+    "high": 520.69
+   }
+  ]
+ },
+ "ceiling-insulation-installation": {
+  "trade": "Insulation",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 10,
+   "high": 25
+  },
+  "materials": [
+   {
+    "name": "Ceiling insulation batts R4.0",
+    "unit": "pack",
+    "optional": false,
+    "low": 61.12,
+    "typical": 81.82,
+    "high": 123.57
+   }
+  ]
+ },
+ "ceiling-painting": {
+  "trade": "Painting",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 40,
+   "high": 70
+  },
+  "materials": [
+   {
+    "name": "Ceiling paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 33.06,
+    "typical": 57.2,
+    "high": 79.34
+   },
+   {
+    "name": "Paint roller and tray kit",
+    "unit": "kit",
+    "optional": false,
+    "low": 3.05,
+    "typical": 5.95,
+    "high": 12.07
+   }
+  ]
+ },
+ "ceiling-plastering": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Plasterboard sheet 10mm 2400x1200",
+    "unit": "sheet",
+    "optional": false,
+    "low": 27.89,
+    "typical": 54.89,
+    "high": 96.59
+   },
+   {
+    "name": "Plasterboard topping compound",
+    "unit": "20kg",
+    "optional": false,
+    "low": 34.19,
+    "typical": 62.9,
+    "high": 73.34
+   },
+   {
+    "name": "Plasterboard jointing tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.28,
+    "typical": 8.51,
+    "high": 20.45
+   }
+  ]
+ },
+ "cement-rendering": {
+  "trade": "Rendering",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Polymer render mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 14.98,
+    "typical": 14.98,
+    "high": 14.98
+   },
+   {
+    "name": "Render reinforcing mesh",
+    "unit": "50m roll",
+    "optional": false,
+    "low": 46.09,
+    "typical": 51.16,
+    "high": 56.23
+   }
+  ]
+ },
+ "colorbond-fencing-installation": {
+  "trade": "Fencing",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 100,
+   "high": 180
+  },
+  "materials": [
+   {
+    "name": "Colorbond fence panel kit",
+    "unit": "panel",
+    "optional": false,
+    "low": 49.95,
+    "typical": 79,
+    "high": 154.53
+   },
+   {
+    "name": "Galvanised steel fence post",
+    "unit": "each",
+    "optional": false,
+    "low": 37.46,
+    "typical": 102.92,
+    "high": 232.57
+   },
+   {
+    "name": "Concrete mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 8.89,
+    "typical": 11.54,
+    "high": 36.8
+   }
+  ]
+ },
+ "colorbond-gutter-installation": {
+  "trade": "Guttering",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Colorbond quad gutter",
+    "unit": "length",
+    "optional": false,
+    "low": 19.95,
+    "typical": 25.96,
+    "high": 49.81
+   },
+   {
+    "name": "Colorbond downpipe 90mm",
+    "unit": "length",
+    "optional": false,
+    "low": 6.94,
+    "typical": 27.44,
+    "high": 37
+   }
+  ]
+ },
+ "colorbond-roof-installation": {
+  "trade": "Roofing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 50,
+   "high": 100
+  },
+  "materials": [
+   {
+    "name": "Corrugated Colorbond roof sheet",
+    "unit": "per lm",
+    "optional": false,
+    "low": 15.33,
+    "typical": 20.71,
+    "high": 22.38
+   },
+   {
+    "name": "Roof sarking/underlay",
+    "unit": "30m roll",
+    "optional": false,
+    "low": 100.98,
+    "typical": 122.62,
+    "high": 144.26
+   },
+   {
+    "name": "Roofing screws 100 pack",
+    "unit": "box",
+    "optional": false,
+    "low": 8.91,
+    "typical": 17.99,
+    "high": 34.99
+   },
+   {
+    "name": "Colorbond ridge capping",
+    "unit": "length",
+    "optional": false,
+    "low": 47.96,
+    "typical": 49.78,
+    "high": 71.17
+   }
+  ]
+ },
+ "coloured-concrete": {
+  "trade": "Concreting",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Concrete oxide pigment",
+    "unit": "each",
+    "optional": false,
+    "low": 18.65,
+    "typical": 24.09,
+    "high": 29.54
+   },
+   {
+    "name": "Concrete sealer 4L",
+    "unit": "4L",
+    "optional": false,
+    "low": 89,
+    "typical": 114.39,
+    "high": 172.03
+   }
+  ]
+ },
+ "composite-decking-installation": {
+  "trade": "Decking",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 200,
+   "high": 1000
+  },
+  "materials": [
+   {
+    "name": "Composite decking board",
+    "unit": "per lm",
+    "optional": false,
+    "low": 14.49,
+    "typical": 19.37,
+    "high": 30.56
+   },
+   {
+    "name": "Treated pine 90x45 MGP10",
+    "unit": "per lm",
+    "optional": false,
+    "low": 4.96,
+    "typical": 11.37,
+    "high": 23.44
+   },
+   {
+    "name": "Decking screws 500 pack",
+    "unit": "box",
+    "optional": false,
+    "low": 28.47,
+    "typical": 69.95,
+    "high": 140.07
+   }
+  ]
+ },
+ "concrete-driveway-installation": {
+  "trade": "Concreting",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "SL72 reinforcing mesh sheet",
+    "unit": "6x2.4m sheet",
+    "optional": false,
+    "low": 20.83,
+    "typical": 37.42,
+    "high": 50.73
+   },
+   {
+    "name": "Formply sheet 17mm",
+    "unit": "sheet",
+    "optional": false,
+    "low": 25.93,
+    "typical": 29.95,
+    "high": 54.48
+   },
+   {
+    "name": "Concrete sealer 4L",
+    "unit": "4L",
+    "optional": false,
+    "low": 89,
+    "typical": 114.39,
+    "high": 172.03
+   }
+  ]
+ },
+ "concrete-path-installation": {
+  "trade": "Concreting",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Concrete mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 8.89,
+    "typical": 11.54,
+    "high": 36.8
+   },
+   {
+    "name": "SL72 reinforcing mesh sheet",
+    "unit": "6x2.4m sheet",
+    "optional": false,
+    "low": 20.83,
+    "typical": 37.42,
+    "high": 50.73
+   },
+   {
+    "name": "Formply sheet 17mm",
+    "unit": "sheet",
+    "optional": false,
+    "low": 25.93,
+    "typical": 29.95,
+    "high": 54.48
+   }
+  ]
+ },
+ "concrete-paver-installation": {
+  "trade": "Paving",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Concrete paver 400x400",
+    "unit": "each",
+    "optional": false,
+    "low": 14.98,
+    "typical": 14.98,
+    "high": 14.98
+   },
+   {
+    "name": "Paving sand 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 10.5,
+    "typical": 13.04,
+    "high": 20.63
+   },
+   {
+    "name": "Crusher dust",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 10.91,
+    "typical": 10.91,
+    "high": 10.91
+   }
+  ]
+ },
+ "concrete-repair-and-crack-filling": {
+  "trade": "Concreting",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "GP cement 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 9.32,
+    "typical": 21.04,
+    "high": 57.33
+   },
+   {
+    "name": "Concrete sealer 4L",
+    "unit": "4L",
+    "optional": true,
+    "low": 89,
+    "typical": 114.39,
+    "high": 172.03
+   }
+  ]
+ },
+ "concrete-retaining-wall": {
+  "trade": "Concreting",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "N12 reinforcing bar 6m",
+    "unit": "length",
+    "optional": false,
+    "low": 13.75,
+    "typical": 20.55,
+    "high": 51.81
+   },
+   {
+    "name": "Formply sheet 17mm",
+    "unit": "sheet",
+    "optional": false,
+    "low": 25.93,
+    "typical": 29.95,
+    "high": 54.48
+   },
+   {
+    "name": "Slotted ag drainage pipe 100mm",
+    "unit": "20m roll",
+    "optional": false,
+    "low": 4.85,
+    "typical": 8.04,
+    "high": 21.24
+   },
+   {
+    "name": "Drainage gravel 20mm",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 12.18,
+    "typical": 15.72,
+    "high": 24.99
+   }
+  ]
+ },
+ "concrete-slab-for-shed": {
+  "trade": "Concreting",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Concrete mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 8.89,
+    "typical": 11.54,
+    "high": 36.8
+   },
+   {
+    "name": "SL72 reinforcing mesh sheet",
+    "unit": "6x2.4m sheet",
+    "optional": false,
+    "low": 20.83,
+    "typical": 37.42,
+    "high": 50.73
+   },
+   {
+    "name": "Formply sheet 17mm",
+    "unit": "sheet",
+    "optional": false,
+    "low": 25.93,
+    "typical": 29.95,
+    "high": 54.48
+   }
+  ]
+ },
+ "cornice-installation": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Cove cornice 90mm",
+    "unit": "4.8m length",
+    "optional": false,
+    "low": 12.33,
+    "typical": 25.41,
+    "high": 44.02
+   },
+   {
+    "name": "Plasterboard base coat 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 40.48,
+    "typical": 50.59,
+    "high": 63.71
+   }
+  ]
+ },
+ "deck-balustrade-installation": {
+  "trade": "Decking",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 200,
+   "high": 1000
+  },
+  "materials": [
+   {
+    "name": "Stainless wire balustrade kit",
+    "unit": "kit",
+    "optional": false,
+    "low": 6.92,
+    "typical": 15.42,
+    "high": 31.73
+   },
+   {
+    "name": "Treated pine 90x45 MGP10",
+    "unit": "per lm",
+    "optional": false,
+    "low": 4.96,
+    "typical": 11.37,
+    "high": 23.44
+   }
+  ]
+ },
+ "deck-oiling-and-staining": {
+  "trade": "Decking",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 200,
+   "high": 1000
+  },
+  "materials": [
+   {
+    "name": "Decking oil/stain 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 70.5,
+    "typical": 130,
+    "high": 296.2
+   }
+  ]
+ },
+ "deck-sanding-and-sealing": {
+  "trade": "Decking",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 200,
+   "high": 1000
+  },
+  "materials": [
+   {
+    "name": "Decking oil/stain 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 70.5,
+    "typical": 130,
+    "high": 296.2
+   }
+  ]
+ },
+ "deck-staining-and-painting": {
+  "trade": "Painting",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 40,
+   "high": 70
+  },
+  "materials": [
+   {
+    "name": "Decking oil/stain 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 70.5,
+    "typical": 130,
+    "high": 296.2
+   }
+  ]
+ },
+ "downpipe-installation": {
+  "trade": "Guttering",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Colorbond downpipe 90mm",
+    "unit": "length",
+    "optional": false,
+    "low": 6.94,
+    "typical": 27.44,
+    "high": 37
+   }
+  ]
+ },
+ "downpipe-repair": {
+  "trade": "Guttering",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Colorbond downpipe 90mm",
+    "unit": "length",
+    "optional": false,
+    "low": 6.94,
+    "typical": 27.44,
+    "high": 37
+   }
+  ]
+ },
+ "drip-irrigation-installation": {
+  "trade": "Irrigation",
+  "tradeCost": {
+   "unit": " installed",
+   "low": 500,
+   "high": 3000
+  },
+  "materials": [
+   {
+    "name": "Drip line 30m",
+    "unit": "roll",
+    "optional": false,
+    "low": 13.77,
+    "typical": 15.38,
+    "high": 30.79
+   },
+   {
+    "name": "Poly pipe 19mm 50m",
+    "unit": "roll",
+    "optional": false,
+    "low": 3.58,
+    "typical": 9.1,
+    "high": 18.15
+   },
+   {
+    "name": "Irrigation controller",
+    "unit": "each",
+    "optional": true,
+    "low": 114.59,
+    "typical": 180.76,
+    "high": 258.9
+   }
+  ]
+ },
+ "driveway-paving": {
+  "trade": "Paving",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Concrete paver 400x400",
+    "unit": "each",
+    "optional": false,
+    "low": 14.98,
+    "typical": 14.98,
+    "high": 14.98
+   },
+   {
+    "name": "Crusher dust",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 10.91,
+    "typical": 10.91,
+    "high": 10.91
+   },
+   {
+    "name": "Paving sand 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 10.5,
+    "typical": 13.04,
+    "high": 20.63
+   }
+  ]
+ },
+ "engineered-timber-flooring-installation": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Engineered oak flooring",
+    "unit": "per m²",
+    "optional": false,
+    "low": 142.42,
+    "typical": 144.79,
+    "high": 147.16
+   },
+   {
+    "name": "Flooring foam underlay",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14.01,
+    "typical": 14.01,
+    "high": 14.01
+   },
+   {
+    "name": "MDF skirting board 67mm",
+    "unit": "per lm",
+    "optional": true,
+    "low": 3.52,
+    "typical": 6.07,
+    "high": 10.58
+   }
+  ]
+ },
+ "epoxy-flooring": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Epoxy floor coating kit",
+    "unit": "kit",
+    "optional": false,
+    "low": 53.3,
+    "typical": 127,
+    "high": 198.4
+   }
+  ]
+ },
+ "ev-charger-installation": {
+  "trade": "Solar & Energy",
+  "tradeCost": {
+   "unit": " installed",
+   "low": 3300,
+   "high": 8000
+  },
+  "materials": [
+   {
+    "name": "EV charger 7kW single phase",
+    "unit": "each",
+    "optional": false,
+    "low": 161.7,
+    "typical": 284.94,
+    "high": 799
+   },
+   {
+    "name": "Twin & earth TPS cable 2.5mm²",
+    "unit": "100m roll",
+    "optional": false,
+    "low": 499,
+    "typical": 499,
+    "high": 499
+   },
+   {
+    "name": "Safety switch (RCBO)",
+    "unit": "each",
+    "optional": false,
+    "low": 13.58,
+    "typical": 17.43,
+    "high": 39.75
+   }
+  ]
+ },
+ "exterior-painting": {
+  "trade": "Painting",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 40,
+   "high": 70
+  },
+  "materials": [
+   {
+    "name": "Exterior acrylic paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 28.5,
+    "typical": 68.5,
+    "high": 108.9
+   },
+   {
+    "name": "Primer sealer undercoat 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 48.24,
+    "typical": 102.5,
+    "high": 186.2
+   },
+   {
+    "name": "Gap filler (no more gaps)",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 6.04,
+    "typical": 16.25,
+    "high": 23.01
+   },
+   {
+    "name": "Painter's masking tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.9,
+    "typical": 14.2,
+    "high": 22.25
+   }
+  ]
+ },
+ "feature-wall-painting": {
+  "trade": "Painting",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 40,
+   "high": 70
+  },
+  "materials": [
+   {
+    "name": "Interior low-sheen paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 50.3,
+    "typical": 107,
+    "high": 253.63
+   },
+   {
+    "name": "Painter's masking tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.9,
+    "typical": 14.2,
+    "high": 22.25
+   }
+  ]
+ },
+ "fence-gate-installation": {
+  "trade": "Fencing",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 100,
+   "high": 180
+  },
+  "materials": [
+   {
+    "name": "Gate hinge and latch kit",
+    "unit": "kit",
+    "optional": false,
+    "low": 17.16,
+    "typical": 38.7,
+    "high": 84.6
+   },
+   {
+    "name": "Treated pine 90x45 MGP10",
+    "unit": "per lm",
+    "optional": false,
+    "low": 4.96,
+    "typical": 11.37,
+    "high": 23.44
+   }
+  ]
+ },
+ "fence-painting": {
+  "trade": "Painting",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 40,
+   "high": 70
+  },
+  "materials": [
+   {
+    "name": "Exterior acrylic paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 28.5,
+    "typical": 68.5,
+    "high": 108.9
+   },
+   {
+    "name": "Paint roller and tray kit",
+    "unit": "kit",
+    "optional": false,
+    "low": 3.05,
+    "typical": 5.95,
+    "high": 12.07
+   }
+  ]
+ },
+ "flat-pack-kitchen-installation": {
+  "trade": "Kitchen Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 20000,
+   "high": 45000
+  },
+  "materials": [
+   {
+    "name": "Flat pack base cabinet",
+    "unit": "each",
+    "optional": false,
+    "low": 68.92,
+    "typical": 178,
+    "high": 306
+   },
+   {
+    "name": "Laminate benchtop",
+    "unit": "per lm",
+    "optional": false,
+    "low": 110,
+    "typical": 129,
+    "high": 135
+   },
+   {
+    "name": "Double bowl kitchen sink",
+    "unit": "each",
+    "optional": false,
+    "low": 169.23,
+    "typical": 392,
+    "high": 769.89
+   },
+   {
+    "name": "Kitchen sink mixer tap",
+    "unit": "each",
+    "optional": false,
+    "low": 79,
+    "typical": 197,
+    "high": 477.32
+   }
+  ]
+ },
+ "floating-floor-installation": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Laminate flooring",
+    "unit": "per m²",
+    "optional": false,
+    "low": 19,
+    "typical": 42.67,
+    "high": 63.93
+   },
+   {
+    "name": "Flooring foam underlay",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14.01,
+    "typical": 14.01,
+    "high": 14.01
+   }
+  ]
+ },
+ "floor-levelling": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Self-levelling compound 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 31.51,
+    "typical": 52.92,
+    "high": 69.68
+   }
+  ]
+ },
+ "floor-tiling": {
+  "trade": "Tiling",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 45,
+   "high": 120
+  },
+  "materials": [
+   {
+    "name": "Porcelain floor tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 28.9,
+    "typical": 85,
+    "high": 125
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   },
+   {
+    "name": "Self-levelling compound 20kg",
+    "unit": "20kg bag",
+    "optional": true,
+    "low": 31.51,
+    "typical": 52.92,
+    "high": 69.68
+   }
+  ]
+ },
+ "frameless-shower-screen-installation": {
+  "trade": "Bathroom Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 15000,
+   "high": 35000
+  },
+  "materials": [
+   {
+    "name": "Frameless shower screen",
+    "unit": "each",
+    "optional": false,
+    "low": 770,
+    "typical": 1590,
+    "high": 1943
+   },
+   {
+    "name": "Sanitary grade silicone",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 13.4,
+    "typical": 20.82,
+    "high": 24.84
+   }
+  ]
+ },
+ "french-drain-installation": {
+  "trade": "Drainage",
+  "tradeCost": {
+   "unit": " per job",
+   "low": 300,
+   "high": 2000
+  },
+  "materials": [
+   {
+    "name": "Slotted ag drainage pipe 100mm",
+    "unit": "20m roll",
+    "optional": false,
+    "low": 4.85,
+    "typical": 8.04,
+    "high": 21.24
+   },
+   {
+    "name": "Drainage gravel 20mm",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 12.18,
+    "typical": 15.72,
+    "high": 24.99
+   },
+   {
+    "name": "Weed mat",
+    "unit": "roll",
+    "optional": false,
+    "low": 23.68,
+    "typical": 48.62,
+    "high": 79.95
+   }
+  ]
+ },
+ "garden-bed-construction": {
+  "trade": "Landscaping",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Garden soil 25L",
+    "unit": "25L bag",
+    "optional": false,
+    "low": 5.97,
+    "typical": 10.8,
+    "high": 22.21
+   },
+   {
+    "name": "Hardwood mulch 60L",
+    "unit": "60L bag",
+    "optional": false,
+    "low": 10.63,
+    "typical": 15.36,
+    "high": 20.09
+   },
+   {
+    "name": "Steel garden edging",
+    "unit": "per m",
+    "optional": false,
+    "low": 13.98,
+    "typical": 25.5,
+    "high": 44.19
+   },
+   {
+    "name": "Weed mat",
+    "unit": "roll",
+    "optional": false,
+    "low": 23.68,
+    "typical": 48.62,
+    "high": 79.95
+   }
+  ]
+ },
+ "garden-bed-edging": {
+  "trade": "Landscaping",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Steel garden edging",
+    "unit": "per m",
+    "optional": false,
+    "low": 13.98,
+    "typical": 25.5,
+    "high": 44.19
+   }
+  ]
+ },
+ "garden-path-paving": {
+  "trade": "Paving",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Concrete paver 400x400",
+    "unit": "each",
+    "optional": false,
+    "low": 14.98,
+    "typical": 14.98,
+    "high": 14.98
+   },
+   {
+    "name": "Paving sand 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 10.5,
+    "typical": 13.04,
+    "high": 20.63
+   },
+   {
+    "name": "Crusher dust",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 10.91,
+    "typical": 10.91,
+    "high": 10.91
+   }
+  ]
+ },
+ "gas-hot-water-system-repair": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "Gas instantaneous hot water system",
+    "unit": "each",
+    "optional": true,
+    "low": 894.8,
+    "typical": 1014,
+    "high": 2499
+   }
+  ]
+ },
+ "glass-pool-fencing": {
+  "trade": "Fencing",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 100,
+   "high": 180
+  },
+  "materials": [
+   {
+    "name": "Frameless glass pool fence panel",
+    "unit": "panel",
+    "optional": false,
+    "low": 246.76,
+    "typical": 405,
+    "high": 686.21
+   },
+   {
+    "name": "Dynabolt masonry anchors",
+    "unit": "pack",
+    "optional": false,
+    "low": 7.27,
+    "typical": 22.74,
+    "high": 46.19
+   }
+  ]
+ },
+ "gutter-guard-installation": {
+  "trade": "Guttering",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Gutter guard mesh",
+    "unit": "roll",
+    "optional": false,
+    "low": 181,
+    "typical": 285,
+    "high": 584.2
+   }
+  ]
+ },
+ "gutter-replacement": {
+  "trade": "Guttering",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Colorbond quad gutter",
+    "unit": "length",
+    "optional": false,
+    "low": 19.95,
+    "typical": 25.96,
+    "high": 49.81
+   },
+   {
+    "name": "Colorbond downpipe 90mm",
+    "unit": "length",
+    "optional": false,
+    "low": 6.94,
+    "typical": 27.44,
+    "high": 37
+   },
+   {
+    "name": "Colorbond flashing",
+    "unit": "length",
+    "optional": true,
+    "low": 61.1,
+    "typical": 65.6,
+    "high": 132.32
+   }
+  ]
+ },
+ "gyprock-installation": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Plasterboard sheet 10mm 2400x1200",
+    "unit": "sheet",
+    "optional": false,
+    "low": 27.89,
+    "typical": 54.89,
+    "high": 96.59
+   },
+   {
+    "name": "Plasterboard base coat 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 40.48,
+    "typical": 50.59,
+    "high": 63.71
+   },
+   {
+    "name": "Plasterboard topping compound",
+    "unit": "20kg",
+    "optional": false,
+    "low": 34.19,
+    "typical": 62.9,
+    "high": 73.34
+   },
+   {
+    "name": "Plasterboard jointing tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.28,
+    "typical": 8.51,
+    "high": 20.45
+   },
+   {
+    "name": "Stud adhesive",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 18.62,
+    "typical": 27.56,
+    "high": 35.55
+   }
+  ]
+ },
+ "gyprock-repair": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Plasterboard sheet 10mm 2400x1200",
+    "unit": "sheet",
+    "optional": false,
+    "low": 27.89,
+    "typical": 54.89,
+    "high": 96.59
+   },
+   {
+    "name": "Plasterboard base coat 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 40.48,
+    "typical": 50.59,
+    "high": 63.71
+   },
+   {
+    "name": "Plasterboard jointing tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.28,
+    "typical": 8.51,
+    "high": 20.45
+   }
+  ]
+ },
+ "home-rewiring": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "Twin & earth TPS cable 2.5mm²",
+    "unit": "100m roll",
+    "optional": false,
+    "low": 499,
+    "typical": 499,
+    "high": 499
+   },
+   {
+    "name": "Double power point (GPO)",
+    "unit": "each",
+    "optional": false,
+    "low": 14.08,
+    "typical": 28.82,
+    "high": 62.16
+   },
+   {
+    "name": "8-way switchboard enclosure",
+    "unit": "each",
+    "optional": false,
+    "low": 87.24,
+    "typical": 99.06,
+    "high": 110.89
+   }
+  ]
+ },
+ "hot-water-system-installation": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "Electric storage hot water system",
+    "unit": "each",
+    "optional": false,
+    "low": 97.95,
+    "typical": 195.6,
+    "high": 527.64
+   },
+   {
+    "name": "Flexible braided hose",
+    "unit": "each",
+    "optional": false,
+    "low": 6.2,
+    "typical": 13.98,
+    "high": 29.44
+   },
+   {
+    "name": "Copper pipe 15mm",
+    "unit": "per metre",
+    "optional": false,
+    "low": 6.72,
+    "typical": 10.35,
+    "high": 16.21
+   }
+  ]
+ },
+ "hot-water-system-replacement": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "Electric storage hot water system",
+    "unit": "each",
+    "optional": false,
+    "low": 97.95,
+    "typical": 195.6,
+    "high": 527.64
+   },
+   {
+    "name": "Flexible braided hose",
+    "unit": "each",
+    "optional": false,
+    "low": 6.2,
+    "typical": 13.98,
+    "high": 29.44
+   }
+  ]
+ },
+ "house-painting": {
+  "trade": "Painting",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 40,
+   "high": 70
+  },
+  "materials": [
+   {
+    "name": "Interior low-sheen paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 50.3,
+    "typical": 107,
+    "high": 253.63
+   },
+   {
+    "name": "Exterior acrylic paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 28.5,
+    "typical": 68.5,
+    "high": 108.9
+   },
+   {
+    "name": "Ceiling paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 33.06,
+    "typical": 57.2,
+    "high": 79.34
+   },
+   {
+    "name": "Primer sealer undercoat 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 48.24,
+    "typical": 102.5,
+    "high": 186.2
+   }
+  ]
+ },
+ "house-rendering": {
+  "trade": "Rendering",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Polymer render mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 14.98,
+    "typical": 14.98,
+    "high": 14.98
+   },
+   {
+    "name": "Acrylic render 15L",
+    "unit": "15L bucket",
+    "optional": false,
+    "low": 213.42,
+    "typical": 213.42,
+    "high": 213.42
+   },
+   {
+    "name": "Render reinforcing mesh",
+    "unit": "50m roll",
+    "optional": false,
+    "low": 46.09,
+    "typical": 51.16,
+    "high": 56.23
+   }
+  ]
+ },
+ "house-slab-pouring": {
+  "trade": "Concreting",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "SL72 reinforcing mesh sheet",
+    "unit": "6x2.4m sheet",
+    "optional": false,
+    "low": 20.83,
+    "typical": 37.42,
+    "high": 50.73
+   },
+   {
+    "name": "N12 reinforcing bar 6m",
+    "unit": "length",
+    "optional": false,
+    "low": 13.75,
+    "typical": 20.55,
+    "high": 51.81
+   },
+   {
+    "name": "Formply sheet 17mm",
+    "unit": "sheet",
+    "optional": false,
+    "low": 25.93,
+    "typical": 29.95,
+    "high": 54.48
+   }
+  ]
+ },
+ "hybrid-flooring-installation": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Hybrid flooring",
+    "unit": "per m²",
+    "optional": false,
+    "low": 30.97,
+    "typical": 44.27,
+    "high": 98.72
+   },
+   {
+    "name": "MDF skirting board 67mm",
+    "unit": "per lm",
+    "optional": false,
+    "low": 3.52,
+    "typical": 6.07,
+    "high": 10.58
+   }
+  ]
+ },
+ "insulation-batts-installation": {
+  "trade": "Insulation",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 10,
+   "high": 25
+  },
+  "materials": [
+   {
+    "name": "Ceiling insulation batts R4.0",
+    "unit": "pack",
+    "optional": false,
+    "low": 61.12,
+    "typical": 81.82,
+    "high": 123.57
+   },
+   {
+    "name": "Wall insulation batts R2.5",
+    "unit": "pack",
+    "optional": true,
+    "low": 81.46,
+    "typical": 131.96,
+    "high": 235.62
+   }
+  ]
+ },
+ "interior-painting": {
+  "trade": "Painting",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 40,
+   "high": 70
+  },
+  "materials": [
+   {
+    "name": "Interior low-sheen paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 50.3,
+    "typical": 107,
+    "high": 253.63
+   },
+   {
+    "name": "Ceiling paint 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 33.06,
+    "typical": 57.2,
+    "high": 79.34
+   },
+   {
+    "name": "Primer sealer undercoat 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 48.24,
+    "typical": 102.5,
+    "high": 186.2
+   },
+   {
+    "name": "Gap filler (no more gaps)",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 6.04,
+    "typical": 16.25,
+    "high": 23.01
+   },
+   {
+    "name": "Painter's masking tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.9,
+    "typical": 14.2,
+    "high": 22.25
+   },
+   {
+    "name": "Canvas drop sheet",
+    "unit": "each",
+    "optional": false,
+    "low": 10.4,
+    "typical": 29,
+    "high": 58.8
+   }
+  ]
+ },
+ "irrigation-solenoid-replacement": {
+  "trade": "Irrigation",
+  "tradeCost": {
+   "unit": " installed",
+   "low": 500,
+   "high": 3000
+  },
+  "materials": [
+   {
+    "name": "Irrigation solenoid valve",
+    "unit": "each",
+    "optional": false,
+    "low": 29.55,
+    "typical": 40.36,
+    "high": 63.51
+   }
+  ]
+ },
+ "irrigation-system-installation": {
+  "trade": "Irrigation",
+  "tradeCost": {
+   "unit": " installed",
+   "low": 500,
+   "high": 3000
+  },
+  "materials": [
+   {
+    "name": "Poly pipe 19mm 50m",
+    "unit": "roll",
+    "optional": false,
+    "low": 3.58,
+    "typical": 9.1,
+    "high": 18.15
+   },
+   {
+    "name": "Pop-up sprinkler",
+    "unit": "each",
+    "optional": false,
+    "low": 6.19,
+    "typical": 12.09,
+    "high": 16.6
+   },
+   {
+    "name": "Irrigation controller",
+    "unit": "each",
+    "optional": false,
+    "low": 114.59,
+    "typical": 180.76,
+    "high": 258.9
+   },
+   {
+    "name": "Irrigation solenoid valve",
+    "unit": "each",
+    "optional": false,
+    "low": 29.55,
+    "typical": 40.36,
+    "high": 63.51
+   }
+  ]
+ },
+ "kitchen-benchtop-replacement": {
+  "trade": "Cabinet Making",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 2000,
+   "high": 15000
+  },
+  "materials": [
+   {
+    "name": "Laminate benchtop",
+    "unit": "per lm",
+    "optional": false,
+    "low": 110,
+    "typical": 129,
+    "high": 135
+   },
+   {
+    "name": "Construction adhesive",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 9.42,
+    "typical": 17.57,
+    "high": 31.25
+   }
+  ]
+ },
+ "kitchen-sink-installation": {
+  "trade": "Kitchen Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 20000,
+   "high": 45000
+  },
+  "materials": [
+   {
+    "name": "Double bowl kitchen sink",
+    "unit": "each",
+    "optional": false,
+    "low": 169.23,
+    "typical": 392,
+    "high": 769.89
+   },
+   {
+    "name": "Kitchen sink mixer tap",
+    "unit": "each",
+    "optional": false,
+    "low": 79,
+    "typical": 197,
+    "high": 477.32
+   },
+   {
+    "name": "Flexible braided hose",
+    "unit": "each",
+    "optional": false,
+    "low": 6.2,
+    "typical": 13.98,
+    "high": 29.44
+   },
+   {
+    "name": "General purpose silicone",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 14.93,
+    "typical": 25.63,
+    "high": 64.02
+   }
+  ]
+ },
+ "kitchen-splashback-installation": {
+  "trade": "Kitchen Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 20000,
+   "high": 45000
+  },
+  "materials": [
+   {
+    "name": "Ceramic wall tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14,
+    "typical": 23.5,
+    "high": 58.9
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   }
+  ]
+ },
+ "kitchen-splashback-tiling": {
+  "trade": "Tiling",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 45,
+   "high": 120
+  },
+  "materials": [
+   {
+    "name": "Ceramic wall tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14,
+    "typical": 23.5,
+    "high": 58.9
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   },
+   {
+    "name": "Aluminium tile trim",
+    "unit": "2.5m length",
+    "optional": false,
+    "low": 10.82,
+    "typical": 24.17,
+    "high": 54.02
+   }
+  ]
+ },
+ "laminate-flooring-installation": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Laminate flooring",
+    "unit": "per m²",
+    "optional": false,
+    "low": 19,
+    "typical": 42.67,
+    "high": 63.93
+   },
+   {
+    "name": "Flooring foam underlay",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14.01,
+    "typical": 14.01,
+    "high": 14.01
+   },
+   {
+    "name": "MDF skirting board 67mm",
+    "unit": "per lm",
+    "optional": true,
+    "low": 3.52,
+    "typical": 6.07,
+    "high": 10.58
+   }
+  ]
+ },
+ "laundry-waterproofing": {
+  "trade": "Waterproofing",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Liquid waterproofing membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 59.42,
+    "typical": 110.32,
+    "high": 261.51
+   },
+   {
+    "name": "Waterproofing primer 4L",
+    "unit": "4L",
+    "optional": false,
+    "low": 19.62,
+    "typical": 32.2,
+    "high": 54.84
+   },
+   {
+    "name": "Bond breaker sealant",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 12.58,
+    "typical": 14.34,
+    "high": 27.63
+   }
+  ]
+ },
+ "leaf-guard-installation": {
+  "trade": "Guttering",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Gutter guard mesh",
+    "unit": "roll",
+    "optional": false,
+    "low": 181,
+    "typical": 285,
+    "high": 584.2
+   }
+  ]
+ },
+ "leaking-shower-repair": {
+  "trade": "Waterproofing",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Leaking shower repair kit",
+    "unit": "kit",
+    "optional": false,
+    "low": 23.13,
+    "typical": 23.13,
+    "high": 23.13
+   },
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   },
+   {
+    "name": "Sanitary grade silicone",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 13.4,
+    "typical": 20.82,
+    "high": 24.84
+   }
+  ]
+ },
+ "leaking-tap-repair": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "Basin mixer tap",
+    "unit": "each",
+    "optional": true,
+    "low": 92.72,
+    "typical": 195,
+    "high": 325.76
+   }
+  ]
+ },
+ "lighting-installation": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "LED downlight",
+    "unit": "each",
+    "optional": false,
+    "low": 12.97,
+    "typical": 26.52,
+    "high": 45.98
+   },
+   {
+    "name": "LED batten light",
+    "unit": "each",
+    "optional": true,
+    "low": 36.15,
+    "typical": 79.9,
+    "high": 200.6
+   }
+  ]
+ },
+ "merbau-decking-installation": {
+  "trade": "Decking",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 200,
+   "high": 1000
+  },
+  "materials": [
+   {
+    "name": "Merbau decking 90x19",
+    "unit": "per lm",
+    "optional": false,
+    "low": 7.63,
+    "typical": 11.25,
+    "high": 22.19
+   },
+   {
+    "name": "Treated pine 90x45 MGP10",
+    "unit": "per lm",
+    "optional": false,
+    "low": 4.96,
+    "typical": 11.37,
+    "high": 23.44
+   },
+   {
+    "name": "Decking screws 500 pack",
+    "unit": "box",
+    "optional": false,
+    "low": 28.47,
+    "typical": 69.95,
+    "high": 140.07
+   },
+   {
+    "name": "Joist hanger",
+    "unit": "each",
+    "optional": false,
+    "low": 2.6,
+    "typical": 3.83,
+    "high": 10.83
+   },
+   {
+    "name": "Decking oil/stain 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 70.5,
+    "typical": 130,
+    "high": 296.2
+   }
+  ]
+ },
+ "metal-roof-replacement": {
+  "trade": "Roofing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 50,
+   "high": 100
+  },
+  "materials": [
+   {
+    "name": "Corrugated Colorbond roof sheet",
+    "unit": "per lm",
+    "optional": false,
+    "low": 15.33,
+    "typical": 20.71,
+    "high": 22.38
+   },
+   {
+    "name": "Roof sarking/underlay",
+    "unit": "30m roll",
+    "optional": false,
+    "low": 100.98,
+    "typical": 122.62,
+    "high": 144.26
+   },
+   {
+    "name": "Roofing screws 100 pack",
+    "unit": "box",
+    "optional": false,
+    "low": 8.91,
+    "typical": 17.99,
+    "high": 34.99
+   },
+   {
+    "name": "Colorbond ridge capping",
+    "unit": "length",
+    "optional": false,
+    "low": 47.96,
+    "typical": 49.78,
+    "high": 71.17
+   },
+   {
+    "name": "Colorbond flashing",
+    "unit": "length",
+    "optional": false,
+    "low": 61.1,
+    "typical": 65.6,
+    "high": 132.32
+   }
+  ]
+ },
+ "mosaic-tiling": {
+  "trade": "Tiling",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 45,
+   "high": 120
+  },
+  "materials": [
+   {
+    "name": "Mosaic tile sheet",
+    "unit": "sheet",
+    "optional": false,
+    "low": 8.96,
+    "typical": 10.65,
+    "high": 25.94
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   }
+  ]
+ },
+ "nbn-point-installation": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "Cat6 data cable",
+    "unit": "305m box",
+    "optional": false,
+    "low": 8.35,
+    "typical": 16.99,
+    "high": 40.22
+   },
+   {
+    "name": "Double power point (GPO)",
+    "unit": "each",
+    "optional": true,
+    "low": 14.08,
+    "typical": 28.82,
+    "high": 62.16
+   }
+  ]
+ },
+ "paving-and-pathways": {
+  "trade": "Landscaping",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Concrete paver 400x400",
+    "unit": "each",
+    "optional": false,
+    "low": 14.98,
+    "typical": 14.98,
+    "high": 14.98
+   },
+   {
+    "name": "Paving sand 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 10.5,
+    "typical": 13.04,
+    "high": 20.63
+   },
+   {
+    "name": "Crusher dust",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 10.91,
+    "typical": 10.91,
+    "high": 10.91
+   }
+  ]
+ },
+ "picket-fence-installation": {
+  "trade": "Fencing",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 100,
+   "high": 180
+  },
+  "materials": [
+   {
+    "name": "Timber fence picket",
+    "unit": "each",
+    "optional": false,
+    "low": 3.5,
+    "typical": 3.55,
+    "high": 3.6
+   },
+   {
+    "name": "Treated pine fence post 125x75",
+    "unit": "each",
+    "optional": false,
+    "low": 24.31,
+    "typical": 36,
+    "high": 68.14
+   },
+   {
+    "name": "Treated pine fence rail",
+    "unit": "per lm",
+    "optional": false,
+    "low": 10.47,
+    "typical": 22.92,
+    "high": 27.17
+   },
+   {
+    "name": "Concrete mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 8.89,
+    "typical": 11.54,
+    "high": 36.8
+   }
+  ]
+ },
+ "plaster-crack-repair": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Plasterboard topping compound",
+    "unit": "20kg",
+    "optional": false,
+    "low": 34.19,
+    "typical": 62.9,
+    "high": 73.34
+   },
+   {
+    "name": "Plasterboard jointing tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.28,
+    "typical": 8.51,
+    "high": 20.45
+   }
+  ]
+ },
+ "plasterboard-installation": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Plasterboard sheet 10mm 2400x1200",
+    "unit": "sheet",
+    "optional": false,
+    "low": 27.89,
+    "typical": 54.89,
+    "high": 96.59
+   },
+   {
+    "name": "Plasterboard base coat 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 40.48,
+    "typical": 50.59,
+    "high": 63.71
+   },
+   {
+    "name": "Plasterboard topping compound",
+    "unit": "20kg",
+    "optional": false,
+    "low": 34.19,
+    "typical": 62.9,
+    "high": 73.34
+   },
+   {
+    "name": "Plasterboard jointing tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.28,
+    "typical": 8.51,
+    "high": 20.45
+   }
+  ]
+ },
+ "pool-paving": {
+  "trade": "Paving",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Travertine paver",
+    "unit": "per m²",
+    "optional": false,
+    "low": 108.96,
+    "typical": 234.21,
+    "high": 359.45
+   },
+   {
+    "name": "Paving sand 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 10.5,
+    "typical": 13.04,
+    "high": 20.63
+   }
+  ]
+ },
+ "pop-up-sprinkler-installation": {
+  "trade": "Irrigation",
+  "tradeCost": {
+   "unit": " installed",
+   "low": 500,
+   "high": 3000
+  },
+  "materials": [
+   {
+    "name": "Pop-up sprinkler",
+    "unit": "each",
+    "optional": false,
+    "low": 6.19,
+    "typical": 12.09,
+    "high": 16.6
+   },
+   {
+    "name": "Poly pipe 19mm 50m",
+    "unit": "roll",
+    "optional": false,
+    "low": 3.58,
+    "typical": 9.1,
+    "high": 18.15
+   }
+  ]
+ },
+ "power-point-installation": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "Double power point (GPO)",
+    "unit": "each",
+    "optional": false,
+    "low": 14.08,
+    "typical": 28.82,
+    "high": 62.16
+   },
+   {
+    "name": "Twin & earth TPS cable 2.5mm²",
+    "unit": "100m roll",
+    "optional": false,
+    "low": 499,
+    "typical": 499,
+    "high": 499
+   }
+  ]
+ },
+ "rainwater-tank-installation": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "Slimline rainwater tank",
+    "unit": "each",
+    "optional": false,
+    "low": 787.5,
+    "typical": 2032.5,
+    "high": 3602
+   },
+   {
+    "name": "PVC stormwater pipe 90mm",
+    "unit": "6m length",
+    "optional": false,
+    "low": 5.66,
+    "typical": 10.24,
+    "high": 26.45
+   }
+  ]
+ },
+ "rangehood-installation": {
+  "trade": "Kitchen Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 20000,
+   "high": 45000
+  },
+  "materials": [
+   {
+    "name": "Rangehood 600mm",
+    "unit": "each",
+    "optional": false,
+    "low": 63.11,
+    "typical": 135,
+    "high": 228.1
+   }
+  ]
+ },
+ "reflective-foil-insulation": {
+  "trade": "Insulation",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 10,
+   "high": 25
+  },
+  "materials": [
+   {
+    "name": "Reflective foil insulation",
+    "unit": "roll",
+    "optional": false,
+    "low": 278.44,
+    "typical": 278.44,
+    "high": 278.44
+   }
+  ]
+ },
+ "render-crack-repair": {
+  "trade": "Rendering",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Polymer render mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 14.98,
+    "typical": 14.98,
+    "high": 14.98
+   },
+   {
+    "name": "Gap filler (no more gaps)",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 6.04,
+    "typical": 16.25,
+    "high": 23.01
+   }
+  ]
+ },
+ "render-repair": {
+  "trade": "Rendering",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Polymer render mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 14.98,
+    "typical": 14.98,
+    "high": 14.98
+   }
+  ]
+ },
+ "retaining-wall-construction": {
+  "trade": "Fencing",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 100,
+   "high": 180
+  },
+  "materials": [
+   {
+    "name": "Treated pine sleeper 200x75",
+    "unit": "each",
+    "optional": false,
+    "low": 21.1,
+    "typical": 22.45,
+    "high": 42.4
+   },
+   {
+    "name": "Galvanised steel fence post",
+    "unit": "each",
+    "optional": true,
+    "low": 37.46,
+    "typical": 102.92,
+    "high": 232.57
+   },
+   {
+    "name": "Concrete mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 8.89,
+    "typical": 11.54,
+    "high": 36.8
+   },
+   {
+    "name": "Slotted ag drainage pipe 100mm",
+    "unit": "20m roll",
+    "optional": false,
+    "low": 4.85,
+    "typical": 8.04,
+    "high": 21.24
+   },
+   {
+    "name": "Drainage gravel 20mm",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 12.18,
+    "typical": 15.72,
+    "high": 24.99
+   }
+  ]
+ },
+ "retaining-wall-drainage": {
+  "trade": "Drainage",
+  "tradeCost": {
+   "unit": " per job",
+   "low": 300,
+   "high": 2000
+  },
+  "materials": [
+   {
+    "name": "Slotted ag drainage pipe 100mm",
+    "unit": "20m roll",
+    "optional": false,
+    "low": 4.85,
+    "typical": 8.04,
+    "high": 21.24
+   },
+   {
+    "name": "Drainage gravel 20mm",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 12.18,
+    "typical": 15.72,
+    "high": 24.99
+   }
+  ]
+ },
+ "ridge-capping-repair": {
+  "trade": "Roofing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 50,
+   "high": 100
+  },
+  "materials": [
+   {
+    "name": "Flexible roof pointing 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 39.98,
+    "typical": 39.98,
+    "high": 39.98
+   },
+   {
+    "name": "Colorbond ridge capping",
+    "unit": "length",
+    "optional": true,
+    "low": 47.96,
+    "typical": 49.78,
+    "high": 71.17
+   }
+  ]
+ },
+ "roof-insulation-top-up": {
+  "trade": "Insulation",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 10,
+   "high": 25
+  },
+  "materials": [
+   {
+    "name": "Ceiling insulation batts R4.0",
+    "unit": "pack",
+    "optional": false,
+    "low": 61.12,
+    "typical": 81.82,
+    "high": 123.57
+   }
+  ]
+ },
+ "roof-leak-repair": {
+  "trade": "Roofing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 50,
+   "high": 100
+  },
+  "materials": [
+   {
+    "name": "Colorbond flashing",
+    "unit": "length",
+    "optional": true,
+    "low": 61.1,
+    "typical": 65.6,
+    "high": 132.32
+   },
+   {
+    "name": "Roofing screws 100 pack",
+    "unit": "box",
+    "optional": false,
+    "low": 8.91,
+    "typical": 17.99,
+    "high": 34.99
+   },
+   {
+    "name": "General purpose silicone",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 14.93,
+    "typical": 25.63,
+    "high": 64.02
+   }
+  ]
+ },
+ "roof-painting": {
+  "trade": "Painting",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 40,
+   "high": 70
+  },
+  "materials": [
+   {
+    "name": "Roof restoration membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 249,
+    "typical": 249,
+    "high": 249
+   }
+  ]
+ },
+ "roof-rebedding-and-repointing": {
+  "trade": "Roofing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 50,
+   "high": 100
+  },
+  "materials": [
+   {
+    "name": "Flexible roof pointing 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 39.98,
+    "typical": 39.98,
+    "high": 39.98
+   },
+   {
+    "name": "GP cement 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 9.32,
+    "typical": 21.04,
+    "high": 57.33
+   }
+  ]
+ },
+ "roof-restoration": {
+  "trade": "Roofing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 50,
+   "high": 100
+  },
+  "materials": [
+   {
+    "name": "Roof restoration membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 249,
+    "typical": 249,
+    "high": 249
+   },
+   {
+    "name": "Flexible roof pointing 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 39.98,
+    "typical": 39.98,
+    "high": 39.98
+   }
+  ]
+ },
+ "safety-switch-installation": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "Safety switch (RCBO)",
+    "unit": "each",
+    "optional": false,
+    "low": 13.58,
+    "typical": 17.43,
+    "high": 39.75
+   }
+  ]
+ },
+ "security-camera-and-cctv-wiring": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "4-camera security camera kit",
+    "unit": "kit",
+    "optional": false,
+    "low": 89.28,
+    "typical": 199.5,
+    "high": 398.7
+   },
+   {
+    "name": "Cat6 data cable",
+    "unit": "305m box",
+    "optional": false,
+    "low": 8.35,
+    "typical": 16.99,
+    "high": 40.22
+   }
+  ]
+ },
+ "sewer-line-replacement": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "PVC DWV pipe 100mm",
+    "unit": "3m length",
+    "optional": false,
+    "low": 5.9,
+    "typical": 12.54,
+    "high": 31.6
+   },
+   {
+    "name": "Drainage gravel 20mm",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 12.18,
+    "typical": 15.72,
+    "high": 24.99
+   }
+  ]
+ },
+ "shower-screen-replacement": {
+  "trade": "Bathroom Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 15000,
+   "high": 35000
+  },
+  "materials": [
+   {
+    "name": "Semi-frameless shower screen",
+    "unit": "each",
+    "optional": false,
+    "low": 275,
+    "typical": 359,
+    "high": 1007.6
+   },
+   {
+    "name": "Sanitary grade silicone",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 13.4,
+    "typical": 20.82,
+    "high": 24.84
+   }
+  ]
+ },
+ "shower-waterproofing": {
+  "trade": "Waterproofing",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Liquid waterproofing membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 59.42,
+    "typical": 110.32,
+    "high": 261.51
+   },
+   {
+    "name": "Waterproofing primer 4L",
+    "unit": "4L",
+    "optional": false,
+    "low": 19.62,
+    "typical": 32.2,
+    "high": 54.84
+   },
+   {
+    "name": "Bond breaker sealant",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 12.58,
+    "typical": 14.34,
+    "high": 27.63
+   },
+   {
+    "name": "Waterproofing reinforcing bandage",
+    "unit": "roll",
+    "optional": false,
+    "low": 37.57,
+    "typical": 44.65,
+    "high": 51.73
+   }
+  ]
+ },
+ "skylight-installation": {
+  "trade": "Roofing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 50,
+   "high": 100
+  },
+  "materials": [
+   {
+    "name": "Tubular skylight",
+    "unit": "each",
+    "optional": false,
+    "low": 767.31,
+    "typical": 2407.63,
+    "high": 2697.89
+   },
+   {
+    "name": "Colorbond flashing",
+    "unit": "length",
+    "optional": false,
+    "low": 61.1,
+    "typical": 65.6,
+    "high": 132.32
+   }
+  ]
+ },
+ "small-bathroom-renovation": {
+  "trade": "Bathroom Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 15000,
+   "high": 35000
+  },
+  "materials": [
+   {
+    "name": "Bathroom vanity 900mm",
+    "unit": "each",
+    "optional": false,
+    "low": 612.2,
+    "typical": 1130,
+    "high": 1589.6
+   },
+   {
+    "name": "Toilet suite",
+    "unit": "each",
+    "optional": false,
+    "low": 315.2,
+    "typical": 676,
+    "high": 1489.6
+   },
+   {
+    "name": "Semi-frameless shower screen",
+    "unit": "each",
+    "optional": false,
+    "low": 275,
+    "typical": 359,
+    "high": 1007.6
+   },
+   {
+    "name": "Liquid waterproofing membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 59.42,
+    "typical": 110.32,
+    "high": 261.51
+   },
+   {
+    "name": "Ceramic wall tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14,
+    "typical": 23.5,
+    "high": 58.9
+   },
+   {
+    "name": "Porcelain floor tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 28.9,
+    "typical": 85,
+    "high": 125
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Bathroom exhaust fan",
+    "unit": "each",
+    "optional": false,
+    "low": 51.75,
+    "typical": 119,
+    "high": 252
+   }
+  ]
+ },
+ "smart-irrigation-controller-installation": {
+  "trade": "Irrigation",
+  "tradeCost": {
+   "unit": " installed",
+   "low": 500,
+   "high": 3000
+  },
+  "materials": [
+   {
+    "name": "Irrigation controller",
+    "unit": "each",
+    "optional": false,
+    "low": 114.59,
+    "typical": 180.76,
+    "high": 258.9
+   }
+  ]
+ },
+ "smoke-alarm-installation": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "240V photoelectric smoke alarm",
+    "unit": "each",
+    "optional": false,
+    "low": 19.3,
+    "typical": 45.98,
+    "high": 75.3
+   }
+  ]
+ },
+ "soak-well-installation": {
+  "trade": "Drainage",
+  "tradeCost": {
+   "unit": " per job",
+   "low": 300,
+   "high": 2000
+  },
+  "materials": [
+   {
+    "name": "Drainage gravel 20mm",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 12.18,
+    "typical": 15.72,
+    "high": 24.99
+   },
+   {
+    "name": "PVC stormwater pipe 90mm",
+    "unit": "6m length",
+    "optional": false,
+    "low": 5.66,
+    "typical": 10.24,
+    "high": 26.45
+   }
+  ]
+ },
+ "sprinkler-system-installation": {
+  "trade": "Irrigation",
+  "tradeCost": {
+   "unit": " installed",
+   "low": 500,
+   "high": 3000
+  },
+  "materials": [
+   {
+    "name": "Pop-up sprinkler",
+    "unit": "each",
+    "optional": false,
+    "low": 6.19,
+    "typical": 12.09,
+    "high": 16.6
+   },
+   {
+    "name": "Poly pipe 19mm 50m",
+    "unit": "roll",
+    "optional": false,
+    "low": 3.58,
+    "typical": 9.1,
+    "high": 18.15
+   },
+   {
+    "name": "Irrigation solenoid valve",
+    "unit": "each",
+    "optional": false,
+    "low": 29.55,
+    "typical": 40.36,
+    "high": 63.51
+   },
+   {
+    "name": "Irrigation controller",
+    "unit": "each",
+    "optional": false,
+    "low": 114.59,
+    "typical": 180.76,
+    "high": 258.9
+   }
+  ]
+ },
+ "steel-stud-framing": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Steel stud 64mm",
+    "unit": "3m length",
+    "optional": false,
+    "low": 8.83,
+    "typical": 12.43,
+    "high": 15.3
+   }
+  ]
+ },
+ "stone-benchtop-installation": {
+  "trade": "Kitchen Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 20000,
+   "high": 45000
+  },
+  "materials": [
+   {
+    "name": "Engineered stone benchtop 20mm",
+    "unit": "per m²",
+    "optional": false,
+    "low": 799,
+    "typical": 1079,
+    "high": 1320
+   },
+   {
+    "name": "Construction adhesive",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 9.42,
+    "typical": 17.57,
+    "high": 31.25
+   }
+  ]
+ },
+ "stormwater-drainage-installation": {
+  "trade": "Drainage",
+  "tradeCost": {
+   "unit": " per job",
+   "low": 300,
+   "high": 2000
+  },
+  "materials": [
+   {
+    "name": "PVC stormwater pipe 90mm",
+    "unit": "6m length",
+    "optional": false,
+    "low": 5.66,
+    "typical": 10.24,
+    "high": 26.45
+   },
+   {
+    "name": "Grated drainage pit",
+    "unit": "each",
+    "optional": false,
+    "low": 41.04,
+    "typical": 66.38,
+    "high": 108.34
+   },
+   {
+    "name": "Drainage gravel 20mm",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 12.18,
+    "typical": 15.72,
+    "high": 24.99
+   }
+  ]
+ },
+ "stormwater-pit-installation": {
+  "trade": "Drainage",
+  "tradeCost": {
+   "unit": " per job",
+   "low": 300,
+   "high": 2000
+  },
+  "materials": [
+   {
+    "name": "Grated drainage pit",
+    "unit": "each",
+    "optional": false,
+    "low": 41.04,
+    "typical": 66.38,
+    "high": 108.34
+   },
+   {
+    "name": "PVC stormwater pipe 90mm",
+    "unit": "6m length",
+    "optional": false,
+    "low": 5.66,
+    "typical": 10.24,
+    "high": 26.45
+   }
+  ]
+ },
+ "switchboard-upgrade": {
+  "trade": "Electrical",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 70,
+   "high": 130
+  },
+  "materials": [
+   {
+    "name": "8-way switchboard enclosure",
+    "unit": "each",
+    "optional": false,
+    "low": 87.24,
+    "typical": 99.06,
+    "high": 110.89
+   },
+   {
+    "name": "Safety switch (RCBO)",
+    "unit": "each",
+    "optional": false,
+    "low": 13.58,
+    "typical": 17.43,
+    "high": 39.75
+   }
+  ]
+ },
+ "texture-coating": {
+  "trade": "Rendering",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Texture coating 15L",
+    "unit": "15L bucket",
+    "optional": false,
+    "low": 79.13,
+    "typical": 108.32,
+    "high": 183.94
+   }
+  ]
+ },
+ "tile-regrouting": {
+  "trade": "Tiling",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 45,
+   "high": 120
+  },
+  "materials": [
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   }
+  ]
+ },
+ "timber-floor-sanding-and-polishing": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Timber floor polyurethane 10L",
+    "unit": "10L",
+    "optional": false,
+    "low": 60.23,
+    "typical": 151.5,
+    "high": 318
+   }
+  ]
+ },
+ "timber-paling-fence-installation": {
+  "trade": "Fencing",
+  "tradeCost": {
+   "unit": "/m",
+   "low": 100,
+   "high": 180
+  },
+  "materials": [
+   {
+    "name": "Treated pine fence paling",
+    "unit": "each",
+    "optional": false,
+    "low": 1.68,
+    "typical": 2.42,
+    "high": 3.56
+   },
+   {
+    "name": "Treated pine fence post 125x75",
+    "unit": "each",
+    "optional": false,
+    "low": 24.31,
+    "typical": 36,
+    "high": 68.14
+   },
+   {
+    "name": "Treated pine fence rail",
+    "unit": "per lm",
+    "optional": false,
+    "low": 10.47,
+    "typical": 22.92,
+    "high": 27.17
+   },
+   {
+    "name": "Concrete mix 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 8.89,
+    "typical": 11.54,
+    "high": 36.8
+   }
+  ]
+ },
+ "toilet-repair-and-replacement": {
+  "trade": "Plumbing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 80,
+   "high": 200
+  },
+  "materials": [
+   {
+    "name": "Toilet suite",
+    "unit": "each",
+    "optional": false,
+    "low": 315.2,
+    "typical": 676,
+    "high": 1489.6
+   },
+   {
+    "name": "Sanitary grade silicone",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 13.4,
+    "typical": 20.82,
+    "high": 24.84
+   },
+   {
+    "name": "Flexible braided hose",
+    "unit": "each",
+    "optional": false,
+    "low": 6.2,
+    "typical": 13.98,
+    "high": 29.44
+   }
+  ]
+ },
+ "travertine-paving": {
+  "trade": "Paving",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Travertine paver",
+    "unit": "per m²",
+    "optional": false,
+    "low": 108.96,
+    "typical": 234.21,
+    "high": 359.45
+   },
+   {
+    "name": "Paving sand 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 10.5,
+    "typical": 13.04,
+    "high": 20.63
+   },
+   {
+    "name": "Crusher dust",
+    "unit": "bulk bag",
+    "optional": false,
+    "low": 10.91,
+    "typical": 10.91,
+    "high": 10.91
+   }
+  ]
+ },
+ "treated-pine-decking-installation": {
+  "trade": "Decking",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 200,
+   "high": 1000
+  },
+  "materials": [
+   {
+    "name": "Treated pine decking 90x22",
+    "unit": "per lm",
+    "optional": false,
+    "low": 4.04,
+    "typical": 4.2,
+    "high": 4.36
+   },
+   {
+    "name": "Treated pine 90x45 MGP10",
+    "unit": "per lm",
+    "optional": false,
+    "low": 4.96,
+    "typical": 11.37,
+    "high": 23.44
+   },
+   {
+    "name": "Decking screws 500 pack",
+    "unit": "box",
+    "optional": false,
+    "low": 28.47,
+    "typical": 69.95,
+    "high": 140.07
+   }
+  ]
+ },
+ "turf-laying": {
+  "trade": "Landscaping",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 50,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Sir Walter buffalo turf",
+    "unit": "per m²",
+    "optional": false,
+    "low": 16.16,
+    "typical": 18.3,
+    "high": 18.84
+   },
+   {
+    "name": "Garden soil 25L",
+    "unit": "25L bag",
+    "optional": false,
+    "low": 5.97,
+    "typical": 10.8,
+    "high": 22.21
+   }
+  ]
+ },
+ "underfloor-insulation": {
+  "trade": "Insulation",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 10,
+   "high": 25
+  },
+  "materials": [
+   {
+    "name": "Underfloor insulation panels",
+    "unit": "pack",
+    "optional": false,
+    "low": 54.21,
+    "typical": 76.78,
+    "high": 106
+   }
+  ]
+ },
+ "vanity-installation": {
+  "trade": "Bathroom Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 15000,
+   "high": 35000
+  },
+  "materials": [
+   {
+    "name": "Bathroom vanity 900mm",
+    "unit": "each",
+    "optional": false,
+    "low": 612.2,
+    "typical": 1130,
+    "high": 1589.6
+   },
+   {
+    "name": "Basin mixer tap",
+    "unit": "each",
+    "optional": false,
+    "low": 92.72,
+    "typical": 195,
+    "high": 325.76
+   },
+   {
+    "name": "Flexible braided hose",
+    "unit": "each",
+    "optional": false,
+    "low": 6.2,
+    "typical": 13.98,
+    "high": 29.44
+   },
+   {
+    "name": "Sanitary grade silicone",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 13.4,
+    "typical": 20.82,
+    "high": 24.84
+   }
+  ]
+ },
+ "villaboard-installation": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Villaboard/FC sheet 6mm",
+    "unit": "sheet",
+    "optional": false,
+    "low": 48.39,
+    "typical": 114,
+    "high": 226.63
+   },
+   {
+    "name": "Stud adhesive",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 18.62,
+    "typical": 27.56,
+    "high": 35.55
+   }
+  ]
+ },
+ "vinyl-plank-installation": {
+  "trade": "Flooring",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 40,
+   "high": 150
+  },
+  "materials": [
+   {
+    "name": "Vinyl plank flooring",
+    "unit": "per m²",
+    "optional": false,
+    "low": 25.2,
+    "typical": 29.71,
+    "high": 63.5
+   },
+   {
+    "name": "Self-levelling compound 20kg",
+    "unit": "20kg bag",
+    "optional": true,
+    "low": 31.51,
+    "typical": 52.92,
+    "high": 69.68
+   }
+  ]
+ },
+ "wall-hung-vanity-installation": {
+  "trade": "Bathroom Renovation",
+  "tradeCost": {
+   "unit": " per project",
+   "low": 15000,
+   "high": 35000
+  },
+  "materials": [
+   {
+    "name": "Wall-hung vanity",
+    "unit": "each",
+    "optional": false,
+    "low": 450.6,
+    "typical": 1102,
+    "high": 1998.71
+   },
+   {
+    "name": "Basin mixer tap",
+    "unit": "each",
+    "optional": false,
+    "low": 92.72,
+    "typical": 195,
+    "high": 325.76
+   },
+   {
+    "name": "Sanitary grade silicone",
+    "unit": "cartridge",
+    "optional": false,
+    "low": 13.4,
+    "typical": 20.82,
+    "high": 24.84
+   }
+  ]
+ },
+ "wall-insulation-installation": {
+  "trade": "Insulation",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 10,
+   "high": 25
+  },
+  "materials": [
+   {
+    "name": "Wall insulation batts R2.5",
+    "unit": "pack",
+    "optional": false,
+    "low": 81.46,
+    "typical": 131.96,
+    "high": 235.62
+   }
+  ]
+ },
+ "wall-patching": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Plasterboard topping compound",
+    "unit": "20kg",
+    "optional": false,
+    "low": 34.19,
+    "typical": 62.9,
+    "high": 73.34
+   },
+   {
+    "name": "Plasterboard jointing tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.28,
+    "typical": 8.51,
+    "high": 20.45
+   }
+  ]
+ },
+ "wall-tiling": {
+  "trade": "Tiling",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 45,
+   "high": 120
+  },
+  "materials": [
+   {
+    "name": "Ceramic wall tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 14,
+    "typical": 23.5,
+    "high": 58.9
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   },
+   {
+    "name": "Tile spacers",
+    "unit": "pack",
+    "optional": false,
+    "low": 10.25,
+    "typical": 16.89,
+    "high": 21.94
+   }
+  ]
+ },
+ "water-damage-plaster-repair": {
+  "trade": "Plastering",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 45,
+   "high": 90
+  },
+  "materials": [
+   {
+    "name": "Plasterboard sheet 10mm 2400x1200",
+    "unit": "sheet",
+    "optional": false,
+    "low": 27.89,
+    "typical": 54.89,
+    "high": 96.59
+   },
+   {
+    "name": "Plasterboard topping compound",
+    "unit": "20kg",
+    "optional": false,
+    "low": 34.19,
+    "typical": 62.9,
+    "high": 73.34
+   },
+   {
+    "name": "Plasterboard jointing tape",
+    "unit": "roll",
+    "optional": false,
+    "low": 6.28,
+    "typical": 8.51,
+    "high": 20.45
+   }
+  ]
+ },
+ "waterproofing-and-tiling": {
+  "trade": "Tiling",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 45,
+   "high": 120
+  },
+  "materials": [
+   {
+    "name": "Liquid waterproofing membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 59.42,
+    "typical": 110.32,
+    "high": 261.51
+   },
+   {
+    "name": "Waterproofing primer 4L",
+    "unit": "4L",
+    "optional": false,
+    "low": 19.62,
+    "typical": 32.2,
+    "high": 54.84
+   },
+   {
+    "name": "Porcelain floor tiles",
+    "unit": "per m²",
+    "optional": false,
+    "low": 28.9,
+    "typical": 85,
+    "high": 125
+   },
+   {
+    "name": "Tile adhesive 20kg",
+    "unit": "20kg bag",
+    "optional": false,
+    "low": 15,
+    "typical": 29.95,
+    "high": 61.64
+   },
+   {
+    "name": "Tile grout 5kg",
+    "unit": "5kg bag",
+    "optional": false,
+    "low": 12.19,
+    "typical": 23.28,
+    "high": 32.82
+   }
+  ]
+ },
+ "waterproofing-membrane-installation": {
+  "trade": "Waterproofing",
+  "tradeCost": {
+   "unit": "/m²",
+   "low": 30,
+   "high": 80
+  },
+  "materials": [
+   {
+    "name": "Liquid waterproofing membrane 15L",
+    "unit": "15L",
+    "optional": false,
+    "low": 59.42,
+    "typical": 110.32,
+    "high": 261.51
+   },
+   {
+    "name": "Waterproofing primer 4L",
+    "unit": "4L",
+    "optional": false,
+    "low": 19.62,
+    "typical": 32.2,
+    "high": 54.84
+   },
+   {
+    "name": "Waterproofing reinforcing bandage",
+    "unit": "roll",
+    "optional": false,
+    "low": 37.57,
+    "typical": 44.65,
+    "high": 51.73
+   }
+  ]
+ },
+ "whirlybird-installation": {
+  "trade": "Roofing",
+  "tradeCost": {
+   "unit": "/hr",
+   "low": 50,
+   "high": 100
+  },
+  "materials": [
+   {
+    "name": "Whirlybird roof ventilator",
+    "unit": "each",
+    "optional": false,
+    "low": 85,
+    "typical": 139.5,
+    "high": 251.26
+   }
+  ]
+ }
+}

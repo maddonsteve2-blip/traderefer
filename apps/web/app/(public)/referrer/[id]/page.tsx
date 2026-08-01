@@ -6,7 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import {
     MapPin, Award, Star, TrendingUp, Briefcase,
-    MessageSquare, ArrowLeft, CheckCircle, ExternalLink
+    MessageSquare, ArrowLeft, CheckCircle
 } from "lucide-react";
 import { PageTransition } from "@/components/ui/PageTransition";
 
@@ -36,7 +36,7 @@ export default function PublicReferrerProfilePage() {
     useEffect(() => {
         if (!isLoaded) return;
         if (!isSignedIn) {
-            router.push(`/sign-in?redirect_url=/referrer/${id}`);
+            router.push(`/login?redirect_url=${encodeURIComponent(`/referrer/${id}`)}`);
             return;
         }
         if (!id) return;
@@ -87,7 +87,7 @@ export default function PublicReferrerProfilePage() {
             val: "text-amber-600",
             sub: "text-amber-500",
             icon: Star,
-            desc: "Verified referrer rating"
+            desc: "Checked referrer rating"
         },
         {
             label: "Confirmed Leads",
@@ -144,7 +144,7 @@ export default function PublicReferrerProfilePage() {
                                     {profile.full_name}
                                 </h1>
                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-green-500/20 text-green-400 rounded-full font-bold" style={{ fontSize: '13px' }}>
-                                    <CheckCircle className="w-3.5 h-3.5" /> Verified Referrer
+                                    <CheckCircle className="w-3.5 h-3.5" /> Referrer Profile
                                 </span>
                             </div>
 
@@ -213,7 +213,7 @@ export default function PublicReferrerProfilePage() {
                         {[
                             { step: "01", title: "You Apply", desc: `Message ${firstName} to join their partner network` },
                             { step: "02", title: "Leads Come In", desc: `${firstName} refers warm, personal leads to your business` },
-                            { step: "03", title: "Pay Per Lead", desc: "Only pay $8 when a lead is confirmed — zero risk" },
+                            { step: "03", title: "Review Lead Details", desc: "Review accepted lead details before paying the referral fee" },
                         ].map(s => (
                             <div key={s.step} className="bg-zinc-800 rounded-2xl p-5">
                                 <p className="font-black text-orange-500 mb-2" style={{ fontSize: '13px' }}>STEP {s.step}</p>

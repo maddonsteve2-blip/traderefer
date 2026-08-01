@@ -1,6 +1,6 @@
-import { Mail, MapPin, Clock, MessageSquare, Send, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Mail, MapPin, Clock, MessageSquare, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
+import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
     title: "Contact Us | TradeRefer — Australia's Trade Referral Marketplace",
@@ -41,9 +41,9 @@ export default function ContactPage() {
                                     <MapPin className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <div className="text-base font-black text-orange-500 uppercase tracking-widest mb-1">Physical HQ</div>
-                                    <div className="font-bold text-zinc-900">Level 12, 120 Collins Street</div>
-                                    <div className="text-xs text-zinc-400 font-medium">Melbourne, VIC 3000 Australia</div>
+                                    <div className="text-base font-black text-orange-500 uppercase tracking-widest mb-1">Based In</div>
+                                    <div className="font-bold text-zinc-900 leading-snug">TradeRefer is an online service based in Geelong, Victoria.</div>
+                                    <div className="text-xs text-zinc-400 font-medium mt-1">ABN 88 764 351 213</div>
                                 </div>
                             </div>
                         </div>
@@ -75,37 +75,7 @@ export default function ContactPage() {
                                 <h2 className="text-2xl font-black text-zinc-900 font-display">Send us a message</h2>
                             </div>
 
-                            <form className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-base font-black text-zinc-400 uppercase tracking-widest ml-1">Your Name</label>
-                                        <input type="text" placeholder="John Doe" className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl h-14 px-6 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-base font-black text-zinc-400 uppercase tracking-widest ml-1">Email Address</label>
-                                        <input type="email" placeholder="john@example.com" className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl h-14 px-6 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all" />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-base font-black text-zinc-400 uppercase tracking-widest ml-1">Department</label>
-                                    <select className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl h-14 px-6 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all appearance-none cursor-pointer">
-                                        <option>General Support</option>
-                                        <option>Dispute Resolution</option>
-                                        <option>Billing & Payouts</option>
-                                        <option>Sales & Partnerships</option>
-                                    </select>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-base font-black text-zinc-400 uppercase tracking-widest ml-1">Your Message</label>
-                                    <textarea rows={5} placeholder="How can we help?" className="w-full bg-zinc-50 border border-zinc-100 rounded-3xl p-6 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-500 transition-all resize-none" />
-                                </div>
-
-                                <Button className="w-full h-16 bg-orange-600 hover:bg-orange-700 text-white rounded-full text-lg font-black shadow-xl shadow-orange-500/20 flex items-center justify-center gap-3 active:scale-[0.98] transition-all">
-                                    Send Message <Send className="w-5 h-5" />
-                                </Button>
-                            </form>
+                            <ContactForm />
                         </div>
 
                         <div className="mt-8 flex items-center justify-center gap-6">

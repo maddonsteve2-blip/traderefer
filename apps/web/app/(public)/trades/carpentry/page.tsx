@@ -20,14 +20,14 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Carpentry Services Australia | Find Verified Carpenters | TradeRefer",
+    title: "Carpentry Services Australia | Find Carpenters | TradeRefer",
     description:
-        "Find trusted carpenters across Australia. Compare carpentry costs by city, understand builder licensing requirements, and hire verified local carpenters for decks, framing, and custom joinery through TradeRefer.",
+        "Find trusted carpenters across Australia. Compare carpentry costs by city, understand builder licensing requirements, and hire local carpenters for decks, framing, and custom joinery through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/carpentry" },
     openGraph: {
         title: "Carpentry Services Australia | TradeRefer",
         description:
-            "Compare carpentry costs, deck building pricing, framing rates, and verified local carpenters across Australia.",
+            "Compare carpentry costs, deck building pricing, framing rates, and local carpenters across Australia.",
         url: "https://traderefer.au/trades/carpentry",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified carpentry businesses",
-        body: "TradeRefer helps homeowners find ABN-verified carpenters — particularly important for structural projects where licensing requirements and building permits affect the quality and legality of the outcome.",
+        title: "Checked carpentry businesses",
+        body: "TradeRefer helps homeowners find ABN-checked carpenters — particularly important for structural projects where licensing requirements and building permits affect the quality and legality of the outcome.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Navigate from this national carpentry guide into city and suburb-level pages to find verified carpenters operating in the specific area where your project is located.",
+        body: "Navigate from this national carpentry guide into city and suburb-level pages to find carpenters operating in the specific area where your project is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function CarpentryTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Carpenters</span> Across Australia
+                            Find <span className="text-[#FF6600]">Carpenters</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer carpentry hub to compare hourly rates and deck build costs across Australian cities, understand licensing requirements for structural work,
-                            and connect with verified local carpenters for your project.
+                            and connect with local carpenters for your project.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function CarpentryTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Carpentry Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your carpentry quotes here and we&apos;ll match your project with up to 3 verified local carpenters.
+                                Request your carpentry quotes here and we&apos;ll match your project with up to 3 local carpenters.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Carpentry" initialSourcePage="/trades/carpentry" />
@@ -481,7 +481,7 @@ export default async function CarpentryTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Carpenter Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local carpenters, compare services and portfolios, and find the right carpenter for your deck, pergola, framing, or custom joinery project.
+                            Browse local carpenters, compare services and portfolios, and find the right carpenter for your deck, pergola, framing, or custom joinery project.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

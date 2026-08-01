@@ -2,10 +2,36 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { Gift, Users, ArrowRight, Zap, DollarSign, ShieldCheck, CheckCircle, TrendingUp, Building2, BadgeCheck, Star, Settings, Quote } from "lucide-react";
+import { buildOgImageUrl } from "@/lib/og-image";
+
+const businessJoinOgImage = buildOgImageUrl({
+    template: "home",
+    title: "Claim your TradeRefer profile",
+    subtitle: "Show your trade services, locations and referral terms with no monthly listing fee.",
+    eyebrow: "For trade businesses",
+    badge: "Free profile",
+    stat1: "Direct enquiries",
+    stat2: "Referral leads",
+    stat3: "Australia-wide",
+});
 
 export const metadata: Metadata = {
-    title: "You're Invited to TradeRefer | Get Qualified Leads for Your Trade Business",
-    description: "Join TradeRefer free. Set your own referral fee, get AI-screened leads from trusted local referrers, and only pay when you unlock a lead. First lead free.",
+    title: "Claim Your TradeRefer Profile | Local Referral Leads for Trade Businesses",
+    description: "Join TradeRefer free. Claim your profile, show services and locations, receive direct enquiries, and review referral lead terms before you unlock.",
+    openGraph: {
+        title: "Claim Your Free TradeRefer Profile",
+        description: "Show your trade services, locations and referral terms with no monthly listing fee.",
+        url: "https://traderefer.au/join/business",
+        siteName: "TradeRefer",
+        type: "website",
+        images: [{ url: businessJoinOgImage, width: 1200, height: 630, alt: "TradeRefer business profile signup" }],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Claim Your Free TradeRefer Profile",
+        description: "Show your trade services, locations and referral terms with no monthly listing fee.",
+        images: [businessJoinOgImage],
+    },
     robots: { index: false, follow: false },
 };
 
@@ -40,7 +66,7 @@ export default async function JoinBusinessPage({
         <main className="min-h-screen bg-white">
             {/* Sticky nav */}
             <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-zinc-100">
-                <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
+                <nav className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between" aria-label="Business signup">
                     <Link href="/"><Logo size="sm" /></Link>
                     <Link
                         href={signUpUrl}
@@ -48,7 +74,7 @@ export default async function JoinBusinessPage({
                     >
                         Claim Free Profile
                     </Link>
-                </div>
+                </nav>
             </header>
 
             {/* ═══ HERO — Split layout ═══ */}
@@ -65,9 +91,9 @@ export default async function JoinBusinessPage({
 
                         <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-black text-zinc-900 tracking-tight leading-[1.1] mb-4">
                             {inviteeName ? (
-                                <>Hi {inviteeName}!<br />Get <span className="text-emerald-600">qualified leads</span> from local referrers</>
+                                <>Hi {inviteeName}!<br />Receive <span className="text-emerald-600">local referral leads</span> from people who trust your work</>
                             ) : (
-                                <>Get <span className="text-emerald-600">qualified leads</span> sent straight to your business</>
+                                <>Receive <span className="text-emerald-600">local referral leads</span> from people who trust your work</>
                             )}
                         </h1>
 
@@ -76,7 +102,7 @@ export default async function JoinBusinessPage({
                         </p>
 
                         <p className="text-base text-emerald-600 font-bold mb-5 flex items-center gap-1.5">
-                            <Building2 className="w-4 h-4" /> 5,000+ businesses already listed across Australia
+                            <Building2 className="w-4 h-4" /> Thousands of public trade profiles listed across Australia
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -145,7 +171,7 @@ export default async function JoinBusinessPage({
                             { step: "1", icon: Building2, title: "Create your profile", desc: "Free listing in 3 minutes. Add your trade, area, photos & reviews." },
                             { step: "2", icon: DollarSign, title: "Set your fee", desc: "Choose what you'll pay per lead ($3–$75+). Change it anytime." },
                             { step: "3", icon: TrendingUp, title: "Referrers promote you", desc: "Trusted locals recommend your business to people who need work done." },
-                            { step: "4", icon: BadgeCheck, title: "Unlock & win jobs", desc: "See AI-screened leads, unlock the ones you want, contact them directly." },
+                            { step: "4", icon: BadgeCheck, title: "Review and respond", desc: "See the customer, trade and job details before deciding whether to unlock a referral lead." },
                         ].map(({ step, icon: Icon, title, desc }) => (
                             <div key={step} className="bg-white rounded-2xl p-6 md:p-8 border border-zinc-200/80 text-center shadow-sm hover:shadow-lg transition-shadow">
                                 <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
@@ -187,8 +213,8 @@ export default async function JoinBusinessPage({
                         <h3 className="text-2xl md:text-3xl font-black mb-7">Why businesses choose TradeRefer</h3>
                         <div className="space-y-5 flex-1">
                             {[
-                                { icon: ShieldCheck, title: "No monthly fees or contracts", desc: "Your listing is 100% free. Only pay when you choose to unlock a lead." },
-                                { icon: Zap, title: "AI-screened leads", desc: "Every lead goes through AI screening before reaching you. No spam, no tyre kickers." },
+                                { icon: ShieldCheck, title: "No monthly listing fee", desc: "Your profile can receive direct enquiries without a subscription. Referral lead terms are shown before unlock." },
+                                { icon: Zap, title: "Lead details first", desc: "Review the job, location and customer context before deciding whether a referral lead is worth unlocking." },
                                 { icon: DollarSign, title: "You control the cost", desc: "Set your referral fee from $3 to $75+. Higher fees attract more referrers to promote you." },
                                 { icon: Star, title: "Direct enquiries are free", desc: "Leads from your profile page cost nothing — you only pay for referral leads you choose to unlock." },
                             ].map(({ icon: Icon, title, desc }) => (
@@ -290,7 +316,7 @@ export default async function JoinBusinessPage({
                         }
                     </h2>
                     <p className="text-xl md:text-2xl text-zinc-500 font-medium mb-8 max-w-lg mx-auto leading-relaxed">
-                        Create your free profile in 3 minutes. Set your own referral fee, get AI-screened leads, and your first lead is on us.
+                        Create your profile, set your referral fee, and review referral details before unlocking paid leads.
                     </p>
                     <Link
                         href={signUpUrl}
@@ -298,7 +324,7 @@ export default async function JoinBusinessPage({
                     >
                         Claim Your Free Profile <ArrowRight className="w-6 h-6" />
                     </Link>
-                    <p className="mt-4 text-lg text-zinc-400 font-medium">Free forever. No credit card. No lock-in.</p>
+                    <p className="mt-4 text-lg text-zinc-400 font-medium">No monthly listing fee. No credit card to claim your profile. No lock-in.</p>
                 </div>
             </section>
 

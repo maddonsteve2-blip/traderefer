@@ -35,14 +35,28 @@ export default function SupportPage() {
         }
 
         setIsSubmitting(true);
-        // Simulate API call for support request
         try {
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const res = await fetch("/api/support", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    department: formData.subject,
+                    message: formData.message
+                })
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                toast.error(data.error || "Failed to send message. Please try again.");
+                return;
+            }
+
             setIsSuccess(true);
-            toast.success("Support request sent successfully!");
             setFormData({ name: "", email: "", subject: "", message: "" });
         } catch {
-            toast.error("Failed to send message. Please try again.");
+            toast.error("Failed to send message. Please check your connection and try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -111,9 +125,9 @@ export default function SupportPage() {
                                     <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
                                         <CheckCircle2 className="w-12 h-12 text-green-500" />
                                     </div>
-                                    <h2 className="text-3xl font-black text-zinc-900 mb-4 font-display">Message Sent!</h2>
+                                    <h2 className="text-3xl font-black text-zinc-900 mb-4 font-display">Message received</h2>
                                     <p className="text-lg text-zinc-500 font-medium mb-8 max-w-md mx-auto">
-                                        Thanks for reaching out. A member of our support team will get back to you shortly.
+                                        We&apos;ll reply to your email as soon as we can.
                                     </p>
                                     <Button 
                                         onClick={() => setIsSuccess(false)}

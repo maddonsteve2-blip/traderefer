@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getCanonicalSuburbSlug } from "@/lib/postcodes";
+import { directoryRobots } from "@/lib/seo/index-policy";
 
 interface PageProps {
     params: Promise<{ state: string; city: string }>;
@@ -56,17 +57,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const totalBusinesses = await getCityBusinessCount(state, city);
     return {
         title: `${totalBusinesses > 0 ? totalBusinesses + ' ' : ''}Trusted Tradies in ${cityName} ${stateUpper} | TradeRefer`,
-        description: `Find ${totalBusinesses > 0 ? totalBusinesses + ' ' : ''}ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to discover top-rated plumbers, electricians, painters & more. Free quotes.`,
-        robots: { index: totalBusinesses >= 2, follow: true },
+        description: `Find ${totalBusinesses > 0 ? totalBusinesses + ' ' : ''}ABN-checked trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to discover top-rated plumbers, electricians, painters & more. Free quotes.`,
+        robots: directoryRobots({ page: "city", businessCount: totalBusinesses }),
         alternates: { canonical: `https://traderefer.au/local/${state}/${city}` },
         openGraph: {
             title: `Trusted Tradies in ${cityName} ${stateUpper} | TradeRefer`,
-            description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
+            description: `Find ABN-checked trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
         },
         twitter: {
             card: 'summary_large_image',
             title: `Trusted Tradies in ${cityName} ${stateUpper} | TradeRefer`,
-            description: `Find ABN-verified trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
+            description: `Find ABN-checked trade businesses across ${cityName}, ${stateUpper}. Browse by suburb. Free quotes.`,
         },
     };
 }
@@ -155,7 +156,7 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
         "@context": "https://schema.org",
         "@type": "CollectionPage",
         "name": `Trade Services in ${cityName} ${stateUpper}`,
-        "description": `${totalBusinesses.toLocaleString()} verified local trade businesses across ${suburbs.length} ${cityName} suburbs.`,
+        "description": `${totalBusinesses.toLocaleString()} local trade profiles across ${suburbs.length} ${cityName} suburbs.`,
         "url": `https://traderefer.au/local/${state}/${city}`,
         "isPartOf": { "@type": "WebSite", "name": "TradeRefer", "url": "https://traderefer.au" }
     };
@@ -204,19 +205,19 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
                     <div className="bg-white border-l-4 border-[#FF6600] rounded-xl px-6 py-4 max-w-3xl mb-8">
                         <p className="text-[#1A1A1A]" style={{ fontSize: '18px', lineHeight: 1.7 }}>
                             {totalBusinesses > 0
-                                ? `${cityName} has ${totalBusinesses.toLocaleString()} ABN-verified trade businesses across ${suburbs.length} suburbs. TradeRefer eliminates the $21 upfront lead risk — ${cityName} pros only pay when they win the job.`
-                                : `${cityName} verified trade directory across ${suburbs.length > 0 ? suburbs.length : 'all'} suburbs. Find ABN-checked local experts. TradeRefer eliminates upfront lead risk for all ${cityName} tradies.`
+                                ? `${cityName} has ${totalBusinesses.toLocaleString()} ABN-checked trade businesses across ${suburbs.length} suburbs. TradeRefer helps customers compare local profiles, reviews and quote options.`
+                                : `${cityName} trade directory across ${suburbs.length > 0 ? suburbs.length : 'all'} suburbs. Find ABN-checked local experts and compare quote options.`
                             }
                         </p>
                     </div>
-                    <div className="max-w-4xl">
+                    <div className="max-w-6xl">
                         <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
                             Trades in <span className="text-[#FF6600]">{cityName}</span>, {stateUpper}
                         </h1>
                         <p className="text-gray-600 mb-4 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             {totalBusinesses > 0
-                                ? `${totalBusinesses.toLocaleString()} verified tradespeople across ${suburbs.length} suburbs in ${cityName}. Find the right expert for your job.`
-                                : `Find verified local trade businesses across ${cityName}, ${stateUpper}. Browse by suburb to connect with experts near you.`
+                                ? `${totalBusinesses.toLocaleString()} tradespeople across ${suburbs.length} suburbs in ${cityName}. Find the right expert for your job.`
+                                : `Find local trade profiles across ${cityName}, ${stateUpper}. Browse by suburb to connect with experts near you.`
                             }
                         </p>
                         <div className="flex flex-wrap gap-4 mb-6">
@@ -246,7 +247,7 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
                             <div className="max-w-3xl mb-8">
                                 <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: '32px' }}>Get 3 Free Quotes in {cityName}</h2>
                                 <p className="text-gray-500" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                                    Submit your job once and we&apos;ll match you with up to 3 verified local businesses across {cityName}, {stateUpper}.
+                                    Submit your job once and we&apos;ll match you with up to 3 local trade profiles across {cityName}, {stateUpper}.
                                 </p>
                             </div>
                             <PublicMultiQuoteForm initialState={stateUpper} initialCity={cityName} initialSourcePage={`/local/${state}/${city}`} />
@@ -257,7 +258,7 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
                             {totalBusinesses > 0 && (
                                 <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-full px-5 py-2.5">
                                     <Users className="w-4 h-4 text-orange-500" />
-                                    <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>{totalBusinesses.toLocaleString()} verified businesses</span>
+                                    <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>{totalBusinesses.toLocaleString()} trade profiles</span>
                                 </div>
                             )}
                             <div className="flex items-center gap-2 bg-white border border-zinc-200 rounded-full px-5 py-2.5">
@@ -275,7 +276,7 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
                         {/* Suburb grid */}
                         <section>
                             <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '32px' }}>Browse by Suburb</h2>
-                            <p className="text-gray-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>Select your suburb to find verified local trade experts near you.</p>
+                            <p className="text-gray-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>Select your suburb to find local trade profiles near you.</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                 {suburbs.map((suburb) => {
                                     const count = businessCounts[suburb] || 0;
@@ -292,7 +293,7 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
                                                 {count > 0 ? (
                                                     <div>
                                                         <span className="text-2xl font-black text-[#FF6600]">{count}</span>
-                                                        <span className="text-zinc-400 font-bold uppercase tracking-wider ml-2" style={{ fontSize: '16px' }}>Verified Pros</span>
+                                                        <span className="text-zinc-400 font-bold uppercase tracking-wider ml-2" style={{ fontSize: '16px' }}>Trade Profiles</span>
                                                     </div>
                                                 ) : (
                                                     <p className="text-zinc-400 font-medium" style={{ fontSize: '16px' }}>Browse trades</p>
@@ -308,11 +309,11 @@ export default async function CityDirectoryPage({ params, searchParams }: PagePr
                         <div className="flex flex-wrap items-center gap-6 bg-white rounded-2xl border border-zinc-200 p-6">
                             <div className="flex items-center gap-2">
                                 <ShieldCheck className="w-5 h-5 text-green-500" />
-                                <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>100% ABN verified</span>
+                                <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>ABN-checked profiles</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Users className="w-5 h-5 text-orange-500" />
-                                <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>Community-ranked, not paid ads</span>
+                                <span className="font-bold text-zinc-700" style={{ fontSize: '16px' }}>community-informed, not paid ads</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <MapPin className="w-5 h-5 text-blue-500" />

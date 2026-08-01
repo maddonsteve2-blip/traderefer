@@ -29,6 +29,7 @@ export function AddressAutocomplete({
     className?: string;
     placeholder?: string;
 }) {
+    const hasInitialValue = Boolean(addressValue || suburbValue || stateValue);
     const [inputValue, setInputValue] = useState(() => {
         if (addressValue && suburbValue && stateValue) {
             return `${addressValue}, ${suburbValue} ${stateValue}`;
@@ -47,6 +48,7 @@ export function AddressAutocomplete({
     const [suggestions, setSuggestions] = useState<SuggestionItem[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [ready, setReady] = useState(false);
+    const [shouldLoadMaps, setShouldLoadMaps] = useState(hasInitialValue);
     const [loadError, setLoadError] = useState(false);
     const [fetchError, setFetchError] = useState(false);
     const [manualMode, setManualMode] = useState(false);
@@ -60,13 +62,16 @@ export function AddressAutocomplete({
     const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
     const onSelectRef = useRef(onAddressSelect);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const loadingMapsRef = useRef(false);
 
     useEffect(() => {
         onSelectRef.current = onAddressSelect;
     }, [onAddressSelect]);
 
     useEffect(() => {
+        if (!shouldLoadMaps || ready || loadError || loadingMapsRef.current) return;
         let mounted = true;
+        loadingMapsRef.current = true;
 
         // Fallback: if Maps API doesn't load within 6s, switch to manual mode
         const timeoutId = setTimeout(() => { if (mounted && !ready) setLoadError(true); }, 6000);
@@ -81,14 +86,15 @@ export function AddressAutocomplete({
                 sessionTokenRef.current = new googleMaps.maps.places.AutocompleteSessionToken();
                 setReady(true);
             })
-            .catch(() => { clearTimeout(timeoutId); setLoadError(true); });
+            .catch(() => { clearTimeout(timeoutId); setLoadError(true); })
+            .finally(() => { loadingMapsRef.current = false; });
 
         return () => {
             mounted = false;
             if (debounceRef.current) clearTimeout(debounceRef.current);
             clearTimeout(timeoutId);
         };
-    }, []);
+    }, [loadError, ready, shouldLoadMaps]);
 
     const fetchSuggestions = useCallback(async (input: string) => {
         if (!input || input.length < 3) {
@@ -99,7 +105,8 @@ export function AddressAutocomplete({
         }
 
         if (!serviceRef.current) {
-            setFetchError(true);
+            setShouldLoadMaps(true);
+            setFetchError(false);
             return;
         }
 
@@ -146,9 +153,24 @@ export function AddressAutocomplete({
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
         setInputValue(val);
+        setShouldLoadMaps(true);
         if (debounceRef.current) clearTimeout(debounceRef.current);
+        if (!ready) {
+            setFetchError(false);
+            setShowDropdown(false);
+            return;
+        }
         debounceRef.current = setTimeout(() => fetchSuggestions(val), 200);
     };
+
+    useEffect(() => {
+        if (!ready || inputValue.length < 3) return;
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => fetchSuggestions(inputValue), 120);
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
+    }, [fetchSuggestions, inputValue, ready]);
 
     const handleSelect = useCallback(async (suggestion: SuggestionItem) => {
         setShowDropdown(false);
@@ -267,11 +289,13 @@ export function AddressAutocomplete({
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
-                onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
+                onFocus={() => {
+                    setShouldLoadMaps(true);
+                    if (suggestions.length > 0) setShowDropdown(true);
+                }}
                 onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-                placeholder={ready ? placeholder : "Loading address search..."}
+                placeholder={ready || !shouldLoadMaps ? placeholder : "Loading address search..."}
                 className={className}
-                disabled={!ready}
                 autoComplete="off"
             />
             {showDropdown && suggestions.length > 0 && (

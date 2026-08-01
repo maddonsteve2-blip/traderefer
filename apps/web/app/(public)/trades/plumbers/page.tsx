@@ -104,7 +104,7 @@ const faqs = [
     },
     {
         q: "Do I need a licensed plumber?",
-        a: "Yes — in Australia, all plumbing work must be carried out by a licensed plumber. It's a legal requirement, and it protects you if something goes wrong. All tradespeople on TradeRefer are verified, so you can hire with peace of mind.",
+        a: "Yes — in Australia, all plumbing work must be carried out by a licensed plumber. It's a legal requirement, and it protects you if something goes wrong. Use TradeRefer profiles to compare licence, review, and business details before choosing.",
     },
     {
         q: "What's the difference between a plumber and a gas fitter?",
@@ -115,13 +115,13 @@ const faqs = [
 const whyTradeRefer = [
     {
         icon: BadgeCheck,
-        title: "Only verified, reviewed tradies",
-        body: "Every plumber on TradeRefer has been reviewed by real customers. You can read genuine feedback before you commit — no fake reviews, no guesswork.",
+        title: "Reviewed trade profiles",
+        body: "Use public reviews and profile details to compare plumbers before you commit.",
     },
     {
         icon: DollarSign,
-        title: "Free to post, no hidden fees",
-        body: "Posting your plumbing job on TradeRefer is completely free. You describe the work, get quotes from local plumbers, and choose who you hire — you're in control.",
+        title: "Free to request quotes",
+        body: "Requesting plumbing quotes on TradeRefer is free. You describe the work, compare replies from local plumbers, and choose who you contact.",
     },
     {
         icon: MapPin,
@@ -372,7 +372,7 @@ export default async function FindAPlumberPage() {
                             Find Plumbers by City
                         </h2>
                         <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                            Browse verified plumbers in your city — or drill into suburb-level pages from there.
+                            Browse plumbers in your city — or drill into suburb-level pages from there.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {featuredCities.map(({ city, state, stateSlug, citySlug }) => (
@@ -413,14 +413,14 @@ export default async function FindAPlumberPage() {
                             Before You Hire a Plumber
                         </h2>
                         <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                            Use these checks to avoid unlicensed work, hidden fees, and poor-quality outcomes.
+                            Use these checks to avoid unlicensed work, unclear charges, and poor-quality outcomes.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {[
                                 { icon: BadgeCheck, title: "Verify the plumbing licence", body: "All plumbing work in Australia must be completed by a licensed plumber. Ask for the licence number and confirm it with your state authority before work starts." },
                                 { icon: FileText, title: "Get 2–3 written quotes", body: "Written quotes should separate labour, materials, call-out fees, and GST. Avoid vague verbal pricing and compare scope carefully before accepting." },
                                 { icon: ShieldCheck, title: "Check insurance and compliance", body: "A reputable plumber should carry public liability insurance and provide compliance certificates where required, especially for regulated installations." },
-                                { icon: Star, title: "Read verified reviews", body: "Look for patterns about punctuality, hidden charges, and cleanup quality. TradeRefer surfaces businesses ranked by real community referrals, not paid placement." },
+                                { icon: Star, title: "Read public reviews", body: "Look for patterns about punctuality, unexpected charges, and cleanup quality. TradeRefer surfaces profile, public review, and referral signals where available." },
                             ].map(({ icon: Icon, title, body }) => (
                                 <div key={title} className="rounded-2xl border border-zinc-100 bg-zinc-50 p-5">
                                     <div className="flex items-start gap-3 mb-2">

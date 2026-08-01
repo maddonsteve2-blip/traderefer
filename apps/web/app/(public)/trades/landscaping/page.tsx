@@ -22,12 +22,12 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "Landscaping Services Australia | Landscapers | TradeRefer",
     description:
-        "Find trusted landscapers across Australia. Compare landscaping costs by city, understand council approval requirements, and hire verified local landscaping businesses through TradeRefer.",
+        "Find trusted landscapers across Australia. Compare landscaping costs by city, understand council approval requirements, and hire local landscaping businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/landscaping" },
     openGraph: {
         title: "Landscaping Services Australia | TradeRefer",
         description:
-            "Compare landscaping costs, turf and garden design pricing, council approval requirements, and verified local landscapers across Australia.",
+            "Compare landscaping costs, turf and garden design pricing, council approval requirements, and local landscapers across Australia.",
         url: "https://traderefer.au/trades/landscaping",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified landscaping businesses",
-        body: "TradeRefer helps homeowners find ABN-verified landscaping contractors instead of relying on unchecked listings for projects that can involve significant structural and compliance work.",
+        title: "Checked landscaping businesses",
+        body: "TradeRefer helps homeowners find ABN-checked landscaping contractors instead of relying on unchecked listings for projects that can involve significant structural and compliance work.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Navigate from this national landscaping guide into city and suburb-level pages to find verified landscapers in the specific area where your property is located.",
+        body: "Navigate from this national landscaping guide into city and suburb-level pages to find landscapers in the specific area where your property is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function LandscapingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Landscapers</span> Across Australia
+                            Find <span className="text-[#FF6600]">Landscapers</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer landscaping hub to compare costs per square metre across Australian cities, understand what work needs council approval,
-                            and connect with verified local landscaping businesses for your project.
+                            and connect with local landscaping businesses for your project.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function LandscapingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Landscaping Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your landscaping quotes here and we&apos;ll match your project with up to 3 verified local landscaping businesses.
+                                Request your landscaping quotes here and we&apos;ll match your project with up to 3 local landscaping businesses.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Landscaping" initialSourcePage="/trades/landscaping" />
@@ -481,7 +481,7 @@ export default async function LandscapingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Landscaper Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local landscaping businesses, compare services and project portfolios, and find the right landscaper for your outdoor transformation.
+                            Browse local landscaping businesses, compare services and project portfolios, and find the right landscaper for your outdoor transformation.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

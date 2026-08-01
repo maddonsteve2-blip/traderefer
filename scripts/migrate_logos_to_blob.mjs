@@ -36,9 +36,10 @@ async function fetchImage(url) {
 
 async function run() {
     const rows = await sql`
-        SELECT id, slug, logo_url 
-        FROM businesses 
-        WHERE logo_url IS NOT NULL 
+        SELECT id, slug, logo_url
+        FROM businesses
+        WHERE status = 'active'
+          AND logo_url IS NOT NULL
           AND logo_url NOT LIKE '%vercel-storage%'
           AND logo_url NOT LIKE '%blob.vercel%'
         ORDER BY id

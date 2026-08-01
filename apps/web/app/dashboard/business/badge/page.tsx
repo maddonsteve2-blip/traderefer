@@ -35,7 +35,7 @@ interface BusinessData {
     is_verified: boolean;
 }
 
-type BadgeStyle = "trust" | "minimal" | "profile";
+type BadgeStyle = "trust" | "minimal" | "profile" | "naked";
 
 const BADGE_STYLES: { id: BadgeStyle; label: string; description: string; icon: React.ReactNode }[] = [
     {
@@ -56,11 +56,47 @@ const BADGE_STYLES: { id: BadgeStyle; label: string; description: string; icon: 
         description: "Full card with logo, reviews and reward. Best for partner pages.",
         icon: <Award className="w-4 h-4" />,
     },
+    {
+        id: "naked",
+        label: "Plain URL",
+        description: "Just the traderefer.au link. Most natural inside text and footers.",
+        icon: <ExternalLink className="w-4 h-4" />,
+    },
 ];
 
 function formatFee(cents: number | null): string {
     if (!cents) return "$50";
     return `$${Math.round(cents / 100)}`;
+}
+
+// Dofollow is earned, not the default: only verified profiles with real review
+// reputation drop the nofollow. Everything else ships rel="nofollow noopener".
+function badgeRel(business: BusinessData): string {
+    const dofollow =
+        business.is_verified &&
+        (business.avg_rating ?? 0) >= 4.0 &&
+        business.total_reviews >= 5;
+    return dofollow ? "noopener" : "nofollow noopener";
+}
+
+const MINIMAL_ANCHOR_VARIANTS: ((name: string, fee: string) => string)[] = [
+    (_name, fee) => `Proud partner of TradeRefer — Refer a customer, earn ${fee} →`,
+    () => `Find us on TradeRefer — Australia's trade referral directory`,
+    () => `See our TradeRefer profile & reviews →`,
+    (name) => `Refer a customer to ${name} via TradeRefer →`,
+];
+
+// Deterministic per business (stable hash of slug), so the same business always
+// gets the same anchor text — variation across sites, never per pageview.
+function slugHash(slug: string): number {
+    let h = 0;
+    for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) | 0;
+    return Math.abs(h);
+}
+
+function minimalAnchorText(business: BusinessData): string {
+    const variant = MINIMAL_ANCHOR_VARIANTS[slugHash(business.slug || "") % MINIMAL_ANCHOR_VARIANTS.length];
+    return variant(business.business_name || "My Business", formatFee(business.referral_fee_cents));
 }
 
 function generateBadgeHtml(style: BadgeStyle, business: BusinessData): string {
@@ -70,10 +106,11 @@ function generateBadgeHtml(style: BadgeStyle, business: BusinessData): string {
     const rating = business.avg_rating ? business.avg_rating.toFixed(1) : "5.0";
     const reviews = business.total_reviews || 0;
     const logoUrl = business.logo_url || "";
+    const rel = badgeRel(business);
 
     if (style === "trust") {
         return `<!-- TradeRefer Partner Badge -->
-<a href="${referUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:12px;padding:14px 20px;background:#ffffff;border:2px solid #f97316;border-radius:12px;text-decoration:none;font-family:system-ui,-apple-system,sans-serif;box-shadow:0 2px 12px rgba(249,115,22,0.15);">
+<a href="${referUrl}" target="_blank" rel="${rel}" style="display:inline-flex;align-items:center;gap:12px;padding:14px 20px;background:#ffffff;border:2px solid #f97316;border-radius:12px;text-decoration:none;font-family:system-ui,-apple-system,sans-serif;box-shadow:0 2px 12px rgba(249,115,22,0.15);">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   <div style="border-right:1px solid #e4e4e7;padding-right:12px;">
     <div style="font-weight:800;color:#18181b;font-size:14px;line-height:1.2;">Verified Partner</div>
@@ -88,11 +125,19 @@ function generateBadgeHtml(style: BadgeStyle, business: BusinessData): string {
     }
 
     if (style === "minimal") {
+        const anchorHtml = minimalAnchorText(business)
+            .replace(/&/g, "&amp;").replace(/—/g, "&mdash;").replace(/→/g, "&rarr;");
         return `<!-- TradeRefer Partner Badge -->
-<a href="${referUrl}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;color:#92400e;text-decoration:none;font-family:system-ui,-apple-system,sans-serif;font-weight:700;font-size:14px;transition:background 0.2s;">
+<a href="${referUrl}" target="_blank" rel="${rel}" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;color:#92400e;text-decoration:none;font-family:system-ui,-apple-system,sans-serif;font-weight:700;font-size:14px;transition:background 0.2s;">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" xmlns="http://www.w3.org/2000/svg"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-  Proud partner of TradeRefer &mdash; Refer a customer, earn ${fee} &rarr;
+  ${anchorHtml}
 </a>
+<!-- End TradeRefer Badge -->`;
+    }
+
+    if (style === "naked") {
+        return `<!-- TradeRefer Partner Badge -->
+<a href="${referUrl}" target="_blank" rel="${rel}" style="font-family:system-ui,-apple-system,sans-serif;font-weight:700;font-size:14px;color:#f97316;text-decoration:underline;">traderefer.au</a>
 <!-- End TradeRefer Badge -->`;
     }
 
@@ -118,7 +163,7 @@ function generateBadgeHtml(style: BadgeStyle, business: BusinessData): string {
     <div style="font-size:26px;font-weight:900;color:#18181b;line-height:1;">${fee}</div>
     <div style="font-size:12px;color:#92400e;margin-top:4px;">per customer you refer</div>
   </div>
-  <a href="${referUrl}" target="_blank" rel="noopener" style="display:block;text-align:center;padding:12px;background:#f97316;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:800;font-size:15px;">Become a Referrer &rarr;</a>
+  <a href="${referUrl}" target="_blank" rel="${rel}" style="display:block;text-align:center;padding:12px;background:#f97316;color:#ffffff;text-decoration:none;border-radius:10px;font-weight:800;font-size:15px;">Become a Referrer &rarr;</a>
 </div>
 <!-- End TradeRefer Badge -->`;
 }
@@ -144,7 +189,7 @@ function TrustBadgePreview({ fee }: { fee: string }) {
     );
 }
 
-function MinimalBadgePreview({ fee }: { fee: string }) {
+function MinimalBadgePreview({ business }: { business: BusinessData }) {
     return (
         <a
             href="#"
@@ -154,8 +199,21 @@ function MinimalBadgePreview({ fee }: { fee: string }) {
         >
             <Star className="w-4 h-4 fill-amber-400 text-amber-400 shrink-0" />
             <span className="text-sm font-bold text-amber-900">
-                Proud partner of TradeRefer — Refer a customer, earn {fee} →
+                {minimalAnchorText(business)}
             </span>
+        </a>
+    );
+}
+
+function NakedLinkPreview() {
+    return (
+        <a
+            href="#"
+            onClick={(e) => e.preventDefault()}
+            className="text-sm font-bold text-orange-500 underline cursor-default select-none"
+            style={{ fontFamily: "system-ui, sans-serif" }}
+        >
+            traderefer.au
         </a>
     );
 }
@@ -412,8 +470,9 @@ export default function BadgeGeneratorPage() {
                             </DashboardSectionHeader>
                             <div className="mt-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-6 flex items-center justify-center min-h-[180px]">
                                 {selectedStyle === "trust" && <TrustBadgePreview fee={fee} />}
-                                {selectedStyle === "minimal" && <MinimalBadgePreview fee={fee} />}
+                                {selectedStyle === "minimal" && <MinimalBadgePreview business={business} />}
                                 {selectedStyle === "profile" && <ProfileCardPreview business={business} fee={fee} />}
+                                {selectedStyle === "naked" && <NakedLinkPreview />}
                             </div>
                         </DashboardSection>
 

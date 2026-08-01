@@ -22,12 +22,12 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "Waterproofing Services Australia | Waterproofers | TradeRefer",
     description:
-        "Find trusted waterproofing contractors across Australia. Compare shower, bathroom, and balcony waterproofing costs by city, understand AS 3740 requirements, and hire verified local waterproofers through TradeRefer.",
+        "Find trusted waterproofing contractors across Australia. Compare shower, bathroom, and balcony waterproofing costs by city, understand AS 3740 requirements, and hire local waterproofers through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/waterproofing" },
     openGraph: {
         title: "Waterproofing Services Australia | TradeRefer",
         description:
-            "Compare waterproofing costs, AS 3740 requirements, and verified local waterproofing contractors across Australia.",
+            "Compare waterproofing costs, AS 3740 requirements, and local waterproofing contractors across Australia.",
         url: "https://traderefer.au/trades/waterproofing",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified waterproofing businesses",
-        body: "TradeRefer helps homeowners find ABN-verified waterproofing contractors — critical for wet area work where compliance with AS 3740 is a legal requirement and failures can cost tens of thousands to rectify.",
+        title: "Checked waterproofing businesses",
+        body: "TradeRefer helps homeowners find ABN-checked waterproofing contractors — critical for wet area work where compliance with AS 3740 is a legal requirement and failures can cost tens of thousands to rectify.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Navigate from this national waterproofing guide into city and suburb-level pages to find verified waterproofing contractors in the specific area where your project is located.",
+        body: "Navigate from this national waterproofing guide into city and suburb-level pages to find waterproofing contractors in the specific area where your project is located.",
     },
 ];
 
@@ -201,11 +201,11 @@ export default async function WaterproofingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Waterproofing</span> Contractors Across Australia
+                            Find <span className="text-[#FF6600]">Waterproofing</span> Contractors Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer waterproofing hub to compare shower, bathroom, and balcony waterproofing costs by city, understand mandatory AS 3740 requirements,
-                            and connect with verified local waterproofing contractors.
+                            and connect with local waterproofing contractors.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -392,7 +392,7 @@ export default async function WaterproofingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Waterproofing Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your waterproofing quotes here and we&apos;ll match your project with up to 3 verified local waterproofing businesses.
+                                Request your waterproofing quotes here and we&apos;ll match your project with up to 3 local waterproofing businesses.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Waterproofing" initialSourcePage="/trades/waterproofing" />
@@ -465,7 +465,7 @@ export default async function WaterproofingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Waterproofer Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local waterproofing businesses and find the right contractor for your shower, bathroom, balcony, or remedial waterproofing project.
+                            Browse local waterproofing businesses and find the right contractor for your shower, bathroom, balcony, or remedial waterproofing project.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

@@ -22,12 +22,12 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "Fencing Services Australia | Fencing Contractors | TradeRefer",
     description:
-        "Find trusted fencing contractors across Australia. Compare Colorbond, timber, and pool fencing costs by city, understand dividing fence laws, and hire verified fencers through TradeRefer.",
+        "Find trusted fencing contractors across Australia. Compare Colorbond, timber, and pool fencing costs by city, understand dividing fence laws, and compare fencing profiles through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/fencing" },
     openGraph: {
         title: "Fencing Services Australia | TradeRefer",
         description:
-            "Compare fencing costs per metre, Colorbond vs timber pricing, pool fencing requirements, and verified local fencing contractors across Australia.",
+            "Compare fencing costs per metre, Colorbond vs timber pricing, pool fencing requirements, and local fencing contractors across Australia.",
         url: "https://traderefer.au/trades/fencing",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified fencing businesses",
-        body: "TradeRefer helps homeowners find ABN-verified fencing contractors instead of relying on letterbox drops — particularly important for pool fencing where compliance is a safety and legal requirement.",
+        title: "Checked fencing businesses",
+        body: "TradeRefer helps homeowners find ABN-checked fencing contractors instead of relying on letterbox drops — particularly important for pool fencing where compliance is a safety and legal requirement.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Navigate from this national fencing guide into city and suburb-level pages to find verified fencing contractors in the specific area where your property is located.",
+        body: "Navigate from this national fencing guide into city and suburb-level pages to find fencing contractors in the specific area where your property is located.",
     },
 ];
 
@@ -217,10 +217,10 @@ export default async function FencingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Fencing</span> Contractors Across Australia
+                            Find <span className="text-[#FF6600]">Fencing</span> Contractors Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Use this TradeRefer fencing hub to compare Colorbond, timber, and pool fencing costs per metre across Australian cities, understand dividing fence laws and pool compliance requirements, and connect with verified local fencing contractors.
+                            Use this TradeRefer fencing hub to compare Colorbond, timber, and pool fencing costs per metre across Australian cities, understand dividing fence laws and pool compliance requirements, and connect with local fencing contractors.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -407,7 +407,7 @@ export default async function FencingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Fencing Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your fencing quotes here and we&apos;ll match your project with up to 3 verified local fencing businesses.
+                                Request your fencing quotes here and we&apos;ll match your project with up to 3 local fencing businesses.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Fencing" initialSourcePage="/trades/fencing" />
@@ -480,7 +480,7 @@ export default async function FencingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Fencing Contractor Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local fencing businesses, compare Colorbond, timber, and glass options, and find the right fencing contractor for your residential or commercial project.
+                            Browse local fencing businesses, compare Colorbond, timber, and glass options, and find the right fencing contractor for your residential or commercial project.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

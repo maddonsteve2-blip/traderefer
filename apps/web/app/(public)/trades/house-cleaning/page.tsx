@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "House Cleaning Services Australia | House Cleaners | TradeRefer",
-    description: "Find trusted house cleaners across Australia. Compare regular and end-of-lease cleaning costs by city, understand what to look for, and hire verified local house cleaning businesses through TradeRefer.",
+    description: "Find trusted house cleaners across Australia. Compare regular and end-of-lease cleaning costs by city, understand what to look for, and hire local house cleaning businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/house-cleaning" },
-    openGraph: { title: "House Cleaning Services Australia | TradeRefer", description: "Compare house cleaning costs, end-of-lease cleaning prices, and verified local house cleaners across Australia.", url: "https://traderefer.au/trades/house-cleaning", type: "website" },
+    openGraph: { title: "House Cleaning Services Australia | TradeRefer", description: "Compare house cleaning costs, end-of-lease cleaning prices, and local house cleaners across Australia.", url: "https://traderefer.au/trades/house-cleaning", type: "website" },
 };
 
 const TRADE_NAME = "Cleaning";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Provide access instructions and a priority list", body: "A written brief before the first clean dramatically improves outcomes. List your priority areas, any products you prefer used (or avoided), access instructions, and areas to skip. Good cleaners work to a checklist — great results start with clear communication.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified house cleaning businesses", body: "TradeRefer helps homeowners find ABN-verified, insured house cleaning businesses — not individuals operating cash-in-hand without insurance coverage or accountability." },
+    { title: "Checked house cleaning businesses", body: "TradeRefer helps homeowners find ABN-checked, insured house cleaning businesses — not individuals operating cash-in-hand without insurance coverage or accountability." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical house cleaning rates and end-of-lease clean costs across Australian cities so you can benchmark any quote before committing to a cleaner." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national house cleaning guide into city and suburb-level pages to find verified house cleaners in the specific area where your property is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national house cleaning guide into city and suburb-level pages to find house cleaners in the specific area where your property is located." },
 ];
 const featuredCities = [
     { city: "Sydney", state: "NSW", stateSlug: "nsw", citySlug: "sydney" },
@@ -110,8 +110,8 @@ export default async function HouseCleaningTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">House Cleaners</span> Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer house cleaning hub to compare regular, end-of-lease, and deep cleaning costs across Australian cities, understand what to look for in a cleaner, and connect with verified local house cleaning businesses.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">House Cleaners</span> Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer house cleaning hub to compare regular, end-of-lease, and deep cleaning costs across Australian cities, understand what to look for in a cleaner, and connect with local house cleaning businesses.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href="/quotes?trade=Cleaning&source=%2Ftrades%2Fhouse-cleaning" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Cleaning" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse House Cleaners</Link>
@@ -168,7 +168,7 @@ export default async function HouseCleaningTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free House Cleaning Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your home with up to 3 verified local house cleaning businesses.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free House Cleaning Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your home with up to 3 local house cleaning businesses.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory="Cleaning" initialSourcePage="/trades/house-cleaning" />
                     </section>
 
@@ -192,7 +192,7 @@ export default async function HouseCleaningTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a House Cleaner Near You?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local house cleaning businesses and find the right cleaner for your regular, end-of-lease, or deep cleaning needs.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local house cleaning businesses and find the right cleaner for your regular, end-of-lease, or deep cleaning needs.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href="/quotes?trade=Cleaning&source=%2Ftrades%2Fhouse-cleaning" className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Cleaning" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse House Cleaners</Link>

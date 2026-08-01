@@ -1,0 +1,4 @@
+recipients.json
+sent-log.jsonl
+suppress.txt
+tmp-*.json

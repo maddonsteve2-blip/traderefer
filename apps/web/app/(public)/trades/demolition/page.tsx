@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Demolition Services Australia | Demolition Contractors | TradeRefer",
-    description: "Find trusted demolition contractors across Australia. Compare house, shed, and pool demolition costs by city, understand DA requirements, and hire verified local demolition businesses through TradeRefer.",
+    description: "Find trusted demolition contractors across Australia. Compare house, shed, and pool demolition costs by city, understand DA requirements, and hire local demolition businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/demolition" },
-    openGraph: { title: "Demolition Services Australia | TradeRefer", description: "Compare demolition costs, DA requirements, asbestos obligations, and verified local demolition contractors across Australia.", url: "https://traderefer.au/trades/demolition", type: "website" },
+    openGraph: { title: "Demolition Services Australia | TradeRefer", description: "Compare demolition costs, DA requirements, asbestos obligations, and local demolition contractors across Australia.", url: "https://traderefer.au/trades/demolition", type: "website" },
 };
 
 const TRADE_NAME = "Demolition";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Confirm waste disposal is included in the quote", body: "Demolition waste disposal costs are significant. Confirm whether the quote includes removal, haulage, and tip fees for all waste material. Separate rates often apply for concrete, masonry, and contaminated materials. Get a fixed price for waste removal, not an estimate.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified demolition businesses", body: "TradeRefer helps property owners find ABN-verified demolition contractors with proper licensing, asbestos compliance, and public liability insurance — critical for any project involving structures built before 1990." },
+    { title: "Checked demolition businesses", body: "TradeRefer helps property owners find ABN-checked demolition contractors with proper licensing, asbestos compliance, and public liability insurance — critical for any project involving structures built before 1990." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical shed, garage, and house demolition costs across Australian cities so you can benchmark any quote before committing to a contractor." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national demolition guide into city and suburb-level pages to find verified demolition contractors in the specific area where your property is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national demolition guide into city and suburb-level pages to find demolition contractors in the specific area where your property is located." },
 ];
 const featuredCities = [
     { city: "Sydney", state: "NSW", stateSlug: "nsw", citySlug: "sydney" },
@@ -110,8 +110,8 @@ export default async function DemolitionTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Demolition</span> Contractors Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer demolition hub to compare shed, garage, and house demolition costs across Australian cities, understand DA and asbestos obligations, and connect with verified local demolition businesses.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Demolition</span> Contractors Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer demolition hub to compare shed, garage, and house demolition costs across Australian cities, understand DA and asbestos obligations, and connect with local demolition businesses.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href="/quotes?trade=Demolition&source=%2Ftrades%2Fdemolition" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Demolition" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Demolition Contractors</Link>
@@ -172,7 +172,7 @@ export default async function DemolitionTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Demolition Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 verified local demolition businesses.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Demolition Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 local demolition businesses.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory="Demolition" initialSourcePage="/trades/demolition" />
                     </section>
 
@@ -198,7 +198,7 @@ export default async function DemolitionTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Demolition Contractor Near You?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local demolition businesses and find the right contractor for your shed, garage, pool, or house demolition project.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local demolition businesses and find the right contractor for your shed, garage, pool, or house demolition project.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href="/quotes?trade=Demolition&source=%2Ftrades%2Fdemolition" className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Demolition" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Demolition Contractors</Link>

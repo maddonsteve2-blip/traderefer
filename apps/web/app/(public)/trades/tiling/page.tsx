@@ -20,14 +20,14 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Tiling Services Australia | Find Verified Tilers | TradeRefer",
+    title: "Tiling Services Australia | Find Tilers | TradeRefer",
     description:
         "Find trusted tilers across Australia. Compare tiling costs per square metre by city, understand wet area waterproofing requirements, and hire with confidence through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/tiling" },
     openGraph: {
         title: "Tiling Services Australia | TradeRefer",
         description:
-            "Compare tiling costs per m², floor and wall tiling rates, waterproofing requirements, and verified local tilers across Australia.",
+            "Compare tiling costs per m², floor and wall tiling rates, waterproofing requirements, and local tilers across Australia.",
         url: "https://traderefer.au/trades/tiling",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified tiling businesses",
-        body: "TradeRefer helps homeowners find ABN-verified tilers instead of relying on unchecked listings — particularly important for wet area work where compliance is mandatory.",
+        title: "Checked tiling businesses",
+        body: "TradeRefer helps homeowners find ABN-checked tilers instead of relying on unchecked listings — particularly important for wet area work where compliance is mandatory.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Move from this national tiling guide into city and suburb-level pages to find verified tilers in the specific area where your project is located.",
+        body: "Move from this national tiling guide into city and suburb-level pages to find tilers in the specific area where your project is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function TilingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Tilers</span> Across Australia
+                            Find <span className="text-[#FF6600]">Tilers</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer tiling hub to compare floor and wall tiling costs per square metre, understand mandatory waterproofing requirements,
-                            and connect with verified local tilers across Australia.
+                            and connect with local tilers across Australia.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function TilingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Tiling Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your tiling quotes here and we&apos;ll match your job with up to 3 verified local tiling businesses.
+                                Request your tiling quotes here and we&apos;ll match your job with up to 3 local tiling businesses.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Tiling" initialSourcePage="/trades/tiling" />
@@ -481,7 +481,7 @@ export default async function TilingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Tiler Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local tiling businesses, compare services and tile experience, and find the right tiler for your bathroom, kitchen, or outdoor project.
+                            Browse local tiling businesses, compare services and tile experience, and find the right tiler for your bathroom, kitchen, or outdoor project.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

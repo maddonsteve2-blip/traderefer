@@ -7,10 +7,10 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Removalists Australia | Find Verified Local Removalists | TradeRefer",
-    description: "Find trusted removalists across Australia. Compare local and interstate removal costs by city, understand insurance and liability, and hire verified local removalist businesses through TradeRefer.",
+    title: "Removalists Australia | Find Local Removalists | TradeRefer",
+    description: "Find trusted removalists across Australia. Compare local and interstate removal costs by city, understand insurance and liability, and hire local removalist businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/removalists" },
-    openGraph: { title: "Removalists Australia | TradeRefer", description: "Compare removalist costs, local vs interstate moving rates, and verified local removalist businesses across Australia.", url: "https://traderefer.au/trades/removalists", type: "website" },
+    openGraph: { title: "Removalists Australia | TradeRefer", description: "Compare removalist costs, local vs interstate moving rates, and local removalist businesses across Australia.", url: "https://traderefer.au/trades/removalists", type: "website" },
 };
 
 const relatedTrades = [
@@ -50,9 +50,9 @@ const hiringTips = [
     { title: "De-clutter before getting quotes", body: "The fewer items you move, the lower your cost. A pre-move de-clutter can reduce move time by 20–40% and save hundreds of dollars. Donate, sell, or skip-bin items before the removalist does an inventory walk — your quote will be significantly lower and the move faster.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified removalist businesses", body: "TradeRefer helps homeowners find ABN-verified, insured removalist businesses — not owner-operators without transit insurance or public liability coverage who leave you unprotected if something goes wrong." },
+    { title: "Checked removalist businesses", body: "TradeRefer helps homeowners find ABN-checked, insured removalist businesses — not owner-operators without transit insurance or public liability coverage who leave you unprotected if something goes wrong." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical removalist hourly and full-day rates across Australian cities so you can benchmark any quote before committing to a moving company." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national removalist guide into city and suburb-level pages to find verified local removalist businesses operating where your move begins." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national removalist guide into city and suburb-level pages to find local removalist businesses operating where your move begins." },
 ];
 const faqs = [
     { q: "How much do removalists charge per hour in Australia?", a: "A 2-person removalist team charges $100–$180/hr in most Australian cities, with most companies having a 2-hour minimum. Total move costs depend on team size, truck size, access, and travel time. Always get a fixed-price quote rather than relying on hourly estimates for large moves." },
@@ -113,8 +113,8 @@ export default async function RemovalistsTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Removalists</span> Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer removalist hub to compare local and interstate moving costs across Australian cities, understand transit insurance and your rights, and connect with verified local removalist businesses.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Removalists</span> Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer removalist hub to compare local and interstate moving costs across Australian cities, understand transit insurance and your rights, and connect with local removalist businesses.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href="/quotes?trade=Removalists&source=%2Ftrades%2Fremovalists" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Removalists" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Removalists</Link>
@@ -170,7 +170,7 @@ export default async function RemovalistsTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Removalist Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your move with up to 3 verified local removalist businesses.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Removalist Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your move with up to 3 local removalist businesses.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory="Removalists" initialSourcePage="/trades/removalists" />
                     </section>
 
@@ -188,7 +188,7 @@ export default async function RemovalistsTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Ready to Move? Get Local Removalist Quotes</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local removalist businesses, compare prices and services, and find the right team for your local or interstate move.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local removalist businesses, compare prices and services, and find the right team for your local or interstate move.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href="/quotes?trade=Removalists&source=%2Ftrades%2Fremovalists" className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Removalists" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Removalists</Link>

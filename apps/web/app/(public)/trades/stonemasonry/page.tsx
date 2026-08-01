@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Stonemasonry Services Australia | Stonemasons | TradeRefer",
-    description: "Find trusted stonemasons across Australia. Compare stone wall, retaining wall, and paving costs by city, and hire verified local stonemasonry businesses through TradeRefer.",
+    description: "Find trusted stonemasons across Australia. Compare stone wall, retaining wall, and paving costs by city, and hire local stonemasonry businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/stonemasonry" },
-    openGraph: { title: "Stonemasonry Services Australia | TradeRefer", description: "Compare stonemasonry costs, stone wall pricing, and verified local stonemasons across Australia.", url: "https://traderefer.au/trades/stonemasonry", type: "website" },
+    openGraph: { title: "Stonemasonry Services Australia | TradeRefer", description: "Compare stonemasonry costs, stone wall pricing, and local stonemasons across Australia.", url: "https://traderefer.au/trades/stonemasonry", type: "website" },
 };
 
 const TRADE_NAME = "Stonemasonry";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Assess the stonemason's portfolio for similar projects", body: "Stonework quality is highly skill-dependent. A stonemason experienced in dry stack boundary walls may not have the skill set for detailed heritage restoration or complex curved feature walls. Always view at least 3 recent completed examples of the same type of work you're commissioning before proceeding.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified stonemasonry businesses", body: "TradeRefer helps homeowners and builders find ABN-verified stonemasons with proven portfolios in stone walls, paving, feature work, and heritage restoration — trades where quality and experience vary significantly between contractors." },
+    { title: "Checked stonemasonry businesses", body: "TradeRefer helps homeowners and builders find ABN-checked stonemasons with proven portfolios in stone walls, paving, feature work, and heritage restoration — trades where quality and experience vary significantly between contractors." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical stonemasonry costs per square metre across Australian cities so you can benchmark any quote and identify unusually low-priced work that may indicate material substitution or inadequate skill levels." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national stonemasonry guide into city and suburb-level pages to find verified stonemasons in the specific area where your project is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national stonemasonry guide into city and suburb-level pages to find stonemasons in the specific area where your project is located." },
 ];
 const customFaqs = [
     { q: "How much does a stone wall cost in Australia?", a: "A dry stack stone garden wall costs $250–$480/m² installed. A mortared stone wall costs $300–$600/m². Prices depend on stone type, wall height, site access, and the complexity of the coursing pattern. Heritage-quality feature walls in premium sandstone or granite can exceed $800/m²." },
@@ -106,8 +106,8 @@ export default async function StonemasonryTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Stonemasons</span> Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer stonemasonry hub to compare stone wall, paving, and feature work costs across Australian cities, understand structural and council requirements, and connect with verified local stonemasons.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Stonemasons</span> Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer stonemasonry hub to compare stone wall, paving, and feature work costs across Australian cities, understand structural and council requirements, and connect with local stonemasons.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Fstonemasonry`} className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Stonemasons</Link>
@@ -176,7 +176,7 @@ export default async function StonemasonryTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Stonemasonry Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 verified local stonemasons.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Stonemasonry Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 local stonemasons.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory={TRADE_NAME} initialSourcePage="/trades/stonemasonry" />
                     </section>
 
@@ -200,7 +200,7 @@ export default async function StonemasonryTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Stonemason Near You?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local stonemasonry businesses and find the right stonemason for your stone wall, paving, retaining wall, or heritage restoration project.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local stonemasonry businesses and find the right stonemason for your stone wall, paving, retaining wall, or heritage restoration project.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Fstonemasonry`} className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Stonemasons</Link>

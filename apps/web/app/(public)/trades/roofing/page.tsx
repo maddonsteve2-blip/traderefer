@@ -20,14 +20,14 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Roofing Services Australia | Find Verified Roofers | TradeRefer",
+    title: "Roofing Services Australia | Find Roofers | TradeRefer",
     description:
         "Find trusted roofers and roofing contractors across Australia. Compare roof repair and replacement costs, understand licensing requirements by state, and hire with confidence through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/roofing" },
     openGraph: {
         title: "Roofing Services Australia | TradeRefer",
         description:
-            "Compare roofing costs, repair vs replacement pricing, licensing requirements, and verified local roofers across Australia.",
+            "Compare roofing costs, repair vs replacement pricing, licensing requirements, and local roofers across Australia.",
         url: "https://traderefer.au/trades/roofing",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified roofing businesses",
-        body: "TradeRefer helps surface ABN-checked roofing businesses so homeowners can compare verified providers instead of relying on anonymous listings or letterbox drops.",
+        title: "Checked roofing businesses",
+        body: "TradeRefer helps surface ABN-checked roofing businesses so homeowners can compare providers instead of relying on anonymous listings or letterbox drops.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Move from this national guide into city and suburb-level pages to find verified roofers in the specific area where your property is located.",
+        body: "Move from this national guide into city and suburb-level pages to find roofers in the specific area where your property is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function RoofingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Roofing</span> Professionals Across Australia
+                            Find <span className="text-[#FF6600]">Roofing</span> Professionals Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer roofing hub to compare typical repair and replacement costs, understand licensing requirements in your state,
-                            and discover verified local roofers in the Australian cities where demand is highest.
+                            and discover local roofers in the Australian cities where demand is highest.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function RoofingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Roofing Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your roofing quotes here and we&apos;ll match your job with up to 3 verified local businesses.
+                                Request your roofing quotes here and we&apos;ll match your job with up to 3 local trade profiles.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Roofing" initialSourcePage="/trades/roofing" />
@@ -481,7 +481,7 @@ export default async function RoofingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Roofer Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local roofing businesses, compare services and pricing, and move into suburb-level directory pages to find the right roofer for your job.
+                            Browse local roofing businesses, compare services and pricing, and move into suburb-level directory pages to find the right roofer for your job.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

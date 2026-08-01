@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Cabinet Making Services Australia | Cabinet Makers | TradeRefer",
-    description: "Find trusted cabinet makers across Australia. Compare custom kitchen, bathroom vanity, and wardrobe cabinet costs by city, and hire verified local cabinet making businesses through TradeRefer.",
+    description: "Find trusted cabinet makers across Australia. Compare custom kitchen, bathroom vanity, and wardrobe cabinet costs by city, and hire local cabinet making businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/cabinet-making" },
-    openGraph: { title: "Cabinet Making Services Australia | TradeRefer", description: "Compare custom cabinet costs, kitchen joinery pricing, and verified local cabinet makers across Australia.", url: "https://traderefer.au/trades/cabinet-making", type: "website" },
+    openGraph: { title: "Cabinet Making Services Australia | TradeRefer", description: "Compare custom cabinet costs, kitchen joinery pricing, and local cabinet makers across Australia.", url: "https://traderefer.au/trades/cabinet-making", type: "website" },
 };
 
 const TRADE_NAME = "Cabinet Making";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Confirm lead times before committing", body: "Custom cabinetry is typically made-to-order with 4–10 week lead times. Confirm the production and installation timeline before signing. Delays in cabinets cascade into delays for tiling, electrical, and plumbing — especially on kitchen and bathroom renovation projects.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified cabinet making businesses", body: "TradeRefer helps homeowners find ABN-verified cabinet makers for kitchen, bathroom, and wardrobe joinery — important for large renovation projects where design quality, material specifications, and warranty terms significantly affect the outcome." },
+    { title: "Checked cabinet making businesses", body: "TradeRefer helps homeowners find ABN-checked cabinet makers for kitchen, bathroom, and wardrobe joinery — important for large renovation projects where design quality, material specifications, and warranty terms significantly affect the outcome." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical cabinet making costs per linear metre across Australian cities so you can benchmark any joinery quote before committing to a cabinet maker." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national cabinet making guide into city and suburb-level pages to find verified cabinet making businesses operating in the specific area where your renovation is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national cabinet making guide into city and suburb-level pages to find cabinet making businesses operating in the specific area where your renovation is located." },
 ];
 const featuredCities = [
     { city: "Sydney", state: "NSW", stateSlug: "nsw", citySlug: "sydney" },
@@ -116,8 +116,8 @@ export default async function CabinetMakingTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Cabinet Makers</span> Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer cabinet making hub to compare custom kitchen, bathroom vanity, and wardrobe costs across Australian cities, and connect with verified local cabinet makers for your renovation.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Cabinet Makers</span> Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer cabinet making hub to compare custom kitchen, bathroom vanity, and wardrobe costs across Australian cities, and connect with local cabinet makers for your renovation.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Fcabinet-making`} className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Cabinet Makers</Link>
@@ -177,7 +177,7 @@ export default async function CabinetMakingTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Cabinet Making Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 verified local cabinet makers.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Cabinet Making Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 local cabinet makers.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory={TRADE_NAME} initialSourcePage="/trades/cabinet-making" />
                     </section>
 
@@ -201,7 +201,7 @@ export default async function CabinetMakingTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Cabinet Maker Near You?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local cabinet making businesses and find the right maker for your kitchen, bathroom, wardrobe, or custom joinery project.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local cabinet making businesses and find the right maker for your kitchen, bathroom, wardrobe, or custom joinery project.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Fcabinet-making`} className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Cabinet Makers</Link>

@@ -7,6 +7,7 @@ import {
 import { sql } from "@/lib/db";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { generateFallbackDescription } from "@/lib/business-utils";
+import { buildOgImageUrl } from "@/lib/og-image";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
@@ -15,8 +16,18 @@ const BASE_URL = "https://traderefer.au";
 
 export async function generateMetadata(): Promise<Metadata> {
     const year = new Date().getFullYear();
+    const ogImageUrl = buildOgImageUrl({
+        template: "near-me",
+        title: "Find a plumber near me",
+        subtitle: "Compare licensed plumbers near you Australia-wide. Real reviews, free quotes and emergency plumbing options.",
+        eyebrow: "Near me guide",
+        badge: `${year} plumbing guide`,
+        stat1: "Licensed plumbers",
+        stat2: "Emergency jobs",
+        stat3: "Free quotes",
+    });
     return {
-        title: `Find a Plumber Near Me | Compare Licensed Plumbers | TradeRefer`,
+        title: "Find a Plumber Near Me | TradeRefer",
         description:
             "Find a licensed plumber near you Australia-wide. Compare real reviews, get free quotes, and hire with confidence. Emergency plumbers available. Post your job free on TradeRefer.",
         alternates: { canonical: `${BASE_URL}/find-a-plumber-near-me` },
@@ -25,6 +36,13 @@ export async function generateMetadata(): Promise<Metadata> {
             description: "Compare licensed plumbers near you. Real reviews, free quotes, no signup needed.",
             url: `${BASE_URL}/find-a-plumber-near-me`,
             type: "website",
+            images: [{ url: ogImageUrl, width: 1200, height: 630, alt: "Find a plumber near me on TradeRefer" }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: "Find a Plumber Near Me | TradeRefer",
+            description: "Compare licensed plumbers near you. Real reviews, free quotes, no signup needed.",
+            images: [ogImageUrl],
         },
     };
 }
@@ -32,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const FAQS = [
     {
         q: "How do I find a good plumber near me?",
-        a: "The best way to find a reliable plumber near you is to compare verified reviews from real customers, check their licence status, and get multiple quotes for your job. On TradeRefer, every listed plumber has been reviewed by homeowners who've used their services — post your job and let licensed plumbers in your area contact you with quotes.",
+        a: "The best way to find a reliable plumber near you is to compare public reviews from real customers, check their licence status, and get multiple quotes for your job. On TradeRefer, every listed plumber has been reviewed by homeowners who've used their services — post your job and let licensed plumbers in your area contact you with quotes.",
     },
     {
         q: "How much does a plumber cost in Australia?",
@@ -181,7 +199,7 @@ export default async function FindAPlumberNearMePage() {
                             <br />Compare Quotes on TradeRefer
                         </h1>
                         <p className="text-xl text-gray-300 mb-8 max-w-2xl leading-relaxed">
-                            Australia&apos;s verified plumber directory. Compare real reviews, get free quotes from licensed plumbers in your area, and hire with confidence — leaky taps to full bathroom renovations.
+                            Australia&apos;s plumber directory. Compare real reviews, get free quotes from licensed plumbers in your area, and hire with confidence: leaky taps to full bathroom renovations.
                         </p>
 
                         <div className="flex flex-wrap gap-6 mb-10">
@@ -222,7 +240,7 @@ export default async function FindAPlumberNearMePage() {
                 <section className="py-5 bg-orange-50 border-b border-orange-100">
                     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-orange-800">
-                            <span className="flex items-center gap-2"><BadgeCheck className="w-4 h-4 text-[#FF6600]" /> ABN-verified businesses</span>
+                            <span className="flex items-center gap-2"><BadgeCheck className="w-4 h-4 text-[#FF6600]" /> ABN-checked businesses</span>
                             <span className="flex items-center gap-2"><Star className="w-4 h-4 text-[#FF6600]" /> Real customer reviews</span>
                             <span className="flex items-center gap-2"><Droplets className="w-4 h-4 text-[#FF6600]" /> Licensed plumbers only</span>
                             <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#FF6600]" /> Free to post your job</span>
@@ -237,7 +255,7 @@ export default async function FindAPlumberNearMePage() {
                             <h2 className="text-2xl font-extrabold mb-2 text-[#1A1A1A] font-display">
                                 Top-Rated Plumbers in Australia ({year})
                             </h2>
-                            <p className="text-gray-500 mb-8">Ranked by verified customer review score</p>
+                            <p className="text-gray-500 mb-8">Ranked by public customer review score</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {businesses.map((biz) => {
                                     const rating = biz.avg_rating ? parseFloat(String(biz.avg_rating)) : null;
@@ -342,7 +360,7 @@ export default async function FindAPlumberNearMePage() {
                                 Plumbing is one of the most commonly required home services in Australia — and one of the most regulated. All plumbing and drainage work in Australia must be carried out by a licensed plumber, and completed work must be certified with a Certificate of Compliance (or equivalent in your state). This is important for insurance purposes and is required when selling your home.
                             </p>
                             <p>
-                                When finding a plumber near you, look for: a valid state plumbing licence, public liability insurance of at least $5 million, genuine customer reviews from verified homeowners, and transparent pricing with a written quote before work starts. Avoid tradespeople who quote verbally only or refuse to provide a licence number.
+                                When finding a plumber near you, look for: a valid state plumbing licence, public liability insurance of at least $5 million, genuine customer reviews from homeowners, and transparent pricing with a written quote before work starts. Avoid tradespeople who quote verbally only or refuse to provide a licence number.
                             </p>
                             <p>
                                 Typical plumbing jobs range from <strong>$150 for minor repairs</strong> to <strong>$5,000+ for hot water system replacement or bathroom plumbing</strong>. Getting at least two quotes is the single most effective way to avoid overpaying — and TradeRefer makes this free and fast.

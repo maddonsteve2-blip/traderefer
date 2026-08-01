@@ -3,9 +3,14 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 import { ChevronRight, Hammer, Lightbulb, Pipette as Pipe, Paintbrush, Wrench, Home, Truck, Trash2, Shovel, Scissors, Lock, Wind, Bug, PenTool, HardHat, Construction, LayoutGrid, Fence, MapPin, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
-import { permanentRedirect, redirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { SUBURB_CONTEXT } from "@/lib/constants";
 import { parseSuburbSlug, getPostcode, getCanonicalSuburbSlug, getDisplayPostcode } from "@/lib/postcodes";
+import { getCanonicalCitySlug } from "@/lib/suburb-cities";
+import { buildOgImageUrl } from "@/lib/og-image";
+import { directoryRobots } from "@/lib/seo/index-policy";
+
+export const revalidate = 3600; // ISR — match the [state]/[city]/[trade] pages
 
 interface PageProps {
     params: Promise<{ state: string; city: string; suburb: string }>;
@@ -60,25 +65,37 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const pc = getDisplayPostcode(canonicalSuburb, state);
     const pcLabel = pc ? ` ${stateUpper} ${pc}` : ` ${stateUpper}`;
     const stats = await getSuburbStats(state, city, canonicalSuburb);
-    const canonicalUrl = `https://traderefer.au/local/${state}/${city}/${canonicalSuburb}`;
+    // Unknown suburb slug + no real listings = crawl trap, not a page.
+    if (getPostcode(parseSuburbSlug(suburb).suburb, state) === null && stats.total === 0) notFound();
+    const canonicalUrl = `https://traderefer.au/local/${state}/${getCanonicalCitySlug(state, suburb) ?? city}/${canonicalSuburb}`;
+    const ogImageUrl = buildOgImageUrl({
+        template: "suburb",
+        title: `Trusted tradies in ${suburbName}${pcLabel}`,
+        subtitle: `Browse ${stats.categories > 0 ? `${stats.categories} trade categories` : "local trades"} in ${suburbName}, ${cityName}. ABN-checked businesses with community referral signals.`,
+        eyebrow: "Suburb directory",
+        badge: `${stateUpper} local hub`,
+        stat1: stats.total > 0 ? `${stats.total} tradies` : "Available tradies",
+        stat2: stats.categories > 0 ? `${stats.categories} categories` : "Trade categories",
+        stat3: pc ? `Postcode ${pc}` : "Free quotes",
+    });
     return {
         title: `${stats.total > 0 ? stats.total + ' ' : ''}Trusted Tradies in ${suburbName}${pcLabel} | TradeRefer`,
-        description: `Compare ${stats.total > 0 ? stats.total : 'verified'} local tradespeople in ${suburbName}, ${cityName}${pcLabel}. Browse ${stats.categories > 0 ? stats.categories + ' trade categories' : 'plumbers, electricians, builders & more'} — ABN-checked with real community referrals. Free quotes.`,
-        robots: { index: stats.total >= 2 || stats.categories >= 2, follow: true },
+        description: `Compare ${stats.total > 0 ? stats.total : 'available'} local tradespeople in ${suburbName}, ${cityName}${pcLabel}. Browse ${stats.categories > 0 ? stats.categories + ' trade categories' : 'plumbers, electricians, builders & more'} — ABN and public review signals where available. Free quotes.`,
+        robots: directoryRobots({ page: "suburb", categories: stats.categories }),
         alternates: { canonical: canonicalUrl },
         openGraph: {
             title: `${stats.total > 0 ? stats.total + ' ' : ''}Trusted Tradies in ${suburbName}${pcLabel} | TradeRefer`,
-            description: `Compare ${stats.total > 0 ? stats.total : 'verified'} local tradespeople in ${suburbName}${pcLabel}. ABN-checked, community-ranked.`,
+            description: `Compare ${stats.total > 0 ? stats.total : 'available'} local tradespeople in ${suburbName}${pcLabel}. ABN-checked, community-informed.`,
             url: canonicalUrl,
             siteName: 'TradeRefer',
             type: 'website',
-            images: [{ url: 'https://traderefer.au/og-default.jpg', width: 1200, height: 630, alt: `Trusted tradies in ${suburbName}${pcLabel}` }],
+            images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `Trusted tradies in ${suburbName}${pcLabel}` }],
         },
         twitter: {
             card: 'summary_large_image',
             title: `${stats.total > 0 ? stats.total + ' ' : ''}Trusted Tradies in ${suburbName}${pcLabel} | TradeRefer`,
-            description: `Compare ${stats.total > 0 ? stats.total : 'verified'} local tradespeople in ${suburbName}${pcLabel}. ABN-checked, community-ranked.`,
-            images: ['https://traderefer.au/og-default.jpg'],
+            description: `Compare ${stats.total > 0 ? stats.total : 'available'} local tradespeople in ${suburbName}${pcLabel}. ABN-checked, community-informed.`,
+            images: [ogImageUrl],
         },
     };
 }
@@ -151,8 +168,12 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
     const { postcode: urlPostcode, suburb: bareSuburb } = parseSuburbSlug(suburb);
     const normalizedSuburb = urlPostcode ? `${bareSuburb}-${urlPostcode}` : bareSuburb;
     const canonicalSuburb = getCanonicalSuburbSlug(suburb, state);
-    if (canonicalSuburb !== normalizedSuburb) {
-        permanentRedirect(`/local/${state}/${city}/${canonicalSuburb}`);
+    // The city segment is otherwise unvalidated — any junk city renders a
+    // duplicate subtree, so 308 to the suburb's canonical parent city
+    // (audit 2026-06-12 §B; supersedes the dead LOCATION_REDIRECTS map).
+    const canonicalCity = getCanonicalCitySlug(state, bareSuburb) ?? city;
+    if (canonicalSuburb !== normalizedSuburb || canonicalCity !== city) {
+        permanentRedirect(`/local/${state}/${canonicalCity}/${canonicalSuburb}`);
     }
     const postcode = getDisplayPostcode(canonicalSuburb, state);
     const quoteHref = `/quotes?suburb=${encodeURIComponent(suburbName)}&city=${encodeURIComponent(cityName)}&state=${stateUpper}&source=${encodeURIComponent(`/local/${state}/${city}/${canonicalSuburb}`)}`;
@@ -168,6 +189,10 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
         getTradesWithCounts(state, city, canonicalSuburb),
         getNearbySuburbs(state, city, canonicalSuburb),
     ]);
+
+    // A suburb the postcode dataset has never heard of, with zero active
+    // businesses, is junk-slug territory: 404 instead of fabricating a hub.
+    if (getPostcode(bareSuburb, state) === null && suburbStats.total === 0) notFound();
 
     const displayTrades = tradesWithCounts;
 
@@ -217,19 +242,19 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
                     <div className="bg-white border-l-4 border-[#FF6600] rounded-xl px-6 py-4 max-w-3xl mb-8">
                         <p className="text-[#1A1A1A]" style={{ fontSize: '18px', lineHeight: 1.7 }}>
                             {suburbStats.total > 0
-                                ? `${suburbName} has ${suburbStats.total} verified trade businesses across ${suburbStats.categories} categories. TradeRefer eliminates the $21 lead-risk for ${suburbName} pros — pay only when you win the work.`
-                                : `Find trusted local trade professionals in ${suburbName}, ${cityName}. All businesses are ABN-verified. TradeRefer eliminates upfront lead risk — pay only when you win.`
+                                ? `${suburbName} has ${suburbStats.total} trade businesses across ${suburbStats.categories} categories. TradeRefer helps locals compare profiles, service areas and quote options.`
+                                : `Find trusted local trade professionals in ${suburbName}, ${cityName}. Compare ABN-checked profiles, service areas and quote options.`
                             }
                         </p>
                     </div>
-                    <div className="max-w-4xl">
+                    <div className="max-w-6xl">
                         <h1 className="text-[42px] md:text-7xl lg:text-[80px] font-black mb-6 leading-[1.1] text-[#1A1A1A] font-display">
                             Best Trades in <span className="text-[#FF6600]">{suburbName}{postcode ? ` ${postcode}` : ''}</span>
                         </h1>
                         <p className="text-gray-600 max-w-2xl" style={{ fontSize: '20px', lineHeight: 1.7 }}>
                             {suburbStats.total > 0
-                                ? `${suburbStats.total.toLocaleString()} verified tradies across ${suburbStats.categories} trade categories in ${suburbName}, ${cityName}.`
-                                : `Find verified local trades in ${suburbName}, ${cityName}. Browse by trade category to compare experts near you.`
+                                ? `${suburbStats.total.toLocaleString()} trade profiles across ${suburbStats.categories} trade categories in ${suburbName}, ${cityName}.`
+                                : `Find local trades in ${suburbName}, ${cityName}. Browse by trade category to compare experts near you.`
                             }
                         </p>
                         <div className="flex flex-wrap gap-4 mb-6">
@@ -244,7 +269,7 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
                         <div className="flex flex-wrap gap-4 text-[#1A1A1A] font-bold" style={{ fontSize: '16px' }}>
                             <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#FF6600]" />ABN-checked businesses</span>
                             <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#FF6600]" />{cityName}, {stateUpper}</span>
-                            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#FF6600]" />Pay only when you win the job</span>
+                            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-[#FF6600]" />Compare before you contact</span>
                         </div>
                     </div>
                 </div>
@@ -259,7 +284,7 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
                             <div className="max-w-3xl mb-8">
                                 <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: '32px' }}>Get 3 Free Quotes in {suburbName}</h2>
                                 <p className="text-gray-500" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                                    Submit your job once and we&apos;ll match you with up to 3 verified local businesses in {suburbName}, {cityName}.
+                                    Submit your job once and we&apos;ll match you with up to 3 local trade profiles in {suburbName}, {cityName}.
                                 </p>
                             </div>
                             <PublicMultiQuoteForm initialState={stateUpper} initialCity={cityName} initialSuburb={suburbName} initialSourcePage={`/local/${state}/${city}/${canonicalSuburb}`} />
@@ -268,7 +293,7 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
                         {/* Trade category grid — oversized 120px icons */}
                         <section>
                             <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '32px' }}>Select a Trade Category</h2>
-                            <p className="text-gray-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find verified local specialists in {suburbName} for your project.</p>
+                            <p className="text-gray-500 mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>Find local specialists in {suburbName} for your project.</p>
                             {displayTrades.length > 0 ? (
                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                                     {displayTrades.map(({ trade, count }) => {
@@ -278,14 +303,14 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
                                         return (
                                             <Link key={trade} href={tradeUrl} className="group">
                                                 <div className="bg-white rounded-2xl border border-zinc-200 hover:border-orange-500 hover:shadow-xl transition-all duration-300 p-5 flex flex-col items-center text-center gap-4">
-                                                    <div className="w-[120px] h-[120px] bg-zinc-50 rounded-2xl flex items-center justify-center text-zinc-400 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
-                                                        <Icon className="w-12 h-12" />
+                                                    <div className="w-full max-w-[120px] aspect-square bg-zinc-50 rounded-2xl flex items-center justify-center text-zinc-400 group-hover:bg-orange-50 group-hover:text-orange-600 transition-colors">
+                                                        <Icon className="w-10 h-10 sm:w-12 sm:h-12" />
                                                     </div>
                                                     <div>
                                                         <p className="font-black text-[#1A1A1A] group-hover:text-[#FF6600] transition-colors leading-tight mb-1" style={{ fontSize: '22px' }}>
                                                             {trade}
                                                         </p>
-                                                        <p className="font-bold text-[#FF6600]" style={{ fontSize: '16px' }}>{count} verified</p>
+                                                        <p className="font-bold text-[#FF6600]" style={{ fontSize: '16px' }}>{count} profiles</p>
                                                     </div>
                                                 </div>
                                             </Link>
@@ -318,7 +343,7 @@ export default async function SuburbDirectoryPage({ params, searchParams }: Page
                             <div>
                                 <h2 className="font-black text-[#1A1A1A] mb-2 font-display" style={{ fontSize: '24px' }}>How TradeRefer Verifies {suburbName} Businesses</h2>
                                 <p className="text-gray-600" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                                    Every business listed in {suburbName} is checked against the Australian Business Register for an active ABN, has their state trade licence confirmed, and is ranked by real peer referrals from {cityName} residents — never paid ads.
+                                    TradeRefer uses public business data such as ABN, location, category, review and referral signals where available, helping {cityName} residents build a more informed shortlist.
                                 </p>
                             </div>
                         </section>

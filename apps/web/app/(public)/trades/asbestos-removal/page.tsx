@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Asbestos Removal Australia | Licensed Removalists | TradeRefer",
-    description: "Find licensed asbestos removalists across Australia. Compare asbestos inspection and removal costs by city, understand Class A and Class B licencing requirements, and hire verified local asbestos removal businesses through TradeRefer.",
+    description: "Find licensed asbestos removalists across Australia. Compare asbestos inspection and removal costs by city, understand Class A and Class B licencing requirements, and hire local asbestos removal businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/asbestos-removal" },
-    openGraph: { title: "Asbestos Removal Australia | TradeRefer", description: "Compare asbestos removal costs, Class A vs Class B licensing, and verified licensed asbestos removalists across Australia.", url: "https://traderefer.au/trades/asbestos-removal", type: "website" },
+    openGraph: { title: "Asbestos Removal Australia | TradeRefer", description: "Compare asbestos removal costs, Class A vs Class B licensing, and licensed asbestos removalists across Australia.", url: "https://traderefer.au/trades/asbestos-removal", type: "website" },
 };
 
 const relatedTrades = [
@@ -51,7 +51,7 @@ const hiringTips = [
     { title: "Confirm licensed disposal and documentation", body: "Asbestos waste must be double-bagged in UN-rated asbestos waste bags, labelled, and transported to an EPA-approved disposal facility — never to a general tip. Request the disposal docket (weighbridge receipt) as proof. Improper disposal carries significant personal liability for the property owner.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified licensed removalists", body: "TradeRefer helps homeowners find ABN-verified, Class A and Class B licensed asbestos removalists — the only legal and safe option for asbestos removal in Australia." },
+    { title: "Checked licensed removalists", body: "TradeRefer helps homeowners find ABN-checked, Class A and Class B licensed asbestos removalists — the only legal and safe option for asbestos removal in Australia." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical asbestos inspection and removal costs per square metre across Australian cities so you can immediately identify underpriced, non-compliant quotes." },
     { title: "Australia-wide local discovery", body: "Navigate from this national asbestos removal guide into city and suburb-level pages to find licensed asbestos removalists in the specific area where your property is located." },
 ];
@@ -115,7 +115,7 @@ export default async function AsbestosRemovalTradeHubPage() {
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Licensed <span className="text-[#FF6600]">Asbestos Removalists</span> Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer asbestos removal hub to compare inspection and removal costs across Australian cities, understand Class A and Class B licensing obligations, and connect with verified licensed asbestos removalists.</p>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer asbestos removal hub to compare inspection and removal costs across Australian cities, understand Class A and Class B licensing obligations, and connect with licensed asbestos removalists.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href="/quotes?trade=Demolition&source=%2Ftrades%2Fasbestos-removal" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Demolition" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Asbestos Removalists</Link>
@@ -171,7 +171,7 @@ export default async function AsbestosRemovalTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Asbestos Removal Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 verified licensed asbestos removalists in your area.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Asbestos Removal Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 licensed asbestos removalists in your area.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory="Demolition" initialSourcePage="/trades/asbestos-removal" />
                     </section>
 
@@ -195,7 +195,7 @@ export default async function AsbestosRemovalTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Licensed Asbestos Removalist?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified licensed asbestos removal businesses and find the right contractor for your inspection, removal, or clearance needs.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse licensed asbestos removal businesses and find the right contractor for your inspection, removal, or clearance needs.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href="/quotes?trade=Demolition&source=%2Ftrades%2Fasbestos-removal" className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Demolition" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Asbestos Removalists</Link>

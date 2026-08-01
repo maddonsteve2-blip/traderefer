@@ -1,0 +1,62 @@
+{
+  "channel": {
+    "name": "Caleb Ulku",
+    "url": "https://www.youtube.com/@calebulku",
+    "channelId": "UCAqcn2yiuWsTj22V1KmzZhw",
+    "feedUrl": "https://www.youtube.com/feeds/videos.xml?channel_id=UCAqcn2yiuWsTj22V1KmzZhw"
+  },
+  "pulledAt": "2026-06-03",
+  "rawTranscriptTempDir": "C:\\Users\\61479\\AppData\\Local\\Temp\\traderefer-youtube",
+  "selectedVideos": [
+    {
+      "videoId": "6v5kb9AtUls",
+      "title": "Top 5 Tech CEOs Just Broke SEO | Neil Patel Reaction",
+      "url": "https://www.youtube.com/watch?v=6v5kb9AtUls",
+      "published": "2026-06-02T16:48:10+00:00",
+      "transcriptLanguage": "en",
+      "transcriptWordCount": 4509,
+      "notePath": "notes/2026-06-02-top-5-tech-ceos-just-broke-seo.md",
+      "whySelected": "Best fit for AI SEO, entity architecture, agent recommendation behavior, and why citation tracking alone is weak."
+    },
+    {
+      "videoId": "p4MBTM41e_I",
+      "title": "Vogue CEO Just Broke SEO",
+      "url": "https://www.youtube.com/watch?v=p4MBTM41e_I",
+      "published": "2026-05-29T14:18:23+00:00",
+      "transcriptLanguage": "en",
+      "transcriptWordCount": 2896,
+      "notePath": "notes/2026-05-29-vogue-ceo-just-broke-seo.md",
+      "whySelected": "Directly relevant to zero-click search, AI Overviews, Ask Maps, and why fake AI content loses trust."
+    },
+    {
+      "videoId": "lH0W-pvO1uU",
+      "title": "Secret Method To Rank FAST (Does It Work?)",
+      "url": "https://www.youtube.com/watch?v=lH0W-pvO1uU",
+      "published": "2026-05-26T18:06:41+00:00",
+      "transcriptLanguage": "en",
+      "transcriptWordCount": 2152,
+      "notePath": "notes/2026-05-26-secret-method-to-rank-fast.md",
+      "whySelected": "Useful for review specificity, goal completion, durable local ranking signals, and avoiding simplistic review-velocity thinking."
+    },
+    {
+      "videoId": "myhshBjsi2A",
+      "title": "Change This To Rank FAST!",
+      "url": "https://www.youtube.com/watch?v=myhshBjsi2A",
+      "published": "2026-05-22T18:19:43+00:00",
+      "transcriptLanguage": "en",
+      "transcriptWordCount": 4030,
+      "notePath": "notes/2026-05-22-change-this-to-rank-fast.md",
+      "whySelected": "Best local SEO audit reference for title/H1, homepage structure, schema, social proof, reviews, and Core 30 architecture."
+    },
+    {
+      "videoId": "76-FifSqbB0",
+      "title": "This AI Tool Will Make You RANK FAST (Full Walkthrough)",
+      "url": "https://www.youtube.com/watch?v=76-FifSqbB0",
+      "published": null,
+      "transcriptLanguage": "en",
+      "transcriptWordCount": 4356,
+      "notePath": "notes/video-76-fifsqb0-ai-tool-rank-fast.md",
+      "whySelected": "Earlier user-supplied video. Useful as a workflow blueprint for entity research, Core 30 gaps, topical/geographic relevance, schema, and QA."
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
+import { buildOgImageUrl } from "@/lib/og-image";
 
 interface QuotesPageProps {
     searchParams: Promise<{
@@ -13,15 +14,34 @@ interface QuotesPageProps {
     }>;
 }
 
+const quotesOgImage = buildOgImageUrl({
+    template: "home",
+    title: "Get up to 3 free quotes",
+    subtitle: "Tell TradeRefer what you need and compare suitable local trade businesses.",
+    eyebrow: "TradeRefer quotes",
+    badge: "Free request",
+    stat1: "ABN-checked",
+    stat2: "Local matching",
+    stat3: "Up to 3 quotes",
+});
+
 export const metadata: Metadata = {
     title: "Get 3 Free Quotes | Compare Local Tradies | TradeRefer",
-    description: "Request up to 3 free quotes from verified local tradies. Tell us about your job and TradeRefer will match you with suitable businesses.",
+    description: "Request up to 3 free quotes from local trade profiles. Tell us about your job and TradeRefer will match you with suitable businesses.",
     alternates: { canonical: "https://traderefer.au/quotes" },
     openGraph: {
         title: "Get 3 Free Quotes | TradeRefer",
-        description: "Request up to 3 free quotes from verified local tradies near you.",
+        description: "Request up to 3 free quotes from local trade profiles near you.",
         url: "https://traderefer.au/quotes",
+        siteName: "TradeRefer",
         type: "website",
+        images: [{ url: quotesOgImage, width: 1200, height: 630, alt: "TradeRefer quote request page" }],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Get 3 Free Quotes | TradeRefer",
+        description: "Request up to 3 free quotes from local trade profiles near you.",
+        images: [quotesOgImage],
     },
 };
 
@@ -70,7 +90,7 @@ export default async function QuotesPage({ searchParams }: QuotesPageProps) {
                                     Get up to <span className="text-[#FF6600]">3 free quotes</span>{headingSuffix}
                                 </h1>
                                 <p className="text-gray-600 max-w-2xl" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                                    Tell us about your job in {locationLabel} and TradeRefer will send your request to up to 3 verified local businesses.
+                                    Tell us about your job in {locationLabel} and TradeRefer will send your request to up to 3 local trade profiles.
                                 </p>
                             </div>
 
@@ -82,7 +102,7 @@ export default async function QuotesPage({ searchParams }: QuotesPageProps) {
                                 </div>
                                 <div className="bg-white rounded-3xl border border-zinc-200 p-5 shadow-sm">
                                     <ShieldCheck className="w-6 h-6 text-green-500 mb-3" />
-                                    <p className="font-black text-zinc-900 mb-1" style={{ fontSize: "18px" }}>Verified businesses</p>
+                                    <p className="font-black text-zinc-900 mb-1" style={{ fontSize: "18px" }}>Trade profiles</p>
                                     <p className="text-zinc-500" style={{ fontSize: "16px", lineHeight: 1.6 }}>ABN-checked businesses already listed on TradeRefer.</p>
                                 </div>
                                 <div className="bg-white rounded-3xl border border-zinc-200 p-5 shadow-sm">

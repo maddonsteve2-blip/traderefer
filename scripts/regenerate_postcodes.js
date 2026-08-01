@@ -1,17 +1,35 @@
 /**
  * Regenerate apps/web/lib/postcodes.ts from DB data.
- * 
+ *
  * Sources (in priority order):
- * 1. locations_reference table
- * 2. Valid postcode extracted from businesses.address field
- * 
- * Usage: node scripts/regenerate_postcodes.js
+ * 1. apps/web/lib/postcode-anchors.json — curated, audit-verified truth (always wins)
+ * 2. locations_reference table
+ * 3. Valid postcode extracted from businesses.address field
+ *
+ * Safety rails (added 2026-06-12 after a regeneration silently flipped 167 suburbs,
+ * see docs/seo-research/audit-2026-06-12/city-postcode-integrity.md):
+ * - every entry that differs from the committed map is printed (old → new);
+ * - if more than MAX_CHANGE_RATIO of existing entries would change or disappear,
+ *   the script aborts WITHOUT writing (override with --force after reviewing the diff);
+ * - anchor values can never be overridden, not even with --force.
+ *
+ * Usage: node scripts/regenerate_postcodes.js [--force]
  */
 
 const pg = require('pg');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', 'apps', 'web', '.env.local') });
+
+const OUT_PATH = path.join(__dirname, '..', 'apps', 'web', 'lib', 'postcodes.ts');
+const ANCHORS_PATH = path.join(__dirname, '..', 'apps', 'web', 'lib', 'postcode-anchors.json');
+const MAX_CHANGE_RATIO = 0.05;
+
+// state → { slug → postcode }, skipping the "//" comment key
+const ANCHORS = {};
+for (const [state, suburbs] of Object.entries(require(ANCHORS_PATH))) {
+  if (typeof suburbs === 'object') ANCHORS[state] = suburbs;
+}
 
 async function main() {
   const client = new pg.Client({
@@ -68,9 +86,21 @@ async function main() {
   let fromRef = 0;
   let missing = 0;
 
+  let fromAnchor = 0;
+
   for (const row of businesses.rows) {
     const { suburb_slug, state } = row;
     if (!postcodeMap[state]) postcodeMap[state] = {};
+
+    // Curated anchors are authoritative — the reference table and address
+    // fallback have both produced wrong postcodes for these suburbs before.
+    const anchorPc = ANCHORS[state] && ANCHORS[state][suburb_slug];
+    if (anchorPc) {
+      postcodeMap[state][suburb_slug] = anchorPc;
+      fromAnchor++;
+      total++;
+      continue;
+    }
 
     const addrKey = `${suburb_slug}|${state}`;
     let pc = refLookup[`${suburb_slug}|${state}`];
@@ -94,9 +124,83 @@ async function main() {
     missing++;
   }
 
+  // Anchored suburbs stay in the map even with no active businesses, so the
+  // anchor unit test (apps/web/lib/__tests__/postcodes.test.ts) stays green.
+  for (const [state, suburbs] of Object.entries(ANCHORS)) {
+    if (!postcodeMap[state]) postcodeMap[state] = {};
+    for (const [slug, pc] of Object.entries(suburbs)) {
+      if (!postcodeMap[state][slug]) {
+        postcodeMap[state][slug] = pc;
+        fromAnchor++;
+        total++;
+      }
+    }
+  }
+
   console.log(`\nResults: ${total} postcodes found, ${missing} missing`);
+  console.log(`  From anchors: ${fromAnchor}`);
   console.log(`  From address: ${fromAddress}`);
   console.log(`  From reference: ${fromRef}`);
+
+  // ---- Diff-guard against the committed map ------------------------------
+  const existing = readExistingMap(OUT_PATH);
+  if (existing) {
+    const existingKeys = Object.keys(existing);
+    const changed = [];
+    const removed = [];
+    let added = 0;
+    for (const key of existingKeys) {
+      const [state, slug] = key.split('/');
+      const next = postcodeMap[state] && postcodeMap[state][slug];
+      if (next === undefined) removed.push(key);
+      else if (next !== existing[key]) changed.push(`${key}: ${existing[key]} -> ${next}`);
+    }
+    for (const [state, suburbs] of Object.entries(postcodeMap)) {
+      for (const slug of Object.keys(suburbs)) {
+        if (existing[`${state}/${slug}`] === undefined) added++;
+      }
+    }
+
+    if (changed.length) {
+      console.log(`\nCHANGED entries (${changed.length}):`);
+      for (const line of changed) console.log(`  ${line}`);
+    }
+    if (removed.length) {
+      console.log(`\nREMOVED entries (${removed.length}):`);
+      for (const key of removed) console.log(`  ${key}: ${existing[key]}`);
+    }
+    console.log(`\nDiff vs committed map: ${changed.length} changed, ${removed.length} removed, ${added} added (of ${existingKeys.length} existing)`);
+
+    const ratio = (changed.length + removed.length) / existingKeys.length;
+    if (ratio > MAX_CHANGE_RATIO && !process.argv.includes('--force')) {
+      console.error(
+        `\nABORTED: ${(ratio * 100).toFixed(1)}% of existing entries would change ` +
+        `(limit ${MAX_CHANGE_RATIO * 100}%). The last silent mass-change shipped 30 wrong ` +
+        `canonical postcodes (audit 2026-06-12). Review the diff above; rerun with --force ` +
+        `only if every change is intentional. Nothing was written.`
+      );
+      await client.end();
+      process.exit(1);
+    }
+  } else {
+    console.warn(`\nWARNING: could not parse existing map at ${OUT_PATH} — diff-guard skipped.`);
+  }
+
+  // ---- Anchor integrity (cannot be bypassed) ------------------------------
+  const anchorViolations = [];
+  for (const [state, suburbs] of Object.entries(ANCHORS)) {
+    for (const [slug, pc] of Object.entries(suburbs)) {
+      const got = postcodeMap[state] && postcodeMap[state][slug];
+      if (got !== pc) anchorViolations.push(`${state}/${slug}: expected ${pc}, generated ${got}`);
+    }
+  }
+  if (anchorViolations.length) {
+    console.error('\nABORTED: generated map violates curated anchors:');
+    for (const v of anchorViolations) console.error(`  ${v}`);
+    console.error('Fix the generator (or, with postal-dataset evidence, the anchors file). Nothing was written.');
+    await client.end();
+    process.exit(1);
+  }
 
   // Sort states and suburbs
   const states = Object.keys(postcodeMap).sort();
@@ -114,9 +218,10 @@ async function main() {
 
   // Write the TS file, preserving the STATE_SLUG_TO_CODE and functions at the bottom
   const ts = `// Auto-generated suburb → postcode lookup
-// Generated from locations_reference + validated businesses.address fallback
+// Sources: lib/postcode-anchors.json (curated, wins) > locations_reference > businesses.address fallback
 // ${totalSuburbs} suburbs across ${states.length} states
 // Last updated: ${new Date().toISOString().split('T')[0]}
+// Anchors are asserted by lib/__tests__/postcodes.test.ts — update the anchors file, not this one.
 // Regenerate: node scripts/regenerate_postcodes.js
 
 export const SUBURB_POSTCODES: Record<string, Record<string, string>> = {
@@ -211,11 +316,34 @@ export function getDisplayPostcode(suburbSlug: string, stateCodeOrSlug: string):
 }
 `;
 
-  const outPath = path.join(__dirname, '..', 'apps', 'web', 'lib', 'postcodes.ts');
-  fs.writeFileSync(outPath, ts, 'utf8');
-  console.log(`\nWritten ${totalSuburbs} suburbs to ${outPath}`);
+  fs.writeFileSync(OUT_PATH, ts, 'utf8');
+  console.log(`\nWritten ${totalSuburbs} suburbs to ${OUT_PATH}`);
 
   await client.end();
+}
+
+/**
+ * Parse the committed SUBURB_POSTCODES map out of postcodes.ts.
+ * Returns a flat { "STATE/slug": "postcode" } object, or null if unreadable.
+ * The format is stable because this script is the only writer.
+ */
+function readExistingMap(tsPath) {
+  if (!fs.existsSync(tsPath)) return null;
+  const src = fs.readFileSync(tsPath, 'utf8');
+  const start = src.indexOf('export const SUBURB_POSTCODES');
+  if (start === -1) return null;
+  const end = src.indexOf('};', start);
+  if (end === -1) return null;
+
+  const map = {};
+  let state = null;
+  for (const line of src.slice(start, end).split('\n')) {
+    const stateMatch = line.match(/^\s{4}"([A-Z]+)": \{/);
+    if (stateMatch) { state = stateMatch[1]; continue; }
+    const entryMatch = line.match(/^\s{8}"([^"]+)": "(\d{4})",/);
+    if (entryMatch && state) map[`${state}/${entryMatch[1]}`] = entryMatch[2];
+  }
+  return Object.keys(map).length ? map : null;
 }
 
 function extractPostcode(address, stateCode) {

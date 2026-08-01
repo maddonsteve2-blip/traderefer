@@ -1,21 +1,48 @@
 import { sql } from "@/lib/db";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Star, ShieldCheck, ChevronRight, ChevronLeft, DollarSign, Gift, Zap, Flame, Clock, ExternalLink, Phone, Filter } from "lucide-react";
+import { Search, MapPin, Star, ShieldCheck, ChevronRight, ChevronLeft, DollarSign, Gift, Zap, Flame, Clock, Phone, Filter } from "lucide-react";
 import Link from "next/link";
 import { BusinessLogo } from "@/components/BusinessLogo";
-import { proxyLogoUrl } from "@/lib/logo";
 import { BusinessDirectorySidebar } from "@/components/BusinessDirectorySidebar";
 import { Suspense } from "react";
-import { BackToDashboard } from "@/components/BackToDashboard";
 import { generateFallbackDescription } from "@/lib/business-utils";
-import { getBusinessHoursStatus, toOpeningHoursSchema } from "@/lib/business-hours";
+import { getBusinessHoursStatus, toOpeningHoursSchema, type OpeningHours } from "@/lib/business-hours";
 import { Metadata } from "next";
 import { TRADE_COST_GUIDE, TRADE_NOUNS } from "@/lib/constants";
-import { EnrichTrigger } from "@/components/EnrichTrigger";
+import { buildOgImageUrl } from "@/lib/og-image";
 
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 15;
+
+type DirectoryBusiness = {
+    id: string;
+    business_name: string;
+    slug: string;
+    trade_category: string;
+    suburb?: string;
+    city?: string;
+    state?: string;
+    referral_fee_cents?: number;
+    logo_url?: string | null;
+    logo_bg_color?: string | null;
+    photo_urls?: string[];
+    description?: string;
+    avg_rating?: string | number;
+    total_reviews?: string | number;
+    opening_hours?: OpeningHours | string | null;
+    business_phone?: string;
+    website?: string;
+    address?: string;
+    lat?: string | number;
+    lng?: string | number;
+    google_maps_url?: string;
+    deal_count?: string | number;
+    campaign_count?: string | number;
+    avg_response_minutes?: number;
+    is_verified?: boolean;
+    is_claimed?: boolean;
+};
 
 function mapCategory(sCat: string) {
     if (sCat === "Plumbing") return "Plumb";
@@ -77,7 +104,17 @@ async function getBusinesses(
 
         const catFilter = sCat ? sql`AND trade_category ILIKE ${'%' + mappedCat + '%'}` : sql``;
         const stateFilter = sState ? sql`AND state ILIKE ${sState}` : sql``;
-        const searchFilter = sQ ? sql`AND (business_name ILIKE ${'%' + sQ + '%'} OR trade_category ILIKE ${'%' + sQ + '%'} OR description ILIKE ${'%' + sQ + '%'})` : sql``;
+        const searchFilter = sQ ? sql`
+            AND (
+                business_name ILIKE ${'%' + sQ + '%'}
+                OR trade_category ILIKE ${'%' + sQ + '%'}
+                OR description ILIKE ${'%' + sQ + '%'}
+                OR suburb ILIKE ${'%' + sQ + '%'}
+                OR city ILIKE ${'%' + sQ + '%'}
+                OR state ILIKE ${'%' + sQ + '%'}
+                OR address ILIKE ${'%' + sQ + '%'}
+            )
+        ` : sql``;
 
         // Trading hours filters
         const open24hFilter = is24h ? sql`
@@ -268,7 +305,7 @@ export async function generateMetadata({
     searchParams: Promise<{ category?: string; suburb?: string; q?: string; state?: string; city?: string; page?: string }>;
 }): Promise<Metadata> {
     const params = await searchParams;
-    const { category, suburb, state, city, page } = params;
+    const { category, suburb, state, city } = params;
 
     const tradeNoun = category ? (TRADE_NOUNS[category] || category) : null;
     const parts: string[] = [];
@@ -278,25 +315,43 @@ export async function generateMetadata({
     if (state) parts.push(STATE_LABELS[state] || state);
 
     const cost = category ? TRADE_COST_GUIDE[category] : null;
-    const priceStr = cost ? ` | $${cost.low}–$${cost.high}${cost.unit}` : "";
+    const priceStr = cost ? ` Typical public guide: $${cost.low}-${cost.high}${cost.unit}.` : "";
 
     const title = parts.length > 0
-        ? `Best ${parts.join(', ')}${priceStr} | TradeRefer`
-        : "Find Verified Trades Near You | Business Directory | TradeRefer";
+        ? `Best ${parts.join(', ')} | TradeRefer`
+        : "Find Local Tradies | TradeRefer";
 
     const description = parts.length > 0
-        ? `Compare top rated ${(tradeNoun || 'tradespeople').toLowerCase()}${suburb ? ` in ${suburb}` : city ? ` in ${city}` : ''}${state ? `, ${STATE_LABELS[state] || state}` : ''}. ABN-verified, Google-reviewed local businesses. Get free quotes today on TradeRefer.`
-        : "Browse 14,000+ verified Australian tradespeople. Compare ratings, reviews, and prices. Get free quotes from local businesses on TradeRefer.";
-
-    // Add noindex to paginated pages to prevent duplicate content
-    const isPaginated = page && parseInt(page) > 1;
+        ? `Compare top rated ${(tradeNoun || 'tradespeople').toLowerCase()}${suburb ? ` in ${suburb}` : city ? ` in ${city}` : ''}${state ? `, ${STATE_LABELS[state] || state}` : ''}. ABN-checked local businesses.${priceStr} Get free quotes on TradeRefer.`
+        : "Browse ABN-checked Australian tradespeople. Compare ratings, reviews, services and prices, then request free quotes from local businesses.";
+    const ogTitle = parts.length > 0 ? `Find ${parts.join(' ')}` : "Find local trade profiles";
+    const ogDescription = parts.length > 0
+        ? `Compare local ${(tradeNoun || 'tradespeople').toLowerCase()} and request free quotes.`
+        : "Browse TradeRefer's Australian trade directory and request free quotes.";
+    const ogImage = buildOgImageUrl({
+        template: "home",
+        title: ogTitle,
+        subtitle: ogDescription,
+        eyebrow: "TradeRefer directory",
+        badge: "Australia-wide",
+        stat1: "ABN-checked",
+        stat2: "Reviews",
+        stat3: "Free quotes",
+    });
 
     return {
         title,
         description,
         alternates: { canonical: "https://traderefer.au/businesses" },
-        openGraph: { title, description },
-        twitter: { card: 'summary_large_image', title, description },
+        openGraph: {
+            title,
+            description,
+            url: "https://traderefer.au/businesses",
+            siteName: "TradeRefer",
+            type: "website",
+            images: [{ url: ogImage, width: 1200, height: 630, alt: ogTitle }],
+        },
+        twitter: { card: 'summary_large_image', title, description, images: [ogImage] },
         robots: { index: true, follow: true },
     };
 }
@@ -325,16 +380,9 @@ export default async function BusinessDirectory({
         getBusinesses(category, suburb, q, state, city, page, openNow, is24h),
         getCounts(),
     ]);
+    const directoryBusinesses = businesses as DirectoryBusiness[];
 
     const hasFilters = category || suburb || q || state || city || openNow || is24h;
-
-    // Collect businesses needing enrichment (no photos, not yet enriched) — max 3 per page
-    const needsEnrichment = businesses.filter((b: any) => {
-        const photoCount = Array.isArray(b.photo_urls) ? b.photo_urls.length : 0;
-        return photoCount < 1 && !b.enriched_at;
-    }).map((b: any) => ({
-        id: b.id, business_name: b.business_name, suburb: b.suburb, state: b.state, slug: b.slug,
-    }));
 
     // Dynamic H1
     const h1Parts: string[] = [];
@@ -343,10 +391,10 @@ export default async function BusinessDirectory({
     if (suburb) h1Parts.push(`in ${suburb}`);
     else if (city) h1Parts.push(`in ${city}`);
     if (state) h1Parts.push(STATE_LABELS[state] || state);
-    const h1 = h1Parts.length > 1 ? `Best ${h1Parts.join(' ')}` : "Find Verified Trades Near You";
+    const h1 = h1Parts.length > 1 ? `Best ${h1Parts.join(' ')}` : "Find Local Trades Near You";
     const subHeading = suburb
-        ? `Compare ${total.toLocaleString()} ${category || 'local trades'} in ${suburb}${city ? `, ${city}` : ''}. ABN-verified with real Google reviews.`
-        : `Browse ${total.toLocaleString()} verified Australian tradespeople. Compare ratings, reviews, and prices.`;
+        ? `Compare ${total.toLocaleString()} ${category || 'local trades'} in ${suburb}${city ? `, ${city}` : ''}. ABN-checked profiles with public review signals.`
+        : `Browse ${total.toLocaleString()} Australian trade profiles. Compare ratings, reviews, services and prices.`;
 
     // Breadcrumbs
     const breadcrumbs: { name: string; href: string }[] = [
@@ -377,8 +425,13 @@ export default async function BusinessDirectory({
         "@type": "ItemList",
         "name": h1,
         "description": subHeading,
-        "numberOfItems": businesses.length,
-        "itemListElement": businesses.map((biz: any, i: number) => ({
+        "numberOfItems": directoryBusinesses.length,
+        "itemListElement": directoryBusinesses.map((biz, i) => {
+            const rating = Number(biz.avg_rating ?? 0);
+            const reviewCount = Number(biz.total_reviews ?? 0);
+            const hoursSchema = toOpeningHoursSchema(biz.opening_hours);
+
+            return {
             "@type": "ListItem",
             "position": i + 1,
             "url": `https://traderefer.au/b/${biz.slug}`,
@@ -399,28 +452,26 @@ export default async function BusinessDirectory({
                 ...(biz.lat && biz.lng ? {
                     "geo": {
                         "@type": "GeoCoordinates",
-                        "latitude": parseFloat(biz.lat),
-                        "longitude": parseFloat(biz.lng),
+                        "latitude": Number(biz.lat),
+                        "longitude": Number(biz.lng),
                     }
                 } : {}),
-                ...(parseFloat(biz.avg_rating) > 0 && parseInt(biz.total_reviews) > 0 ? {
+                ...(rating > 0 && reviewCount > 0 ? {
                     "aggregateRating": {
                         "@type": "AggregateRating",
-                        "ratingValue": parseFloat(biz.avg_rating).toFixed(1),
-                        "reviewCount": parseInt(biz.total_reviews),
+                        "ratingValue": rating.toFixed(1),
+                        "reviewCount": reviewCount,
                         "bestRating": "5",
                         "worstRating": "1",
                     }
                 } : {}),
-                ...(() => {
-                    const hoursSchema = toOpeningHoursSchema(biz.opening_hours);
-                    return hoursSchema.length > 0 ? { "openingHoursSpecification": hoursSchema } : {};
-                })(),
+                ...(hoursSchema.length > 0 ? { "openingHoursSpecification": hoursSchema } : {}),
                 ...(biz.logo_url ? { "image": biz.logo_url } : {}),
                 ...(biz.google_maps_url ? { "hasMap": biz.google_maps_url } : {}),
                 "priceRange": cost ? `$${cost.low}–$${cost.high}${cost.unit}` : "$$",
             },
-        })),
+            };
+        }),
     };
 
     const serviceJsonLd = category && cost ? {
@@ -441,9 +492,9 @@ export default async function BusinessDirectory({
     } : null;
 
     const faqItems = [
-        { q: `How much does a ${category || 'tradesperson'} cost${suburb ? ` in ${suburb}` : ''}?`, a: cost ? `${category} typically costs $${cost.low}–$${cost.high}${cost.unit} in Australia. Prices vary based on job complexity, materials, and location.` : `Costs vary depending on the trade, job complexity, and your location. Get free quotes from verified businesses on TradeRefer to compare prices.` },
-        { q: `How do I find a reliable ${category || 'tradesperson'}${suburb ? ` in ${suburb}` : ''}?`, a: `TradeRefer lists only ABN-verified businesses with real Google reviews. Compare ratings, read reviews, and get free quotes to find the right tradesperson for your job.` },
-        { q: `Are the businesses on TradeRefer verified?`, a: `Yes. Every business on TradeRefer is ABN-verified and listed with real Google reviews and ratings. We verify business details to ensure quality and trust.` },
+        { q: `How much does a ${category || 'tradesperson'} cost${suburb ? ` in ${suburb}` : ''}?`, a: cost ? `${category} typically costs $${cost.low}-${cost.high}${cost.unit} in Australia. Prices vary based on job complexity, materials, and location.` : `Costs vary depending on the trade, job complexity, and your location. Request free quotes from local businesses on TradeRefer to compare prices.` },
+        { q: `How do I find a reliable ${category || 'tradesperson'}${suburb ? ` in ${suburb}` : ''}?`, a: `Use TradeRefer to compare ABN-checked profiles, public review signals, service details and locations before requesting quotes.` },
+        { q: `Are the businesses on TradeRefer checked?`, a: `TradeRefer uses public business information such as ABN, location, category and review data where available so customers can make a more informed shortlist.` },
     ];
     const faqJsonLd = {
         "@context": "https://schema.org",
@@ -461,24 +512,29 @@ export default async function BusinessDirectory({
         "name": "TradeRefer",
         "url": "https://traderefer.au",
         "logo": "https://traderefer.au/logo.png",
-        "description": "Australia's verified trade referral marketplace. Find ABN-verified local tradespeople with real Google reviews.",
+        "description": "Australia's trade referral marketplace. Find ABN-checked local trade profiles with public review and service information.",
         "sameAs": ["https://www.facebook.com/traderefer", "https://www.instagram.com/traderefer"],
     };
+
+    const canonicalQuery = new URLSearchParams(
+        Object.entries(params).filter((entry): entry is [string, string] =>
+            typeof entry[1] === "string" && entry[1].length > 0
+        )
+    ).toString();
 
     const webPageJsonLd = {
         "@context": "https://schema.org",
         "@type": "WebPage",
         "name": h1,
         "description": subHeading,
-        "url": `https://traderefer.au/businesses${hasFilters ? `?${new URLSearchParams(params as any).toString()}` : ''}`,
+        "url": `https://traderefer.au/businesses${canonicalQuery ? `?${canonicalQuery}` : ''}`,
         "isPartOf": { "@type": "WebSite", "name": "TradeRefer", "url": "https://traderefer.au" },
         "about": { "@type": "Thing", "name": category || "Trade Services" },
     };
 
     return (
         <>
-        {needsEnrichment.length > 0 && <EnrichTrigger businesses={needsEnrichment} />}
-        <main className="flex-1 pt-20 md:pt-28 pb-12 bg-zinc-50 min-h-screen">
+        <main className="flex-1 pt-20 md:pt-28 pb-28 lg:pb-12 bg-zinc-50 min-h-screen">
             {/* ── JSON-LD SCHEMA (7 types) ── */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
@@ -488,15 +544,13 @@ export default async function BusinessDirectory({
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }} />
 
             <div className="max-w-screen-2xl mx-auto px-4 md:px-8">
-                <Suspense fallback={null}><BackToDashboard /></Suspense>
-
                 {/* ── BREADCRUMBS ── */}
                 <nav className="flex items-center flex-wrap gap-1.5 text-base text-zinc-500 mb-6" aria-label="Breadcrumb">
                     {breadcrumbs.map((bc, i) => (
                         <span key={i} className="flex items-center gap-1.5">
                             {i > 0 && <ChevronRight className="w-3 h-3 text-zinc-300" />}
                             {bc.href !== "#" ? (
-                                <Link href={bc.href} className="font-bold hover:text-[#FF6600] transition-colors">{bc.name}</Link>
+                                <Link href={bc.href} prefetch={false} className="font-bold hover:text-[#FF6600] transition-colors">{bc.name}</Link>
                             ) : (
                                 <span className="font-bold text-zinc-900">{bc.name}</span>
                             )}
@@ -511,9 +565,37 @@ export default async function BusinessDirectory({
                         <p className="text-zinc-600 text-lg leading-relaxed max-w-3xl">{subHeading}</p>
                     </div>
                     <Button asChild className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black border-none whitespace-nowrap h-11 px-6">
-                        <Link href="/register?type=business">List Your Business Free</Link>
+                        <Link href="/register?type=business" prefetch={false}>List Your Business Free</Link>
                     </Button>
                 </div>
+
+                <form action="/businesses" className="mb-6 rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
+                    {category && <input type="hidden" name="category" value={category} />}
+                    {suburb && <input type="hidden" name="suburb" value={suburb} />}
+                    {state && <input type="hidden" name="state" value={state} />}
+                    {city && <input type="hidden" name="city" value={city} />}
+                    {openNow && <input type="hidden" name="openNow" value="true" />}
+                    {is24h && <input type="hidden" name="is24h" value="true" />}
+                    <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+                        <label className="flex min-h-[56px] items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-4 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-500/20">
+                            <Search className="h-5 w-5 shrink-0 text-[#FF6600]" />
+                            <span className="sr-only">Search business name, trade, suburb or city</span>
+                            <input
+                                name="q"
+                                type="search"
+                                defaultValue={q || ""}
+                                placeholder="Search business name, trade, suburb or city"
+                                className="w-full bg-transparent text-base font-semibold text-zinc-900 outline-none placeholder:text-zinc-400"
+                            />
+                        </label>
+                        <button
+                            type="submit"
+                            className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-xl bg-[#FF6600] px-6 py-3 text-base font-black text-white transition-colors hover:bg-[#E65C00]"
+                        >
+                            Search <ChevronRight className="h-5 w-5" />
+                        </button>
+                    </div>
+                </form>
 
                 {/* ── RESULT COUNT ── */}
                 <p className="font-bold text-orange-600 mb-6 text-base">
@@ -537,7 +619,7 @@ export default async function BusinessDirectory({
                 {/* ── SIDEBAR + LISTINGS LAYOUT ── */}
                 <div className="flex gap-8">
                     {/* Left Sidebar (desktop only) */}
-                    <aside className="hidden lg:block w-[280px] shrink-0 sticky top-28 self-start max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent bg-white border border-zinc-200 rounded-2xl p-5">
+                    <aside className="hidden lg:block w-[280px] shrink-0 self-start bg-white border border-zinc-200 rounded-2xl p-5">
                         <Suspense fallback={null}><BusinessDirectorySidebar counts={counts} total={total} /></Suspense>
                     </aside>
                     {/* Main Content — Single Column Listings */}
@@ -556,22 +638,24 @@ export default async function BusinessDirectory({
                         )}
 
                         {/* ── BUSINESS CARDS (single column, horizontal layout) ── */}
-                        {businesses.map((biz: any) => {
+                        {directoryBusinesses.map((biz) => {
                             const hoursStatus = getBusinessHoursStatus(biz.opening_hours);
                             const photos = Array.isArray(biz.photo_urls) ? biz.photo_urls : [];
+                            const rating = Number(biz.avg_rating ?? 0);
+                            const reviewCount = Number(biz.total_reviews ?? 0);
                             return (
                             <div key={biz.id} className="bg-white rounded-2xl border border-zinc-200 p-5 sm:p-7 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
                                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                                     {/* Logo */}
-                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="sm" bgColor={biz.logo_bg_color} className="sm:hidden" />
-                                    <BusinessLogo logoUrl={biz.logo_url} name={biz.business_name} photoUrls={biz.photo_urls} size="md" bgColor={biz.logo_bg_color} className="hidden sm:flex" />
+                                    <BusinessLogo logoUrl={biz.logo_url ?? null} name={biz.business_name} photoUrls={photos} size="sm" bgColor={biz.logo_bg_color ?? null} className="sm:hidden" />
+                                    <BusinessLogo logoUrl={biz.logo_url ?? null} name={biz.business_name} photoUrls={photos} size="md" bgColor={biz.logo_bg_color ?? null} className="hidden sm:flex" />
 
                                     {/* Content */}
                                     <div className="flex-1 min-w-0">
                                         {/* Header Row */}
                                         <div className="flex items-start justify-between mb-1">
                                             <div className="flex-1 min-w-0">
-                                                <Link href={`/b/${biz.slug}`} className="hover:underline">
+                                                <Link href={`/b/${biz.slug}`} prefetch={false} className="hover:underline">
                                                     <h3 className="text-2xl font-black text-zinc-900 group-hover:text-[#FF6600] transition-colors line-clamp-2">
                                                         {biz.business_name}
                                                     </h3>
@@ -586,7 +670,7 @@ export default async function BusinessDirectory({
                                                 </div>
                                             </div>
                                             {biz.is_verified && (
-                                                <div className="bg-orange-100 text-orange-600 p-1.5 rounded-full shrink-0 ml-2" title="ABN Verified">
+                                                <div className="bg-orange-100 text-orange-600 p-1.5 rounded-full shrink-0 ml-2" title="ABN checked">
                                                     <ShieldCheck className="w-4 h-4" />
                                                 </div>
                                             )}
@@ -615,16 +699,16 @@ export default async function BusinessDirectory({
                                         </div>
 
                                         {/* Google Rating */}
-                                        {parseFloat(biz.avg_rating) > 0 && (
+                                        {rating > 0 && (
                                             <div className="flex items-center gap-2 mb-2">
                                                 <div className="flex items-center gap-0.5">
                                                     {[1,2,3,4,5].map(s => (
-                                                        <Star key={s} className={`w-5 h-5 ${s <= Math.round(parseFloat(biz.avg_rating)) ? 'fill-orange-400 text-orange-400' : 'text-zinc-200'}`} />
+                                                        <Star key={s} className={`w-5 h-5 ${s <= Math.round(rating) ? 'fill-orange-400 text-orange-400' : 'text-zinc-200'}`} />
                                                     ))}
                                                 </div>
-                                                <span className="font-bold text-zinc-900 text-base">{parseFloat(biz.avg_rating).toFixed(1)}</span>
-                                                {parseInt(biz.total_reviews) > 0 && (
-                                                    <span className="text-zinc-500 text-base">({biz.total_reviews} reviews)</span>
+                                                <span className="font-bold text-zinc-900 text-base">{rating.toFixed(1)}</span>
+                                                {reviewCount > 0 && (
+                                                    <span className="text-zinc-500 text-base">({reviewCount} reviews)</span>
                                                 )}
                                             </div>
                                         )}
@@ -643,7 +727,7 @@ export default async function BusinessDirectory({
                                                     </div>
                                                 ))}
                                                 {photos.length > 3 && (
-                                                    <Link href={`/b/${biz.slug}`} className="aspect-square rounded-lg bg-zinc-100 border border-zinc-200 flex items-center justify-center hover:bg-zinc-200 transition-colors">
+                                                    <Link href={`/b/${biz.slug}`} prefetch={false} className="aspect-square rounded-lg bg-zinc-100 border border-zinc-200 flex items-center justify-center hover:bg-zinc-200 transition-colors">
                                                         <span className="text-xs font-bold text-zinc-500">+{photos.length - 3}</span>
                                                     </Link>
                                                 )}
@@ -680,16 +764,16 @@ export default async function BusinessDirectory({
                                         <div className="flex flex-wrap items-center gap-2.5 pt-3 border-t border-zinc-100">
                                             {biz.is_claimed === false ? (
                                                 <>
-                                                    <Link href={`/claim/${biz.slug}`} className="px-6 py-3 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5 shadow-sm">
+                                                    <Link href={`/claim/${biz.slug}`} prefetch={false} className="px-6 py-3 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5 shadow-sm">
                                                         <ShieldCheck className="w-4 h-4" /> Claim This Business
                                                     </Link>
-                                                    <Link href={`/b/${biz.slug}#enquiry-form`} className="px-5 py-3 border-2 border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-black rounded-xl text-base transition-colors">
+                                                    <Link href={`/b/${biz.slug}#enquiry-form`} prefetch={false} className="px-5 py-3 border-2 border-zinc-200 hover:bg-zinc-50 text-zinc-700 font-black rounded-xl text-base transition-colors">
                                                         Get Quote
                                                     </Link>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Link href={`/b/${biz.slug}#enquiry-form`} className="px-6 py-3 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl text-base transition-colors">
+                                                    <Link href={`/b/${biz.slug}#enquiry-form`} prefetch={false} className="px-6 py-3 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl text-base transition-colors">
                                                         Get a Free Quote
                                                     </Link>
                                                     {biz.business_phone && (
@@ -699,7 +783,7 @@ export default async function BusinessDirectory({
                                                     )}
                                                 </>
                                             )}
-                                            <Link href={`/b/${biz.slug}`} className="ml-auto px-5 py-3 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5">
+                                            <Link href={`/b/${biz.slug}`} prefetch={false} className="ml-auto px-5 py-3 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-base transition-colors inline-flex items-center gap-1.5">
                                                 View Business <ChevronRight className="w-4 h-4" />
                                             </Link>
                                         </div>
@@ -710,7 +794,7 @@ export default async function BusinessDirectory({
                         })}
 
                         {/* Empty State */}
-                        {businesses.length === 0 && (
+                        {directoryBusinesses.length === 0 && (
                             <div className="bg-white rounded-2xl border border-zinc-200 p-16 text-center">
                                 <div className="w-16 h-16 bg-zinc-50 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <Search className="w-8 h-8 text-zinc-200" />
@@ -718,7 +802,7 @@ export default async function BusinessDirectory({
                                 <h2 className="text-xl font-black text-zinc-900 mb-2">No businesses found</h2>
                                 <p className="text-zinc-500 mb-6 text-sm">Try adjusting your filters or check back soon.</p>
                                 <Button asChild className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl px-6 font-black">
-                                    <Link href="/businesses">Clear filters</Link>
+                                    <Link href="/businesses" prefetch={false}>Clear filters</Link>
                                 </Button>
                             </div>
                         )}
@@ -727,7 +811,7 @@ export default async function BusinessDirectory({
                         {totalPages > 1 && (
                             <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
                                 {page > 1 ? (
-                                    <Link href={buildPageUrl(params, page - 1)}
+                                    <Link href={buildPageUrl(params, page - 1)} prefetch={false}
                                         className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl font-bold text-zinc-700 hover:bg-zinc-50 transition-all text-sm">
                                         <ChevronLeft className="w-4 h-4" /> Prev
                                     </Link>
@@ -749,7 +833,7 @@ export default async function BusinessDirectory({
                                             p === "..." ? (
                                                 <span key={`e-${idx}`} className="px-2 text-zinc-400 font-bold text-sm">…</span>
                                             ) : (
-                                                <Link key={p} href={buildPageUrl(params, p as number)}
+                                                <Link key={p} href={buildPageUrl(params, p as number)} prefetch={false}
                                                     className={`w-10 h-10 flex items-center justify-center rounded-xl font-bold transition-all text-sm ${p === page
                                                             ? "bg-[#FF6600] text-white shadow-sm"
                                                             : "bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50"
@@ -762,7 +846,7 @@ export default async function BusinessDirectory({
                                 </div>
 
                                 {page < totalPages ? (
-                                    <Link href={buildPageUrl(params, page + 1)}
+                                    <Link href={buildPageUrl(params, page + 1)} prefetch={false}
                                         className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white border border-zinc-200 rounded-xl font-bold text-zinc-700 hover:bg-zinc-50 transition-all text-sm">
                                         Next <ChevronRight className="w-4 h-4" />
                                     </Link>
@@ -795,15 +879,15 @@ export default async function BusinessDirectory({
         </main>
 
         {/* ── STICKY GET QUOTES CTA BAR ── */}
-        {businesses.length > 0 && (
+        {directoryBusinesses.length > 0 && (
             <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-zinc-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] py-3 px-4 md:px-6 lg:hidden">
                 <div className="container mx-auto flex items-center justify-between gap-4">
                     <div>
-                        <p className="font-black text-zinc-900 text-sm">{total.toLocaleString()} verified {category ? category.toLowerCase() : 'trades'}</p>
+                        <p className="font-black text-zinc-900 text-sm">{total.toLocaleString()} {category ? category.toLowerCase() : 'trades'}</p>
                         <p className="text-zinc-500 text-xs">ABN-checked · Google reviewed</p>
                     </div>
                     <Button asChild size="sm" className="bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl font-black h-10 px-5 border-none">
-                        <Link href="/register?type=business">List Free</Link>
+                        <Link href="/register?type=business" prefetch={false}>List Free</Link>
                     </Button>
                 </div>
             </div>

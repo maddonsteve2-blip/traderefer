@@ -636,7 +636,7 @@ export function Navbar() {
 
                 <div className={`${isDashboard ? 'w-full px-4 lg:px-5' : 'container mx-auto px-4'} h-full flex items-center justify-between gap-4`}>
 
-                    <Link href="/" className="flex items-center gap-2 group shrink-0">
+                    <Link href="/" prefetch={false} className="flex items-center gap-2 group shrink-0">
 
                         <Logo size="sm" />
 
@@ -674,25 +674,25 @@ export function Navbar() {
 
                                     <>
 
-                                        <Link href="/businesses" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                        <Link href="/businesses" prefetch={false} className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
 
                                             Browse Businesses
 
                                         </Link>
 
-                                        <Link href="/categories" className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                        <Link href="/categories" prefetch={false} className="hidden md:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
 
                                             Trade Guides
 
                                         </Link>
 
-                                        <Link href="/support" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                        <Link href="/support" prefetch={false} className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
 
                                             Support
 
                                         </Link>
 
-                                        <Link href="/contact" className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
+                                        <Link href="/contact" prefetch={false} className="hidden lg:block text-sm font-medium text-zinc-600 hover:text-orange-600 transition-colors px-3 py-2">
 
                                             Contact
 
@@ -704,7 +704,7 @@ export function Navbar() {
 
                                 <Button asChild variant="ghost" className="text-sm font-bold text-zinc-600 hover:text-zinc-900 ml-2">
 
-                                    <Link href="/login">
+                                    <Link href="/login" prefetch={false}>
 
                                         Sign In
 
@@ -714,7 +714,7 @@ export function Navbar() {
 
                                 <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-6 font-bold shadow-lg shadow-orange-500/20">
 
-                                    <Link href="/signup">
+                                    <Link href="/signup" prefetch={false}>
 
                                         Sign Up
 
@@ -925,7 +925,7 @@ export function Navbar() {
 
                                     <>
 
-                                        <Link href="/businesses" className="hidden sm:block">
+                                        <Link href="/businesses" prefetch={false} className="hidden sm:block">
 
                                             <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
 
@@ -935,7 +935,7 @@ export function Navbar() {
 
                                         </Link>
 
-                                        <Link href="/categories" className="hidden sm:block">
+                                        <Link href="/categories" prefetch={false} className="hidden sm:block">
 
                                             <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
 
@@ -945,7 +945,7 @@ export function Navbar() {
 
                                         </Link>
 
-                                        <Link href="/support" className="hidden lg:block">
+                                        <Link href="/support" prefetch={false} className="hidden lg:block">
 
                                             <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
 
@@ -955,7 +955,7 @@ export function Navbar() {
 
                                         </Link>
 
-                                        <Link href="/contact" className="hidden lg:block">
+                                        <Link href="/contact" prefetch={false} className="hidden lg:block">
 
                                             <Button variant="ghost" className="text-sm font-bold px-3 text-zinc-600 hover:text-orange-600 transition-colors">
 
@@ -1008,7 +1008,7 @@ export function Navbar() {
                     <div className="absolute top-0 right-0 h-full w-[85vw] max-w-sm bg-white shadow-2xl flex flex-col">
                         {/* Drawer header */}
                         <div className="flex items-center justify-between px-5 border-b border-zinc-100 h-[72px] shrink-0">
-                            <Link href="/" onClick={() => setMobileMenuOpen(false)}><Logo size="sm" /></Link>
+                            <Link href="/" prefetch={false} onClick={() => setMobileMenuOpen(false)}><Logo size="sm" /></Link>
                             <button onClick={() => setMobileMenuOpen(false)} className="w-10 h-10 rounded-xl flex items-center justify-center text-zinc-500 hover:bg-zinc-100 transition-colors">
                                 <X className="w-6 h-6" />
                             </button>
@@ -1024,7 +1024,7 @@ export function Navbar() {
                                         { href: "/support", label: "Support" },
                                         { href: "/contact", label: "Contact" },
                                     ].map(({ href, label }) => (
-                                        <Link key={href} href={href} onClick={() => setMobileMenuOpen(false)}
+                                        <Link key={href} href={href} prefetch={false} onClick={() => setMobileMenuOpen(false)}
                                             className="flex items-center px-4 py-4 rounded-xl text-zinc-700 hover:bg-orange-50 hover:text-[#FF6600] font-bold transition-colors"
                                             style={{ fontSize: '18px' }}>
                                             {label}
@@ -1075,12 +1075,12 @@ export function Navbar() {
                         {/* Bottom CTA */}
                         <div className="p-4 border-t border-zinc-100 space-y-2 shrink-0">
                             <SignedOut>
-                                <Link href="/login" onClick={() => setMobileMenuOpen(false)}
+                                <Link href="/login" prefetch={false} onClick={() => setMobileMenuOpen(false)}
                                     className="w-full border-2 border-zinc-200 text-zinc-700 font-black rounded-xl flex items-center justify-center transition-colors hover:border-zinc-300"
                                     style={{ minHeight: '52px', fontSize: '17px' }}>
                                     Sign In
                                 </Link>
-                                <Link href="/signup" onClick={() => setMobileMenuOpen(false)}
+                                <Link href="/signup" prefetch={false} onClick={() => setMobileMenuOpen(false)}
                                     className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl flex items-center justify-center transition-colors"
                                     style={{ minHeight: '52px', fontSize: '17px' }}>
                                     Sign Up Free

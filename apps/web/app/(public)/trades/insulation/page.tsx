@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Insulation Services Australia | Insulation Installers | TradeRefer",
-    description: "Find trusted insulation installers across Australia. Compare ceiling, wall, and underfloor insulation costs by city, understand R-value requirements, and hire verified local insulation businesses through TradeRefer.",
+    description: "Find trusted insulation installers across Australia. Compare ceiling, wall, and underfloor insulation costs by city, understand R-value requirements, and hire local insulation businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/insulation" },
-    openGraph: { title: "Insulation Services Australia | TradeRefer", description: "Compare insulation costs, R-value requirements, and verified local insulation installers across Australia.", url: "https://traderefer.au/trades/insulation", type: "website" },
+    openGraph: { title: "Insulation Services Australia | TradeRefer", description: "Compare insulation costs, R-value requirements, and local insulation installers across Australia.", url: "https://traderefer.au/trades/insulation", type: "website" },
 };
 
 const TRADE_NAME = "Insulation";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Ensure downlights are IC-rated or clearance is maintained", body: "Recessed downlights generate heat that can cause a fire if covered with insulation. The installer must either use IC-rated (insulation contact) downlights or maintain a 75mm clearance around each light. This is a mandatory fire safety requirement — confirm compliance in writing before starting.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified insulation businesses", body: "TradeRefer helps homeowners find ABN-verified insulation installers who comply with NCC R-value requirements and fire safety standards around downlights — critical for both energy performance and building compliance." },
+    { title: "Checked insulation businesses", body: "TradeRefer helps homeowners find ABN-checked insulation installers who comply with NCC R-value requirements and fire safety standards around downlights — critical for both energy performance and building compliance." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical insulation costs per square metre across Australian cities so you can benchmark any quote and identify whether government rebates apply to your installation." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national insulation guide into city and suburb-level pages to find verified insulation businesses servicing the specific area where your property is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national insulation guide into city and suburb-level pages to find insulation businesses servicing the specific area where your property is located." },
 ];
 const customFaqs = [
     { q: "What R-value insulation do I need in Australia?", a: "Required R-values vary by climate zone under the National Construction Code. As a guide: Darwin (zone 1) needs R1.3+ ceiling insulation; Brisbane (zone 2) needs R2.7+; Sydney/Perth (zone 5) needs R3.5–R4.1+; Melbourne (zone 6) needs R4.1–R5.1+; Canberra (zone 7) needs R5.1–R6.3+. Higher R-values cost more but deliver greater energy savings." },
@@ -106,7 +106,7 @@ export default async function InsulationTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Insulation</span> Installers Across Australia</h1>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Insulation</span> Installers Across Australia</h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer insulation hub to compare ceiling, wall, and underfloor insulation costs across Australian cities, understand R-value requirements by climate zone, and check available government rebates before you book.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Finsulation`} className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
@@ -176,7 +176,7 @@ export default async function InsulationTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Insulation Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your home with up to 3 verified local insulation businesses.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Insulation Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your home with up to 3 local insulation businesses.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory={TRADE_NAME} initialSourcePage="/trades/insulation" />
                     </section>
 
@@ -200,7 +200,7 @@ export default async function InsulationTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need an Insulation Installer Near You?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local insulation businesses, compare ceiling and wall options, check rebate eligibility, and find the right installer to reduce your energy bills.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local insulation businesses, compare ceiling and wall options, check rebate eligibility, and find the right installer to reduce your energy bills.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Finsulation`} className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Insulation Installers</Link>

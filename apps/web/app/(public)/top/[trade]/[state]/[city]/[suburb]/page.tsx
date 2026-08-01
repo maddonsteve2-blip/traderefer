@@ -1,7 +1,11 @@
 import { sql } from "@/lib/db";
 import { Metadata } from "next";
+import { directoryRobots } from "@/lib/seo/index-policy";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+import { parseSuburbSlug, getCanonicalSuburbSlug } from "@/lib/postcodes";
+import { retiredTradeSlugTarget } from "@/lib/trade-redirects";
+import { getCanonicalCitySlug } from "@/lib/suburb-cities";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { Button } from "@/components/ui/button";
 import { TRADE_COST_GUIDE, TRADE_FAQ_BANK, STATE_LICENSING, HOW_TO_CHOOSE, TRADE_NOUNS } from "@/lib/constants";
@@ -9,6 +13,7 @@ import {
     Star, ShieldCheck, MapPin, ChevronRight, Users, Award,
     DollarSign, FileText, ArrowRight, Trophy
 } from "lucide-react";
+import { buildOgImageUrl } from "@/lib/og-image";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +43,8 @@ const STATE_NAMES: Record<string, string> = {
 async function getTopBusinesses(trade: string, state: string, suburb: string) {
     try {
         const tradeSlug = tradeToSlug(trade);
-        const suburbName = formatSlug(suburb);
+        // Strip postcode suffix (e.g. "bibra-lake-6163") — DB suburbs have no postcode
+        const suburbName = formatSlug(parseSuburbSlug(suburb).suburb);
         const stateUpper = state.toUpperCase();
         const results = await sql`
             SELECT b.*,
@@ -64,7 +70,7 @@ async function getNearbySuburbsWithTrade(trade: string, state: string, city: str
         const tradeSlug = tradeToSlug(trade);
         const stateUpper = state.toUpperCase();
         const cityName = formatSlug(city);
-        const suburbName = formatSlug(currentSuburb);
+        const suburbName = formatSlug(parseSuburbSlug(currentSuburb).suburb);
         const results = await sql`
             SELECT DISTINCT suburb, state, city, COUNT(*) as cnt
             FROM businesses
@@ -93,41 +99,71 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { trade, state, city, suburb } = await params;
     const tradeName = getTradeDisplayName(trade);
     const cityName = formatSlug(city);
-    const suburbName = formatSlug(suburb);
+    const suburbName = formatSlug(parseSuburbSlug(suburb).suburb);
     const stateName = STATE_NAMES[state] || state.toUpperCase();
     const businesses = await getTopBusinesses(trade, state, suburb);
     const totalReviews = businesses.reduce((acc: number, biz: any) => acc + (parseInt(biz.total_reviews) || 0), 0);
     const topBiz = businesses[0] as any;
     const topBizStr = topBiz ? ` #1: ${topBiz.business_name} (${parseFloat(topBiz.avg_rating).toFixed(1)}★).` : "";
-    const canonicalUrl = `https://traderefer.au/top/${trade}/${state}/${city}/${suburb}`;
+    // Canonical from normalized slugs — raw params can arrive in any casing.
+    const canonicalUrl = `https://traderefer.au/top/${retiredTradeSlugTarget(trade) ?? tradeToSlug(trade)}/${state.toLowerCase()}/${getCanonicalCitySlug(state, suburb) ?? tradeToSlug(city)}/${getCanonicalSuburbSlug(suburb, state)}`;
+    const ogImageUrl = buildOgImageUrl({
+        template: "top",
+        title: `Top ${tradeName} in ${suburbName}`,
+        subtitle: `Ranked by public Google reviews and local business signals in ${suburbName}, ${cityName} ${stateName}.`,
+        eyebrow: "Ranked suburb list",
+        badge: "Top local picks",
+        stat1: businesses.length > 0 ? `${businesses.length} ranked` : "Ranked list",
+        stat2: totalReviews > 0 ? `${totalReviews} reviews` : "Review signals",
+        stat3: topBiz ? `#1 ${topBiz.business_name}` : "Free quotes",
+    });
 
     return {
         title: `Top ${tradeName} in ${suburbName} | TradeRefer`,
-        description: `The ${businesses.length} highest-rated ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateName} ranked by ${totalReviews.toLocaleString()} verified reviews.${topBizStr} Get free quotes today.`,
-        robots: { index: businesses.length >= 3, follow: true },
+        description: `The ${businesses.length} highest-rated ${tradeName.toLowerCase()} in ${suburbName}, ${cityName} ${stateName} ranked by ${totalReviews.toLocaleString()} public reviews.${topBizStr} Get free quotes today.`,
+        robots: directoryRobots({ page: "topSuburb", businessCount: businesses.length, totalReviews }),
         alternates: { canonical: canonicalUrl },
         openGraph: {
             title: `Top ${tradeName} in ${suburbName} | TradeRefer`,
-            description: `Ranked by verified Google reviews. Best ${tradeName.toLowerCase()} in ${suburbName}.`,
+            description: `Ranked by public Google reviews. Best ${tradeName.toLowerCase()} in ${suburbName}.`,
             url: canonicalUrl,
             siteName: 'TradeRefer',
             type: 'website',
-            images: ['https://traderefer.au/og-default.jpg'],
+            images: [ogImageUrl],
         },
         twitter: {
             card: 'summary_large_image',
             title: `Top ${tradeName} in ${suburbName} | TradeRefer`,
-            description: `Ranked by verified Google reviews. Best ${tradeName.toLowerCase()} in ${suburbName}.`,
-            images: ['https://traderefer.au/og-default.jpg'],
+            description: `Ranked by public Google reviews. Best ${tradeName.toLowerCase()} in ${suburbName}.`,
+            images: [ogImageUrl],
         },
     };
 }
 
 export default async function Top10SuburbPage({ params }: PageProps) {
     const { trade, state, city, suburb } = await params;
+
+    // Redirect non-canonical segments: bare suburb slugs (e.g. "bibra-lake"),
+    // mixed-case trade/state/city, and retired trade synonyms all 308 to the
+    // canonical all-slug, postcode-suffixed form.
+    const { postcode: urlPostcode, suburb: bareSuburb } = parseSuburbSlug(suburb);
+    const normalizedSuburb = urlPostcode ? `${bareSuburb}-${urlPostcode}` : bareSuburb;
+    const canonicalSuburb = getCanonicalSuburbSlug(suburb, state);
+    const canonicalTradeSeg = retiredTradeSlugTarget(trade) ?? tradeToSlug(trade);
+    const canonicalStateSeg = state.toLowerCase();
+    const canonicalCitySeg = getCanonicalCitySlug(state, bareSuburb) ?? tradeToSlug(city);
+    if (
+        canonicalSuburb !== normalizedSuburb ||
+        canonicalTradeSeg !== trade ||
+        canonicalStateSeg !== state ||
+        canonicalCitySeg !== city
+    ) {
+        permanentRedirect(`/top/${canonicalTradeSeg}/${canonicalStateSeg}/${canonicalCitySeg}/${canonicalSuburb}`);
+    }
+
     const tradeName = getTradeDisplayName(trade);
     const cityName = formatSlug(city);
-    const suburbName = formatSlug(suburb);
+    const suburbName = formatSlug(bareSuburb);
     const stateName = STATE_NAMES[state] || state.toUpperCase();
     const stateUpper = state.toUpperCase();
     const year = new Date().getFullYear();
@@ -158,7 +194,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
             { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://traderefer.au" },
             { "@type": "ListItem", "position": 2, "name": "Categories", "item": "https://traderefer.au/categories" },
             { "@type": "ListItem", "position": 3, "name": cityName, "item": `https://traderefer.au/local/${state}/${citySlug}` },
-            { "@type": "ListItem", "position": 4, "name": suburbName, "item": `https://traderefer.au/local/${state}/${citySlug}/${suburb}` },
+            { "@type": "ListItem", "position": 4, "name": suburbName, "item": `https://traderefer.au/local/${state}/${citySlug}/${canonicalSuburb}` },
             { "@type": "ListItem", "position": 5, "name": `Top 10 ${tradeName} in ${suburbName}` },
         ]
     };
@@ -167,13 +203,36 @@ export default async function Top10SuburbPage({ params }: PageProps) {
         "@context": "https://schema.org",
         "@type": "ItemList",
         "name": `Top 10 ${tradeName} in ${suburbName}, ${cityName} (${year})`,
-        "description": `The highest-rated ${tradeName.toLowerCase()} in ${suburbName} ranked by verified Google reviews.`,
+        "description": `The highest-rated ${tradeName.toLowerCase()} in ${suburbName} ranked by public Google reviews.`,
         "numberOfItems": businesses.length,
         "itemListElement": businesses.map((biz: any, i: number) => ({
             "@type": "ListItem",
             "position": i + 1,
             "url": `https://traderefer.au/b/${biz.slug}`,
             "name": biz.business_name,
+            "item": {
+                "@type": "LocalBusiness",
+                "name": biz.business_name,
+                "url": `https://traderefer.au/b/${biz.slug}`,
+                ...(biz.business_phone ? { "telephone": biz.business_phone } : {}),
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": biz.suburb || suburbName,
+                    "addressRegion": stateName,
+                    ...(urlPostcode ? { "postalCode": urlPostcode } : {}),
+                    "addressCountry": "AU"
+                },
+                ...(parseFloat(biz.avg_rating) > 0 && parseInt(biz.total_reviews) > 0 ? {
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": parseFloat(biz.avg_rating).toFixed(1),
+                        "reviewCount": parseInt(biz.total_reviews),
+                        "bestRating": "5",
+                        "worstRating": "1"
+                    }
+                } : {}),
+                ...(biz.logo_url ? { "image": biz.logo_url } : {}),
+            }
         }))
     };
 
@@ -218,12 +277,12 @@ export default async function Top10SuburbPage({ params }: PageProps) {
             {/* Breadcrumbs */}
             <div className="bg-zinc-900 pt-32 pb-4">
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 text-xs font-bold text-zinc-500 uppercase tracking-widest flex-wrap">
-                        <Link href="/" className="hover:text-white transition-colors">Home</Link>
+                    <nav className="flex items-center gap-2 text-xs font-bold text-zinc-600 uppercase tracking-widest flex-wrap">
+                        <Link prefetch={false} href="/" className="hover:text-white transition-colors">Home</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href={`/local/${state}/${citySlug}/${suburb}`} className="hover:text-white transition-colors">{suburbName}</Link>
+                        <Link prefetch={false} href={`/local/${state}/${citySlug}/${canonicalSuburb}`} className="hover:text-white transition-colors">{suburbName}</Link>
                         <ChevronRight className="w-3 h-3" />
-                        <Link href={`/local/${state}/${citySlug}/${suburb}/${tradeSlug}`} className="hover:text-white transition-colors">{tradeName}</Link>
+                        <Link prefetch={false} href={`/local/${state}/${citySlug}/${canonicalSuburb}/${tradeSlug}`} className="hover:text-white transition-colors">{tradeName}</Link>
                         <ChevronRight className="w-3 h-3" />
                         <span className="text-orange-400">Top 10</span>
                     </nav>
@@ -245,7 +304,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                             Top 10 <span className="text-orange-500">{tradeName}</span><br />in {suburbName}, {cityName}
                         </h1>
                         <p className="text-lg text-zinc-400 mb-4 leading-relaxed max-w-2xl">
-                            TradeRefer lists <strong className="text-white">{businesses.length} verified {tradeName.toLowerCase()} businesses</strong> in {suburbName} with an average Google rating of <strong className="text-white">{avgRating}★</strong> across <strong className="text-white">{totalReviews.toLocaleString()} reviews</strong>. The businesses below are ranked from highest to lowest rating — all ABN-verified and community-recommended.
+                            TradeRefer lists <strong className="text-white">{businesses.length} {tradeName.toLowerCase()} businesses</strong> in {suburbName} with an average Google rating of <strong className="text-white">{avgRating}★</strong> across <strong className="text-white">{totalReviews.toLocaleString()} reviews</strong>. The businesses below are ranked from highest to lowest rating — all ABN-checked and community-recommended.
                         </p>
                         {cost && (
                             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-xl px-4 py-2 mb-6 text-sm font-bold text-white">
@@ -255,10 +314,10 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                         )}
                         <div className="flex flex-wrap gap-4">
                             <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold h-14 px-8 text-lg border-none">
-                                <Link href="#ranked-list">See the Ranked List</Link>
+                                <Link prefetch={false} href="#ranked-list">See the Ranked List</Link>
                             </Button>
                             <Button asChild variant="outline" size="lg" className="bg-white/5 border-white/10 text-white hover:bg-white/10 rounded-xl font-bold h-14 px-8 text-lg">
-                                <Link href={`/top/${tradeSlug}/${state}/${citySlug}`}>Top 10 in {cityName}</Link>
+                                <Link prefetch={false} href={`/top/${tradeSlug}/${state}/${citySlug}`}>Top 10 in {cityName}</Link>
                             </Button>
                         </div>
                     </div>
@@ -271,15 +330,15 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                     <div className="flex flex-wrap gap-8 items-center">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600"><Trophy className="w-5 h-5" /></div>
-                            <div><p className="text-sm font-black text-zinc-900">Ranked #{year}</p><p className="text-xs text-zinc-500">By Google Rating</p></div>
+                            <div><p className="text-sm font-black text-zinc-900">Ranked #{year}</p><p className="text-xs text-zinc-600">By Google Rating</p></div>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600"><Star className="w-5 h-5 fill-yellow-400" /></div>
-                            <div><p className="text-sm font-black text-zinc-900">{avgRating}★ Avg Rating</p><p className="text-xs text-zinc-500">{totalReviews.toLocaleString()} reviews</p></div>
+                            <div><p className="text-sm font-black text-zinc-900">{avgRating}★ Avg Rating</p><p className="text-xs text-zinc-600">{totalReviews.toLocaleString()} reviews</p></div>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-green-600"><ShieldCheck className="w-5 h-5" /></div>
-                            <div><p className="text-sm font-black text-zinc-900">100% Verified</p><p className="text-xs text-zinc-500">ABN-checked</p></div>
+                            <div><p className="text-sm font-black text-zinc-900">ABN Checked</p><p className="text-xs text-zinc-600">ABN-checked</p></div>
                         </div>
                     </div>
                 </div>
@@ -295,8 +354,8 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                             <h2 className="text-2xl font-black text-zinc-900 mb-2">
                                 Top {businesses.length} {tradeName} in {suburbName} — Ranked by Rating
                             </h2>
-                            <p className="text-zinc-500 text-sm mb-8">
-                                Sorted by verified Google rating, highest first. All ABN-verified.
+                            <p className="text-zinc-600 text-sm mb-8">
+                                Sorted by public Google rating, highest first. All ABN-checked.
                             </p>
                             <div className="space-y-5">
                                 {businesses.map((biz: any, index: number) => (
@@ -317,14 +376,14 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                                     <span className="px-2.5 py-1 bg-zinc-100 text-zinc-600 rounded-full text-[10px] font-black uppercase tracking-wider">{biz.trade_category}</span>
                                                     {biz.is_verified && (
                                                         <span className="flex items-center gap-1 px-2.5 py-1 bg-green-50 text-green-700 border border-green-100 rounded-full text-[10px] font-black uppercase">
-                                                            <ShieldCheck className="w-3 h-3" /> Verified
+                                                            <ShieldCheck className="w-3 h-3" /> ABN checked
                                                         </span>
                                                     )}
                                                 </div>
                                                 <h3 className="text-xl md:text-2xl font-black text-zinc-900 mb-1 group-hover:text-orange-600 transition-colors">
                                                     {biz.business_name}
                                                 </h3>
-                                                <p className="text-zinc-500 text-sm mb-4 line-clamp-2 leading-relaxed">
+                                                <p className="text-zinc-600 text-sm mb-4 line-clamp-2 leading-relaxed">
                                                     {biz.description || `${biz.trade_category} specialist based in ${biz.suburb}, serving ${suburbName} and surrounding ${cityName} suburbs.`}
                                                 </p>
                                                 <div className="flex flex-wrap items-center gap-5 text-sm font-bold mb-4">
@@ -333,12 +392,12 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                                         <span className="text-zinc-900">{parseFloat(biz.avg_rating).toFixed(1)}</span>
                                                         {biz.total_reviews > 0 && <span className="text-zinc-400 font-normal text-xs">({biz.total_reviews} reviews)</span>}
                                                     </div>
-                                                    <div className="flex items-center gap-1.5 text-zinc-500">
+                                                    <div className="flex items-center gap-1.5 text-zinc-600">
                                                         <MapPin className="w-4 h-4 text-zinc-400" />
                                                         {biz.suburb}
                                                     </div>
                                                     {biz.trusted_count > 0 && (
-                                                        <div className="flex items-center gap-1.5 text-zinc-500">
+                                                        <div className="flex items-center gap-1.5 text-zinc-600">
                                                             <Users className="w-4 h-4 text-zinc-400" />
                                                             {biz.trusted_count} referrals
                                                         </div>
@@ -346,10 +405,10 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                                 </div>
                                                 <div className="flex flex-wrap gap-3">
                                                     <Button asChild size="sm" className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold px-5 border-none">
-                                                        <Link href={`/b/${biz.slug}`}>View Profile</Link>
+                                                        <Link prefetch={false} href={`/b/${biz.slug}`}>View Profile</Link>
                                                     </Button>
                                                     <Button asChild variant="outline" size="sm" className="border-zinc-200 hover:bg-zinc-50 rounded-xl font-bold px-5">
-                                                        <Link href={`/b/${biz.slug}#enquiry-form`}>Get Quote</Link>
+                                                        <Link prefetch={false} href={`/b/${biz.slug}#enquiry-form`}>Get Quote</Link>
                                                     </Button>
                                                 </div>
                                             </div>
@@ -366,22 +425,22 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                     <DollarSign className="w-6 h-6 text-orange-500" />
                                     How Much Do {tradeName} Cost in {suburbName}?
                                 </h2>
-                                <p className="text-zinc-500 text-sm mb-6">Based on {stateName} industry rates. Always get 2–3 written quotes.</p>
+                                <p className="text-zinc-600 text-sm mb-6">Based on {stateName} industry rates. Always get 2–3 written quotes.</p>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                                     <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Typical Range</p>
+                                        <p className="text-xs font-black text-zinc-500 uppercase tracking-wider mb-1">Typical Range</p>
                                         <p className="text-2xl font-black text-zinc-900">${cost.low}–${cost.high}</p>
-                                        <p className="text-sm text-zinc-500">{cost.unit}</p>
+                                        <p className="text-sm text-zinc-600">{cost.unit}</p>
                                     </div>
                                     <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">After-Hours</p>
+                                        <p className="text-xs font-black text-zinc-500 uppercase tracking-wider mb-1">After-Hours</p>
                                         <p className="text-2xl font-black text-zinc-900">${Math.round(cost.high * 1.5)}</p>
-                                        <p className="text-sm text-zinc-500">Emergency callout</p>
+                                        <p className="text-sm text-zinc-600">Emergency callout</p>
                                     </div>
                                     <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100">
-                                        <p className="text-xs font-black text-zinc-400 uppercase tracking-wider mb-1">Avg Hourly</p>
+                                        <p className="text-xs font-black text-zinc-500 uppercase tracking-wider mb-1">Avg Hourly</p>
                                         <p className="text-2xl font-black text-zinc-900">${Math.round((cost.low + cost.high) / 2)}</p>
-                                        <p className="text-sm text-zinc-500">{suburbName} market</p>
+                                        <p className="text-sm text-zinc-600">{suburbName} market</p>
                                     </div>
                                 </div>
                                 <p className="text-xs text-zinc-400">Estimates only. Always request a written quote before authorising work.</p>
@@ -403,7 +462,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                         {howToChoose && (
                             <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
                                 <h2 className="text-2xl font-black text-zinc-900 mb-2">How to Choose the Best {tradeName} in {suburbName}</h2>
-                                <p className="text-zinc-500 text-sm mb-6">A checklist before hiring any {tradeName.toLowerCase()} in {suburbName}, {cityName}.</p>
+                                <p className="text-zinc-600 text-sm mb-6">A checklist before hiring any {tradeName.toLowerCase()} in {suburbName}, {cityName}.</p>
                                 <ol className="space-y-4">
                                     {howToChoose.map((tip, i) => (
                                         <li key={i} className="flex gap-4 items-start">
@@ -427,7 +486,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                     {faqEntries.map((faq, i) => (
                                         <div key={i} className="bg-white rounded-2xl border border-zinc-200 p-6">
                                             <h3 className="font-bold text-zinc-900 mb-2">{faq.q}</h3>
-                                            <p className="text-sm text-zinc-500 leading-relaxed">{faq.a}</p>
+                                            <p className="text-sm text-zinc-600 leading-relaxed">{faq.a}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -441,14 +500,14 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                     <MapPin className="w-5 h-5 text-orange-500" />
                                     Top {tradeName} in Nearby Suburbs
                                 </h2>
-                                <p className="text-zinc-500 text-sm mb-6">Find ranked {tradeName.toLowerCase()} in suburbs close to {suburbName}.</p>
+                                <p className="text-zinc-600 text-sm mb-6">Find ranked {tradeName.toLowerCase()} in suburbs close to {suburbName}.</p>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                     {nearbySuburbs.map(({ suburb: nearSub, city: nearCity, state: nearState }) => {
-                                        const nearSubSlug = nearSub.toLowerCase().replace(/\s+/g, '-');
+                                        const nearSubSlug = getCanonicalSuburbSlug(nearSub.toLowerCase().replace(/\s+/g, '-'), nearState);
                                         const nearCitySlug = nearCity.toLowerCase().replace(/\s+/g, '-');
                                         const nearStateSlug = nearState.toLowerCase();
                                         return (
-                                            <Link
+                                            <Link prefetch={false}
                                                 key={nearSub}
                                                 href={`/top/${tradeSlug}/${nearStateSlug}/${nearCitySlug}/${nearSubSlug}`}
                                                 className="flex items-center justify-between px-4 py-3 bg-zinc-50 border border-zinc-100 rounded-xl text-xs font-bold text-zinc-600 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 transition-colors"
@@ -470,7 +529,7 @@ export default async function Top10SuburbPage({ params }: PageProps) {
                                 Get listed on TradeRefer and rank in the top {tradeName.toLowerCase()} for {suburbName}. Free to join.
                             </p>
                             <Button asChild size="lg" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-bold px-8 h-12 border-none">
-                                <Link href="/register?type=business">List Your Business Free</Link>
+                                <Link prefetch={false} href="/register?type=business">List Your Business Free</Link>
                             </Button>
                         </section>
                     </div>

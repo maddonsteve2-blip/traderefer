@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { SignIn } from "@clerk/nextjs";
 import {
     ShieldCheck
@@ -5,6 +6,11 @@ import {
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 
+export const metadata: Metadata = {
+    title: "Sign in | TradeRefer",
+    description: "Sign in to manage your TradeRefer account.",
+    robots: { index: false, follow: true },
+};
 
 export default function LoginPage() {
     return (

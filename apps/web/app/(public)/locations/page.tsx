@@ -2,16 +2,38 @@ import { sql } from "@/lib/db";
 import { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight, MapPin, Users, Building2, ArrowRight } from "lucide-react";
+import { buildOgImageUrl } from "@/lib/og-image";
 
 export const dynamic = "force-dynamic";
 
+const locationsOgImage = buildOgImageUrl({
+    template: "home",
+    title: "Find tradies by location",
+    subtitle: "Every Australian state, city and suburb — local trade profiles with ABN and review signals.",
+    eyebrow: "TradeRefer locations",
+    badge: "All states",
+    stat1: "8 states",
+    stat2: "80+ cities",
+    stat3: "1,000+ suburbs",
+});
+
 export const metadata: Metadata = {
-    title: "Find Tradies by Location | All Australian States & Cities | TradeRefer",
-    description: "Browse verified tradies by location across all Australian states and cities. Find electricians, plumbers, painters & more in your suburb. ABN-verified, community-ranked. Free quotes.",
+    title: "Find Tradies by Location — Every State & City | TradeRefer",
+    description: "Browse Australian trade profiles by location. Find electricians, plumbers, painters and more by state, city, and suburb with ABN and public review signals where available.",
     alternates: { canonical: "https://traderefer.au/locations" },
     openGraph: {
         title: "Find Local Tradies by Location | TradeRefer Australia",
-        description: "All 8 Australian states, 89 cities, 997 suburbs. Find verified local tradies near you.",
+        description: "All Australian states, cities and suburbs. Find local trade profiles near you.",
+        url: "https://traderefer.au/locations",
+        siteName: "TradeRefer",
+        type: "website",
+        images: [{ url: locationsOgImage, width: 1200, height: 630, alt: "Find tradies by location on TradeRefer" }],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Find Local Tradies by Location | TradeRefer Australia",
+        description: "All Australian states, cities and suburbs. Find local trade profiles near you.",
+        images: [locationsOgImage],
     },
 };
 
@@ -99,7 +121,7 @@ export default async function LocationsPage() {
             {/* Hero */}
             <div className="bg-[#1A1A1A] pt-32 pb-16 text-white">
                 <div className="container mx-auto px-4">
-                    <nav className="flex items-center gap-2 font-bold text-zinc-400 uppercase tracking-widest mb-8" style={{ fontSize: '16px' }}>
+                    <nav className="flex items-center gap-2 font-bold text-zinc-500 uppercase tracking-widest mb-8" style={{ fontSize: '16px' }}>
                         <Link href="/" className="hover:text-white transition-colors">Home</Link>
                         <ChevronRight className="w-4 h-4" />
                         <span className="text-[#FF6600]">All Locations</span>
@@ -112,10 +134,10 @@ export default async function LocationsPage() {
                         Find Local Tradies <span className="text-[#FF6600]">by Location</span>
                     </h1>
                     <p className="text-zinc-400 max-w-2xl mb-8" style={{ fontSize: '20px', lineHeight: 1.7 }}>
-                        Browse verified tradies across all Australian states and cities. Every business is ABN-verified and ranked by real community referrals.
+                        Browse Australian trade profiles by state and city. TradeRefer uses ABN, location, category, public review, and referral signals where available.
                     </p>
                     <div className="flex flex-wrap gap-6 text-white font-bold" style={{ fontSize: '16px' }}>
-                        <span className="flex items-center gap-2"><Users className="w-4 h-4 text-[#FF6600]" />{totalBusinesses.toLocaleString()} verified businesses</span>
+                        <span className="flex items-center gap-2"><Users className="w-4 h-4 text-[#FF6600]" />{totalBusinesses.toLocaleString()} trade profiles</span>
                         <span className="flex items-center gap-2"><Building2 className="w-4 h-4 text-[#FF6600]" />{totalCities} cities</span>
                         <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#FF6600]" />{totalSuburbs} suburbs</span>
                     </div>
@@ -139,13 +161,13 @@ export default async function LocationsPage() {
                                                 <ArrowRight className="w-6 h-6 text-zinc-300 group-hover:text-[#FF6600] transition-colors" />
                                             </h2>
                                         </Link>
-                                        <p className="text-zinc-500 mt-1" style={{ fontSize: '16px' }}>
+                                        <p className="text-zinc-600 mt-1" style={{ fontSize: '16px' }}>
                                             {cities.length} {cities.length === 1 ? 'city' : 'cities'} · {stateSubs} suburbs · {stateBiz.toLocaleString()} businesses
                                         </p>
                                     </div>
                                     <Link
                                         href={`/local/${stateSlug}`}
-                                        className="hidden md:flex items-center gap-2 font-black text-zinc-500 hover:text-[#FF6600] uppercase tracking-widest transition-colors" style={{ fontSize: '16px' }}
+                                        className="hidden md:flex items-center gap-2 font-black text-zinc-600 hover:text-[#FF6600] uppercase tracking-widest transition-colors" style={{ fontSize: '16px' }}
                                     >
                                         View All in {state}
                                         <ChevronRight className="w-4 h-4" />
@@ -171,7 +193,7 @@ export default async function LocationsPage() {
                                                         <Users className="w-4 h-4 text-[#FF6600]" />
                                                         {count} businesses
                                                     </div>
-                                                    <div className="text-zinc-500 font-medium">{suburbs} suburbs</div>
+                                                    <div className="text-zinc-600 font-medium">{suburbs} suburbs</div>
                                                 </div>
                                             </Link>
                                         );

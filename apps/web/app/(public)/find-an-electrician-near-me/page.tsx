@@ -7,6 +7,7 @@ import {
 import { sql } from "@/lib/db";
 import { BusinessLogo } from "@/components/BusinessLogo";
 import { generateFallbackDescription } from "@/lib/business-utils";
+import { buildOgImageUrl } from "@/lib/og-image";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
@@ -15,8 +16,18 @@ const BASE_URL = "https://traderefer.au";
 
 export async function generateMetadata(): Promise<Metadata> {
     const year = new Date().getFullYear();
+    const ogImageUrl = buildOgImageUrl({
+        template: "near-me",
+        title: "Find an electrician near me",
+        subtitle: "Compare licensed electricians near you Australia-wide. Real reviews, free quotes and emergency electrical options.",
+        eyebrow: "Near me guide",
+        badge: `${year} electrical guide`,
+        stat1: "Licensed electricians",
+        stat2: "Emergency jobs",
+        stat3: "Free quotes",
+    });
     return {
-        title: `Find an Electrician Near Me | Licensed Electricians | TradeRefer`,
+        title: "Find an Electrician Near Me | TradeRefer",
         description:
             "Find a licensed electrician near you Australia-wide. Compare real reviews, get free quotes, and hire safely. Residential, commercial, and emergency electricians. Post your job free.",
         alternates: { canonical: `${BASE_URL}/find-an-electrician-near-me` },
@@ -25,6 +36,13 @@ export async function generateMetadata(): Promise<Metadata> {
             description: "Compare licensed electricians near you. Real reviews, free quotes, no signup needed.",
             url: `${BASE_URL}/find-an-electrician-near-me`,
             type: "website",
+            images: [{ url: ogImageUrl, width: 1200, height: 630, alt: "Find an electrician near me on TradeRefer" }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: "Find an Electrician Near Me | TradeRefer",
+            description: "Compare licensed electricians near you. Real reviews, free quotes, no signup needed.",
+            images: [ogImageUrl],
         },
     };
 }
@@ -32,15 +50,15 @@ export async function generateMetadata(): Promise<Metadata> {
 const FAQS = [
     {
         q: "How do I find a reliable electrician near me?",
-        a: "The best way to find a reliable electrician near you is to check their licence, read verified reviews from real customers, and compare at least two quotes. On TradeRefer, every listed electrician has been reviewed by homeowners — post your job and let licensed electricians in your area respond with quotes and availability.",
+        a: "The best way to find a reliable electrician near you is to check their licence, read public reviews from real customers, and compare at least two quotes. On TradeRefer, every listed electrician has been reviewed by homeowners: post your job and let licensed electricians in your area respond with quotes and availability.",
     },
     {
         q: "How much does an electrician cost in Australia?",
-        a: "Electricians in Australia typically charge between $80 and $150 per hour, with call-out fees of $80 to $120 on top. Most standard jobs — a new power point, replacing a safety switch, ceiling fan installation — cost between $150 and $500 in total. Larger jobs like a switchboard upgrade or solar connection cost $1,000 to $3,000+. Always get a written quote before work starts.",
+        a: "Electricians in Australia typically charge between $80 and $150 per hour, with call-out fees of $80 to $120 on top. Most standard jobs: a new power point, replacing a safety switch, ceiling fan installation: cost between $150 and $500 in total. Larger jobs like a switchboard upgrade or solar connection cost $1,000 to $3,000+. Always get a written quote before work starts.",
     },
     {
         q: "Do electricians in Australia need to be licensed?",
-        a: "Yes — all electrical work in Australia must be carried out by a licensed electrician. Unlicensed electrical work is illegal, extremely dangerous, and will void your home insurance. Each state and territory has its own licensing authority (e.g. Energy Safe Victoria, NSW Fair Trading, QBCC in Queensland). A licensed electrician must provide a Certificate of Electrical Safety on completion of any work.",
+        a: "Yes: all electrical work in Australia must be carried out by a licensed electrician. Unlicensed electrical work is illegal, extremely dangerous, and will void your home insurance. Each state and territory has its own licensing authority (e.g. Energy Safe Victoria, NSW Fair Trading, QBCC in Queensland). A licensed electrician must provide a Certificate of Electrical Safety on completion of any work.",
     },
     {
         q: "What types of jobs can an electrician help with?",
@@ -48,11 +66,11 @@ const FAQS = [
     },
     {
         q: "Can I get an emergency electrician near me?",
-        a: "Yes. Many electricians on TradeRefer offer emergency and after-hours call-outs for serious electrical faults — exposed wires, power outages, burning smell from switchboard, or safety switch tripping repeatedly. When posting your job, select 'Urgent' and describe the fault clearly so local electricians offering emergency response can reply quickly.",
+        a: "Yes. Many electricians on TradeRefer offer emergency and after-hours call-outs for serious electrical faults: exposed wires, power outages, burning smell from switchboard, or safety switch tripping repeatedly. When posting your job, select 'Urgent' and describe the fault clearly so local electricians offering emergency response can reply quickly.",
     },
     {
         q: "How do I know if electrical work needs a permit in my state?",
-        a: "Most electrical work in Australia requires a Certificate of Electrical Safety (or equivalent), which your licensed electrician arranges automatically as part of the job. Major works like new circuits, switchboard upgrades, or solar connections may also need a separate permit. Your electrician will advise on this — if they don't mention certificates, ask for one explicitly before they start.",
+        a: "Most electrical work in Australia requires a Certificate of Electrical Safety (or equivalent), which your licensed electrician arranges automatically as part of the job. Major works like new circuits, switchboard upgrades, or solar connections may also need a separate permit. Your electrician will advise on this: if they don't mention certificates, ask for one explicitly before they start.",
     },
 ];
 
@@ -181,7 +199,7 @@ export default async function FindAnElectricianNearMePage() {
                             <br />Compare Quotes on TradeRefer
                         </h1>
                         <p className="text-xl text-gray-300 mb-8 max-w-2xl leading-relaxed">
-                            Australia&apos;s verified electrician directory. Compare real reviews, get free quotes from licensed electricians in your area, and hire safely — power points to full switchboard upgrades.
+                            Australia&apos;s electrician directory. Compare real reviews, get free quotes from licensed electricians in your area, and hire safely: power points to full switchboard upgrades.
                         </p>
 
                         <div className="flex flex-wrap gap-6 mb-10">
@@ -222,7 +240,7 @@ export default async function FindAnElectricianNearMePage() {
                 <section className="py-5 bg-orange-50 border-b border-orange-100">
                     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-semibold text-orange-800">
-                            <span className="flex items-center gap-2"><BadgeCheck className="w-4 h-4 text-[#FF6600]" /> ABN-verified businesses</span>
+                            <span className="flex items-center gap-2"><BadgeCheck className="w-4 h-4 text-[#FF6600]" /> ABN-checked businesses</span>
                             <span className="flex items-center gap-2"><Star className="w-4 h-4 text-[#FF6600]" /> Real customer reviews</span>
                             <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-[#FF6600]" /> Licensed electricians only</span>
                             <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-[#FF6600]" /> Free to post your job</span>
@@ -237,7 +255,7 @@ export default async function FindAnElectricianNearMePage() {
                             <h2 className="text-2xl font-extrabold mb-2 text-[#1A1A1A] font-display">
                                 Top-Rated Electricians in Australia ({year})
                             </h2>
-                            <p className="text-gray-500 mb-8">Ranked by verified customer review score</p>
+                            <p className="text-gray-500 mb-8">Ranked by public customer review score</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {businesses.map((biz) => {
                                     const rating = biz.avg_rating ? parseFloat(String(biz.avg_rating)) : null;
@@ -317,7 +335,7 @@ export default async function FindAnElectricianNearMePage() {
                             <div className="text-center">
                                 <div className="w-12 h-12 rounded-full bg-orange-100 text-[#FF6600] font-extrabold text-xl flex items-center justify-center mx-auto mb-4">1</div>
                                 <h3 className="font-bold text-lg mb-2">Post your electrical job</h3>
-                                <p className="text-gray-500 text-sm leading-relaxed">Describe what you need — new power point, switchboard upgrade, safety switch fault, EV charger — and your suburb. Takes two minutes, costs nothing.</p>
+                                <p className="text-gray-500 text-sm leading-relaxed">Describe what you need: new power point, switchboard upgrade, safety switch fault, EV charger: and your suburb. Takes two minutes, costs nothing.</p>
                             </div>
                             <div className="text-center">
                                 <div className="w-12 h-12 rounded-full bg-orange-100 text-[#FF6600] font-extrabold text-xl flex items-center justify-center mx-auto mb-4">2</div>
@@ -339,13 +357,13 @@ export default async function FindAnElectricianNearMePage() {
                         <h2 className="text-2xl font-extrabold mb-5 text-[#1A1A1A] font-display">What to Look for When Hiring an Electrician</h2>
                         <div className="prose prose-gray max-w-none text-gray-600 leading-relaxed space-y-4">
                             <p>
-                                Electrical work is the most tightly regulated trade in Australia — and for good reason. All electrical work must be carried out by a licensed electrician, and completed work requires a Certificate of Electrical Safety (or equivalent in your state). This certificate is required for insurance claims, property sales, and council inspections.
+                                Electrical work is the most tightly regulated trade in Australia: and for good reason. All electrical work must be carried out by a licensed electrician, and completed work requires a Certificate of Electrical Safety (or equivalent in your state). This certificate is required for insurance claims, property sales, and council inspections.
                             </p>
                             <p>
-                                When finding an electrician near you, look for: a valid state electrical licence, public liability insurance of at least $5 million, genuine reviews from verified customers, and a written quote before work begins. Never hire someone who offers to do electrical work without a licence — the legal risk and safety risk are both significant.
+                                When finding an electrician near you, look for: a valid state electrical licence, public liability insurance of at least $5 million, genuine reviews from customers, and a written quote before work begins. Never hire someone who offers to do electrical work without a licence: the legal risk and safety risk are both significant.
                             </p>
                             <p>
-                                Common jobs range from <strong>$150 for a new power point</strong> to <strong>$3,000+ for a full switchboard upgrade</strong>. Getting multiple quotes is the most effective way to ensure fair pricing — and TradeRefer makes it free and fast to compare licensed electricians in your area.
+                                Common jobs range from <strong>$150 for a new power point</strong> to <strong>$3,000+ for a full switchboard upgrade</strong>. Getting multiple quotes is the most effective way to ensure fair pricing: and TradeRefer makes it free and fast to compare licensed electricians in your area.
                             </p>
                         </div>
                     </div>
@@ -392,13 +410,13 @@ export default async function FindAnElectricianNearMePage() {
                         <Zap className="w-12 h-12 text-[#FF6600] mx-auto mb-5" />
                         <h2 className="text-3xl font-extrabold mb-4 font-display">Ready to Find an Electrician Near You?</h2>
                         <p className="text-gray-300 text-lg mb-8 leading-relaxed">
-                            Join thousands of Australians who&apos;ve found trusted local electricians through TradeRefer. Post your job free — no signup needed, no obligation.
+                            Join thousands of Australians who&apos;ve found trusted local electricians through TradeRefer. Post your job free: no signup needed, no obligation.
                         </p>
                         <Link
                             href="/businesses?category=Electrical"
                             className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-bold text-lg px-10 py-4 rounded-xl shadow-xl transition-all active:scale-95"
                         >
-                            Find an Electrician Near Me — Free <ArrowRight className="w-5 h-5" />
+                            Find an Electrician Near Me: Free <ArrowRight className="w-5 h-5" />
                         </Link>
                     </div>
                 </section>

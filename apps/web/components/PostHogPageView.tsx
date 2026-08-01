@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { trackPageView, detectPageType, initScrollDepthTracking } from '@/lib/posthog-events';
 
 export function PostHogPageView() {
   const pathname = usePathname();
@@ -10,17 +9,27 @@ export function PostHogPageView() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const pageInfo = detectPageType(pathname);
-    
-    trackPageView({
-      pageUrl: pathname,
-      pageTitle: document.title,
-      ...pageInfo,
+    let cleanup: (() => void) | undefined;
+    let cancelled = false;
+
+    import('@/lib/posthog-events').then(({ detectPageType, initScrollDepthTracking, trackPageView }) => {
+      if (cancelled) return;
+
+      const pageInfo = detectPageType(pathname);
+
+      trackPageView({
+        pageUrl: pathname,
+        pageTitle: document.title,
+        ...pageInfo,
+      });
+
+      cleanup = initScrollDepthTracking();
     });
 
-    // Initialize scroll depth tracking for this page
-    const cleanup = initScrollDepthTracking();
-    return cleanup;
+    return () => {
+      cancelled = true;
+      cleanup?.();
+    };
   }, [pathname]);
 
   return null;

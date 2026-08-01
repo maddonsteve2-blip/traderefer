@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Glazing & Window Services Australia | Glaziers | TradeRefer",
-    description: "Find trusted glaziers across Australia. Compare window replacement, double glazing, and glass repair costs by city, understand energy ratings, and hire verified local glazing businesses through TradeRefer.",
+    description: "Find trusted glaziers across Australia. Compare window replacement, double glazing, and glass repair costs by city, understand energy ratings, and hire local glazing businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/glazing" },
-    openGraph: { title: "Glazing & Window Services Australia | TradeRefer", description: "Compare window replacement costs, double glazing pricing, and verified local glaziers across Australia.", url: "https://traderefer.au/trades/glazing", type: "website" },
+    openGraph: { title: "Glazing & Window Services Australia | TradeRefer", description: "Compare window replacement costs, double glazing pricing, and local glaziers across Australia.", url: "https://traderefer.au/trades/glazing", type: "website" },
 };
 
 const TRADE_NAME = "Glazing & Windows";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Get measured on site before receiving a final price", body: "Window sizes vary significantly even within the same building. A professional glazier will always measure on site before providing a fixed price. Be very cautious of online or phone quotes without site measurements — they become estimates that can escalate significantly once the installer arrives.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified glazing businesses", body: "TradeRefer helps homeowners find ABN-verified glaziers who meet Australian glazing standards — important for energy performance compliance, safety glazing requirements, and quality installations that last." },
+    { title: "Checked glazing businesses", body: "TradeRefer helps homeowners find ABN-checked glaziers who meet Australian glazing standards — important for energy performance compliance, safety glazing requirements, and quality installations that last." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical window replacement and double glazing costs across Australian cities so you can benchmark quotes before committing to a glazier." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national glazing guide into city and suburb-level pages to find verified glazing businesses in the specific area where your property is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national glazing guide into city and suburb-level pages to find glazing businesses in the specific area where your property is located." },
 ];
 const customFaqs = [
     { q: "How much does double glazing cost in Australia?", a: "A double glazed unit (IGU) replacement for a standard window costs $550–$1,400 depending on size, glass type, and frame. Full window replacement with new aluminium double-glazed frames costs $750–$2,500 per window. Whole-of-home double glazing can range from $10,000–$40,000+ depending on the number and size of windows." },
@@ -106,8 +106,8 @@ export default async function GlazingTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Glaziers</span> Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer glazing hub to compare window replacement and double glazing costs across Australian cities, understand energy and safety glazing requirements, and connect with verified local glazing businesses.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Glaziers</span> Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer glazing hub to compare window replacement and double glazing costs across Australian cities, understand energy and safety glazing requirements, and connect with local glazing businesses.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Fglazing`} className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Glaziers</Link>
@@ -176,7 +176,7 @@ export default async function GlazingTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Glazing Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 verified local glazing businesses.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Glazing Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 local glazing businesses.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory={TRADE_NAME} initialSourcePage="/trades/glazing" />
                     </section>
 
@@ -200,7 +200,7 @@ export default async function GlazingTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Glazier Near You?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local glazing businesses and find the right glazier for your window replacement, double glazing, or glass repair project.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local glazing businesses and find the right glazier for your window replacement, double glazing, or glass repair project.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Fglazing`} className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Glaziers</Link>

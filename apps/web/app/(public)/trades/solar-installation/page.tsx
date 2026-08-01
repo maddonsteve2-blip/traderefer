@@ -22,12 +22,12 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "Solar Panel Installation Australia | Solar Installers | TradeRefer",
     description:
-        "Find CEC-accredited solar installers across Australia. Compare 6.6kW and 10kW solar system costs by city, understand the STC rebate, and hire verified local solar businesses through TradeRefer.",
+        "Find CEC-accredited solar installers across Australia. Compare 6.6kW and 10kW solar system costs by city, understand the STC rebate, and hire local solar businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/solar-installation" },
     openGraph: {
         title: "Solar Panel Installation Australia | TradeRefer",
         description:
-            "Compare solar panel installation costs, STC rebate amounts, and verified local CEC-accredited solar installers across Australia.",
+            "Compare solar panel installation costs, STC rebate amounts, and CEC-accredited solar installers across Australia.",
         url: "https://traderefer.au/trades/solar-installation",
         type: "website",
     },
@@ -96,8 +96,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified solar businesses",
-        body: "TradeRefer helps homeowners find ABN-verified, CEC-accredited solar installers — the only way to ensure your system qualifies for the STC rebate and that the installation meets Australian electrical standards.",
+        title: "Checked solar businesses",
+        body: "TradeRefer helps homeowners find ABN-checked, CEC-accredited solar installers — the only way to ensure your system qualifies for the STC rebate and that the installation meets Australian electrical standards.",
     },
     {
         title: "Compare costs before you call",
@@ -202,11 +202,11 @@ export default async function SolarInstallationTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Solar Installers</span> Across Australia
+                            Find <span className="text-[#FF6600]">Solar Installers</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer solar hub to compare 6.6kW and 10kW system costs across Australian cities, understand the STC government rebate,
-                            and connect with verified CEC-accredited solar installers for your home or business.
+                            and connect with CEC-accredited solar installers for your home or business.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -393,7 +393,7 @@ export default async function SolarInstallationTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Solar Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your solar quotes here and we&apos;ll match your project with up to 3 verified local CEC-accredited solar installers.
+                                Request your solar quotes here and we&apos;ll match your project with up to 3 CEC-accredited solar installers.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Solar & Energy" initialSourcePage="/trades/solar-installation" />
@@ -466,7 +466,7 @@ export default async function SolarInstallationTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Get Solar Quotes From Local Installers</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified CEC-accredited solar businesses, compare system sizes and battery options, and find the right solar installer to reduce your energy bills.
+                            Browse CEC-accredited solar businesses, compare system sizes and battery options, and find the right solar installer to reduce your energy bills.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

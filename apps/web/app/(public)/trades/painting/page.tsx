@@ -20,14 +20,14 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Painting Services Australia | Find Verified Painters | TradeRefer",
+    title: "Painting Services Australia | Find Painters | TradeRefer",
     description:
         "Find trusted painters and painting contractors across Australia. Compare interior and exterior painting costs by city, understand licensing requirements, and hire with confidence through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/painting" },
     openGraph: {
         title: "Painting Services Australia | TradeRefer",
         description:
-            "Compare house painting costs, interior vs exterior rates, licensing requirements, and verified local painters across Australia.",
+            "Compare house painting costs, interior vs exterior rates, licensing requirements, and local painters across Australia.",
         url: "https://traderefer.au/trades/painting",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified painting businesses",
-        body: "TradeRefer helps homeowners find ABN-verified painting contractors instead of relying on gumtree ads or solo operators with no verifiable track record.",
+        title: "Checked painting businesses",
+        body: "TradeRefer helps homeowners find ABN-checked painting contractors instead of relying on gumtree ads or solo operators with no verifiable track record.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Move from this national painting guide into city and suburb-level pages to find verified painters in the specific area where your property is located.",
+        body: "Move from this national painting guide into city and suburb-level pages to find painters in the specific area where your property is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function PaintingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Painters</span> Across Australia
+                            Find <span className="text-[#FF6600]">Painters</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer painting hub to compare interior and exterior painting costs across Australian cities, understand licensing requirements,
-                            and connect with verified local painters who deliver quality finishes.
+                            and connect with local painters who deliver quality finishes.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function PaintingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Painting Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your painting quotes here and we&apos;ll match your job with up to 3 verified local painting businesses.
+                                Request your painting quotes here and we&apos;ll match your job with up to 3 local painting businesses.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Painting" initialSourcePage="/trades/painting" />
@@ -481,7 +481,7 @@ export default async function PaintingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Painter Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local painting businesses across Australia, compare services and finishes, and find the right painter for your residential or commercial project.
+                            Browse local painting businesses across Australia, compare services and finishes, and find the right painter for your residential or commercial project.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

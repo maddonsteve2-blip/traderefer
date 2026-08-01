@@ -1,36 +1,48 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Metadata } from "next";
-import { SignedInOut } from "@/components/SignedInOut";
 import {
-  MapPin, ArrowRight,
+  MapPin, ArrowRight, Search,
   Megaphone, CheckCircle2, XCircle, ShieldCheck,
-  Construction, TrendingUp, Zap, HardHat, Home as HomeIcon,
+  TrendingUp, Home as HomeIcon,
   Wrench, ChevronRight
 } from "lucide-react";
 import { TRADE_CATEGORIES } from "@/lib/constants";
 import { sql } from "@/lib/db";
+import { buildOgImageUrl } from "@/lib/og-image";
+import { getCanonicalSuburbSlug } from "@/lib/postcodes";
 
 const SmartSearch = dynamic(() => import("@/components/SmartSearch").then((m) => m.SmartSearch), {
   loading: () => <div className="h-14 rounded-xl bg-white/10 animate-pulse" />,
 });
 
+const homeOgImage = buildOgImageUrl({
+  template: "home",
+  title: "Find trusted local tradies",
+  subtitle: "Compare ABN-checked trade businesses, request free quotes and reward trusted referrals across Australia.",
+  eyebrow: "Trade referral marketplace",
+  badge: "Australia-wide",
+  stat1: "ABN-checked",
+  stat2: "Free quotes",
+  stat3: "Referral rewards",
+});
+
 export const metadata: Metadata = {
-  title: "TradeRefer | More Customers for Tradies. Earn Gift Cards.",
-  description: "TradeRefer helps trade businesses win more jobs and rewards referrers with gift cards for trusted introductions. Join Australia's referral network free.",
+  title: "TradeRefer | Local Tradies & Free Quotes",
+  description: "Find ABN-checked Australian tradies, request free quotes, or earn rewards by referring trade businesses you trust. Browse TradeRefer free.",
   openGraph: {
-    title: "TradeRefer | More Customers for Tradies. Earn Gift Cards.",
-    description: "TradeRefer helps trade businesses win more jobs and rewards referrers with gift cards for trusted introductions.",
+    title: "TradeRefer | Find Trusted Local Tradies & Get Free Quotes",
+    description: "Find ABN-checked Australian tradies, request free quotes, or earn rewards by referring trade businesses you trust.",
     url: "https://traderefer.au",
     siteName: "TradeRefer",
     type: "website",
-    images: [{ url: "https://traderefer.au/og-default.jpg", width: 1200, height: 630, alt: "TradeRefer — More customers for tradies. Earn gift cards for referrals." }],
+    images: [{ url: homeOgImage, width: 1200, height: 630, alt: "TradeRefer - Find trusted local tradies, request quotes, and reward trusted referrals." }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "TradeRefer | More Customers for Tradies. Earn Gift Cards.",
-    description: "TradeRefer helps trade businesses win more jobs and rewards referrers with gift cards for trusted introductions.",
-    images: ["https://traderefer.au/og-default.jpg"],
+    title: "TradeRefer | Find Trusted Local Tradies & Get Free Quotes",
+    description: "Find ABN-checked Australian tradies, request free quotes, or earn rewards by referring trade businesses you trust.",
+    images: [homeOgImage],
   },
 };
 
@@ -42,6 +54,12 @@ type PopularSearchRow = {
   sample_address: string | null;
 };
 
+type NetworkStats = {
+  businessCount: number;
+  tradeCount: number;
+  stateCount: number;
+};
+
 const ROICalculators = dynamic(() => import("@/components/home/ROICalculators").then((mod) => mod.ROICalculators), {
   loading: () => <div className="min-h-[720px] rounded-2xl bg-white border border-gray-200 animate-pulse" />,
 });
@@ -49,14 +67,6 @@ const ROICalculators = dynamic(() => import("@/components/home/ROICalculators").
 const PrezzeeCarousel = dynamic(() => import("@/components/home/PrezzeeCarousel").then((mod) => mod.PrezzeeCarousel), {
   loading: () => <div className="min-h-[360px] rounded-2xl bg-[#F8F8F8] border border-gray-200 animate-pulse" />,
 });
-
-// Fetch popular city+trade combinations from database
-// Uses ROW_NUMBER to pick max 2 trades per city for diversity across Australia
-function extractPostcode(address: string): string | null {
-  if (!address) return null;
-  const match = address.match(/\b(\d{4})\b/);
-  return match ? match[1] : null;
-}
 
 async function getPopularSearches() {
   try {
@@ -84,8 +94,7 @@ async function getPopularSearches() {
       const citySlug = row.city.toLowerCase().replace(/\s+/g, '-');
       const tradeSlug = row.trade_category.toLowerCase().replace(/\s+&?\s*/g, '-');
       const stateSlug = row.state.toLowerCase();
-      const postcode = extractPostcode(row.sample_address || "");
-      const cityWithPostcode = postcode ? `${citySlug}-${postcode}` : citySlug;
+      const cityWithPostcode = getCanonicalSuburbSlug(citySlug, stateSlug);
       
       return {
         label: `${row.trade_category} in ${row.city}`,
@@ -107,8 +116,46 @@ async function getPopularSearches() {
   }
 }
 
+async function getNetworkStats(): Promise<NetworkStats> {
+  try {
+    const [row] = await sql<{
+      business_count: string | number;
+      trade_count: string | number;
+      state_count: string | number;
+    }[]>`
+      SELECT
+        COUNT(*) AS business_count,
+        COUNT(DISTINCT trade_category) AS trade_count,
+        COUNT(DISTINCT state) AS state_count
+      FROM businesses
+      WHERE status = 'active'
+        AND (listing_visibility = 'public' OR listing_visibility IS NULL)
+        AND business_name IS NOT NULL
+        AND business_name != ''
+    `;
+
+    return {
+      businessCount: Number(row?.business_count ?? 0),
+      tradeCount: Number(row?.trade_count ?? 0),
+      stateCount: Number(row?.state_count ?? 0),
+    };
+  } catch {
+    return { businessCount: 0, tradeCount: 0, stateCount: 0 };
+  }
+}
+
 export default async function HomePage() {
-  const popularSearches = await getPopularSearches();
+  const [popularSearches, networkStats] = await Promise.all([
+    getPopularSearches(),
+    getNetworkStats(),
+  ]);
+
+  const stats = [
+    { value: networkStats.businessCount ? networkStats.businessCount.toLocaleString() : "30,000+", label: "public trade profiles" },
+    { value: networkStats.tradeCount ? networkStats.tradeCount.toLocaleString() : "50+", label: "trade categories" },
+    { value: networkStats.stateCount ? networkStats.stateCount.toLocaleString() : "8", label: "states and territories" },
+  ];
+
   return (
     <main className="bg-[#FCFCFC] text-[#1A1A1A] antialiased">
 
@@ -127,78 +174,88 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 z-0 bg-[#FCFCFC]/75" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold text-[#1A1A1A] mb-4 md:mb-6 leading-[1.1] tracking-tight font-display">
-            More customers for tradies.{" "}
-            <span className="text-[#FF6600]">Earn gift cards</span>{" "}
-            for referrals.
-          </h1>
-          <p className="text-xl md:text-2xl lg:text-3xl text-gray-600 mb-8 md:mb-16 max-w-3xl mx-auto leading-relaxed">
-            Trade businesses get more jobs. Referrers get rewarded for trusted introductions. Join Australia&apos;s referral network and sign up free.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 max-w-5xl mx-auto">
-            {/* Referrers card */}
-            <div className="bg-white rounded-2xl p-8 lg:p-10 shadow-xl border-t-8 border-[#FF6600] hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center h-full">
-              <div className="w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mb-6 text-[#FF6600] ring-4 ring-orange-100">
-                <Megaphone className="w-12 h-12" />
-              </div>
-              <h3 className="text-3xl font-extrabold mb-3 font-display text-[#1A1A1A]">Referrers</h3>
-              <p className="text-gray-600 mb-8 text-center text-xl leading-relaxed flex-grow">
-                Get rewarded for trusted introductions. Earn gift cards for every trade job you refer — no selling, just connecting.
-              </p>
-              <SignedInOut
-                signedOut={
-                  <Link
-                    href="/register?type=referrer"
-                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
-                  >
-                    Get Paid to Refer <ArrowRight className="w-6 h-6" />
-                  </Link>
-                }
-                signedIn={
-                  <Link
-                    href="/dashboard/referrer"
-                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-2xl font-bold uppercase tracking-wider flex items-center justify-center gap-2"
-                  >
-                    My Dashboard <ArrowRight className="w-6 h-6" />
-                  </Link>
-                }
-              />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-3 text-sm font-black uppercase tracking-widest text-[#FF6600]">
+              <ShieldCheck className="w-4 h-4" />
+              ABN-checked Australian trade directory
             </div>
+            <h1 className="mt-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-[#1A1A1A] leading-[1.05] tracking-tight font-display">
+              Find trusted local tradies, get free quotes, and reward good referrals.
+            </h1>
+            <p className="mt-6 text-lg md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              TradeRefer helps Australians compare local trade businesses, send quote requests, and back the tradies they already trust.
+            </p>
+            <form action="/businesses" className="mt-8 mx-auto flex max-w-3xl flex-col gap-3 rounded-lg border border-gray-200 bg-white p-2 shadow-xl shadow-gray-900/10 sm:flex-row">
+              <label htmlFor="home-business-search" className="sr-only">Search for a business by name, trade or suburb</label>
+              <div className="flex min-h-[56px] flex-1 items-center gap-3 px-4">
+                <Search className="h-5 w-5 shrink-0 text-[#FF6600]" />
+                <input
+                  id="home-business-search"
+                  name="q"
+                  type="search"
+                  placeholder="Search business name, trade or suburb"
+                  className="w-full bg-transparent text-base font-semibold text-[#1A1A1A] outline-none placeholder:text-gray-400"
+                />
+              </div>
+              <button
+                type="submit"
+                className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-md bg-[#1A1A1A] px-6 py-3 text-base font-black text-white transition-colors hover:bg-[#FF6600]"
+              >
+                Search Businesses <ArrowRight className="w-5 h-5" />
+              </button>
+            </form>
+            <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+              <Link
+                href="/quotes"
+                prefetch={false}
+                className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-lg bg-[#FF6600] px-7 py-4 text-lg font-black text-white shadow-lg shadow-orange-500/20 transition-colors hover:bg-[#E65C00]"
+              >
+                Get Free Quotes <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/businesses"
+                prefetch={false}
+                className="inline-flex min-h-[56px] items-center justify-center gap-2 rounded-lg border-2 border-[#1A1A1A] bg-white px-7 py-4 text-lg font-black text-[#1A1A1A] transition-colors hover:bg-[#1A1A1A] hover:text-white"
+              >
+                Browse Tradies
+              </Link>
+            </div>
+          </div>
 
-            {/* Trades card */}
-            <div className="bg-[#1A1A1A] rounded-2xl p-8 lg:p-10 shadow-xl border-t-8 border-[#FF6600] hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-center h-full text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Construction className="w-36 h-36" />
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl mx-auto">
+            {stats.map((stat) => (
+              <div key={stat.label} className="rounded-lg border border-gray-200 bg-white/90 px-5 py-4 text-center shadow-sm">
+                <p className="text-3xl font-black text-[#1A1A1A] font-display">{stat.value}</p>
+                <p className="mt-1 text-sm font-bold uppercase tracking-widest text-gray-500">{stat.label}</p>
               </div>
-              <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-6 text-white ring-4 ring-gray-700 z-10">
-                <ShieldCheck className="w-12 h-12" />
-              </div>
-              <h3 className="text-3xl font-extrabold mb-3 font-display z-10 text-white">Trade Businesses</h3>
-              <p className="text-gray-300 mb-8 text-center text-xl leading-relaxed flex-grow z-10">
-                Get more jobs from trusted referrals. Zero upfront cost — only pay a 20% fee when you win the job.
-              </p>
-              <SignedInOut
-                signedOut={
-                  <Link
-                    href="/register?type=business"
-                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
-                    style={{ minHeight: "64px" }}
-                  >
-                    Get More Jobs <TrendingUp className="w-6 h-6" />
-                  </Link>
-                }
-                signedIn={
-                  <Link
-                    href="/dashboard/business"
-                    className="w-full bg-[#FF6600] hover:bg-[#E65C00] text-white rounded-xl shadow-lg transition-all active:scale-95 font-cta text-[22px] font-bold uppercase tracking-wider z-10 flex items-center justify-center gap-2"
-                    style={{ minHeight: "64px" }}
-                  >
-                    View My Leads <TrendingUp className="w-6 h-6" />
-                  </Link>
-                }
-              />
+            ))}
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <HomeIcon className="w-8 h-8 text-[#FF6600] mb-4" />
+              <h2 className="text-2xl font-extrabold text-[#1A1A1A] font-display">Need a job done?</h2>
+              <p className="mt-3 text-gray-600 leading-relaxed">Tell us the trade and suburb. We send your request to suitable local businesses so you can compare replies.</p>
+              <Link href="/quotes" prefetch={false} className="mt-5 inline-flex items-center gap-2 font-black text-[#FF6600]">
+                Request quotes <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="rounded-lg border border-gray-900 bg-[#1A1A1A] p-6 text-white shadow-sm">
+              <TrendingUp className="w-8 h-8 text-[#FF6600] mb-4" />
+              <h2 className="text-2xl font-extrabold font-display">Run a trade business?</h2>
+              <p className="mt-3 text-gray-300 leading-relaxed">Claim your profile, show services and locations, and receive direct enquiries without a monthly listing fee.</p>
+              <Link href="/register?type=business" prefetch={false} className="mt-5 inline-flex items-center gap-2 font-black text-[#FF6600]">
+                Claim your profile <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <Megaphone className="w-8 h-8 text-[#FF6600] mb-4" />
+              <h2 className="text-2xl font-extrabold text-[#1A1A1A] font-display">Know good tradies?</h2>
+              <p className="mt-3 text-gray-600 leading-relaxed">Refer businesses you trust and earn rewards when your introductions create real opportunities.</p>
+              <Link href="/register?type=referrer" prefetch={false} className="mt-5 inline-flex items-center gap-2 font-black text-[#FF6600]">
+                Start referring <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
@@ -226,44 +283,28 @@ export default async function HomePage() {
       {/* ── TRUST BAR ── */}
       <section className="bg-white border-b border-gray-200 py-12 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-base font-black text-gray-400 uppercase tracking-widest mb-10 text-center font-display">Trusted by Industry Leaders</p>
-          <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
-
-            {/* Pulsing ABN Live badge */}
-            <div className="flex items-center gap-4 bg-green-50 border-2 border-green-200 rounded-2xl px-6 py-4">
-              <div className="relative">
-                <ShieldCheck className="w-12 h-12 text-green-600" />
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 animate-ping" />
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500" />
-              </div>
-              <div>
-                <p className="font-black text-xl text-[#1A1A1A] font-display">ABN &amp; License Verified</p>
-                <p className="font-bold text-green-600 uppercase tracking-widest text-base">● Live Network Active</p>
-              </div>
+          <p className="text-base font-black text-gray-400 uppercase tracking-widest mb-10 text-center font-display">What TradeRefer Checks</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="rounded-lg border border-green-200 bg-green-50 px-5 py-5">
+              <ShieldCheck className="w-8 h-8 text-green-600 mb-3" />
+              <p className="font-black text-xl text-[#1A1A1A] font-display">Business identity</p>
+              <p className="mt-2 text-gray-600 leading-relaxed">Profiles are matched to public business details such as ABN, location and trade category where available.</p>
             </div>
-
-            <div className="flex items-center gap-4">
-              <HardHat className="w-12 h-12 text-blue-800" />
-              <div>
-                <p className="font-extrabold text-xl font-display">Master Builders</p>
-                <p className="text-gray-400 font-medium text-base">Association Member</p>
-              </div>
+            <div className="rounded-lg border border-gray-200 bg-white px-5 py-5">
+              <Wrench className="w-8 h-8 text-[#FF6600] mb-3" />
+              <p className="font-black text-xl text-[#1A1A1A] font-display">Trade fit</p>
+              <p className="mt-2 text-gray-600 leading-relaxed">Pages surface services, suburbs and job types before a customer sends an enquiry.</p>
             </div>
-            <div className="flex items-center gap-4">
-              <Zap className="w-12 h-12 text-yellow-600" />
-              <div>
-                <p className="font-extrabold text-xl font-display">NECA</p>
-                <p className="text-gray-400 font-medium text-base">National Electrical</p>
-              </div>
+            <div className="rounded-lg border border-gray-200 bg-white px-5 py-5">
+              <MapPin className="w-8 h-8 text-blue-600 mb-3" />
+              <p className="font-black text-xl text-[#1A1A1A] font-display">Local coverage</p>
+              <p className="mt-2 text-gray-600 leading-relaxed">Directory and quote flows prioritise nearby businesses before broader matches.</p>
             </div>
-            <div className="flex items-center gap-4">
-              <HomeIcon className="w-12 h-12 text-red-700" />
-              <div>
-                <p className="font-extrabold text-xl font-display">HIA</p>
-                <p className="text-gray-400 font-medium text-base">Housing Industry</p>
-              </div>
+            <div className="rounded-lg border border-gray-200 bg-white px-5 py-5">
+              <CheckCircle2 className="w-8 h-8 text-green-600 mb-3" />
+              <p className="font-black text-xl text-[#1A1A1A] font-display">Clear next steps</p>
+              <p className="mt-2 text-gray-600 leading-relaxed">Customers can browse, request quotes or contact businesses directly from profile pages.</p>
             </div>
-
           </div>
         </div>
       </section>
@@ -288,11 +329,11 @@ export default async function HomePage() {
           
           <div className="mt-6 flex flex-wrap justify-center gap-2 md:gap-3 text-gray-400">
             <span className="text-gray-500 text-sm hidden sm:inline">Popular:</span>
-            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Plumbing">Plumbers</Link>
-            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Electrical">Electricians</Link>
-            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Building">Builders</Link>
-            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Painting">Painters</Link>
-            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Landscaping">Landscapers</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Plumbing" prefetch={false}>Plumbers</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Electrical" prefetch={false}>Electricians</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Building" prefetch={false}>Builders</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Painting" prefetch={false}>Painters</Link>
+            <Link className="text-sm hover:text-[#FF6600] underline decoration-[#FF6600] decoration-2 underline-offset-4 transition-all" href="/businesses?category=Landscaping" prefetch={false}>Landscapers</Link>
           </div>
         </div>
       </section>
@@ -301,8 +342,8 @@ export default async function HomePage() {
       <section className="py-20 bg-[#F2F2F2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-[#1A1A1A] mb-4 font-display leading-tight">The Math Behind Success</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-xl leading-relaxed">See exactly why our model puts more money in your pocket.</p>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-[#1A1A1A] mb-4 font-display leading-tight">Compare Lead Models</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-xl leading-relaxed">See how upfront lead spend compares with TradeRefer&apos;s profile and referral flow.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch max-w-5xl mx-auto">
@@ -346,16 +387,16 @@ export default async function HomePage() {
 
             {/* TradeRefer way */}
             <div className="bg-white p-8 lg:p-10 rounded-2xl shadow-2xl border-2 border-[#FF6600] relative transform md:scale-105 z-10 flex flex-col">
-              <div className="absolute -top-5 right-0 left-0 mx-auto w-max bg-[#FF6600] text-white text-sm font-bold px-6 py-2 rounded-full uppercase tracking-wider shadow-md">Recommended Choice</div>
-              <h3 className="text-xl font-bold text-[#FF6600] mb-6 uppercase font-display text-center">Pay-For-Success Model</h3>
+              <div className="absolute -top-5 right-0 left-0 mx-auto w-max bg-[#FF6600] text-white text-sm font-bold px-6 py-2 rounded-full uppercase tracking-wider shadow-md">TradeRefer Model</div>
+              <h3 className="text-xl font-bold text-[#FF6600] mb-6 uppercase font-display text-center">Profile Plus Referral Flow</h3>
               <ul className="space-y-6 text-gray-700 mb-8 flex-grow">
                 <li className="flex items-start gap-4">
                   <div className="mt-1 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-xl mb-1">$0 Upfront Cost — Exclusive Leads</strong>
-                    <span className="text-gray-500 text-base leading-relaxed">Join, list your business, and receive exclusive leads completely free.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">$0 monthly listing fee</strong>
+                    <span className="text-gray-500 text-base leading-relaxed">Join, list your business, and receive direct profile enquiries without a monthly subscription.</span>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
@@ -363,8 +404,8 @@ export default async function HomePage() {
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-xl mb-1">Only pay 20% fee when you WIN</strong>
-                    <span className="text-gray-500 text-base leading-relaxed">We only get paid when money hits your account. Zero risk.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">Success fee on won referral work</strong>
+                    <span className="text-gray-500 text-base leading-relaxed">Referral lead terms are shown clearly, so your business can decide before committing.</span>
                   </div>
                 </li>
                 <li className="flex items-start gap-4">
@@ -372,13 +413,13 @@ export default async function HomePage() {
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <strong className="block text-[#1A1A1A] text-xl mb-1">Tax-Deductible — Section 8-1 ITAA 1997</strong>
-                    <span className="text-gray-500 text-base leading-relaxed">The 20% success fee qualifies as a Marketing &amp; Promotion expense under Australian tax law.</span>
+                    <strong className="block text-[#1A1A1A] text-xl mb-1">Clear success-fee model</strong>
+                    <span className="text-gray-500 text-base leading-relaxed">Costs are connected to won work, with terms shown before a business commits.</span>
                   </div>
                 </li>
               </ul>
               <div className="border-t border-gray-100 pt-6 text-center">
-                <span className="text-green-600 font-bold font-display text-lg">Zero Risk, Infinite Upside</span>
+                <span className="text-green-600 font-bold font-display text-lg">Clear terms, controlled spend</span>
               </div>
             </div>
           </div>
@@ -402,13 +443,14 @@ export default async function HomePage() {
                 />
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A1A1A] mb-2 font-display">Cash in Your Goodwill</h2>
-              <p className="text-gray-600 text-lg">Invite 5 people → earn a $25 Prezzee Smart Card. Spend it at 400+ brands.</p>
+              <p className="text-gray-600 text-lg">Invite 5 people → earn a $25 Prezzee Smart Card. Spend it at 335+ brands.</p>
             </div>
             <Link
               href="/rewards"
+              prefetch={false}
               className="shrink-0 inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-7 py-3 rounded-full transition-colors shadow-lg"
             >
-              See all 335 brands <ArrowRight className="w-4 h-4" />
+              See all 335+ brands <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
@@ -421,12 +463,12 @@ export default async function HomePage() {
         <div className="container mx-auto px-6">
           <div className="text-center mb-6">
             <h2 className="text-3xl md:text-5xl font-black text-zinc-900 mb-4 font-display tracking-tight leading-tight">Browse by Trade</h2>
-            <p className="text-zinc-600 font-medium max-w-2xl mx-auto text-xl leading-relaxed">Find verified local specialists for every home and commercial trade across Australia.</p>
+            <p className="text-zinc-600 font-medium max-w-2xl mx-auto text-xl leading-relaxed">Find local specialists for home and commercial trades across Australia.</p>
           </div>
           {/* GEO BLUF snippet for AI crawlers */}
           <div className="bg-white border-l-4 border-[#FF6600] rounded-xl px-6 py-4 max-w-3xl mx-auto mb-12">
             <p className="text-[#1A1A1A] text-lg leading-relaxed">
-              TradeRefer provides access to 12,000+ verified Australian trades across every state and territory. Our network eliminates upfront lead risk for businesses while rewarding local communities for high-quality introductions.
+              TradeRefer helps Australians compare public trade profiles across every state and territory, request quotes, and reward trusted local introductions when referral terms are accepted.
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-w-6xl mx-auto">
@@ -435,6 +477,7 @@ export default async function HomePage() {
                 <Link
                   key={trade}
                   href={`/businesses?category=${encodeURIComponent(trade)}`}
+                  prefetch={false}
                   className="group flex items-center gap-2.5 bg-white border border-zinc-200 rounded-2xl px-4 py-3.5 font-bold text-zinc-700 hover:border-orange-500 hover:text-orange-600 hover:shadow-md transition-all duration-200 text-base"
                 >
                   <Wrench className="w-3.5 h-3.5 text-zinc-400 group-hover:text-orange-500 shrink-0 transition-colors" />
@@ -446,6 +489,7 @@ export default async function HomePage() {
           <div className="text-center mt-10">
             <Link
               href="/categories"
+              prefetch={false}
               className="inline-flex items-center gap-2 font-bold text-orange-600 hover:text-orange-700 transition-colors text-base"
             >
               Browse All Trades <ChevronRight className="w-4 h-4" />
@@ -475,6 +519,7 @@ export default async function HomePage() {
               <Link
                 key={slug}
                 href={`/local/${slug}`}
+                prefetch={false}
                 className="group bg-zinc-50 border border-zinc-200 rounded-2xl p-5 hover:border-orange-500 hover:shadow-lg transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-2">
@@ -495,13 +540,13 @@ export default async function HomePage() {
           <h2 className="text-2xl font-black text-zinc-900 mb-8 text-center font-display">Popular Local Searches</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 max-w-6xl mx-auto text-sm">
             {popularSearches.map(({ label, href }) => (
-              <Link key={label} href={href} className="px-3 py-2 bg-white border border-zinc-200 rounded-lg font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors text-center">
+              <Link key={label} href={href} prefetch={false} className="px-3 py-2 bg-white border border-zinc-200 rounded-lg font-bold text-zinc-600 hover:border-orange-400 hover:text-orange-600 transition-colors text-center">
                 {label}
               </Link>
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/local" className="inline-flex items-center gap-2 font-bold text-orange-600 hover:text-orange-700 transition-colors">
+            <Link href="/local" prefetch={false} className="inline-flex items-center gap-2 font-bold text-orange-600 hover:text-orange-700 transition-colors">
               View Full Directory <ChevronRight className="w-4 h-4" />
             </Link>
           </div>

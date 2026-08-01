@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Pool Building Services Australia | Pool Builders | TradeRefer",
-    description: "Find trusted pool builders across Australia. Compare concrete, fibreglass, and above-ground pool costs by city, understand council approval and fencing requirements, and hire verified local pool builders through TradeRefer.",
+    description: "Find trusted pool builders across Australia. Compare concrete, fibreglass, and above-ground pool costs by city, understand council approval and fencing requirements, and hire local pool builders through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/pool-building" },
-    openGraph: { title: "Pool Building Services Australia | TradeRefer", description: "Compare pool construction costs, fibreglass vs concrete pricing, and verified local pool builders across Australia.", url: "https://traderefer.au/trades/pool-building", type: "website" },
+    openGraph: { title: "Pool Building Services Australia | TradeRefer", description: "Compare pool construction costs, fibreglass vs concrete pricing, and local pool builders across Australia.", url: "https://traderefer.au/trades/pool-building", type: "website" },
 };
 
 const TRADE_NAME = "Pool & Spa";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Understand the ongoing maintenance commitment", body: "A pool requires weekly chemical dosing, regular filter cleaning, and annual servicing. Basic chemical and maintenance costs run $600–$2,000/year for a residential pool. Salt water chlorinators ($800–$2,500 installed) reduce chemical handling. Factor these costs into your decision — especially for second pools or holiday homes with infrequent use.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified pool builders", body: "TradeRefer helps homeowners find ABN-verified, licensed pool builders who manage DA approvals, fencing compliance, and installation to AS 1926 standards — critical for pool safety and legal compliance." },
+    { title: "Checked pool builders", body: "TradeRefer helps homeowners find ABN-checked, licensed pool builders who manage DA approvals, fencing compliance, and installation to AS 1926 standards — critical for pool safety and legal compliance." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical fibreglass and concrete pool costs across Australian cities so you can benchmark builder quotes and identify what's included vs what's an extra." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national pool building guide into city and suburb-level pages to find verified pool builders in the specific area where your property is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national pool building guide into city and suburb-level pages to find pool builders in the specific area where your property is located." },
 ];
 const customFaqs = [
     { q: "How much does a fibreglass pool cost in Australia?", a: "A standard fibreglass pool (8×4m) installed in a typical suburban backyard costs $35,000–$65,000 in most Australian cities, including excavation, installation, filtration, and basic landscaping restoration. Difficult access, rock excavation, complex soil conditions, or extensive landscaping can add $5,000–$25,000 to the project cost." },
@@ -106,8 +106,8 @@ export default async function PoolBuildingTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Pool Builders</span> Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer pool building hub to compare fibreglass, concrete, and plunge pool costs across Australian cities, understand DA and fencing requirements, and connect with verified local pool builders.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Pool Builders</span> Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer pool building hub to compare fibreglass, concrete, and plunge pool costs across Australian cities, understand DA and fencing requirements, and connect with local pool builders.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Fpool-building`} className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Pool Builders</Link>
@@ -176,7 +176,7 @@ export default async function PoolBuildingTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Pool Building Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 verified local pool builders.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Pool Building Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 local pool builders.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory={TRADE_NAME} initialSourcePage="/trades/pool-building" />
                     </section>
 
@@ -200,7 +200,7 @@ export default async function PoolBuildingTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Ready to Build Your Pool?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local pool builders, compare fibreglass and concrete options, and find the right contractor for your backyard pool project.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local pool builders, compare fibreglass and concrete options, and find the right contractor for your backyard pool project.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Fpool-building`} className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Pool Builders</Link>

@@ -20,14 +20,14 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Concreting Services Australia | Find Verified Concreters | TradeRefer",
+    title: "Concreting Services Australia | Find Concreters | TradeRefer",
     description:
-        "Find trusted concreters across Australia. Compare concrete driveway and slab costs by city, understand licensing requirements by state, and hire verified local concreters through TradeRefer.",
+        "Find trusted concreters across Australia. Compare concrete driveway and slab costs by city, understand licensing requirements by state, and hire local concreters through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/concreting" },
     openGraph: {
         title: "Concreting Services Australia | TradeRefer",
         description:
-            "Compare concreting costs per m², driveway and slab pricing, licensing requirements, and verified local concreters across Australia.",
+            "Compare concreting costs per m², driveway and slab pricing, licensing requirements, and local concreters across Australia.",
         url: "https://traderefer.au/trades/concreting",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified concreting businesses",
-        body: "TradeRefer helps homeowners find ABN-verified concreting contractors instead of relying on unchecked listings — particularly important for structural slabs where compliance and quality directly affect your property value.",
+        title: "Checked concreting businesses",
+        body: "TradeRefer helps homeowners find ABN-checked concreting contractors instead of relying on unchecked listings — particularly important for structural slabs where compliance and quality directly affect your property value.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Navigate from this national concreting guide into city and suburb-level pages to find verified concreters in the specific area where your project is located.",
+        body: "Navigate from this national concreting guide into city and suburb-level pages to find concreters in the specific area where your project is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function ConcretingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Concreters</span> Across Australia
+                            Find <span className="text-[#FF6600]">Concreters</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer concreting hub to compare driveway and slab costs per square metre across Australian cities, understand licensing requirements,
-                            and connect with verified local concreters for your residential or commercial project.
+                            and connect with local concreters for your residential or commercial project.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function ConcretingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Concreting Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your concreting quotes here and we&apos;ll match your project with up to 3 verified local concreting businesses.
+                                Request your concreting quotes here and we&apos;ll match your project with up to 3 local concreting businesses.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Concreting" initialSourcePage="/trades/concreting" />
@@ -481,7 +481,7 @@ export default async function ConcretingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Concreter Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local concreting businesses, compare services and finishes, and find the right concreter for your driveway, slab, or outdoor project.
+                            Browse local concreting businesses, compare services and finishes, and find the right concreter for your driveway, slab, or outdoor project.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

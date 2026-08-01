@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: "Air Conditioning Installation & Service Australia | TradeRefer",
         description:
-            "Compare air conditioning costs, split system vs ducted pricing, licensing requirements, and verified local HVAC businesses across Australia.",
+            "Compare air conditioning costs, split system vs ducted pricing, licensing requirements, and local HVAC businesses across Australia.",
         url: "https://traderefer.au/trades/air-conditioning",
         type: "website",
     },
@@ -88,15 +88,15 @@ const hiringTips = [
     },
     {
         title: "Compare brand-agnostic installers",
-        body: "Some technicians are aligned with or incentivised by specific brands. TradeRefer surfaces verified businesses ranked by real community referrals — helping you find independent HVAC technicians who will recommend the right system for your home, not just the brand they stock.",
+        body: "Some technicians are aligned with or incentivised by specific brands. TradeRefer surfaces trade profiles ranked by real community referrals — helping you find independent HVAC technicians who will recommend the right system for your home, not just the brand they stock.",
         icon: Star,
     },
 ];
 
 const whyTradeRefer = [
     {
-        title: "Verified HVAC businesses",
-        body: "TradeRefer helps surface ABN-checked air conditioning businesses so homeowners can compare verified providers instead of relying on anonymous listings or branded directories.",
+        title: "Checked HVAC businesses",
+        body: "TradeRefer helps surface ABN-checked air conditioning businesses so homeowners can compare providers instead of relying on anonymous listings or branded directories.",
     },
     {
         title: "Better quote comparison",
@@ -246,7 +246,7 @@ export default async function AirConditioningTradeHubPage() {
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer air conditioning hub to compare typical split system and ducted AC costs, understand
-                            ARC licensing requirements, and discover verified local HVAC businesses in the Australian cities where demand is highest.
+                            ARC licensing requirements, and discover local HVAC businesses in the Australian cities where demand is highest.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -433,7 +433,7 @@ export default async function AirConditioningTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Air Conditioning Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your air conditioning quotes here and we&apos;ll match your job with up to 3 verified local businesses.
+                                Request your air conditioning quotes here and we&apos;ll match your job with up to 3 local trade profiles.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Air Conditioning & Heating" initialSourcePage="/trades/air-conditioning" />
@@ -506,7 +506,7 @@ export default async function AirConditioningTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need an Air Conditioning Installer Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local air conditioning businesses, compare their services, and move into suburb-level directory pages to find the best licensed HVAC installer for your home or business.
+                            Browse local air conditioning businesses, compare their services, and move into suburb-level directory pages to find the best licensed HVAC installer for your home or business.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

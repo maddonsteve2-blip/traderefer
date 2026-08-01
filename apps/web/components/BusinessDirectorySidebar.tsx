@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { MapPin, Wrench, Clock, ChevronDown, ChevronUp, X, Search } from "lucide-react";
 import { TRADE_CATEGORIES, AUSTRALIA_LOCATIONS, JOB_TYPES } from "@/lib/constants";
-import { useState, useTransition } from "react";
+import { type FormEvent, useEffect, useState, useTransition } from "react";
 
 const STATE_LABELS: Record<string, string> = {
     VIC: "Victoria", NSW: "New South Wales", QLD: "Queensland",
@@ -130,6 +130,15 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
     const currentIs24h = searchParams.get("is24h") === "true";
     const hasFilters = currentCategory || currentSuburb || currentState || currentCity || currentSearch || currentOpenNow || currentIs24h;
 
+    useEffect(() => {
+        setSearchQuery(currentSearch);
+    }, [currentSearch]);
+
+    const submitSearch = (event?: FormEvent<HTMLFormElement>) => {
+        event?.preventDefault();
+        push({ q: searchQuery.trim() });
+    };
+
     const visibleCategories = showAllCategories
         ? TRADE_CATEGORIES
         : TRADE_CATEGORIES.slice(0, 10);
@@ -137,21 +146,25 @@ export function BusinessDirectorySidebar({ counts, total }: SidebarProps) {
     return (
         <div className={`space-y-5 transition-opacity duration-150 ${isPending ? 'opacity-60 pointer-events-none' : ''}`}>
             {/* Search */}
-            <div className="relative">
+            <form onSubmit={submitSearch} className="relative">
+                <label htmlFor="business-sidebar-search" className="sr-only">Search business name, trade or service</label>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4 pointer-events-none" />
                 <input
-                    type="text"
+                    id="business-sidebar-search"
+                    name="q"
+                    type="search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            push({ q: searchQuery });
-                        }
-                    }}
-                    placeholder="Search businesses..."
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm font-medium"
+                    placeholder="Business name, trade or service"
+                    className="w-full pl-10 pr-20 py-2.5 bg-white border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all text-sm font-medium"
                 />
-            </div>
+                <button
+                    type="submit"
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg bg-zinc-900 px-3 py-1.5 text-xs font-black text-white transition-colors hover:bg-[#FF6600]"
+                >
+                    Search
+                </button>
+            </form>
 
             {/* Active Filters Summary */}
             <div className={`border rounded-xl p-4 ${hasFilters ? 'bg-orange-50 border-orange-100' : 'bg-zinc-50 border-zinc-100'}`}>

@@ -4,17 +4,27 @@ const GSC_BASE_URL = process.env.GSC_API_BASE_URL || "https://disciplined-truth-
 const SITE_BASE_URL = process.env.SITE_BASE_URL || "https://traderefer.au";
 const SAMPLE_LIMIT = Number(process.env.SEO_MONITOR_SAMPLE_LIMIT || 2);
 
-const SITEMAPS = ["general", "profiles", "suburbs", "trades", "top"];
+const STATIC_SITEMAPS = ["general", "suburbs", "trades", "top"];
+// Profile URLs are split across /sitemaps/profiles-N chunks; limits for
+// "profiles" apply to the total across all chunks discovered in the index.
+const PROFILES_CHUNK_MAX = 10000;
+// Profiles/trades bounds reflect the 2026-06-12 sitemap quality gates
+// (profiles need reviews>=5 or reviews>=1+photos; trade pages need >=2
+// businesses) AND the 2026-06-12 dedupe/no-logo purge, which delisted ~9.8k
+// businesses (3,318 duplicates + 6,464 logo-less) leaving 23,850 active:
+// gated profiles ~20.5k, gated trade pages ~6.0k.
 const EXPECTED_LIMITS = {
   general: { max: 900 },
-  profiles: { min: 30000, max: 36000 },
+  profiles: { min: 18000, max: 24000 },
   suburbs: { max: 1300 },
-  trades: { max: 15000 },
+  trades: { min: 5000, max: 7500 },
   top: { max: 1400 },
 };
 
 const WATCH_URLS = [
   "/local/nsw/epping/epping-3076/drainage",
+  "/local/act/canberra/queanbeyan/excavation",
+  "/local/nsw/queanbeyan/queanbeyan-2620/excavation",
   "/local/nsw/sydney/caringbah-2229/air-conditioning-heating",
   "/local/nsw/sydney/caringbah-2229/air-conditioning-heating/split-system-air-conditioner-electrical",
   "/top/air-conditioning-heating/nsw/parramatta",
@@ -100,25 +110,55 @@ async function main() {
 
   const sitemapSummary = {};
   const issues = [];
-  for (const sitemap of SITEMAPS) {
+
+  const { response: indexResponse, text: indexXml } = await fetchText(`${SITE_BASE_URL}/sitemap.xml`);
+  const indexedSitemaps = indexResponse.ok
+    ? extractLocs(indexXml).map((loc) => new URL(loc).pathname.replace(/^\/sitemaps\//, ""))
+    : [];
+  if (!indexResponse.ok) issues.push(`sitemap index returned ${indexResponse.status}`);
+  for (const name of STATIC_SITEMAPS) {
+    if (!indexedSitemaps.includes(name)) issues.push(`sitemap index is missing ${name}`);
+  }
+  const profileChunks = indexedSitemaps.filter((name) => /^profiles-\d+$/.test(name));
+  if (indexResponse.ok && !profileChunks.length) issues.push("sitemap index lists no profiles-N chunks");
+  if (indexedSitemaps.includes("profiles")) issues.push("sitemap index still lists the unchunked profiles sitemap");
+
+  let profilesTotal = 0;
+  const sitemapNames = [...new Set([...STATIC_SITEMAPS, ...profileChunks])];
+  for (const sitemap of sitemapNames) {
+    const isProfilesChunk = /^profiles-\d+$/.test(sitemap);
     const { response, text } = await fetchText(`${SITE_BASE_URL}/sitemaps/${sitemap}`);
     const locs = response.ok ? extractLocs(text) : [];
-    const limits = EXPECTED_LIMITS[sitemap] || {};
+    const limits = (isProfilesChunk ? null : EXPECTED_LIMITS[sitemap]) || {};
     const count = locs.length;
     const nearMeLeak = text.includes("air-conditioning-specialists-near-me");
     const badPostcodeLeak = text.includes("/local/nsw/epping/epping-3076/");
+    const badStateSuburbLeak = text.includes("/local/act/canberra/queanbeyan/");
+    const canonicalQueanbeyanPresent = text.includes("/local/nsw/queanbeyan/queanbeyan-2620/excavation");
     sitemapSummary[sitemap] = {
       status: response.status,
       count,
       sample: locs.slice(0, SAMPLE_LIMIT),
       nearMeLeak,
       badPostcodeLeak,
+      badStateSuburbLeak,
+      canonicalQueanbeyanPresent,
     };
     if (!response.ok) issues.push(`${sitemap} sitemap returned ${response.status}`);
+    if (isProfilesChunk) {
+      profilesTotal += count;
+      if (count > PROFILES_CHUNK_MAX) issues.push(`${sitemap} sitemap count ${count} exceeds chunk limit ${PROFILES_CHUNK_MAX}`);
+    }
     if (limits.min && count < limits.min) issues.push(`${sitemap} sitemap count ${count} is below expected minimum ${limits.min}`);
     if (limits.max && count > limits.max) issues.push(`${sitemap} sitemap count ${count} is above expected maximum ${limits.max}`);
     if (nearMeLeak) issues.push(`${sitemap} sitemap includes generic near-me URLs`);
     if (badPostcodeLeak) issues.push(`${sitemap} sitemap includes invalid NSW/VIC Epping postcode URL`);
+    if (badStateSuburbLeak) issues.push(`${sitemap} sitemap includes invalid ACT/NSW Queanbeyan URL`);
+    if (sitemap === "trades" && !canonicalQueanbeyanPresent) issues.push(`${sitemap} sitemap is missing canonical NSW Queanbeyan excavation URL`);
+  }
+  if (profileChunks.length) {
+    if (profilesTotal < EXPECTED_LIMITS.profiles.min) issues.push(`profiles sitemaps total ${profilesTotal} is below expected minimum ${EXPECTED_LIMITS.profiles.min}`);
+    if (profilesTotal > EXPECTED_LIMITS.profiles.max) issues.push(`profiles sitemaps total ${profilesTotal} is above expected maximum ${EXPECTED_LIMITS.profiles.max}`);
   }
 
   const inspections = [];
@@ -134,6 +174,14 @@ async function main() {
     {
       label: "valid local trade page remains indexable",
       ok: inspections.find((item) => item.url.endsWith("/local/nsw/sydney/caringbah-2229/air-conditioning-heating"))?.robots === "index, follow",
+    },
+    {
+      label: "canonical Queanbeyan trade page remains indexable",
+      ok: inspections.find((item) => item.url.endsWith("/local/nsw/queanbeyan/queanbeyan-2620/excavation"))?.robots === "index, follow",
+    },
+    {
+      label: "invalid ACT Queanbeyan page stays out of the index",
+      ok: inspections.find((item) => item.url.endsWith("/local/act/canberra/queanbeyan/excavation"))?.robots === "noindex, follow",
     },
     {
       label: "job subtype pages stay noindex",
@@ -162,6 +210,7 @@ async function main() {
       pageTypeSummary90d: summarizePageTypes(pages90.pages),
     },
     sitemaps: sitemapSummary,
+    profilesTotalUrls: profilesTotal,
     inspections,
   };
 
@@ -179,6 +228,7 @@ async function main() {
   for (const [name, details] of Object.entries(sitemapSummary)) {
     console.log(`- ${name}: ${details.count} URLs`);
   }
+  console.log(`- profiles total: ${profilesTotal} URLs across ${profileChunks.length} chunks`);
   console.log(`\nWatched URLs:`);
   for (const item of inspections) {
     console.log(`- ${item.status} ${item.url}${item.robots ? ` [${item.robots}]` : ""}${item.location ? ` -> ${item.location}` : ""}`);

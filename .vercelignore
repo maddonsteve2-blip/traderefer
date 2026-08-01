@@ -13,6 +13,13 @@ prototype-comparison
 *.png
 *.webp
 *.img
+!apps/web/public/**/*.ico
+!apps/web/public/**/*.jpg
+!apps/web/public/**/*.jpeg
+!apps/web/public/**/*.mp3
+!apps/web/public/**/*.png
+!apps/web/public/**/*.svg
+!apps/web/public/**/*.webp
 combined.sql
 scraped_businesses.json
 neon

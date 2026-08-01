@@ -2,10 +2,36 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { Gift, Users, ArrowRight, DollarSign, ShieldCheck, CheckCircle, Briefcase, Quote } from "lucide-react";
+import { buildOgImageUrl } from "@/lib/og-image";
+
+const referrerJoinOgImage = buildOgImageUrl({
+    template: "home",
+    title: "Refer tradies you trust",
+    subtitle: "Join TradeRefer as a referrer and receive Prezzee rewards when eligible referrals are accepted.",
+    eyebrow: "For referrers",
+    badge: "Free to join",
+    stat1: "Trusted referrals",
+    stat2: "Business-set fees",
+    stat3: "Prezzee rewards",
+});
 
 export const metadata: Metadata = {
-    title: "You're Invited to TradeRefer | Earn Up to $60 Per Referral",
-    description: "Join TradeRefer free and earn cash rewards every time you refer a tradie. Businesses set fees from $10 to $60+ per lead — paid as Prezzee gift cards.",
+    title: "Refer Trusted Tradies | TradeRefer Referrer Rewards",
+    description: "Join TradeRefer free as a referrer. Recommend trade businesses you trust and receive Prezzee rewards when eligible referrals are accepted.",
+    openGraph: {
+        title: "Refer Trusted Tradies | TradeRefer",
+        description: "Recommend trade businesses you trust and receive Prezzee rewards when eligible referrals are accepted.",
+        url: "https://traderefer.au/join/referrer",
+        siteName: "TradeRefer",
+        type: "website",
+        images: [{ url: referrerJoinOgImage, width: 1200, height: 630, alt: "TradeRefer referrer rewards signup" }],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Refer Trusted Tradies | TradeRefer",
+        description: "Recommend trade businesses you trust and receive Prezzee rewards when eligible referrals are accepted.",
+        images: [referrerJoinOgImage],
+    },
     robots: { index: false, follow: false },
 };
 
@@ -40,7 +66,7 @@ export default async function JoinReferrerPage({
         <main className="min-h-screen bg-white">
             {/* Sticky nav */}
             <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-zinc-100">
-                <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
+                <nav className="w-full max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between" aria-label="Referrer signup">
                     <Link href="/"><Logo size="sm" /></Link>
                     <Link
                         href={signUpUrl}
@@ -48,7 +74,7 @@ export default async function JoinReferrerPage({
                     >
                         Join Free
                     </Link>
-                </div>
+                </nav>
             </header>
 
             {/* ═══ HERO — Split layout ═══ */}
@@ -65,18 +91,18 @@ export default async function JoinReferrerPage({
 
                         <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-black text-zinc-900 tracking-tight leading-[1.1] mb-4">
                             {inviteeName ? (
-                                <>Hi {inviteeName}!<br />Earn <span className="text-emerald-600">up to $60</span> every time you refer a tradie</>
+                                <>Hi {inviteeName}!<br />Refer <span className="text-emerald-600">trusted tradies</span> and receive rewards when leads are accepted</>
                             ) : (
-                                <>Earn <span className="text-emerald-600">up to $60</span> every time you refer a tradie</>
+                                <>Refer <span className="text-emerald-600">trusted tradies</span> and receive rewards when leads are accepted</>
                             )}
                         </h1>
 
                         <p className="text-xl text-zinc-500 font-medium leading-relaxed mb-5 max-w-lg">
-                            Know someone who needs a plumber, sparky or builder? Refer a quality tradie from our network. <strong className="text-zinc-800">Each business sets their own referral fee</strong> — you earn 80% as a Prezzee gift card every time they take your lead.
+                            Know someone who needs a plumber, sparky or builder? Recommend a trade business you trust. <strong className="text-zinc-800">Each business sets its own referral fee</strong>, and eligible accepted leads are paid as Prezzee gift cards.
                         </p>
 
                         <p className="text-base text-emerald-600 font-bold mb-5 flex items-center gap-1.5">
-                            <Users className="w-4 h-4" /> 1,200+ referrers already earning across Australia
+                            <Users className="w-4 h-4" /> Australia-wide referral programme for trusted local introductions
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -89,7 +115,7 @@ export default async function JoinReferrerPage({
                         </div>
 
                         <div className="flex flex-wrap gap-x-5 gap-y-2 text-base text-zinc-500 font-bold">
-                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> 100% free</span>
+                            <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> Free to join</span>
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> No experience needed</span>
                             <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-500" /> Paid via Prezzee gift cards</span>
                         </div>
@@ -144,10 +170,10 @@ export default async function JoinReferrerPage({
                     </h2>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                         {[
-                            { step: "1", icon: ShieldCheck, title: "Sign up free", desc: "Create your account in 2 minutes. No cost, ever." },
-                            { step: "2", icon: Briefcase, title: "Pick businesses", desc: "Browse 5,000+ tradies and apply to refer the ones you trust." },
+                            { step: "1", icon: ShieldCheck, title: "Sign up free", desc: "Create your account and choose how you want to refer." },
+                            { step: "2", icon: Briefcase, title: "Pick businesses", desc: "Browse public trade profiles and apply to refer the ones you trust." },
                             { step: "3", icon: Users, title: "Send leads", desc: "Know someone who needs work done? Share your unique link or submit a lead." },
-                            { step: "4", icon: DollarSign, title: "Get paid", desc: "When the business takes your lead, you earn their referral fee as a Prezzee gift card." },
+                            { step: "4", icon: DollarSign, title: "Receive rewards", desc: "When an eligible referral is accepted, your reward is issued as a Prezzee gift card." },
                         ].map(({ step, icon: Icon, title, desc }) => (
                             <div key={step} className="bg-white rounded-2xl p-6 md:p-8 border border-zinc-200/80 text-center shadow-sm hover:shadow-lg transition-shadow">
                                 <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
@@ -162,7 +188,7 @@ export default async function JoinReferrerPage({
                 </div>
             </section>
 
-            {/* ═══ TESTIMONIAL ═══ */}
+            {/* ═══ REFERRAL PRINCIPLE ═══ */}
             <section className="w-full bg-white">
                 <div className="max-w-7xl mx-auto px-4 lg:px-8 py-14 md:py-20">
                     <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row gap-8 items-center">
@@ -171,9 +197,9 @@ export default async function JoinReferrerPage({
                         </div>
                         <div>
                             <p className="text-xl md:text-2xl text-zinc-800 font-bold leading-relaxed mb-3">
-                                &ldquo;I earned $145 last month just recommending my plumber and electrician to neighbours. It&apos;s genuinely the easiest side income I&apos;ve ever had.&rdquo;
+                                A good referral is not a cold lead. It is a trusted introduction between someone who needs work done and a trade business you would actually recommend.
                             </p>
-                            <p className="text-lg text-zinc-500 font-bold">Sarah M. — Referrer, Sydney</p>
+                            <p className="text-lg text-zinc-500 font-bold">Use TradeRefer when you know the tradie is worth backing.</p>
                         </div>
                     </div>
                 </div>
@@ -185,14 +211,14 @@ export default async function JoinReferrerPage({
 
                     {/* Left: Stats + trust (3 cols) */}
                     <div className="lg:col-span-3 rounded-3xl bg-zinc-800 p-7 md:p-10 text-white flex flex-col border border-zinc-700/50">
-                        <p className="text-emerald-400 font-black text-xs uppercase tracking-widest mb-2">Social Proof</p>
-                        <h3 className="text-2xl md:text-3xl font-black mb-6">Why thousands trust TradeRefer</h3>
+                        <p className="text-emerald-400 font-black text-xs uppercase tracking-widest mb-2">How rewards stay clear</p>
+                        <h3 className="text-2xl md:text-3xl font-black mb-6">Know the terms before you refer</h3>
                         <div className="grid grid-cols-2 gap-3 mb-6">
                             {[
-                                { value: "5,000+", label: "Businesses" },
-                                { value: "1,200+", label: "Active Referrers" },
-                                { value: "$10–$60", label: "Typical Earnings" },
-                                { value: "335+", label: "Prezzee Brands" },
+                                { value: "Free", label: "To join" },
+                                { value: "80%", label: "Referral share" },
+                                { value: "400+", label: "Prezzee brands" },
+                                { value: "AU", label: "Local trade focus" },
                             ].map(s => (
                                 <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
                                     <p className="text-3xl md:text-4xl font-black text-emerald-400">{s.value}</p>
@@ -202,10 +228,10 @@ export default async function JoinReferrerPage({
                         </div>
                         <div className="space-y-3 mt-auto">
                             {[
-                                "Businesses set their own fee — you always know what you'll earn",
-                                "AI-screened leads mean businesses trust your referrals",
-                                "Earnings paid as Prezzee cards — spend at 400+ stores",
-                                "Tier system: refer more, earn a bigger share (up to 90%)",
+                                "Businesses set their own referral fee before you promote them",
+                                "Structured referral details help businesses assess each lead",
+                                "Eligible rewards are paid as Prezzee cards for flexible spending",
+                                "Referral status is tracked so you can see what happened next",
                             ].map(txt => (
                                 <div key={txt} className="flex items-start gap-3">
                                     <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 shrink-0" />
@@ -249,7 +275,7 @@ export default async function JoinReferrerPage({
                             </p>
 
                             <p className="text-zinc-400 font-medium text-base text-center mb-5 leading-relaxed">
-                                Once 5 friends sign up and become active, you get a $25 Prezzee Smart Card — automatically.
+                                Invite rewards are issued when eligibility is confirmed for active invitees.
                             </p>
 
                             {/* Brand chips */}
@@ -269,19 +295,19 @@ export default async function JoinReferrerPage({
                     <h2 className="text-4xl md:text-5xl font-black text-zinc-900 mb-4 tracking-tight leading-tight">
                         {inviterName
                             ? `${inviterName} is already earning. Join them.`
-                            : "Start earning today — it's free"
+                            : "Start referring trusted businesses"
                         }
                     </h2>
                     <p className="text-xl md:text-2xl text-zinc-500 font-medium mb-8 max-w-lg mx-auto leading-relaxed">
-                        Sign up in 2 minutes, pick the tradies you trust, and earn up to $60 every time someone takes your referral.
+                        Sign up, pick the trade businesses you trust, and receive Prezzee rewards when eligible referrals are accepted.
                     </p>
                     <Link
                         href={signUpUrl}
                         className="inline-flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-black text-xl px-12 py-5 rounded-full transition-all active:scale-95 shadow-xl shadow-orange-600/25 ring-2 ring-orange-600/20"
                     >
-                        Join Free & Start Earning <ArrowRight className="w-6 h-6" />
+                        Join Free as a Referrer <ArrowRight className="w-6 h-6" />
                     </Link>
-                    <p className="mt-4 text-lg text-zinc-400 font-medium">No credit card. No experience. No strings.</p>
+                    <p className="mt-4 text-lg text-zinc-400 font-medium">No credit card to join. Recommend only businesses you trust.</p>
                 </div>
             </section>
 

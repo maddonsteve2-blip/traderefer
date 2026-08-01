@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Skip Bin Hire Australia | Skip Bin Companies | TradeRefer",
-    description: "Find trusted skip bin hire companies across Australia. Compare skip bin sizes and hire costs by city, understand permitted vs prohibited waste, and book verified local skip bin services through TradeRefer.",
+    description: "Find trusted skip bin hire companies across Australia. Compare skip bin sizes and hire costs by city, understand permitted vs prohibited waste, and book local skip bin services through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/skip-bins" },
-    openGraph: { title: "Skip Bin Hire Australia | TradeRefer", description: "Compare skip bin hire costs, sizes, and verified local skip bin companies across Australia.", url: "https://traderefer.au/trades/skip-bins", type: "website" },
+    openGraph: { title: "Skip Bin Hire Australia | TradeRefer", description: "Compare skip bin hire costs, sizes, and local skip bin companies across Australia.", url: "https://traderefer.au/trades/skip-bins", type: "website" },
 };
 
 const TRADE_CATEGORY = "Rubbish Removal";
@@ -50,9 +50,9 @@ const hiringTips = [
     { title: "Confirm the hire period and extension costs", body: "Standard skip bin hire periods are 2–7 days. Extensions are usually $20–$60/day. If your project runs long, it's significantly cheaper to call and extend than to have the bin collected and another delivered. Ask about the extension rate before confirming your booking.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified skip bin companies", body: "TradeRefer helps homeowners and builders find ABN-verified skip bin companies with proper waste disposal licences and recycling commitments — not unlicensed operators who illegally dump waste." },
+    { title: "Checked skip bin companies", body: "TradeRefer helps homeowners and builders find ABN-checked skip bin companies with proper waste disposal licences and recycling commitments — not unlicensed operators who illegally dump waste." },
     { title: "Compare costs before you book", body: "Use this hub to understand typical skip bin hire rates across Australian cities so you can benchmark pricing by size and duration before committing to a booking." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national skip bin guide into city and suburb-level pages to find verified skip bin companies servicing the specific area where your project is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national skip bin guide into city and suburb-level pages to find skip bin companies servicing the specific area where your project is located." },
 ];
 const faqs = [
     { q: "What size skip bin do I need for a bathroom renovation?", a: "A 3–4m³ skip bin is typically sufficient for a full bathroom renovation, accommodating tiles, bathroom suite fixtures, timber framing offcuts, and general construction waste. A 4m³ skip is the most popular size for residential renovations as it handles most jobs without being too large for suburban driveways." },
@@ -110,8 +110,8 @@ export default async function SkipBinsTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Skip Bin</span> Companies Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer skip bin hub to compare bin sizes and hire costs across Australian cities, understand council permit requirements and prohibited waste, and connect with verified local skip bin companies.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Skip Bin</span> Companies Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer skip bin hub to compare bin sizes and hire costs across Australian cities, understand council permit requirements and prohibited waste, and connect with local skip bin companies.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_CATEGORY)}&source=%2Ftrades%2Fskip-bins`} className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_CATEGORY)}`} className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Skip Bin Companies</Link>
@@ -167,7 +167,7 @@ export default async function SkipBinsTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Skip Bin Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 verified local skip bin companies.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Skip Bin Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 local skip bin companies.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory={TRADE_CATEGORY} initialSourcePage="/trades/skip-bins" />
                     </section>
 
@@ -191,7 +191,7 @@ export default async function SkipBinsTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Skip Bin Delivered?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local skip bin companies and get the right size bin delivered to your renovation, cleanout, or construction project anywhere in Australia.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local skip bin companies and get the right size bin delivered to your renovation, cleanout, or construction project anywhere in Australia.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_CATEGORY)}&source=%2Ftrades%2Fskip-bins`} className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_CATEGORY)}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Skip Bin Companies</Link>

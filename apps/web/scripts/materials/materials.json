@@ -1,0 +1,1358 @@
+[
+ {
+  "slug": "pvc-dwv-pipe-100mm",
+  "name": "PVC DWV pipe 100mm",
+  "category": "Plumbing",
+  "unit": "3m length",
+  "aliases": [
+   "sewer pipe",
+   "dwv pipe"
+  ]
+ },
+ {
+  "slug": "pvc-stormwater-pipe-90mm",
+  "name": "PVC stormwater pipe 90mm",
+  "category": "Plumbing",
+  "unit": "6m length",
+  "aliases": [
+   "stormwater pipe"
+  ]
+ },
+ {
+  "slug": "copper-pipe-15mm",
+  "name": "Copper pipe 15mm",
+  "category": "Plumbing",
+  "unit": "per metre",
+  "aliases": []
+ },
+ {
+  "slug": "pex-pipe-16mm",
+  "name": "PEX pipe 16mm",
+  "category": "Plumbing",
+  "unit": "5m length",
+  "aliases": [
+   "pex-a pipe"
+  ]
+ },
+ {
+  "slug": "flexi-hose",
+  "name": "Flexible braided hose",
+  "category": "Plumbing",
+  "unit": "each",
+  "aliases": [
+   "flexi connector"
+  ]
+ },
+ {
+  "slug": "basin-mixer-tap",
+  "name": "Basin mixer tap",
+  "category": "Plumbing",
+  "unit": "each",
+  "aliases": [
+   "basin tap"
+  ]
+ },
+ {
+  "slug": "kitchen-mixer-tap",
+  "name": "Kitchen sink mixer tap",
+  "category": "Plumbing",
+  "unit": "each",
+  "aliases": [
+   "kitchen tap"
+  ]
+ },
+ {
+  "slug": "shower-head",
+  "name": "Shower head",
+  "category": "Plumbing",
+  "unit": "each",
+  "aliases": [
+   "shower rose"
+  ]
+ },
+ {
+  "slug": "toilet-suite",
+  "name": "Toilet suite",
+  "category": "Plumbing",
+  "unit": "each",
+  "aliases": [
+   "back to wall toilet"
+  ]
+ },
+ {
+  "slug": "hot-water-system-electric-storage",
+  "name": "Electric storage hot water system",
+  "category": "Plumbing",
+  "unit": "each",
+  "aliases": [
+   "electric hws",
+   "hot water tank"
+  ]
+ },
+ {
+  "slug": "gas-instantaneous-hot-water",
+  "name": "Gas instantaneous hot water system",
+  "category": "Plumbing",
+  "unit": "each",
+  "aliases": [
+   "gas continuous flow",
+   "instant gas hws"
+  ]
+ },
+ {
+  "slug": "sanitary-silicone",
+  "name": "Sanitary grade silicone",
+  "category": "Plumbing",
+  "unit": "cartridge",
+  "aliases": [
+   "wet area silicone"
+  ]
+ },
+ {
+  "slug": "rainwater-tank-slimline",
+  "name": "Slimline rainwater tank",
+  "category": "Plumbing",
+  "unit": "each",
+  "aliases": [
+   "water tank"
+  ]
+ },
+ {
+  "slug": "ag-pipe-100mm",
+  "name": "Slotted ag drainage pipe 100mm",
+  "category": "Drainage",
+  "unit": "20m roll",
+  "aliases": [
+   "agi pipe",
+   "agricultural pipe"
+  ]
+ },
+ {
+  "slug": "drainage-gravel",
+  "name": "Drainage gravel 20mm",
+  "category": "Drainage",
+  "unit": "bulk bag",
+  "aliases": [
+   "blue metal"
+  ]
+ },
+ {
+  "slug": "drainage-pit-grated",
+  "name": "Grated drainage pit",
+  "category": "Drainage",
+  "unit": "each",
+  "aliases": [
+   "stormwater pit"
+  ]
+ },
+ {
+  "slug": "tps-cable-2-5mm",
+  "name": "Twin & earth TPS cable 2.5mm²",
+  "category": "Electrical",
+  "unit": "100m roll",
+  "aliases": [
+   "electrical cable"
+  ]
+ },
+ {
+  "slug": "double-gpo",
+  "name": "Double power point (GPO)",
+  "category": "Electrical",
+  "unit": "each",
+  "aliases": [
+   "double outlet"
+  ]
+ },
+ {
+  "slug": "led-downlight",
+  "name": "LED downlight",
+  "category": "Electrical",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "led-batten",
+  "name": "LED batten light",
+  "category": "Electrical",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "ceiling-fan",
+  "name": "Ceiling fan with light",
+  "category": "Electrical",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "smoke-alarm-240v",
+  "name": "240V photoelectric smoke alarm",
+  "category": "Electrical",
+  "unit": "each",
+  "aliases": [
+   "smoke detector"
+  ]
+ },
+ {
+  "slug": "safety-switch-rcbo",
+  "name": "Safety switch (RCBO)",
+  "category": "Electrical",
+  "unit": "each",
+  "aliases": [
+   "rcd",
+   "circuit breaker"
+  ]
+ },
+ {
+  "slug": "switchboard-8-way",
+  "name": "8-way switchboard enclosure",
+  "category": "Electrical",
+  "unit": "each",
+  "aliases": [
+   "distribution board",
+   "way switchboard"
+  ]
+ },
+ {
+  "slug": "conduit-20mm",
+  "name": "Electrical conduit 20mm",
+  "category": "Electrical",
+  "unit": "4m length",
+  "aliases": []
+ },
+ {
+  "slug": "ev-charger-7kw",
+  "name": "EV charger 7kW single phase",
+  "category": "Electrical",
+  "unit": "each",
+  "aliases": [
+   "ev charging station"
+  ]
+ },
+ {
+  "slug": "cat6-cable",
+  "name": "Cat6 data cable",
+  "category": "Electrical",
+  "unit": "305m box",
+  "aliases": [
+   "ethernet cable"
+  ]
+ },
+ {
+  "slug": "security-camera-kit",
+  "name": "4-camera security camera kit",
+  "category": "Security",
+  "unit": "kit",
+  "aliases": [
+   "cctv kit"
+  ]
+ },
+ {
+  "slug": "video-doorbell",
+  "name": "Video doorbell",
+  "category": "Security",
+  "unit": "each",
+  "aliases": [
+   "smart doorbell"
+  ]
+ },
+ {
+  "slug": "deadbolt",
+  "name": "Deadbolt lock",
+  "category": "Security",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "entrance-handle-set",
+  "name": "Entrance door handle set",
+  "category": "Security",
+  "unit": "each",
+  "aliases": [
+   "door lock set"
+  ]
+ },
+ {
+  "slug": "interior-low-sheen-paint-10l",
+  "name": "Interior low-sheen paint 10L",
+  "category": "Painting",
+  "unit": "10L",
+  "aliases": [
+   "wall paint"
+  ]
+ },
+ {
+  "slug": "exterior-paint-10l",
+  "name": "Exterior acrylic paint 10L",
+  "category": "Painting",
+  "unit": "10L",
+  "aliases": []
+ },
+ {
+  "slug": "ceiling-paint-10l",
+  "name": "Ceiling paint 10L",
+  "category": "Painting",
+  "unit": "10L",
+  "aliases": []
+ },
+ {
+  "slug": "primer-sealer-undercoat-10l",
+  "name": "Primer sealer undercoat 10L",
+  "category": "Painting",
+  "unit": "10L",
+  "aliases": [
+   "undercoat",
+   "primer"
+  ]
+ },
+ {
+  "slug": "deck-stain-10l",
+  "name": "Decking oil/stain 10L",
+  "category": "Painting",
+  "unit": "10L",
+  "aliases": [
+   "decking oil"
+  ]
+ },
+ {
+  "slug": "roof-membrane-paint-15l",
+  "name": "Roof restoration membrane 15L",
+  "category": "Painting",
+  "unit": "15L",
+  "aliases": [
+   "roof paint"
+  ]
+ },
+ {
+  "slug": "gap-filler",
+  "name": "Gap filler (no more gaps)",
+  "category": "Painting",
+  "unit": "cartridge",
+  "aliases": [
+   "caulk"
+  ]
+ },
+ {
+  "slug": "painters-tape",
+  "name": "Painter's masking tape",
+  "category": "Painting",
+  "unit": "roll",
+  "aliases": [
+   "masking tape"
+  ]
+ },
+ {
+  "slug": "canvas-drop-sheet",
+  "name": "Canvas drop sheet",
+  "category": "Painting",
+  "unit": "each",
+  "aliases": [
+   "drop cloth"
+  ]
+ },
+ {
+  "slug": "roller-and-tray-kit",
+  "name": "Paint roller and tray kit",
+  "category": "Painting",
+  "unit": "kit",
+  "aliases": []
+ },
+ {
+  "slug": "plasterboard-sheet-10mm",
+  "name": "Plasterboard sheet 10mm 2400x1200",
+  "category": "Plastering",
+  "unit": "sheet",
+  "aliases": [
+   "gyprock sheet",
+   "drywall"
+  ],
+  "query": "gyprock plasterboard 10mm"
+ },
+ {
+  "slug": "villaboard-6mm",
+  "name": "Villaboard/FC sheet 6mm",
+  "category": "Plastering",
+  "unit": "sheet",
+  "aliases": [
+   "fibre cement sheet",
+   "wet area board"
+  ]
+ },
+ {
+  "slug": "cornice-90mm",
+  "name": "Cove cornice 90mm",
+  "category": "Plastering",
+  "unit": "4.8m length",
+  "aliases": []
+ },
+ {
+  "slug": "plasterboard-base-coat-20kg",
+  "name": "Plasterboard base coat 20kg",
+  "category": "Plastering",
+  "unit": "20kg bag",
+  "aliases": [
+   "base coat compound"
+  ]
+ },
+ {
+  "slug": "topping-compound-20kg",
+  "name": "Plasterboard topping compound",
+  "category": "Plastering",
+  "unit": "20kg",
+  "aliases": [
+   "top coat",
+   "finishing compound"
+  ]
+ },
+ {
+  "slug": "stud-adhesive",
+  "name": "Stud adhesive",
+  "category": "Plastering",
+  "unit": "cartridge",
+  "aliases": []
+ },
+ {
+  "slug": "jointing-tape",
+  "name": "Plasterboard jointing tape",
+  "category": "Plastering",
+  "unit": "roll",
+  "aliases": [
+   "paper tape"
+  ]
+ },
+ {
+  "slug": "steel-stud-64mm",
+  "name": "Steel stud 64mm",
+  "category": "Plastering",
+  "unit": "3m length",
+  "aliases": []
+ },
+ {
+  "slug": "ceramic-wall-tile",
+  "name": "Ceramic wall tiles",
+  "category": "Tiling",
+  "unit": "per m²",
+  "aliases": [
+   "wall tiles"
+  ]
+ },
+ {
+  "slug": "porcelain-floor-tile",
+  "name": "Porcelain floor tiles",
+  "category": "Tiling",
+  "unit": "per m²",
+  "aliases": [
+   "floor tiles"
+  ]
+ },
+ {
+  "slug": "tile-adhesive-20kg",
+  "name": "Tile adhesive 20kg",
+  "category": "Tiling",
+  "unit": "20kg bag",
+  "aliases": []
+ },
+ {
+  "slug": "tile-grout-5kg",
+  "name": "Tile grout 5kg",
+  "category": "Tiling",
+  "unit": "5kg bag",
+  "aliases": []
+ },
+ {
+  "slug": "tile-spacers",
+  "name": "Tile spacers",
+  "category": "Tiling",
+  "unit": "pack",
+  "aliases": []
+ },
+ {
+  "slug": "tile-trim-aluminium",
+  "name": "Aluminium tile trim",
+  "category": "Tiling",
+  "unit": "2.5m length",
+  "aliases": [
+   "tile edge trim"
+  ]
+ },
+ {
+  "slug": "self-levelling-compound-20kg",
+  "name": "Self-levelling compound 20kg",
+  "category": "Tiling",
+  "unit": "20kg bag",
+  "aliases": [
+   "floor leveller"
+  ]
+ },
+ {
+  "slug": "mosaic-sheet",
+  "name": "Mosaic tile sheet",
+  "category": "Tiling",
+  "unit": "sheet",
+  "aliases": []
+ },
+ {
+  "slug": "waterproofing-membrane-15l",
+  "name": "Liquid waterproofing membrane 15L",
+  "category": "Waterproofing",
+  "unit": "15L",
+  "aliases": [
+   "wet area membrane"
+  ]
+ },
+ {
+  "slug": "waterproofing-primer-4l",
+  "name": "Waterproofing primer 4L",
+  "category": "Waterproofing",
+  "unit": "4L",
+  "aliases": [
+   "waterproofing primer",
+   "waterproof primer",
+   "wet area primer"
+  ]
+ },
+ {
+  "slug": "bond-breaker",
+  "name": "Bond breaker sealant",
+  "category": "Waterproofing",
+  "unit": "cartridge",
+  "aliases": []
+ },
+ {
+  "slug": "reinforcing-bandage",
+  "name": "Waterproofing reinforcing bandage",
+  "category": "Waterproofing",
+  "unit": "roll",
+  "aliases": [
+   "joint bandage"
+  ]
+ },
+ {
+  "slug": "shower-repair-kit",
+  "name": "Leaking shower repair kit",
+  "category": "Waterproofing",
+  "unit": "kit",
+  "aliases": [
+   "shower waterproofing kit",
+   "leaking shower repair"
+  ]
+ },
+ {
+  "slug": "corrugated-colorbond-sheet",
+  "name": "Corrugated Colorbond roof sheet",
+  "category": "Roofing",
+  "unit": "per lm",
+  "aliases": [
+   "colorbond roofing"
+  ]
+ },
+ {
+  "slug": "roofing-screws-100pk",
+  "name": "Roofing screws 100 pack",
+  "category": "Roofing",
+  "unit": "box",
+  "aliases": [
+   "tek screws"
+  ]
+ },
+ {
+  "slug": "roof-sarking",
+  "name": "Roof sarking/underlay",
+  "category": "Roofing",
+  "unit": "30m roll",
+  "aliases": [
+   "roof underlay",
+   "sarking"
+  ]
+ },
+ {
+  "slug": "ridge-capping",
+  "name": "Colorbond ridge capping",
+  "category": "Roofing",
+  "unit": "length",
+  "aliases": [
+   "ridge cap"
+  ]
+ },
+ {
+  "slug": "flexible-pointing-10l",
+  "name": "Flexible roof pointing 10L",
+  "category": "Roofing",
+  "unit": "10L",
+  "aliases": [
+   "roof pointing compound",
+   "flexible pointing",
+   "roof pointing"
+  ]
+ },
+ {
+  "slug": "whirlybird",
+  "name": "Whirlybird roof ventilator",
+  "category": "Roofing",
+  "unit": "each",
+  "aliases": [
+   "roof vent"
+  ]
+ },
+ {
+  "slug": "skylight-tube",
+  "name": "Tubular skylight",
+  "category": "Roofing",
+  "unit": "each",
+  "aliases": [
+   "solar tube"
+  ]
+ },
+ {
+  "slug": "quad-gutter",
+  "name": "Colorbond quad gutter",
+  "category": "Guttering",
+  "unit": "length",
+  "aliases": []
+ },
+ {
+  "slug": "downpipe-90mm",
+  "name": "Colorbond downpipe 90mm",
+  "category": "Guttering",
+  "unit": "length",
+  "aliases": []
+ },
+ {
+  "slug": "gutter-guard-mesh",
+  "name": "Gutter guard mesh",
+  "category": "Guttering",
+  "unit": "roll",
+  "aliases": [
+   "leaf guard"
+  ]
+ },
+ {
+  "slug": "colorbond-flashing",
+  "name": "Colorbond flashing",
+  "category": "Guttering",
+  "unit": "length",
+  "aliases": []
+ },
+ {
+  "slug": "treated-pine-90x45",
+  "name": "Treated pine 90x45 MGP10",
+  "category": "Timber",
+  "unit": "per lm",
+  "aliases": [
+   "framing timber"
+  ]
+ },
+ {
+  "slug": "treated-pine-sleeper-200x75",
+  "name": "Treated pine sleeper 200x75",
+  "category": "Timber",
+  "unit": "each",
+  "aliases": [
+   "retaining wall sleeper"
+  ]
+ },
+ {
+  "slug": "merbau-decking-90x19",
+  "name": "Merbau decking 90x19",
+  "category": "Decking",
+  "unit": "per lm",
+  "aliases": [
+   "merbau boards"
+  ]
+ },
+ {
+  "slug": "composite-decking-board",
+  "name": "Composite decking board",
+  "category": "Decking",
+  "unit": "per lm",
+  "aliases": []
+ },
+ {
+  "slug": "treated-pine-decking-90x22",
+  "name": "Treated pine decking 90x22",
+  "category": "Decking",
+  "unit": "per lm",
+  "aliases": []
+ },
+ {
+  "slug": "decking-screws-500pk",
+  "name": "Decking screws 500 pack",
+  "category": "Decking",
+  "unit": "box",
+  "aliases": []
+ },
+ {
+  "slug": "joist-hanger",
+  "name": "Joist hanger",
+  "category": "Timber",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "stainless-wire-balustrade-kit",
+  "name": "Stainless wire balustrade kit",
+  "category": "Decking",
+  "unit": "kit",
+  "aliases": [
+   "wire balustrade"
+  ]
+ },
+ {
+  "slug": "colorbond-fence-panel-kit",
+  "name": "Colorbond fence panel kit",
+  "category": "Fencing",
+  "unit": "panel",
+  "aliases": [
+   "colorbond fencing"
+  ]
+ },
+ {
+  "slug": "treated-pine-paling",
+  "name": "Treated pine fence paling",
+  "category": "Fencing",
+  "unit": "each",
+  "aliases": [
+   "fence paling"
+  ]
+ },
+ {
+  "slug": "fence-post-treated-pine",
+  "name": "Treated pine fence post 125x75",
+  "category": "Fencing",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "steel-fence-post",
+  "name": "Galvanised steel fence post",
+  "category": "Fencing",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "fence-rail-treated-pine",
+  "name": "Treated pine fence rail",
+  "category": "Fencing",
+  "unit": "per lm",
+  "aliases": []
+ },
+ {
+  "slug": "timber-picket",
+  "name": "Timber fence picket",
+  "category": "Fencing",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "gate-hinge-latch-kit",
+  "name": "Gate hinge and latch kit",
+  "category": "Fencing",
+  "unit": "kit",
+  "aliases": [
+   "gate hardware"
+  ]
+ },
+ {
+  "slug": "glass-pool-fence-panel",
+  "name": "Frameless glass pool fence panel",
+  "category": "Fencing",
+  "unit": "panel",
+  "aliases": [
+   "glass fencing"
+  ]
+ },
+ {
+  "slug": "aluminium-slat-panel",
+  "name": "Aluminium slat fence panel",
+  "category": "Fencing",
+  "unit": "panel",
+  "aliases": [
+   "slat fencing"
+  ]
+ },
+ {
+  "slug": "concrete-mix-20kg",
+  "name": "Concrete mix 20kg",
+  "category": "Concreting",
+  "unit": "20kg bag",
+  "aliases": [
+   "rapid set concrete"
+  ]
+ },
+ {
+  "slug": "gp-cement-20kg",
+  "name": "GP cement 20kg",
+  "category": "Concreting",
+  "unit": "20kg bag",
+  "aliases": [
+   "general purpose cement"
+  ]
+ },
+ {
+  "slug": "sl72-mesh-sheet",
+  "name": "SL72 reinforcing mesh sheet",
+  "category": "Concreting",
+  "unit": "6x2.4m sheet",
+  "aliases": [
+   "reo mesh"
+  ]
+ },
+ {
+  "slug": "n12-rebar-6m",
+  "name": "N12 reinforcing bar 6m",
+  "category": "Concreting",
+  "unit": "length",
+  "aliases": [
+   "rebar"
+  ]
+ },
+ {
+  "slug": "formply-sheet",
+  "name": "Formply sheet 17mm",
+  "category": "Concreting",
+  "unit": "sheet",
+  "aliases": [
+   "formwork ply"
+  ]
+ },
+ {
+  "slug": "concrete-sealer-4l",
+  "name": "Concrete sealer 4L",
+  "category": "Concreting",
+  "unit": "4L",
+  "aliases": []
+ },
+ {
+  "slug": "concrete-oxide-pigment",
+  "name": "Concrete oxide pigment",
+  "category": "Concreting",
+  "unit": "each",
+  "aliases": [
+   "concrete colour",
+   "cement oxide",
+   "oxide cement colouring"
+  ]
+ },
+ {
+  "slug": "concrete-paver-400x400",
+  "name": "Concrete paver 400x400",
+  "category": "Paving",
+  "unit": "each",
+  "aliases": [
+   "concrete paver"
+  ]
+ },
+ {
+  "slug": "brick-paver",
+  "name": "Clay brick paver",
+  "category": "Paving",
+  "unit": "each",
+  "aliases": [
+   "brick paver",
+   "clay paver"
+  ]
+ },
+ {
+  "slug": "travertine-paver",
+  "name": "Travertine paver",
+  "category": "Paving",
+  "unit": "per m²",
+  "aliases": [
+   "travertine paver"
+  ]
+ },
+ {
+  "slug": "bluestone-paver",
+  "name": "Bluestone paver",
+  "category": "Paving",
+  "unit": "per m²",
+  "aliases": []
+ },
+ {
+  "slug": "paving-sand-20kg",
+  "name": "Paving sand 20kg",
+  "category": "Paving",
+  "unit": "20kg bag",
+  "aliases": [
+   "bedding sand"
+  ]
+ },
+ {
+  "slug": "crusher-dust",
+  "name": "Crusher dust",
+  "category": "Paving",
+  "unit": "bulk bag",
+  "aliases": [
+   "cracker dust",
+   "crusher dust",
+   "paving dust"
+  ]
+ },
+ {
+  "slug": "hybrid-flooring",
+  "name": "Hybrid flooring",
+  "category": "Flooring",
+  "unit": "per m²",
+  "aliases": [
+   "hybrid planks"
+  ]
+ },
+ {
+  "slug": "laminate-flooring",
+  "name": "Laminate flooring",
+  "category": "Flooring",
+  "unit": "per m²",
+  "aliases": []
+ },
+ {
+  "slug": "engineered-oak-flooring",
+  "name": "Engineered oak flooring",
+  "category": "Flooring",
+  "unit": "per m²",
+  "aliases": [
+   "engineered timber",
+   "engineered oak",
+   "oak flooring"
+  ]
+ },
+ {
+  "slug": "vinyl-plank",
+  "name": "Vinyl plank flooring",
+  "category": "Flooring",
+  "unit": "per m²",
+  "aliases": [
+   "lvp"
+  ]
+ },
+ {
+  "slug": "bamboo-flooring",
+  "name": "Bamboo flooring",
+  "category": "Flooring",
+  "unit": "per m²",
+  "aliases": [
+   "bamboo flooring",
+   "bamboo floor"
+  ]
+ },
+ {
+  "slug": "carpet",
+  "name": "Carpet",
+  "category": "Flooring",
+  "unit": "per m²",
+  "aliases": []
+ },
+ {
+  "slug": "foam-underlay",
+  "name": "Flooring foam underlay",
+  "category": "Flooring",
+  "unit": "per m²",
+  "aliases": []
+ },
+ {
+  "slug": "skirting-mdf-67mm",
+  "name": "MDF skirting board 67mm",
+  "category": "Flooring",
+  "unit": "per lm",
+  "aliases": [
+   "skirting"
+  ]
+ },
+ {
+  "slug": "floor-coating-10l",
+  "name": "Timber floor polyurethane 10L",
+  "category": "Flooring",
+  "unit": "10L",
+  "aliases": [
+   "floor polish"
+  ]
+ },
+ {
+  "slug": "epoxy-floor-kit",
+  "name": "Epoxy floor coating kit",
+  "category": "Flooring",
+  "unit": "kit",
+  "aliases": [
+   "garage epoxy"
+  ]
+ },
+ {
+  "slug": "sir-walter-turf",
+  "name": "Sir Walter buffalo turf",
+  "category": "Landscaping",
+  "unit": "per m²",
+  "aliases": [
+   "buffalo grass"
+  ]
+ },
+ {
+  "slug": "synthetic-turf",
+  "name": "Synthetic turf",
+  "category": "Landscaping",
+  "unit": "per m²",
+  "aliases": [
+   "artificial grass",
+   "fake grass"
+  ]
+ },
+ {
+  "slug": "garden-soil-25l",
+  "name": "Garden soil 25L",
+  "category": "Landscaping",
+  "unit": "25L bag",
+  "aliases": []
+ },
+ {
+  "slug": "mulch-60l",
+  "name": "Hardwood mulch 60L",
+  "category": "Landscaping",
+  "unit": "60L bag",
+  "aliases": [
+   "bark mulch 60l",
+   "mulch 60l"
+  ]
+ },
+ {
+  "slug": "retaining-wall-block",
+  "name": "Retaining wall block",
+  "category": "Landscaping",
+  "unit": "each",
+  "aliases": [
+   "besser block",
+   "link block"
+  ]
+ },
+ {
+  "slug": "garden-edging-steel",
+  "name": "Steel garden edging",
+  "category": "Landscaping",
+  "unit": "per m",
+  "aliases": []
+ },
+ {
+  "slug": "weed-mat",
+  "name": "Weed mat",
+  "category": "Landscaping",
+  "unit": "roll",
+  "aliases": [
+   "landscape fabric"
+  ]
+ },
+ {
+  "slug": "poly-pipe-19mm-50m",
+  "name": "Poly pipe 19mm 50m",
+  "category": "Irrigation",
+  "unit": "roll",
+  "aliases": [
+   "irrigation pipe"
+  ]
+ },
+ {
+  "slug": "drip-line-30m",
+  "name": "Drip line 30m",
+  "category": "Irrigation",
+  "unit": "roll",
+  "aliases": [
+   "drip irrigation"
+  ]
+ },
+ {
+  "slug": "pop-up-sprinkler",
+  "name": "Pop-up sprinkler",
+  "category": "Irrigation",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "irrigation-controller",
+  "name": "Irrigation controller",
+  "category": "Irrigation",
+  "unit": "each",
+  "aliases": [
+   "reticulation controller"
+  ]
+ },
+ {
+  "slug": "solenoid-valve",
+  "name": "Irrigation solenoid valve",
+  "category": "Irrigation",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "ceiling-batts-r4-pack",
+  "name": "Ceiling insulation batts R4.0",
+  "category": "Insulation",
+  "unit": "pack",
+  "aliases": [
+   "ceiling batts"
+  ],
+  "query": "ceiling insulation batts"
+ },
+ {
+  "slug": "wall-batts-r2-5-pack",
+  "name": "Wall insulation batts R2.5",
+  "category": "Insulation",
+  "unit": "pack",
+  "aliases": [
+   "wall batts"
+  ]
+ },
+ {
+  "slug": "underfloor-insulation-pack",
+  "name": "Underfloor insulation panels",
+  "category": "Insulation",
+  "unit": "pack",
+  "aliases": [
+   "underfloor insulation"
+  ]
+ },
+ {
+  "slug": "acoustic-batts-pack",
+  "name": "Acoustic insulation batts",
+  "category": "Insulation",
+  "unit": "pack",
+  "aliases": [
+   "soundscreen",
+   "acoustic batts"
+  ]
+ },
+ {
+  "slug": "reflective-foil-roll",
+  "name": "Reflective foil insulation",
+  "category": "Insulation",
+  "unit": "roll",
+  "aliases": [
+   "sisalation"
+  ]
+ },
+ {
+  "slug": "render-mix-20kg",
+  "name": "Polymer render mix 20kg",
+  "category": "Rendering",
+  "unit": "20kg bag",
+  "aliases": []
+ },
+ {
+  "slug": "acrylic-render-15l",
+  "name": "Acrylic render 15L",
+  "category": "Rendering",
+  "unit": "15L bucket",
+  "aliases": [
+   "acrylic render"
+  ]
+ },
+ {
+  "slug": "render-mesh",
+  "name": "Render reinforcing mesh",
+  "category": "Rendering",
+  "unit": "50m roll",
+  "aliases": [
+   "fibreglass mesh"
+  ]
+ },
+ {
+  "slug": "texture-coat-15l",
+  "name": "Texture coating 15L",
+  "category": "Rendering",
+  "unit": "15L bucket",
+  "aliases": [
+   "texture coat"
+  ]
+ },
+ {
+  "slug": "vanity-900mm",
+  "name": "Bathroom vanity 900mm",
+  "category": "Bathroom",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "wall-hung-vanity",
+  "name": "Wall-hung vanity",
+  "category": "Bathroom",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "frameless-shower-screen",
+  "name": "Frameless shower screen",
+  "category": "Bathroom",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "shower-screen-semi-frameless",
+  "name": "Semi-frameless shower screen",
+  "category": "Bathroom",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "freestanding-bath",
+  "name": "Freestanding bath",
+  "category": "Bathroom",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "exhaust-fan",
+  "name": "Bathroom exhaust fan",
+  "category": "Bathroom",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "laminate-benchtop",
+  "name": "Laminate benchtop",
+  "category": "Kitchen",
+  "unit": "per lm",
+  "aliases": []
+ },
+ {
+  "slug": "stone-benchtop-20mm",
+  "name": "Engineered stone benchtop 20mm",
+  "category": "Kitchen",
+  "unit": "per m²",
+  "aliases": [
+   "caesarstone benchtop"
+  ]
+ },
+ {
+  "slug": "flat-pack-base-cabinet",
+  "name": "Flat pack base cabinet",
+  "category": "Kitchen",
+  "unit": "each",
+  "aliases": [
+   "kitchen cabinet"
+  ]
+ },
+ {
+  "slug": "kitchen-sink-double",
+  "name": "Double bowl kitchen sink",
+  "category": "Kitchen",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "rangehood-600mm",
+  "name": "Rangehood 600mm",
+  "category": "Kitchen",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "liquid-nails",
+  "name": "Construction adhesive",
+  "category": "General",
+  "unit": "cartridge",
+  "aliases": [
+   "liquid nails"
+  ]
+ },
+ {
+  "slug": "general-silicone",
+  "name": "General purpose silicone",
+  "category": "General",
+  "unit": "cartridge",
+  "aliases": [
+   "silicone sealant"
+  ]
+ },
+ {
+  "slug": "batten-screws-500pk",
+  "name": "Batten screws 500 pack",
+  "category": "General",
+  "unit": "box",
+  "aliases": []
+ },
+ {
+  "slug": "dynabolt-pack",
+  "name": "Dynabolt masonry anchors",
+  "category": "General",
+  "unit": "pack",
+  "aliases": [
+   "sleeve anchors"
+  ]
+ },
+ {
+  "slug": "split-system-2-5kw",
+  "name": "Split system air conditioner 2.5kW",
+  "category": "HVAC",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "split-system-7kw",
+  "name": "Split system air conditioner 7kW",
+  "category": "HVAC",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "solar-panel-440w",
+  "name": "Solar panel 440W",
+  "category": "Solar",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "solar-inverter-5kw",
+  "name": "Solar inverter 5kW",
+  "category": "Solar",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "garage-door-opener",
+  "name": "Garage door opener",
+  "category": "Garage",
+  "unit": "each",
+  "aliases": [
+   "garage door motor"
+  ]
+ },
+ {
+  "slug": "garden-shed-3x3",
+  "name": "Garden shed ~3x3m",
+  "category": "Sheds",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "roller-blind",
+  "name": "Roller blind",
+  "category": "Blinds",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "pool-pump",
+  "name": "Pool pump",
+  "category": "Pool",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "pool-chlorine-10kg",
+  "name": "Pool chlorine 10kg",
+  "category": "Pool",
+  "unit": "10kg",
+  "aliases": []
+ },
+ {
+  "slug": "pool-filter-cartridge",
+  "name": "Pool filter cartridge",
+  "category": "Pool",
+  "unit": "each",
+  "aliases": []
+ },
+ {
+  "slug": "steel-shs-50x50",
+  "name": "Steel SHS 50x50",
+  "category": "Welding",
+  "unit": "length",
+  "aliases": [
+   "box section"
+  ]
+ }
+]

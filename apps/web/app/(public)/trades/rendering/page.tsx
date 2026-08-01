@@ -20,14 +20,14 @@ import { PublicMultiQuoteForm } from "@/components/PublicMultiQuoteForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-    title: "Rendering Services Australia | Find Verified Renderers | TradeRefer",
+    title: "Rendering Services Australia | Find Renderers | TradeRefer",
     description:
-        "Find trusted renderers across Australia. Compare cement and acrylic rendering costs per m² by city, understand curing requirements, and hire verified local rendering businesses through TradeRefer.",
+        "Find trusted renderers across Australia. Compare cement and acrylic rendering costs per m² by city, understand curing requirements, and hire local rendering businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/rendering" },
     openGraph: {
         title: "Rendering Services Australia | TradeRefer",
         description:
-            "Compare rendering costs per m², cement vs acrylic render, curing requirements, and verified local renderers across Australia.",
+            "Compare rendering costs per m², cement vs acrylic render, curing requirements, and local renderers across Australia.",
         url: "https://traderefer.au/trades/rendering",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified rendering businesses",
-        body: "TradeRefer helps homeowners find ABN-verified rendering contractors — important for exterior work where poor surface preparation and missed curing steps lead to expensive failures within 1–2 years.",
+        title: "Checked rendering businesses",
+        body: "TradeRefer helps homeowners find ABN-checked rendering contractors — important for exterior work where poor surface preparation and missed curing steps lead to expensive failures within 1–2 years.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Navigate from this national rendering guide into city and suburb-level pages to find verified renderers in the specific area where your property is located.",
+        body: "Navigate from this national rendering guide into city and suburb-level pages to find renderers in the specific area where your property is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function RenderingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Renderers</span> Across Australia
+                            Find <span className="text-[#FF6600]">Renderers</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer rendering hub to compare cement and acrylic rendering costs per square metre, understand curing and painting timelines,
-                            and connect with verified local renderers across Australia.
+                            and connect with local renderers across Australia.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function RenderingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Rendering Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your rendering quotes here and we&apos;ll match your project with up to 3 verified local rendering businesses.
+                                Request your rendering quotes here and we&apos;ll match your project with up to 3 local rendering businesses.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Rendering" initialSourcePage="/trades/rendering" />
@@ -481,7 +481,7 @@ export default async function RenderingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Renderer Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local rendering businesses, compare cement and acrylic systems, and find the right renderer to transform your home&apos;s exterior.
+                            Browse local rendering businesses, compare cement and acrylic systems, and find the right renderer to transform your home&apos;s exterior.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

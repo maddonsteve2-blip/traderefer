@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     openGraph: {
         title: "Plumbing Services Australia | TradeRefer",
         description:
-            "Compare plumbing costs, hiring tips, licensing requirements, and verified local plumbing professionals across Australia.",
+            "Compare plumbing costs, hiring tips, licensing requirements, and local plumbing professionals across Australia.",
         url: "https://traderefer.au/trades/plumbing",
         type: "website",
     },
@@ -86,16 +86,16 @@ const hiringTips = [
         icon: ShieldCheck,
     },
     {
-        title: "Read verified reviews",
-        body: "Look for review patterns about punctuality, hidden charges, and cleanup quality. TradeRefer surfaces verified businesses ranked by real community referrals, not paid placement.",
+        title: "Read public reviews",
+        body: "Look for review patterns about punctuality, unexpected charges, and cleanup quality. TradeRefer surfaces profile, public review, and referral signals where available.",
         icon: Star,
     },
 ];
 
 const whyTradeRefer = [
     {
-        title: "Verified plumbing businesses",
-        body: "TradeRefer helps surface ABN-checked plumbing businesses so homeowners can compare verified providers instead of relying on anonymous listings.",
+        title: "Checked plumbing businesses",
+        body: "TradeRefer helps surface ABN-checked plumbing businesses so homeowners can compare providers instead of relying on anonymous listings.",
     },
     {
         title: "Better quote comparison",
@@ -241,11 +241,11 @@ export default async function PlumbingTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Plumbing</span> Professionals Across Australia
+                            Find <span className="text-[#FF6600]">Plumbing</span> Professionals Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer plumbing hub to compare typical plumbing costs, understand licensing requirements in each state,
-                            and discover verified local plumbing businesses in the Australian cities where demand is highest.
+                            and discover local plumbing businesses in the Australian cities where demand is highest.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -382,7 +382,7 @@ export default async function PlumbingTradeHubPage() {
                                 Before You Hire a Plumber
                             </h2>
                             <p className="text-zinc-500 mb-6" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Use these checks to avoid unlicensed work, hidden fees, and poor-quality outcomes.
+                                Use these checks to avoid unlicensed work, unclear charges, and poor-quality outcomes.
                             </p>
                             <div className="space-y-4">
                                 {hiringTips.map(({ title, body, icon: Icon }) => (
@@ -432,7 +432,7 @@ export default async function PlumbingTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Plumbing Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your plumbing quotes here and we&apos;ll match your job with up to 3 verified local businesses.
+                                Request your plumbing quotes here and we&apos;ll match your job with up to 3 local trade profiles.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Plumbing" initialSourcePage="/trades/plumbing" />
@@ -505,7 +505,7 @@ export default async function PlumbingTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Plumber Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local plumbing businesses, compare their services, and move into suburb-level directory pages to find the best plumber for your job.
+                            Browse local plumbing businesses, compare their services, and move into suburb-level directory pages to find the best plumber for your job.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

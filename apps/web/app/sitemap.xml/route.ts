@@ -1,22 +1,16 @@
 import { NextResponse } from 'next/server';
+import { googleSitemapXml } from '@/lib/sitemaps';
 
+export const runtime = 'nodejs';
 export const revalidate = 86400; // 24-hour edge cache
 
-// Sub-sitemaps are served by the web app so sitemap indexation rules can ship
-// with the SEO templates without waiting on the separate Railway API deploy.
-const BASE_URL = 'https://traderefer.au';
-
+// Google-facing curated sitemap — the release valve of the recovery plan
+// (SEO_RECOVERY_PLAN.md Phase 1). Only pages that pass the Google index gates
+// are submitted, so the set stays in the low thousands and every URL in it is
+// one we expect to index AND hold. The full tree for Bing lives at
+// /sitemap-full.xml (submitted directly in Bing Webmaster Tools).
 export async function GET() {
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap><loc>${BASE_URL}/sitemaps/general</loc></sitemap>
-  <sitemap><loc>${BASE_URL}/sitemaps/profiles</loc></sitemap>
-  <sitemap><loc>${BASE_URL}/sitemaps/suburbs</loc></sitemap>
-  <sitemap><loc>${BASE_URL}/sitemaps/trades</loc></sitemap>
-  <sitemap><loc>${BASE_URL}/sitemaps/top</loc></sitemap>
-</sitemapindex>`;
-
-    return new NextResponse(xml, {
+    return new NextResponse(await googleSitemapXml(), {
         headers: {
             'Content-Type': 'application/xml; charset=utf-8',
             'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate',

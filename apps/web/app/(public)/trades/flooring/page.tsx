@@ -22,12 +22,12 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "Flooring Services Australia | Flooring Installers | TradeRefer",
     description:
-        "Find trusted flooring installers across Australia. Compare timber, hybrid, carpet, and tile flooring costs by city, understand subfloor requirements, and hire verified local flooring businesses through TradeRefer.",
+        "Find trusted flooring installers across Australia. Compare timber, hybrid, carpet, and tile flooring costs by city, understand subfloor requirements, and hire local flooring businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/flooring" },
     openGraph: {
         title: "Flooring Services Australia | TradeRefer",
         description:
-            "Compare flooring costs per m², timber vs hybrid vs carpet pricing, and verified local flooring installers across Australia.",
+            "Compare flooring costs per m², timber vs hybrid vs carpet pricing, and local flooring installers across Australia.",
         url: "https://traderefer.au/trades/flooring",
         type: "website",
     },
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified flooring businesses",
-        body: "TradeRefer helps homeowners find ABN-verified flooring installers instead of relying on showroom referrals — allowing you to compare independent businesses with verified track records.",
+        title: "Checked flooring businesses",
+        body: "TradeRefer helps homeowners find ABN-checked flooring installers instead of relying on showroom referrals — allowing you to compare independent businesses with track records.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Navigate from this national flooring guide into city and suburb-level pages to find verified flooring installers in the specific area where your project is located.",
+        body: "Navigate from this national flooring guide into city and suburb-level pages to find flooring installers in the specific area where your project is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function FlooringTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Flooring</span> Installers Across Australia
+                            Find <span className="text-[#FF6600]">Flooring</span> Installers Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer flooring hub to compare timber, hybrid, carpet, and tile flooring costs per square metre across Australian cities,
-                            understand subfloor requirements, and connect with verified local flooring installers.
+                            understand subfloor requirements, and connect with local flooring installers.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function FlooringTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Flooring Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your flooring quotes here and we&apos;ll match your project with up to 3 verified local flooring installers.
+                                Request your flooring quotes here and we&apos;ll match your project with up to 3 local flooring installers.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Flooring" initialSourcePage="/trades/flooring" />
@@ -481,7 +481,7 @@ export default async function FlooringTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Flooring Installer Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local flooring businesses, compare timber, hybrid, and carpet options, and find the right installer for your home renovation project.
+                            Browse local flooring businesses, compare timber, hybrid, and carpet options, and find the right installer for your home renovation project.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

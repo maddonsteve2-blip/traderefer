@@ -1942,7 +1942,7 @@ export const TRADE_FAQ_BANK: Record<string, Array<{ q: string; a: string }>> = {
         { q: "How much does an electrician charge per hour in Australia?", a: "Electricians typically charge $70–$130 per hour depending on the state and job type. After-hours and emergency callouts attract higher rates, often $150–$250/hr plus a callout fee of $80–$150." },
         { q: "Do I need a licensed electrician for all electrical work?", a: "Yes — in Australia, all electrical work including new power points, light fittings, safety switches, and switchboard upgrades must be performed by a licensed electrician. The only DIY exception is replacing light globes." },
         { q: "What is a safety switch and do I need one?", a: "A safety switch (RCD) shuts off power within milliseconds if it detects a fault, protecting against electric shock. Australian standards require safety switches on all power and lighting circuits. If your home doesn't have them, upgrading is a legal requirement when renovating." },
-        { q: "How long does a switchboard upgrade take?", a: "A standard switchboard upgrade takes 4–8 hours. If your home needs new wiring runs or the switchboard is in a difficult location, allow a full day. Your electrician will also need to notify your distributor (e.g., Ausgrid, Jemena, Citipower)." },
+        { q: "How long does a switchboard upgrade take?", a: "Most switchboard upgrades take about half a day (4–6 hours), with power off for 2–4 hours while the electrician swaps the board and tests each circuit. Allow a full day if new wiring runs are needed. Your electrician will also notify your distributor (e.g., Ausgrid, Jemena, Citipower)." },
         { q: "What should a Certificate of Electrical Safety include?", a: "A Certificate of Electrical Safety (CES) must describe the work performed, the licence number of the electrician, the address, and confirm the installation was tested and complies with AS/NZS 3000." },
         { q: "Can I add more power points to my home myself?", a: "No. Adding power points involves working with mains power, which is illegal for unlicensed persons in all Australian states. An electrician can typically add a power point in 1–2 hours for $100–$250 per point." },
         { q: "How do I know if my home's wiring needs replacing?", a: "Signs include frequent tripped circuit breakers, flickering lights, burning smells, discoloured outlet covers, or aluminium wiring (common in homes built in the 1960s–70s). Have a licensed electrician conduct an inspection." },
@@ -2452,13 +2452,13 @@ export const TRADE_FAQ_BANK: Record<string, Array<{ q: string; a: string }>> = {
 
 export const STATE_AUTHORITY_LINKS: Record<string, { name: string; url: string }> = {
     VIC: { name: "Victorian Building Authority", url: "https://www.vba.vic.gov.au" },
-    NSW: { name: "NSW Fair Trading", url: "https://www.fairtrading.nsw.gov.au" },
+    NSW: { name: "NSW Fair Trading", url: "https://www.nsw.gov.au/departments-and-agencies/fair-trading" },
     QLD: { name: "QBCC", url: "https://www.qbcc.qld.gov.au" },
     WA:  { name: "Building Commission WA", url: "https://www.commerce.wa.gov.au/building-and-energy" },
     SA:  { name: "CBS South Australia", url: "https://www.cbs.sa.gov.au" },
     TAS: { name: "CBOS Tasmania", url: "https://www.cbos.tas.gov.au" },
     ACT: { name: "Access Canberra", url: "https://www.accesscanberra.act.gov.au" },
-    NT:  { name: "NT Building Advisory Services", url: "https://nt.gov.au/industry/building-and-construction" },
+    NT:  { name: "NT Building Advisory Services", url: "https://nt.gov.au/property/building" },
 };
 
 export type SuburbContext = {
@@ -2983,7 +2983,7 @@ export function generateLocalizedIntro(
             localDetail = `${suburbName}'s ${ctx.housing} and ${ctx.climate} mean local ${tradeName.toLowerCase()} contractors understand the specific requirements of properties in the ${ctx.region} area.`;
         }
     } else {
-        localDetail = `Local ${tradeNamePlural.toLowerCase()} in ${suburbName} bring specialist knowledge of ${cityName}'s building regulations, soil conditions, and climate — delivering better results than tradies without local experience.`;
+        localDetail = `Local ${tradeNamePlural.toLowerCase()} in ${suburbName} bring specialist knowledge of ${cityName}'s building regulations, soil conditions, and climate, delivering better results than tradies without local experience.`;
     }
 
     const licenceInfo = STATE_LICENSING[tradeName]?.[stateName.toUpperCase()];

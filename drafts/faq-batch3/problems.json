@@ -1,0 +1,148 @@
+[
+ {
+  "file": "out-5.json",
+  "slug": "acrylic-rendering, bathroom-tiling, colorbond-gutter-installation, deck-staining-and-painting, fence-painting, gas-hot-water-system-repair, hybrid-flooring-installation, leaking-shower-repair, pool-paving, roof-insulation-top-up, small-bathroom-renovation, timber-floor-sanding-and-polishing, water-damage-plaster-repair",
+  "q": "N/A (whole-file duplication)",
+  "issue": "out-5.json is byte-for-byte identical to out-1.json (confirmed via diff). Per chunks.json, chunk index 5 was supposed to contain FAQs for backyard-landscaping, burst-pipe-repair, concrete-paver-installation, driveway-paving, floor-tiling, gyprock-repair, kitchen-sink-installation, mosaic-tiling, reflective-foil-insulation, roof-restoration, steel-stud-framing, and vanity-installation. Instead the generation pipeline re-emitted chunk index 1's content verbatim into out-5.json. Result: 12 target job pages get zero FAQ coverage from this batch, and if both files are ingested downstream, 13 slugs get duplicate-published FAQ content across two different job pages -- a direct SEO/citation-trust hazard and a completeness gap.",
+  "suggestedFix": "Delete/discard out-5.json and re-run the FAQ generation step for chunk index 5's actual 12 target jobs (backyard-landscaping, burst-pipe-repair, concrete-paver-installation, driveway-paving, floor-tiling, gyprock-repair, kitchen-sink-installation, mosaic-tiling, reflective-foil-insulation, roof-restoration, steel-stud-framing, vanity-installation) before this batch is published."
+ },
+ {
+  "file": "out-5.json",
+  "slug": "batch-pipeline-wrong-content",
+  "issue": "out-5.json is a byte-for-byte duplicate of out-1.json (same 13 job slugs and identical Q&A text: acrylic-rendering, bathroom-tiling, colorbond-gutter-installation, deck-staining-and-painting, fence-painting, gas-hot-water-system-repair, hybrid-flooring-installation, leaking-shower-repair, pool-paving, roof-insulation-top-up, small-bathroom-renovation, timber-floor-sanding-and-polishing, water-damage-plaster-repair) instead of the 12 jobs chunks.json[5] actually assigns to this batch slot (backyard-landscaping, burst-pipe-repair, concrete-paver-installation, driveway-paving, floor-tiling, gyprock-repair, kitchen-sink-installation, mosaic-tiling, reflective-foil-insulation, roof-restoration, steel-stud-framing, vanity-installation). Verified programmatically against chunks.json — chunks 0,1,2,3,4,6,7,8,9 all match their out-N.json, only chunk 5 is wrong.",
+  "suggestedFix": "Regenerate out-5.json from chunks.json[5]'s actual 12-job list before stitching/publishing — as-is, those 12 job pages would silently ship with zero FAQ content while 13 chunk-1 jobs get pointlessly duplicated FAQs."
+ },
+ {
+  "file": "out-0.json",
+  "slug": "deck-sanding-and-sealing",
+  "q": "How much does deck sanding and sealing cost in Australia?",
+  "issue": "FAQ states deck sanding & sealing costs $35–$70/m² (\"$700 to $2,100\" for a 20–30m² deck), but grounding.json prices this exact job's trade cost (trade: Decking) at $200–$1,000/m² — same unit, roughly 6–15x lower than the job's own priced range. If the page's materials/price module shows the $200–$1,000/m² figure (as it does for every other Decking job in this batch), the FAQ directly contradicts the page's own headline price.",
+  "suggestedFix": "Align the FAQ number with whatever tradeCost the job page actually displays, or (more likely correct) give refinishing-only Decking jobs their own lower tradeCost bracket in grounding.json rather than inheriting the full deck-construction $200–$1,000/m² band."
+ },
+ {
+  "file": "out-9.json",
+  "slug": "deck-oiling-and-staining",
+  "q": "How much does deck oiling and staining cost in Australia?",
+  "issue": "FAQ states labour costs \"$15–$35 per square metre\", but grounding.json's tradeCost for this job (trade: Decking) is $200–$1,000/m² — same unit, roughly 13–30x lower than the job's own priced range.",
+  "suggestedFix": "Same fix as deck-sanding-and-sealing: reconcile with the displayed tradeCost, or give surface-refinishing jobs a dedicated lower price bracket instead of reusing the full-decking-installation band."
+ },
+ {
+  "file": "out-0.json",
+  "slug": "bathroom-tap-installation",
+  "q": "How much does bathroom tap installation cost in Australia?",
+  "issue": "FAQ gives a sensible $150–$400 for a single tap swap, but grounding.json's tradeCost for this exact job is \"Bathroom Renovation, per project, $15,000–$35,000\" — a bucket clearly copied from full bathroom-reno jobs and misapplied here. If that per-project figure appears anywhere on the same page (materials module / hero price), it directly contradicts the FAQ's $150–$400 answer by roughly 40–200x.",
+  "suggestedFix": "Give narrow single-fixture jobs (bathroom-tap-installation, frameless-shower-screen-installation, shower-screen-replacement, kitchen-splashback-installation, stone-benchtop-installation) their own realistic tradeCost instead of the whole-renovation project band, or have the FAQ explicitly caveat the difference the way wall-hung-vanity-installation's FAQ does (\"as a standalone swap X; as part of a full reno $15k–$35k\")."
+ },
+ {
+  "file": "out-6.json",
+  "slug": "frameless-shower-screen-installation",
+  "q": "How much does a frameless shower screen cost in Australia?",
+  "issue": "FAQ states $900–$2,200 supplied and installed, but grounding.json's tradeCost for this job is \"Bathroom Renovation, per project, $15,000–$35,000\" — 7–16x higher than the FAQ's number for what is really just a screen-and-glazing job.",
+  "suggestedFix": "Same category fix as bathroom-tap-installation — this job shouldn't inherit the full-bathroom-reno project price band."
+ },
+ {
+  "file": "out-8.json",
+  "slug": "shower-screen-replacement",
+  "q": "How much does a shower screen replacement cost in Australia?",
+  "issue": "FAQ states $275–$1,008 for a semi-frameless screen, but grounding.json's tradeCost for this job is \"Bathroom Renovation, per project, $15,000–$35,000\" — 15–55x higher than the FAQ's number for a simple screen swap.",
+  "suggestedFix": "Same category fix — give this job its own realistic tradeCost instead of the full-reno project band."
+ },
+ {
+  "file": "out-6.json",
+  "slug": "kitchen-splashback-installation",
+  "q": "How much does a kitchen splashback cost to install in Australia?",
+  "issue": "FAQ gives $60–$180/m² (\"$250 and $900\" for a 4–6m² splashback), but grounding.json's tradeCost for this job is \"Kitchen Renovation, per project, $20,000–$45,000\" — 22–180x higher. It also directly contradicts the near-duplicate job kitchen-splashback-tiling (out-7.json), whose FAQ states $45–$120/m² for what is essentially the same task (tiling a kitchen splashback) — two different job pages quoting two different per-m² price bands for the same real-world job.",
+  "suggestedFix": "Consolidate kitchen-splashback-installation and kitchen-splashback-tiling onto one consistent price band (the Tiling $45–$120/m² figure is the realistic one) and stop the Kitchen Renovation project bucket bleeding into single-item jobs."
+ },
+ {
+  "file": "out-6.json",
+  "slug": "stone-benchtop-installation",
+  "q": "How much does a stone benchtop cost in Australia?",
+  "issue": "FAQ computes $4,000–$7,000 for a typical 5m² stone benchtop, directly contradicting grounding.json's tradeCost for the same job (\"Kitchen Renovation, per project, $20,000–$45,000\") — a 3–11x mismatch on the same page.",
+  "suggestedFix": "Same category fix as the other Kitchen Renovation-bucketed single-item jobs — give it a realistic standalone tradeCost."
+ },
+ {
+  "file": "out-0.json",
+  "slug": "tile-regrouting",
+  "q": "How much does tile regrouting cost in Australia?",
+  "issue": "FAQ states regrouting labour costs $15–$40/m² (\"$300 to $700\" for a standard bathroom), but grounding.json's tradeCost for this job (trade: Tiling) is $45–$120/m² — same unit, roughly 3x lower than the job's own priced range.",
+  "suggestedFix": "Lower the tile-regrouting tradeCost bracket to reflect that it's labour-only (no tile supply), or raise the FAQ number to sit within the displayed $45–$120/m² band."
+ },
+ {
+  "file": "out-1.json",
+  "slug": "acrylic-rendering",
+  "q": "What is the difference between acrylic render and cement render?",
+  "issue": "This answer claims acrylic render \"usually costs more per square metre than traditional cement render,\" but the acrylic-rendering FAQ's own headline installed price ($30–$80/m²) is identical to cement-rendering's headline price ($30–$80/m²) in the same batch — no premium is actually reflected, so the claim contradicts the page's own quoted range. (Note: out-5.json duplicates this same content verbatim — see the batch-pipeline finding.)",
+  "suggestedFix": "Either give acrylic rendering a genuinely higher $/m² band, or soften the claim to reference the material cost difference only (acrylic ~$213/15L bucket vs cement's ~$15/20kg bag) without asserting a different installed rate."
+ },
+ {
+  "file": "out-3.json",
+  "slug": "waterproofing-membrane-installation",
+  "q": "Can I do waterproofing myself in Australia?",
+  "issue": "Claims \"In most Australian states, waterproofing wet areas like bathrooms and balconies must be carried out or signed off by a licensed waterproofer, since it is classed as restricted building work.\" \"Restricted building work\" is a specific NSW Home Building Act licensing classification, not a term or classification used uniformly by other states' regulators — presenting it as a general \"most Australian states\" fact overstates a jurisdiction-specific rule.",
+  "suggestedFix": "Soften to a verifiably nationwide claim (e.g. \"waterproofing wet areas is licensed trade work in every state, though the specific classification and sign-off rules vary — check your local regulator\") rather than citing NSW's specific \"restricted building work\" term as a national standard."
+ },
+ {
+  "file": "out-0.json",
+  "slug": "deck-sanding-and-sealing",
+  "q": "How much does deck sanding and sealing cost in Australia?",
+  "issue": "FAQ states $35–$70 per m² installed, but grounding.json's own tradeCost entry for deck-sanding-and-sealing (trade \"Decking\") is $200–$1,000 per m² — a 5–14x divergence in the identical per-m² unit. This job wrongly inherits the full deck-CONSTRUCTION rate (same bucket used correctly for composite/treated-pine decking builds elsewhere in the batch), not a resurfacing/maintenance rate.",
+  "suggestedFix": "Give deck-sanding-and-sealing its own realistic labour-only tradeCost in grounding.json (roughly the $15-70/m² range the copy actually uses) instead of inheriting the full-build Decking bucket, then re-verify the FAQ number against the corrected grounding entry."
+ },
+ {
+  "file": "out-9.json",
+  "slug": "deck-oiling-and-staining",
+  "q": "How much does deck oiling and staining cost in Australia?",
+  "issue": "FAQ states labour costs $15–$35 per m², but grounding.json's tradeCost for deck-oiling-and-staining (trade \"Decking\") is $200–$1,000 per m² — the same >5x divergence as deck-sanding-and-sealing, caused by the same root issue (a light maintenance job inheriting the full deck-build pricing bucket).",
+  "suggestedFix": "Same fix as deck-sanding-and-sealing: give this job slug its own grounding tradeCost bucket separate from full deck construction, so the published FAQ price and the sourced grounding price actually agree."
+ },
+ {
+  "file": "out-0.json",
+  "slug": "tile-regrouting",
+  "q": "How much does tile regrouting cost in Australia?",
+  "issue": "FAQ states $15–$40 per m², but grounding.json's tradeCost for tile-regrouting (trade \"Tiling\") is $45–$120 per m² — roughly a 3x divergence in the same per-m² unit. Regrouting is labour-only (no new tiles), so it correctly shouldn't cost as much as full tile installation, but that means the job is misassigned to the full-installation Tiling bucket in grounding.json rather than the FAQ being wrong.",
+  "suggestedFix": "Add a dedicated, lighter tradeCost entry for tile-regrouting in grounding.json (labour-only rate, distinct from full floor/wall tiling) so the number the FAQ cites is traceable to a matching grounding figure instead of contradicting it."
+ },
+ {
+  "file": "out-6.json",
+  "slug": "engineered-timber-flooring-installation",
+  "q": "How much does engineered timber flooring cost to install in Australia?",
+  "issue": "FAQ claims the installed price is $40–$150 per m², but in the same sentence says the timber itself runs ~$145/m² plus underlay ~$14/m². Per grounding.json, engineered oak flooring is $142.42–$147.16/m² (typical $144.79) and foam underlay is a flat $14.01/m², so bare materials alone are always ≥$156/m² — already above the stated installed ceiling of $150/m² at every price point, before any labour is added.",
+  "suggestedFix": "Raise the installed range (e.g., roughly $160–$220/m²) so it sits above the material-only floor, or flag that grounding.json's shared Flooring tradeCost bucket ($40-150/m², meant to also cover cheap laminate/vinyl) doesn't fit a $145/m² material like engineered oak and needs its own higher tradeCost entry."
+ },
+ {
+  "file": "out-1.json",
+  "slug": "pool-paving",
+  "q": "How much does pool paving cost in Australia?",
+  "issue": "FAQ states pool paving is $50–$150 per m² installed, then in the same answer says travertine pavers cost $109–$359 per m² supplied. Bare travertine material cost is already up to 2.4x the stated installed ceiling, meaning the quoted \"installed\" range can't actually cover a travertine job even before sand, base prep, and labour are added. (Identical text is duplicated verbatim in out-5.json.)",
+  "suggestedFix": "Clarify that the $50-150/m² figure applies to concrete/clay pavers only, and give travertine pool paving its own higher installed range (e.g. $150-450/m²) sourced from a stone-specific tradeCost rather than the generic Paving bucket; apply the same fix to the duplicate copy in out-5.json."
+ },
+ {
+  "file": "out-2.json",
+  "slug": "glass-pool-fencing",
+  "q": "How much does glass pool fencing cost in Australia?",
+  "issue": "FAQ states installed cost is $100–$180 per metre, but a single frameless glass panel alone costs $247–$686 per grounding.json. Standard frameless glass pool fence panels run roughly 1-1.5m wide, so bare glass material cost per metre (~$165-$686/m) already exceeds the full quoted installed price, often by 2-4x, before posts, fixings, or labour are added.",
+  "suggestedFix": "Raise the installed price range for glass pool fencing to reflect real market costs (commonly $400-800+/m installed), and split glass fencing out of the shared Fencing tradeCost bucket ($100-180/m) since that bucket's other members (timber paling, Colorbond) use far cheaper panel materials."
+ },
+ {
+  "file": "out-3.json",
+  "slug": "aluminium-slat-fencing",
+  "q": "How much does aluminium slat fencing cost in Australia?",
+  "issue": "FAQ states installed cost is $100–$180 per metre, then notes a single fence panel alone costs $354-$1,069 (per grounding.json), and concludes \"a professional installer's supply-and-install quote is usually the better value once labour and post setting are included\" — implying the labour-inclusive installed price is cheaper than buying the bare panel, which isn't mathematically coherent (adding labour/posts/concrete on top of materials can't land below the materials-only price). Even at a generous 2.4-3m panel width, the high end of panel pricing alone (~$120-$445/m) is close to or exceeds the $180/m installed ceiling before any labour is added.",
+  "suggestedFix": "Remove or rework the \"better value\" framing so it doesn't claim installed pricing beats raw materials, and derive a realistic installed range for aluminium slat fencing (e.g. $150-450/m) instead of inheriting the shared $100-180/m Fencing bucket built around cheaper timber/Colorbond panels."
+ },
+ {
+  "file": "out-2.json",
+  "slug": "waterproofing-and-tiling",
+  "q": "How much does waterproofing and tiling cost in Australia?",
+  "issue": "FAQ states the job costs $45-$120 per m² installed, but in the same sentence lists porcelain floor tiles alone at $29-$125 per m². The bare tile cost at the high end ($125/m²) already exceeds the stated installed ceiling ($120/m²), before adding the waterproofing membrane, primer, adhesive, or grout the same answer also describes as part of the job.",
+  "suggestedFix": "Raise the installed range (e.g. to roughly $60-$180/m²) so it comfortably clears the highest listed material input, or cite a lower, more typical porcelain tile price in the example so the two figures in the same answer don't contradict each other."
+ },
+ {
+  "file": "out-6.json",
+  "slug": "stone-benchtop-installation",
+  "q": "How much does a stone benchtop cost in Australia?",
+  "issue": "FAQ says a 5m² benchtop \"installed\" lands between $4,000 and $7,000, but the low end ($4,000) is exactly 5 × the bare supply-only material price ($800/m² per grounding.json's low figure), leaving zero margin for stonemason fabrication, sink/cooktop cutouts, edge profiling, or installation labour — all real, non-trivial costs for stone benchtops.",
+  "suggestedFix": "Raise the low end of the \"installed\" range (e.g. to roughly $4,800-$5,000+) so it includes a realistic fabrication/install margin above the bare $800/m² supply-only figure rather than letting the stated low end equal pure material cost."
+ }
+]

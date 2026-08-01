@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import { useState, useRef } from "react";
 
 /**
  * Adaptive Logo Display System
@@ -48,6 +49,17 @@ function getProxyUrl(url: string | null): string | null {
     return `/api/logo-proxy?url=${encodeURIComponent(safe)}`;
 }
 
+function getInitials(name: string): string {
+    const parts = name
+        .split(/\s+/)
+        .map((part) => part.replace(/[^a-z0-9]/gi, ""))
+        .filter(Boolean);
+
+    if (parts.length === 0) return "TR";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+}
+
 // ── Pixel analysis types ──
 
 interface PixelStats {
@@ -56,6 +68,12 @@ interface PixelStats {
     hasTransparency: boolean;
     dominantEdge: "dark" | "light" | "mixed";
     croppedSrc: string | null;
+}
+
+interface LogoState {
+    logoUrl: string | null;
+    stats: PixelStats | null;
+    error: boolean;
 }
 
 /** Returns true if a pixel is considered "empty" — transparent or matching solid bg */
@@ -208,20 +226,15 @@ export function BusinessLogo({
     skipAnalysis = false,
 }: BusinessLogoProps) {
     const imgRef = useRef<HTMLImageElement>(null);
-    const [stats, setStats] = useState<PixelStats | null>(null);
-    const [error, setError] = useState(false);
+    const [logoState, setLogoState] = useState<LogoState>({ logoUrl: null, stats: null, error: false });
 
     const config = SIZE_CONFIG[size] || SIZE_CONFIG.md;
     const proxyUrl = getProxyUrl(logoUrl);
+    const stats = logoState.logoUrl === logoUrl ? logoState.stats : null;
+    const error = logoState.logoUrl === logoUrl ? logoState.error : false;
 
     // Pre-computed bg: from DB prop → localStorage cache → null (needs analysis)
     const precomputedBg = bgColor || (logoUrl ? getCachedBg(logoUrl) : null);
-
-    // Reset state when src changes
-    useEffect(() => {
-        setStats(null);
-        setError(false);
-    }, [logoUrl]);
 
     function handleLoad() {
         // Skip analysis entirely if we already have a bg color
@@ -230,11 +243,15 @@ export function BusinessLogo({
         if (!img) return;
         try {
             const result = analyzeImage(img);
-            setStats(result);
+            setLogoState({ logoUrl, stats: result, error: false });
             // Cache in localStorage for next visit
             if (logoUrl) setCachedBg(logoUrl, result.bg);
         } catch {
-            setStats({ bg: "#e8e8e8", luminance: 128, hasTransparency: false, dominantEdge: "mixed", croppedSrc: null });
+            setLogoState({
+                logoUrl,
+                stats: { bg: "#e8e8e8", luminance: 128, hasTransparency: false, dominantEdge: "mixed", croppedSrc: null },
+                error: false,
+            });
         }
     }
 
@@ -243,20 +260,19 @@ export function BusinessLogo({
         ? { width: "100%", height: "100%", borderRadius: config.radius }
         : { width: config.w, height: config.h, borderRadius: config.radius };
 
-    // Fallback: TradeRefer logo
+    // Fallback: lightweight initials placeholder for missing or failed logos
     if (!proxyUrl || error) {
+        const initials = getInitials(name);
+
         return (
             <div
-                className={`bg-white flex items-center justify-center overflow-hidden shrink-0 ${className}`}
-                style={{ ...containerStyle, border: "1px solid rgba(0,0,0,0.08)", padding: config.padding * 1.5, boxShadow: "0 1px 4px rgba(0,0,0,0.12)" }}
+                className={`flex items-center justify-center overflow-hidden shrink-0 bg-orange-50 text-orange-700 ${className}`}
+                style={{ ...containerStyle, border: "1px solid rgba(194,65,12,0.18)", padding: config.padding, boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}
+                aria-label={`${name} logo placeholder`}
             >
-                <img 
-                    src="/logo.png" 
-                    alt="TradeRefer" 
-                    loading={imageLoading}
-                    fetchPriority={fetchPriority}
-                    style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-                />
+                <span className={`${config.fallbackText} font-black tracking-tight`} aria-hidden="true">
+                    {initials}
+                </span>
             </div>
         );
     }
@@ -269,6 +285,7 @@ export function BusinessLogo({
     // Only use proxy URL when we need CORS access for canvas analysis
     const directUrl = logoUrl?.replace(/^http:\/\//i, "https://") || proxyUrl;
     const displaySrc = stats?.croppedSrc ?? (needsAnalysis ? proxyUrl : directUrl);
+    const useOptimizedVisibleLogo = !needsAnalysis && !displaySrc.startsWith("data:");
 
     return (
         <div
@@ -287,28 +304,44 @@ export function BusinessLogo({
                 <img
                     ref={imgRef}
                     src={proxyUrl}
-                    alt=""
+                    alt={`${name} logo`}
                     crossOrigin="anonymous"
                     onLoad={handleLoad}
-                    onError={() => setError(true)}
+                    onError={() => setLogoState({ logoUrl, stats: null, error: true })}
                     style={{ display: "none" }}
                 />
             )}
             {/* Visible logo */}
-            <img
-                src={displaySrc}
-                alt={name}
-                loading={imageLoading}
-                fetchPriority={fetchPriority}
-                style={{
-                    maxWidth: "100%",
-                    maxHeight: "100%",
-                    objectFit: "contain",
-                    display: "block",
-                    transition: "opacity 0.2s ease",
-                }}
-                onError={() => setError(true)}
-            />
+            {useOptimizedVisibleLogo ? (
+                <span className="relative block h-full w-full">
+                    <Image
+                        src={displaySrc}
+                        alt={name}
+                        fill
+                        loading={imageLoading}
+                        fetchPriority={fetchPriority}
+                        quality={72}
+                        sizes={`${config.w || 240}px`}
+                        className="object-contain"
+                        onError={() => setLogoState({ logoUrl, stats: null, error: true })}
+                    />
+                </span>
+            ) : (
+                <img
+                    src={displaySrc}
+                    alt={name}
+                    loading={imageLoading}
+                    fetchPriority={fetchPriority}
+                    style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                        display: "block",
+                        transition: "opacity 0.2s ease",
+                    }}
+                    onError={() => setLogoState({ logoUrl, stats: null, error: true })}
+                />
+            )}
         </div>
     );
 }

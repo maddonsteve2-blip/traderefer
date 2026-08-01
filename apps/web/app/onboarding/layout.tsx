@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Onboarding | TradeRefer",
+    description: "Set up your TradeRefer account.",
+    robots: { index: false, follow: true },
+};
+
 export default function OnboardingLayout({
     children,
 }: {

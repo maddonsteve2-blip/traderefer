@@ -1,0 +1,57 @@
+{
+  "//": "Curated suburb → postcode anchors verified against real Australian postcodes (audit 2026-06-12, docs/seo-research/audit-2026-06-12/city-postcode-integrity.md). These win over every other source in scripts/regenerate_postcodes.js and are asserted by lib/__tests__/postcodes.test.ts. Only change a value here with postal-dataset evidence, never from a single business address.",
+  "ACT": {
+    "canberra": "2601",
+    "chifley": "2606",
+    "narrabundah": "2604",
+    "reid": "2612"
+  },
+  "NSW": {
+    "ashfield": "2131",
+    "bossley-park": "2176",
+    "chatswood": "2067",
+    "chifley": "2036",
+    "crestwood": "2620",
+    "crows-nest": "2065",
+    "epping": "2121",
+    "gladesville": "2111",
+    "hornsby": "2077",
+    "kingswood": "2747",
+    "macquarie-fields": "2564",
+    "mascot": "2020",
+    "north-sydney": "2060",
+    "parramatta": "2150",
+    "ryde": "2112",
+    "st-clair": "2759",
+    "strathfield": "2135",
+    "sutherland": "2232",
+    "woollahra": "2025"
+  },
+  "NT": {
+    "millner": "0810"
+  },
+  "QLD": {
+    "craiglie": "4877",
+    "currajong": "4812",
+    "douglas": "4814",
+    "julatten": "4871",
+    "kallangur": "4503",
+    "kirwan": "4817",
+    "macgregor": "4109",
+    "port-douglas": "4877"
+  },
+  "VIC": {
+    "epping": "3076",
+    "heidelberg": "3084",
+    "moolap": "3224",
+    "springvale-south": "3172"
+  },
+  "WA": {
+    "ashfield": "6054",
+    "ballajura": "6066",
+    "east-perth": "6004",
+    "gnangara": "6077",
+    "mariginiup": "6078",
+    "mirrabooka": "6061"
+  }
+}

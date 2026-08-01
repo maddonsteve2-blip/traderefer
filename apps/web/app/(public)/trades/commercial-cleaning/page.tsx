@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Commercial Cleaning Australia | Commercial Cleaners | TradeRefer",
-    description: "Find trusted commercial cleaners across Australia. Compare office, retail, and industrial cleaning costs by city, understand insurance requirements, and hire verified local commercial cleaning businesses through TradeRefer.",
+    description: "Find trusted commercial cleaners across Australia. Compare office, retail, and industrial cleaning costs by city, understand insurance requirements, and hire local commercial cleaning businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/commercial-cleaning" },
-    openGraph: { title: "Commercial Cleaning Services Australia | TradeRefer", description: "Compare commercial cleaning costs, office cleaning rates, and verified local commercial cleaners across Australia.", url: "https://traderefer.au/trades/commercial-cleaning", type: "website" },
+    openGraph: { title: "Commercial Cleaning Services Australia | TradeRefer", description: "Compare commercial cleaning costs, office cleaning rates, and local commercial cleaners across Australia.", url: "https://traderefer.au/trades/commercial-cleaning", type: "website" },
 };
 
 const TRADE_NAME = "Cleaning";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Request references from comparable premises", body: "Ask for at least 2 references from similar-sized commercial premises. A commercial cleaner servicing small offices may not have the right equipment, staffing, or procedures for larger buildings or specialist environments like medical or industrial sites.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified cleaning businesses", body: "TradeRefer helps facility managers and business owners find ABN-verified commercial cleaning businesses — ensuring you're engaging a legitimate operator with proper insurance, not an informal contractor." },
+    { title: "Checked cleaning businesses", body: "TradeRefer helps facility managers and business owners find ABN-checked commercial cleaning businesses — ensuring you're engaging a legitimate operator with proper insurance, not an informal contractor." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical commercial cleaning hourly rates across Australian cities so you can benchmark any contractor quote before committing to a regular service agreement." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national commercial cleaning guide into city and suburb-level pages to find verified commercial cleaning businesses servicing the specific area where your premises are located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national commercial cleaning guide into city and suburb-level pages to find commercial cleaning businesses servicing the specific area where your premises are located." },
 ];
 const featuredCities = [
     { city: "Sydney", state: "NSW", stateSlug: "nsw", citySlug: "sydney" },
@@ -110,8 +110,8 @@ export default async function CommercialCleaningTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Commercial Cleaners</span> Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer commercial cleaning hub to compare office, retail, medical, and industrial cleaning rates across Australian cities, understand insurance requirements, and connect with verified local commercial cleaning businesses.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Commercial Cleaners</span> Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer commercial cleaning hub to compare office, retail, medical, and industrial cleaning rates across Australian cities, understand insurance requirements, and connect with local commercial cleaning businesses.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href="/quotes?trade=Cleaning&source=%2Ftrades%2Fcommercial-cleaning" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Cleaning" className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Commercial Cleaners</Link>
@@ -168,7 +168,7 @@ export default async function CommercialCleaningTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Commercial Cleaning Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your premises with up to 3 verified local commercial cleaning businesses.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Commercial Cleaning Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your premises with up to 3 local commercial cleaning businesses.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory="Cleaning" initialSourcePage="/trades/commercial-cleaning" />
                     </section>
 
@@ -192,7 +192,7 @@ export default async function CommercialCleaningTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Commercial Cleaner Near You?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local commercial cleaning businesses and find the right service for your office, retail, medical, or industrial premises.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local commercial cleaning businesses and find the right service for your office, retail, medical, or industrial premises.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href="/quotes?trade=Cleaning&source=%2Ftrades%2Fcommercial-cleaning" className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href="/businesses?category=Cleaning" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Commercial Cleaners</Link>

@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, AlertCircle, User, Phone, Mail, MapPin, MessageSquare, Clock, Zap, Loader2, ArrowRight } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
-import { trackReferralSubmitted } from "@/lib/posthog-events";
 
 interface LeadFormProps {
     businessName: string;
@@ -17,43 +15,9 @@ interface LeadFormProps {
 
 export function LeadForm({ businessName, businessId, referralCode }: LeadFormProps) {
     const router = useRouter();
-    const { isSignedIn, userId, getToken } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [submitSuccess, setSubmitSuccess] = useState(false);
-    const [isOwner, setIsOwner] = useState(false);
-
-    // Check if current user owns this business
-    useEffect(() => {
-        if (!isSignedIn || !userId) {
-            setIsOwner(false);
-            return;
-        }
-        (async () => {
-            try {
-                const token = await getToken();
-                if (!token) {
-                    console.warn("No auth token available");
-                    setIsOwner(false);
-                    return;
-                }
-                const res = await fetch(`/api/backend/business/me`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    const biz = await res.json();
-                    setIsOwner(biz.id === businessId);
-                } else {
-                    console.warn("Business ownership check failed:", res.status, res.statusText);
-                    setIsOwner(false);
-                }
-            } catch (err) {
-                console.error("Business ownership check error:", err);
-                // If check fails, assume not owner
-                setIsOwner(false);
-            }
-        })();
-    }, [isSignedIn, userId, businessId, getToken]);
 
     const [formData, setFormData] = useState({
         consumer_name: "",
@@ -114,16 +78,21 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
             const data = await response.json();
 
             if (isReferralLead) {
-                trackReferralSubmitted({
-                    referralId: data.id,
-                    tradeCategory: data.trade_type || 'unknown',
-                    suburb: formData.consumer_suburb,
-                    state: stateValue || 'unknown',
-                    jobValueEstimate: undefined,
-                    matchedBusinesses: 1,
-                    urgency: formData.lead_urgency === 'hot' ? 'emergency' : formData.lead_urgency === 'warm' ? 'standard' : 'planning',
-                    sourcePage: typeof window !== 'undefined' ? window.location.pathname : '',
-                });
+                try {
+                    const { trackReferralSubmitted } = await import("@/lib/posthog-events");
+                    trackReferralSubmitted({
+                        referralId: data.id,
+                        tradeCategory: data.trade_type || 'unknown',
+                        suburb: formData.consumer_suburb,
+                        state: stateValue || 'unknown',
+                        jobValueEstimate: undefined,
+                        matchedBusinesses: 1,
+                        urgency: formData.lead_urgency === 'hot' ? 'emergency' : formData.lead_urgency === 'warm' ? 'standard' : 'planning',
+                        sourcePage: typeof window !== 'undefined' ? window.location.pathname : '',
+                    });
+                } catch (trackingError) {
+                    console.warn("Referral tracking failed", trackingError);
+                }
             }
 
             setSubmitSuccess(true);
@@ -131,7 +100,7 @@ export function LeadForm({ businessName, businessId, referralCode }: LeadFormPro
 
             await new Promise(resolve => setTimeout(resolve, 1500));
 
-            if (!isReferralLead || isOwner) {
+            if (!isReferralLead) {
                 router.push("/leads/success");
             } else {
                 router.push(`/leads/verify?id=${data.id}`);

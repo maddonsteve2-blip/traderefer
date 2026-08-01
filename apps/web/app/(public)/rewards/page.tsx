@@ -3,11 +3,37 @@ import Link from "next/link";
 import Image from "next/image";
 import CardGrid from "./CardGrid";
 import { ArrowRight, CheckCircle2, Gift, Mail, Smartphone, Clock3, Star, Users, ChevronRight } from "lucide-react";
+import { buildOgImageUrl } from "@/lib/og-image";
+
+const rewardsOgImage = buildOgImageUrl({
+    template: "home",
+    title: "TradeRefer rewards",
+    subtitle: "Eligible referrals and invite activity can earn Prezzee Smart Cards.",
+    eyebrow: "Rewards",
+    badge: "Powered by Prezzee",
+    stat1: "Invite rewards",
+    stat2: "Referral rewards",
+    stat3: "335+ brands",
+});
 
 export const metadata: Metadata = {
     title: "Earn Prezzee Gift Cards | TradeRefer Rewards",
-    description: "Invite 5 people to TradeRefer and automatically earn a $25 Prezzee Smart Card — spend it at Woolworths, Bunnings, Uber, Netflix, Coles and 400+ more brands.",
+    description: "Learn how eligible TradeRefer referrals and invite activity can earn Prezzee Smart Cards for use across Woolworths, Bunnings, Uber, Netflix, Coles and more.",
     alternates: { canonical: "https://traderefer.au/rewards" },
+    openGraph: {
+        title: "TradeRefer Rewards | Prezzee Gift Cards",
+        description: "Eligible referrals and invite activity can earn Prezzee Smart Cards.",
+        url: "https://traderefer.au/rewards",
+        siteName: "TradeRefer",
+        type: "website",
+        images: [{ url: rewardsOgImage, width: 1200, height: 630, alt: "TradeRefer rewards powered by Prezzee" }],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "TradeRefer Rewards | Prezzee Gift Cards",
+        description: "Eligible referrals and invite activity can earn Prezzee Smart Cards.",
+        images: [rewardsOgImage],
+    },
 };
 
 const PREZZEE_LOGO = "/images/prezzee/prezzee-logo.svg";
@@ -42,7 +68,7 @@ const CARDS = [
     { name: "Well Done!", url: `${BASE}/e4b8ace6-5f59-4dff-9ea8-61f8b95d9d24/Well_done_SKU_452_280.png` },
     { name: "World's Best Teacher", url: `${BASE}/dfccf25a-6508-4bb8-9374-0a5d7f0ff9e9/20240805-worldteacherday-SKU_452_280.png` },
     { name: "School Graduation", url: `${BASE}/aa8599a4-308f-4831-a9f6-3e4e041ea231/Primary_School_Graduation_SKU_(1)_452_280.png` },
-    // ── Verified brand cards (A–F) from Prezzee React Query cache ──
+    // ── Checked brand cards (A–F) from Prezzee React Query cache ──
     { name: "Accor Hotels", url: `${BASE}/ee57055b-b8e8-40cf-97dc-5605c8cc2b2e/ACCOR_HOTELS_AUD_452_280.jpg` },
     { name: "Adina Hotels", url: `${BASE}/596d078e-27da-4640-b89d-64d7feb4beeb/ADINA_HOTELS_AUD_452_280.png` },
     { name: "Adore Beauty", url: `${BASE}/463fa687-6cb0-486f-af47-a5a983230530/Adore_Beauty_GC_Image_452_280.png` },
@@ -139,7 +165,7 @@ const CARDS = [
     { name: "Fortnite", url: `${BASE}/f0b7a251-fcaa-42f3-bdfa-778bf2456cf4/Fotnite_AU_GC_2025_452_280.jpg` },
     { name: "frank green", url: `${BASE}/c0144fac-63a5-4320-a275-5882bb988e9f/FRANK_GREEN_452_280.png` },
     { name: "Frederic", url: `${BASE}/7c322495-54bb-4463-9367-0b4a9473049e/Frederic_GC_452_280.jpg` },
-    // ── Verified brand cards (G–M) from Prezzee React Query cache ──
+    // ── Checked brand cards (G–M) from Prezzee React Query cache ──
     { name: "Gazman", url: `${BASE}/6524fe97-c203-4850-9fd1-59241d544c3a/GAZMAN_AUD_452_280.png` },
     { name: "Gemelli Broadbeach", url: `${BASE}/9d372caa-b19c-46d9-8e13-62b49a7dd8dd/Gemelli_Broadbeach_GC_452_280.jpg` },
     { name: "General Pants Co.", url: `${BASE}/f3f60cf4-6bca-459c-8842-e79d51ec484f/GENERAL_PANTS_CO_452_280.png` },
@@ -228,7 +254,7 @@ const CARDS = [
     { name: "Mudbar Restaurant", url: `${BASE}/7f8a297f-347e-45c1-a8b7-583a8927d6e6/Mudbar_Restaurant_gc_452_280.jpg` },
     { name: "My Creative Box", url: `${BASE}/57f6f65c-4532-4161-8cc4-4669c68fe12d/My_Creative_Box_GC_452_280.png` },
     { name: "Myer", url: `${BASE}/87dc338c-dc0d-42ae-9eaf-5f64c3dbd7db/myer-orange_452_280.jpg` },
-    // ── Verified brand cards (N–Z) from Prezzee React Query cache ──
+    // ── Checked brand cards (N–Z) from Prezzee React Query cache ──
     { name: "Nexon Game Card", url: `${BASE}/6780847f-9ad8-47b3-aea7-abef1d874041/Nexon_Game_Card_Updated_452_280.jpg` },
     { name: "Nine West", url: `${BASE}/a43aa099-99f8-4b8d-a0b5-c7c8adf8b166/NINE_WEST_452_280.png` },
     { name: "NuNu", url: `${BASE}/2e8cfc03-012a-43b2-ba8f-188a4295dd64/NuNu_GC_452_280.jpg` },
@@ -358,7 +384,7 @@ const STEPS = [
     {
         number: "02",
         title: "Job confirmed",
-        desc: "Once both sides confirm the job was hired and completed, your reward is automatically calculated — no chasing required.",
+        desc: "Once both sides confirm the job was hired and completed, your reward is calculated and prepared for issue.",
     },
     {
         number: "03",
@@ -371,7 +397,7 @@ const TRUST = [
     { icon: Clock3, label: "Valid 3 years", sub: "No rush to spend" },
     { icon: Mail, label: "Instant delivery", sub: "Email or SMS" },
     { icon: Smartphone, label: "Prezzee Wallet app", sub: "Apple Wallet compatible" },
-    { icon: Star, label: "400+ brands", sub: "One card, your choice" },
+    { icon: Star, label: "335+ brands", sub: "One card, your choice" },
 ];
 
 export default function RewardsPage() {
@@ -397,10 +423,10 @@ export default function RewardsPage() {
 
                         <h1 className="text-5xl md:text-7xl font-black text-zinc-900 mb-6 leading-[1.05] tracking-tight font-display">
                             One Card.<br />
-                            <span className="text-[#FF6600]">400+ Places</span> to Spend It.
+                            <span className="text-[#FF6600]">335+ Places</span> to Spend It.
                         </h1>
                         <p className="text-xl md:text-2xl text-zinc-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-                            Earn a <strong className="text-zinc-900">$25 Prezzee Smart Card</strong> every time you invite 5 people who join TradeRefer. Spend it anywhere — Woolworths, Bunnings, Uber, Netflix and hundreds more.
+                            Eligible referrers can receive a <strong className="text-zinc-900">$25 Prezzee Smart Card</strong> when 5 invitees join and become active. Spend it with Woolworths, Bunnings, Uber, Netflix and hundreds more.
                         </p>
                         {/* Prezzee Smart Card animated GIF */}
                         <div className="relative inline-block mb-8">
@@ -418,8 +444,8 @@ export default function RewardsPage() {
                                 <Gift className="w-7 h-7 text-[#FF6600]" />
                             </div>
                             <div className="text-left">
-                                <p className="font-black text-zinc-900 text-xl leading-tight">Invite 5 → earn $25</p>
-                                <p className="text-zinc-500 font-medium text-sm mt-0.5">Automatically issued when your 5th invitee becomes active</p>
+                                <p className="font-black text-zinc-900 text-xl leading-tight">Invite 5 active users</p>
+                                <p className="text-zinc-500 font-medium text-sm mt-0.5">Reward issued when eligibility is confirmed</p>
                             </div>
                         </div>
 
@@ -539,7 +565,7 @@ export default function RewardsPage() {
                             </div>
                             <h2 className="text-4xl md:text-5xl font-black text-zinc-900 mb-4 font-display">Where you can spend</h2>
                             <p className="text-xl text-zinc-500 font-medium max-w-2xl mx-auto">
-                                Your Prezzee Smart Card unlocks 400+ brands. Here&apos;s just a taste of where you can spend it.
+                                Your Prezzee Smart Card unlocks 335+ brands. Here&apos;s just a taste of where you can spend it.
                             </p>
                         </div>
 

@@ -1,0 +1,24 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "main": ".open-next/worker.js",
+    "name": "traderefer-web",
+    "compatibility_date": "2025-05-05",
+    "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+    "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+    "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "traderefer-web" }],
+    "images": { "binding": "IMAGES" },
+    // Back-end-heavy app with Neon in us-east-1 — run compute near the DB
+    // (matches today's Vercel iad1 function placement).
+    "placement": { "mode": "smart" },
+    "r2_buckets": [
+        { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "traderefer-next-cache" }
+    ],
+    "durable_objects": {
+        "bindings": [
+            { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" }
+        ]
+    },
+    "migrations": [
+        { "tag": "v1", "new_sqlite_classes": ["DOQueueHandler"] }
+    ]
+}

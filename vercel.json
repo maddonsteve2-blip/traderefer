@@ -1,0 +1,14 @@
+{
+  "framework": "nextjs",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm --dir apps/web build",
+  "outputDirectory": "apps/web/.next",
+  "redirects": [
+    {
+      "source": "/:path(.*)",
+      "has": [{ "type": "host", "value": "www.traderefer.au" }],
+      "destination": "https://traderefer.au/:path",
+      "permanent": true
+    }
+  ]
+}

@@ -11,7 +11,7 @@ export function ROICalculators() {
 
   const [bizSpend, setBizSpend] = useState(500);
   const [bizConvRate, setBizConvRate] = useState(30);
-  const bizSaved = Math.round(bizSpend * (1 - bizConvRate / 100));
+  const unconvertedSpend = Math.round(bizSpend * (1 - bizConvRate / 100));
 
   const bizPct = `${((bizSpend - 0) / 5000) * 100}%`;
   const bizConvPct = `${((bizConvRate - 5) / (90 - 5)) * 100}%`;
@@ -26,9 +26,9 @@ export function ROICalculators() {
         {/* Header */}
         <div className="bg-[#1A1A1A] px-5 py-5 md:px-8 md:py-7">
           <p className="text-[#FF6600] font-black text-xl uppercase tracking-widest mb-2">For Trade Businesses</p>
-          <h3 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white font-display leading-tight">Protect Your Profit.</h3>
+          <h3 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white font-display leading-tight">Know What Your Leads Cost.</h3>
           <p className="text-zinc-400 text-base md:text-lg mt-3 leading-relaxed">
-            Stop paying $21+ per lead just to quote. See what you&apos;d save by switching to pay-on-success.
+            Estimate how much of your current lead spend is not converting into won work, then compare it with a no-monthly-fee profile.
           </p>
         </div>
         {/* Body — flex-1 so button stays at bottom */}
@@ -71,13 +71,13 @@ export function ROICalculators() {
 
           {/* Result */}
           <div className="bg-green-50 border-2 border-green-200 rounded-2xl p-6 text-center">
-            <p className="text-base font-black text-green-700 uppercase tracking-widest mb-2">Total Marketing Waste Eliminated</p>
-            <p className="text-6xl md:text-7xl font-black text-green-600 leading-none">${bizSaved.toLocaleString()}</p>
-            <p className="text-lg text-green-700 mt-3 font-medium">per month — saved with $0 upfront</p>
+            <p className="text-base font-black text-green-700 uppercase tracking-widest mb-2">Estimated spend not tied to wins</p>
+            <p className="text-6xl md:text-7xl font-black text-green-600 leading-none">${unconvertedSpend.toLocaleString()}</p>
+            <p className="text-lg text-green-700 mt-3 font-medium">per month, based on your slider inputs</p>
           </div>
 
           <p className="text-base text-gray-500 leading-relaxed flex-1">
-            TradeRefer charges $0 upfront. The 20% success fee on won jobs qualifies as a marketing &amp; promotion expense deductible under <strong>Section 8-1 of the ITAA 1997</strong>.
+            TradeRefer has no monthly listing fee. Referral lead costs are shown before a business unlocks a lead, and direct profile enquiries are free.
           </p>
 
           <Link
@@ -85,7 +85,7 @@ export function ROICalculators() {
             className="flex items-center justify-center gap-3 w-full bg-[#1A1A1A] hover:bg-zinc-800 text-white font-black text-xl rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
             style={{ minHeight: "64px" }}
           >
-            Grow Risk-Free <TrendingUp className="w-6 h-6" />
+            Claim Free Profile <TrendingUp className="w-6 h-6" />
           </Link>
         </div>
       </div>
@@ -95,9 +95,9 @@ export function ROICalculators() {
         {/* Header */}
         <div className="bg-[#FF6600] px-5 py-5 md:px-8 md:py-7">
           <p className="text-white font-black text-xl uppercase tracking-widest mb-2">For Referrers</p>
-          <h3 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white font-display leading-tight">Earn Your Worth.</h3>
+          <h3 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white font-display leading-tight">Recommend Tradies You Trust.</h3>
           <p className="text-white/85 text-base md:text-lg mt-3 leading-relaxed">
-            Know a tradie? That&apos;s money. See what your network is worth in gift cards every month.
+            Estimate how referral rewards could add up when you introduce trusted trade businesses to real opportunities.
           </p>
         </div>
         {/* Body — flex-1 so button stays at bottom */}
@@ -140,9 +140,9 @@ export function ROICalculators() {
 
           {/* Result */}
           <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-6 text-center">
-            <p className="text-base font-black text-[#FF6600] uppercase tracking-widest mb-2">Monthly Gift Card Potential</p>
+            <p className="text-base font-black text-[#FF6600] uppercase tracking-widest mb-2">Estimated referral rewards</p>
             <p className="text-6xl md:text-7xl font-black text-[#FF6600] leading-none">${monthlyEarnings.toLocaleString()}</p>
-            <p className="text-lg text-orange-700 mt-3 font-medium">per month in tax-deductible gift cards</p>
+            <p className="text-lg text-orange-700 mt-3 font-medium">estimated monthly reward value</p>
           </div>
 
           {/* spacer to push button to bottom */}
@@ -153,7 +153,7 @@ export function ROICalculators() {
             className="flex items-center justify-center gap-3 w-full bg-[#FF6600] hover:bg-[#E65C00] text-white font-black text-xl rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
             style={{ minHeight: "60px" }}
           >
-            Start Earning Now <ArrowRight className="w-6 h-6" />
+            Start Referring <ArrowRight className="w-6 h-6" />
           </Link>
         </div>
       </div>

@@ -22,12 +22,12 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "Pest Control Services Australia | Pest Controllers | TradeRefer",
     description:
-        "Find licensed pest controllers across Australia. Compare termite inspection and treatment costs by city, understand licensing requirements by state, and hire verified local pest control businesses through TradeRefer.",
+        "Find licensed pest controllers across Australia. Compare termite inspection and treatment costs by city, understand licensing requirements by state, and hire local pest control businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/pest-control" },
     openGraph: {
         title: "Pest Control Services Australia | TradeRefer",
         description:
-            "Compare pest control and termite treatment costs, licensing requirements, and verified local pest controllers across Australia.",
+            "Compare pest control and termite treatment costs, licensing requirements, and local pest controllers across Australia.",
         url: "https://traderefer.au/trades/pest-control",
         type: "website",
     },
@@ -82,8 +82,8 @@ const hiringTips = [
         icon: FileText,
     },
     {
-        title: "Understand what's treated and what guarantee is offered",
-        body: "Reputable pest controllers will explain exactly what chemicals are used, where they are applied, and what the re-treatment guarantee covers. Be wary of extremely cheap termite treatments that use lower-quality chemical barriers with shorter effective lifespans.",
+        title: "Understand what is treated and what follow-up terms are offered",
+        body: "Reputable pest controllers will explain exactly what chemicals are used, where they are applied, and what any re-treatment terms cover. Be wary of extremely cheap termite treatments that use lower-quality chemical barriers with shorter effective lifespans.",
         icon: ShieldCheck,
     },
     {
@@ -95,8 +95,8 @@ const hiringTips = [
 
 const whyTradeRefer = [
     {
-        title: "Verified pest control businesses",
-        body: "TradeRefer helps homeowners find licensed, ABN-verified pest control businesses — particularly important when dealing with termites, where unlicensed treatment can void your home insurance.",
+        title: "Checked pest control businesses",
+        body: "TradeRefer helps homeowners find licensed, ABN-checked pest control businesses — particularly important when dealing with termites, where unlicensed treatment can void your home insurance.",
     },
     {
         title: "Compare costs before you call",
@@ -104,7 +104,7 @@ const whyTradeRefer = [
     },
     {
         title: "Australia-wide local discovery",
-        body: "Navigate from this national pest control guide into city and suburb-level pages to find verified pest controllers operating in the specific area where your property is located.",
+        body: "Navigate from this national pest control guide into city and suburb-level pages to find pest controllers operating in the specific area where your property is located.",
     },
 ];
 
@@ -217,11 +217,11 @@ export default async function PestControlTradeHubPage() {
                             Australia-Wide Trade Hub
                         </div>
                         <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>
-                            Find Verified <span className="text-[#FF6600]">Pest Controllers</span> Across Australia
+                            Find <span className="text-[#FF6600]">Pest Controllers</span> Across Australia
                         </h1>
                         <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>
                             Use this TradeRefer pest control hub to compare termite inspection and treatment costs across Australian cities, understand mandatory licensing requirements,
-                            and connect with verified local pest control businesses for your property.
+                            and connect with local pest control businesses for your property.
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <Link
@@ -408,7 +408,7 @@ export default async function PestControlTradeHubPage() {
                         <div className="max-w-3xl mb-8">
                             <h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Pest Control Quotes</h2>
                             <p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>
-                                Request your pest control quotes here and we&apos;ll match your job with up to 3 verified local pest control businesses.
+                                Request your pest control quotes here and we&apos;ll match your job with up to 3 local pest control businesses.
                             </p>
                         </div>
                         <PublicMultiQuoteForm initialTradeCategory="Pest Control" initialSourcePage="/trades/pest-control" />
@@ -481,7 +481,7 @@ export default async function PestControlTradeHubPage() {
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need a Pest Controller Near You?</h2>
                         <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>
-                            Browse verified local pest control businesses, compare termite inspection and treatment options, and find a licensed pest controller for your property.
+                            Browse local pest control businesses, compare termite inspection and treatment options, and find a licensed pest controller for your property.
                         </p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link

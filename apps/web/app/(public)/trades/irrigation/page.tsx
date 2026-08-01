@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
     title: "Irrigation Services Australia | Irrigation Contractors | TradeRefer",
-    description: "Find trusted irrigation contractors across Australia. Compare drip, pop-up, and automatic irrigation system costs by city, and hire verified local irrigation businesses through TradeRefer.",
+    description: "Find trusted irrigation contractors across Australia. Compare drip, pop-up, and automatic irrigation system costs by city, and hire local irrigation businesses through TradeRefer.",
     alternates: { canonical: "https://traderefer.au/trades/irrigation" },
-    openGraph: { title: "Irrigation Services Australia | TradeRefer", description: "Compare irrigation system costs, automated watering pricing, and verified local irrigation contractors across Australia.", url: "https://traderefer.au/trades/irrigation", type: "website" },
+    openGraph: { title: "Irrigation Services Australia | TradeRefer", description: "Compare irrigation system costs, automated watering pricing, and local irrigation contractors across Australia.", url: "https://traderefer.au/trades/irrigation", type: "website" },
 };
 
 const TRADE_NAME = "Irrigation";
@@ -55,9 +55,9 @@ const hiringTips = [
     { title: "Ask about warranty on heads, valves, and controller", body: "Quality components (Rain Bird, Hunter, Toro) carry 2–5 year part warranties. Labour warranties vary from 12 months to 2 years. Request brand names for heads, valves, and controller — avoid quotes that list only 'quality components' without specifying brands.", icon: Star },
 ];
 const whyTradeRefer = [
-    { title: "Verified irrigation businesses", body: "TradeRefer helps homeowners and commercial property managers find ABN-verified irrigation contractors who meet backflow prevention requirements and design systems for water efficiency." },
+    { title: "Checked irrigation businesses", body: "TradeRefer helps homeowners and commercial property managers find ABN-checked irrigation contractors who meet backflow prevention requirements and design systems for water efficiency." },
     { title: "Compare costs before you call", body: "Use this hub to understand typical irrigation system costs across Australian cities so you can benchmark design and installation quotes before committing to a contractor." },
-    { title: "Australia-wide local discovery", body: "Navigate from this national irrigation guide into city and suburb-level pages to find verified irrigation businesses in the specific area where your property is located." },
+    { title: "Australia-wide local discovery", body: "Navigate from this national irrigation guide into city and suburb-level pages to find irrigation businesses in the specific area where your property is located." },
 ];
 const customFaqs = [
     { q: "How much does a home irrigation system cost in Australia?", a: "A pop-up lawn sprinkler system for a small to medium backyard costs $1,200–$4,500 installed, depending on zone count, pipe run length, and controller type. Drip irrigation for garden beds adds $400–$1,200 per zone. Full front and back yard automated systems with smart controllers typically cost $3,500–$8,000." },
@@ -106,8 +106,8 @@ export default async function IrrigationTradeHubPage() {
                     </nav>
                     <div className="max-w-4xl">
                         <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-full px-4 py-2 font-black text-orange-400 uppercase tracking-widest mb-6" style={{ fontSize: "16px" }}><Home className="w-4 h-4" />Australia-Wide Trade Hub</div>
-                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find Verified <span className="text-[#FF6600]">Irrigation</span> Contractors Across Australia</h1>
-                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer irrigation hub to compare automated watering system costs across Australian cities, understand backflow prevention requirements, and connect with verified local irrigation businesses.</p>
+                        <h1 className="font-black mb-6 leading-[1.05] font-display text-white" style={{ fontSize: "clamp(48px, 8vw, 80px)" }}>Find <span className="text-[#FF6600]">Irrigation</span> Contractors Across Australia</h1>
+                        <p className="text-zinc-400 max-w-3xl mb-8" style={{ fontSize: "20px", lineHeight: 1.7 }}>Use this TradeRefer irrigation hub to compare automated watering system costs across Australian cities, understand backflow prevention requirements, and connect with local irrigation businesses.</p>
                         <div className="flex flex-wrap gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Firrigation`} className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-black px-8 rounded-xl transition-colors inline-flex items-center justify-center gap-2" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes<ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="bg-white/10 hover:bg-white/20 text-white font-black px-8 rounded-xl transition-colors border border-white/10 inline-flex items-center justify-center" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Irrigation Contractors</Link>
@@ -176,7 +176,7 @@ export default async function IrrigationTradeHubPage() {
                     </section>
 
                     <section className="bg-white rounded-3xl border border-zinc-200 p-8 md:p-10">
-                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Irrigation Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 verified local irrigation businesses.</p></div>
+                        <div className="max-w-3xl mb-8"><h2 className="font-black text-[#1A1A1A] mb-3 font-display" style={{ fontSize: "32px" }}>Get 3 Free Irrigation Quotes</h2><p className="text-zinc-500" style={{ fontSize: "18px", lineHeight: 1.7 }}>Request quotes here and we&apos;ll match your project with up to 3 local irrigation businesses.</p></div>
                         <PublicMultiQuoteForm initialTradeCategory={TRADE_NAME} initialSourcePage="/trades/irrigation" />
                     </section>
 
@@ -200,7 +200,7 @@ export default async function IrrigationTradeHubPage() {
 
                     <section className="bg-[#1A1A1A] rounded-3xl p-8 md:p-12 text-center text-white">
                         <h2 className="font-black mb-4 text-white" style={{ fontSize: "40px" }}>Need an Irrigation Contractor Near You?</h2>
-                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse verified local irrigation businesses and find the right contractor for your lawn sprinkler, drip irrigation, or automated watering system project.</p>
+                        <p className="text-zinc-400 mb-8 max-w-2xl mx-auto" style={{ fontSize: "20px", lineHeight: 1.7 }}>Browse local irrigation businesses and find the right contractor for your lawn sprinkler, drip irrigation, or automated watering system project.</p>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href={`/quotes?trade=${encodeURIComponent(TRADE_NAME)}&source=%2Ftrades%2Firrigation`} className="inline-flex items-center gap-2 bg-[#FF6600] hover:bg-[#E65C00] text-white font-black rounded-xl px-8 transition-colors" style={{ minHeight: "64px", fontSize: "18px" }}>Get 3 Free Quotes <ArrowRight className="w-5 h-5" /></Link>
                             <Link href={`/businesses?category=${encodeURIComponent(TRADE_NAME)}`} className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-black rounded-xl px-8 transition-colors border border-white/10" style={{ minHeight: "64px", fontSize: "18px" }}>Browse Irrigation Contractors</Link>

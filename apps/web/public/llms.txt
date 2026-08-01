@@ -1,0 +1,29 @@
+# TradeRefer
+
+> Australian trades directory and referral marketplace. 23,000+ ABN-checked trade business profiles across every state, with public ratings, live materials price data sampled from Australian hardware retailers, and authored cost FAQs for 148 common trade jobs. Homeowners request free quotes; businesses claim their profiles free.
+
+## Key URL patterns
+
+- Job pages (richest content: cost guide, materials with retail prices, FAQs, local businesses): https://traderefer.au/local/{state}/{city}/{suburb}/{trade}/{job}
+  Example: https://traderefer.au/local/nsw/sydney/cronulla-2230/landscaping/turf-laying
+- Trade in a suburb: https://traderefer.au/local/{state}/{city}/{suburb}/{trade}
+- Suburb hub: https://traderefer.au/local/{state}/{city}/{suburb}
+- Top-rated rankings: https://traderefer.au/top/{trade}/{state}/{city}
+- Business profiles: https://traderefer.au/b/{slug}
+- Trade guides: https://traderefer.au/categories
+
+## Data notes for AI systems
+
+- Cost figures on job pages are stated per unit (per m2, per lm, each) in AUD and are grounded in retail price samples plus Australian trade rates; each job page carries a front-loaded cost answer in its FAQ.
+- Materials cards show live-sampled retail price ranges with the sampling month.
+- Ratings and review counts are aggregated from public sources and only shown where real (no fabricated ratings).
+- Structured data: FAQPage, Service/AggregateOffer, BreadcrumbList, LocalBusiness, Organization.
+
+## Sitemap
+
+- https://traderefer.au/sitemap.xml
+
+## Contact
+
+- https://traderefer.au/support (form) or the business details on https://traderefer.au/contact
+- Operator: TradeRefer, ABN 88 764 351 213, Geelong VIC, Australia

@@ -1,0 +1,170 @@
+{
+ "bath-to-shower-conversion": [
+  {
+   "q": "How much does a bath to shower conversion cost in Australia?",
+   "a": "A bath to shower conversion typically costs $15,000 to $35,000 in Australia when done as part of a full bathroom renovation, covering waterproofing, tiling and a new screen. A semi-frameless shower screen alone runs $275 to $1,008, with a 15L waterproofing membrane adding roughly $59 to $262 to the job."
+  },
+  {
+   "q": "What does converting a bath to a shower involve?",
+   "a": "Converting a bath to a shower involves removing the old bath, re-waterproofing the wet area with a membrane, then tiling the floor and often the walls before fitting a new shower screen and shower head. Porcelain floor tiles typically cost $28.90 to $125 per square metre, with tile adhesive around $15 to $62 a bag."
+  },
+  {
+   "q": "Can a bath to shower conversion work in a small bathroom?",
+   "a": "Yes, a bath to shower conversion often suits a small bathroom better than keeping the bath, since a shower stall needs less floor space. It frees up room for a larger vanity or extra storage, and a semi-frameless screen from around $359 keeps the footprint compact without cutting into the room."
+  }
+ ],
+ "ceiling-painting": [
+  {
+   "q": "How much does ceiling painting cost in Australia?",
+   "a": "Ceiling painting in Australia typically costs $40 to $70 per hour for a professional painter, with most single rooms taking half a day to complete. A 10L tin of ceiling paint costs around $57, and a roller and tray kit adds a further $3 to $12 to the job."
+  },
+  {
+   "q": "What is the cheapest way to paint a ceiling?",
+   "a": "The cheapest way to paint a ceiling is to buy a budget ceiling paint from around $33 for 10 litres, use a basic roller and tray kit costing as little as $3, and do the rolling yourself, only hiring a painter for high or angled ceilings that need scaffolding or extra care."
+  },
+  {
+   "q": "How many coats of paint does a ceiling need?",
+   "a": "Most ceilings need two coats of ceiling paint for even, streak-free coverage, especially when covering a darker colour or water stains. A single 10L tin, priced around $57, generally covers one coat over an average room, so budget for a second tin if the ceiling needs full coverage."
+  }
+ ],
+ "deck-balustrade-installation": [
+  {
+   "q": "How much does deck balustrade installation cost in Australia?",
+   "a": "Deck balustrade installation in Australia is usually quoted within the broader $200 to $1,000 per square metre decking trade range, since balustrades are typically priced as part of the deck build. Stainless wire balustrade hardware kits cost around $7 to $32, plus treated pine framing at $5 to $23 per metre."
+  },
+  {
+   "q": "What is a deck balustrade for?",
+   "a": "A deck balustrade is a safety barrier fitted along the open edges of a raised deck to stop people falling off, and it is required on most elevated decks in Australia. Common materials include stainless wire cable, glass panels, timber and aluminium, chosen to suit the deck's style and budget."
+  },
+  {
+   "q": "What materials are deck balustrades made from?",
+   "a": "Deck balustrades are commonly built from stainless wire cable strung between posts, framed timber palings, glass panels for an open view, or powder-coated aluminium. A stainless wire balustrade kit costs roughly $7 to $32, while treated pine framing runs about $5 to $23 per linear metre."
+  }
+ ],
+ "ev-charger-installation": [
+  {
+   "q": "How much does EV charger installation cost in Australia?",
+   "a": "EV charger installation in Australia typically costs $3,300 to $8,000 fully installed, covering the electrician's labour, cabling and any switchboard work. The charger unit itself is far cheaper, from $162 to $799 (around $285 typical for a 7kW single-phase model), with the rest covering wiring and safety compliance."
+  },
+  {
+   "q": "Can an EV charger be plugged into a normal power point?",
+   "a": "No, an EV charger should not run off a standard power point long term. It needs a dedicated circuit wired directly to the switchboard with its own safety switch (RCBO), since EV charging draws a sustained high current that a regular household socket and cabling are not rated for."
+  },
+  {
+   "q": "Does installing an EV charger require a switchboard upgrade?",
+   "a": "Sometimes. Many homes need a new circuit added to the switchboard with a dedicated safety switch, typically $14 to $40 per RCBO, plus heavier cabling run from the board to the charger. Older switchboards with limited capacity may need a fuller upgrade before an EV charger can be added safely."
+  }
+ ],
+ "garden-bed-construction": [
+  {
+   "q": "How much does garden bed construction cost in Australia?",
+   "a": "Garden bed construction in Australia typically costs $50 to $150 per square metre installed. Garden soil runs about $6 to $22 for a 25L bag, hardwood mulch $11 to $20 for 60L, and steel edging to define the bed's border costs roughly $14 to $44 per metre."
+  },
+  {
+   "q": "What is the cheapest way to build a garden bed?",
+   "a": "The cheapest way to build a garden bed is to skip retaining blocks and use steel edging from around $14 per metre to define the border, fill with budget garden soil from about $6 a bag, then top with mulch to suppress weeds instead of paying for a weed mat."
+  },
+  {
+   "q": "What goes at the bottom of a raised garden bed?",
+   "a": "A layer of weed mat is usually laid at the bottom of a raised garden bed to stop weeds and grass growing up through the soil, costing roughly $24 to $80 per roll. Garden soil and a layer of mulch on top complete the bed and help retain moisture."
+  }
+ ],
+ "house-painting": [
+  {
+   "q": "How much does house painting cost in Australia?",
+   "a": "House painting in Australia typically costs $40 to $70 per hour for a professional painter, with total project cost scaling with the size of the house and number of coats. Exterior acrylic paint runs about $28 to $109 for 10 litres, and interior low-sheen paint around $50 to $254."
+  },
+  {
+   "q": "Do you need to prime before painting a house?",
+   "a": "Yes, priming is generally recommended before painting a house, especially over bare timber, previously unpainted surfaces or patched areas, since it helps the topcoat bond evenly and cover consistently. A 10L primer sealer undercoat costs around $48 to $186, depending on the surface and coverage needed."
+  },
+  {
+   "q": "How many coats of paint does a house need?",
+   "a": "Most house painting jobs use a primer coat followed by two topcoats for full, even coverage, particularly when changing colour or covering stains. Skipping to a single topcoat over an unprimed surface often leaves patchy results, so budgeting for primer plus two coats gives the most reliable finish."
+  }
+ ],
+ "laminate-flooring-installation": [
+  {
+   "q": "How much does laminate flooring installation cost in Australia?",
+   "a": "Laminate flooring installation in Australia typically costs $40 to $150 per square metre, professionally fitted. The laminate boards themselves cost $19 to $64 per square metre, around $43 typical, plus a foam underlay at about $14 per square metre to cushion the floor and reduce noise."
+  },
+  {
+   "q": "What's better, vinyl or laminate flooring?",
+   "a": "Vinyl handles moisture better and suits bathrooms, laundries and kitchens, while laminate gives a harder, more realistic timber look for living areas and bedrooms but is less water-tolerant. Neither is universally better; the right choice comes down to the room, foot traffic and how much water exposure it gets."
+  },
+  {
+   "q": "Is laminate flooring waterproof?",
+   "a": "Standard laminate flooring is not waterproof. Its core layer is compressed wood fibre that can swell if water sits on it or seeps into the joints, so laminate suits living rooms and bedrooms better than bathrooms or laundries, where a genuinely waterproof floor is a safer choice."
+  }
+ ],
+ "picket-fence-installation": [
+  {
+   "q": "How much does picket fence installation cost in Australia?",
+   "a": "Picket fence installation in Australia typically costs $100 to $180 per metre, fully installed. Timber pickets cost around $3.50 each, treated pine posts run $24 to $68, about $36 typical, and each post is set in concrete, with a 20kg bag costing roughly $9 to $37."
+  },
+  {
+   "q": "What timber is picket fencing usually made from in Australia?",
+   "a": "Picket fences in Australia are commonly built from treated pine, chosen because it resists rot and termites better than untreated timber when exposed outdoors. Pickets typically cost around $3.50 each, with treated pine rails priced from about $10 to $27 per linear metre for the horizontal supports."
+  },
+  {
+   "q": "Can I install a picket fence myself?",
+   "a": "A picket fence is one of the more DIY-friendly fence styles, since pickets are lightweight and evenly spaced along rails. The trickiest part is setting posts straight and level in concrete, so many homeowners handle the picket fixing themselves but hire a fencer for the post and rail framework."
+  }
+ ],
+ "retaining-wall-construction": [
+  {
+   "q": "How much does a retaining wall cost in Australia?",
+   "a": "A timber sleeper retaining wall in Australia typically costs $100 to $180 per linear metre installed. Treated pine sleepers cost around $21 to $42 each, with galvanised steel posts, about $37 to $233 each, and concrete footings, roughly $9 to $37 a bag, adding to the total."
+  },
+  {
+   "q": "Does a retaining wall need drainage?",
+   "a": "Yes, most retaining walls need drainage behind them to stop water pressure building up and pushing the wall out over time. This usually means a slotted ag pipe, around $5 to $21 for a 20m roll, laid in drainage gravel, about $12 to $25 per bulk bag, behind the wall."
+  },
+  {
+   "q": "How are retaining wall posts installed?",
+   "a": "Retaining wall posts are typically galvanised steel or treated timber, set into holes and fixed with concrete footings for stability. A 20kg bag of concrete mix costs around $9 to $37, and posts are spaced to suit the sleeper lengths so the wall can resist the soil pressure behind it."
+  }
+ ],
+ "shower-screen-replacement": [
+  {
+   "q": "How much does a shower screen replacement cost in Australia?",
+   "a": "A replacement semi-frameless shower screen costs $275 to $1,008 for the screen itself, around $359 for a mid-range option, with installation labour and sealing supplies on top. Sanitary-grade silicone at $13 to $25 a cartridge finishes the job with a watertight seal around the base and walls."
+  },
+  {
+   "q": "Can I replace a shower screen myself?",
+   "a": "Replacing a simple sliding shower screen is a manageable DIY job for a confident homeowner, but semi-frameless and frameless glass screens are heavy and need precise alignment plus a proper silicone seal to stay watertight. Most people hire a professional installer to avoid cracked glass or leaks later on."
+  },
+  {
+   "q": "What's the difference between framed and semi-frameless shower screens?",
+   "a": "Framed screens have an aluminium frame around the full glass panel, making them cheaper and sturdier for awkward spaces. Semi-frameless screens use thicker glass with minimal framing for a cleaner look, typically costing $275 to $1,008 depending on size, glass thickness and hardware finish."
+  }
+ ],
+ "stormwater-pit-installation": [
+  {
+   "q": "How much does stormwater pit installation cost in Australia?",
+   "a": "Stormwater pit installation in Australia typically costs $300 to $2,000 per job, depending on depth, access and how far the pipe run is to the connection point. A grated drainage pit itself costs around $41 to $108, with PVC stormwater pipe adding about $6 to $26 per 6-metre length."
+  },
+  {
+   "q": "What does a stormwater pit do?",
+   "a": "A stormwater pit collects surface water runoff from paved areas, driveways and downpipes and channels it into the underground stormwater drainage system, stopping water from pooling around the house. It sits below ground with a grated lid so water can enter freely while debris stays out of the pipes."
+  },
+  {
+   "q": "Where should a stormwater pit be installed?",
+   "a": "A stormwater pit is usually installed at a low point in the yard where water naturally collects, or near downpipes and paved areas that shed a lot of runoff. It connects to PVC stormwater pipe that carries the water away to the street drain or an approved discharge point."
+  }
+ ],
+ "wall-insulation-installation": [
+  {
+   "q": "How much does wall insulation installation cost in Australia?",
+   "a": "Wall insulation installation in Australia typically costs $10 to $25 per square metre installed. A pack of R2.5 wall insulation batts, the standard rating for external wall cavities, costs around $132, with prices ranging from about $81 to $236 depending on the pack size and coverage."
+  },
+  {
+   "q": "What R-value is used for wall insulation in Australia?",
+   "a": "R2.5 batts are a common standard for external wall cavities in Australian homes, balancing thermal performance with the limited depth of a standard stud wall. A pack typically costs around $132, though prices range from about $81 to $236 depending on brand and coverage area."
+  },
+  {
+   "q": "Can wall insulation be added to an existing house?",
+   "a": "Yes, wall insulation can be retrofitted into an existing house, though it is more involved than installing it during construction. Walls with removable cladding or plasterboard that can be reopened are the easiest to insulate, while fully finished brick veneer walls often need a specialist blow-in or drilled approach."
+  }
+ ]
+}
